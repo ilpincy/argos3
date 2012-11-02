@@ -178,9 +178,9 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CSpace::GetEntitiesMatching(TEntityVector& t_buffer,
+   void CSpace::GetEntitiesMatching(CEntity::TVector& t_buffer,
                                     const std::string& str_pattern) {
-      for(TEntityVector::iterator it = m_vecEntities.begin();
+      for(CEntity::TVector::iterator it = m_vecEntities.begin();
           it != m_vecEntities.end(); ++it) {
          if(MatchPattern((*it)->GetId(), str_pattern)) {
             t_buffer.push_back(*it);
@@ -310,10 +310,10 @@ namespace argos {
    /****************************************/
 
    void CSpace::RemoveEntity(CEntity& c_entity) {
-      TEntityVector::iterator itEntityVec = find(m_vecEntities.begin(),
-                                                 m_vecEntities.end(),
-                                                 &c_entity);
-      TEntityMap::iterator itEntityMap = m_mapEntities.find(c_entity.GetId());
+      CEntity::TVector::iterator itEntityVec = find(m_vecEntities.begin(),
+                                                    m_vecEntities.end(),
+                                                    &c_entity);
+      CEntity::TMap::iterator itEntityMap = m_mapEntities.find(c_entity.GetId());
       if(itEntityVec == m_vecEntities.end()) {
          THROW_ARGOSEXCEPTION("CSceneGraph::RemoveEntity() : Entity \"" <<
                               c_entity.GetId() <<

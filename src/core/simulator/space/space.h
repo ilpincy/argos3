@@ -86,12 +86,12 @@ namespace argos {
          return m_vecEntities.size();
       }
 
-      inline TEntityVector& GetEntityVector() {
+      inline CEntity::TVector& GetEntityVector() {
          return m_vecEntities;
       }
 
       inline CEntity& GetEntity(const std::string& str_id) {
-         TEntityMap::const_iterator it = m_mapEntities.find(str_id);
+         CEntity::TMap::const_iterator it = m_mapEntities.find(str_id);
          if ( it != m_mapEntities.end()) {
             return *(it->second);
          }
@@ -99,14 +99,14 @@ namespace argos {
                               "\" when requesting entity from space.");
       }
 
-      void GetEntitiesMatching(TEntityVector& t_buffer,
+      void GetEntitiesMatching(CEntity::TVector& t_buffer,
                                const std::string& str_pattern);
 
       bool GetClosestEmbodiedEntityIntersectedByRay(SEntityIntersectionItem<CEmbodiedEntity>& s_data,
                                                     const CRay& c_ray,
                                                     const TEmbodiedEntitySet& set_ignored_entities = TEmbodiedEntitySet());
 
-      inline TEntityMap& GetAllEntities() {
+      inline CEntity::TMap& GetAllEntities() {
          return m_mapEntities;
       }
 
@@ -238,10 +238,10 @@ namespace argos {
       CVector3 m_cArenaSize;
 
       /** A vector of entities. */
-      TEntityVector m_vecEntities;
+      CEntity::TVector m_vecEntities;
 
       /** A map of entities. */
-      TEntityMap m_mapEntities;
+      CEntity::TMap m_mapEntities;
 
       /** A map of maps of all the simulated entities.
           The map stores several submaps with the key equals to the

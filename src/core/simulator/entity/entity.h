@@ -33,6 +33,11 @@ namespace argos {
 
    public:
 
+      typedef std::vector<CEntity*> TVector;
+      typedef std::map<std::string, CEntity*> TMap;
+
+   public:
+
       CEntity(CEntity* pc_parent) :
          m_pcParent(pc_parent) {}
       virtual ~CEntity() {}
@@ -69,9 +74,6 @@ namespace argos {
       CEntity* m_pcParent;
 
    };
-
-   typedef std::vector<CEntity*> TEntityVector;
-   typedef std::map<std::string, CEntity*> TEntityMap;
 
 }
 

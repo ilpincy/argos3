@@ -451,7 +451,7 @@ namespace argos {
          /* Cycle through the entities associated to this engine and add them to it */
          TConfigurationNodeIterator itEntities;
          std::string strEntityId;
-         TEntityVector tMatchingEntities;
+         CEntity::TVector tMatchingEntities;
          for(itEntities = itEntities.begin(&(*itEngines));
              itEntities != itEntities.end();
              ++itEntities) {
@@ -465,7 +465,7 @@ namespace argos {
                THROW_ARGOSEXCEPTION("No entity matches the regular expression \"" << strEntityId << "\"");
             }
             /* Go through the matching entities */
-            for(TEntityVector::iterator itMatchingEntities = tMatchingEntities.begin();
+            for(CEntity::TVector::iterator itMatchingEntities = tMatchingEntities.begin();
                 itMatchingEntities != tMatchingEntities.end(); ++itMatchingEntities) {
                CEntity& cEntity = **itMatchingEntities;
                /* Add the entity to the engine */

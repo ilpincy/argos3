@@ -29,9 +29,19 @@ namespace argos {
       virtual ~CComposableEntity() {}
 
       virtual CEntity& GetComponent(const std::string& str_component) = 0;
+
       template <class E> E& GetComponent(const std::string& str_component) {
-         return *(dynamic_cast<E*>(&GetComponent(str_component)));
+         E* pcComponent = dynamic_cast<E*>(&GetComponent(str_component));
+         if(pcComponent != NULL) {
+            return *pcComponent;
+         }
+         else {
+            THROW_ARGOSEXCEPTION("Entity \"" <<
+                                 GetId() <<
+                                 "\" does not have component of type");
+         }
       }
+
       virtual bool HasComponent(const std::string& str_component) = 0;
 
       inline virtual std::string GetTypeDescription() const {
