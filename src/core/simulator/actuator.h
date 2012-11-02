@@ -1,16 +1,16 @@
 /**
- * @file argos3/core/simulator/simulated_actuator.h
+ * @file argos3/core/simulator/actuator.h
  *
  * @brief This file provides the definition of
  *
  * @author Carlo Pinciroli - <cpinciro@ulb.ac.be>
  */
 
-#ifndef SIMULATED_ACTUATOR_H
-#define SIMULATED_ACTUATOR_H
+#ifndef ACTUATOR_H
+#define ACTUATOR_H
 
 namespace argos {
-   class CSimulatedActuator;
+   class CActuator;
    class CEntity;
 }
 
@@ -21,17 +21,14 @@ namespace argos {
 
 namespace argos {
 
-   class CSimulatedActuator : virtual public CCI_Actuator {
+   class CActuator : virtual public CCI_Actuator {
 
    public:
 
-      virtual ~CSimulatedActuator() {}
-
+      virtual ~CActuator() {}
       virtual CEntity& GetEntity() = 0;
       virtual void SetEntity(CEntity& c_entity) = 0;
-
       virtual void Update() = 0;
-      virtual void Reset() = 0;
 
    };
 

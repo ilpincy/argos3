@@ -6,12 +6,12 @@
  * @author Carlo Pinciroli - <cpinciro@ulb.ac.be>
  */
 
-#ifndef SIMULATED_SENSOR_H
-#define SIMULATED_SENSOR_H
+#ifndef SENSOR_H
+#define SENSOR_H
 
 /* To avoid dependency problems when including */
 namespace argos {
-   class CSimulatedSensor;
+   class CSensor;
    class CEntity;
 }
 
@@ -21,20 +21,14 @@ namespace argos {
 
 namespace argos {
 
-   class CSimulatedSensor {
+   class CSensor : virtual public CCI_Sensor {
 
    public:
 
-      virtual ~CSimulatedSensor() {}
-
+      virtual ~CSensor() = 0;
       virtual CEntity& GetEntity() = 0;
       virtual void SetEntity(CEntity& c_entity) = 0;
-
       virtual void Update() = 0;
-      virtual void Reset() = 0;
-
-      virtual void Destroy() {}
-
    };
 
 }

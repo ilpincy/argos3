@@ -9,8 +9,8 @@
 
 namespace argos {
    class CControllableEntity;
-   class CSimulatedActuator;
-   class CSimulatedSensor;
+   class CActuator;
+   class CSensor;
 }
 
 #include <argos3/core/simulator/entity/entity.h>
@@ -82,8 +82,8 @@ namespace argos {
       std::string m_strControllerId;
       CCI_Controller* m_pcController;
 
-      std::map<std::string, CSimulatedActuator*> m_mapActuators;
-      std::map<std::string, CSimulatedSensor*> m_mapSensors;
+      std::map<std::string, CActuator*> m_mapActuators;
+      std::map<std::string, CSensor*> m_mapSensors;
 
       std::vector< std::pair<bool, CRay> > m_vecCheckedRays;
       std::vector< CVector3 > m_vecIntersectionPoints;

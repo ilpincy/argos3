@@ -5,8 +5,8 @@
  */
 
 #include "controllable_entity.h"
-#include <argos3/core/simulator/simulated_actuator.h>
-#include <argos3/core/simulator/simulated_sensor.h>
+#include <argos3/core/simulator/actuator.h>
+#include <argos3/core/simulator/sensor.h>
 
 namespace argos {
 
@@ -46,12 +46,12 @@ namespace argos {
       m_vecIntersectionPoints.clear();
 
       /* Reset sensors */
-      for(std::map<std::string, CSimulatedSensor*>::iterator it = m_mapSensors.begin();
+      for(std::map<std::string, CSensor*>::iterator it = m_mapSensors.begin();
           it != m_mapSensors.end(); ++it) {
          it->second->Reset();
       }
       /* Reset actuators */
-      for(std::map<std::string, CSimulatedActuator*>::iterator it = m_mapActuators.begin();
+      for(std::map<std::string, CActuator*>::iterator it = m_mapActuators.begin();
           it != m_mapActuators.end(); ++it) {
          it->second->Reset();
       }
@@ -69,12 +69,12 @@ namespace argos {
       m_vecIntersectionPoints.clear();
 
       /* Destroy sensors */
-      for(std::map<std::string, CSimulatedSensor*>::iterator it = m_mapSensors.begin();
+      for(std::map<std::string, CSensor*>::iterator it = m_mapSensors.begin();
           it != m_mapSensors.end(); ++it) {
          it->second->Destroy();
       }
       /* Destroy actuators */
-      for(std::map<std::string, CSimulatedActuator*>::iterator it = m_mapActuators.begin();
+      for(std::map<std::string, CActuator*>::iterator it = m_mapActuators.begin();
           it != m_mapActuators.end(); ++it) {
          it->second->Destroy();
       }
@@ -93,12 +93,12 @@ namespace argos {
       /* Set the simulated actuator list */
       for(CCI_Actuator::TMap::iterator it = m_pcController->GetRobot().GetAllActuators().begin();
           it != m_pcController->GetRobot().GetAllActuators().end(); ++it) {
-         m_mapActuators[it->first] = dynamic_cast<CSimulatedActuator*>(it->second);
+         m_mapActuators[it->first] = dynamic_cast<CActuator*>(it->second);
       }
       /* Set the simulated sensor list */
       for(CCI_Sensor::TMap::iterator it = m_pcController->GetRobot().GetAllSensors().begin();
           it != m_pcController->GetRobot().GetAllSensors().end(); ++it) {
-         m_mapSensors[it->first] = dynamic_cast<CSimulatedSensor*>(it->second);
+         m_mapSensors[it->first] = dynamic_cast<CSensor*>(it->second);
       }
    }
 
@@ -109,7 +109,7 @@ namespace argos {
       m_vecCheckedRays.clear();
       m_vecIntersectionPoints.clear();
 
-      for(std::map<std::string, CSimulatedSensor*>::iterator it = m_mapSensors.begin();
+      for(std::map<std::string, CSensor*>::iterator it = m_mapSensors.begin();
           it != m_mapSensors.end(); ++it) {
          it->second->Update();
       }
@@ -119,7 +119,7 @@ namespace argos {
    /****************************************/
 
    void CControllableEntity::Act() {
-      for(std::map<std::string, CSimulatedActuator*>::iterator it = m_mapActuators.begin();
+      for(std::map<std::string, CActuator*>::iterator it = m_mapActuators.begin();
           it != m_mapActuators.end(); ++it) {
          it->second->Update();
       }
