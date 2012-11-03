@@ -253,7 +253,7 @@ namespace argos {
        * This function should be avoided as much as possible because
        * the size of long integers changes on 32- and 64-bit
        * architectures.
-       * @param un_value the buffer for the signed long integer.
+       * @param n_value the buffer for the signed long integer.
        * @return a reference to this byte array.
        */
       CByteArray& operator>>(signed long int& n_value);

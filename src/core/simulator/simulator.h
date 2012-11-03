@@ -2,9 +2,6 @@
  * @mainpage Autonomous Robots GO Swarming
  * @author Carlo Pinciroli <cpinciro@ulb.ac.be>
  *
- * @ref README "ARGoS QUICK GUIDE"
- * @include README
- *
  * @version  3.0
  * @see      http://iridia.ulb.ac.be/
  * @see      http://www.swarmanoid.org/

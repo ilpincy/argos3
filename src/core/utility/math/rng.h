@@ -293,7 +293,7 @@ namespace argos {
          }
          /**
           * Sets the new seed of the category.
-          * @param str_id the new seed of the category.
+          * @param un_seed the new seed of the category.
           */
          void SetSeed(UInt32 un_seed);
 
@@ -383,7 +383,7 @@ namespace argos {
       /**
        * Sets the new seed of the wanted category.
        * @param str_category the id of the category.
-       * @param str_id the new seed of the wanted category.
+       * @param un_seed the new seed of the wanted category.
        */
       static void SetSeedOf(const std::string& str_category,
                             UInt32 un_seed);

@@ -113,7 +113,7 @@ namespace argos {
        *
        * It sets m_fValue (which is in radians) converting from the passed value in Aseba format.
        *
-       * @param f_value a value in Aseba format
+       * @param n_value a value in Aseba format
        */
       inline void FromValueInAseba(SInt16 n_value) {
          ASEBA_RANGE.MapValueIntoRange(*this, n_value, SIGNED_RANGE);
@@ -344,7 +344,7 @@ namespace argos {
        *
        * It sets m_fValue (which is in degrees) converting from the passed value in Aseba format.
        *
-       * @param f_value a value in Aseba format
+       * @param n_value a value in Aseba format
        */
       inline void FromValueInAseba(SInt16 n_value) {
          ASEBA_RANGE.MapValueIntoRange(*this, n_value, SIGNED_RANGE);
@@ -608,7 +608,7 @@ namespace argos {
    /** 
     * @brief Computes the arctangent of the passed values.
     *
-    * It internally uses the standard <cmath> function ::atan2(y,x).
+    * It internally uses the standard function ::atan2(y,x).
     * 
     * @param f_y the extent on the y axis
     * @param f_x the extent on the x axis

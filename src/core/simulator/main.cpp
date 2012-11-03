@@ -25,8 +25,8 @@ using namespace argos;
  * simulator: parses the command line, loads the experiment, runs the
  * simulation and disposes all the data.
  *
- * @param argc the number of command line arguments given at the shell.
- * @param argv the actual command line arguments.
+ * @param n_argc the number of command line arguments given at the shell.
+ * @param ppch_argv the actual command line arguments.
  *
  * @return 0 if everything OK; 1 in case of errors.
  *

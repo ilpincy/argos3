@@ -199,7 +199,7 @@ namespace argos {
     /**
      * Return the value of the linear interpolation
      * @param f_x the value of x that you want to interpolate
-     * @param t_points vector of points NOTE: the vector has to be ordered in INCREASING ORDER.
+     * @param c_points vector of points NOTE: the vector has to be ordered in INCREASING ORDER.
      * @return value of y.
      */
     inline Real Interpolate(Real f_x, const std::vector<std::pair<Real, Real> >& c_points) {

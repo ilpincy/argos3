@@ -86,7 +86,12 @@ namespace argos {
       /**
        * Registers a new <tt>TYPE</tt> creator in the factory
        * @param str_label The label associated to the <tt>TYPE</tt> creator
-       * @param pc_creator The <tt>TYPE</tt> creator
+       * @param str_author The author of the plugin
+       * @param str_version The version of the plugin
+       * @param str_brief_desc The brief description of the plugin
+       * @param str_long_desc The long description of the plugin
+       * @param str_status The status of the plugin
+       * @param pc_creator The <tt>TYPE</tt> creator of the factory
        */
       static void Register(const std::string& str_label,
                            const std::string& str_author,
