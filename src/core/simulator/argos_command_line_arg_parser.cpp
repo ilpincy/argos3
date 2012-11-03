@@ -133,12 +133,12 @@ namespace argos {
    void CARGoSCommandLineArgParser::PrintUsage(CARGoSLog& c_log) {
       c_log << "Usage: argos [OPTIONS]" << std::endl;
       c_log << "The ARGOS simulator, the official simulator of the Swarmanoid Project." << std::endl;
-      c_log << "Current version: 2.0" << std::endl;
+      c_log << "Current version: 3.0" << std::endl;
       c_log << std::endl;
       c_log << "   -h        | --help                  display this usage information" << std::endl;
       c_log << "   -c FILE   | --config-file FILE      the experiment XML configuration file" << std::endl;
       c_log << "   -q QUERY  | --query QUERY           query the available plugins." << std::endl;
-      c_log << "   -n        | --no-color FILE         do not use colored output [OPTIONAL]" << std::endl;
+      c_log << "   -n        | --no-color              do not use colored output [OPTIONAL]" << std::endl;
       c_log << "   -l        | --log-file FILE         redirect LOG to FILE [OPTIONAL]" << std::endl;
       c_log << "   -e        | --logerr-file FILE      redirect LOGERR to FILE [OPTIONAL]" << std::endl << std::endl;
       c_log << "The options --config-file and --query are mutually exclusive. Either you use" << std::endl;
@@ -146,9 +146,9 @@ namespace argos {
       c_log << "plugins." << std::endl << std::endl;
       c_log << "EXAMPLES" << std::endl << std::endl;
       c_log << "To run an experiment, type:" << std::endl << std::endl;
-      c_log << "   ./argos -c /path/to/myconfig.xml" << std::endl << std::endl;
+      c_log << "   ./argos3 -c /path/to/myconfig.xml" << std::endl << std::endl;
       c_log << "To query the plugins, type:" << std::endl << std::endl;
-      c_log << "   ./argos -q QUERY" << std::endl << std::endl;
+      c_log << "   ./argos3 -q QUERY" << std::endl << std::endl;
       c_log << "where QUERY can have the following values:" << std::endl << std::endl;
       c_log << "   all                    print a list of all the available plugins" << std::endl;
       c_log << "   actuators              print a list of all the available actuators" << std::endl;

@@ -44,7 +44,6 @@
 #ifndef FACTORY_H
 #define FACTORY_H
 
-#include <argos3/core/utility/logging/argos_log.h>
 #include <argos3/core/utility/configuration/argos_exception.h>
 #include <map>
 #include <iostream>
