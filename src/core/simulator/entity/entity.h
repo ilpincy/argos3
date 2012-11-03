@@ -15,11 +15,11 @@
 
 namespace argos {
    class CEntity;
-   class CPhysicsEngine;
    class CSpace;
 }
 
 #include <argos3/core/utility/datatypes/datatypes.h>
+#include <argos3/core/utility/configuration/memento.h>
 #include <argos3/core/utility/configuration/argos_configuration.h>
 #include <argos3/core/utility/configuration/base_configurable_resource.h>
 #include <argos3/core/simulator/event.h>
@@ -30,7 +30,8 @@ namespace argos {
 
 namespace argos {
 
-   class CEntity : public CBaseConfigurableResource {
+   class CEntity : public CBaseConfigurableResource,
+                   public CMemento {
 
    public:
 
@@ -44,8 +45,6 @@ namespace argos {
       virtual ~CEntity() {}
 
       virtual void Init(TConfigurationNode& t_tree);
-      virtual void Reset() {}
-      virtual void Destroy() {}
 
       inline virtual const std::string& GetId() const {
          return m_strId;

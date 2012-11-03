@@ -15,19 +15,20 @@ namespace argos {
    class CFloorEntity;
 }
 
+#include <argos3/core/utility/datatypes/any.h>
+#include <argos3/core/simulator/entity/entity.h>
+#include <argos3/core/simulator/entity/embodied_entity.h>
 #include <argos3/core/simulator/entity/controllable_entity.h>
 #include <argos3/core/simulator/entity/medium_entity.h>
-#include <argos3/core/utility/configuration/base_configurable_resource.h>
-#include <argos3/core/utility/datatypes/any.h>
-#include <argos3/core/utility/math/vector3.h>
-#include <argos3/core/simulator/space/space_hash.h>
-#include <argos3/core/simulator/entity/embodied_entity.h>
 //#include <argos3/core/simulator/entity/led_entity.h>
 //#include <argos3/core/simulator/entity/rab_equipped_entity.h>
 
 namespace argos {
 
    class CSpace : public CBaseConfigurableResource {
+
+      /****************************************/
+      /****************************************/
 
    public:
 

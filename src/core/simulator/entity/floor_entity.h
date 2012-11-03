@@ -40,6 +40,21 @@ namespace argos {
 
       virtual void Init(TConfigurationNode& t_tree);
       virtual void Reset();
+      virtual void Destroy() {}
+
+      /**
+       * Saves the state of the object to the given buffer.
+       * Data is added to the buffer.
+       * @param c_buffer the target buffer
+       */
+      virtual void SaveState(CByteArray& c_buffer) {}
+
+      /**
+       * Restores the state of the object from the given buffer.
+       * The read data is removed from the buffer.
+       * @param c_buffer the source buffer
+       */
+      virtual void LoadState(CByteArray& c_buffer) {}
 
       inline CColor GetColorAtPoint(Real f_x,
                                     Real f_y) {

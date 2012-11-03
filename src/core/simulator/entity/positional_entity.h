@@ -16,6 +16,7 @@ namespace argos {
 #include <argos3/core/utility/math/quaternion.h>
 
 namespace argos {
+
    class CPositionalEntity : public CEntity {
 
    public:
