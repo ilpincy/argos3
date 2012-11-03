@@ -1,4 +1,14 @@
 #
+# Check for GCC version >= 4.2
+#
+execute_process(COMMAND ${CMAKE_C_COMPILER} -dumpversion OUTPUT_VARIABLE GCC_VERSION)
+if (GCC_VERSION VERSION_GREATER 4.2 OR GCC_VERSION VERSION_EQUAL 4.2)
+  message(STATUS "GCC/G++ version >= 4.2")
+else(GCC_VERSION VERSION_GREATER 4.2 OR GCC_VERSION VERSION_EQUAL 4.2)
+  message(FATAL_ERROR "You need to have at least GCC/G++ version 4.2!")
+endif(GCC_VERSION VERSION_GREATER 4.2 OR GCC_VERSION VERSION_EQUAL 4.2)
+
+#
 # Check for dynamic library loading facility
 #
 if(ARGOS_DYNAMIC_LIBRARY_LOADING)
