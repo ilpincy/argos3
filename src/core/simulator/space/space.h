@@ -1,5 +1,5 @@
 /**
- * @file argos3/core/simulator/space/space.h
+ * @file core/simulator/space/space.h
  *
  * @brief This file provides the definition of the space.
  *

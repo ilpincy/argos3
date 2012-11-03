@@ -1,5 +1,5 @@
 /**
- * @file argos3/core/utility/plugins/factory.h
+ * @file core/utility/plugins/factory.h
  *
  * @brief This file defines the basic factory template.
 
@@ -129,6 +129,11 @@ namespace argos {
  * @param BASECLASS The base class of the hiearchy of types to register (corresponds to <tt>TYPE</tt> in the factory)
  * @param CLASSNAME The actual class to register
  * @param LABEL The label to associate to <tt>CLASSNAME</tt>
+ * @param AUTHOR The author of the class <tt>CLASSNAME</tt>
+ * @param VERSION Version information for the code in <tt>CLASSNAME</tt>
+ * @param BRIEF_DESCRIPTION A brief description of what <tt>CLASSNAME</tt> is
+ * @param LONG_DESCRIPTION A detailed description of what <tt>CLASSNAME</tt> is and does
+ * @param STATUS Status information (usable, draft, todos, etc) for the code in <tt>CLASSNAME</tt>
  */
 #define REGISTER_SYMBOL(BASECLASS,              \
                         CLASSNAME,              \

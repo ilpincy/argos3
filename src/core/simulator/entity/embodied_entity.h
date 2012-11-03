@@ -1,5 +1,5 @@
 /**
- * @file <simulator/entity/embodied_entity.h>
+ * @file simulator/entity/embodied_entity.h
  *
  * @author Carlo Pinciroli - <cpinciroli@ulb.ac.be>
  */

@@ -1,5 +1,5 @@
 /**
- * @file argos3/core/simulator/simulator.cpp
+ * @file core/simulator/simulator.cpp
  *
  * @author Carlo Pinciroli - <cpinciro@ulb.ac.be>
  */
@@ -95,7 +95,7 @@ namespace argos {
       /* General configuration */
       InitFramework(GetNode(m_tConfigurationRoot, "framework"));
 
-      /* TODO: MANAGE CREATION OF LOOP FUNCTIONS */
+      /** @todo manage creation of loop functions */
 
       /* Space */
       InitSpace(GetNode(m_tConfigurationRoot, "arena"));
@@ -521,15 +521,14 @@ namespace argos {
                      /* Get the parameters subtree */
                      tControllerParameters = GetNode(*itControllers, "parameters");
                   }
-                  /* TODO */
-                  /* Create the controller */
+                  /** @todo Create the controller */
                   // CCI_Controller* pcController =
                   //    GetDynamicLinkingManager().
                   //    NewController(cEntity,
                   //                  cControllableEntity.GetControllerId(),
                   //                  tControllerParameters);
                   
-                  // /* Set the controller to the entity */
+                  /* @todo Set the controller to the entity */
                   // cControllableEntity.SetController(*pcController);
                }
             }

@@ -1,5 +1,5 @@
 /**
- * @file argos3/core/utility/math/rotationmatrix2.cpp
+ * @file core/utility/math/rotationmatrix2.cpp
  *
  * @brief Contains the implementation of a 2x2 rotation matrix
  *

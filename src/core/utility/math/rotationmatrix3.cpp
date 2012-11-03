@@ -1,5 +1,5 @@
 /**
- * @file argos3/core/utility/math/rotationmatrix3.cpp
+ * @file core/utility/math/rotationmatrix3.cpp
  *
  * @brief Contains the implementation of a 3x3 rotation matrix
  *

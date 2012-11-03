@@ -1,5 +1,5 @@
 /**
- * @file argos3/core/utility/configuration/command_line_arg_parser.h
+ * @file core/utility/configuration/command_line_arg_parser.h
  *
  * This file provides the definition of the class CCommandLineArgParser.
  * It is an easy-to-use command line parser.

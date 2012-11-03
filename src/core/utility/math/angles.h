@@ -1,6 +1,5 @@
 /**
- * @file   argos3/core/utility/math/angles.h
- * @author Carlo Pinciroli <cpinciro@ulb.ac.be>
+ * @file core/utility/math/angles.h
  * 
  * @brief Contains definitions for angle management, such as the CRadians and CDegrees classes.
  * 
@@ -10,6 +9,8 @@
  *
  * For normal usage (main() code and all the class methods) you have to
  * use the normal CRadians::PI variable and its siblings.
+ *
+ * @author Carlo Pinciroli <cpinciro@ulb.ac.be>
  */
 
 #ifndef ANGLES_H

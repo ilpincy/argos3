@@ -1,5 +1,5 @@
 /**
- * @file argos3/simulator/space/space_no_threads.h
+ * @file simulator/space/space_no_threads.h
  *
  * @brief This file provides the definition of the Swarmanoid 3D Space.
  *

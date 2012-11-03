@@ -1,11 +1,6 @@
 /**
- * @file   argos3/core/utility/math/angles.cpp
+ * @file core/utility/math/angles.cpp
  * 
- * @brief Contains definitions for angle management, such as the CRadians and CDegrees classes.
- * 
- * Contains definitions for angle management, such as the CRadians and CDegrees classes, as well as
- * trigonometric and conversion functions.
- *
  * @author Carlo Pinciroli <cpinciro@ulb.ac.be>
  */
 

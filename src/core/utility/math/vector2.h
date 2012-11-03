@@ -1,5 +1,5 @@
 /**
- * @file argos3/core/utility/math/vector2.h
+ * @file core/utility/math/vector2.h
  * @author Carlo Pinciroli <cpinciro@ulb.ac.be>
  *
  * @brief Contains the definition of the CVector2 class.

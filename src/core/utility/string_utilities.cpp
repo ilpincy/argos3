@@ -14,7 +14,7 @@
  */
 
 /**
- * @file argos3/core/utility/string_utilities.cpp
+ * @file core/utility/string_utilities.cpp
  *
  * @brief This file provides the implementation of
  *

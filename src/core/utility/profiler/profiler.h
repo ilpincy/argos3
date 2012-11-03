@@ -1,5 +1,5 @@
 /**
- * @file argos3/core/utility/profiler/profiler.h
+ * @file core/utility/profiler/profiler.h
  *
  * @author Carlo Pinciroli - <cpinciro@ulb.ac.be>
  */

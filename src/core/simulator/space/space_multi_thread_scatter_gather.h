@@ -1,5 +1,5 @@
 /**
- * @file argos3/simulator/space/space_multi_thread_scatter_gather.h
+ * @file simulator/space/space_multi_thread_scatter_gather.h
  *
  * @brief This file provides the definition of the Swarmanoid 3D Space.
  *

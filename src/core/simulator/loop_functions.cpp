@@ -1,5 +1,5 @@
 /**
- * @file argos3/core/simulator/loop_functions.cpp
+ * @file core/simulator/loop_functions.cpp
  *
  * @author Carlo Pinciroli - <cpinciro@ulb.ac.be>
  */

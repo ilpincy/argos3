@@ -1,5 +1,5 @@
 /**
- * @file argos3/core/utility/configuration/base_configurable_resource.h
+ * @file core/utility/configuration/base_configurable_resource.h
  *
  * @brief This file provides the definition of the base configurable resource interface.
  *

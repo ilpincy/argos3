@@ -1,5 +1,5 @@
 /**
- * @file argos3/core/utility/math/general.h
+ * @file core/utility/math/general.h
  *
  * @brief Contains the definition of some basic math functions.
  *

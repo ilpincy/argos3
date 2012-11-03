@@ -1,5 +1,5 @@
 /**
- * @file argos3/core/simulator/main.cpp
+ * @file core/simulator/main.cpp
  *
  * @brief This file provides the standard main() function to run the ARGoS
  * simulator.
@@ -12,7 +12,7 @@
  */
 
 #include <argos3/core/simulator/simulator.h>
-#include <argos3/core/simulator/factories/query_factories.h>
+#include <argos3/core/simulator/query_factories.h>
 #include <argos3/core/simulator/argos_command_line_arg_parser.h>
 #include <cstdlib>
 
@@ -27,9 +27,9 @@ using namespace argos;
  *
  * @param n_argc the number of command line arguments given at the shell.
  * @param ppch_argv the actual command line arguments.
- *
  * @return 0 if everything OK; 1 in case of errors.
  *
+ * @todo Factory query support
  */
 int main(int n_argc, char** ppch_argv) {
    /* Create a new instance of the simulator */

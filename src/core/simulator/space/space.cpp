@@ -1,5 +1,5 @@
 /**
- * @file argos3/core/simulator/space/space.cpp
+ * @file core/simulator/space/space.cpp
  *
  * @brief This file provides the implementation of the Swarmanoid 3D Space.
  *
@@ -122,7 +122,7 @@ namespace argos {
 
       if(IsUsingSpaceHash()) {
          /* Initialize the space hash */
-         /* TODO make this automatic, using the average bb size */
+         /** @todo make space cell sizing automatic, using the average bb size */
          size_t unBuckets;
          CVector3 cCellSize;
          GetNodeAttributeOrDefault<size_t>(t_tree, "embodied_entity_space_hash_buckets", unBuckets, 100000u);
@@ -286,8 +286,7 @@ namespace argos {
       m_vecEntities.push_back(&c_entity);
       m_mapEntities[c_entity.GetId()] = &c_entity;
 
-      /* creating the visitor and adding the entity to the map */
-      /* TODO */
+      /** @todo Create the visitor and add the entity to the map */
       // CSpaceVisitorAdd cVisitor(*this);
       // c_entity.Accept(cVisitor);
    }
@@ -331,8 +330,7 @@ namespace argos {
       /* Remove the entity from the map */
       m_mapEntities.erase(itEntityMap);
 
-      /* creating the visitor and removing the entity from the map */
-      /* TODO */
+      /** @todo Create the visitor and remove the entity from the map */
       // CSpaceVisitorRemove cVisitor(*this);
       // c_entity.Accept(cVisitor);
    }

@@ -1,5 +1,5 @@
 /**
- * @file argos3/simulator/space/space_hash_native.h
+ * @file simulator/space/space_hash_native.h
  *
  * @author Carlo Pinciroli - <cpinciro@ulb.ac.be>
  */
@@ -108,7 +108,7 @@ namespace argos {
       inline virtual void SetSize(size_t un_size) {
          CSpaceHash<Element,Updater>::SetSize(un_size);
          m_psBuckets = new SBucket[CSpaceHash<Element,Updater>::GetSize()];
-         // TODO: rehash!
+         /** @todo rehash */
       }
 
       inline virtual void Update() {

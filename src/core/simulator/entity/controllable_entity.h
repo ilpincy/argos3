@@ -1,5 +1,5 @@
 /**
- * @file <simulator/swarmanoid_entity/controllable_entity.h>
+ * @file core/simulator/entity/controllable_entity.h
  *
  * @author Carlo Pinciroli - <cpinciro@ulb.ac.be>
  */

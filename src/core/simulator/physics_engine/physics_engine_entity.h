@@ -1,5 +1,5 @@
 /**
- * @file argos3/core/simulator/physics_engine/physics_engine_entity.h
+ * @file core/simulator/physics_engine/physics_engine_entity.h
  *
  * @brief This file provides the definition of the physics engine entity interface.
  *

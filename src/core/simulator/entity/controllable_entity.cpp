@@ -1,5 +1,5 @@
 /**
- * @file <argos3/core/simulator/entity/controllable_entity.cpp>
+ * @file core/simulator/entity/controllable_entity.cpp
  *
  * @author Carlo Pinciroli - <cpinciro@ulb.ac.be>
  */

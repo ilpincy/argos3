@@ -1,5 +1,5 @@
 /**
- * @file argos3/simulator/space/space_no_threads.cpp
+ * @file simulator/space/space_no_threads.cpp
  *
  * @brief This file provides the implementation of the Swarmanoid 3D Space.
  *

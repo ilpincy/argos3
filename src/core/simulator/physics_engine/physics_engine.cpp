@@ -1,5 +1,5 @@
 /**
- * @file argos3/core/simulator/physics_engine/physics_engine.cpp
+ * @file core/simulator/physics_engine/physics_engine.cpp
  *
  * @author Carlo Pinciroli - <cpinciro@ulb.ac.be>
  */

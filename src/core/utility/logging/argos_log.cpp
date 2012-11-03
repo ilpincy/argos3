@@ -1,5 +1,5 @@
 /**
- * @file argos3/core/utility/logging/argos_log.cpp
+ * @file core/utility/logging/argos_log.cpp
  *
  * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */

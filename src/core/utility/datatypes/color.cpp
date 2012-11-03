@@ -1,5 +1,5 @@
 /**
- * @file argos3/core/utility/datatypes/color.cpp
+ * @file core/utility/datatypes/color.cpp
  *
  * @brief This file provides 
  *

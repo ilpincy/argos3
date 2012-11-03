@@ -1,5 +1,5 @@
 /**
- * @file argos3/simulator/space/space_multi_thread_scatter_gather.cpp
+ * @file simulator/space/space_multi_thread_scatter_gather.cpp
  *
  * @brief This file provides the implementation of the Swarmanoid 3D Space.
  *

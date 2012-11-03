@@ -1,5 +1,5 @@
 /**
- * @file argos3/core/utility/datatypes/color.h
+ * @file core/utility/datatypes/color.h
  *
  * @brief Basic color-related definitions.
  *

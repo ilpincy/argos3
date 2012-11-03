@@ -1,5 +1,5 @@
 /**
- * @file argos3/simulator/space/space_hash.h
+ * @file simulator/space/space_hash.h
  *
  * @author Carlo Pinciroli - <cpinciro@ulb.ac.be>
  */

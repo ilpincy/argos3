@@ -1,5 +1,5 @@
 /**
- * @file argos3/core/utility/configuration/memento.h
+ * @file core/utility/configuration/memento.h
  *
  * @brief This file provides the definition of the memento interface.
  *

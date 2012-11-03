@@ -14,7 +14,7 @@
  */
 
 /**
- * @file argos3/core/control_interface/ci_controller.h
+ * @file core/control_interface/ci_controller.h
  *
  * @brief This file provides the definition of
  *

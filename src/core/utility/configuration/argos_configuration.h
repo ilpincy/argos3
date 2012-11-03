@@ -1,5 +1,5 @@
 /**
- * @file argos3/core/utility/configuration/argos_configuration.h
+ * @file core/utility/configuration/argos_configuration.h
  *
  * @brief This file provides some functions to deal with XML data.
  *

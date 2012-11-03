@@ -1,5 +1,5 @@
 /**
- * @file argos3/core/control_interface/ci_robot.h
+ * @file core/control_interface/ci_robot.h
  *
  * @brief This file provides the definition of the robot class.
  *

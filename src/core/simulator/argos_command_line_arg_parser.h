@@ -1,5 +1,5 @@
 /**
- * @file argos3/core/simulator/argos_command_line_arg_parser.h
+ * @file core/simulator/argos_command_line_arg_parser.h
  *
  * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */
