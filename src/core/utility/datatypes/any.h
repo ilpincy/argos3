@@ -11,11 +11,11 @@
  * @author Carlo Pinciroli <ilpincy@gmail.com>
  */
 
+#include <argos3/core/utility/configuration/argos_exception.h>
+
 #include <cxxabi.h>
 #include <typeinfo>
 #include <algorithm>
-
-#include <argos3/core/utility/configuration/argos_exception.h>
 
 namespace argos {
 

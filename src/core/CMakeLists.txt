@@ -78,6 +78,7 @@ set(ARGOS3_HEADERS_CONTROLINTERFACE
   control_interface/ci_sensor.h)
 # argos3/core/simulator
 set(ARGOS3_HEADERS_SIMULATOR
+  simulator/event.h
   simulator/actuator.h
   simulator/sensor.h
   simulator/argos_command_line_arg_parser.h
@@ -140,26 +141,31 @@ set(ARGOS3_SOURCES
   utility/math/vector3.cpp
   utility/math/rng.cpp
   ${ARGOS3_HEADERS_CONTROLINTERFACE}
-  control_interface/ci_robot.cpp
-  ${ARGOS3_HEADERS_SIMULATOR}
-  simulator/argos_command_line_arg_parser.cpp
-  simulator/loop_functions.cpp
-  simulator/simulator.cpp
-  ${ARGOS3_HEADERS_SIMULATOR_ENTITY}
-  simulator/entity/controllable_entity.cpp
-  simulator/entity/embodied_entity.cpp
-  simulator/entity/entity.cpp
-  simulator/entity/floor_entity.cpp
-  simulator/entity/positional_entity.cpp
-  ${ARGOS3_HEADERS_SIMULATOR_PHYSICSENGINE}
-  simulator/physics_engine/physics_engine.cpp
-  ${ARGOS3_HEADERS_SIMULATOR_VISUALIZATION}
-  simulator/visualization/visualization.cpp
-  ${ARGOS3_HEADERS_SIMULATOR_SPACE}
-  simulator/space/space.cpp
-  simulator/space/space_multi_thread_h_dispatch.cpp
-  simulator/space/space_multi_thread_scatter_gather.cpp
-  simulator/space/space_no_threads.cpp)
+  control_interface/ci_robot.cpp)
+
+if(ARGOS_BUILD_FOR_SIMULATOR)
+  set(ARGOS3_SOURCES
+    ${ARGOS3_SOURCES}
+    ${ARGOS3_HEADERS_SIMULATOR}
+    simulator/argos_command_line_arg_parser.cpp
+    simulator/loop_functions.cpp
+    simulator/simulator.cpp
+    ${ARGOS3_HEADERS_SIMULATOR_ENTITY}
+    simulator/entity/controllable_entity.cpp
+    simulator/entity/embodied_entity.cpp
+    simulator/entity/entity.cpp
+    simulator/entity/floor_entity.cpp
+    simulator/entity/positional_entity.cpp
+    ${ARGOS3_HEADERS_SIMULATOR_PHYSICSENGINE}
+    simulator/physics_engine/physics_engine.cpp
+    ${ARGOS3_HEADERS_SIMULATOR_VISUALIZATION}
+    simulator/visualization/visualization.cpp
+    ${ARGOS3_HEADERS_SIMULATOR_SPACE}
+    simulator/space/space.cpp
+    simulator/space/space_multi_thread_h_dispatch.cpp
+    simulator/space/space_multi_thread_scatter_gather.cpp
+    simulator/space/space_no_threads.cpp)
+endif(ARGOS_BUILD_FOR_SIMULATOR)
 
 # Compile dynamic library loading only if enabled
 if(ARGOS3_DYNAMIC_LIBRARY_LOADING)
@@ -169,14 +175,24 @@ endif(ARGOS3_DYNAMIC_LIBRARY_LOADING)
 #
 # Create core ARGoS3 library
 #
-add_library(argos3core SHARED ${ARGOS3_SOURCES})
-set_target_properties(argos3core PROPERTIES VERSION 3)
+add_library(argos3core_${ARGOS_BUILD_FOR} SHARED ${ARGOS3_SOURCES})
+set_target_properties(argos3core_${ARGOS_BUILD_FOR} PROPERTIES VERSION 3)
+# Link DLFCN library if necessary
 if(ARGOS3_DYNAMIC_LIBRARY_LOADING)
-  target_link_libraries(argos3core dl)
+  target_link_libraries(argos3core_${ARGOS_BUILD_FOR} ${DLFCN_LIBRARY})
 endif(ARGOS3_DYNAMIC_LIBRARY_LOADING)
+# Link PThreads library if necessary
+if(PTHREADS_FOUND)
+  target_link_libraries(argos3core_${ARGOS_BUILD_FOR} ${PTHREADS_LIBRARY})
+endif(PTHREADS_FOUND)
+# Link GSL library if necessary
 if(GSL_FOUND)
-  target_link_libraries(argos3core ${GSL_LIBRARIES})
+  target_link_libraries(argos3core_${ARGOS_BUILD_FOR} ${GSL_LIBRARIES})
 endif(GSL_FOUND)
+# Link FreeImage library if necessary
+if(FREEIMAGE_FOUND)
+  target_link_libraries(argos3core_${ARGOS_BUILD_FOR} ${FREEIMAGE_LIBRARIES})
+endif(FREEIMAGE_FOUND)
 
 
 #
@@ -191,22 +207,24 @@ install(FILES ${ARGOS3_HEADERS_UTILITY_PLUGINS}               DESTINATION includ
 install(FILES ${ARGOS3_HEADERS_UTILITY_PROFILER}              DESTINATION include/argos3/core/utility/profiler)
 install(FILES ${ARGOS3_HEADERS_UTILITY_MATH}                  DESTINATION include/argos3/core/utility/math)
 install(FILES ${ARGOS3_HEADERS_CONTROLINTERFACE}              DESTINATION include/argos3/core/control_interface)
-install(FILES ${ARGOS3_HEADERS_SIMULATOR}                     DESTINATION include/argos3/core/simulator)
-install(FILES ${ARGOS3_HEADERS_SIMULATOR_ENTITY}              DESTINATION include/argos3/core/simulator/entity)
-install(FILES ${ARGOS3_HEADERS_SIMULATOR_PHYSICSENGINE}       DESTINATION include/argos3/core/simulator/physics_engine)
-install(FILES ${ARGOS3_HEADERS_SIMULATOR_VISUALIZATION}       DESTINATION include/argos3/core/simulator/visualization)
-install(FILES ${ARGOS3_HEADERS_SIMULATOR_SPACE}               DESTINATION include/argos3/core/simulator/space)
-install(TARGETS argos3core
+if(ARGOS_BUILD_FOR_SIMULATOR)
+  install(FILES ${ARGOS3_HEADERS_SIMULATOR}                     DESTINATION include/argos3/core/simulator)
+  install(FILES ${ARGOS3_HEADERS_SIMULATOR_ENTITY}              DESTINATION include/argos3/core/simulator/entity)
+  install(FILES ${ARGOS3_HEADERS_SIMULATOR_PHYSICSENGINE}       DESTINATION include/argos3/core/simulator/physics_engine)
+  install(FILES ${ARGOS3_HEADERS_SIMULATOR_VISUALIZATION}       DESTINATION include/argos3/core/simulator/visualization)
+  install(FILES ${ARGOS3_HEADERS_SIMULATOR_SPACE}               DESTINATION include/argos3/core/simulator/space)
+endif(ARGOS_BUILD_FOR_SIMULATOR)
+install(TARGETS argos3core_${ARGOS_BUILD_FOR}
   RUNTIME DESTINATION bin
   LIBRARY DESTINATION lib/argos3
   ARCHIVE DESTINATION lib/argos3)
 
-if(ARGOS3_BUILD_FOR STREQUAL "SIMULATOR")
+if(ARGOS_BUILD_FOR_SIMULATOR)
   #
   # Create core ARGoS3 executable
   #
   add_executable(argos3 simulator/main.cpp)
-  target_link_libraries(argos3 argos3core)
+  target_link_libraries(argos3 argos3core_${ARGOS_BUILD_FOR})
   #
   # Core ARGoS3 installation
   #
@@ -214,4 +232,4 @@ if(ARGOS3_BUILD_FOR STREQUAL "SIMULATOR")
     RUNTIME DESTINATION bin
     LIBRARY DESTINATION lib/argos3
     ARCHIVE DESTINATION lib/argos3)
-endif(ARGOS3_BUILD_FOR STREQUAL "SIMULATOR")
+endif(ARGOS_BUILD_FOR_SIMULATOR)

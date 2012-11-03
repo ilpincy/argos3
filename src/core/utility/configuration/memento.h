@@ -31,7 +31,7 @@ namespace argos {
       /**
        * Class destructor.
        */
-      virtual ~CMemento() = 0;
+      virtual ~CMemento() {}
 
       /**
        * Saves the state of the object to the given buffer.

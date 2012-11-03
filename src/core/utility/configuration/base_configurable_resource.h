@@ -27,7 +27,7 @@ namespace argos {
       /**
        * Class destructor.
        */
-      virtual ~CBaseConfigurableResource() = 0;
+      virtual ~CBaseConfigurableResource() {}
 
       /**
        * Initializes the resource.

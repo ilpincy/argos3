@@ -12,7 +12,7 @@
  */
 
 #include <argos3/core/simulator/simulator.h>
-#include <argos3/core/simulator/query_factories.h>
+//#include <argos3/core/simulator/query_factories.h>
 #include <argos3/core/simulator/argos_command_line_arg_parser.h>
 #include <cstdlib>
 
@@ -56,7 +56,8 @@ int main(int n_argc, char** ppch_argv) {
             break;
 
          case CARGoSCommandLineArgParser::ACTION_QUERY:
-            QueryPlugins(cACLAP.GetQuery());
+            /** @todo Plugin query machinery */
+            //QueryPlugins(cACLAP.GetQuery());
             break;
 
          case CARGoSCommandLineArgParser::ACTION_SHOW_HELP:
