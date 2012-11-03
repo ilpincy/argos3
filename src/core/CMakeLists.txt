@@ -113,6 +113,7 @@ set(ARGOS3_HEADERS_SIMULATOR_SPACE
 #
 # Source files
 #
+# Common for all builds
 set(ARGOS3_SOURCES
   ${ARGOS3_HEADERS_UTILITY}
   utility/string_utilities.cpp
@@ -142,7 +143,11 @@ set(ARGOS3_SOURCES
   utility/math/rng.cpp
   ${ARGOS3_HEADERS_CONTROLINTERFACE}
   control_interface/ci_robot.cpp)
-
+# Compile dynamic library loading only if enabled
+if(ARGOS3_DYNAMIC_LIBRARY_LOADING)
+  set(ARGOS3_SOURCES ${ARGOS3_SOURCES} utility/plugins/dynamic_loading.cpp)
+endif(ARGOS3_DYNAMIC_LIBRARY_LOADING)
+# Compile simulator code only if requested
 if(ARGOS_BUILD_FOR_SIMULATOR)
   set(ARGOS3_SOURCES
     ${ARGOS3_SOURCES}
@@ -166,11 +171,6 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
     simulator/space/space_multi_thread_scatter_gather.cpp
     simulator/space/space_no_threads.cpp)
 endif(ARGOS_BUILD_FOR_SIMULATOR)
-
-# Compile dynamic library loading only if enabled
-if(ARGOS3_DYNAMIC_LIBRARY_LOADING)
-  set(ARGOS3_SOURCES ${ARGOS3_SOURCES} utility/plugins/dynamic_loading.cpp)
-endif(ARGOS3_DYNAMIC_LIBRARY_LOADING)
 
 #
 # Create core ARGoS3 library
