@@ -85,6 +85,7 @@ namespace argos {
             m_vecStreams.pop_back();
          }
 #endif
+         reset(m_cStream);
       }
 
       inline void EnableColoredOutput() {

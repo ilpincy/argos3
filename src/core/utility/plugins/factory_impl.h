@@ -25,7 +25,7 @@ void CFactory<TYPE>::Register(const std::string& str_label,
                               const std::string& str_long_desc,
                               const std::string& str_status,
                               TCreator* pc_creator) {
-   typename CFactory<TYPE>::STypeInfo* psTypeInfo = new CFactory<TYPE>::STypeInfo;
+   typename CFactory<TYPE>::STypeInfo* psTypeInfo = new typename CFactory<TYPE>::STypeInfo;
    psTypeInfo->Author = str_author;
    psTypeInfo->Version = str_version;
    psTypeInfo->BriefDescription = str_brief_desc;

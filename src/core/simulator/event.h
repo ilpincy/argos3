@@ -42,7 +42,7 @@ namespace argos {
    public:
 
       virtual ~CEvent() {}
-      void AddOperator(CEventHandler<T>& c_operator) {
+      void AddHandler(CEventHandler<T>& c_operator) {
          m_tHandlers[c_operator.GetId()] = &c_operator;
       }
 
