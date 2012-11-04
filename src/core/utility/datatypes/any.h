@@ -161,10 +161,16 @@ namespace argos {
     */
    template<typename T>
    const T* any_cast(const CAny* pc_any) {
+      /* NULL pointer passed? */
       if(pc_any == NULL)
          return NULL;
+      /* OK, Non-NULL pointer; do types match? */
       if(pc_any->m_pcRef->GetType() == typeid(T))
+         /* Types match -> return cast object */
          return &(static_cast<CAny::CReference<T>*>(pc_any->m_pcRef))->m_tObject;
+      else
+         /* Types don't match -> return NULL */
+         return NULL;
    }
 
    /**

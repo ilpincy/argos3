@@ -276,7 +276,6 @@ namespace argos {
 
       /** A reference to the list of physics engines */
       CPhysicsEngine::TVector* m_ptPhysicsEngines;
-
    };
 
 }
