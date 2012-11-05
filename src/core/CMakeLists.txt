@@ -49,8 +49,9 @@ set(ARGOS3_HEADERS_UTILITY_LOGGING
   utility/logging/argos_log.h)
 # argos3/core/utility/plugins
 set(ARGOS3_HEADERS_UTILITY_PLUGINS
-  utility/plugins/factory.h
   utility/plugins/dynamic_loading.h
+  utility/plugins/vtable.h
+  utility/plugins/factory.h
   utility/plugins/factory_impl.h)
 # argos3/core/utility/profiler
 set(ARGOS3_HEADERS_UTILITY_PROFILER
@@ -232,4 +233,9 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
     RUNTIME DESTINATION bin
     LIBRARY DESTINATION lib/argos3
     ARCHIVE DESTINATION lib/argos3)
+  #
+  # Testing stuff
+  #
+  add_executable(testing simulator/extra/testing.cpp)
+  target_link_libraries(testing argos3core_${ARGOS_BUILD_FOR})
 endif(ARGOS_BUILD_FOR_SIMULATOR)

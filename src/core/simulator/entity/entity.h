@@ -22,7 +22,7 @@ namespace argos {
 #include <argos3/core/utility/configuration/memento.h>
 #include <argos3/core/utility/configuration/argos_configuration.h>
 #include <argos3/core/utility/configuration/base_configurable_resource.h>
-#include <argos3/core/simulator/event.h>
+#include <argos3/core/utility/plugins/vtable.h>
 
 #include <vector>
 #include <map>
@@ -31,9 +31,12 @@ namespace argos {
 namespace argos {
 
    class CEntity : public CBaseConfigurableResource,
-                   public CMemento {
+                   public CMemento,
+                   public EnableVTableFor<CEntity> {
 
    public:
+
+      ENABLE_VTABLE();
 
       typedef std::vector<CEntity*> TVector;
       typedef std::map<std::string, CEntity*> TMap;
