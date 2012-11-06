@@ -1,6 +1,78 @@
 /**
  * @file core/utility/plugins/vtable.h
  *
+ * @brief This file provides the facility to map operations to operands in plugins.
+ *
+ * <p>This file contains a set of facilities to map operations to operands in
+ * plugins. These facilities are heavily used in physics engines and
+ * visualizations to call operations on entities that are defined outside
+ * the plugin scope. In this way, new entities can be added without touching
+ * the plugin code. These facilities can be used also in other cases (it is
+ * not necessary to refer to entitie).
+ *
+ * <p>From the user perspective, if you want to add support to decoupled
+ * operations on a class hierarchy, you need to add the ENABLE_VTABLE() macro
+ * to each class in the hierarchy:
+ * <pre>
+ *    class MyBase {
+ *    public:
+ *       ENABLE_VTABLE();
+ *    };
+ *
+ *    class MyDerived1 : public MyBase {
+ *    public:
+ *       ENABLE_VTABLE();
+ *    };
+ *
+ *    class MyDerived2 : public MyBase {
+ *    public:
+ *       ENABLE_VTABLE();
+ *    };
+ * </pre>
+ * This is all you need to do to the class hierarchy.
+ *
+ * <p>Then, you define somewhere the operations. Before that, you need to
+ * create a symbol of any sort, that will be used as context of the operation.
+ * The context is used by the system to differentiate among operations with the
+ * same signature. For instance, in the case of a physics engine, the class
+ * name of the physics engine is a good choice. Here we define an empty struct
+ * as context:
+ * <pre>
+ *    struct MyContext {};
+ * </pre>
+ * <p>It is time to define the operations. An operation MUST have a method
+ * ApplyTo(), because that is what the system wants to call. Not having such a
+ * method generates nasty compile errors. Also, an operation MUST have its
+ * parameter passed by reference (not by pointer).
+ * <pre>
+ *    class MyOperationOnDerived1 : public COperation<MyContext, MyBase, void> {
+ *    public:
+ *       void ApplyTo(MyDerived1& d) {
+ *          std::cout << "MyOperationOnDerived1" << std::endl;
+ *       }
+ *    };
+ *    REGISTER_OPERATION(MyContext, MyBase, MyOperationOnDerived1, void, MyDerived1)
+ *    class MyOperationOnDerived2 : public COperation<MyContext, MyBase, void> {
+ *    public:
+ *       void ApplyTo(MyDerived2& d) {
+ *          std::cout << "MyOperationOnDerived2" << std::endl;
+ *       }
+ *    };
+ *    REGISTER_OPERATION(MyContext, MyBase, MyOperationOnDerived2, void, MyDerived2)
+ * </pre>
+ * The template arguments to provide to COperations are the context, the base
+ * class of the hierarchy, and the return value of the function ApplyTo(). The
+ * registration macros inform the system of the presence of the operations.
+ *
+ * <p>The operations are now ready to be called from your code. To call them,
+ * use this syntax:
+ * <pre>
+ *    MyBase* b1 = new MyDerived1();
+ *    MyBase* b2 = new MyDerived2();
+ *    CallOperation<MyContext, MyBase, void>(*b1);
+ *    CallOperation<MyContext, MyBase, void>(*b2);
+ * </pre>
+ *
  * @see http://www.artima.com/cppsource/cooperative_visitor.html
  *
  * @author Carlo Pinciroli
@@ -91,7 +163,7 @@ namespace argos {
          /* Second dispatch: cast t_base to DERIVED */
          DERIVED& tDerived = static_cast<DERIVED&>(t_base);
          /* Perform visit */
-         tOperation.ApplyTo(tDerived);
+         return tOperation.ApplyTo(tDerived);
       }
    };
 
@@ -201,16 +273,15 @@ namespace argos {
       return cVTable;
    }
 
-/**
- * Calls the operation corresponding to the given context and operand
- * NOTE: the operand here must be a <em>reference<em>, not a pointer
- */
-#define CALL_OPERATION(CONTEXT, BASE, RETURN_VALUE, OPERAND)            \
-   {                                                                    \
-      typedef void (COperation<CONTEXT, BASE, RETURN_VALUE>::*TFunction)(BASE&); \
-      TFunction tFunction = GetVTable<CONTEXT, BASE, TFunction>()[(OPERAND).GetTag()]; \
-      COperation<CONTEXT, BASE, RETURN_VALUE>* pcOperation = GetOperationInstanceHolder<CONTEXT, BASE, RETURN_VALUE>()[(OPERAND).GetTag()]; \
-      (pcOperation->*tFunction)(OPERAND);                               \
+   /**
+    * Calls the operation corresponding to the given context and operand
+    */
+   template<typename CONTEXT, typename BASE, typename RETURN_VALUE>
+   RETURN_VALUE CallOperation(BASE& t_base) {
+      typedef RETURN_VALUE (COperation<CONTEXT, BASE, RETURN_VALUE>::*TFunction)(BASE&);
+      TFunction tFunction = GetVTable<CONTEXT, BASE, TFunction>()[t_base.GetTag()];
+      COperation<CONTEXT, BASE, RETURN_VALUE>* pcOperation = GetOperationInstanceHolder<CONTEXT, BASE, RETURN_VALUE>()[t_base.GetTag()];
+      return (pcOperation->*tFunction)(t_base);
    }
 
 }
