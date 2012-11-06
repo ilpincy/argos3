@@ -71,7 +71,7 @@ namespace argos {
       /* Get the parameters subtree */
       TConfigurationNode tControllerParameters;
       tControllerParameters = GetNode(*itControllers, "parameters");
-      // /* Create the controller */
+      /** @todo Create the controller */
       // CCI_Controller* pcController =
       //    CSimulator::GetInstance().
       //    GetDynamicLinkingManager().
@@ -79,7 +79,7 @@ namespace argos {
       //                  cControllableEntity.GetControllerId(),
       //                  tControllerParameters);      
                        
-      // /* Set the controller to the entity */
+      /* Set the controller to the entity */
       // cControllableEntity.SetController(*pcController);
    }
 
@@ -88,9 +88,7 @@ namespace argos {
 
    void CLoopFunctions::RemoveEntity(CEntity& c_entity) {
       /* Remove the entity from space */
-      m_cSpace.RemoveEntity(c_entity);
-      /* free memory */
-      delete &c_entity;
+      CallEntityOperation<CSpaceOperationRemoveEntity, CSpace, void>(m_cSpace, c_entity);
    }
 
    /****************************************/

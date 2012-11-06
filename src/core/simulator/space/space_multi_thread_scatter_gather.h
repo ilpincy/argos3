@@ -74,13 +74,15 @@ namespace argos {
       virtual void Init(TConfigurationNode& t_tree);
       virtual void Destroy();
 
-      virtual void AddControllableEntity(CControllableEntity& c_entity);
-      virtual void RemoveControllableEntity(CControllableEntity& c_entity);
-
       virtual void SetPhysicsEngines(CPhysicsEngine::TVector& t_engines);
 
       virtual void UpdateControllableEntities();
       virtual void UpdatePhysics();
+
+   protected:
+
+      virtual void AddControllableEntity(CControllableEntity& c_entity);
+      virtual void RemoveControllableEntity(CControllableEntity& c_entity);
 
    private:
 

@@ -86,7 +86,7 @@ namespace argos {
          /**
           * Destructor
           */
-         virtual ~CAbstractReference() = 0;
+         virtual ~CAbstractReference() {}
          /**
           * Returns the type info on the referenced object
           */

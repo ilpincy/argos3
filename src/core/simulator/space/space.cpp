@@ -23,6 +23,49 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   class CSpaceOperationAddControllableEntity : public CSpaceOperationAddEntity {
+   public:
+      void ApplyTo(CSpace& c_space, CControllableEntity& c_entity) {
+         c_space.AddControllableEntity(c_entity);
+      }
+   };
+   REGISTER_SPACE_OPERATION(CSpaceOperationAddEntity,
+                            CSpaceOperationAddControllableEntity,
+                            CControllableEntity);
+
+   class CSpaceOperationRemoveControllableEntity : public CSpaceOperationRemoveEntity {
+   public:
+      void ApplyTo(CSpace& c_space, CControllableEntity& c_entity) {
+         c_space.RemoveControllableEntity(c_entity);
+      }
+   };
+   REGISTER_SPACE_OPERATION(CSpaceOperationRemoveEntity,
+                            CSpaceOperationRemoveControllableEntity,
+                            CControllableEntity);
+
+   class CSpaceOperationAddMediumEntity : public CSpaceOperationAddEntity {
+   public:
+      void ApplyTo(CSpace& c_space, CMediumEntity& c_entity) {
+         c_space.AddMediumEntity(c_entity);
+      }
+   };
+   REGISTER_SPACE_OPERATION(CSpaceOperationAddEntity,
+                            CSpaceOperationAddMediumEntity,
+                            CMediumEntity);
+
+   class CSpaceOperationRemoveMediumEntity : public CSpaceOperationRemoveEntity {
+   public:
+      void ApplyTo(CSpace& c_space, CMediumEntity& c_entity) {
+         c_space.RemoveMediumEntity(c_entity);
+      }
+   };
+   REGISTER_SPACE_OPERATION(CSpaceOperationRemoveEntity,
+                            CSpaceOperationRemoveMediumEntity,
+                            CMediumEntity);
+
+   /****************************************/
+   /****************************************/
+
    class CSpace::CRayEmbodiedEntityIntersectionMethod {
    public:
       CRayEmbodiedEntityIntersectionMethod(CSpace& c_space) : m_cSpace(c_space) {}
@@ -98,7 +141,7 @@ namespace argos {
          if(itArenaItem->Value() != "distribute" && itArenaItem->Value() != "box_strip") {
             CEntity* pcEntity = CFactory<CEntity>::New(itArenaItem->Value());
             pcEntity->Init(*itArenaItem);
-            AddEntity(*pcEntity);
+            CallEntityOperation<CSpaceOperationAddEntity, CSpace, void>(*this, *pcEntity);
          }
       }
 
@@ -254,6 +297,19 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   CSpace::TMapPerType& CSpace::GetEntitiesByType(const std::string& str_type) {
+      TMapPerTypePerId::iterator itEntities = m_mapEntitiesPerTypePerId.find(str_type);
+      if (itEntities != m_mapEntitiesPerTypePerId.end()){
+         return itEntities->second;
+      }
+      else {
+         THROW_ARGOSEXCEPTION("Entity map for type \"" << str_type << "\" not found.");
+      }
+   }
+
+   /****************************************/
+   /****************************************/
+
    void CSpace::Update() {
       /* Update space-related data */
       UpdateSpaceData();
@@ -268,36 +324,22 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CSpace::UpdateMediumEntities() {
-      for(size_t i = 0; i < m_vecMediumEntities.size(); ++i) {
-         m_vecMediumEntities[i]->Update();
-      }
-   }
-
-   /****************************************/
-   /****************************************/
-
-   void CSpace::AddEntity(CEntity& c_entity) {
-      /* Check that the id of the entity is not already present */
-      if(m_mapEntities.find(c_entity.GetId()) != m_mapEntities.end()) {
-         THROW_ARGOSEXCEPTION("Error inserting a " << c_entity.GetTypeDescription() << " entity with id \"" << c_entity.GetId() << "\". An entity with that id exists already.");
-      }
-      /* Add the entity to the indexes */
-      m_vecEntities.push_back(&c_entity);
-      m_mapEntities[c_entity.GetId()] = &c_entity;
-
-      /** @todo Create the visitor and add the entity to the map */
-      // CSpaceVisitorAdd cVisitor(*this);
-      // c_entity.Accept(cVisitor);
-   }
-
-   /****************************************/
-   /****************************************/
-
    void CSpace::AddControllableEntity(CControllableEntity& c_entity) {
       m_vecControllableEntities.push_back(&c_entity);
    }
 
+   /****************************************/
+   /****************************************/
+
+   void CSpace::RemoveControllableEntity(CControllableEntity& c_entity) {
+      CControllableEntity::TVector::iterator it = find(m_vecControllableEntities.begin(),
+                                                       m_vecControllableEntities.end(),
+                                                       &c_entity);
+      if(it != m_vecControllableEntities.end()) {
+         m_vecControllableEntities.erase(it);
+      }
+   }
+      
    /****************************************/
    /****************************************/
 
@@ -308,51 +350,22 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CSpace::RemoveEntity(CEntity& c_entity) {
-      CEntity::TVector::iterator itEntityVec = find(m_vecEntities.begin(),
-                                                    m_vecEntities.end(),
-                                                    &c_entity);
-      CEntity::TMap::iterator itEntityMap = m_mapEntities.find(c_entity.GetId());
-      if(itEntityVec == m_vecEntities.end()) {
-         THROW_ARGOSEXCEPTION("CSceneGraph::RemoveEntity() : Entity \"" <<
-                              c_entity.GetId() <<
-                              "\" to remove has not been found in m_vecEntities.");
-      }
-      if(itEntityMap == m_mapEntities.end()) {
-         THROW_ARGOSEXCEPTION("CSceneGraph::RemoveEntity() : Entity \"" <<
-                              c_entity.GetId() <<
-                              "\" to remove has not been found in m_mapEntities.");
-      }
-
-      /* Remove the entity from the vector */
-      m_vecEntities.erase(itEntityVec);
-
-      /* Remove the entity from the map */
-      m_mapEntities.erase(itEntityMap);
-
-      /** @todo Create the visitor and remove the entity from the map */
-      // CSpaceVisitorRemove cVisitor(*this);
-      // c_entity.Accept(cVisitor);
-   }
-
-   /****************************************/
-   /****************************************/
-
-   void CSpace::RemoveControllableEntity(CControllableEntity& c_entity) {
-      TControllableEntityVector::iterator it = find(m_vecControllableEntities.begin(),
-                                                    m_vecControllableEntities.end(),
-                                                    &c_entity);
-      m_vecControllableEntities.erase(it);
-   }
-
-   /****************************************/
-   /****************************************/
-
    void CSpace::RemoveMediumEntity(CMediumEntity& c_entity) {
-      TMediumEntityVector::iterator it = find(m_vecMediumEntities.begin(),
-                                              m_vecMediumEntities.end(),
-                                              &c_entity);
-      m_vecMediumEntities.erase(it);
+      CMediumEntity::TVector::iterator it = find(m_vecMediumEntities.begin(),
+                                                       m_vecMediumEntities.end(),
+                                                       &c_entity);
+      if(it != m_vecMediumEntities.end()) {
+         m_vecMediumEntities.erase(it);
+      }
+   }
+      
+   /****************************************/
+   /****************************************/
+
+   void CSpace::UpdateMediumEntities() {
+      for(size_t i = 0; i < m_vecMediumEntities.size(); ++i) {
+         m_vecMediumEntities[i]->Update();
+      }
    }
 
    /****************************************/

@@ -16,7 +16,6 @@ namespace argos {
 }
 
 #include <argos3/core/utility/datatypes/any.h>
-#include <argos3/core/simulator/entity/entity.h>
 #include <argos3/core/simulator/entity/embodied_entity.h>
 #include <argos3/core/simulator/entity/controllable_entity.h>
 #include <argos3/core/simulator/entity/medium_entity.h>
@@ -25,16 +24,31 @@ namespace argos {
 
 namespace argos {
 
-   class CSpace : public CBaseConfigurableResource {
+   template <typename ACTION>
+   class CSpaceOperation : public CEntityOperation<ACTION, CSpace, void> {
+   public:
+      virtual ~CSpaceOperation() {}
+   };
 
-      /****************************************/
-      /****************************************/
+   class CSpaceOperationAddEntity : public CSpaceOperation<CSpaceOperationAddEntity> {
+   public:
+      virtual ~CSpaceOperationAddEntity() {}
+   };
+   class CSpaceOperationRemoveEntity : public CSpaceOperation<CSpaceOperationRemoveEntity> {
+   public:
+      virtual ~CSpaceOperationRemoveEntity() {}
+   };
+
+   /****************************************/
+   /****************************************/
+
+   class CSpace : public CBaseConfigurableResource {
 
    public:
 
       /** Maps for quick access to physical entities (robots, objects) */
-      typedef std::map <std::string, CAny, std::less <std::string> > TAnyEntityMap;
-      typedef std::map <std::string, TAnyEntityMap, std::less <std::string> > TMapOfAnyEntityMaps;
+      typedef std::map <std::string, CAny, std::less <std::string> > TMapPerType;
+      typedef std::map <std::string, TMapPerType, std::less <std::string> > TMapPerTypePerId;
 
       template <class E> struct SEntityIntersectionItem {
          E* IntersectedEntity;
@@ -92,8 +106,8 @@ namespace argos {
       }
 
       inline CEntity& GetEntity(const std::string& str_id) {
-         CEntity::TMap::const_iterator it = m_mapEntities.find(str_id);
-         if ( it != m_mapEntities.end()) {
+         CEntity::TMap::const_iterator it = m_mapEntitiesPerId.find(str_id);
+         if ( it != m_mapEntitiesPerId.end()) {
             return *(it->second);
          }
          THROW_ARGOSEXCEPTION("Unknown entity id \"" << str_id <<
@@ -107,27 +121,19 @@ namespace argos {
                                                     const CRay& c_ray,
                                                     const TEmbodiedEntitySet& set_ignored_entities = TEmbodiedEntitySet());
 
-      inline CEntity::TMap& GetAllEntities() {
-         return m_mapEntities;
+      inline CEntity::TMap& GetEntityMapPerId() {
+         return m_mapEntitiesPerId;
       }
 
-      inline TMapOfAnyEntityMaps& GetEntitiesMapOfMaps() {
-         return m_mapOfMapsEntities;
+      inline TMapPerTypePerId& GetEntityMapPerTypePerId() {
+         return m_mapEntitiesPerTypePerId;
       }
 
-      inline TAnyEntityMap& GetEntitiesByType(const std::string str_type) {
-         TMapOfAnyEntityMaps::iterator itEntities = m_mapOfMapsEntities.find(str_type);
-         if (itEntities != m_mapOfMapsEntities.end()){
-            return itEntities->second;
-         }
-         THROW_ARGOSEXCEPTION("Entity map for type \"" << str_type << "\" not found.");
-      }
+      TMapPerType& GetEntitiesByType(const std::string& str_type);
 
       inline CFloorEntity& GetFloorEntity() {
-         if(m_pcFloorEntity == NULL) {
-            THROW_ARGOSEXCEPTION("No floor entity has been added to the space.");
-         }
-         return *m_pcFloorEntity;
+         if(m_pcFloorEntity != NULL) return *m_pcFloorEntity;
+         else THROW_ARGOSEXCEPTION("No floor entity has been added to the space.");
       }
 
       inline void SetFloorEntity(CFloorEntity& c_floor_entity) {
@@ -144,13 +150,44 @@ namespace argos {
 
       virtual void Update();
 
-      virtual void AddEntity(CEntity& c_entity);
-      virtual void AddControllableEntity(CControllableEntity& c_entity);
-      virtual void AddMediumEntity(CMediumEntity& c_entity);
+      template <typename ENTITY>
+      void AddEntity(ENTITY& c_entity) {
+         /* Check that the id of the entity is not already present */
+         if(m_mapEntitiesPerId.find(c_entity.GetId()) != m_mapEntitiesPerId.end()) {
+            THROW_ARGOSEXCEPTION("Error inserting a " << c_entity.GetTypeDescription() << " entity with id \"" << c_entity.GetId() << "\". An entity with that id exists already.");
+         }
+         /* Add the entity to the indexes */
+         m_vecEntities.push_back(&c_entity);
+         m_mapEntitiesPerId[c_entity.GetId()] = &c_entity;
+         m_mapEntitiesPerTypePerId[c_entity.GetTypeDescription()][c_entity.GetId()] = &c_entity;
+      }
 
-      virtual void RemoveEntity(CEntity& c_entity);
-      virtual void RemoveControllableEntity(CControllableEntity& c_entity);
-      virtual void RemoveMediumEntity(CMediumEntity& c_entity);
+      template <typename ENTITY>
+      void RemoveEntity(CEntity& c_entity) {
+         /* Search for entity in the index per type */
+         TMapPerTypePerId::iterator itMapPerType = m_mapEntitiesPerTypePerId.find(c_entity.GetTypeDescription());
+         if(itMapPerType != m_mapEntitiesPerTypePerId.end()) {
+            /* Search for entity in the index per type per id */
+            TMapPerType::iterator itMapPerTypePerId = itMapPerType->second.find(c_entity.GetId());
+            if(itMapPerTypePerId != itMapPerType->second.end()) {
+               /* Remove entity object */
+               delete itMapPerTypePerId->second;
+               /* Get iterators for other indexes */
+               CEntity::TVector::iterator itVec = find(m_vecEntities.begin(),
+                                                       m_vecEntities.end(),
+                                                       &c_entity);
+               CEntity::TMap::iterator itMap = m_mapEntitiesPerId.find(c_entity.GetId());
+               /* Remove the entity from the indexes */
+               m_vecEntities.erase(itVec);
+               m_mapEntitiesPerId.erase(itMap);
+               itMapPerType->second.erase(itMapPerTypePerId);
+               return;
+            }
+         }
+         THROW_ARGOSEXCEPTION("CSpace::RemoveEntity() : Entity \"" <<
+                              c_entity.GetId() <<
+                              "\" has not been found in the indexes.");
+      }
 
       inline UInt32 GetSimulationClock() const {
          return m_unSimulationClock;
@@ -204,6 +241,11 @@ namespace argos {
 */
 
    protected:
+
+      virtual void AddControllableEntity(CControllableEntity& c_entity);
+      virtual void RemoveControllableEntity(CControllableEntity& c_entity);
+      virtual void AddMediumEntity(CMediumEntity& c_entity);
+      virtual void RemoveMediumEntity(CMediumEntity& c_entity);
       
       inline void UpdateSpaceData() {
          if(IsUsingSpaceHash()) {
@@ -232,6 +274,13 @@ namespace argos {
 
    protected:
 
+      friend class CSpaceOperationAddControllableEntity;
+      friend class CSpaceOperationRemoveControllableEntity;
+      friend class CSpaceOperationAddMediumEntity;
+      friend class CSpaceOperationRemoveMediumEntity;
+
+   protected:
+
       /** The current simulation clock */
       UInt32 m_unSimulationClock;
 
@@ -242,13 +291,12 @@ namespace argos {
       CEntity::TVector m_vecEntities;
 
       /** A map of entities. */
-      CEntity::TMap m_mapEntities;
+      CEntity::TMap m_mapEntitiesPerId;
 
       /** A map of maps of all the simulated entities.
-          The map stores several submaps with the key equals to the
-          type description of an entity. The submaps store the entities
-          according to their id */
-      TMapOfAnyEntityMaps m_mapOfMapsEntities;
+          The top-level map is indexed by type, as returned by CEntity::GetTypeDescription().
+          The second-level maps are indexed by entity id */
+      TMapPerTypePerId m_mapEntitiesPerTypePerId;
 
       /** The space hash of embodied entities */
       CSpaceHash<CEmbodiedEntity, CEmbodiedEntitySpaceHashUpdater>* m_pcEmbodiedEntitiesSpaceHash;
@@ -260,10 +308,10 @@ namespace argos {
 //      CSpaceHash<CRABEquippedEntity, CRABEquippedEntitySpaceHashUpdater>* m_pcRABEquippedEntitiesSpaceHash;
 
       /** A vector of controllable entities */
-      TControllableEntityVector m_vecControllableEntities;
+      CControllableEntity::TVector m_vecControllableEntities;
 
       /** A vector of medium entities */
-      TMediumEntityVector m_vecMediumEntities;
+      CMediumEntity::TVector m_vecMediumEntities;
 
       /** The floor entity */
       CFloorEntity* m_pcFloorEntity;
@@ -279,5 +327,8 @@ namespace argos {
    };
 
 }
+
+#define REGISTER_SPACE_OPERATION(ACTION, OPERATION, ENTITY) \
+   REGISTER_ENTITY_OPERATION(ACTION, CSpace, OPERATION, void, ENTITY);
 
 #endif

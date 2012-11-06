@@ -146,85 +146,6 @@ namespace argos {
    }
 
    /**
-    * The basic operation to be stored in the vtable
-    */
-   template <typename CONTEXT, typename BASE, typename RETURN_TYPE>
-   class COperation {
-   public:
-      template <typename DERIVED, typename OPERATION_IMPL>
-      RETURN_TYPE Hook(BASE& t_base) {
-         return Dispatch<DERIVED, OPERATION_IMPL>(t_base);
-      }
-   protected:
-      template <typename DERIVED, typename OPERATION_IMPL>
-      RETURN_TYPE Dispatch(BASE& t_base) {
-         /* First dispatch: cast this operation into the specific operation */
-         OPERATION_IMPL& tOperation = static_cast<OPERATION_IMPL&>(*this);
-         /* Second dispatch: cast t_base to DERIVED */
-         DERIVED& tDerived = static_cast<DERIVED&>(t_base);
-         /* Perform visit */
-         return tOperation.ApplyTo(tDerived);
-      }
-   };
-
-   template <typename CONTEXT, typename BASE, typename RETURN_TYPE>
-   class COperationInstanceHolder {
-   public:
-      ~COperationInstanceHolder() {
-         while(!m_vecOperationInstances.empty()) {
-            if(m_vecOperationInstances.back() != NULL) {
-               delete m_vecOperationInstances.back();
-            }
-            m_vecOperationInstances.pop_back();
-         }
-      }
-      template <typename DERIVED>
-      void Add(COperation<CONTEXT, BASE, RETURN_TYPE>* pc_operation) {
-         /* Find the slot */
-         size_t unIndex = GetTag<DERIVED, BASE>();
-         /* Does the holder have a slot for this index? */
-         if(unIndex >= m_vecOperationInstances.size()) {
-            /* No, new slots must be created
-             * Fill the slots with NULL
-             */
-            /* Create new slots up to index+1 and fill them with tDefaultFunction */
-            m_vecOperationInstances.resize(unIndex+1, NULL);
-         }
-         m_vecOperationInstances[unIndex] = pc_operation;
-      }
-      COperation<CONTEXT, BASE, RETURN_TYPE>* operator[](size_t un_index) const {
-         if(un_index >= m_vecOperationInstances.size()) {
-            return NULL;
-         }
-         return m_vecOperationInstances[un_index];
-      }
-   private:
-      std::vector<COperation<CONTEXT, BASE, RETURN_TYPE>*> m_vecOperationInstances;
-   };
-
-   /**
-    * Function that returns a reference to the static operation instance holder
-    */
-   template <typename CONTEXT, typename BASE, typename RETURN_VALUE>
-   COperationInstanceHolder<CONTEXT, BASE, RETURN_VALUE>& GetOperationInstanceHolder() {
-      static COperationInstanceHolder<CONTEXT, BASE, RETURN_VALUE> cOperationInstanceHolder;
-      return cOperationInstanceHolder;
-   }
-
-/**
- * Convenience macro to register vtable operations
- */
-#define REGISTER_OPERATION(CONTEXT, BASE, OPERATION, RETURN_VALUE, DERIVED)                                                                           \
-   class C ## CONTEXT ## BASE ## OPERATION ## RETURN_VALUE ## DERIVED {                                                                               \
-      typedef RETURN_VALUE (COperation<CONTEXT, BASE, RETURN_VALUE>::*T ## CONTEXT ## BASE ## OPERATION ## RETURN_VALUE ## DERIVED)(BASE&);           \
-   public:                                                                                                                                            \
-      C ## CONTEXT ## BASE ## OPERATION ## RETURN_VALUE ## DERIVED() {                                                                                \
-         GetVTable<CONTEXT, BASE, T ## CONTEXT ## BASE ## OPERATION ## RETURN_VALUE ## DERIVED>().Add<DERIVED>(&OPERATION::Hook<DERIVED, OPERATION>); \
-         GetOperationInstanceHolder<CONTEXT, BASE, RETURN_VALUE>().Add<DERIVED>(new OPERATION());                                                     \
-      }                                                                                                                                               \
-   } c ## CONTEXT ## BASE ## OPERATION ## RETURN_VALUE ## DERIVED;
-
-   /**
     * The actual vtable
     */
    template <typename CONTEXT, typename BASE, typename FUNCTION>
@@ -272,17 +193,13 @@ namespace argos {
       static CVTable<CONTEXT, BASE, FUNCTION> cVTable;
       return cVTable;
    }
-
-   /**
-    * Calls the operation corresponding to the given context and operand
-    */
-   template<typename CONTEXT, typename BASE, typename RETURN_VALUE>
-   RETURN_VALUE CallOperation(BASE& t_base) {
-      typedef RETURN_VALUE (COperation<CONTEXT, BASE, RETURN_VALUE>::*TFunction)(BASE&);
-      TFunction tFunction = GetVTable<CONTEXT, BASE, TFunction>()[t_base.GetTag()];
-      COperation<CONTEXT, BASE, RETURN_VALUE>* pcOperation = GetOperationInstanceHolder<CONTEXT, BASE, RETURN_VALUE>()[t_base.GetTag()];
-      return (pcOperation->*tFunction)(t_base);
-   }
+   
+#define INIT_VTABLE_FOR(BASE)                   \
+   struct SVTableInitializerFor ## BASE {       \
+      SVTableInitializerFor ## BASE() {         \
+         GetTag<BASE, BASE>();                  \
+      }                                         \
+   } sVTableInitializerFor ## BASE;
 
 }
 

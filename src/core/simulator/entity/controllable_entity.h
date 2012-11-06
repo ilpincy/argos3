@@ -22,6 +22,10 @@ namespace argos {
    class CControllableEntity : public CEntity {
 
    public:
+      typedef std::vector<CControllableEntity*> TVector;
+      typedef std::map<std::string, CControllableEntity*> TMap;
+
+   public:
       CControllableEntity(CEntity* pc_parent) :
          CEntity(pc_parent),
          m_pcController(NULL) {}
@@ -89,9 +93,6 @@ namespace argos {
       std::vector< CVector3 > m_vecIntersectionPoints;
 
    };
-
-   typedef std::vector<CControllableEntity*> TControllableEntityVector;
-   typedef std::map<std::string, CControllableEntity*> TControllableEntityMap;
 
 }
 

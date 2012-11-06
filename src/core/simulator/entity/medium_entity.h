@@ -18,6 +18,11 @@ namespace argos {
 
    public:
 
+      typedef std::vector<CMediumEntity*> TVector;
+      typedef std::map<std::string, CMediumEntity*> TMap;
+
+   public:
+
       CMediumEntity(CEntity* pc_parent) :
          CEntity(pc_parent) {}
       virtual ~CMediumEntity() {}
@@ -30,7 +35,6 @@ namespace argos {
 
    };
 
-   typedef std::vector<CMediumEntity*> TMediumEntityVector;
 }
 
 #endif

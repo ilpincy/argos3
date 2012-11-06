@@ -33,29 +33,29 @@ public:
    }
 };
 
-class CTestOperation : public COperation<Testing, CEntity, int> {};
+class CTestOperation : public CEntityOperation<CTestOperation, Testing, int> {};
 
 class CTestOperationOnTestEntity1 : public CTestOperation {
 public:
-   int ApplyTo(CTestEntity1& c_entity) {
+   int ApplyTo(Testing&, CTestEntity1& c_entity) {
       std::cout << "CTestOperationOnTestEntity1::ApplyTo("
                 << c_entity.GetId()
                 << ")" << std::endl;
       return 1;
    }
 };
-REGISTER_OPERATION(Testing, CEntity, CTestOperationOnTestEntity1, int, CTestEntity1);
+REGISTER_ENTITY_OPERATION(CTestOperation, Testing, CTestOperationOnTestEntity1, int, CTestEntity1);
 
 class CTestOperationOnTestEntity2 : public CTestOperation {
 public:
-   int ApplyTo(CTestEntity2& c_entity) {
+   int ApplyTo(Testing&, CTestEntity2& c_entity) {
       std::cout << "CTestOperationOnTestEntity2::ApplyTo("
                 << c_entity.GetId()
                 << ")" << std::endl;
       return 2;
    }
 };
-REGISTER_OPERATION(Testing, CEntity, CTestOperationOnTestEntity2, int, CTestEntity2);
+REGISTER_ENTITY_OPERATION(CTestOperation, Testing, CTestOperationOnTestEntity2, int, CTestEntity2);
 
 int main() {
    CEntity* e1 = new CTestEntity1;
@@ -63,7 +63,9 @@ int main() {
    e1->SetId("CTestEntity1");
    e2->SetId("CTestEntity2");
 
-   std::cout << CallOperation<Testing, CEntity, int>(*e1) << std::endl;
-   std::cout << CallOperation<Testing, CEntity, int>(*e2) << std::endl;
+   Testing t;
+
+   std::cout << CallEntityOperation<CTestOperation, Testing, int>(t, *e1) << std::endl;
+   std::cout << CallEntityOperation<CTestOperation, Testing, int>(t, *e2) << std::endl;
 
 }
