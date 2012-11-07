@@ -79,7 +79,6 @@ set(ARGOS3_HEADERS_CONTROLINTERFACE
   control_interface/ci_sensor.h)
 # argos3/core/simulator
 set(ARGOS3_HEADERS_SIMULATOR
-  simulator/event.h
   simulator/actuator.h
   simulator/sensor.h
   simulator/argos_command_line_arg_parser.h
