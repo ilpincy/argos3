@@ -23,9 +23,7 @@ endif(ARGOS_BUILD_FOR STREQUAL "simulator")
 # By default, use the thread-safe version
 # When compiling for the simulator, the thread-safe version is mandatory
 #
-if(NOT DEFINED ARGOS_THREADSAFE_LOG)
-  set(ARGOS_THREADSAFE_LOG TRUE CACHE BOOL "ON -> compile thread-safe version of log, OFF -> compile thread-unsafe version of log")
-endif(NOT DEFINED ARGOS_THREADSAFE_LOG)
+option(ARGOS_THREADSAFE_LOG "ON -> compile thread-safe version of log, OFF -> compile thread-unsafe version of log" ON)
 if((NOT ARGOS_THREADSAFE_LOG) AND (ARGOS_BUILD_FOR STREQUAL "SIMULATOR"))
   message(FATAL_ERROR "When compiling for the simulator, ARGOS_THREADSAFE_LOG must be ON")
 endif((NOT ARGOS_THREADSAFE_LOG) AND (ARGOS_BUILD_FOR STREQUAL "SIMULATOR"))
@@ -38,9 +36,13 @@ endif(ARGOS_THREADSAFE_LOG)
 # By default, support for dynamic library loading is on
 # When compiling for the simulator, support for dynamic library loading must be on
 #
-if(NOT DEFINED ARGOS_DYNAMIC_LIBRARY_LOADING)
-  set(ARGOS_DYNAMIC_LIBRARY_LOADING TRUE CACHE BOOL "ON -> compile support for dynamic library loading, OFF -> no support for dynamic library loading")
-endif(NOT DEFINED ARGOS_DYNAMIC_LIBRARY_LOADING)
+option(ARGOS_DYNAMIC_LIBRARY_LOADING "ON -> compile support for dynamic library loading, OFF -> no support for dynamic library loading" ON)
 if((NOT ARGOS_DYNAMIC_LIBRARY_LOADING) AND (ARGOS_BUILD_FOR STREQUAL "SIMULATOR"))
   message(FATAL_ERROR "When compiling for the simulator, ARGOS_DYNAMIC_LIBRARY_LOADING must be ON")
 endif((NOT ARGOS_DYNAMIC_LIBRARY_LOADING) AND (ARGOS_BUILD_FOR STREQUAL "SIMULATOR"))
+
+#
+# Compile Doxygen-based documentation
+# This requires GraphViz/Dot to be installed
+#
+option(ARGOS_DOCUMENTATION "ON -> compile support for dynamic library loading, OFF -> no support for dynamic library loading" ON)

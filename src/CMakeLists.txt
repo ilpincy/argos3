@@ -35,3 +35,24 @@ include(${CMAKE_SOURCE_DIR}/cmake/ARGoSBuildChecks.cmake)
 #
 add_subdirectory(core)
 #add_subdirectory(plugins)
+
+#
+# Create doxygen documentation, if asked for
+#
+if(ARGOS_DOCUMENTATION)
+  find_package(Doxygen)
+  if(DOXYGEN_FOUND)
+    if(DOXYGEN_DOT_FOUND)
+      configure_file(${CMAKE_SOURCE_DIR}/../doc/Doxyfile.in
+        ${CMAKE_BINARY_DIR}/Doxyfile
+        @ONLY)
+      add_custom_target(doc
+        COMMAND
+        ${DOXYGEN_EXECUTABLE} ${CMAKE_BINARY_DIR}/Doxyfile)
+    else(DOXYGEN_DOT_FOUND)
+      message(FATAL_ERROR "GraphViz/Dot not found, and it is required to build the API documentation")
+    endif(DOXYGEN_DOT_FOUND)
+  else(DOXYGEN_FOUND)
+    message(FATAL_ERROR "Doxygen not found, and it is required to build the API documentation")
+  endif(DOXYGEN_FOUND)
+endif(ARGOS_DOCUMENTATION)
