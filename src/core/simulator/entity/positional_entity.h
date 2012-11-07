@@ -32,32 +32,64 @@ namespace argos {
          return m_cPosition;
       }
 
+      inline virtual const CVector3& GetOffsetPosition() const {
+         return m_cOffsetPosition;
+      }
+
       inline virtual const CVector3& GetInitPosition() const {
          return m_cInitPosition;
+      }
+
+      inline virtual const CVector3& GetInitOffsetPosition() const {
+         return m_cInitOffsetPosition;
       }
 
       inline virtual void SetPosition(const CVector3& c_position) {
          m_cPosition = c_position;
       }
 
+      inline virtual void SetOffsetPosition(const CVector3& c_position) {
+         m_cOffsetPosition = c_position;
+      }
+
       inline virtual void SetInitPosition(const CVector3& c_position) {
          m_cInitPosition = c_position;
+      }
+
+      inline virtual void SetInitOffsetPosition(const CVector3& c_position) {
+         m_cInitOffsetPosition = c_position;
       }
 
       inline virtual const CQuaternion& GetOrientation() const {
          return m_cOrientation;
       }
 
+      inline virtual const CQuaternion& GetOffsetOrientation() const {
+         return m_cOffsetOrientation;
+      }
+
       inline virtual const CQuaternion& GetInitOrientation() const {
          return m_cInitOrientation;
+      }
+
+      inline virtual const CQuaternion& GetInitOffsetOrientation() const {
+         return m_cInitOffsetOrientation;
       }
 
       inline virtual void SetOrientation(const CQuaternion c_orientation) {
          m_cOrientation = c_orientation;
       }
 
+      inline virtual void SetOffsetOrientation(const CQuaternion c_orientation) {
+         m_cOffsetOrientation = c_orientation;
+      }
+
       inline virtual void SetInitOrientation(const CQuaternion c_orientation) {
          m_cInitOrientation = c_orientation;
+      }
+
+      inline virtual void SetInitOffsetOrientation(const CQuaternion c_orientation) {
+         m_cInitOffsetOrientation = c_orientation;
       }
 
       virtual bool MoveTo(const CVector3& c_position,
@@ -71,9 +103,16 @@ namespace argos {
    private:
       
       CVector3 m_cPosition;
-      CVector3 m_cInitPosition;
       CQuaternion m_cOrientation;
+
+      CVector3 m_cOffsetPosition;
+      CQuaternion m_cOffsetOrientation;
+
+      CVector3 m_cInitPosition;
       CQuaternion m_cInitOrientation;
+
+      CVector3 m_cInitOffsetPosition;
+      CQuaternion m_cInitOffsetOrientation;
 
    };
 }
