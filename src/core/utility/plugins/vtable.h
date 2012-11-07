@@ -82,6 +82,7 @@
 #define VTABLE_H
 
 #include <vector>
+#include <cstddef>
 
 namespace argos {
 
