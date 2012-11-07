@@ -9,11 +9,6 @@
 # AUTHOR: Carlo Pinciroli <cpinciro@ulb.ac.be>
 
 #
-# Define a default exception scheme to link against
-# and validate user choice.
-#
-
-#
 # Find the header file
 #
 FIND_PATH(DLFCN_INCLUDE_DIR

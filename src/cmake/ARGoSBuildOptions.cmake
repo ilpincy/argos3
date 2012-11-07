@@ -43,6 +43,12 @@ endif((NOT ARGOS_DYNAMIC_LIBRARY_LOADING) AND (ARGOS_BUILD_FOR STREQUAL "SIMULAT
 
 #
 # Compile Doxygen-based documentation
+# This requires SWIG to be installed
+#
+option(ARGOS_WRAPPERS "ON -> create wrappers, OFF -> don't create wrappers" OFF)
+
+#
+# Compile Doxygen-based documentation
 # This requires GraphViz/Dot to be installed
 #
-option(ARGOS_DOCUMENTATION "ON -> compile support for dynamic library loading, OFF -> no support for dynamic library loading" ON)
+option(ARGOS_DOCUMENTATION "ON -> compile documentation, OFF -> dont'compile documentation" ON)
