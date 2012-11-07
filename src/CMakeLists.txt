@@ -49,6 +49,7 @@ if(ARGOS_DOCUMENTATION)
       add_custom_target(doc
         COMMAND
         ${DOXYGEN_EXECUTABLE} ${CMAKE_BINARY_DIR}/Doxyfile)
+      install(DIRECTORY ${CMAKE_SOURCE_DIR}/../doc/api DESTINATION doc/argos3)
     else(DOXYGEN_DOT_FOUND)
       message(FATAL_ERROR "GraphViz/Dot not found, and it is required to build the API documentation")
     endif(DOXYGEN_DOT_FOUND)
