@@ -13,7 +13,7 @@ if(NOT SWIG_FOUND)
 else(NOT SWIG_FOUND)
   # Include the necessary definitions
   include(${SWIG_USE_FILE})
-  set(CMAKE_SWIG_FLAGS "-Wall -includeall -I${CMAKE_SOURCE_DIR}/src/core  -I${CMAKE_SOURCE_DIR}/src/plugins")
+  set(CMAKE_SWIG_FLAGS "-c++" "-Wall" "-includeall" "-I${CMAKE_SOURCE_DIR}")
   # Get list of source files
   file(GLOB_RECURSE ARGOS3_SOURCES ${CMAKE_SOURCE_DIR}/core/*.h)
   # Create the lua wrapper library

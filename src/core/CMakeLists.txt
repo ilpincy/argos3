@@ -14,11 +14,6 @@ set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "ARGoS3 core package")
 include(CPack)
 
 #
-# Include path points to the base source dir
-#
-include_directories(${CMAKE_SOURCE_DIR})
-
-#
 # Headers
 #
 # argos3/core/utility

@@ -11,7 +11,7 @@ namespace argos {
    class CWiFiMediumEntity;
 }
 
-#include <argos3/core/simulator/entities/medium_entity.h>
+#include <argos3/core/simulator/entity/medium_entity.h>
 
 namespace argos {
    class CWiFiMediumEntity : public CMediumEntity {

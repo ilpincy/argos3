@@ -9,6 +9,11 @@ cmake_minimum_required(VERSION 2.8)
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
 #
+# Include path points to the base source dir
+#
+include_directories(${CMAKE_SOURCE_DIR})
+
+#
 # Make sure we are under Unix
 #
 if(NOT UNIX)
