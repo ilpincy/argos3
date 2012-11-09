@@ -33,19 +33,20 @@ if(QT4_FOUND)
           # GLUT is ok
           
           # All the required libraries are OK
-          set(ARGOS_COMPILE_QTOPENGL true)
-	        if( APPLE )
+          set(ARGOS_COMPILE_QTOPENGL ON)
+	        if(APPLE)
 	          include_directories(${OPENGL_INCLUDE_DIR}/Headers)
-	        endif( APPLE )
+	        endif(APPLE)
 	        include(${QT_USE_FILE})
-
+          
           # Now check for SDL (optional)
           set(SDL_BUILDING_LIBRARY true)
           find_package(SDL)
           if(SDL_FOUND)
             # SDL is ok
             add_definitions(-DQTOPENGL_WITH_SDL)
-
+            include_directories(${SDL_INCLUDE_DIR})
+  
           else(SDL_FOUND)
             message(STATUS "SDL not found. QTOpenGL won't have joystick support.")
           endif(SDL_FOUND)
