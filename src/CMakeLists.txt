@@ -21,14 +21,14 @@ if(NOT UNIX)
 endif(NOT UNIX)
 
 #
-# Set compiler flags
-#
-include(${CMAKE_SOURCE_DIR}/cmake/ARGoSBuildFlags.cmake)
-
-#
 # Set build options
 #
 include(${CMAKE_SOURCE_DIR}/cmake/ARGoSBuildOptions.cmake)
+
+#
+# Set compiler flags
+#
+include(${CMAKE_SOURCE_DIR}/cmake/ARGoSBuildFlags.cmake)
 
 #
 # Check for libraries

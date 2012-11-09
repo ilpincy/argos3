@@ -25,3 +25,10 @@ endif(APPLE)
 # This is required for TinyXML++ to work
 #
 add_definitions(-DTIXML_USE_TICPP)
+
+#
+# Use double or float for Real?
+#
+if(ARGOS_USE_DOUBLE)
+  add_definitions(-DARGOS_DOUBLE_PRECISION)
+endif(ARGOS_USE_DOUBLE)

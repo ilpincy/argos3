@@ -48,6 +48,11 @@ endif((NOT ARGOS_DYNAMIC_LIBRARY_LOADING) AND (ARGOS_BUILD_FOR STREQUAL "SIMULAT
 option(ARGOS_WRAPPERS "ON -> create wrappers, OFF -> don't create wrappers" OFF)
 
 #
+# Whether to use double or float for the Real type
+#
+option(ARGOS_USE_DOUBLE "ON -> use double for Real, OFF -> use float for Real" ON)
+
+#
 # Compile Doxygen-based documentation
 # This requires GraphViz/Dot to be installed
 #
