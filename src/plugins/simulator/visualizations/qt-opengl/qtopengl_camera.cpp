@@ -279,7 +279,6 @@ namespace argos {
    /****************************************/
 
    void CQTOpenGLCamera::SSettings::CalculateYFieldOfView() {
-      CRadians cAspectRatioAngle = ATan2(3.0f, 4.0f);
       YFieldOfView = ToDegrees(2.0f * ATan2(0.027f * 0.5f, LensFocalLength));
    }
 
