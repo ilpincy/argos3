@@ -52,7 +52,7 @@ namespace argos {
             }
          }
          else {
-            THROW_ARGOSEXCEPTION("Unknown actuator type " << str_actuator_type << " requested in controller");
+            THROW_ARGOSEXCEPTION("Unknown actuator type " << str_actuator_type << " requested in controller. Did you add it to the XML file?");
          }
       }
 
@@ -70,7 +70,7 @@ namespace argos {
             }
          }
          else {
-            THROW_ARGOSEXCEPTION("Unknown sensor type " << str_sensor_type << " requested in controller");
+            THROW_ARGOSEXCEPTION("Unknown sensor type " << str_sensor_type << " requested in controller. Did you add it to the XML file?");
          }
       }
 
