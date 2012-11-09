@@ -1,7 +1,7 @@
 #
 # Project name
 #
-project(argos3core)
+project(argos3core_${ARGOS_BUILD_FOR})
 
 #
 # Configuration for CPack's tar.bz2 generator
@@ -10,7 +10,7 @@ set(CPACK_GENERATOR TBZ2)
 set(CPACK_PACKAGE_VERSION_MAJOR "3")
 set(CPACK_PACKAGE_VERSION_MINOR "0")
 set(CPACK_PACKAGE_VERSION_PATCH "0")
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "ARGoS3 core package")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "ARGoS3 core package for ${ARGOS_BUILD_FOR}")
 include(CPack)
 
 #
@@ -109,7 +109,7 @@ set(ARGOS3_HEADERS_SIMULATOR_SPACE
 # Source files
 #
 # Common for all builds
-set(ARGOS3_SOURCES
+set(ARGOS3_SOURCES_CORE
   ${ARGOS3_HEADERS_UTILITY}
   utility/string_utilities.cpp
   ${ARGOS3_HEADERS_UTILITY_CONFIGURATION}
@@ -140,12 +140,12 @@ set(ARGOS3_SOURCES
   control_interface/ci_robot.cpp)
 # Compile dynamic library loading only if enabled
 if(ARGOS3_DYNAMIC_LIBRARY_LOADING)
-  set(ARGOS3_SOURCES ${ARGOS3_SOURCES} utility/plugins/dynamic_loading.cpp)
+  set(ARGOS3_SOURCES_CORE ${ARGOS3_SOURCES_CORE} utility/plugins/dynamic_loading.cpp)
 endif(ARGOS3_DYNAMIC_LIBRARY_LOADING)
 # Compile simulator code only if requested
 if(ARGOS_BUILD_FOR_SIMULATOR)
-  set(ARGOS3_SOURCES
-    ${ARGOS3_SOURCES}
+  set(ARGOS3_SOURCES_CORE
+    ${ARGOS3_SOURCES_CORE}
     ${ARGOS3_HEADERS_SIMULATOR}
     simulator/argos_command_line_arg_parser.cpp
     simulator/loop_functions.cpp
@@ -170,7 +170,7 @@ endif(ARGOS_BUILD_FOR_SIMULATOR)
 #
 # Create core ARGoS3 library
 #
-add_library(argos3core_${ARGOS_BUILD_FOR} SHARED ${ARGOS3_SOURCES})
+add_library(argos3core_${ARGOS_BUILD_FOR} SHARED ${ARGOS3_SOURCES_CORE})
 set_target_properties(argos3core_${ARGOS_BUILD_FOR} PROPERTIES VERSION 3)
 # Link DLFCN library if necessary
 if(ARGOS3_DYNAMIC_LIBRARY_LOADING)
