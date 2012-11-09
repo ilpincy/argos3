@@ -39,7 +39,7 @@ include(${CMAKE_SOURCE_DIR}/cmake/ARGoSBuildChecks.cmake)
 # Compile stuff
 #
 add_subdirectory(core)
-#add_subdirectory(plugins)
+add_subdirectory(plugins)
 if(ARGOS_WRAPPERS)
   add_subdirectory(wrappers)
 endif(ARGOS_WRAPPERS)

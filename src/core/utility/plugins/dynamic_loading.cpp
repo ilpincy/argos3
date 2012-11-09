@@ -13,18 +13,13 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   CDynamicLoading::~CDynamicLoading() {
-      for(TDLHandleMap::iterator it = m_tOpenLibs.begin();
-          it != m_tOpenLibs.end();
-          ++it) {
-         UnloadLibrary(it->second);
-      }
-   }
+   TDLHandleMap CDynamicLoading::m_tOpenLibs;
 
    /****************************************/
    /****************************************/
 
    CDynamicLoading::TDLHandle CDynamicLoading::LoadLibrary(const std::string& str_lib) {
+      /** @todo Expand variable ARGOSPLUGINDIR and use it */
       TDLHandle tHandle = ::dlopen(str_lib.c_str(), RTLD_NOW);
       if(tHandle == NULL) {
          THROW_ARGOSEXCEPTION("Can't load library \""
