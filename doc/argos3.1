@@ -1,0 +1,103 @@
+.\" Process this file with
+.\" groff -man -Tascii foo.1
+.\"
+.TH ARGoS3 1 "November 2012" Linux "User Commands"
+.SH NAME
+ARGoS3 \- a parallel, multi-engine, multi-robot simulator
+.SH SYNOPSIS
+.P
+.B argos3 [-h|--help]
+.P
+.BI "argos3 [-c " FILE "|--config-file=" FILE "] [ ... ]"
+.P
+.BI "argos3 [-q " QUERY "|--query=" QUERY "] [ ... ]"
+.SH DESCRIPTION
+.P
+ARGoS is a physics-based simulator designed to support large swarms of
+different types of robots.
+.P
+ARGoS provides several physics engines, such as 2D kinematics, 2D
+dynamics, and 3D dynamics. ARGoS can run more than one physics engine
+in the same experiment and the user can choose which robots to
+simulate with which engine so that the simulation is optimised and
+accurate.
+.P
+ARGoS also offers a number of alternative visualisation possibilities,
+such as a simple 3D OpenGL renderer, an offline POVRay renderer and a
+tabular text renderer for data collection.
+.P
+The modular architecture of ARGoS allows the user to easily add new
+robots, actuators, sensors, physics engines and renderers. The simulator can
+be configured with an intuitive XML file and new modules programmed by
+the user are automatically registered and made available for use in
+the XML file.
+.P
+Finally, ARGoS is designed to make the transition between simulated
+robots and real robots seamless. The control interface to write robot
+controllers is common to both simulated and real robots. Thus, a
+controller developed for a simulated robot needs only to be recompiled
+before it can be run on the real robot platform.
+.SH OPTIONS
+.TP
+.BR -h ", " --help
+display usage information.
+.TP
+\fB\-c \fIFILE\fR, \fB\-\-config-file=\fIFILE\fR
+sets the experiment XML configuration file.
+.TP
+\fB\-q \fIQUERY\fR, \fB\-\-query=\fIQUERY\fR
+queries the available plugins.
+.TP
+\fB\-n\fR, \fB\-\-no-color\fR
+do not use colored output.
+.TP
+\fB\-l \fIFILE\fR, \fB\-\-log\-file=\fIFILE\fR
+redirect LOG to
+.IR FILE "."
+.TP
+\fB\-e \fIFILE\fR, \fB\-\-logerr\-file=\fIFILE\fR
+redirect LOGERR to
+.IR FILE "."
+.SH QUERIES
+.P
+ARGoS has a pluggable architecture. To know which plug-ins are
+available, use the
+.B -q
+.I QUERY
+syntax.
+.I QUERY
+can have the following values:
+.TP
+.B all
+print a list of all the available plugins.
+.TP
+.B actuators
+print a list of all the available actuators.
+.TP
+.B sensors
+print a list of all the available sensors.
+.TP
+.B physics_engines
+print a list of all the available physics engines.
+.TP
+.B visualizations
+print a list of all the available visualizations.
+.TP
+.B entities
+print a list of all the available entities.
+.P
+Alternatively,
+.I QUERY
+can be written as (part of) the name of a specific plugin as returned by the
+above commands. In this case, you get a complete description of the matching
+plugins. For example:
+.P
+.B $ argos3 -q epuck_proximity
+.SH ENVIRONMENT
+.TP
+.B ARGOS_PLUGIN_PATH
+This environment variable must be set to where the ARGoS plugins are
+installed. By default, they are installed in
+.IR /usr/lib/argos3 "."
+.SH AUTHOR
+Carlo Pinciroli <ilpincy@gmail.com>
