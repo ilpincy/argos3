@@ -59,3 +59,20 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
   endif(NOT FREEIMAGE_FOUND)
   include_directories(${FREEIMAGE_INCLUDE_PATH})
 endif(ARGOS_BUILD_FOR_SIMULATOR)
+
+#
+# Check for Doxygen
+#
+set(ARGOS_BUILD_API OFF)
+if(ARGOS_DOCUMENTATION)
+  find_package(Doxygen)
+  if(DOXYGEN_FOUND)
+    if(DOXYGEN_DOT_FOUND)
+      set(ARGOS_BUILD_API ON)
+    else(DOXYGEN_DOT_FOUND)
+      message(WARNING "GraphViz/Dot not found, API documentation won't be generated")
+    endif(DOXYGEN_DOT_FOUND)
+  else(DOXYGEN_FOUND)
+    message(WARNING "Doxygen not found, API documentation won't be generated")
+  endif(DOXYGEN_FOUND)
+endif(ARGOS_DOCUMENTATION)

@@ -45,23 +45,6 @@ if(ARGOS_WRAPPERS)
 endif(ARGOS_WRAPPERS)
 
 #
-# Create doxygen documentation, if asked for
+# Create documentation
 #
-if(ARGOS_DOCUMENTATION)
-  find_package(Doxygen)
-  if(DOXYGEN_FOUND)
-    if(DOXYGEN_DOT_FOUND)
-      configure_file(${CMAKE_SOURCE_DIR}/../doc/Doxyfile.in
-        ${CMAKE_BINARY_DIR}/Doxyfile
-        @ONLY)
-      add_custom_target(doc
-        COMMAND
-        ${DOXYGEN_EXECUTABLE} ${CMAKE_BINARY_DIR}/Doxyfile)
-      install(DIRECTORY ${CMAKE_SOURCE_DIR}/../doc/api DESTINATION doc/argos3)
-    else(DOXYGEN_DOT_FOUND)
-      message(FATAL_ERROR "GraphViz/Dot not found, and it is required to build the API documentation")
-    endif(DOXYGEN_DOT_FOUND)
-  else(DOXYGEN_FOUND)
-    message(FATAL_ERROR "Doxygen not found, and it is required to build the API documentation")
-  endif(DOXYGEN_FOUND)
-endif(ARGOS_DOCUMENTATION)
+include(${CMAKE_SOURCE_DIR}/cmake/ARGoSCreateDocs.cmake)
