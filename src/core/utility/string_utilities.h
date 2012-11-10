@@ -149,19 +149,8 @@ namespace argos {
       /****************************************/
 
       /**
-       * Replaces all occurrences of the string <tt>$ARGOSINSTALLDIR</tt> into its actual value
-       * set in the environment.
-       * @param str_buffer the string to search and replace.
-       * @return a new string where <tt>$ARGOSINSTALLDIR</tt> is substituted by its actual value.
-       */
-      std::string ExpandARGoSInstallDir(const std::string& str_buffer);
-
-      /****************************************/
-      /****************************************/
-
-      /**
-       * Searches into str_buffer for occurrences of str_original and substitutes them
-       * with str_new.
+       * Searches into str_buffer for occurrences of str_original and substitutes
+       * them with str_new.
        * @param str_buffer the string to modify.
        * @param str_original the string to search for.
        * @param str_new the substitute string.
@@ -182,6 +171,16 @@ namespace argos {
        */
       bool MatchPattern(const std::string& str_input,
                         const std::string str_pattern);
+
+      /****************************************/
+      /****************************************/
+
+      /**
+       * Searches into str_buffer for occurrences of an environment variable
+       * of the form $VAR and substitutes them with the value of the variable
+       * @param str_buffer the string to modify.
+       */
+      std::string& ExpandEnvVariables(std::string& str_buffer);
 
       /****************************************/
       /****************************************/

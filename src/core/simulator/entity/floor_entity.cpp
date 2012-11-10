@@ -171,7 +171,7 @@ namespace argos {
       if(m_strColorSource == "image") {
          std::string strPath;
          GetNodeAttribute(t_tree, "path", strPath);
-         strPath = ExpandARGoSInstallDir(strPath);
+         ExpandEnvVariables(strPath);
          m_pcColorSource = new CFloorColorFromImageFile(strPath,
                                                         m_cFloorSize.GetX(),
                                                         m_cFloorSize.GetY());

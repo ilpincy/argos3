@@ -93,9 +93,6 @@ namespace argos {
       /** XML configuration file root node */
       TConfigurationNode m_tConfigurationRoot;
 
-      /** Directory pointed to by ARGOSINSTALLDIR */
-      std::string m_strInstallationDirectory;
-
       /** The number of parallel threads to split up the computation */
       UInt32 m_unThreads;
 
@@ -204,16 +201,15 @@ namespace argos {
          return m_unMaxSimulationClock;
       }
 
-      inline void SetInstallationDirectory(const std::string& str_installation_dir) {
-         m_strInstallationDirectory = str_installation_dir;
-      }
-
-      inline const std::string& GetInstallationDirectory() const {
-         return m_strInstallationDirectory;
-      }
-
       inline UInt32 GetNumThreads() const {
          return m_unThreads;
+      }
+
+      /**
+       * @todo
+       */
+      inline std::string GetInstallationDirectory() const {
+         return "/usr";
       }
 
    private:

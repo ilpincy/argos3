@@ -45,6 +45,7 @@ set(ARGOS3_HEADERS_UTILITY_LOGGING
 # argos3/core/utility/plugins
 set(ARGOS3_HEADERS_UTILITY_PLUGINS
   utility/plugins/dynamic_loading.h
+  utility/plugins/dynamic_loading_impl.h
   utility/plugins/vtable.h
   utility/plugins/factory.h
   utility/plugins/factory_impl.h)
@@ -139,9 +140,9 @@ set(ARGOS3_SOURCES_CORE
   ${ARGOS3_HEADERS_CONTROLINTERFACE}
   control_interface/ci_robot.cpp)
 # Compile dynamic library loading only if enabled
-if(ARGOS3_DYNAMIC_LIBRARY_LOADING)
+if(ARGOS_DYNAMIC_LIBRARY_LOADING)
   set(ARGOS3_SOURCES_CORE ${ARGOS3_SOURCES_CORE} utility/plugins/dynamic_loading.cpp)
-endif(ARGOS3_DYNAMIC_LIBRARY_LOADING)
+endif(ARGOS_DYNAMIC_LIBRARY_LOADING)
 # Compile simulator code only if requested
 if(ARGOS_BUILD_FOR_SIMULATOR)
   set(ARGOS3_SOURCES_CORE
@@ -173,9 +174,9 @@ endif(ARGOS_BUILD_FOR_SIMULATOR)
 add_library(argos3core_${ARGOS_BUILD_FOR} SHARED ${ARGOS3_SOURCES_CORE})
 set_target_properties(argos3core_${ARGOS_BUILD_FOR} PROPERTIES VERSION 3)
 # Link DLFCN library if necessary
-if(ARGOS3_DYNAMIC_LIBRARY_LOADING)
+if(ARGOS_DYNAMIC_LIBRARY_LOADING)
   target_link_libraries(argos3core_${ARGOS_BUILD_FOR} ${DLFCN_LIBRARY})
-endif(ARGOS3_DYNAMIC_LIBRARY_LOADING)
+endif(ARGOS_DYNAMIC_LIBRARY_LOADING)
 # Link PThreads library if necessary
 if(PTHREADS_FOUND)
   target_link_libraries(argos3core_${ARGOS_BUILD_FOR} ${PTHREADS_LIBRARY})

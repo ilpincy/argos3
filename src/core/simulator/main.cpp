@@ -14,7 +14,6 @@
 #include <argos3/core/simulator/simulator.h>
 //#include <argos3/core/simulator/query_factories.h>
 #include <argos3/core/simulator/argos_command_line_arg_parser.h>
-#include <cstdlib>
 
 using namespace argos;
 
@@ -38,13 +37,6 @@ int main(int n_argc, char** ppch_argv) {
    CARGoSCommandLineArgParser cACLAP(cSimulator);
 
    try {
-      /* Check the presence of the environment variable ARGOSINSTALLDIR */
-      char* pchARGoSInstallDir = ::getenv("ARGOSINSTALLDIR");
-      if (pchARGoSInstallDir == NULL) {
-         THROW_ARGOSEXCEPTION("Unable to find the required environment variable \"ARGOSINSTALLDIR\"");
-      }
-      cSimulator.SetInstallationDirectory(pchARGoSInstallDir);
-
       /* Parse command line */
       cACLAP.Parse(n_argc, ppch_argv);
 

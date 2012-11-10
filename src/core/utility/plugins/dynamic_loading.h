@@ -7,8 +7,14 @@
 #ifndef DYNAMIC_LOADING_H
 #define DYNAMIC_LOADING_H
 
+#include <argos3/core/utility/configuration/argos_exception.h>
+#include <argos3/core/utility/logging/argos_log.h>
+
 #include <map>
 #include <string>
+
+#include <dlfcn.h>
+#include <cstdlib>
 
 namespace argos {
 
@@ -57,8 +63,14 @@ namespace argos {
        */
       static TDLHandleMap m_tOpenLibs;
 
+      /**
+       * Default plugin paths
+       */
+      static const std::string DEFAULT_PLUGIN_PATH;
    };
 
 }
+
+#include <argos3/core/utility/plugins/dynamic_loading_impl.h>
 
 #endif

@@ -145,7 +145,7 @@ namespace argos {
       std::string strTitle;
       GetNodeAttributeOrDefault<std::string>(t_tree, "title", strTitle, "ARGoS v2.0");
       setWindowTitle(tr(strTitle.c_str()));
-      /* Installation directory */
+      /** Installation directory */
       std::string strIconDir = CSimulator::GetInstance().GetInstallationDirectory();
       strIconDir += "/simulator/visualizations/qt-opengl/icons/";
       m_strIconDir = strIconDir.c_str();

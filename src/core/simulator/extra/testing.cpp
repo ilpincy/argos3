@@ -1,5 +1,7 @@
 #include <argos3/core/utility/plugins/vtable.h>
 #include <argos3/core/simulator/entity/entity.h>
+#include <argos3/core/utility/plugins/dynamic_loading.h>
+#include <argos3/core/utility/logging/argos_log.h>
 
 using namespace argos;
 
@@ -67,5 +69,14 @@ int main() {
 
    std::cout << CallEntityOperation<CTestOperation, Testing, int>(t, *e1) << std::endl;
    std::cout << CallEntityOperation<CTestOperation, Testing, int>(t, *e2) << std::endl;
+
+   try {
+      CDynamicLoading::LoadLibrary("libpippo.so");
+   }
+   catch(CARGoSException& ex) {
+      LOGERR << ex.what() << std::endl;
+      LOG.Flush();
+      LOGERR.Flush();
+   }
 
 }
