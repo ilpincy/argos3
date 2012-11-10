@@ -1,5 +1,5 @@
 /**
- * @file simulator/space/space_hash.h
+ * @file core/simulator/space/space_hash.h
  *
  * @author Carlo Pinciroli - <cpinciro@ulb.ac.be>
  */
@@ -23,26 +23,60 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   template <class Element> class CAbstractSpaceHash {
+   /**
+    * The abstract definition of a space hash.
+    * This template class defines all the basic functionality of a space hash.
+    * This class is used only internally. To define your own space hash, you have to
+    * subclass CSpaceHash.
+    * @param Element The type of the element held by the space hash
+    * @see CSpaceHash
+    */
+   template <class Element>
+   class CAbstractSpaceHash {
 
    public:
 
+      /**
+       * Type definition for the list of elements held by the space hash
+       */
       typedef std::tr1::unordered_set<Element*> TElementList;
 
    public:
 
+      /**
+       * Class constructor.
+       * The size of the space hash (the number of buckets) is set to zero.
+       * To be able to use the space hash, you first must set the size to an
+       * appropriate value.
+       * @see SetSize()
+       */
       CAbstractSpaceHash() : m_unSize(0) {}
 
+      /**
+       * Class destructor.
+       */
       virtual ~CAbstractSpaceHash() {}
 
+      /**
+       * Adds an element to the space hash.
+       * @param c_element The element to add.
+       */
       inline virtual void AddElement(Element& c_element) {
          m_tElements.insert(&c_element);
       }
 
+      /**
+       * Returns the list of elements held by this space hash.
+       * @return The list of elements held by this space hash.
+       */
       inline TElementList& GetElements() {
          return m_tElements;
       }
 
+      /**
+       * Remove an element from the space hash.
+       * @param c_element The element to remove.
+       */
       inline void RemoveElement(Element& c_element) {
          typename TElementList::iterator it = m_tElements.find(&c_element);
          if(it != m_tElements.end()) {
@@ -53,22 +87,48 @@ namespace argos {
          }
       }
 
+      /**
+       * Returns the size of the space hash.
+       * The size corresponds to the number of buckets.
+       * @return The size of the space hash.
+       */
       inline size_t GetSize() {
          return m_unSize;
       }
 
-      inline CVector3& GetCellSize() {
-         return m_cCellSize;
-      }
-
-      inline CVector3& GetInvCellSize() {
-         return m_cInvCellSize;
-      }
-
+      /**
+       * Sets the size of the space hash.
+       * The size corresponds to the number of buckets.
+       * @param un_size The size of the space hash.
+       */
       inline virtual void SetSize(size_t un_size) {
          m_unSize = un_size;
       }
 
+      /**
+       * Returns the size of the cells of the space hash.
+       * The size is returned in meters.
+       * @return The size of the cells of the space hash.
+       */
+      inline CVector3& GetCellSize() {
+         return m_cCellSize;
+      }
+
+      /**
+       * Returns the inverse size of the cells of the space hash.
+       * It is used to convert measures of the space into cells of the space hash.
+       * @return The size of the cells of the space hash.
+       * @see SpaceToHashTable
+       */
+      inline CVector3& GetInvCellSize() {
+         return m_cInvCellSize;
+      }
+
+      /**
+       * Sets the size of the cells of the space hash.
+       * The size is measured in meters.
+       * @param c_cell_size The new size for the cells of the space hash.
+       */
       inline virtual void SetCellSize(const CVector3& c_cell_size) {
          m_cCellSize = c_cell_size;
          m_cInvCellSize.Set(1.0f / m_cCellSize.GetX(),
@@ -76,23 +136,55 @@ namespace argos {
                             1.0f / m_cCellSize.GetZ());
       }
 
+      /**
+       * Updates the entire space hash.
+       * @see UpdateCell
+       * @see CSpaceHash::Update
+       */
       virtual void Update() = 0;
 
+      /**
+       * Adds an element to a cell of the space hash.
+       * @param n_x The x coordinate of the cell.
+       * @param n_y The y coordinate of the cell.
+       * @param n_z The z coordinate of the cell.
+       * @param c_element The element to add.
+       */
       virtual void UpdateCell(SInt32 n_x,
                               SInt32 n_y,
                               SInt32 n_z,
                               Element& c_element) = 0;
 
-      inline virtual SInt32 SpaceToHashTable(Real c_coord,
+      /**
+       * Converts a single space coordinate into a space hash cell coordinate.
+       * @param f_coord The value of the X/Y/Z coordinate in meters.
+       * @param un_axis the axis: 0 -> X, 1 -> Y, 2 -> Z.
+       * @return The X/Y/Z coordinate of the corresponding space hash cell.
+       */
+      inline virtual SInt32 SpaceToHashTable(Real f_coord,
                                              UInt32 un_axis) {
-         return RoundClosestToZero(c_coord * GetInvCellSize()[un_axis]);
+         return RoundClosestToZero(f_coord * GetInvCellSize()[un_axis]);
       }
 
+      /**
+       * Converts a single space hash cell coordinate into a space coordinate.
+       * @param n_coord The value of the X/Y/Z space hash coordinate.
+       * @param un_axis the axis: 0 -> X, 1 -> Y, 2 -> Z.
+       * @return The X/Y/Z coordinate in the space.
+       */
       inline virtual Real HashTableToSpace(SInt32 n_coord,
                                            UInt32 un_axis) {
          return n_coord * m_cCellSize[un_axis];
       }
 
+      /**
+       * Converts a space position into a space hash cell
+       * The values are written into n_i, n_j, and n_k.
+       * @param n_i The X coordinate of the space hash cell.
+       * @param n_j The Y coordinate of the space hash cell.
+       * @param n_k The Z coordinate of the space hash cell.
+       * @param c_pos The value position in meters.
+       */
       inline virtual void SpaceToHashTable(SInt32& n_i,
                                            SInt32& n_j,
                                            SInt32& n_k,
@@ -102,6 +194,13 @@ namespace argos {
          n_k = RoundClosestToZero(c_pos.GetZ() * CAbstractSpaceHash::GetInvCellSize().GetZ());
       }
 
+      /**
+       * Looks for elements to process in a cell
+       * @param n_i The X coordinate of the space hash cell.
+       * @param n_j The Y coordinate of the space hash cell.
+       * @param n_k The Z coordinate of the space hash cell.
+       * @param The list of elements to process.
+       */
       virtual bool CheckCell(SInt32 n_i,
                              SInt32 n_j,
                              SInt32 n_k,
@@ -109,6 +208,13 @@ namespace argos {
 
    protected:
 
+      /**
+       * Calculates the hash of a space hash coordinate.
+       * @param n_i The X coordinate of the space hash cell.
+       * @param n_j The Y coordinate of the space hash cell.
+       * @param n_k The Z coordinate of the space hash cell.
+       * @return The hash of a space hash coordinate.
+       */
       inline UInt32 CoordinateHash(SInt32 n_i,
                                    SInt32 n_j,
                                    SInt32 n_k) {
@@ -121,9 +227,26 @@ namespace argos {
       
    private:
 
+      /**
+       * The list of elements held by this space hash
+       */
       TElementList m_tElements;
+
+      /**
+       * The size (number of buckets) of the space hash.
+       */
       size_t m_unSize;
+
+      /**
+       * The size of a cell in the space.
+       * Measured in meters.
+       */
       CVector3 m_cCellSize;
+
+      /**
+       * The inverse of the size of a cell in the space.
+       * It is used to convert measures of the space into cells of the space hash.
+       */
       CVector3 m_cInvCellSize;
 
    };
@@ -131,12 +254,30 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   template <class Element> class CSpaceHashUpdater {
+   /**
+    * Defines the basic cell updater of the space hash.
+    * If you want to store your elements in a space hash, you need to implement
+    * this interface. The aim of this class is to call
+    * CAbstractSpaceHash::UpdateCell() for each cell in which the element must be
+    * contained.
+    * @param Element The type of element held by the corresponding space hash
+    * @see CSpaceHash
+    */
+   template <class Element>
+   class CSpaceHashUpdater {
 
      public:
 
+      /**
+       * Class destructor.
+       */
       virtual ~CSpaceHashUpdater() {}
 
+      /**
+       * Updates the necessary cells of a space hash.
+       * @param c_space_hash The space hash to update
+       * @param c_element The element indexed by the space hash.
+       */
       virtual void operator()(CAbstractSpaceHash<Element>& c_space_hash,
                               Element& c_element) = 0;
 
@@ -145,10 +286,24 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   template <class Element, class Updater> class CSpaceHash : public CAbstractSpaceHash<Element> {
+   /**
+    * Defines the basic space hash.
+    * If you want to create a new space hash implementation, you need to extend this
+    * class.
+    * @param Element The type of element held by the corresponding space hash
+    * @param Updater The cell updater for type Element
+    * @see CSpaceHashNative
+    */
+   template <class Element, class Updater>
+   class CSpaceHash : public CAbstractSpaceHash<Element> {
 
    public:
 
+      /**
+       * Updates the entire space hash.
+       * It calls the updater for all the elements held by the space hash.
+       * @see CSpaceHashUpdater
+       */
       inline virtual void Update() {
          /* Go through all the entities */
          for(typename CAbstractSpaceHash<Element>::TElementList::const_iterator el = CAbstractSpaceHash<Element>::GetElements().begin();
