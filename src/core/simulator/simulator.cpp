@@ -9,15 +9,16 @@
 #include <iostream>
 #include <string>
 #include <sys/time.h>
+#include <argos3/core/utility/logging/argos_log.h>
+#include <argos3/core/utility/profiler/profiler.h>
+#include <argos3/core/utility/string_utilities.h>
+#include <argos3/core/utility/plugins/dynamic_loading.h>
+#include <argos3/core/utility/math/rng.h>
 #include <argos3/core/simulator/space/space_no_threads.h>
 #include <argos3/core/simulator/space/space_multi_thread_scatter_gather.h>
 #include <argos3/core/simulator/space/space_multi_thread_h_dispatch.h>
-#include <argos3/core/utility/logging/argos_log.h>
-#include <argos3/core/utility/profiler/profiler.h>
 #include <argos3/core/simulator/visualization/visualization.h>
 #include <argos3/core/simulator/physics_engine/physics_engine.h>
-#include <argos3/core/utility/string_utilities.h>
-#include <argos3/core/utility/math/rng.h>
 #include <argos3/core/simulator/loop_functions.h>
 #include <argos3/core/simulator/entity/controllable_entity.h>
 #include <argos3/core/simulator/entity/composable_entity.h>
@@ -95,7 +96,15 @@ namespace argos {
       /* General configuration */
       InitFramework(GetNode(m_tConfigurationRoot, "framework"));
 
-      /** @todo manage creation of loop functions */
+      /** Create loop functions */
+      if(NodeExists(m_tConfigurationRoot, "loop_functions")) {
+         /* User specified a loop_functions section in the XML */
+         InitLoopFunctions(GetNode(m_tConfigurationRoot, "loop_functions"));
+      }
+      else {
+         /* No loop_functions in the XML */
+         m_pcLoopFunctions = new CLoopFunctions;
+      }
 
       /* Space */
       InitSpace(GetNode(m_tConfigurationRoot, "arena"));
@@ -349,6 +358,22 @@ namespace argos {
       }
       catch(CARGoSException& ex) {
          THROW_ARGOSEXCEPTION_NESTED("Failed to initialize the simulator. Parse error inside the <framework> tag.", ex);
+      }
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CSimulator::InitLoopFunctions(TConfigurationNode& t_tree) {
+      try {
+         std::string strLibrary, strLabel;
+         GetNodeAttribute(t_tree, "library", strLibrary);
+         GetNodeAttribute(t_tree, "label", strLabel);
+         CDynamicLoading::LoadLibrary(strLibrary);
+         m_pcLoopFunctions = CFactory<CLoopFunctions>::New(strLabel);
+      }
+      catch(CARGoSException& ex) {
+         THROW_ARGOSEXCEPTION_NESTED("Error initializing loop functions: ", ex);
       }
    }
 

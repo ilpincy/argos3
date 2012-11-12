@@ -205,16 +205,14 @@ namespace argos {
          return m_unThreads;
       }
 
-      /**
-       * @todo
-       */
       inline std::string GetInstallationDirectory() const {
-         return "/usr";
+         return INSTALL_PREFIX;
       }
 
    private:
 
       void InitFramework(TConfigurationNode& t_tree);
+      void InitLoopFunctions(TConfigurationNode& t_tree);
       void InitSpace(TConfigurationNode& t_tree);
       void InitPhysics(TConfigurationNode& t_tree);
       void InitVisualization(TConfigurationNode& t_tree);
