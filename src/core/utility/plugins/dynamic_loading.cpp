@@ -22,8 +22,15 @@ namespace argos {
       /* Check if the provided path is absolute or relative */
       if(str_lib[0] == '/') {
          /*
-          * Absolute path, load the library directly and bomb out in case of failure
+          * Absolute path
           */
+         /* First check if the library is already loaded */
+         TDLHandleMap::iterator it = m_tOpenLibs.find(str_lib);
+         if(it != m_tOpenLibs.end()) {
+            /* Already loaded */
+            return m_tOpenLibs[str_lib];
+         }
+         /* Not already loaded, load the library and bomb out in case of failure */
          tHandle = ::dlopen(str_lib.c_str(), RTLD_NOW);
          if(tHandle == NULL) {
             THROW_ARGOSEXCEPTION(::dlerror());
@@ -61,6 +68,13 @@ namespace argos {
                strDir.append("/");
             }
             strLibPath = strDir + str_lib;
+            /* First check if the library is already loaded */
+            TDLHandleMap::iterator it = m_tOpenLibs.find(strLibPath);
+            if(it != m_tOpenLibs.end()) {
+               /* Already loaded */
+               return m_tOpenLibs[strLibPath];
+            }
+            /* Not already loaded, try and load the library */
             tHandle = ::dlopen(strLibPath.c_str(), RTLD_NOW);
             if(tHandle != NULL) {
                /* Store the handle to the loaded library */
