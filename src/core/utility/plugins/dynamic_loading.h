@@ -71,6 +71,4 @@ namespace argos {
 
 }
 
-#include <argos3/core/utility/plugins/dynamic_loading_impl.h>
-
 #endif

@@ -45,7 +45,6 @@ set(ARGOS3_HEADERS_UTILITY_LOGGING
 # argos3/core/utility/plugins
 set(ARGOS3_HEADERS_UTILITY_PLUGINS
   utility/plugins/dynamic_loading.h
-  utility/plugins/dynamic_loading_impl.h
   utility/plugins/vtable.h
   utility/plugins/factory.h
   utility/plugins/factory_impl.h)
