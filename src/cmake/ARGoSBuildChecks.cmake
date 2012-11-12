@@ -61,6 +61,20 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
 endif(ARGOS_BUILD_FOR_SIMULATOR)
 
 #
+# Check for Google Perftools
+# They are optional, and checked for only when compiling in Debug
+#
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+  find_package(GooglePerfTools)
+endif(CMAKE_BUILD_TYPE STREQUAL "Debug")
+# Create a macro to ease linking GooglePerfTools
+function(link_googleperftools_to TARGET)
+  if(GOOGLEPERFTOOLS_FOUND)
+    target_link_libraries(${TARGET} tcmalloc profiler)
+  endif(GOOGLEPERFTOOLS_FOUND)
+endfunction(link_googleperftools_to)
+
+#
 # Check for Doxygen
 #
 set(ARGOS_BUILD_API OFF)
@@ -78,15 +92,6 @@ if(ARGOS_DOCUMENTATION)
 endif(ARGOS_DOCUMENTATION)
 
 #
-# Check for Google Perftools
-# They are optional, and checked for only when compiling in Debug
+# Check for ASCIIDoc
 #
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-  find_package(GooglePerfTools)
-endif(CMAKE_BUILD_TYPE STREQUAL "Debug")
-# Create a macro to ease linking GooglePerfTools
-function(link_googleperftools_to TARGET)
-  if(GOOGLEPERFTOOLS_FOUND)
-    target_link_libraries(${TARGET} tcmalloc profiler)
-  endif(GOOGLEPERFTOOLS_FOUND)
-endfunction(link_googleperftools_to)
+find_package(ASCIIDoc)

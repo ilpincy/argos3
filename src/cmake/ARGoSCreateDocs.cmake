@@ -25,8 +25,29 @@ if(ARGOS_DOCUMENTATION)
   endif(ARGOS_BUILD_API)
 
   #
+  # Process README
+  #
+  if(ASCIIDOC_FOUND)
+    add_custom_command(OUTPUT README.html
+      COMMAND ${ASCIIDOC_EXECUTABLE} -n -o ${CMAKE_BINARY_DIR}/README.html ${CMAKE_SOURCE_DIR}/../README
+      DEPENDS ${CMAKE_SOURCE_DIR}/../README)
+    add_custom_target(readme
+      DEPENDS README.html)
+    set(ARGOS_DOCUMENTATION_DEPENDS ${ARGOS_DOCUMENTATION_DEPENDS} readme)
+    install(FILES ${CMAKE_BINARY_DIR}/README.html DESTINATION doc/argos3)
+  endif(ASCIIDOC_FOUND)
+
+  #
   # Add a target doc so that a 'make doc' creates all documentation
   #
   add_custom_target(doc
     DEPENDS ${ARGOS_DOCUMENTATION_DEPENDS})
 endif(ARGOS_DOCUMENTATION)
+
+#
+# Always install at least the README and the license
+#
+install(FILES
+  ${CMAKE_SOURCE_DIR}/../README
+  ${CMAKE_BINARY_DIR}/../doc/GPL_V3
+  DESTINATION doc/argos3)
