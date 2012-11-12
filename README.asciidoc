@@ -1,1 +1,67 @@
-README
+ARGoS3 README
+=============
+:Author: Carlo Pinciroli
+:Email:  ilpincy@gmail.com
+:Date:   November 10th, 2012
+
+What is ARGoS3?
+---------------
+
+ARGoS3 is a physics-based simulators for robotics.
+
+Downloading ARGoS3
+------------------
+
+You can download a binary package of ARGoS3 from
+http://iridia.ulb.ac.be/argos/download.php. Alternatively, you can download the
+development sources through git:
+
+ $ git clone https://github.com/ilpincy/argos3.git argos3
+
+Compiling ARGoS3
+----------------
+
+If you downloaded the sources of ARGoS and want to compile its code, you need:
+
+* g++ >= 4.2
+* cmake >= 2.8
+* gsl >= 1.15
+* FreeImage >= 3.15
+
+Compiling the code
+~~~~~~~~~~~~~~~~~~
+
+Compiling the simulator
+^^^^^^^^^^^^^^^^^^^^^^^
+
+ cd argos3
+ mkdir build_simulator
+ cd build_simulator
+ cmake -DCMAKE_BUILD_TYPE=Release ../src
+ make
+
+Compiling ARGoS3 for a robot
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+ cd argos3
+ mkdir build_myrobot
+ cd build_myrobot
+ cmake -DCMAKE_BUILD_TYPE=Release -DARGOS_BUILD_FOR=myrobot ../src
+ make
+
+Compiling the documentation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ cd argos3
+ cd build_simulator
+ make doc
+
+Advanced compilation configuration
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+TODO
+
+Installing ARGoS3
+-----------------
+
+TODO
