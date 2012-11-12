@@ -173,6 +173,7 @@ endif(ARGOS_BUILD_FOR_SIMULATOR)
 #
 add_library(argos3core_${ARGOS_BUILD_FOR} SHARED ${ARGOS3_SOURCES_CORE})
 set_target_properties(argos3core_${ARGOS_BUILD_FOR} PROPERTIES VERSION 3)
+link_googleperftools_to(argos3core_${ARGOS_BUILD_FOR})
 # Link DLFCN library if necessary
 if(ARGOS_DYNAMIC_LIBRARY_LOADING)
   target_link_libraries(argos3core_${ARGOS_BUILD_FOR} ${DLFCN_LIBRARY})
@@ -189,7 +190,6 @@ endif(GSL_FOUND)
 if(FREEIMAGE_FOUND)
   target_link_libraries(argos3core_${ARGOS_BUILD_FOR} ${FREEIMAGE_LIBRARIES})
 endif(FREEIMAGE_FOUND)
-
 
 #
 # Core library installation
@@ -221,6 +221,7 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
   #
   add_executable(argos3 simulator/main.cpp)
   target_link_libraries(argos3 argos3core_${ARGOS_BUILD_FOR})
+  link_googleperftools_to(argos3)
   #
   # Core ARGoS3 installation
   #
@@ -233,4 +234,5 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
   #
   add_executable(testing simulator/extra/testing.cpp)
   target_link_libraries(testing argos3core_${ARGOS_BUILD_FOR})
+  link_googleperftools_to(testing)
 endif(ARGOS_BUILD_FOR_SIMULATOR)

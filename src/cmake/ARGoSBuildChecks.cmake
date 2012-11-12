@@ -76,3 +76,17 @@ if(ARGOS_DOCUMENTATION)
     message(WARNING "Doxygen not found, API documentation won't be generated")
   endif(DOXYGEN_FOUND)
 endif(ARGOS_DOCUMENTATION)
+
+#
+# Check for Google Perftools
+# They are optional, and checked for only when compiling in Debug
+#
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+  find_package(GooglePerfTools)
+endif(CMAKE_BUILD_TYPE STREQUAL "Debug")
+# Create a macro to ease linking GooglePerfTools
+function(link_googleperftools_to TARGET)
+  if(GOOGLEPERFTOOLS_FOUND)
+    target_link_libraries(${TARGET} tcmalloc profiler)
+  endif(GOOGLEPERFTOOLS_FOUND)
+endfunction(link_googleperftools_to)

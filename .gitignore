@@ -1,4 +1,4 @@
 build
 install
 doc/api/html
-src/.emacs.desktop*
+.emacs.desktop*

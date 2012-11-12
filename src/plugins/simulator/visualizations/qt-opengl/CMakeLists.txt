@@ -72,6 +72,7 @@ add_library(argos3plugin_${ARGOS_BUILD_FOR}_qtopengl MODULE
   ${ARGOS3_SOURCES_PLUGINS_SIMULATOR_VISUALIZATIONS_QTOPENGL})
 set_target_properties(argos3plugin_${ARGOS_BUILD_FOR}_qtopengl PROPERTIES VERSION 3)
 target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_qtopengl ${QT_LIBRARIES} ${GLUT_LIBRARY} ${OPENGL_LIBRARY})
+link_googleperftools_to(argos3plugin_${ARGOS_BUILD_FOR}_qtopengl)
 # Link SDL if necessary
 if(SDL_FOUND)
  target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_qtopengl ${SDL_LIBRARY})
