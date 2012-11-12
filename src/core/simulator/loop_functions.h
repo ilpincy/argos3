@@ -58,8 +58,8 @@ namespace argos {
       inline virtual void Reset() {}
       inline virtual void Destroy() {}
 
-      inline virtual void PrePhysicsEngineStep() {}
-      inline virtual void PostPhysicsEngineStep() {}
+      inline virtual void PreStep() {}
+      inline virtual void PostStep() {}
 
       inline virtual bool IsExperimentFinished() {
          return false;

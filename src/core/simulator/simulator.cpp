@@ -210,7 +210,7 @@ namespace argos {
       /* Increase the simulation clock */
       m_pcSpace->IncreaseSimulationClock();
       /* Call loop functions */
-      m_pcLoopFunctions->PrePhysicsEngineStep();
+      m_pcLoopFunctions->PreStep();
       LOG.Flush();
       LOGERR.Flush();
       /* Update the space */
@@ -218,7 +218,7 @@ namespace argos {
       LOG.Flush();
       LOGERR.Flush();
       /* Call loop functions */
-      m_pcLoopFunctions->PostPhysicsEngineStep();
+      m_pcLoopFunctions->PostStep();
       LOG.Flush();
       LOGERR.Flush();
    }
