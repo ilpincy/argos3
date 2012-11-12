@@ -42,7 +42,7 @@ if((NOT ARGOS_DYNAMIC_LIBRARY_LOADING) AND (ARGOS_BUILD_FOR STREQUAL "SIMULATOR"
 endif((NOT ARGOS_DYNAMIC_LIBRARY_LOADING) AND (ARGOS_BUILD_FOR STREQUAL "SIMULATOR"))
 
 #
-# Compile Doxygen-based documentation
+# Compile SWIG-based wrappers
 # This requires SWIG to be installed
 #
 option(ARGOS_WRAPPERS "ON -> create wrappers, OFF -> don't create wrappers" OFF)
@@ -53,7 +53,6 @@ option(ARGOS_WRAPPERS "ON -> create wrappers, OFF -> don't create wrappers" OFF)
 option(ARGOS_USE_DOUBLE "ON -> use double for Real, OFF -> use float for Real" ON)
 
 #
-# Compile Doxygen-based documentation
-# This requires GraphViz/Dot to be installed
+# Compile documentation
 #
 option(ARGOS_DOCUMENTATION "ON -> compile documentation, OFF -> dont'compile documentation" ON)
