@@ -32,3 +32,8 @@ add_definitions(-DTIXML_USE_TICPP)
 if(ARGOS_USE_DOUBLE)
   add_definitions(-DARGOS_DOUBLE_PRECISION)
 endif(ARGOS_USE_DOUBLE)
+
+#
+# Pass the install prefix to source
+#
+add_definitions(-DINSTALL_PREFIX="${CMAKE_INSTALL_PREFIX}")
