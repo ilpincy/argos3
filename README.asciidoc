@@ -1,67 +1,135 @@
-ARGoS3 README
+ARGoS README
 =============
 :Author: Carlo Pinciroli
 :Email:  ilpincy@gmail.com
-:Date:   November 10th, 2012
+:Date:   November 12th, 2012
 
-What is ARGoS3?
+What is ARGoS?
 ---------------
 
-ARGoS3 is a physics-based simulators for robotics.
+ARGoS is a physics-based simulators for robotics. Its main features are:
 
-Downloading ARGoS3
+* Parallel and modular architecture;
+* The possibility to run multiple physics engines at the same time;
+* The possibility to divide the physical space in region, and assign different
+  regions to different physics engines.
+
+ARGoS is very flexible, extremely efficient, and easy to use.
+
+Downloading ARGoS
 ------------------
 
-You can download a binary package of ARGoS3 from
+You can download a binary package of ARGoS from
 http://iridia.ulb.ac.be/argos/download.php. Alternatively, you can download the
 development sources through git:
 
  $ git clone https://github.com/ilpincy/argos3.git argos3
 
-Compiling ARGoS3
+Compiling ARGoS
 ----------------
 
 If you downloaded the sources of ARGoS and want to compile its code, you need:
 
-* g++ >= 4.2
-* cmake >= 2.8
-* gsl >= 1.15
-* FreeImage >= 3.15
+* A UNIX system (Linux or MacOSX; Microsoft Windows is not supported)
+* _g++_ >= 4.2
+* _cmake_ >= 2.8
+
+If you want to compile the simulator, you need:
+
+* _gsl_ >= 1.15
+* _FreeImage_ >= 3.15
+
+If you want to create the documentation you need:
+
+* To create the API:
+** _Doxygen_ >= 1.7.3
+** _Graphviz/dot_ >= 2.28
+* To create the HTML version of this README:
+** _asciidoc_ >= 8.6.2
 
 Compiling the code
 ~~~~~~~~~~~~~~~~~~
 
-Compiling the simulator
-^^^^^^^^^^^^^^^^^^^^^^^
+The compilation of ARGoS is configured through CMake.
 
- cd argos3
- mkdir build_simulator
- cd build_simulator
- cmake -DCMAKE_BUILD_TYPE=Release ../src
- make
+Fast compilation instructions
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Compiling ARGoS3 for a robot
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Compiling the ARGoS simulator
+++++++++++++++++++++++++++++++
 
- cd argos3
- mkdir build_myrobot
- cd build_myrobot
- cmake -DCMAKE_BUILD_TYPE=Release -DARGOS_BUILD_FOR=myrobot ../src
- make
+ $ cd argos3
+ $ mkdir build_simulator
+ $ cd build_simulator
+ $ cmake ../src
+ $ make
+
+Compiling ARGoS for a robot
+++++++++++++++++++++++++++++
+
+ $ cd argos3
+ $ mkdir build_myrobot
+ $ cd build_myrobot
+ $ cmake -DARGOS_BUILD_FOR=myrobot ../src
+ $ make
 
 Compiling the documentation
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
++++++++++++++++++++++++++++
 
- cd argos3
- cd build_simulator
- make doc
+ $ cd argos3
+ $ cd build_simulator # or 'cd build_myrobot'
+ $ make doc
 
 Advanced compilation configuration
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-TODO
+The compilation of ARGoS can be configured through a set of CMake options:
 
-Installing ARGoS3
------------------
+[options="header"]
+|====================================================================================================
+| Variable                | Type      | Meaning [default value]
+| +CMAKE_BUILD_TYPE+      | _STRING_  | Build type (Debug, Release, etc.) [empty]
+| +CMAKE_INSTALL_PREFIX+  | _STRING_  | Install prefix (+/usr+, +/usr/local+, etc.) [+/usr/local+]
+| +ARGOS_BUILD_FOR+       | _STRING_  | Target of compilation (simulator or robot name) [+simulator+]
+| +ARGOS_THREADSAFE_LOG+  | _BOOLEAN_ | Use or not the thread-safe version of LOG/LOGERR. [+ON+]
+| +ARGOS_DYNAMIC_LOADING+ | _BOOLEAN_ | Compile (and use) dynamic loading facilities [+ON+]
+| +ARGOS_WRAPPERS+        | _BOOLEAN_ | Compile SWIG-based scripting wrappers [+OFF+]
+| +ARGOS_USE_DOUBLE+      | _BOOLEAN_ | Use double (+ON+) or float (+OFF+) [+ON+]
+| +ARGOS_DOCUMENTATION+   | _BOOLEAN_ | Create documentation (API, manpage, etc.) [+ON+]
+|====================================================================================================
 
-TODO
+You can pass the wanted values from the command line. For instance, if you wanted to
+set explictly all the default values, you would write:
+
+ $ cd argos3/build_simulator
+ $ cmake -DCMAKE_BUILD_TYPE=Debug \
+         -DCMAKE_INSTALL_PREFIX=/usr/local \
+         -DARGOS_BUILD_FOR=simulator \
+         -DARGOS_THREADSAFE_LOG=ON \
+         -DARGOS_DYNAMIC_LOADING=ON \
+         -DARGOS_WRAPPERS=OFF \
+         -DARGOS_USE_DOUBLE=ON \
+         -DARGOS_DOCUMENTATION=ON \
+         ../src
+
+IMPORTANT: When +ARGOS_BUILD_FOR+ is set to +simulator+, +ARGOS_THREADSAFE_LOG+ and
+           +ARGOS_DYNAMIC_LOADING+ must be ON.
+
+NOTE: If +CMAKE_BUILD_TYPE+ is set to +Debug+, the CMake scripts search for Google
+      Perftools (+libtmalloc.so+ and +libprofiler.so+) and use them if present.
+
+TIP: For production environments, it is recommended to compile ARGoS with
+     +CMAKE_BUILD_TYPE+ set to +Release+. If you want to debug ARGoS, it is
+     recommended to set +CMAKE_BUILD_TYPE+ to +Debug+. The other standard settings
+     (empty and +RelWithDebInfo+) are supported but should be avoided.
+
+Installing ARGoS from the compiled binaries
+--------------------------------------------
+
+To install ARGoS after having compiled the sources, it is enough to write:
+
+ $ cd argos3
+ $ cd build_simulator # or 'cd build_myrobot'
+ $ sudo make install
+
+An easier option is to install ARGoS from a package distributed at http://iridia.ulb.ac.be/argos/download.php.
