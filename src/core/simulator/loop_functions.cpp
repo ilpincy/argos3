@@ -24,7 +24,7 @@ namespace argos {
          return *pcEntity;
       }
       catch(CARGoSException ex) {
-         THROW_ARGOSEXCEPTION_NESTED("Loop functions: error to creating entity type \"" << t_tree.Value() << "\"", ex);
+         THROW_ARGOSEXCEPTION_NESTED("Loop functions: error creating entity type \"" << t_tree.Value() << "\"", ex);
       }
    }
 

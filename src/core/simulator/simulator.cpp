@@ -20,7 +20,6 @@
 #include <argos3/core/simulator/visualization/visualization.h>
 #include <argos3/core/simulator/physics_engine/physics_engine.h>
 #include <argos3/core/simulator/loop_functions.h>
-#include <argos3/core/simulator/entity/controllable_entity.h>
 #include <argos3/core/simulator/entity/composable_entity.h>
 #include <argos3/core/simulator/entity/embodied_entity.h>
 #include <argos3/core/simulator/physics_engine/physics_engine_entity.h>
@@ -79,6 +78,15 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   CPhysicsEngine& CSimulator::GetPhysicsEngine(const std::string& str_id) const {
+      CPhysicsEngine::TMap::const_iterator it = m_mapPhysicsEngines.find(str_id);
+      ARGOS_ASSERT(it != m_mapPhysicsEngines.end(), "Physics engine \"" << str_id << "\" not found.")
+         return *(it->second);
+   }
+
+   /****************************************/
+   /****************************************/
+
    void CSimulator::LoadExperiment() {
       /* Build configuration tree */
       m_tConfiguration.LoadFile(m_strExperimentConfigFileName);
@@ -95,6 +103,8 @@ namespace argos {
    void CSimulator::Init() {
       /* General configuration */
       InitFramework(GetNode(m_tConfigurationRoot, "framework"));
+
+      InitControllers(GetNode(m_tConfigurationRoot, "controllers"));
 
       /** Create loop functions */
       if(NodeExists(m_tConfigurationRoot, "loop_functions")) {
@@ -373,7 +383,39 @@ namespace argos {
          m_pcLoopFunctions = CFactory<CLoopFunctions>::New(strLabel);
       }
       catch(CARGoSException& ex) {
-         THROW_ARGOSEXCEPTION_NESTED("Error initializing loop functions: ", ex);
+         THROW_ARGOSEXCEPTION_NESTED("Error initializing loop functions", ex);
+      }
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CSimulator::InitControllers(TConfigurationNode& t_tree) {
+      /*
+       * Go through controllers, loading the library of each of them
+       * and storing type, id and XML tree of each of them for later use
+       */
+      try {
+         std::string strLibrary;
+         std::string strId;
+         for(TConfigurationNodeIterator it = it.begin(&t_tree);
+             it != it.end(); ++it) {
+            /* Get library name */
+            GetNodeAttribute(*it, "library", strLibrary);
+            /* Load library */
+            CDynamicLoading::LoadLibrary(strLibrary);
+            /* Get controller id */
+            GetNodeAttribute(*it, "id", strId);
+            /* Bomb out if id is already in map */
+            if(m_mapControllerConfig.find(strId) != m_mapControllerConfig.end()) {
+               THROW_ARGOSEXCEPTION("Controller id \"" << strId << "\" duplicated");
+            }
+            /* Store XML info in map by id */
+            m_mapControllerConfig.insert(std::pair<std::string, TConfigurationNode&>(strId, *it));
+         }
+      }
+      catch(CARGoSException& ex) {
+         THROW_ARGOSEXCEPTION_NESTED("Error initializing controllers", ex);
       }
    }
 
@@ -494,14 +536,6 @@ namespace argos {
                 itMatchingEntities != tMatchingEntities.end(); ++itMatchingEntities) {
                CEntity& cEntity = **itMatchingEntities;
                /* Add the entity to the engine */
-               /*
-               LOG << "[INFO] Adding entity \""
-                   << cEntity.GetId()
-                   << "\" to engine \""
-                   << pcEngine->GetId()
-                   << "\""
-                   << std::endl;
-               */
                pcEngine->AddEntity(cEntity);
                /* Is the entity composable with a controllable component? */
                CComposableEntity* pcComposableEntity = dynamic_cast<CComposableEntity*>(&cEntity);
@@ -509,52 +543,18 @@ namespace argos {
                   pcComposableEntity->HasComponent("controllable_entity")) {
                   /* The entity is controllable, there's more to do: associating a controller */
                   CControllableEntity& cControllableEntity = pcComposableEntity->GetComponent<CControllableEntity>("controllable_entity");
-                  TConfigurationNode tControllerParameters;
                   /* Try to get the <parameters> section in the robot entity */
-                  /* If there's none, get the one set in the controller */
                   if(NodeExists(*itEntities, "parameters")) {
-                     /* Look in the <parameters> section in the entity */
-                     tControllerParameters = GetNode(*itEntities, "parameters");
+                     /* Use the <parameters> section in the robot entity */
+                     TConfigurationNode& tControllerParameters = GetNode(*itEntities, "parameters");
+                     AssignController(cControllableEntity.GetControllerId(),
+                                                         tControllerParameters,
+                                                         *pcComposableEntity);
                   }
                   else {
-                     /* The previous check failed, so look in the controller now */
-                     /* Look for the controller with the right id in the XML */
-                     TConfigurationNode tControllersTree;
-                     tControllersTree = GetNode(t_tree, "controllers");
-                     bool bFound = false;
-                     TConfigurationNodeIterator itControllers;
-                     std::string strControllerId;
-                     itControllers = itControllers.begin(&tControllersTree);
-                     while(!bFound && itControllers != itControllers.end()) {
-                        GetNodeAttribute(*itControllers, "id", strControllerId);
-                        if(strControllerId == cControllableEntity.GetControllerId()) {
-                           bFound = true;
-                        }
-                        else {
-                           ++itControllers;
-                        }
-                     }
-                     /* Did we find the controller? */
-                     if(! bFound) {
-                        THROW_ARGOSEXCEPTION(
-                           "[FATAL] The entity \"" <<
-                           cControllableEntity.GetId() << "\" has been associated with a controller with id \"" <<
-                           cControllableEntity.GetControllerId() <<
-                           "\", but a controller with this id wasn't found in the <controllers> section of the XML file.");
-                     }
-                     /* Now itControllers points to the right controller subtree */
-                     /* Get the parameters subtree */
-                     tControllerParameters = GetNode(*itControllers, "parameters");
+                     AssignController(cControllableEntity.GetControllerId(),
+                                                         *pcComposableEntity);
                   }
-                  /** @todo Create the controller */
-                  // CCI_Controller* pcController =
-                  //    GetDynamicLinkingManager().
-                  //    NewController(cEntity,
-                  //                  cControllableEntity.GetControllerId(),
-                  //                  tControllerParameters);
-                  
-                  /* @todo Set the controller to the entity */
-                  // cControllableEntity.SetController(*pcController);
                }
             }
          }

@@ -92,12 +92,12 @@ namespace argos {
          m_mapSensors[str_sensor_type] = pc_sensor;
       }
 
-      inline const std::string& GetRobotId() const {
-         return m_strRobotId;
+      inline const std::string& GetId() const {
+         return m_strId;
       }
 
-      inline void SetRobotId(const std::string& str_robot_id) {
-         m_strRobotId = str_robot_id;
+      inline void SetId(const std::string& str_id) {
+         m_strId = str_id;
       }
 
    protected:
@@ -105,7 +105,7 @@ namespace argos {
       CCI_Actuator::TMap m_mapActuators;
       CCI_Sensor::TMap m_mapSensors;
 
-      std::string m_strRobotId;
+      std::string m_strId;
 
    };
 

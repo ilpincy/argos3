@@ -60,12 +60,12 @@ namespace argos {
          m_pcRobot = &pc_robot;
       }
 
-      inline const std::string& GetControllerId() const {
-         return m_strControllerId;
+      inline const std::string& GetId() const {
+         return m_strId;
       }
 
-      inline void SetControllerId(const std::string& str_controller_id) {
-         m_strControllerId = str_controller_id;
+      inline void SetId(const std::string& str_id) {
+         m_strId = str_id;
       }
 
       virtual bool IsControllerFinished() const {
@@ -78,7 +78,7 @@ namespace argos {
    private:
 
       CCI_Robot* m_pcRobot;
-      std::string m_strControllerId;
+      std::string m_strId;
 
    };
 

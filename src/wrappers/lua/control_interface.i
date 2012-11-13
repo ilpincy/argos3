@@ -30,8 +30,8 @@ namespace argos {
       ACTUATOR_IMPL* GetActuator(const std::string& str_actuator_type);
       template<typename SENSOR_IMPL>
       SENSOR_IMPL* GetSensor(const std::string& str_sensor_type);
-      inline const std::string& GetRobotId() const;
-      inline void SetRobotId(const std::string& str_robot_id);
+      inline const std::string& GetId() const;
+      inline void SetId(const std::string& str_id);
    };
 
    class CCI_Controller : public CBaseConfigurableResource,
