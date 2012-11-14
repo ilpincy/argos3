@@ -55,17 +55,19 @@ set(ARGOS3_HEADERS_UTILITY_PROFILER
 set(ARGOS3_HEADERS_UTILITY_MATH
   utility/math/angles.h
   utility/math/general.h
-  utility/math/matrix.h
   utility/math/quaternion.h
   utility/math/range.h
   utility/math/ray.h
-  utility/math/rotationmatrix2.h
-  utility/math/rotationmatrix3.h
   utility/math/segment.h
-  utility/math/squarematrix.h
   utility/math/vector2.h
   utility/math/vector3.h
-  utility/math/rng.h)
+  utility/math/rng.h
+  utility/math/matrix/matrix.h
+  utility/math/matrix/squarematrix.h
+  utility/math/matrix/rotationmatrix2.h
+  utility/math/matrix/rotationmatrix3.h
+  utility/math/matrix/transformationmatrix2.h
+  utility/math/matrix/transformationmatrix3.h)
 # argos3/core/control_interface
 set(ARGOS3_HEADERS_CONTROLINTERFACE
   control_interface/ci_actuator.h
@@ -130,12 +132,14 @@ set(ARGOS3_SOURCES_CORE
   utility/profiler/profiler.cpp
   ${ARGOS3_HEADERS_UTILITY_MATH}
   utility/math/angles.cpp
-  utility/math/rotationmatrix2.cpp
-  utility/math/rotationmatrix3.cpp
   utility/math/segment.cpp
   utility/math/vector2.cpp
   utility/math/vector3.cpp
   utility/math/rng.cpp
+  utility/math/matrix/rotationmatrix3.cpp
+  utility/math/matrix/rotationmatrix2.cpp
+  utility/math/matrix/transformationmatrix3.cpp
+  utility/math/matrix/transformationmatrix2.cpp
   ${ARGOS3_HEADERS_CONTROLINTERFACE}
   control_interface/ci_robot.cpp)
 # Compile dynamic library loading only if enabled

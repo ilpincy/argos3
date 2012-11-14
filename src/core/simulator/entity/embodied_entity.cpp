@@ -3,7 +3,7 @@
 #include <argos3/core/simulator/space/space.h>
 #include <argos3/core/simulator/simulator.h>
 #include <argos3/core/utility/string_utilities.h>
-#include <argos3/core/utility/math/rotationmatrix3.h>
+#include <argos3/core/utility/math/matrix/rotationmatrix3.h>
 
 namespace argos {
 

@@ -191,6 +191,13 @@ namespace argos {
          return *this;
       }
 
+      inline bool operator==(const CQuaternion& c_quaternion) {
+         return (m_fValues[0] == c_quaternion.m_fValues[0] &&
+                 m_fValues[1] == c_quaternion.m_fValues[1] &&
+                 m_fValues[2] == c_quaternion.m_fValues[2] &&
+                 m_fValues[3] == c_quaternion.m_fValues[3]);
+      }      
+
       inline CQuaternion& operator=(const CQuaternion& c_quaternion) {
          if (&c_quaternion != this) {
             m_fValues[0] = c_quaternion.m_fValues[0];

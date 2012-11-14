@@ -1,5 +1,5 @@
-/**
- * @file core/utility/math/matrix.h
+ /**
+ * @file argos2/common/utility/math/matrix.h
  *
  * @brief Contains the definition of a MxN templated matrix
  *
@@ -21,11 +21,17 @@ namespace argos {
 
    /* Matrices of different dimensions can access each others data */
    template <UInt32 SMROWS, UInt32 SMCOLS> friend class CMatrix;
+   
+   /* The specified derived classes are allowed to access members of the base class */
+   friend class CRotationMatrix2;
+   friend class CTransformationMatrix2;
+   friend class CRotationMatrix3;
+   friend class CTransformationMatrix3;
       
    public:
       CMatrix() {
          for(UInt32 i = 0; i < ROWS * COLS; i++)
-            m_fValues[i] = 0;
+            m_pfValues[i] = 0;
       }
       
       CMatrix(const Real* f_values) {
@@ -33,12 +39,12 @@ namespace argos {
       }
       
       CMatrix(const CMatrix<ROWS,COLS>& c_matrix) {
-         Set(c_matrix.m_fValues);
+         Set(c_matrix.m_pfValues);
       }
       
       CMatrix<ROWS,COLS>& operator=(const CMatrix<ROWS,COLS>& c_matrix) {
          if(this != &c_matrix) {
-            Set(c_matrix.m_fValues);
+            Set(c_matrix.m_pfValues);
          }
          return *this;
       }
@@ -50,7 +56,7 @@ namespace argos {
                       un_row <<
                       ", un_col = " <<
                       un_col);
-         return m_fValues[un_row * COLS + un_col];
+         return m_pfValues[un_row * COLS + un_col];
       }
       
       inline Real operator()(UInt32 un_row,
@@ -60,33 +66,33 @@ namespace argos {
                       un_row <<
                       ", un_col = " <<
                       un_col);
-         return m_fValues[un_row * COLS + un_col];
+         return m_pfValues[un_row * COLS + un_col];
       }
       
       inline Real operator()(UInt32 un_idx) const {
          ARGOS_ASSERT(un_idx < ROWS * COLS,
                       "Matrix index out of bounds: un_idx = " <<
                       un_idx);
-         return m_fValues[un_idx];
+         return m_pfValues[un_idx];
       }
 
       inline Real& operator()(UInt32 un_idx) {
          ARGOS_ASSERT(un_idx < ROWS * COLS,
                       "Matrix index out of bounds: un_idx = " <<
                       un_idx);
-         return m_fValues[un_idx];
+         return m_pfValues[un_idx];
       }
       
       void Set(const Real* f_values) {
          for(UInt32 i = 0; i < ROWS * COLS; i++)
-            m_fValues[i] = f_values[i];
+            m_pfValues[i] = f_values[i];
       }
       
       CMatrix<COLS, ROWS> GetTransposed() {
          Real fNewValues[COLS * ROWS];
          for(UInt32 i = 0; i < ROWS; i++)
             for(UInt32 j = 0; j < COLS; j++)
-               fNewValues[j * ROWS + i] = m_fValues[i * COLS + j];
+               fNewValues[j * ROWS + i] = m_pfValues[i * COLS + j];
 
          return CMatrix<COLS, ROWS>(fNewValues);
       }
@@ -107,14 +113,14 @@ namespace argos {
                       
          for(UInt32 i = 0; i < SMROWS; i++)
             for(UInt32 j = 0; j < SMCOLS; j++)
-               c_matrix.m_fValues[i * SMCOLS + j] = m_fValues[(i + un_offset_row) * COLS + (j + un_offset_col)];
+               c_matrix.m_pfValues[i * SMCOLS + j] = m_pfValues[(i + un_offset_row) * COLS + (j + un_offset_col)];
          
          return c_matrix;
       }
       
       bool operator==(const CMatrix<ROWS, COLS>& c_matrix) const {
          for(UInt32 i = 0; i < ROWS * COLS; i++) {
-            if(m_fValues[i] != c_matrix.m_fValues[i])
+            if(m_pfValues[i] != c_matrix.m_pfValues[i])
                return false;
          }
          return true;
@@ -122,21 +128,21 @@ namespace argos {
 
       CMatrix<ROWS, COLS>& operator+=(const CMatrix<ROWS, COLS>& c_matrix) {
          for(UInt32 i = 0; i < ROWS * COLS; i++) {
-            m_fValues[i] += c_matrix.m_fValues[i];
+            m_pfValues[i] += c_matrix.m_pfValues[i];
          }
          return *this;
       }
       
       CMatrix<ROWS, COLS>& operator-=(const CMatrix<ROWS, COLS>& c_matrix) {
          for(UInt32 i = 0; i < ROWS * COLS; i++) {
-            m_fValues[i] -= c_matrix.m_fValues[i];
+            m_pfValues[i] -= c_matrix.m_pfValues[i];
          }
          return *this;
       }
       
       CMatrix<ROWS, COLS>& operator*=(Real f_scale) {
          for(UInt32 i = 0; i < ROWS * COLS; i++) {
-            m_fValues[i] *= f_scale;
+            m_pfValues[i] *= f_scale;
          }
          return *this;
       }
@@ -159,7 +165,7 @@ namespace argos {
             for(UInt32 j = 0; j < COLS; j++) {
                fNewValues[i * COLS + j] = 0.0f;
                for(UInt32 k = 0; k < COLS; k++) {
-                  fNewValues[i * COLS + j] += m_fValues[i * COLS + k] * c_matrix.m_fValues[k * COLS + j];
+                  fNewValues[i * COLS + j] += m_pfValues[i * COLS + k] * c_matrix.m_pfValues[k * COLS + j];
                }
             }
          }
@@ -174,7 +180,7 @@ namespace argos {
             for(UInt32 j = 0; j < OTRCOLS; j++) {
                fNewValues[i * OTRCOLS + j] = 0.0f;
                for(UInt32 k = 0; k < COLS; k++) {
-                  fNewValues[i * OTRCOLS + j] += m_fValues[i * COLS + k] * c_matrix.m_fValues[k * OTRCOLS + j];
+                  fNewValues[i * OTRCOLS + j] += m_pfValues[i * COLS + k] * c_matrix.m_pfValues[k * OTRCOLS + j];
                }
             }
          }
@@ -205,7 +211,7 @@ namespace argos {
       
    protected:
 
-      Real m_fValues[ROWS * COLS];
+      Real m_pfValues[ROWS * COLS];
 
    };
 }

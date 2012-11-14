@@ -12,15 +12,15 @@ namespace argos {
 
    public:
 
-      CRange(const T& t_min,
-             const T& t_max) :
+      CRange(const T& t_min = T(),
+             const T& t_max = T()) :
          m_tMin(t_min),
          m_tMax(t_max),
          m_tSpan(m_tMax - m_tMin) {
-         ARGOS_ASSERT(t_min < t_max,
+         ARGOS_ASSERT(t_min <= t_max,
                       "Error initializing CRange(" <<
                       t_min << ", " << t_max << "): " <<
-                      t_min << " is not < " << t_max);
+                      t_min << " is not <= " << t_max);
       }
 
       inline T GetMin() const {
@@ -28,10 +28,10 @@ namespace argos {
       }
 
       inline void SetMin(const T& t_min) {
-         ARGOS_ASSERT(t_min < m_tMax,
+         ARGOS_ASSERT(t_min <= m_tMax,
                       "Error setting min CRange bound (" <<
                       t_min << "): " <<
-                      t_min << " is not < " << m_tMax);
+                      t_min << " is not <= " << m_tMax);
          m_tMin = t_min;
          /* Same as, but faster than
             m_tSpan = m_tMax - m_tMin; */
@@ -44,10 +44,10 @@ namespace argos {
       }
 
       inline void SetMax(const T& t_max) {
-         ARGOS_ASSERT(m_tMin < t_max,
+         ARGOS_ASSERT(m_tMin <= t_max,
                       "Error setting max CRange bound (" <<
                       t_max << "): " <<
-                      m_tMin << " is not < " << t_max);
+                      m_tMin << " is not <= " << t_max);
          m_tMax = t_max;
          /* Same as, but faster than
             m_tSpan = m_tMax - m_tMin; */
@@ -60,10 +60,10 @@ namespace argos {
       }
 
       inline void Set(const T& t_min, const T& t_max) {
-         ARGOS_ASSERT(t_min < t_max,
+         ARGOS_ASSERT(t_min <= t_max,
                       "Error setting CRange bounds (" <<
                       t_min << ", " << t_max << "): " <<
-                      t_min << " is not < " << t_max);
+                      t_min << " is not <= " << t_max);
          m_tMin = t_min;
          m_tMax = t_max;
          /* Same as, but faster than

@@ -28,6 +28,7 @@ namespace argos {
    class CVector3 {
    
    friend class CRotationMatrix3;
+   friend class CTransformationMatrix3;
 
    public:
 
