@@ -170,6 +170,7 @@ namespace argos {
 
       public:
 
+         virtual ~CAbstractArgument() {}
          virtual void Parse(const std::string& str_value) = 0;
 
       public:

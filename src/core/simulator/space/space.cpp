@@ -69,6 +69,7 @@ namespace argos {
    class CSpace::CRayEmbodiedEntityIntersectionMethod {
    public:
       CRayEmbodiedEntityIntersectionMethod(CSpace& c_space) : m_cSpace(c_space) {}
+      virtual ~CRayEmbodiedEntityIntersectionMethod() {}
       virtual bool operator()(SEntityIntersectionItem<CEmbodiedEntity>& s_data,
                               const CRay& c_ray,
                               const TEmbodiedEntitySet& set_ignored_entities) = 0;
@@ -373,6 +374,7 @@ namespace argos {
 
    class RealNumberGenerator {
    public:
+      virtual ~RealNumberGenerator() {}
       virtual CVector3 operator()(bool b_is_retry) = 0;
    };
 
