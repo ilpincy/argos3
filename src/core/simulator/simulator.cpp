@@ -106,14 +106,17 @@ namespace argos {
 
       InitControllers(GetNode(m_tConfigurationRoot, "controllers"));
 
-      /** Create loop functions */
+      /* Create loop functions */
+      bool bUserDefLoopFunctions;
       if(NodeExists(m_tConfigurationRoot, "loop_functions")) {
          /* User specified a loop_functions section in the XML */
          InitLoopFunctions(GetNode(m_tConfigurationRoot, "loop_functions"));
+         bUserDefLoopFunctions = true;
       }
       else {
          /* No loop_functions in the XML */
          m_pcLoopFunctions = new CLoopFunctions;
+         bUserDefLoopFunctions = false;
       }
 
       /* Space */
@@ -126,7 +129,9 @@ namespace argos {
       InitPhysicsEntitiesMapping(m_tConfigurationRoot);
 
       /* Call user init function */
-      m_pcLoopFunctions->Init(GetNode(m_tConfigurationRoot, "loop_functions"));
+      if(bUserDefLoopFunctions) {
+         m_pcLoopFunctions->Init(GetNode(m_tConfigurationRoot, "loop_functions"));
+      }
 
       /* Initialise visualization */
       InitVisualization(GetNode(m_tConfigurationRoot, "visualization"));
@@ -334,7 +339,7 @@ namespace argos {
                           unTicksPerSec);
          CPhysicsEngine::SetSimulationClockTick(1.0 / static_cast<Real>(unTicksPerSec));
 
-         /* Set the maximum simulation ticks (in ticks) */
+         /* Set the maximum simulation duration (in seconds) */
          Real fExpLength;
          GetNodeAttributeOrDefault<Real>(tExperiment,
                                          "length",
@@ -395,27 +400,29 @@ namespace argos {
        * Go through controllers, loading the library of each of them
        * and storing type, id and XML tree of each of them for later use
        */
-      try {
-         std::string strLibrary;
-         std::string strId;
-         for(TConfigurationNodeIterator it = it.begin(&t_tree);
-             it != it.end(); ++it) {
-            /* Get library name */
-            GetNodeAttribute(*it, "library", strLibrary);
-            /* Load library */
-            CDynamicLoading::LoadLibrary(strLibrary);
-            /* Get controller id */
-            GetNodeAttribute(*it, "id", strId);
-            /* Bomb out if id is already in map */
-            if(m_mapControllerConfig.find(strId) != m_mapControllerConfig.end()) {
-               THROW_ARGOSEXCEPTION("Controller id \"" << strId << "\" duplicated");
+      if(! t_tree.NoChildren()) {
+         try {
+            std::string strLibrary;
+            std::string strId;
+            for(TConfigurationNodeIterator it = it.begin(&t_tree);
+                it != it.end(); ++it) {
+               /* Get library name */
+               GetNodeAttribute(*it, "library", strLibrary);
+               /* Load library */
+               CDynamicLoading::LoadLibrary(strLibrary);
+               /* Get controller id */
+               GetNodeAttribute(*it, "id", strId);
+               /* Bomb out if id is already in map */
+               if(m_mapControllerConfig.find(strId) != m_mapControllerConfig.end()) {
+                  THROW_ARGOSEXCEPTION("Controller id \"" << strId << "\" duplicated");
+               }
+               /* Store XML info in map by id */
+               m_mapControllerConfig.insert(std::pair<std::string, TConfigurationNode&>(strId, *it));
             }
-            /* Store XML info in map by id */
-            m_mapControllerConfig.insert(std::pair<std::string, TConfigurationNode&>(strId, *it));
          }
-      }
-      catch(CARGoSException& ex) {
-         THROW_ARGOSEXCEPTION_NESTED("Error initializing controllers", ex);
+         catch(CARGoSException& ex) {
+            THROW_ARGOSEXCEPTION_NESTED("Error initializing controllers", ex);
+         }
       }
    }
 
