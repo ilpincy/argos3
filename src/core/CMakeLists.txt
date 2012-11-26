@@ -232,10 +232,4 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
     RUNTIME DESTINATION bin
     LIBRARY DESTINATION lib/argos3
     ARCHIVE DESTINATION lib/argos3)
-  #
-  # Testing stuff
-  #
-  add_executable(testing simulator/extra/testing.cpp)
-  target_link_libraries(testing argos3core_${ARGOS_BUILD_FOR})
-  link_googleperftools_to(testing)
 endif(ARGOS_BUILD_FOR_SIMULATOR)
