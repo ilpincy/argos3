@@ -1,19 +1,4 @@
 #
-# Project name
-#
-project(argos3plugin_${ARGOS_BUILD_FOR}_qtopengl)
-
-#
-# Configuration for CPack's tar.bz2 generator
-#
-set(CPACK_GENERATOR TBZ2)
-set(CPACK_PACKAGE_VERSION_MAJOR "3")
-set(CPACK_PACKAGE_VERSION_MINOR "0")
-set(CPACK_PACKAGE_VERSION_PATCH "0")
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "ARGoS3 Qt-OpenGL visualization plugin package for ${ARGOS_BUILD_FOR}")
-include(CPack)
-
-#
 # Headers
 #
 # argos3/plugins/simulator/visualizations/qt-opengl

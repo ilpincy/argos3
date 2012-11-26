@@ -42,12 +42,13 @@ if(ARGOS_DOCUMENTATION)
   #
   add_custom_target(doc
     DEPENDS ${ARGOS_DOCUMENTATION_DEPENDS})
+
 endif(ARGOS_DOCUMENTATION)
 
 #
 # Always install at least the README and the license
 #
 install(FILES
-  ${CMAKE_SOURCE_DIR}/../README
+  ${CMAKE_SOURCE_DIR}/../README.asciidoc
   ${CMAKE_BINARY_DIR}/../doc/GPL_V3
   DESTINATION doc/argos3)
