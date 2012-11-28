@@ -39,6 +39,12 @@ If you want to compile the simulator, you need:
 * _gsl_ >= 1.15
 * _FreeImage_ >= 3.15
 
+The OpenGL-based graphical visualization is compiled only if the following
+libraries are found:
+
+* _Qt_ >= 4.5
+* _freeglut_ >= 2.8.0
+
 If you want to create the documentation you need:
 
 * To create the API:
@@ -98,8 +104,8 @@ The compilation of ARGoS can be configured through a set of CMake options:
 | +ARGOS_DOCUMENTATION+   | _BOOLEAN_ | Create documentation (API, manpage, etc.) [+ON+]
 |======================================================================================================
 
-You can pass the wanted values from the command line. For instance, if you wanted to
-set explictly all the default values, you would write:
+You can pass the wanted values from the command line. For instance, if you
+wanted to set explictly all the default values, you would write:
 
  $ cd argos3/build_simulator
  $ cmake -DCMAKE_BUILD_TYPE=Debug \
@@ -112,16 +118,17 @@ set explictly all the default values, you would write:
          -DARGOS_DOCUMENTATION=ON \
          ../src
 
-IMPORTANT: When +ARGOS_BUILD_FOR+ is set to +simulator+, +ARGOS_THREADSAFE_LOG+ and
-           +ARGOS_DYNAMIC_LOADING+ must be ON.
+IMPORTANT: When +ARGOS_BUILD_FOR+ is set to +simulator+, +ARGOS_THREADSAFE_LOG+
+           and +ARGOS_DYNAMIC_LOADING+ must be ON.
 
-NOTE: If +CMAKE_BUILD_TYPE+ is set to +Debug+, the CMake scripts search for Google
-      Perftools (+libtmalloc.so+ and +libprofiler.so+) and use them if present.
+NOTE: If +CMAKE_BUILD_TYPE+ is set to +Debug+, the CMake scripts search for
+      Google Perftools (+libtmalloc.so+ and +libprofiler.so+), and use them if
+      present.
 
 TIP: For production environments, it is recommended to compile ARGoS with
      +CMAKE_BUILD_TYPE+ set to +Release+. If you want to debug ARGoS, it is
-     recommended to set +CMAKE_BUILD_TYPE+ to +Debug+. The other standard settings
-     (empty and +RelWithDebInfo+) are supported but should be avoided.
+     recommended to set +CMAKE_BUILD_TYPE+ to +Debug+. The other standard
+     settings (empty and +RelWithDebInfo+) are supported but should be avoided.
 
 Installing ARGoS from the compiled binaries
 --------------------------------------------
@@ -132,4 +139,21 @@ To install ARGoS after having compiled the sources, it is enough to write:
  $ cd build_simulator # or 'cd build_myrobot'
  $ sudo make install
 
-An easier option is to install ARGoS from a package distributed at http://iridia.ulb.ac.be/argos/download.php.
+Alternatively, one can create a package. To build all the packages supported by
+your system, run these commands:
+
+ $ cd argos3
+ $ cd build_simulator # or 'cd build_myrobot'
+ $ sudo make package
+
+This typically creates a self-extracting .tar.gz archive, a .tar.bz2 archive,
+a .zip archive, and a platform-specific archive (.deb, .rpm, or a MacOSX
+package). You can determine which packages to create by setting the variables
++CPACK_BINARY_DEB+, +CPACK_BINARY_RPM+, +CPACK_BINARY_STGZ+,
++CPACK_BINARY_TBZ2+, +CPACK_BINARY_TGZ+, +CPACK_BINARY_TZ+.
+
+IMPORTANT: the creation of source packages through the command
+           +make package_source+ is not supported.
+
+An easier option is to install ARGoS from a package distributed at
+http://iridia.ulb.ac.be/argos/download.php.
