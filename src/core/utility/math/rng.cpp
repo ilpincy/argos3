@@ -274,15 +274,18 @@ namespace argos {
    /****************************************/
 
    SInt32 CRandom::CRNG::Uniform(const CRange<SInt32>& c_range) {
-#ifndef CROSSCOMPILING
       SInt32 nRetVal;
-      m_pcIntegerRNGRange->MapValueIntoRange(nRetVal, gsl_rng_get(m_ptRNG), c_range);
+#ifndef CROSSCOMPILING
+      do {
+         m_pcIntegerRNGRange->MapValueIntoRange(nRetVal, gsl_rng_get(m_ptRNG), c_range);
+      } while(nRetVal == c_range.GetMax());
       return nRetVal;
 #else
       UInt32 unNumber;
       random_r(m_ptRNG, reinterpret_cast<int32_t*>(&unNumber));
-      SInt32 nRetVal;
-      m_pcIntegerRNGRange->MapValueIntoRange(nRetVal, unNumber, c_range);
+      do {
+         m_pcIntegerRNGRange->MapValueIntoRange(nRetVal, unNumber, c_range);
+      } while(nRetVal == c_range.GetMax());
       return nRetVal;
 #endif
    }
@@ -291,15 +294,18 @@ namespace argos {
    /****************************************/
 
    UInt32 CRandom::CRNG::Uniform(const CRange<UInt32>& c_range) {
-#ifndef CROSSCOMPILING
       UInt32 unRetVal;
-      m_pcIntegerRNGRange->MapValueIntoRange(unRetVal, gsl_rng_get(m_ptRNG), c_range);
+#ifndef CROSSCOMPILING
+      do {
+         m_pcIntegerRNGRange->MapValueIntoRange(unRetVal, gsl_rng_get(m_ptRNG), c_range);
+      } while(unRetVal == c_range.GetMax());
       return unRetVal;
 #else
       UInt32 unNumber;
       random_r(m_ptRNG, reinterpret_cast<int32_t*>(&unNumber));
-      UInt32 unRetVal;
-      m_pcIntegerRNGRange->MapValueIntoRange(unRetVal, unNumber, c_range);
+      do {
+         m_pcIntegerRNGRange->MapValueIntoRange(unRetVal, unNumber, c_range);
+      } while(unRetVal == c_range.GetMax());
       return unRetVal;
 #endif
    }
