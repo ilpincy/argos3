@@ -13,7 +13,6 @@ set(ARGOS_PACKAGE_DESCRIPTION "ARGoS (multi-physics multi-robot simulator)
  the possibility to run multiple physics engines at the same time.")
 set(ARGOS_PACKAGE_HOMEPAGE "http://iridia.ulb.ac.be/argos")
 set(ARGOS_PACKAGE_MAINTAINER "Carlo Pinciroli <ilpincy@gmail.com>")
-set(ARGOS_PACKAGE_REQUIRES "libgsl0-dev, freeglut3-dev, libqt4-opengl-dev, libxi-dev, libxmu-dev, libfreeimage-dev")
 
 #
 # General CPack configuration
@@ -30,9 +29,8 @@ set(CPACK_STRIP_FILES ON)
 
 #
 # Configuration for the Debian generator
-# TODO Testing
 #
-set(CPACK_DEBIAN_PACKAGE_DEPENDS ${ARGOS_PACKAGE_REQUIRES})
+set(CPACK_DEBIAN_PACKAGE_DEPENDS "gcc >= 4.2, g++ >= 4.2, cmake >= 2.6, libgsl0-dev >= 1.15, freeglut3-dev >= 2.8.0, libqt4-opengl-dev >= 4.5, libxi-dev, libxmu-dev, libfreeimage-dev >= 3.15")
 set(CPACK_DEBIAN_PACKAGE_DESCRIPTION ${ARGOS_PACKAGE_DESCRIPTION})
 set(CPACK_DEBIAN_PACKAGE_HOMEPAGE ${ARGOS_PACKAGE_HOMEPAGE})
 set(CPACK_DEBIAN_PACKAGE_MAINTAINER ${ARGOS_PACKAGE_MAINTAINER})
@@ -40,14 +38,13 @@ set(CPACK_DEBIAN_PACKAGE_SECTION "contrib/science")
 
 #
 # Configuration for the RPM generator
-# TODO Finish
 #
 set(CPACK_RPM_PACKAGE_DESCRIPTION ${ARGOS_PACKAGE_DESCRIPTION})
 set(CPACK_RPM_PACKAGE_URL ${ARGOS_PACKAGE_HOMEPAGE})
 set(CPACK_RPM_PACKAGE_GROUP "Development/Tools")
 set(CPACK_RPM_PACKAGE_LICENSE "GPL")
 set(CPACK_RPM_PACKAGE_REQUIRES ${ARGOS_PACKAGE_REQUIRES})
-set(CPACK_RPM_PACKAGE_URL ${ARGOS_PACKAGE_HOMEPAGE})
+set(CPACK_RPM_PACKAGE_URL "gcc >= 4.2, gcc-c++ >= 4.2, cmake >= 2.6, gsl >= 1.15, gsl-devel >= 1.15, freeglut-devel >= 2.8.0, libqt4-devel >= 4.5, libfreeimage3 >= 3.15, libfreeimageplus3 >= 3.15, freeimage-devel >= 3.15")
 
 #
 # Time to call CPack
