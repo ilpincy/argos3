@@ -63,4 +63,10 @@ configure_file(
   ${CMAKE_SOURCE_DIR}/scripts/argos3.conf.in
   ${CMAKE_BINARY_DIR}/argos3.conf
   @ONLY)
-install(FILES ${CMAKE_BINARY_DIR}/argos3.conf DESTINATION /etc/ld.so.conf.d/)
+install(FILES ${CMAKE_BINARY_DIR}/argos3.conf DESTINATION /etc/ld.so.conf.d)
+# Configuration file for pkg-config
+configure_file(
+  ${CMAKE_SOURCE_DIR}/scripts/argos3.pc.in
+  ${CMAKE_BINARY_DIR}/argos3_${ARGOS_BUILD_FOR}.pc
+  @ONLY)
+install(FILES ${CMAKE_BINARY_DIR}/argos3_${ARGOS_BUILD_FOR}.pc DESTINATION lib/pkgconfig)

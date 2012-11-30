@@ -43,10 +43,8 @@ distribution.
 #define DEBUG
 #endif
 
-#ifdef TIXML_USE_TICPP
-	#ifndef TIXML_USE_STL
-		#define TIXML_USE_STL
-	#endif
+#ifndef TIXML_USE_STL
+  #define TIXML_USE_STL
 #endif
 
 #ifdef TIXML_USE_STL
@@ -201,12 +199,8 @@ const TiXmlEncoding TIXML_DEFAULT_ENCODING = TIXML_ENCODING_UNKNOWN;
 	A Decleration contains: Attributes (not on tree)
 	@endverbatim
 */
-#ifdef TIXML_USE_TICPP
 #include "ticpprc.h"
 class TiXmlBase : public TiCppRC
-#else
-class TiXmlBase
-#endif
 {
 	friend class TiXmlNode;
 	friend class TiXmlElement;

@@ -20,8 +20,6 @@ IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#ifdef TIXML_USE_TICPP
-
 #include "ticpp.h"
 #include "ticpprc.h"
 #include "tinyxml.h"
@@ -1146,5 +1144,3 @@ bool TiCppRCImp::IsNull()
 {
 	return 0 == m_tiCppRC;
 }
-
-#endif // TIXML_USE_TICPP
