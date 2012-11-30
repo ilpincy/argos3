@@ -43,7 +43,7 @@ The OpenGL-based graphical visualization is compiled only if the following
 libraries are found:
 
 * _Qt_ >= 4.5
-* _freeglut_ >= 2.8.0
+* _freeglut_ >= 2.6.0
 
 If you want to create the documentation you need:
 
