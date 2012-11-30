@@ -54,3 +54,13 @@ endif(ARGOS_WRAPPERS)
 # Create documentation
 #
 include(${CMAKE_SOURCE_DIR}/cmake/ARGoSCreateDocs.cmake)
+
+#
+# Install extra stuff
+#
+# Configuration file for /etc/ld.so.conf.d/
+configure_file(
+  ${CMAKE_SOURCE_DIR}/scripts/argos3.conf.in
+  ${CMAKE_BINARY_DIR}/argos3.conf
+  @ONLY)
+install(FILES ${CMAKE_BINARY_DIR}/argos3.conf DESTINATION /etc/ld.so.conf.d/)
