@@ -417,7 +417,7 @@ namespace argos {
                   THROW_ARGOSEXCEPTION("Controller id \"" << strId << "\" duplicated");
                }
                /* Store XML info in map by id */
-               m_mapControllerConfig.insert(std::pair<std::string, TConfigurationNode&>(strId, *it));
+               m_mapControllerConfig.insert(std::pair<std::string, TConfigurationNode*>(strId, &(*it)));
             }
          }
          catch(CARGoSException& ex) {

@@ -318,7 +318,7 @@ namespace argos {
          if(it == m_mapControllerConfig.end()) {
             THROW_ARGOSEXCEPTION("Controller id \"" << str_controller_id << "\" not found");
          }
-         AssignController(str_controller_id, it->second, c_entity);
+         AssignController(str_controller_id, *(it->second), c_entity);
       }
       
       /**
@@ -343,7 +343,7 @@ namespace argos {
          CCI_Robot* pcRobot = new CCI_Robot();
          pcRobot->SetId(c_entity.GetId());
          /* Go through actuators */
-         TConfigurationNode& tActuators = GetNode(itController->second, "actuators");
+         TConfigurationNode& tActuators = GetNode(*(itController->second), "actuators");
          for(TConfigurationNodeIterator itAct = itAct.begin(&tActuators);
              itAct != itAct.end();
              ++itAct) {
@@ -359,7 +359,7 @@ namespace argos {
             pcRobot->AddActuator(itAct->Value(), pcCIAct);
          }
          /* Go through sensors */
-         TConfigurationNode& tSensors = GetNode(itController->second, "sensors");
+         TConfigurationNode& tSensors = GetNode(*(itController->second), "sensors");
          for(TConfigurationNodeIterator itSens = itSens.begin(&tSensors);
              itSens != itSens.end();
              ++itSens) {
@@ -375,7 +375,7 @@ namespace argos {
             pcRobot->AddSensor(itSens->Value(), pcCISens);
          }
          /* Create and configure the controller */
-         CCI_Controller* pcController = CFactory<CCI_Controller>::New(itController->second.Value());
+         CCI_Controller* pcController = CFactory<CCI_Controller>::New(itController->second->Value());
          pcController->SetRobot(*pcRobot);
          pcController->SetId(str_controller_id);
          pcController->Init(t_parameters);
@@ -399,7 +399,7 @@ namespace argos {
 
    private:
 
-      typedef std::map<std::string, TConfigurationNode&> TControllerConfigurationMap;
+      typedef std::map<std::string, TConfigurationNode*> TControllerConfigurationMap;
 
    private:
 
