@@ -126,7 +126,9 @@ namespace argos {
     * The default settings are white text on black background.
     */
    inline std::ostream& reset(std::ostream& c_os) {
-      c_os << SLogColor(ARGOS_LOG_ATTRIBUTE_RESET, ARGOS_LOG_COLOR_WHITE);
+      c_os << "\033["
+           << ARGOS_LOG_ATTRIBUTE_RESET
+           << "m";
       return c_os;
    }
 
