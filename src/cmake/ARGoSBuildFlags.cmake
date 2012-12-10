@@ -25,20 +25,10 @@ if(APPLE)
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -undefined dynamic_lookup")
   set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -undefined dynamic_lookup")
   set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -undefined dynamic_lookup")
+  set(ARGOS_DYNAMIC_LIBRARY_EXTENSION "dylib")
 else(APPLE)
   # Linux
   # Avoid discarding unused symbols to allow plugins to work
   set(CMAKE_SHARED_LINKER_FLAGS "-Wl,--no-as-needed")
+  set(ARGOS_DYNAMIC_LIBRARY_EXTENSION "so")
 endif(APPLE)
-
-#
-# Use double or float for Real?
-#
-if(ARGOS_USE_DOUBLE)
-  add_definitions(-DARGOS_DOUBLE_PRECISION)
-endif(ARGOS_USE_DOUBLE)
-
-#
-# Pass the install prefix to source
-#
-add_definitions(-DINSTALL_PREFIX="${CMAKE_INSTALL_PREFIX}")

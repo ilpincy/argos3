@@ -7,16 +7,15 @@
  *
  * The argos::Real type wraps the native C++ types <tt>float</tt> and <tt>double</tt>.
  * Whether argos::Real is defined as <tt>float</tt> or <tt>double</tt> depends on the
- * compilation flags set when building ARGoS. If nothing was specified, which is
- * the default, argos::Real will be defined as <tt>float</tt>. Otherwise, if the
- * macro <tt>-DARGOS_DOUBLE_PRECISION</tt> is specified, Real is defined as
- * <tt>double</tt>.
+ * compilation flags set when building ARGoS in file src/core/config.h.
  *
  * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */
 
 #ifndef DATATYPES_H
 #define DATATYPES_H
+
+#include <argos3/core/config.h>
 
 #ifdef __cplusplus
 #include <iostream>
@@ -32,11 +31,9 @@ namespace argos {
    /**
     * The basic floating point type in ARGoS.
     * Real is defined either as <tt>float</tt> or <tt>double</tt>, depending on the flags set
-    * for compilation. If you don't specify anything, ARGoS defaults to using <tt>float</tt>s.
-    * If you compiled with <tt>-DARGOS_DOUBLE_PRECISION</tt>, ARGoS will be compiled with
-    * <tt>double</tt>s.
+    * for compilation.
     */
-#ifdef ARGOS_DOUBLE_PRECISION
+#ifdef ARGOS_USE_DOUBLE
    typedef double Real;
 #else
    typedef float Real;

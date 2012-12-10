@@ -1,0 +1,14 @@
+/*
+ * System-dependent extension for dynamic libraries
+ */
+#define ARGOS_DYNAMIC_LIBRARY_EXTENSION "@ARGOS_DYNAMIC_LIBRARY_EXTENSION@"
+
+/*
+ * Install prefix for ARGoS
+ */
+#define ARGOS_INSTALL_PREFIX "@CMAKE_INSTALL_PREFIX@"
+
+/*
+ * Whether on not to use double
+ */
+#cmakedefine ARGOS_USE_DOUBLE

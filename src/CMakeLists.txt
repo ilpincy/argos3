@@ -11,7 +11,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 #
 # Include path points to the base source dir
 #
-include_directories(${CMAKE_SOURCE_DIR})
+include_directories(${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR})
 
 #
 # Make sure we are under Unix
@@ -39,6 +39,25 @@ include(${CMAKE_SOURCE_DIR}/cmake/ARGoSBuildChecks.cmake)
 # Set up CPack for later use
 #
 include(${CMAKE_SOURCE_DIR}/cmake/ARGoSPackaging.cmake)
+
+#
+# Create config file with settings that must be accessed from C++
+#
+configure_file(
+  ${CMAKE_SOURCE_DIR}/core/config.h.in
+  ${CMAKE_BINARY_DIR}/core/config.h
+  @ONLY)
+install(FILES ${CMAKE_BINARY_DIR}/core/config.h DESTINATION include/argos3/core)
+
+#
+# Create a soft link 'argos3' pointing to the build directory
+# It is necessary for the config.h file to be found by the compiler
+#
+if(NOT EXISTS ${CMAKE_BINARY_DIR}/argos3)
+  execute_process(
+    COMMAND ln -s . argos3
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+endif(NOT EXISTS ${CMAKE_BINARY_DIR}/argos3)
 
 #
 # Compile stuff

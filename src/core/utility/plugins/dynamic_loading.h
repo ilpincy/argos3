@@ -51,6 +51,12 @@ namespace argos {
        */
       static void UnloadLibrary(TDLHandle t_lib);
 
+      /**
+       * Loads all the dynamic libraries in the current ARGOS_PLUGIN_PATH
+       * Internally used to execute queries (<tt>argos3 --query</tt>)
+       */
+      static void LoadAllLibraries();
+
    private:
 
       /**

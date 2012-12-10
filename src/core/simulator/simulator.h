@@ -33,6 +33,7 @@ namespace argos {
    class CControllableEntity;
 }
 
+#include <argos3/core/config.h>
 #include <argos3/core/utility/math/rng.h>
 #include <argos3/core/utility/configuration/argos_configuration.h>
 #include <argos3/core/utility/datatypes/datatypes.h>
@@ -242,7 +243,7 @@ namespace argos {
        * @return The directory in which the ARGoS core was installed.
        */
       inline std::string GetInstallationDirectory() const {
-         return INSTALL_PREFIX;
+         return ARGOS_INSTALL_PREFIX;
       }
 
       /**
