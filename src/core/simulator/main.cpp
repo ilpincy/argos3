@@ -13,7 +13,7 @@
 
 #include <argos3/core/simulator/simulator.h>
 #include <argos3/core/utility/plugins/dynamic_loading.h>
-//#include <argos3/core/simulator/query_factories.h>
+#include <argos3/core/simulator/query_plugins.h>
 #include <argos3/core/simulator/argos_command_line_arg_parser.h>
 
 using namespace argos;
@@ -51,7 +51,7 @@ int main(int n_argc, char** ppch_argv) {
          case CARGoSCommandLineArgParser::ACTION_QUERY:
             /** @todo Plugin query machinery */
             CDynamicLoading::LoadAllLibraries();
-            //QueryPlugins(cACLAP.GetQuery());
+            QueryPlugins(cACLAP.GetQuery());
             break;
 
          case CARGoSCommandLineArgParser::ACTION_SHOW_HELP:

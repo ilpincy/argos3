@@ -65,6 +65,7 @@ set(ARGOS3_HEADERS_SIMULATOR
   simulator/sensor.h
   simulator/argos_command_line_arg_parser.h
   simulator/loop_functions.h
+  simulator/query_plugins.h
   simulator/simulator.h)
 # argos3/core/simulator/entity
 set(ARGOS3_HEADERS_SIMULATOR_ENTITY
@@ -207,7 +208,9 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
   #
   # Create core ARGoS3 executable
   #
-  add_executable(argos3 simulator/main.cpp)
+  add_executable(argos3
+    simulator/query_plugins.cpp
+    simulator/main.cpp)
   target_link_libraries(argos3 argos3core_${ARGOS_BUILD_FOR})
   link_googleperftools_to(argos3)
   #
