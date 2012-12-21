@@ -1,7 +1,7 @@
 /**
  * @file core/utility/math/angles.cpp
  * 
- * @author Carlo Pinciroli <cpinciro@ulb.ac.be>
+ * @author Carlo Pinciroli <ilpincy@gmail.com>
  */
 
 #include "angles.h"

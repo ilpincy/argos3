@@ -5,7 +5,7 @@
  *
  * This file provides the implementation of the Swarmanoid 3D Space.
  *
- * @author Carlo Pinciroli - <cpinciro@ulb.ac.be>
+ * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */
 
 #include <unistd.h>

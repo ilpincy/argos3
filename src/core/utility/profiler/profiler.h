@@ -1,7 +1,7 @@
 /**
  * @file core/utility/profiler/profiler.h
  *
- * @author Carlo Pinciroli - <cpinciro@ulb.ac.be>
+ * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */
 #ifndef PROFILER_H
 #define PROFILER_H

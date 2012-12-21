@@ -3,7 +3,7 @@
  *
  * @brief This file provides 
  *
- * @author Carlo Pinciroli - <cpinciro@ulb.ac.be>
+ * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */
 
 #include "color.h"

@@ -1,6 +1,6 @@
 /**
  * @file core/utility/math/vector2.cpp
- * @author Carlo Pinciroli <cpinciro@ulb.ac.be>
+ * @author Carlo Pinciroli <ilpincy@gmail.com>
  *
  * @brief Contains the definition of the CVector2 class.
  */

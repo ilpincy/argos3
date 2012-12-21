@@ -1,7 +1,7 @@
 /**
  * @file core/simulator/loop_functions.cpp
  *
- * @author Carlo Pinciroli - <cpinciro@ulb.ac.be>
+ * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */
 
 #include "loop_functions.h"

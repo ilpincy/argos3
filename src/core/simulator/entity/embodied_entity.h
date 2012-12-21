@@ -1,7 +1,7 @@
 /**
  * @file simulator/entity/embodied_entity.h
  *
- * @author Carlo Pinciroli - <cpinciroli@ulb.ac.be>
+ * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */
 
 #ifndef EMBODIED_ENTITY_H

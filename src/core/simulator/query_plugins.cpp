@@ -1,7 +1,7 @@
 /**
  * @file <argos3/core/simulator/query_plugins.cpp>
  *
- * @author Carlo Pinciroli - <cpinciro@ulb.ac.be>
+ * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */
 
 #include "query_plugins.h"

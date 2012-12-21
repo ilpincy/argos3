@@ -3,7 +3,7 @@
  *
  * @brief Contains the definition of some basic math functions.
  *
- * @author Carlo Pinciroli <cpinciro@ulb.ac.be>
+ * @author Carlo Pinciroli <ilpincy@gmail.com>
  */
 
 #ifndef GENERAL_H

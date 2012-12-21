@@ -1,7 +1,7 @@
 /**
  * @file core/simulator/entity/floor_entity.cpp
  *
- * @author Carlo Pinciroli - <cpinciroli@ulb.ac.be>
+ * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */
 
 #include "floor_entity.h"
@@ -209,7 +209,7 @@ namespace argos {
 
    REGISTER_ENTITY(CFloorEntity,
                    "floor",
-                   "Carlo Pinciroli [cpinciro@ulb.ac.be]",
+                   "Carlo Pinciroli [ilpincy@gmail.com]",
                    "1.0",
                    "It contains the properties of the arena floor.",
                    "The floor entity contains the properties of the arena floor. In the current\n"

@@ -16,7 +16,7 @@
 /**
  * @file <argos3/core/simulator/visualizations/qtopengl_user_functions.h>
  *
- * @author Carlo Pinciroli - <cpinciro@ulb.ac.be>
+ * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */
 
 #ifndef QTOPENGL_USER_FUNCTIONS_H

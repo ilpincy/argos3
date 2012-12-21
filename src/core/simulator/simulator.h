@@ -1,6 +1,6 @@
 /**
  * @mainpage Autonomous Robots GO Swarming
- * @author Carlo Pinciroli <cpinciro@ulb.ac.be>
+ * @author Carlo Pinciroli <ilpincy@gmail.com>
  *
  * @version  3.0
  * @see      http://iridia.ulb.ac.be/
@@ -17,7 +17,7 @@
  * CSimulator organizes the flow of data coming from the modules of ARGoS
  * and provides the main simulation loop.
  *
- * @author Carlo Pinciroli - <cpinciro@ulb.ac.be>
+ * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */
 
 #ifndef SIMULATOR_H

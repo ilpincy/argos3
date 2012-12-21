@@ -16,7 +16,7 @@
 /**
  * @file <simulator/visualizations/qtopengl_log_buffer.h>
  *
- * @author Carlo Pinciroli - <cpinciro@ulb.ac.be>
+ * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */
 
 #ifndef QTOPENGL_LOG_STREAM_H

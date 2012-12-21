@@ -5,7 +5,7 @@
  *
  * This file provides the definition of the class argos::CColor.
  *
- * @author Carlo Pinciroli - <cpinciro@ulb.ac.be>
+ * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */
 
 #ifndef COLOR_H

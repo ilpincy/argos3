@@ -16,7 +16,7 @@
 /**
  * @file <argos3/core/simulator/visualizations/qtopengl_user_functions.cpp>
  *
- * @author Carlo Pinciroli - <cpinciro@ulb.ac.be>
+ * @author Carlo Pinciroli - <ilpincy@gmail.com>
  * @author Giovanni Pini - <gpini@ulb.ac.be>
  */
 

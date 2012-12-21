@@ -3,7 +3,7 @@
  *
  * @brief This file provides the definition of the physics engine entity interface.
  *
- * @author Carlo Pinciroli - <cpinciro@ulb.ac.be>
+ * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */
 
 #ifndef PHYSICS_ENGINE_ENTITY_H

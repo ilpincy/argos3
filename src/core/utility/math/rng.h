@@ -53,7 +53,7 @@
  * argos::CRandom::CRNG* m_pcRNG = argos::CRandom::CreateRNG("my_category");
  * </pre>
  *
- * @author Carlo Pinciroli - <cpinciro@ulb.ac.be>
+ * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */
 
 #ifndef ARGOS_RANDOM

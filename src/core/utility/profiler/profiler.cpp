@@ -1,7 +1,7 @@
 /**
  * @file core/utility/profiler/profiler.cpp
  *
- * @author Carlo Pinciroli - <cpinciro@ulb.ac.be>
+ * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */
 
 #include "profiler.h"

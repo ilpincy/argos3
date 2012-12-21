@@ -16,7 +16,7 @@
 /**
  * @file <simulator/visualizations/qtopengl_camera.h>
  *
- * @author Carlo Pinciroli - <cpinciro@ulb.ac.be>
+ * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */
 
 #ifndef QTOPENGL_CAMERA_H

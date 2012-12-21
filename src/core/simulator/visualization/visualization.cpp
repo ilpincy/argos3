@@ -1,7 +1,7 @@
 /**
  * @file core/simulator/visualization/visualization.cpp
  *
- * @author Carlo Pinciroli - <cpinciro@ulb.ac.be>
+ * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */
 
 #include <argos3/core/simulator/visualization/visualization.h>

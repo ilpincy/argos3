@@ -1,7 +1,7 @@
 /**
  * @file core/simulator/space/space_hash_native.h
  *
- * @author Carlo Pinciroli - <cpinciro@ulb.ac.be>
+ * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */
 
 #ifndef SPACE_HASH_NATIVE_H

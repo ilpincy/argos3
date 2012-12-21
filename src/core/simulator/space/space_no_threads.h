@@ -5,7 +5,7 @@
  *
  * This file provides the definition of the Swarmanoid 3D Space.
  *
- * @author Carlo Pinciroli - <cpinciro@ulb.ac.be>
+ * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */
 
 #ifndef SPACE_NO_THREADS_H

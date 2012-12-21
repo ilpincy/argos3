@@ -16,7 +16,7 @@
 /**
  * @file <simulator/visualizations/qtopengl_main_window.h>
  *
- * @author Carlo Pinciroli - <cpinciro@ulb.ac.be>
+ * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */
 
 #ifndef QTOPENGL_MAIN_WINDOW_H

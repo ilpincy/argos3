@@ -1,7 +1,7 @@
 /**
  * @file core/simulator/entity/wifi_medium_entity.h
  *
- * @author Carlo Pinciroli - <cpinciroli@ulb.ac.be>
+ * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */
 
 #ifndef WIFI_MEDIUM_ENTITY_H

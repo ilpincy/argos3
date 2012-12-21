@@ -6,7 +6,7 @@
  * This file contains the definition of the CVisualization interface. Such interface
  * is the base for all the visualisations in ARGoS.
  *
- * @author Carlo Pinciroli - <cpinciro@ulb.ac.be>
+ * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */
 
 #ifndef VISUALIZATION_H

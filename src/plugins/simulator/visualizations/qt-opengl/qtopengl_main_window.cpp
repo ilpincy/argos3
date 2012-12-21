@@ -16,7 +16,7 @@
 /**
  * @file <simulator/visualizations/qtopengl_main_window.h>
  *
- * @author Carlo Pinciroli - <cpinciro@ulb.ac.be>
+ * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */
 
 #include "qtopengl_widget.h"

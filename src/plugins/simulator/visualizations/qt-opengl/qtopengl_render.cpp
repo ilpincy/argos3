@@ -22,7 +22,7 @@
  * is the base for all the visualisations (OpenGL, OGRE, gnuplot, blender,
  * etc.) in ARGOS.
  *
- * @author Carlo Pinciroli - <cpinciro@ulb.ac.be>
+ * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */
 
 #include "qtopengl_render.h"
@@ -119,7 +119,7 @@ namespace argos {
 
    REGISTER_VISUALIZATION(CQTOpenGLRender,
                           "qtopengl_render",
-                          "Carlo Pinciroli [cpinciro@ulb.ac.be]",
+                          "Carlo Pinciroli [ilpincy@gmail.com]",
                           "1.0",
                           "An interactive graphical renderer based on QT and OpenGL",
                           "The QT-OpenGL renderer is a graphical renderer based on QT >= 4.5 and OpenGL.\n"

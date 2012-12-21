@@ -22,7 +22,7 @@
  * is the base for all the visualisations (OpenGL, OGRE, gnuplot, blender,
  * etc.) in ARGOS.
  *
- * @author Carlo Pinciroli - <cpinciro@ulb.ac.be>
+ * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */
 
 #ifndef QT_OPENGL_RENDER_H

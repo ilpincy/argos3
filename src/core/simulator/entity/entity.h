@@ -7,7 +7,7 @@
  * entity, that is, the basic class that provides the interface for the
  * simulation of all the objects in the environment.
  *
- * @author Carlo Pinciroli - <cpinciroli@ulb.ac.be>
+ * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */
 
 #ifndef ENTITY_H

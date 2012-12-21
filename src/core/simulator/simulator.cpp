@@ -1,7 +1,7 @@
 /**
  * @file core/simulator/simulator.cpp
  *
- * @author Carlo Pinciroli - <cpinciro@ulb.ac.be>
+ * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */
 
 #include "simulator.h"

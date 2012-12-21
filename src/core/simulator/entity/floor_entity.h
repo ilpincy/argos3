@@ -1,7 +1,7 @@
 /**
  * @file core/simulator/entity/floor_entity.h
  *
- * @author Carlo Pinciroli - <cpinciroli@ulb.ac.be>
+ * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */
 
 #ifndef FLOOR_ENTITY_H

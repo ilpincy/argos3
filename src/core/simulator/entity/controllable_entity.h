@@ -1,7 +1,7 @@
 /**
  * @file core/simulator/entity/controllable_entity.h
  *
- * @author Carlo Pinciroli - <cpinciro@ulb.ac.be>
+ * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */
 
 #ifndef CONTROLLABLE_ENTITY_H

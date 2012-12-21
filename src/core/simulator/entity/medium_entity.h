@@ -1,7 +1,7 @@
 /**
  * @file core/simulator/entity/medium_entity.h
  *
- * @author Carlo Pinciroli - <cpinciroli@ulb.ac.be>
+ * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */
 
 #ifndef MEDIUM_ENTITY_H

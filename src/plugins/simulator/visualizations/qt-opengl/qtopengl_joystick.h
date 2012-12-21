@@ -19,7 +19,7 @@
  * @brief This file contains the definition of the QTOpenGLJoystick class.
  * It is heavily based on the code found at http://www.batcom-it.net/?p=59.
  *
- * @author Carlo Pinciroli - <cpinciro@ulb.ac.be>
+ * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */
 
 #ifndef QT_OPENGL_JOYSTICK_H

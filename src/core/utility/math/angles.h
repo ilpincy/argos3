@@ -10,7 +10,7 @@
  * For normal usage (main() code and all the class methods) you have to
  * use the normal CRadians::PI variable and its siblings.
  *
- * @author Carlo Pinciroli <cpinciro@ulb.ac.be>
+ * @author Carlo Pinciroli <ilpincy@gmail.com>
  */
 
 #ifndef ANGLES_H

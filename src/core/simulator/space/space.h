@@ -3,7 +3,7 @@
  *
  * @brief This file provides the definition of the space.
  *
- * @author Carlo Pinciroli - <cpinciro@ulb.ac.be>
+ * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */
 
 #ifndef SPACE_H

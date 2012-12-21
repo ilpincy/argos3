@@ -1,7 +1,7 @@
 /**
  * @file core/simulator/physics_engine/physics_engine.h
  *
- * @author Carlo Pinciroli - <cpinciro@ulb.ac.be>
+ * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */
 
 #ifndef PHYSICS_ENGINE_H
