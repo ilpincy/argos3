@@ -29,14 +29,12 @@ namespace argos {
 }
 
 #include <argos3/core/utility/configuration/base_configurable_resource.h>
-#include <argos3/core/utility/configuration/memento.h>
 #include <argos3/core/utility/datatypes/datatypes.h>
 #include <argos3/core/control_interface/ci_robot.h>
 
 namespace argos {
 
-   class CCI_Controller : public CBaseConfigurableResource,
-                          public CMemento {
+   class CCI_Controller : public CBaseConfigurableResource {
 
    public:
 
@@ -71,9 +69,6 @@ namespace argos {
       virtual bool IsControllerFinished() const {
          return false;
       }
-
-      virtual void SaveState(CByteArray& c_buffer) {}
-      virtual void LoadState(CByteArray& c_buffer) {}
 
    private:
 

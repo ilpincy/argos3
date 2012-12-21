@@ -15,14 +15,12 @@ namespace argos {
 
 #include <argos3/core/utility/datatypes/datatypes.h>
 #include <argos3/core/utility/configuration/base_configurable_resource.h>
-#include <argos3/core/utility/configuration/memento.h>
 
 #include <map>
 
 namespace argos {
 
-   class CCI_Sensor : public CBaseConfigurableResource,
-                      public CMemento {
+   class CCI_Sensor : public CBaseConfigurableResource {
 
    public:
 

@@ -54,35 +54,6 @@ namespace argos {
    /****************************************/
    /****************************************/
    
-   CRandom::CRNG::CRNG(CByteArray& c_buffer) :
-      m_ptRNG(NULL),
-#ifdef CROSSCOMPILING
-      m_pchRNGState(NULL),
-#endif
-      m_pcIntegerRNGRange(NULL) {
-      /* Get the seed of the generator */
-      c_buffer >> m_unSeed;
-      /* Get the type of the generator */
-      c_buffer >> m_strType;
-      /* Create the RNG */
-      CreateRNG();
-      /* Restore the state of the generator */
-#ifndef CROSSCOMPILING
-      size_t unStateSize = gsl_rng_size(m_ptRNG);
-      UInt8* pStateBuffer = new UInt8[unStateSize];
-      c_buffer.FetchBuffer(pStateBuffer, unStateSize);
-      ::memcpy(gsl_rng_state(m_ptRNG), pStateBuffer, unStateSize);
-      /* Cleanup */
-      delete[] pStateBuffer;
-#else
-      c_buffer.FetchBuffer(reinterpret_cast<UInt8*>(m_pchRNGState), 256);
-      setstate_r(m_pchRNGState, m_ptRNG);
-#endif
-   }
-
-   /****************************************/
-   /****************************************/
-
    CRandom::CRNG::CRNG(const CRNG& c_rng) :
       m_unSeed(c_rng.m_unSeed),
       m_strType(c_rng.m_strType),
@@ -167,55 +138,6 @@ namespace argos {
       delete m_pcIntegerRNGRange;
    }
 
-   /****************************************/
-   /****************************************/
-
-   void CRandom::CRNG::SaveState(CByteArray& c_buffer) {
-      /* Dump the seed of the generator */
-      c_buffer << m_unSeed;
-      /* Dump the type of the generator */
-      c_buffer << m_strType;
-      /* Dump the state of the generator */
-#ifndef CROSSCOMPILING
-      UInt8* pStateBuffer = reinterpret_cast<UInt8*>(gsl_rng_state(m_ptRNG));
-      c_buffer.AddBuffer(pStateBuffer, gsl_rng_size(m_ptRNG));
-#else
-      c_buffer.AddBuffer(reinterpret_cast<UInt8*>(m_pchRNGState), 256);
-#endif
-   }
-
-   /****************************************/
-   /****************************************/
-
-   void CRandom::CRNG::LoadState(CByteArray& c_buffer) {
-      /* Get the seed of the generator */
-      c_buffer >> m_unSeed;
-      /* Get the type of the generator */
-      std::string strReadType;
-      c_buffer >> strReadType;
-#ifndef CROSSCOMPILING
-      /* Check if the type read and the current type match */
-      if(strReadType != m_strType) {
-         /* The types don't match.
-            We need to recreate the generator with the right type */
-         m_strType = strReadType;
-         DisposeRNG();
-         CreateRNG();
-      }
-      /* Get the state of the generator */
-      size_t unStateSize = gsl_rng_size(m_ptRNG);
-      UInt8* pStateBuffer = new UInt8[unStateSize];
-      c_buffer.FetchBuffer(pStateBuffer, unStateSize);
-      /* Restore the state of the RNG */
-      ::memcpy(gsl_rng_state(m_ptRNG), pStateBuffer, unStateSize);
-      /* Cleanup */
-      delete[] pStateBuffer;
-#else
-      c_buffer.FetchBuffer(reinterpret_cast<UInt8*>(m_pchRNGState), 256);
-      setstate_r(m_pchRNGState, m_ptRNG);
-#endif
-   }
-   
    /****************************************/
    /****************************************/
 
@@ -396,16 +318,6 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   CRandom::CCategory::CCategory(CByteArray& c_buffer) :
-      m_unSeed(0),
-      m_cSeeder(0),
-      m_cSeedRange(1, std::numeric_limits<UInt32>::max()) {
-      LoadState(c_buffer);
-   }
-
-   /****************************************/
-   /****************************************/
-
    CRandom::CCategory::~CCategory() {
       while(! m_vecRNGList.empty()) {
          delete m_vecRNGList.back();
@@ -419,48 +331,6 @@ namespace argos {
    void CRandom::CCategory::SetSeed(UInt32 un_seed) {
       m_unSeed = un_seed;
       m_cSeeder.SetSeed(m_unSeed);
-   }
-
-   /****************************************/
-   /****************************************/
-
-   void CRandom::CCategory::SaveState(CByteArray& c_buffer) {
-      /* Dump id */
-      c_buffer << m_strId;
-      /* Dump seed */
-      c_buffer << m_unSeed;
-      /* Dump number of RNG in this category */
-      c_buffer << m_vecRNGList.size();
-      /* Dump the state of each RNG */
-      for(size_t i = 0; i < m_vecRNGList.size(); ++i) {
-         m_vecRNGList[i]->SaveState(c_buffer);
-      }
-      /* Dump seeder */
-      m_cSeeder.SaveState(c_buffer);
-   }
-
-   /****************************************/
-   /****************************************/
-
-   void CRandom::CCategory::LoadState(CByteArray& c_buffer) {
-      /* Empty the RNG list */
-      while(!m_vecRNGList.empty()) {
-         delete m_vecRNGList.back();
-         m_vecRNGList.pop_back();
-      }
-      /* Get id */
-      c_buffer >> m_strId;
-      /* Get seed */
-      c_buffer >> m_unSeed;
-      /* Get number of RNG in this category */
-      size_t unRNGNum;
-      c_buffer >> unRNGNum;
-      /* Create new generators */
-      for(size_t i = 0; i < unRNGNum; ++i) {
-         m_vecRNGList.push_back(new CRNG(c_buffer));
-      }
-      /* Get seeder */
-      m_cSeeder.LoadState(c_buffer);
    }
 
    /****************************************/
@@ -570,35 +440,6 @@ namespace argos {
                            UInt32 un_seed) {
       CHECK_CATEGORY(str_category);
       itCategory->second->SetSeed(un_seed);
-   }
-
-   /****************************************/
-   /****************************************/
-
-   void CRandom::SaveState(CByteArray& c_buffer) {
-      /* Dump the number of categories */
-      c_buffer << m_mapCategories.size();
-      /* Dump the categories */
-      for(std::map<std::string, CCategory*>::iterator itCategory = m_mapCategories.begin();
-          itCategory != m_mapCategories.end();
-          ++itCategory) {
-         itCategory->second->SaveState(c_buffer);
-      }
-   }
-
-   /****************************************/
-   /****************************************/
-
-   void CRandom::LoadState(CByteArray& c_buffer) {
-      /* Get the number of categories */
-      size_t unCategories;
-      c_buffer >> unCategories;
-      /* Restore the categories */
-      for(UInt32 i = 0; i < unCategories; ++i) {
-         CCategory* pcCat = new CCategory(c_buffer);
-         m_mapCategories.insert(
-            std::pair<std::string, CRandom::CCategory*>(pcCat->GetId(), pcCat));
-      }
    }
 
    /****************************************/

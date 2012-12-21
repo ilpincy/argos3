@@ -63,9 +63,9 @@ namespace argos {
    class CRandom;
 }
 
-#include <argos3/core/utility/configuration/memento.h>
 #include <argos3/core/utility/math/angles.h>
 #include <argos3/core/utility/math/range.h>
+
 #include <map>
 
 #ifndef CROSSCOMPILING
@@ -90,7 +90,7 @@ namespace argos {
        * This class is the real random number generator. You need an instance of this class
        * to be able to generate random numbers.
        */
-      class CRNG : public CMemento {
+      class CRNG {
 
       public:
 
@@ -102,18 +102,13 @@ namespace argos {
           */
          CRNG(UInt32 un_seed,
               const std::string& str_type = "mt19937");
-         /**
-          * Class constructor.
-          * To create a new RNG from user code, never use this method. Use CreateRNG() instead.
-          * Constructs the class from a byte array.
-          * @param c_buffer the byte array to deserialize.
-          */
-         CRNG(CByteArray& c_buffer);
+
          /**
           * Class copy constructor.
           * To create a new RNG from user code, never use this method. Use CreateRNG() instead.
           */
          CRNG(const CRNG& c_rng);
+
          /**
           * Class destructor.
           */
@@ -150,17 +145,6 @@ namespace argos {
          inline void SetType(const std::string& str_type) {
             m_strType = str_type;
          }
-
-         /**
-          * Saves the state of the RNG into a byte array.
-          * @param c_buffer the target byte array.
-          */
-         virtual void SaveState(CByteArray& c_buffer);
-         /**
-          * Loads the state of the RNG from a byte array.
-          * @param c_buffer the byte array.
-          */
-         virtual void LoadState(CByteArray& c_buffer);
 
          /**
           * Reset the RNG.
@@ -249,7 +233,7 @@ namespace argos {
        * The RNG category.
        * This class stores a specific category of RNGs.
        */
-      class CCategory : public CMemento {
+      class CCategory {
 
       public:
 
@@ -260,10 +244,7 @@ namespace argos {
           */
          CCategory(const std::string& str_id,
                    UInt32 un_seed);
-         /**
-          * Class copy constructor.
-          */
-         CCategory(CByteArray& c_buffer);
+
          /**
           * Class destructor.
           */
@@ -296,17 +277,6 @@ namespace argos {
           * @param un_seed the new seed of the category.
           */
          void SetSeed(UInt32 un_seed);
-
-         /**
-          * Saves the state of the RNG category into a byte array.
-          * @param c_buffer the target byte array.
-          */
-         virtual void SaveState(CByteArray& c_buffer);
-         /**
-          * Loads the state of the RNG category from a byte array.
-          * @param c_buffer the byte array.
-          */
-         virtual void LoadState(CByteArray& c_buffer);
 
          /**
           * Creates a new RNG inside this category.
@@ -387,17 +357,6 @@ namespace argos {
        */
       static void SetSeedOf(const std::string& str_category,
                             UInt32 un_seed);
-
-      /**
-       * Saves the state of all the RNG categories into a byte array.
-       * @param c_buffer the target byte array.
-       */
-      virtual void SaveState(CByteArray& c_buffer);
-      /**
-       * Loads the state of all the RNG categories from a byte array.
-       * @param c_buffer the byte array.
-       */
-      virtual void LoadState(CByteArray& c_buffer);
 
       /**
        * Resets all the RNG categories.
