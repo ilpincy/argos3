@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+                    |-----handy-ruler------------------------------------------------------|
+@CPACK_PACKAGE_NAME@: ARGoS (multi-physics multi-robot simulator)
+@CPACK_PACKAGE_NAME@:
+@CPACK_PACKAGE_NAME@: ARGoS is a highly scalable multi-robot simulator. Among its
+@CPACK_PACKAGE_NAME@: distinctive features, there are: (i) modularity (robots, devices,
+@CPACK_PACKAGE_NAME@: physics engines, visualizations and controllers are plug-ins), (ii)
+@CPACK_PACKAGE_NAME@: tunable accuracy, and (iii) the possibility to run multiple physics
+@CPACK_PACKAGE_NAME@: engines at the same time.
+@CPACK_PACKAGE_NAME@:
+@CPACK_PACKAGE_NAME@: 
+@CPACK_PACKAGE_NAME@: Packager: Carlo Pinciroli <ilpincy@gmail.com>
+@CPACK_PACKAGE_NAME@:

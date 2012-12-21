@@ -1,0 +1,54 @@
+#!/bin/bash -e
+
+# Slackware build script for ARGoS
+
+# Make sure only root can run this script
+if [ $EUID -ne 0 ]; then
+   echo "This script must be run as root" 1>&2
+   exit 1
+fi
+
+PRGNAM=@CPACK_PACKAGE_NAME@
+VERSION=${VERSION:-@CPACK_PACKAGE_VERSION@}
+BUILD=${BUILD:-1}
+TAG=${TAG:-_cp}
+
+# Automatically determine the architecture we're building on:
+if [ -z "$ARCH" ]; then
+  case "@ARGOS_PROCESSOR_ARCH@" in
+    i?86) ARCH=i486 ;;
+    arm*) ARCH=arm ;;
+# Unless $ARCH is already set, use uname -m for all other archs:
+       *) ARCH=@ARGOS_PROCESSOR_ARCH@ ;;
+  esac
+fi
+
+CWD=$(pwd)
+SRC=$CWD/../src
+TMP=${TMP:-/tmp}
+PKG=$TMP/package-$PRGNAM
+OUTPUT=${OUTPUT:-$CWD}
+
+rm -rf $PKG
+mkdir -p $PKG $OUTPUT
+make 
+make DESTDIR=$PKG install
+cd ..
+
+# Remove /etc/ld.so.conf.d, not supported by Slackware
+rm -rf $PKG/etc/ld.so.conf.d
+
+# Copy program documentation into the package
+cat $CWD/argos.SlackBuild > $PKG/usr/doc/argos3/$PRGNAM.SlackBuild
+
+# Copy the slack-desc and doinst.sh into package install/
+mkdir -p $PKG/install
+cat $CWD/slack-desc > $PKG/install/slack-desc
+cat $CWD/doinst.sh > $PKG/install/doinst.sh
+
+# Make the package; be sure to leave it in $OUTPUT
+cd $PKG
+/sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
+
+# Remove now useless package dir
+rm -rf $PKG

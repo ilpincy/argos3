@@ -51,6 +51,22 @@ set(CPACK_RPM_PACKAGE_URL ${CPACK_PACKAGE_HOMEPAGE})
 set(CPACK_RPM_POST_INSTALL_SCRIPT_FILE "${CMAKE_SOURCE_DIR}/scripts/argos_post_install.sh")
 
 #
+# Creation of SlackBuild script
+#
+configure_file(
+  ${CMAKE_SOURCE_DIR}/scripts/slackware/argos.SlackBuild.in
+  ${CMAKE_BINARY_DIR}/argos.SlackBuild
+  @ONLY)
+configure_file(
+  ${CMAKE_SOURCE_DIR}/scripts/slackware/slack-desc.in
+  ${CMAKE_BINARY_DIR}/slack-desc
+  @ONLY)
+configure_file(
+  ${CMAKE_SOURCE_DIR}/scripts/slackware/doinst.sh.in
+  ${CMAKE_BINARY_DIR}/doinst.sh
+  @ONLY)
+
+#
 # Time to call CPack
 #
 include(CPack)
