@@ -50,5 +50,5 @@ endif(ARGOS_DOCUMENTATION)
 #
 install(FILES
   ${CMAKE_SOURCE_DIR}/../README.asciidoc
-  ${CMAKE_BINARY_DIR}/../doc/GPL_V3
+  ${CMAKE_SOURCE_DIR}/../doc/ARGoS_LICENSE.txt
   DESTINATION doc/argos3)
