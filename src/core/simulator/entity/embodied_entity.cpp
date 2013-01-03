@@ -57,12 +57,12 @@ namespace argos {
          /* Update space position */
          SetPosition(c_position);
          SetOrientation(c_orientation);
-	 if( HasParent() ) {
-	    CComposableEntity* pcEntity = dynamic_cast<CComposableEntity*>(&GetParent());
-	    if( pcEntity != NULL ) {
-	       pcEntity->UpdateComponents();
-	    }
-	 }
+         if( HasParent() ) {
+            CComposableEntity* pcEntity = dynamic_cast<CComposableEntity*>(&GetParent());
+            if( pcEntity != NULL ) {
+               pcEntity->Update();
+            }
+         }
          return true;
       }
       else {

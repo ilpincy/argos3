@@ -67,9 +67,11 @@ namespace argos {
          m_pcColorSource->SaveAsImage(str_path);
       }
 
-      inline virtual std::string GetTypeDescription() const {
+      virtual std::string GetTypeDescription() const {
          return "floor_entity";
       }
+
+      virtual void Update() {}
 
    private:
 

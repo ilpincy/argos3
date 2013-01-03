@@ -53,6 +53,15 @@ TYPE* CFactory<TYPE>::New(const std::string& str_label) {
 /****************************************/
 
 template<typename TYPE>
+bool CFactory<TYPE>::Exists(const std::string& str_label) {
+   typename TTypeMap::iterator it = GetTypeMap().find(str_label);
+   return(it != GetTypeMap().end());
+}
+
+/****************************************/
+/****************************************/
+
+template<typename TYPE>
 void CFactory<TYPE>::Print(std::ostream& c_os) {
    typename TTypeMap::iterator it;
    c_os << "Symbols:" << std::endl;

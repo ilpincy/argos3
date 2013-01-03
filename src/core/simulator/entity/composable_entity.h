@@ -28,27 +28,37 @@ namespace argos {
          CEntity(pc_parent) {}
       virtual ~CComposableEntity() {}
 
-      virtual CEntity& GetComponent(const std::string& str_component) = 0;
+      virtual void AddComponent(CEntity& c_component);
 
-      template <class E> E& GetComponent(const std::string& str_component) {
+      virtual void RemoveComponent(const std::string& str_component);
+
+      virtual CEntity& GetComponent(const std::string& str_component);
+
+      template <class E>
+      E& GetComponent(const std::string& str_component) {
          E* pcComponent = dynamic_cast<E*>(&GetComponent(str_component));
          if(pcComponent != NULL) {
             return *pcComponent;
          }
          else {
-            THROW_ARGOSEXCEPTION("Entity \"" <<
-                                 GetId() <<
-                                 "\" does not have component of type");
+            THROW_ARGOSEXCEPTION("Type conversion failed for component type \"" << str_component << "\" of entity \"" << GetId());
          }
       }
 
-      virtual bool HasComponent(const std::string& str_component) = 0;
+      virtual bool HasComponent(const std::string& str_component);
 
-      inline virtual std::string GetTypeDescription() const {
-         return "composable_entity";
-      }
+      virtual void Update();
 
-      virtual void UpdateComponents() = 0;
+   protected:
+
+      CEntity::TMultiMap::iterator FindComponent(const std::string& str_component);
+
+      virtual void UpdateComponents();
+
+   private:
+
+      CEntity::TMultiMap m_mapComponents;
+
    };
 }
 

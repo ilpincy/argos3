@@ -104,6 +104,7 @@ namespace argos {
       /* General configuration */
       InitFramework(GetNode(m_tConfigurationRoot, "framework"));
 
+      /* Initialize controllers */
       InitControllers(GetNode(m_tConfigurationRoot, "controllers"));
 
       /* Create loop functions */
@@ -134,7 +135,13 @@ namespace argos {
       }
 
       /* Initialise visualization */
-      InitVisualization(GetNode(m_tConfigurationRoot, "visualization"));
+      if(NodeExists(m_tConfigurationRoot, "visualization")) {
+         InitVisualization(GetNode(m_tConfigurationRoot, "visualization"));
+      }
+      else {
+         LOGERR << "[WARNING] No visualization selected." << std::endl;
+         m_pcVisualization = new CVisualization();
+      }
 
       /* Start profiling, if needed */
       if(IsProfiling()) {
@@ -485,16 +492,10 @@ namespace argos {
          /* Consider only the first visualization */
          TConfigurationNodeIterator itVisualization;
          itVisualization = itVisualization.begin(&t_tree);
-         if(itVisualization != NULL) {
-            /* Create the visualization */
-            m_pcVisualization = CFactory<CVisualization>::New(itVisualization->Value());
-            /* Initialize the visualization */
-            m_pcVisualization->Init(*itVisualization);
-         }
-         else {
-            LOGERR << "[WARNING] No visualization selected." << std::endl;
-            m_pcVisualization = new CVisualization();
-         }
+         /* Create the visualization */
+         m_pcVisualization = CFactory<CVisualization>::New(itVisualization->Value());
+         /* Initialize the visualization */
+         m_pcVisualization->Init(*itVisualization);
       }
       catch(CARGoSException& ex) {
          THROW_ARGOSEXCEPTION_NESTED("Failed to initialize the visualization. Parse error in the <visualization> subtree.", ex);
@@ -555,12 +556,13 @@ namespace argos {
                      /* Use the <parameters> section in the robot entity */
                      TConfigurationNode& tControllerParameters = GetNode(*itEntities, "parameters");
                      AssignController(cControllableEntity.GetControllerId(),
-                                                         tControllerParameters,
-                                                         *pcComposableEntity);
+                                      tControllerParameters,
+                                      *pcComposableEntity);
                   }
                   else {
+                     /* Use the <parameters> section in the controller section */
                      AssignController(cControllableEntity.GetControllerId(),
-                                                         *pcComposableEntity);
+                                      *pcComposableEntity);
                   }
                }
             }

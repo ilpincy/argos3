@@ -24,7 +24,7 @@ namespace argos {
 #include <argos3/core/utility/plugins/vtable.h>
 
 #include <vector>
-#include <map>
+#include <tr1/unordered_map>
 #include <string>
 
 namespace argos {
@@ -37,7 +37,8 @@ namespace argos {
       ENABLE_VTABLE();
 
       typedef std::vector<CEntity*> TVector;
-      typedef std::map<std::string, CEntity*> TMap;
+      typedef std::tr1::unordered_map<std::string, CEntity*> TMap;
+      typedef std::tr1::unordered_multimap<std::string, CEntity*> TMultiMap;
 
    public:
 
@@ -68,6 +69,8 @@ namespace argos {
       }
 
       virtual std::string GetTypeDescription() const = 0;
+
+      virtual void Update() = 0;
 
    private:
 

@@ -141,6 +141,7 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
     simulator/loop_functions.cpp
     simulator/simulator.cpp
     ${ARGOS3_HEADERS_SIMULATOR_ENTITY}
+    simulator/entity/composable_entity.cpp
     simulator/entity/controllable_entity.cpp
     simulator/entity/embodied_entity.cpp
     simulator/entity/entity.cpp
