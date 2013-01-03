@@ -1,0 +1,112 @@
+#!/bin/bash -e
+
+CWD=$(pwd)
+
+#
+# Build code
+#
+function build {
+    ( cd ../build && make -j2 )
+}
+
+#
+# Install stuff in local repository
+#
+function install {
+    rm -rf ../install
+    mkdir ../install
+    ( cd ../build && make DESTDIR=../install install )
+}
+
+#
+# Dump headers in specified file
+#
+function dump_headers {
+    OUTFILE=$1
+    find . -type f -name '*.h' | sort > ${OUTFILE}
+}
+
+#
+# Compare the lists of source and installed headers
+#
+function check_headers {
+    echo "Checking headers..."
+    build > /dev/null
+    install > /dev/null
+    dump_headers source_headers
+    ( cd ../install/usr/include/argos3 && dump_headers ${CWD}/installed_headers )
+    echo "source <, installed >"
+    diff source_headers installed_headers
+    rm -f source_headers installed_headers
+}
+
+#
+# Fix all mentions of argos2
+#
+function fix_argos2 {
+    echo "Creating list of files to change..."
+    LIST=fix_argos2_list.txt
+    find . -type f \( -name '*.h' -o -name '*.cpp' \) -print0 | xargs -0 -e grep -l -e argos2 > ${LIST}
+    echo "Changing argos2 in argos3..."
+    sed -i -e 's|argos2|argos3|g' $(cat ${LIST})
+    echo "Checking once more:"
+    find . -type f \( -name '*.h' -o -name '*.cpp' \) -print0 | xargs -0 -e grep -l -e argos2
+    rm -f ${LIST}
+}
+
+#
+# Fix
+# - "argos3/common" into "argos3/core"
+# - "argos3/simulator" into "argos3/core/simulator"
+#
+function fix_includes {
+    echo "Creating list of files to change..."
+    LIST=fix_includes_list.txt
+    find . -type f \( -name '*.h' -o -name '*.cpp' \) -print0 | xargs -0 -e grep -l -e argos3/common -e argos3/simulator > ${LIST}
+    echo "Changing includes..."
+    sed -i -e 's|argos3/common|argos3/core|g' -e 's|argos3/simulator|argos3/core/simulator|g' $(cat ${LIST})
+    echo "Checking once more:"
+    find . -type f \( -name '*.h' -o -name '*.cpp' \) -print0 | xargs -0 -e grep -l -e argos3/common -e argos3/simulator
+    rm -f ${LIST}
+}
+
+function fix_email {
+    echo "Creating list of files to change..."
+    LIST=fix_email_list.txt
+    find . -type f \( -name '*.h' -o -name '*.cpp' \) -print0 | xargs -0 -e grep -l -e cpinciro > ${LIST}
+    echo "Changing email..."
+    sed -i -e 's|cpinciro@ulb.ac.be|ilpincy@gmail.com|g' -e 's|cpinciroli@ulb.ac.be|ilpincy@gmail.com|g' -e 's|cpinciroli@iridia.ulb.ac.be|ilpincy@gmail.com|g' $(cat ${LIST})
+    echo "Checking once more:"
+    find . -type f \( -name '*.h' -o -name '*.cpp' \) -print0 | xargs -0 -e grep -l -e cpinciro > ${LIST}
+    rm -f ${LIST}
+}
+
+#
+# Check command line parameters
+#
+if [ $# -ne 1 ]; then
+    echo "Usage:"
+    echo "   $0 { check_headers | fix_argos2 | fix_includes | fix_email }"
+    exit 1
+fi
+
+#
+# Execute wanted operation
+#
+case $1 in
+    "check_headers")
+        check_headers
+        ;;
+    "fix_argos2")
+        fix_argos2
+        ;;
+    "fix_includes")
+        fix_includes
+        ;;
+    "fix_email")
+        fix_email
+        ;;
+    *)
+        echo "Unrecognized operation \"${OP}\""
+        ;;
+esac
