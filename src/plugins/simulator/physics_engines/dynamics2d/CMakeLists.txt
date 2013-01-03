@@ -35,8 +35,6 @@ set(ARGOS3_HEADERS_PLUGINS_SIMULATOR_PHYSICS_ENGINES_DYNAMICS2D_CHIPMUNK
 # argos3/plugins/simulator/physics_engines/dynamics2d/chipmunk-physics/include
 # Headers of the 2d dynamics physics engine
 set(ARGOS3_HEADERS_PLUGINS_SIMULATOR_PHYSICS_ENGINES_DYNAMICS2D
-  dynamics2d_add_visitor.h
-  dynamics2d_remove_visitor.h
   dynamics2d_entity.h
   dynamics2d_engine.h)
 

@@ -46,7 +46,9 @@ set(ARGOS3_HEADERS_UTILITY_MATH
   utility/math/segment.h
   utility/math/vector2.h
   utility/math/vector3.h
-  utility/math/rng.h
+  utility/math/rng.h)
+# argos3/core/utility/math/matrix
+set(ARGOS3_HEADERS_UTILITY_MATH_MATRIX
   utility/math/matrix/matrix.h
   utility/math/matrix/squarematrix.h
   utility/math/matrix/rotationmatrix2.h
@@ -74,6 +76,7 @@ set(ARGOS3_HEADERS_SIMULATOR_ENTITY
   simulator/entity/embodied_entity.h
   simulator/entity/entity.h
   simulator/entity/floor_entity.h
+  simulator/entity/gripper_equipped_entity.h
   simulator/entity/medium_entity.h
   simulator/entity/positional_entity.h
   simulator/entity/wifi_medium_entity.h)
@@ -117,6 +120,7 @@ set(ARGOS3_SOURCES_CORE
   ${ARGOS3_HEADERS_UTILITY_PROFILER}
   utility/profiler/profiler.cpp
   ${ARGOS3_HEADERS_UTILITY_MATH}
+  ${ARGOS3_HEADERS_UTILITY_MATH_MATRIX}
   utility/math/angles.cpp
   utility/math/segment.cpp
   utility/math/vector2.cpp
@@ -192,6 +196,7 @@ install(FILES ${ARGOS3_HEADERS_UTILITY_LOGGING}               DESTINATION includ
 install(FILES ${ARGOS3_HEADERS_UTILITY_PLUGINS}               DESTINATION include/argos3/core/utility/plugins)
 install(FILES ${ARGOS3_HEADERS_UTILITY_PROFILER}              DESTINATION include/argos3/core/utility/profiler)
 install(FILES ${ARGOS3_HEADERS_UTILITY_MATH}                  DESTINATION include/argos3/core/utility/math)
+install(FILES ${ARGOS3_HEADERS_UTILITY_MATH_MATRIX}           DESTINATION include/argos3/core/utility/math/matrix)
 install(FILES ${ARGOS3_HEADERS_CONTROLINTERFACE}              DESTINATION include/argos3/core/control_interface)
 if(ARGOS_BUILD_FOR_SIMULATOR)
   install(FILES ${ARGOS3_HEADERS_SIMULATOR}                     DESTINATION include/argos3/core/simulator)

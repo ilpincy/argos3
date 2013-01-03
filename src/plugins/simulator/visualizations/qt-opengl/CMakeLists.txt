@@ -16,6 +16,7 @@ endif(SDL_FOUND)
 set(ARGOS3_HEADERS_PLUGINS_SIMULATOR_VISUALIZATIONS_QTOPENGL
   ${ARGOS3_MOC_HEADERS_PLUGINS_SIMULATOR_VISUALIZATIONS_QTOPENGL}
   qtopengl_render.h
+  qtopengl_log_stream.h
   qtopengl_user_functions.h)
 
 #
