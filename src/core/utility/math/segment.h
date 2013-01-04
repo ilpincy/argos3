@@ -1,3 +1,9 @@
+
+/**
+ * @file <argos3/core/utility/math/segment.h>
+ *
+ * @author Carlo Pinciroli <ilpincy@gmail.com>
+ */
 #ifndef SEGMENT_H
 #define SEGMENT_H
 

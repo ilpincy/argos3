@@ -1,5 +1,5 @@
 /**
- * @file core/control_interface/ci_robot.h
+ * @file <argos3/core/control_interface/ci_robot.cpp>
  *
  * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */

@@ -1,3 +1,9 @@
+
+/**
+ * @file <argos3/core/utility/math/ray.h>
+ *
+ * @author Carlo Pinciroli <ilpincy@gmail.com>
+ */
 #ifndef CRAY_H
 #define CRAY_H
 

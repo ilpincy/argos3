@@ -1,5 +1,5 @@
 /**
- * @file core/utility/configuration/argos_exception.h
+ * @file <argos3/core/utility/configuration/argos_exception.h>
  *
  * @brief This file provides the definition of the main ARGoS exception.
  *

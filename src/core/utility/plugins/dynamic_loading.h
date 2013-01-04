@@ -1,5 +1,5 @@
 /**
- * @file core/utility/plugins/dynamic_loading.h
+ * @file <argos3/core/utility/plugins/dynamic_loading.h>
  *
  * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */

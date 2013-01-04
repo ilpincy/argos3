@@ -1,5 +1,5 @@
 /**
- * @file <argos3/core/simulator/space/entities/rab_equipped_entity.h>
+ * @file <argos3/core/simulator/entity/rab_equipped_entity.h>
  *
  * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */

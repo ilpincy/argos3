@@ -1,5 +1,5 @@
 /**
- * @file core/utility/math/angles.cpp
+ * @file <argos3/core/utility/math/angles.cpp>
  * 
  * @author Carlo Pinciroli <ilpincy@gmail.com>
  */

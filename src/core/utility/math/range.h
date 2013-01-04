@@ -1,3 +1,9 @@
+
+/**
+ * @file <argos3/core/utility/math/range.h>
+ *
+ * @author Carlo Pinciroli <ilpincy@gmail.com>
+ */
 #ifndef CRANGE_H
 #define CRANGE_H
 

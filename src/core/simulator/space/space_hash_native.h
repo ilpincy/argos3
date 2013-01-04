@@ -1,5 +1,5 @@
 /**
- * @file core/simulator/space/space_hash_native.h
+ * @file <argos3/core/simulator/space/space_hash_native.h>
  *
  * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */

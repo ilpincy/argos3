@@ -1,3 +1,9 @@
+
+/**
+ * @file <argos3/testing/unit/test-range.cpp>
+ *
+ * @author Carlo Pinciroli <ilpincy@gmail.com>
+ */
 #include <argos3/core/utility/math/rng.h>
 #include <argos3/core/utility/string_utilities.h>
 

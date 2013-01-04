@@ -1,5 +1,5 @@
 /**
- * @file <argos3/core/simulator/space/entities/led_equipped_entity.cpp>
+ * @file <argos3/core/simulator/entity/led_equipped_entity.cpp>
  *
  * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */

@@ -1,5 +1,5 @@
 /**
- * @file core/utility/math/vector3.h
+ * @file <argos3/core/utility/math/vector3.h>
  *
  * @brief This file provides the definition of
  *

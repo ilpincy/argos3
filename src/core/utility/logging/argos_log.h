@@ -1,5 +1,5 @@
 /**
- * @file core/utility/logging/argos_log.h
+ * @file <argos3/core/utility/logging/argos_log.h>
  *
  * @brief This file provides the ARGoSLogger class.
  *

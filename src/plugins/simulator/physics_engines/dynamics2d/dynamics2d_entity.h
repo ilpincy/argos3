@@ -1,5 +1,5 @@
 /**
- * @file <argos3/plugins/simulator/physics_engines/dynamics2d_entity.h>
+ * @file <argos3/plugins/simulator/physics_engines/dynamics2d/dynamics2d_entity.h>
  *
  * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */

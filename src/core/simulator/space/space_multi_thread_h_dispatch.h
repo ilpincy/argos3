@@ -1,5 +1,5 @@
 /**
- * @file simulator/space/space_multi_thread_h_dispatch.h
+ * @file <argos3/core/simulator/space/space_multi_thread_h_dispatch.h>
  *
  * @brief This file provides the definition of the Swarmanoid 3D Space.
  *

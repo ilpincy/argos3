@@ -1,5 +1,5 @@
 /**
- * @file <simulator/space/entities/footbot_entity.cpp>
+ * @file <argos3/plugins/robots/foot-bot/simulator/footbot_entity.cpp>
  *
  * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */

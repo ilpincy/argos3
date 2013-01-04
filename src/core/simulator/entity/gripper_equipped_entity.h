@@ -1,5 +1,5 @@
 /**
- * @file <argos3/core/simulator/entity/gripper_entity.h>
+ * @file <argos3/core/simulator/entity/gripper_equipped_entity.h>
  *
  * This file defines the class CGripperEquippedEntity. This class provides a
  * component that gripper-equipped robots can use manage for gripping other

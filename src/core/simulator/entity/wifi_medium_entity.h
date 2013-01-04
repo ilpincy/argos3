@@ -1,5 +1,5 @@
 /**
- * @file core/simulator/entity/wifi_medium_entity.h
+ * @file <argos3/core/simulator/entity/wifi_medium_entity.h>
  *
  * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */

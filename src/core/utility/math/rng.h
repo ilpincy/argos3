@@ -1,5 +1,5 @@
 /**
- * @file core/utility/math/rng.h
+ * @file <argos3/core/utility/math/rng.h>
  *
  * @brief This file provides the definition of the random number generator of ARGoS.
  *

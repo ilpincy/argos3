@@ -9,7 +9,7 @@
  */
 
 /**
- * @file core/simulator/simulator.h
+ * @file <argos3/core/simulator/simulator.h>
  *
  * @brief This file provides the definition of class CSimulator, the core class of ARGoS.
  *

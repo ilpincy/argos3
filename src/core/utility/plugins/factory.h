@@ -1,5 +1,5 @@
 /**
- * @file core/utility/plugins/factory.h
+ * @file <argos3/core/utility/plugins/factory.h>
  *
  * @brief This file defines the basic factory template.
 

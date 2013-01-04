@@ -1,5 +1,5 @@
 /**
- * @file core/utility/string_utilities.h
+ * @file <argos3/core/utility/string_utilities.h>
  *
  * This file provides the definition of some useful string-related utilities.
  *

@@ -1,5 +1,5 @@
 /**
- * @file core/utility/datatypes/any.h
+ * @file <argos3/core/utility/datatypes/any.h>
  *
  * @brief This file provides the definition of the any type.
  *

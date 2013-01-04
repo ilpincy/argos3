@@ -1,5 +1,5 @@
 /**
- * @file simulator/entity/embodied_entity.h
+ * @file <argos3/core/simulator/entity/embodied_entity.h>
  *
  * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */

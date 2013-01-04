@@ -1,5 +1,5 @@
  /**
- * @file argos2/common/utility/math/transformationmatrix3.h
+ * @file <argos3/core/utility/math/matrix/transformationmatrix3.h>
  *
  * @brief Contains the definition of a 3D transformation matrix (4x4)
  *

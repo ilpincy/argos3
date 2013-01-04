@@ -1,5 +1,5 @@
 /**
- * @file core/simulator/visualization/visualization.h
+ * @file <argos3/core/simulator/visualization/visualization.h>
  *
  * @brief This file contains the definition of the CVisualization interface.
  *

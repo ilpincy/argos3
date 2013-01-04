@@ -1,5 +1,5 @@
 /**
- * @file core/simulator/actuator.h
+ * @file <argos3/core/simulator/actuator.h>
  *
  * @brief This file provides the definition of
  *

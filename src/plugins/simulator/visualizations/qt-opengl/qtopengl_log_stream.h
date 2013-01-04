@@ -1,5 +1,5 @@
 /**
- * @file <simulator/visualizations/qtopengl_log_buffer.h>
+ * @file <argos3/plugins/simulator/visualizations/qt-opengl/qtopengl_log_stream.h>
  *
  * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */

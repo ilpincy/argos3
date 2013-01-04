@@ -1,5 +1,5 @@
 /**
- * @file core/utility/math/angles.h
+ * @file <argos3/core/utility/math/angles.h>
  * 
  * @brief Contains definitions for angle management, such as the CRadians and CDegrees classes.
  * 

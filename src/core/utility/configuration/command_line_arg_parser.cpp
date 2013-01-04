@@ -1,5 +1,5 @@
 /**
- * @file core/utility/configuration/command_line_arg_parser.cpp
+ * @file <argos3/core/utility/configuration/command_line_arg_parser.cpp>
  *
  * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */

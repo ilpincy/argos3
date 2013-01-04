@@ -1,5 +1,5 @@
 /**
- * @file core/simulator/visualization/visualization.cpp
+ * @file <argos3/core/simulator/visualization/visualization.cpp>
  *
  * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */

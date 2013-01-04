@@ -1,3 +1,9 @@
+
+/**
+ * @file <argos3/core/utility/math/segment.cpp>
+ *
+ * @author Carlo Pinciroli <ilpincy@gmail.com>
+ */
 #include "segment.h"
 
 namespace argos {

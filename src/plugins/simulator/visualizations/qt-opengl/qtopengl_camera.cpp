@@ -1,5 +1,5 @@
 /**
- * @file <simulator/visualizations/qtopengl_camera.cpp>
+ * @file <argos3/plugins/simulator/visualizations/qt-opengl/qtopengl_camera.cpp>
  *
  * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */

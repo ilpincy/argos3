@@ -1,5 +1,5 @@
 /**
- * @file core/simulator/simulator.cpp
+ * @file <argos3/core/simulator/simulator.cpp>
  *
  * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */

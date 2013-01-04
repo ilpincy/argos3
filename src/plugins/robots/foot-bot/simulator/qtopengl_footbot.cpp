@@ -1,5 +1,5 @@
 /**
- * @file <simulator/visualizations/models/qtopengl_footbot.h>
+ * @file <argos3/plugins/robots/foot-bot/simulator/qtopengl_footbot.cpp>
  *
  * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */

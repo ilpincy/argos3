@@ -1,5 +1,5 @@
 /**
- * @file core/simulator/entity/floor_entity.h
+ * @file <argos3/core/simulator/entity/floor_entity.h>
  *
  * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */

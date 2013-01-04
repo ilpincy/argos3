@@ -1,5 +1,5 @@
 /**
- * @file core/utility/logging/argos_colored_text.h
+ * @file <argos3/core/utility/logging/argos_colored_text.h>
  *
  * @brief This file provides a list of functions to add colors to std::ostreams.
  *

@@ -1,5 +1,5 @@
 /**
- * @file <argos3/core/simulator/physics_engines/dynamics2d_footbot_entity.h>
+ * @file <argos3/plugins/robots/foot-bot/simulator/dynamics2d_footbot_entity.h>
  *
  * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */

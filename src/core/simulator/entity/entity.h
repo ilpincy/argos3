@@ -1,5 +1,5 @@
 /**
- * @file core/simulator/entity/entity.h
+ * @file <argos3/core/simulator/entity/entity.h>
  *
  * @brief This file contains the definition of an entity.
  *

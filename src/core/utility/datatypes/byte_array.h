@@ -1,5 +1,5 @@
 /**
- * @file core/utility/datatypes/byte_array.h
+ * @file <argos3/core/utility/datatypes/byte_array.h>
  *
  * @brief Defines the byte array class.
  *

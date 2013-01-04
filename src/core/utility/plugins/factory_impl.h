@@ -1,3 +1,9 @@
+
+/**
+ * @file <argos3/core/utility/plugins/factory_impl.h>
+ *
+ * @author Carlo Pinciroli <ilpincy@gmail.com>
+ */
 /**
  * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */

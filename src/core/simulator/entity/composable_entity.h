@@ -1,5 +1,5 @@
 /**
- * @file simulator/entity/composable_entity.h
+ * @file <argos3/core/simulator/entity/composable_entity.h>
  *
  * @brief This file contains the definition of an entity.
  *

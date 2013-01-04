@@ -1,5 +1,5 @@
 /**
- * @file core/simulator/sensor.h
+ * @file <argos3/core/simulator/sensor.h>
  *
  * @brief This file provides the definition of
  *

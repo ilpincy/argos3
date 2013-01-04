@@ -1,5 +1,5 @@
 /**
- * @file core/simulator/main.cpp
+ * @file <argos3/core/simulator/main.cpp>
  *
  * @brief This file provides the standard main() function to run the ARGoS
  * simulator.

@@ -1,5 +1,5 @@
 /**
- * @file <simulator/visualizations/qtopengl_render.h>
+ * @file <argos3/plugins/simulator/visualizations/qt-opengl/qtopengl_render.h>
  *
  * @brief This file contains the definition of the CRender interface.
  *

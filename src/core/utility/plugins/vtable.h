@@ -1,5 +1,5 @@
 /**
- * @file core/utility/plugins/vtable.h
+ * @file <argos3/core/utility/plugins/vtable.h>
  *
  * @brief This file provides the facility to map operations to operands in plugins.
  *

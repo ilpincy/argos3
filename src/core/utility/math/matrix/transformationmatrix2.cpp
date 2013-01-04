@@ -1,5 +1,5 @@
  /**
- * @file argos2/common/utility/math/transformationmatrix2.cpp
+ * @file <argos3/core/utility/math/matrix/transformationmatrix2.cpp>
  *
  * @brief Contains the implementation of a 2D transformation matrix (3x3)
  *

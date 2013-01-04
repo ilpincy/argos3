@@ -1,5 +1,5 @@
 /**
- * @file core/utility/datatypes/byte_array.cpp
+ * @file <argos3/core/utility/datatypes/byte_array.cpp>
  *
  * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */

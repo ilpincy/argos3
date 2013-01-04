@@ -1,5 +1,5 @@
  /**
- * @file argos2/common/utility/math/matrix.h
+ * @file <argos3/core/utility/math/matrix/matrix.h>
  *
  * @brief Contains the definition of a MxN templated matrix
  *

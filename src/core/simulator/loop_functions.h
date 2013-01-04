@@ -1,5 +1,5 @@
 /**
- * @file core/simulator/loop_functions.h
+ * @file <argos3/core/simulator/loop_functions.h>
  *
  * @brief This file provides the definition of the loop functions.
  *

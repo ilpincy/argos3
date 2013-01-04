@@ -1,5 +1,5 @@
  /**
- * @file argos2/common/utility/math/rotationmatrix3.h
+ * @file <argos3/core/utility/math/matrix/rotationmatrix3.h>
  *
  * @brief Contains the definition of a 3x3 rotation matrix
  *

@@ -1,3 +1,9 @@
+
+/**
+ * @file <argos3/core/simulator/entity/embodied_entity.cpp>
+ *
+ * @author Carlo Pinciroli <ilpincy@gmail.com>
+ */
 #include "embodied_entity.h"
 #include "composable_entity.h"
 #include <argos3/core/simulator/space/space.h>

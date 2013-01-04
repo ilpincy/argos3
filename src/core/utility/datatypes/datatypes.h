@@ -1,5 +1,5 @@
 /**
- * @file core/utility/datatypes/datatypes.h
+ * @file <argos3/core/utility/datatypes/datatypes.h>
  *
  * This file provides the basic data type definitions of ARGoS.
  * The definitions provided here are cross-platform. For instance, a argos::SInt16

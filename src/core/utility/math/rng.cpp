@@ -1,5 +1,5 @@
 /**
- * @file core/utility/math/rng.cpp
+ * @file <argos3/core/utility/math/rng.cpp>
  *
  * @brief This file provides the definition of
  *

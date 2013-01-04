@@ -1,3 +1,9 @@
+
+/**
+ * @file <argos3/core/simulator/entity/entity.cpp>
+ *
+ * @author Carlo Pinciroli <ilpincy@gmail.com>
+ */
 #include "entity.h"
 
 namespace argos {

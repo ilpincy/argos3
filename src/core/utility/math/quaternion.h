@@ -1,3 +1,9 @@
+
+/**
+ * @file <argos3/core/utility/math/quaternion.h>
+ *
+ * @author Carlo Pinciroli <ilpincy@gmail.com>
+ */
 #ifndef CQUATERNION_H
 #define CQUATERNION_H
 

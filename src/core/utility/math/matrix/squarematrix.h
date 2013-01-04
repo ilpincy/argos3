@@ -1,5 +1,5 @@
  /**
- * @file argos2/common/utility/math/squarematrix.h
+ * @file <argos3/core/utility/math/matrix/squarematrix.h>
  *
  * @brief Contains the definition of a NxN templated square matrix
  *

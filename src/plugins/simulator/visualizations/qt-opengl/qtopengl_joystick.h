@@ -1,5 +1,5 @@
 /**
- * @file <argos3/core/simulator/visualizations/qtopengl_joystick.h>
+ * @file <argos3/plugins/simulator/visualizations/qt-opengl/qtopengl_joystick.h>
  *
  * @brief This file contains the definition of the QTOpenGLJoystick class.
  * It is heavily based on the code found at http://www.batcom-it.net/?p=59.

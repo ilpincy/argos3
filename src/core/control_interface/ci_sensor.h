@@ -1,5 +1,5 @@
 /**
- * @file core/control_interface/ci_sensor.h
+ * @file <argos3/core/control_interface/ci_sensor.h>
  *
  * @brief This file provides the basic interface for all actuators.
  *
