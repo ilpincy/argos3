@@ -57,20 +57,33 @@ function check_license {
 function fix_file_doxy {
     for ORIGPATH in $(find . -type f \( -name '*.h' -o -name '*.cpp' \) -print0 | xargs -0)
     do
-        DOXYPATH="$(echo ${ORIGPATH} | sed 's|^./|argos3/|')"
-        FILELINE="$(grep -e '@file' ${ORIGPATH})"
+        # Exclude files coming from external sources
+        echo ${ORIGPATH} | grep -q -e "tinyxml" -e "chipmunk"
         if [ $? -ne 0 ]; then
-            echo "${ORIGPATH}: No @file statement found"
-        else
-            echo "${FILELINE}" | grep -eq "${DOXYPATH}"
+            DOXYPATH="$(echo ${ORIGPATH} | sed 's|^./|argos3/|')"
+            FILELINE="$(grep -e '@file' ${ORIGPATH})"
             if [ $? -ne 0 ]; then
-                #sed -i 's|${FILELINE}| * @file <${DOXYPATH}>|'
-                echo "${ORIGPATH}: ${FILELINE} does not contain ${DOXYPATH}"
+            # No @file statement found
+                cat <<EOF > tmpfile
+
+/**
+ * @file <${DOXYPATH}>
+ *
+ * @author Carlo Pinciroli <ilpincy@gmail.com>
+ */
+EOF
+                cat ${ORIGPATH} >> tmpfile
+                mv tmpfile ${ORIGPATH}
             else
-                echo "${ORIGPATH}: is OK (${FILELINE})"
+                # Wrong path
+                echo "${FILELINE}" | grep -qe "${DOXYPATH}"
+                if [ $? -ne 0 ]; then
+                    sed -i "s|${FILELINE}| @file <${DOXYPATH}>|g" ${ORIGPATH}
+                fi
             fi
         fi
     done
+    rm -f tmpfile
 }
 
 #
