@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash
 
 CWD=$(pwd)
 
@@ -38,6 +38,39 @@ function check_headers {
     echo "source <, installed >"
     diff source_headers installed_headers
     rm -f source_headers installed_headers
+}
+
+#
+# Prints the list of files that still have the license as header
+#
+function check_license {
+    find . -type f \( -name '*.h' -o -name '*.cpp' \) -print0 | xargs -0 -e grep -l -e "This program is free software"
+}
+
+#
+# Fixes for @file statements in all source files
+# Common errors:
+# 1. Files without the @file statement
+# 2. Files without the <...> parentheses
+# 3. Files with the wrong path in them
+#
+function fix_file_doxy {
+    for ORIGPATH in $(find . -type f \( -name '*.h' -o -name '*.cpp' \) -print0 | xargs -0)
+    do
+        DOXYPATH="$(echo ${ORIGPATH} | sed 's|^./|argos3/|')"
+        FILELINE="$(grep -e '@file' ${ORIGPATH})"
+        if [ $? -ne 0 ]; then
+            echo "${ORIGPATH}: No @file statement found"
+        else
+            echo "${FILELINE}" | grep -eq "${DOXYPATH}"
+            if [ $? -ne 0 ]; then
+                #sed -i 's|${FILELINE}| * @file <${DOXYPATH}>|'
+                echo "${ORIGPATH}: ${FILELINE} does not contain ${DOXYPATH}"
+            else
+                echo "${ORIGPATH}: is OK (${FILELINE})"
+            fi
+        fi
+    done
 }
 
 #
@@ -86,7 +119,7 @@ function fix_email {
 #
 if [ $# -ne 1 ]; then
     echo "Usage:"
-    echo "   $0 { check_headers | fix_argos2 | fix_includes | fix_email }"
+    echo "   $0 { check_headers | check_license | fix_file_doxy | fix_argos2 | fix_includes | fix_email }"
     exit 1
 fi
 
@@ -96,6 +129,12 @@ fi
 case $1 in
     "check_headers")
         check_headers
+        ;;
+    "check_license")
+        check_license
+        ;;
+    "fix_file_doxy")
+        fix_file_doxy
         ;;
     "fix_argos2")
         fix_argos2

@@ -1,0 +1,5 @@
+if(ARGOS_BUILD_FOR_SIMULATOR)
+  add_subdirectory(simulator)
+else(ARGOS_BUILD_FOR_SIMULATOR)
+  add_subdirectory(real_robot)
+endif(ARGOS_BUILD_FOR_SIMULATOR)

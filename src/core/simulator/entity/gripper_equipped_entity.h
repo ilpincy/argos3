@@ -39,9 +39,11 @@ namespace argos {
 
       virtual ~CGripperEquippedEntity() {}
 
-      inline virtual void Reset() {
+      virtual void Reset() {
          m_fLogicLockState = 0.0f;
       }
+
+      virtual void Update() {}
 
       inline Real GetLogicLockState() const {
          return m_fLogicLockState;

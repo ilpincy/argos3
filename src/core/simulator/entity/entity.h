@@ -48,6 +48,10 @@ namespace argos {
 
       virtual void Init(TConfigurationNode& t_tree);
 
+      virtual void Reset() {}
+
+      virtual void Destroy() {}
+
       inline virtual const std::string& GetId() const {
          return m_strId;
       }

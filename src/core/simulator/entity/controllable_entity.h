@@ -35,6 +35,8 @@ namespace argos {
       virtual void Reset();
       virtual void Destroy();
 
+      virtual void Update() {}
+
       inline const std::string& GetControllerId() const {
          return m_strControllerId;
       }

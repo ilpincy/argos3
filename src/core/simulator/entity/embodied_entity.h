@@ -50,6 +50,8 @@ namespace argos {
       virtual void Init(TConfigurationNode& t_tree);
       virtual void Reset();
 
+      virtual void Update() {}
+
       inline virtual bool IsCollisionDetected() const {
          return m_bCollisionDetected;
       }

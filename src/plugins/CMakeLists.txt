@@ -8,4 +8,4 @@ endif(ARGOS_BUILD_FOR_SIMULATOR)
 #
 # Compile robot plugins
 #
-#add_subdirectory(robots)
+add_subdirectory(robots)

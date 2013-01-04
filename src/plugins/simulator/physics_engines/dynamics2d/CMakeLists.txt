@@ -93,10 +93,25 @@ set_source_files_properties(${ARGOS3_SOURCES_PLUGINS_SIMULATOR_PHYSICS_ENGINES_D
 add_library(argos3plugin_${ARGOS_BUILD_FOR}_dynamics2d MODULE
   ${ARGOS3_SOURCES_PLUGINS_SIMULATOR_PHYSICS_ENGINES_DYNAMICS2D})
 
-install(FILES ${CMAKE_SOURCE_DIR}/plugins/simulator/physics_engines/dynamics2d/chipmunk-physics/CHIPMUNK_LICENSE.txt DESTINATION doc/argos3/licenses)
-install(FILES ${ARGOS3_HEADERS_PLUGINS_SIMULATOR_PHYSICS_ENGINES_DYNAMICS2D_CHIPMUNK_CONSTRAINTS} DESTINATION include/argos3/plugins/simulator/physics_engines/dynamics2d/chipmunk-physics/include/constraints)
-install(FILES ${ARGOS3_HEADERS_PLUGINS_SIMULATOR_PHYSICS_ENGINES_DYNAMICS2D_CHIPMUNK} DESTINATION include/argos3/plugins/simulator/physics_engines/dynamics2d/chipmunk-physics/include)
-install(FILES ${ARGOS3_HEADERS_PLUGINS_SIMULATOR_PHYSICS_ENGINES_DYNAMICS2D} DESTINATION include/argos3/plugins/simulator/physics_engines/dynamics2d)
+install(
+  FILES
+  ${CMAKE_SOURCE_DIR}/plugins/simulator/physics_engines/dynamics2d/chipmunk-physics/CHIPMUNK_LICENSE.txt
+  DESTINATION
+  doc/argos3/licenses)
+install(
+  FILES
+  ${ARGOS3_HEADERS_PLUGINS_SIMULATOR_PHYSICS_ENGINES_DYNAMICS2D_CHIPMUNK_CONSTRAINTS}
+  DESTINATION
+  include/argos3/plugins/simulator/physics_engines/dynamics2d/chipmunk-physics/include/constraints)
+install(
+  FILES
+  ${ARGOS3_HEADERS_PLUGINS_SIMULATOR_PHYSICS_ENGINES_DYNAMICS2D_CHIPMUNK}
+  DESTINATION
+  include/argos3/plugins/simulator/physics_engines/dynamics2d/chipmunk-physics/include)
+install(FILES
+  ${ARGOS3_HEADERS_PLUGINS_SIMULATOR_PHYSICS_ENGINES_DYNAMICS2D}
+  DESTINATION
+  include/argos3/plugins/simulator/physics_engines/dynamics2d)
 install(TARGETS argos3plugin_${ARGOS_BUILD_FOR}_dynamics2d
   RUNTIME DESTINATION bin
   LIBRARY DESTINATION lib/argos3

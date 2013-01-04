@@ -39,8 +39,8 @@ namespace argos {
       virtual ~CFloorEntity();
 
       virtual void Init(TConfigurationNode& t_tree);
+
       virtual void Reset();
-      virtual void Destroy() {}
 
       inline CColor GetColorAtPoint(Real f_x,
                                     Real f_y) {
