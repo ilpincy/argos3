@@ -161,8 +161,6 @@ namespace argos {
          c_new_orient.FromAngleAxis(CRadians(pt_body->a), CVector3::Z);
       }
 
-   private:
-
       void AddPhysicsEntity(const std::string& str_id,
                             CDynamics2DEntity& c_entity);
       void AddControllableEntity(CControllableEntity& c_entity);
