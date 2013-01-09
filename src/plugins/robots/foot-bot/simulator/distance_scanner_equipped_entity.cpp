@@ -5,7 +5,7 @@
  */
 
 #include "distance_scanner_equipped_entity.h"
-#include <argos2/simulator/physics_engines/physics_engine.h>
+#include <argos3/core/simulator/physics_engine/physics_engine.h>
 
 namespace argos {
 

@@ -90,7 +90,7 @@ set_source_files_properties(${ARGOS3_SOURCES_PLUGINS_SIMULATOR_PHYSICS_ENGINES_D
   PROPERTIES
   COMPILE_FLAGS "-std=gnu99")
 # Create library
-add_library(argos3plugin_${ARGOS_BUILD_FOR}_dynamics2d MODULE
+add_library(argos3plugin_${ARGOS_BUILD_FOR}_dynamics2d SHARED
   ${ARGOS3_SOURCES_PLUGINS_SIMULATOR_PHYSICS_ENGINES_DYNAMICS2D})
 
 install(
