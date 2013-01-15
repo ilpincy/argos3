@@ -7,11 +7,12 @@
 #include "qtopengl_footbot.h"
 #include "footbot_entity.h"
 #include "distance_scanner_equipped_entity.h"
+#include <argos3/core/simulator/entity/embodied_entity.h>
 #include <argos3/core/utility/math/vector2.h>
 #include <argos3/core/utility/math/vector3.h>
-#include <argos3/core/utility/logging/argos_log.h>
 #include <argos3/core/simulator/entity/led_equipped_entity.h>
 #include <argos3/core/simulator/entity/gripper_equipped_entity.h>
+#include <argos3/plugins/simulator/visualizations/qt-opengl/qtopengl_widget.h>
 
 namespace argos {
 
@@ -961,6 +962,23 @@ namespace argos {
       }
       glEnd();
    }
+
+   /****************************************/
+   /****************************************/
+
+   class CQTOpenGLOperationDrawFootBot : public CQTOpenGLOperationDraw {
+   public:
+      void ApplyTo(CQTOpenGLWidget& c_visualization,
+                   CFootBotEntity& c_entity) {
+         c_visualization.DrawPositionalEntity(c_entity.GetEmbodiedEntity());
+         m_cModel.Draw(c_entity);
+         c_visualization.DrawRays(c_entity.GetControllableEntity());
+      }
+   private:
+      CQTOpenGLFootBot m_cModel;
+   };
+
+   REGISTER_ENTITY_OPERATION(CQTOpenGLOperationDraw, CQTOpenGLWidget, CQTOpenGLOperationDrawFootBot, void, CFootBotEntity);
 
    /****************************************/
    /****************************************/

@@ -28,6 +28,8 @@ namespace argos {
 
    public:
 
+      ENABLE_VTABLE();
+
       CFootBotEntity();
       virtual ~CFootBotEntity();
 
