@@ -139,7 +139,8 @@ namespace argos {
       for(itArenaItem = itArenaItem.begin(&t_tree);
           itArenaItem != itArenaItem.end();
           ++itArenaItem) {
-         if(itArenaItem->Value() != "distribute" && itArenaItem->Value() != "box_strip") {
+         if(itArenaItem->Value() != "distribute" &&
+            itArenaItem->Value() != "box_strip") {
             CEntity* pcEntity = CFactory<CEntity>::New(itArenaItem->Value());
             pcEntity->Init(*itArenaItem);
             CallEntityOperation<CSpaceOperationAddEntity, CSpace, void>(*this, *pcEntity);
