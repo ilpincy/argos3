@@ -13,6 +13,8 @@ namespace argos {
    class CSimulator;
    class CQTOpenGLBox;
    class CQTOpenGLUserFunctions;
+   class CPositionalEntity;
+   class CControllableEntity;
 }
 
 #ifdef QTOPENGL_WITH_SDL
@@ -20,6 +22,7 @@ namespace argos {
 #endif
 
 #include <argos3/plugins/simulator/visualizations/qt-opengl/qtopengl_camera.h>
+#include <argos3/core/simulator/entity/entity.h>
 #include <argos3/core/utility/datatypes/datatypes.h>
 #include <QGLWidget>
 
@@ -30,6 +33,17 @@ namespace argos {
 #endif
 
 namespace argos {
+
+   /****************************************/
+   /****************************************/
+
+   class CQTOpenGLOperationDraw : public CEntityOperation<CQTOpenGLOperationDraw, CQTOpenGLWidget, void> {
+   public:
+      virtual ~CQTOpenGLOperationDraw() {}
+   };
+
+   /****************************************/
+   /****************************************/
 
    class CQTOpenGLWidget : public QGLWidget {
 
@@ -66,6 +80,10 @@ namespace argos {
       virtual void paintEvent(QPaintEvent*);
 
       virtual void DrawScene();
+
+      void DrawPositionalEntity(CPositionalEntity& c_entity);
+
+      void DrawRays(CControllableEntity& c_entity);
 
       inline virtual int heightForWidth(int w) const {
          return (w * 3) / 4;

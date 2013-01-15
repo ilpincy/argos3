@@ -202,8 +202,8 @@ namespace argos {
           itEntities != vecEntities.end();
           ++itEntities) {
          glPushMatrix();
-         /** @todo call function to draw entity */
-         //itEntities->Accept(*m_pcVisitor);
+         //@todo CallEntityOperation<CQTOpenGLOperationDraw, CQTOpenGLWidget, void>(*this, **itEntities);
+         //@todo m_cUserFunctions.Draw(**itEntities);
          glPopMatrix();
       }
       if(m_bAntiAliasing) {
@@ -241,6 +241,57 @@ namespace argos {
       }
    }
 
+   /****************************************/
+   /****************************************/
+
+   void CQTOpenGLWidget::DrawPositionalEntity(CPositionalEntity& c_entity) {
+      /* Get the position of the entity */
+      const CVector3& cPosition = c_entity.GetPosition();
+      /* Get the orientation of the entity */
+      const CQuaternion& cOrientation = c_entity.GetOrientation();
+      CRadians cZAngle, cYAngle, cXAngle;
+      cOrientation.ToEulerAngles(cZAngle, cYAngle, cXAngle);
+      /* First, translate the entity */
+      glTranslatef(cPosition.GetX(), cPosition.GetY(), cPosition.GetZ());
+      /* Second, rotate the entity */
+      glRotatef(ToDegrees(cXAngle).GetValue(), 1.0f, 0.0f, 0.0f);
+      glRotatef(ToDegrees(cYAngle).GetValue(), 0.0f, 1.0f, 0.0f);
+      glRotatef(ToDegrees(cZAngle).GetValue(), 0.0f, 0.0f, 1.0f);
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CQTOpenGLWidget::DrawRays(CControllableEntity& c_entity) {
+      if(! c_entity.GetCheckedRays().empty()) {
+         glDisable(GL_LIGHTING);
+         glBegin(GL_LINES);
+         for(UInt32 i = 0; i < c_entity.GetCheckedRays().size(); ++i) {
+            if(c_entity.GetCheckedRays()[i].first) {
+               glColor3f(1.0, 0.0, 1.0);
+            }
+            else {
+               glColor3f(0.0, 1.0, 1.0);
+            }
+            const CVector3& cStart = c_entity.GetCheckedRays()[i].second.GetStart();
+            const CVector3& cEnd = c_entity.GetCheckedRays()[i].second.GetEnd();
+            glVertex3f(cStart.GetX(), cStart.GetY(), cStart.GetZ());
+            glVertex3f(cEnd.GetX(), cEnd.GetY(), cEnd.GetZ());
+         }
+         glEnd();
+         glPointSize(5.0);
+         glColor3f(0.0, 0.0, 0.0);
+         glBegin(GL_POINTS);
+         for(UInt32 i = 0; i < c_entity.GetIntersectionPoints().size(); ++i) {
+            const CVector3& cPoint = c_entity.GetIntersectionPoints()[i];
+            glVertex3f(cPoint.GetX(), cPoint.GetY(), cPoint.GetZ());
+         }
+         glEnd();
+         glPointSize(1.0);
+         glEnable(GL_LIGHTING);
+      }
+   }
+   
    /****************************************/
    /****************************************/
 

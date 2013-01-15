@@ -103,7 +103,7 @@ namespace argos {
    /****************************************/
 
    REGISTER_VISUALIZATION(CQTOpenGLRender,
-                          "qtopengl_render",
+                          "qt-opengl",
                           "Carlo Pinciroli [ilpincy@gmail.com]",
                           "1.0",
                           "An interactive graphical renderer based on QT and OpenGL",
