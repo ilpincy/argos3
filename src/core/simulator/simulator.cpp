@@ -135,7 +135,9 @@ namespace argos {
       }
 
       /* Initialise visualization */
-      if(NodeExists(m_tConfigurationRoot, "visualization")) {
+      TConfigurationNodeIterator itVisualization;
+      if(NodeExists(m_tConfigurationRoot, "visualization") &&
+         ((itVisualization = itVisualization.begin(&GetNode(m_tConfigurationRoot, "visualization"))) != itVisualization.end())) {
          InitVisualization(GetNode(m_tConfigurationRoot, "visualization"));
       }
       else {
