@@ -22,6 +22,9 @@ namespace argos {
    class CControllableEntity : public CEntity {
 
    public:
+
+      ENABLE_VTABLE();
+
       typedef std::vector<CControllableEntity*> TVector;
       typedef std::map<std::string, CControllableEntity*> TMap;
 

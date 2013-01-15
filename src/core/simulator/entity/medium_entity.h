@@ -18,6 +18,8 @@ namespace argos {
 
    public:
 
+      ENABLE_VTABLE();
+
       typedef std::vector<CMediumEntity*> TVector;
       typedef std::map<std::string, CMediumEntity*> TMap;
 
