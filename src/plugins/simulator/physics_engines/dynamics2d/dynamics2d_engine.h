@@ -27,7 +27,6 @@ namespace argos {
    public:
       virtual ~CDynamics2DOperation() {}
    };
-
    class CDynamics2DOperationAddEntity : public CDynamics2DOperation<CDynamics2DOperationAddEntity> {
    public:
       virtual ~CDynamics2DOperationAddEntity() {}
