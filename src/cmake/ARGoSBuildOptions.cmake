@@ -56,3 +56,8 @@ option(ARGOS_USE_DOUBLE "ON -> use double for Real, OFF -> use float for Real" O
 # Compile documentation
 #
 option(ARGOS_DOCUMENTATION "ON -> compile documentation, OFF -> dont'compile documentation" ON)
+
+#
+# Using Google PerfTools 
+#
+option(ARGOS_USE_GOOGLEPERFTOOLS "Try to use Google PerfTools in Debug builds" ON)
