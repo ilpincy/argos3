@@ -4,7 +4,8 @@
 # argos3/plugins/simulator/entities/
 set(ARGOS3_HEADERS_PLUGINS_SIMULATOR_ENTITIES
   box_entity.h
-  cylinder_entity.h)
+  cylinder_entity.h
+  light_entity.h)
 
 #
 # Source files
@@ -12,7 +13,8 @@ set(ARGOS3_HEADERS_PLUGINS_SIMULATOR_ENTITIES
 set(ARGOS3_SOURCES_PLUGINS_SIMULATOR_ENTITIES
   ${ARGOS3_HEADERS_PLUGINS_SIMULATOR_ENTITIES}
   box_entity.cpp
-  cylinder_entity.cpp)
+  cylinder_entity.cpp
+  light_entity.cpp)
 
 #
 # Create entity plugin library
