@@ -120,7 +120,7 @@ namespace argos {
          virtual CAbstractReference* Clone() const {
             return new CReference<T>(m_tObject);
          }
-      private:
+      public:
 
          /**
           * Actual referenced object
@@ -128,7 +128,7 @@ namespace argos {
          T m_tObject;
       };
       
-   private:
+   public:
 
       /**
        * Pointer to object reference
