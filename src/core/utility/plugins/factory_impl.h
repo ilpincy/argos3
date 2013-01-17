@@ -81,4 +81,18 @@ void CFactory<TYPE>::Print(std::ostream& c_os) {
 /****************************************/
 /****************************************/
 
+template<typename TYPE>
+void CFactory<TYPE>::Destroy() {
+   typename TTypeMap::iterator it;
+   for(it = GetTypeMap().begin();
+       it != GetTypeMap().end();
+       ++it) {
+      delete it->second;
+   }
+   GetTypeMap().clear();
+}
+
+/****************************************/
+/****************************************/
+
 #endif

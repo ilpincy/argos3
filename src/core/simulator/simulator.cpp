@@ -219,6 +219,11 @@ namespace argos {
          CRandom::RemoveCategory("argos");
       }
 
+      /* Free up factory data */
+      CFactory<CEntity>::Destroy();
+      CFactory<CPhysicsEngine>::Destroy();
+      CFactory<CVisualization>::Destroy();
+
       /* Stop profiling and flush the data */
       if(IsProfiling()) {
          m_pcProfiler->Stop();

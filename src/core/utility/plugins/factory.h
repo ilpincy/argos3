@@ -123,6 +123,11 @@ namespace argos {
        * @param c_os The <tt>std::ostream</tt> to write into
        */
       static void Print(std::ostream& c_os);
+
+      /**
+       * Frees up all used memory.
+       */
+      static void Destroy();
    };
 
 /*
