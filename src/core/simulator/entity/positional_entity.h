@@ -21,6 +21,8 @@ namespace argos {
 
    public:
 
+      ENABLE_VTABLE();
+
       CPositionalEntity(CEntity* pc_parent) :
          CEntity(pc_parent) {}
       virtual ~CPositionalEntity() {}

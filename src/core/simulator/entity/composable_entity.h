@@ -24,6 +24,8 @@ namespace argos {
 
    public:
 
+      ENABLE_VTABLE();
+
       CComposableEntity(CEntity* pc_parent) :
          CEntity(pc_parent) {}
       virtual ~CComposableEntity() {}

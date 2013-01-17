@@ -21,6 +21,8 @@ namespace argos {
 
    public:
 
+      ENABLE_VTABLE();
+
       typedef std::map<std::string, CLedEquippedEntity*> TMap;
 
    public:

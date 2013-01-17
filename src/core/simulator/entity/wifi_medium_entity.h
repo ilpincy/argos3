@@ -18,6 +18,8 @@ namespace argos {
 
    public:
 
+      ENABLE_VTABLE();
+
       CWiFiMediumEntity(CEntity* pc_parent) :
          CMediumEntity(pc_parent) {}
       virtual ~CWiFiMediumEntity() {}

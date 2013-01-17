@@ -21,6 +21,8 @@ namespace argos {
 
    public:
 
+      ENABLE_VTABLE();
+
       enum EMode {
          MODE_OFF,
          MODE_POSITION_CONTROL,

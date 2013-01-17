@@ -24,6 +24,8 @@ namespace argos {
 
    public:
 
+      ENABLE_VTABLE();
+
       CCylinderEntity();
       virtual ~CCylinderEntity();
 

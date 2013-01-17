@@ -35,6 +35,8 @@ namespace argos {
 
    public:
 
+      ENABLE_VTABLE();
+
       CFloorEntity();
       virtual ~CFloorEntity();
 

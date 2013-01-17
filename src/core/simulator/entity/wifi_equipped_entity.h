@@ -16,6 +16,8 @@ namespace argos {
 
    public:
 
+      ENABLE_VTABLE();
+
       CWiFiEquippedEntity(CEntity* pc_parent) :
          CEntity(pc_parent) {}
 

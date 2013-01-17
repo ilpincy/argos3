@@ -16,6 +16,8 @@ namespace argos {
 
    public:
 
+      ENABLE_VTABLE();
+
       CWheeledEntity(CEntity* pc_parent) :
          CEntity(pc_parent) {
          ::bzero(m_cWheelSpeed, NUM_WHEELS * sizeof(Real));
@@ -67,6 +69,8 @@ namespace argos {
    template <> class CWheeledEntity<2> : public CEntity {
 
    public:
+
+      ENABLE_VTABLE();
 
       CWheeledEntity(CEntity* pc_parent) :
          CEntity(pc_parent) {

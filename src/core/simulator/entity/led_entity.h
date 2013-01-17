@@ -22,6 +22,8 @@ namespace argos {
 
    public:
 
+      ENABLE_VTABLE();
+
       CLedEntity(CEntity* pc_parent,
                  const CVector3& c_position,
                  const CColor& c_color) :

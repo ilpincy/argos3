@@ -31,6 +31,8 @@ namespace argos {
 
    public:
 
+      ENABLE_VTABLE();
+
       CGripperEquippedEntity(CEntity* pc_parent) :
          CEntity(pc_parent),
          m_fLogicLockState(0.0f),

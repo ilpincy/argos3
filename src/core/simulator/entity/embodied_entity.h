@@ -40,6 +40,8 @@ namespace argos {
 
    public:
 
+      ENABLE_VTABLE();
+
       CEmbodiedEntity(CEntity* pc_parent) :
          CPositionalEntity(pc_parent),
          m_bCollisionDetected(false),
