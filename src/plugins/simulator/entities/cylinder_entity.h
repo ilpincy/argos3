@@ -1,5 +1,5 @@
 /**
- * @file <argos3/plugins/simulator/entities/cylinder_entity.cpp>
+ * @file <argos3/plugins/simulator/entities/cylinder_entity.h>
  *
  * @author Carlo Pinciroli - <ilpincy@gmail.com>
  * @author Giovanni Pini - <gpini@ulb.ac.be>
