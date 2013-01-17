@@ -5,6 +5,7 @@
  */
 
 #include "light_entity.h"
+#include <argos3/core/simulator/space/space.h>
 
 namespace argos {
 
@@ -101,6 +102,32 @@ namespace argos {
                    "None for the time being.\n",
                    "Usable"
       );
+
+   /****************************************/
+   /****************************************/
+
+   class CSpaceOperationAddLightEntity : public CSpaceOperationAddEntity {
+   public:
+      void ApplyTo(CSpace& c_space, CLightEntity& c_entity) {
+         c_space.AddEntity(c_entity);
+         c_space.AddEntity(c_entity.GetLEDEquippedEntity());
+      }
+   };
+   REGISTER_SPACE_OPERATION(CSpaceOperationAddEntity,
+                            CSpaceOperationAddLightEntity,
+                            CLightEntity);
+
+   class CSpaceOperationRemoveLightEntity : public CSpaceOperationRemoveEntity {
+   public:
+      void ApplyTo(CSpace& c_space, CLightEntity& c_entity) {
+         c_space.RemoveEntity(c_entity);
+         c_space.RemoveEntity(c_entity.GetLEDEquippedEntity());
+      }
+   };
+
+   REGISTER_SPACE_OPERATION(CSpaceOperationRemoveEntity,
+                            CSpaceOperationRemoveLightEntity,
+                            CLightEntity);
 
    /****************************************/
    /****************************************/
