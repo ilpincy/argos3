@@ -7,8 +7,7 @@
 #include "qtopengl_light.h"
 #include <argos3/core/utility/math/vector3.h>
 #include <argos3/plugins/simulator/entities/light_entity.h>
-
-#include <argos3/core/utility/logging/argos_log.h>
+#include <argos3/plugins/simulator/visualizations/qt-opengl/qtopengl_widget.h>
 
 namespace argos {
 
@@ -87,6 +86,22 @@ namespace argos {
 
       glCallList(m_unList);
    }
+
+   /****************************************/
+   /****************************************/
+
+   class CQTOpenGLOperationDrawLight : public CQTOpenGLOperationDraw {
+   public:
+      void ApplyTo(CQTOpenGLWidget& c_visualization,
+                   CLightEntity& c_entity) {
+         c_visualization.DrawPositionalEntity(c_entity);
+         m_cModel.Draw(c_entity);
+      }
+   private:
+      CQTOpenGLLight m_cModel;
+   };
+
+   REGISTER_ENTITY_OPERATION(CQTOpenGLOperationDraw, CQTOpenGLWidget, CQTOpenGLOperationDrawLight, void, CLightEntity);
 
    /****************************************/
    /****************************************/

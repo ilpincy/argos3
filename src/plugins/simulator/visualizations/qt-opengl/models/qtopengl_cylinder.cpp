@@ -8,6 +8,7 @@
 #include <argos3/core/utility/math/vector2.h>
 #include <argos3/core/simulator/entity/led_equipped_entity.h>
 #include <argos3/plugins/simulator/entities/cylinder_entity.h>
+#include <argos3/plugins/simulator/visualizations/qt-opengl/qtopengl_widget.h>
 
 namespace argos {
 
@@ -177,6 +178,22 @@ namespace argos {
       }
       glEnd();
    }
+
+   /****************************************/
+   /****************************************/
+
+   class CQTOpenGLOperationDrawCylinder : public CQTOpenGLOperationDraw {
+   public:
+      void ApplyTo(CQTOpenGLWidget& c_visualization,
+                   CCylinderEntity& c_entity) {
+         c_visualization.DrawPositionalEntity(c_entity.GetEmbodiedEntity());
+         m_cModel.Draw(c_entity);
+      }
+   private:
+      CQTOpenGLCylinder m_cModel;
+   };
+
+   REGISTER_ENTITY_OPERATION(CQTOpenGLOperationDraw, CQTOpenGLWidget, CQTOpenGLOperationDrawCylinder, void, CCylinderEntity);
 
    /****************************************/
    /****************************************/
