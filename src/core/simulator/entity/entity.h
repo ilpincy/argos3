@@ -21,6 +21,7 @@ namespace argos {
 #include <argos3/core/utility/datatypes/datatypes.h>
 #include <argos3/core/utility/configuration/argos_configuration.h>
 #include <argos3/core/utility/configuration/base_configurable_resource.h>
+#include <argos3/core/utility/plugins/factory.h>
 #include <argos3/core/utility/plugins/vtable.h>
 
 #include <vector>
