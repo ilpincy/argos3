@@ -1,0 +1,15 @@
+ARGoS SOURCE DIRECTORY STRUCTURE
+================================
+:Author: Carlo Pinciroli
+:Email:  ilpincy@gmail.com
+:Date:   January 17th, 2013
+
+The ARGoS sources are organized in a set of directories, following this schema:
+
+* +src/argos3+: a soft link to the +src/+ directory. When ARGoS is installed in the system, +#include+ statements will look into the +argos3/+ directory. This soft link is necessary to +#include+ the files correctly when compiling the source.
+* +src/cmake/+: contains all the custom CMake modules and scripts necessary to compile ARGoS
+* +src/core/+: contains all the core ARGoS code, which makes up the executable and the main dynamic library
+* +src/plugins/+: contains non-core but necessary parts of ARGoS, such as physics engines, visualizations, robots, etc. provided by default
+* +src/scripts/+: contains a set of scripts to perform various tasks (installation, modification of code, etc.)
+* +src/testing/+: contains a set of test files of various kinds
+* +src/wrappers/+: contains the code necessary to wrap ARGoS with other languages and systems (ex. Lua, ROS, etc.)
