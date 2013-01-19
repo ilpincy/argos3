@@ -163,15 +163,13 @@ namespace argos {
       }
 
       template <typename ENTITY>
-      void RemoveEntity(CEntity& c_entity) {
+      void RemoveEntity(ENTITY& c_entity) {
          /* Search for entity in the index per type */
          TMapPerTypePerId::iterator itMapPerType = m_mapEntitiesPerTypePerId.find(c_entity.GetTypeDescription());
          if(itMapPerType != m_mapEntitiesPerTypePerId.end()) {
             /* Search for entity in the index per type per id */
             TMapPerType::iterator itMapPerTypePerId = itMapPerType->second.find(c_entity.GetId());
             if(itMapPerTypePerId != itMapPerType->second.end()) {
-               /* Remove entity object */
-               delete itMapPerTypePerId->second;
                /* Get iterators for other indexes */
                CEntity::TVector::iterator itVec = find(m_vecEntities.begin(),
                                                        m_vecEntities.end(),
@@ -181,6 +179,9 @@ namespace argos {
                m_vecEntities.erase(itVec);
                m_mapEntitiesPerId.erase(itMap);
                itMapPerType->second.erase(itMapPerTypePerId);
+               /* Remove entity object */
+               c_entity.Destroy();
+               delete &c_entity;
                return;
             }
          }
