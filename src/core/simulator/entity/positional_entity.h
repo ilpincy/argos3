@@ -30,8 +30,6 @@ namespace argos {
                         const CVector3& c_position,
                         const CQuaternion& c_orientation);
 
-      virtual ~CPositionalEntity() {}
-
       virtual void Init(TConfigurationNode& t_tree);
       virtual void Reset();
 

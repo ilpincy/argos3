@@ -11,7 +11,68 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   std::vector<UInt16> CRABEquippedEntity::AVAILABLE_IDS(65535, 1);
+   CRABEquippedEntity::CRABEquippedEntity(CComposableEntity* pc_parent,
+                                          size_t un_msg_size) :
+      CPositionalEntity(pc_parent),
+      m_unMsgSize(un_msg_size),
+      m_punData(new UInt8[un_msg_size]),
+      m_fRange(0.0f) {
+      ::memset(m_punData, 0, m_unMsgSize);
+   }
+
+   /****************************************/
+   /****************************************/
+
+   CRABEquippedEntity::CRABEquippedEntity(CComposableEntity* pc_parent,
+                                          const std::string& str_id,
+                                          const CVector3& c_position,
+                                          const CQuaternion& c_orientation,
+                                          size_t un_msg_size,
+                                          Real f_range) :
+      CPositionalEntity(pc_parent,
+                        str_id,
+                        c_position,
+                        c_orientation),
+      m_unMsgSize(un_msg_size),
+      m_punData(new UInt8[un_msg_size]),
+      m_fRange(f_range) {
+      ::memset(m_punData, 0, m_unMsgSize);
+   }
+
+   /****************************************/
+   /****************************************/
+
+   CRABEquippedEntity::~CRABEquippedEntity() {
+      delete[] m_punData;
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CRABEquippedEntity::Reset() {
+      ::memset(m_punData, 0, m_unMsgSize);
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CRABEquippedEntity::GetData(UInt8* pun_data) const {
+      ::memcpy(pun_data, m_punData, m_unMsgSize);
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CRABEquippedEntity::SetData(const UInt8* pun_data) {
+      ::memcpy(m_punData, pun_data, m_unMsgSize);
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CRABEquippedEntity::ClearData() {
+      ::memset(m_punData, 0, m_unMsgSize);
+   }
 
    /****************************************/
    /****************************************/

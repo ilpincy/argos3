@@ -158,7 +158,7 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
     simulator/entity/led_equipped_entity.cpp
     simulator/entity/medium_entity.cpp
     simulator/entity/positional_entity.cpp
-#    simulator/entity/rab_equipped_entity.cpp
+    simulator/entity/rab_equipped_entity.cpp
     ${ARGOS3_HEADERS_SIMULATOR_PHYSICSENGINE}
     simulator/physics_engine/physics_engine.cpp
     ${ARGOS3_HEADERS_SIMULATOR_VISUALIZATION}
