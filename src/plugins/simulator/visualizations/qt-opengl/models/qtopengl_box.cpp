@@ -59,8 +59,8 @@ namespace argos {
       glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, pfSpecular);
       glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, pfShininess);
       glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, pfEmission);
-      CLedEquippedEntity& cLEDEquippedEntity = c_entity.GetLEDEquippedEntity();
-      for(UInt32 i = 0; i < cLEDEquippedEntity.GetAllLeds().size(); ++i) {
+      CLEDEquippedEntity& cLEDEquippedEntity = c_entity.GetLEDEquippedEntity();
+      for(UInt32 i = 0; i < cLEDEquippedEntity.GetAllLEDs().size(); ++i) {
          glPushMatrix();
          /* Set the material */
          const CColor& cColor = cLEDEquippedEntity.GetLED(i).GetColor();
@@ -87,9 +87,6 @@ namespace argos {
       glCallList(m_unBodyList);
       glPopMatrix();
    }
-
-   /****************************************/
-   /****************************************/
 
    /****************************************/
    /****************************************/

@@ -114,8 +114,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CSpace::Init(TConfigurationNode& t_tree)
-   {
+   void CSpace::Init(TConfigurationNode& t_tree) {
       /* Get the arena size */
       GetNodeAttribute(t_tree, "size", m_cArenaSize);
 
@@ -207,17 +206,16 @@ namespace argos {
 
    void CSpace::Destroy() {
       /* Remove all entities */
-      while(!m_vecEntities.empty()) {
-         m_vecEntities.back()->Destroy();
-         delete m_vecEntities.back();
-         m_vecEntities.pop_back();
+      while(!m_vecRootEntities.empty()) {
+         delete m_vecRootEntities.back();
+         m_vecRootEntities.pop_back();
       }
       /* Get rid of the ray-embodied entity intersection method */
       delete m_pcRayEmbodiedEntityIntersectionMethod;
       /* Get rid of the space hashes, if used */
       delete m_pcEmbodiedEntitiesSpaceHash;
-//      delete m_pcLEDEntitiesSpaceHash;
-//      delete m_pcRABEquippedEntitiesSpaceHash;
+     // delete m_pcLEDEntitiesSpaceHash;
+     // delete m_pcRABEquippedEntitiesSpaceHash;
    }
 
    /****************************************/
@@ -321,6 +319,25 @@ namespace argos {
       UpdatePhysics();
       /* Update medium entities */
       UpdateMediumEntities();
+      /* @todo remove this, it's only for debugging */
+      LOGERR << "[t=" << m_unSimulationClock << "]" << std::endl;
+      LOGERR << "ALL ENTITIES" << std::endl;
+      for(CEntity::TVector::iterator it = m_vecEntities.begin();
+          it != m_vecEntities.end();
+          ++it) {
+         LOGERR << "   "
+                << (*it)->GetId()
+                << std::endl;
+      }
+      LOGERR << "ROOT ENTITIES" << std::endl;
+      for(CEntity::TVector::iterator it = m_vecRootEntities.begin();
+          it != m_vecRootEntities.end();
+          ++it) {
+         LOGERR << "   "
+                << (*it)->GetId()
+                << std::endl;
+      }
+      LOGERR << std::endl;
    }
 
    /****************************************/

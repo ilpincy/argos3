@@ -13,32 +13,47 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CComposableEntity::AddComponent(CEntity& c_component) {
-      m_mapComponents.insert(
-         std::pair<std::string, CEntity*>(
-            c_component.GetTypeDescription(),
-            &c_component));
+   CComposableEntity::CComposableEntity(CComposableEntity* pc_parent) :
+      CEntity(pc_parent) {}
+
+   /****************************************/
+   /****************************************/
+   
+   CComposableEntity::CComposableEntity(CComposableEntity* pc_parent,
+                                        const std::string& str_id) :
+      CEntity(pc_parent, str_id) {}
+
+   /****************************************/
+   /****************************************/
+
+   CComposableEntity::~CComposableEntity() {
+      for(CEntity::TMultiMap::iterator it = m_mapComponents.begin();
+          it != m_mapComponents.end();
+          ++it) {
+         delete it->second;
+      }
    }
 
    /****************************************/
    /****************************************/
 
-   void CComposableEntity::RemoveComponent(const std::string& str_component) {
-      m_mapComponents.erase(FindComponent(str_component));
+   void CComposableEntity::Reset() {
+      for(CEntity::TMultiMap::iterator it = m_mapComponents.begin();
+          it != m_mapComponents.end();
+          ++it) {
+         it->second->Reset();
+      }
    }
 
    /****************************************/
    /****************************************/
 
-   CEntity& CComposableEntity::GetComponent(const std::string& str_component) {
-      return *(FindComponent(str_component)->second);
-   }
-
-   /****************************************/
-   /****************************************/
-
-   bool CComposableEntity::HasComponent(const std::string& str_component) {
-      return m_mapComponents.count(str_component) > 0;
+   void CComposableEntity::Destroy() {
+      for(CEntity::TMultiMap::iterator it = m_mapComponents.begin();
+          it != m_mapComponents.end();
+          ++it) {
+         it->second->Destroy();
+      }
    }
 
    /****************************************/
@@ -57,6 +72,50 @@ namespace argos {
           ++it) {
          it->second->Update();
       }
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CComposableEntity::AddComponent(CEntity& c_component) {
+      m_mapComponents.insert(
+         std::pair<std::string, CEntity*>(
+            c_component.GetTypeDescription(),
+            &c_component));
+   }
+
+   /****************************************/
+   /****************************************/
+
+   CEntity& CComposableEntity::RemoveComponent(const std::string& str_component) {
+      try {
+         CEntity::TMultiMap::iterator it = FindComponent(str_component);
+         CEntity& cRetVal = *(it->second);
+         m_mapComponents.erase(it);
+         return cRetVal;
+      }
+      catch(CARGoSException& ex) {
+         THROW_ARGOSEXCEPTION_NESTED("While removing a component from a composable entity", ex);
+      }
+   }
+
+   /****************************************/
+   /****************************************/
+
+   CEntity& CComposableEntity::GetComponent(const std::string& str_component) {
+      try {
+         return *(FindComponent(str_component)->second);
+      }
+      catch(CARGoSException& ex) {
+         THROW_ARGOSEXCEPTION_NESTED("While getting a component from a composable entity", ex);
+      }
+   }
+
+   /****************************************/
+   /****************************************/
+
+   bool CComposableEntity::HasComponent(const std::string& str_component) {
+      return m_mapComponents.count(str_component) > 0;
    }
 
    /****************************************/
@@ -135,4 +194,3 @@ namespace argos {
    /****************************************/
 
 }
-

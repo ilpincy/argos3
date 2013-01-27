@@ -71,7 +71,7 @@ namespace argos {
 
    void CQTOpenGLLight::Draw(CLightEntity& c_entity) {
       /* Set the material */
-      const CColor& cColor = c_entity.GetLEDEntity().GetColor();
+      const CColor& cColor = c_entity.GetColor();
       const GLfloat pfColor[]     = { cColor.GetRed()   / 255.0f,
                                       cColor.GetGreen() / 255.0f,
                                       cColor.GetBlue()  / 255.0f,

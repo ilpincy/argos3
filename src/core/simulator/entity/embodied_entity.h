@@ -42,32 +42,17 @@ namespace argos {
 
       ENABLE_VTABLE();
 
-      CEmbodiedEntity(CEntity* pc_parent) :
-         CPositionalEntity(pc_parent),
-         m_bCollisionDetected(false),
-         m_unNumCollisions(0),
-         m_pcCollidingEntity(NULL) {}
+      CEmbodiedEntity(CComposableEntity* pc_parent);
+
+      CEmbodiedEntity(CComposableEntity* pc_parent,
+                      const std::string& str_id,
+                      const CVector3& c_position,
+                      const CQuaternion& c_orientation,
+                      bool b_movable);
+
       virtual ~CEmbodiedEntity() {}
 
       virtual void Init(TConfigurationNode& t_tree);
-      virtual void Reset();
-
-      virtual void Update() {}
-
-      inline virtual bool IsCollisionDetected() const {
-         return m_bCollisionDetected;
-      }
-
-      inline virtual void SetCollisionDetected(CEmbodiedEntity& c_entity) {
-         m_pcCollidingEntity = &c_entity;
-         m_bCollisionDetected = true;
-         ++m_unNumCollisions;
-      }
-
-      inline virtual void ClearCollisionDetected() {
-         m_bCollisionDetected = false;
-         m_pcCollidingEntity  = NULL;
-      }
 
       inline bool IsMovable() const {
          return m_bMovable;
@@ -77,87 +62,34 @@ namespace argos {
          m_bMovable = b_movable;
       }
 
-      inline virtual UInt32 GetCollisionNumber() {
-         return m_unNumCollisions;
-      }
-
-      inline virtual CEmbodiedEntity& GetCollidingEntity() {
-         return *m_pcCollidingEntity;
-      }
-
-      inline virtual void SetPosition(const CVector3& c_position) {
+      inline void SetPosition(const CVector3& c_position) {
          CPositionalEntity::SetPosition(c_position);
          m_bBoundingBoxRecalculationNeeded = true;
       }
 
-      inline virtual void SetOrientation(const CQuaternion& c_orientation) {
+      inline void SetOrientation(const CQuaternion& c_orientation) {
          CPositionalEntity::SetOrientation(c_orientation);
          m_bBoundingBoxRecalculationNeeded = true;
-      }
-
-      inline virtual void UpdateBoundingBox() {
-         if(m_bBoundingBoxRecalculationNeeded) {
-            CalculateBoundingBox();
-            m_bBoundingBoxRecalculationNeeded = false;
-         }
       }
 
       inline SBoundingBox& GetBoundingBox() {
          return m_sBoundingBox;
       }
 
-      inline virtual void AddPhysicsEngine(CPhysicsEngine& c_physics_engine) {
-         m_tEngines.push_back(&c_physics_engine);
-      }
+      void AddPhysicsEngine(CPhysicsEngine& c_physics_engine);
 
-      inline virtual void RemovePhysicsEngine(CPhysicsEngine& c_physics_engine) {
-         CPhysicsEngine::TVector::iterator it = std::find(m_tEngines.begin(),
-                                                          m_tEngines.end(),
-                                                          &c_physics_engine);
-         if(it == m_tEngines.end()) {
-            THROW_ARGOSEXCEPTION("Engine \"" << c_physics_engine.GetId() << "\" not found when removing it from entity id = \"" << GetId() << "\"");
-         }
-         m_tEngines.erase(it);
-      }
+      void RemovePhysicsEngine(CPhysicsEngine& c_physics_engine);
 
-      inline virtual CPhysicsEngine& GetPhysicsEngine(UInt32 un_index) const {
-         if(un_index >= m_tEngines.size()) {
-            THROW_ARGOSEXCEPTION("Index out of bound for physics engine query for entity " << GetId() <<
-                                 ". Passed index = " << un_index << ", but " <<
-                                 m_tEngines.size() << " engines were associated to this entity.");
-         }
-         return *(m_tEngines[un_index]);
-      }
+      CPhysicsEngine& GetPhysicsEngine(UInt32 un_index) const;
 
-      inline virtual UInt32 GetPhysicsEngineNum() const {
-         return m_tEngines.size();
-      }
+      UInt32 GetPhysicsEngineNum() const;
 
-      inline virtual void AddPhysicsEngineEntity(const std::string& str_engine_id,
-                                                 CPhysicsEngineEntity& c_physics_entity) {
-         m_tPhysicsEngineEntityMap[str_engine_id] = &c_physics_entity;
-         m_tPhysicsEngineEntityVector.push_back(&c_physics_entity);
-      }
+      virtual void AddPhysicsEngineEntity(const std::string& str_engine_id,
+                                          CPhysicsEngineEntity& c_physics_entity);
 
-      inline virtual void RemovePhysicsEngineEntity(const std::string& str_engine_id) {
-         CPhysicsEngineEntity::TMap::iterator itMap = m_tPhysicsEngineEntityMap.find(str_engine_id);
-         if(itMap == m_tPhysicsEngineEntityMap.end()) {
-            THROW_ARGOSEXCEPTION("Entity \"" << GetId() << "\" has no associated entity in physics engine " << str_engine_id);
-         }
-         CPhysicsEngineEntity::TVector::iterator itVec = std::find(m_tPhysicsEngineEntityVector.begin(),
-                                                                  m_tPhysicsEngineEntityVector.end(),
-                                                                  itMap->second);
-         m_tPhysicsEngineEntityMap.erase(itMap);
-         m_tPhysicsEngineEntityVector.erase(itVec);
-      }
+      void RemovePhysicsEngineEntity(const std::string& str_engine_id);
 
-      inline virtual const CPhysicsEngineEntity& GetPhysicsEngineEntity(const std::string& str_engine_id) const {
-         CPhysicsEngineEntity::TMap::const_iterator it = m_tPhysicsEngineEntityMap.find(str_engine_id);
-         if(it == m_tPhysicsEngineEntityMap.end()) {
-            THROW_ARGOSEXCEPTION("Entity \"" << GetId() << "\" has no associated entity in physics engine \"" << str_engine_id << "\"");
-         }
-         return *(it->second);
-      }
+      const CPhysicsEngineEntity& GetPhysicsEngineEntity(const std::string& str_engine_id) const;
 
       virtual bool CheckIntersectionWithRay(Real& f_distance,
                                             const CRay& c_ray) const;
@@ -166,21 +98,24 @@ namespace argos {
                           const CQuaternion& c_orientation,
                           bool b_check_only = false);
 
+      virtual void Update();
+
+      virtual std::string GetTypeDescription() const {
+         return "embodied_entity";
+      }
+
    protected:
 
       virtual void CalculateBoundingBox() = 0;
       
    protected:
       
+      bool m_bMovable;
       CPhysicsEngine::TVector m_tEngines;
       CPhysicsEngineEntity::TMap m_tPhysicsEngineEntityMap;
       CPhysicsEngineEntity::TVector m_tPhysicsEngineEntityVector;
-      bool m_bCollisionDetected;
-      UInt32 m_unNumCollisions;
-      CEmbodiedEntity* m_pcCollidingEntity;
       SBoundingBox m_sBoundingBox;
       bool m_bBoundingBoxRecalculationNeeded;
-      bool m_bMovable;
 
    };
 

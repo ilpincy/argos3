@@ -25,11 +25,7 @@ namespace argos {
 
    public:
 
-      CMediumEntity(CEntity* pc_parent) :
-         CEntity(pc_parent) {}
-      virtual ~CMediumEntity() {}
-
-      virtual void Update() = 0;
+      CMediumEntity();
 
       inline virtual std::string GetTypeDescription() const {
          return "medium_entity";

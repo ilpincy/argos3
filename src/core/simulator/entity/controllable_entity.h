@@ -29,7 +29,7 @@ namespace argos {
       typedef std::map<std::string, CControllableEntity*> TMap;
 
    public:
-      CControllableEntity(CEntity* pc_parent) :
+      CControllableEntity(CComposableEntity* pc_parent) :
          CEntity(pc_parent),
          m_pcController(NULL) {}
       virtual ~CControllableEntity();

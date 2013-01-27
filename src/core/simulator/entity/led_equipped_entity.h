@@ -8,28 +8,32 @@
 #define LED_EQUIPPED_ENTITY_H
 
 namespace argos {
-   class CLedEquippedEntity;
-   class CLedEntity;
+   class CLEDEquippedEntity;
+   class CLEDEntity;
 }
 
 #include <argos3/core/simulator/entity/led_entity.h>
+#include <argos3/core/simulator/entity/composable_entity.h>
 #include <map>
 
 namespace argos {
 
-   class CLedEquippedEntity : public CEntity {
+   class CLEDEquippedEntity : public CComposableEntity {
 
    public:
 
       ENABLE_VTABLE();
 
-      typedef std::map<std::string, CLedEquippedEntity*> TMap;
+      typedef std::map<std::string, CLEDEquippedEntity*> TMap;
 
    public:
 
-      CLedEquippedEntity(CEntity* pc_parent) :
-         CEntity(pc_parent) {}
-      virtual ~CLedEquippedEntity();
+      CLEDEquippedEntity(CComposableEntity* pc_parent,
+                         CPositionalEntity* pc_reference = NULL);
+
+      CLEDEquippedEntity(CComposableEntity* pc_parent,
+                         const std::string& str_id,
+                         CPositionalEntity* pc_reference);
 
       virtual void Init(TConfigurationNode& t_tree);
 
@@ -37,62 +41,46 @@ namespace argos {
 
       virtual void Update() {}
 
-      inline void AddLed(const CVector3& c_position,
-                         const CColor& c_color = CColor::BLACK)
-      {
-         m_tLeds.push_back(new CLedEntity(this, c_position, c_color));
+      void AddLED(const CVector3& c_position,
+                  const CColor& c_color = CColor::BLACK);
+
+      CLEDEntity& GetLED(UInt32 un_index);
+
+      inline CLEDEntity::TList& GetAllLEDs() {
+         return m_tLEDs;
       }
 
-      inline CLedEntity& GetLED(UInt32 un_index)
-      {
-         ARGOS_ASSERT(un_index < m_tLeds.size(),
-                      "LED index out of bounds: un_index = " <<
-                      un_index <<
-                      ", m_tLEDs.size() = " <<
-                      m_tLeds.size());
-         return *m_tLeds[un_index];
+      void SetLEDPosition(UInt32 un_index,
+                          const CVector3& c_position);
+
+      void SetLEDColor(UInt32 un_index,
+                       const CColor& c_color);
+
+      void SetAllLEDsColors(const CColor& c_color);
+
+      void SetAllLEDsColors(const std::vector<CColor>& vec_colors);
+
+      bool HasReferenceEntity() const {
+         return m_pcReferenceEntity != NULL;
       }
 
-      inline TLedEntityList& GetAllLeds()
-      {
-         return m_tLeds;
+      CPositionalEntity& GetReferenceEntity() {
+         return *m_pcReferenceEntity;
       }
 
-      inline void SetLedPosition(UInt32 un_index, const CVector3& c_position)
-      {
-         ARGOS_ASSERT(un_index < m_tLeds.size(),
-                      "LED index out of bounds: un_index = " <<
-                      un_index <<
-                      ", m_tLEDs.size() = " <<
-                      m_tLeds.size());
-         m_tLeds[un_index]->SetPosition(c_position);
-      }
-
-      inline void SetLedColor(UInt32 un_index,
-                              const CColor& c_color) {
-         ARGOS_ASSERT(un_index < m_tLeds.size(),
-                      "LED index out of bounds: un_index = " <<
-                      un_index <<
-                      ", m_tLEDs.size() = " <<
-                      m_tLeds.size());
-         m_tLeds[un_index]->SetColor(c_color);
-      }
-
-      inline void SetAllLedsColors(const std::vector<CColor>& vec_colors)
-      {
-         for(UInt32 i = 0; i < vec_colors.size(); ++i) {
-            m_tLeds[i]->SetColor(vec_colors[i]);
-         }
-      }
-
-      virtual std::string GetTypeDescription() const
-      {
+      virtual std::string GetTypeDescription() const {
          return "led_equipped_entity";
       }
 
    protected:
 
-      TLedEntityList m_tLeds;
+      virtual void UpdateComponents();
+
+   protected:
+
+      CLEDEntity::TList m_tLEDs;
+      std::vector<CVector3> m_vecLEDOffsetPositions;
+      CPositionalEntity* m_pcReferenceEntity;
 
    };
 

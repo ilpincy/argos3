@@ -26,15 +26,26 @@ namespace argos {
 
       ENABLE_VTABLE();
 
-      CComposableEntity(CEntity* pc_parent) :
-         CEntity(pc_parent) {}
-      virtual ~CComposableEntity() {}
+      CComposableEntity(CComposableEntity* pc_parent);
 
-      virtual void AddComponent(CEntity& c_component);
+      CComposableEntity(CComposableEntity* pc_parent,
+                        const std::string& str_id);
 
-      virtual void RemoveComponent(const std::string& str_component);
+      virtual ~CComposableEntity();
 
-      virtual CEntity& GetComponent(const std::string& str_component);
+      virtual void Reset();
+
+      virtual void Destroy();
+
+      virtual void Update();
+
+      virtual void UpdateComponents();
+
+      void AddComponent(CEntity& c_component);
+
+      CEntity& RemoveComponent(const std::string& str_component);
+
+      CEntity& GetComponent(const std::string& str_component);
 
       template <class E>
       E& GetComponent(const std::string& str_component) {
@@ -47,15 +58,9 @@ namespace argos {
          }
       }
 
-      virtual bool HasComponent(const std::string& str_component);
-
-      virtual void Update();
-
-   protected:
+      bool HasComponent(const std::string& str_component);
 
       CEntity::TMultiMap::iterator FindComponent(const std::string& str_component);
-
-      virtual void UpdateComponents();
 
    private:
 

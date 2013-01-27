@@ -16,22 +16,110 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   CEmbodiedEntity::CEmbodiedEntity(CComposableEntity* pc_parent) :
+      CPositionalEntity(pc_parent),
+      m_bMovable(true) {}
+
+   /****************************************/
+   /****************************************/
+
+   CEmbodiedEntity::CEmbodiedEntity(CComposableEntity* pc_parent,
+                                    const std::string& str_id,
+                                    const CVector3& c_position,
+                                    const CQuaternion& c_orientation,
+                                    bool b_movable) :
+      CPositionalEntity(pc_parent,
+                        str_id,
+                        c_position,
+                        c_orientation),
+      m_bMovable(b_movable) {}
+
+   /****************************************/
+   /****************************************/
+
    void CEmbodiedEntity::Init(TConfigurationNode& t_tree) {
-      CPositionalEntity::Init(t_tree);
-      m_bBoundingBoxRecalculationNeeded = true;
-      m_bMovable = true;
+      try {
+         CPositionalEntity::Init(t_tree);
+         m_bBoundingBoxRecalculationNeeded = true;
+         m_bMovable = true;
+      }
+      catch(CARGoSException& ex) {
+         THROW_ARGOSEXCEPTION_NESTED("Failed to initialize embodied entity \"" << GetId() << "\".", ex);
+      }
    }
 
    /****************************************/
    /****************************************/
 
-   void CEmbodiedEntity::Reset() {
-      CPositionalEntity::Reset();
+   void CEmbodiedEntity::AddPhysicsEngine(CPhysicsEngine& c_physics_engine) {
+      m_tEngines.push_back(&c_physics_engine);
+   }
 
-      /* Reset collision data */
-      ClearCollisionDetected();
-      m_unNumCollisions = 0;
-      m_bBoundingBoxRecalculationNeeded = true;
+   /****************************************/
+   /****************************************/
+
+   void CEmbodiedEntity::RemovePhysicsEngine(CPhysicsEngine& c_physics_engine) {
+      CPhysicsEngine::TVector::iterator it = std::find(m_tEngines.begin(),
+                                                       m_tEngines.end(),
+                                                       &c_physics_engine);
+      if(it == m_tEngines.end()) {
+         THROW_ARGOSEXCEPTION("Engine \"" << c_physics_engine.GetId() << "\" not found when removing it from entity id = \"" << GetId() << "\"");
+      }
+      m_tEngines.erase(it);
+   }
+
+   /****************************************/
+   /****************************************/
+
+   CPhysicsEngine& CEmbodiedEntity::GetPhysicsEngine(UInt32 un_index) const {
+      if(un_index >= m_tEngines.size()) {
+         THROW_ARGOSEXCEPTION("Index out of bound for physics engine query for entity " << GetId() <<
+                              ". Passed index = " << un_index << ", but " <<
+                              m_tEngines.size() << " engines were associated to this entity.");
+      }
+      return *(m_tEngines[un_index]);
+   }
+
+   /****************************************/
+   /****************************************/
+
+   UInt32 CEmbodiedEntity::GetPhysicsEngineNum() const {
+      return m_tEngines.size();
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CEmbodiedEntity::AddPhysicsEngineEntity(const std::string& str_engine_id,
+                                                CPhysicsEngineEntity& c_physics_entity) {
+      m_tPhysicsEngineEntityMap[str_engine_id] = &c_physics_entity;
+      m_tPhysicsEngineEntityVector.push_back(&c_physics_entity);
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CEmbodiedEntity::RemovePhysicsEngineEntity(const std::string& str_engine_id) {
+      CPhysicsEngineEntity::TMap::iterator itMap = m_tPhysicsEngineEntityMap.find(str_engine_id);
+      if(itMap == m_tPhysicsEngineEntityMap.end()) {
+         THROW_ARGOSEXCEPTION("Entity \"" << GetId() << "\" has no associated entity in physics engine " << str_engine_id);
+      }
+      CPhysicsEngineEntity::TVector::iterator itVec = std::find(m_tPhysicsEngineEntityVector.begin(),
+                                                                m_tPhysicsEngineEntityVector.end(),
+                                                                itMap->second);
+      m_tPhysicsEngineEntityMap.erase(itMap);
+      m_tPhysicsEngineEntityVector.erase(itVec);
+   }
+
+   /****************************************/
+   /****************************************/
+
+   const CPhysicsEngineEntity& CEmbodiedEntity::GetPhysicsEngineEntity(const std::string& str_engine_id) const {
+      CPhysicsEngineEntity::TMap::const_iterator it = m_tPhysicsEngineEntityMap.find(str_engine_id);
+      if(it == m_tPhysicsEngineEntityMap.end()) {
+         THROW_ARGOSEXCEPTION("Entity \"" << GetId() << "\" has no associated entity in physics engine \"" << str_engine_id << "\"");
+      }
+      return *(it->second);
    }
 
    /****************************************/
@@ -42,7 +130,7 @@ namespace argos {
       for(UInt32 i = 0; i < m_tPhysicsEngineEntityVector.size(); ++i)
          if(m_tPhysicsEngineEntityVector[i]->CheckIntersectionWithRay(f_distance, c_ray)) {
             return true;
-      }
+         }
       return false;
    }
 
@@ -91,6 +179,16 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   void CEmbodiedEntity::Update() {
+      if(m_bBoundingBoxRecalculationNeeded) {
+         CalculateBoundingBox();
+         m_bBoundingBoxRecalculationNeeded = false;
+      }
+   }
+
+   /****************************************/
+   /****************************************/
+
    void CalculateBoundingBoxFromHalfSize(CEmbodiedEntity::SBoundingBox& s_bounding_box,
                                          const CVector3& c_half_size,
                                          const CVector3& c_center_pos,
@@ -116,7 +214,7 @@ namespace argos {
    void CEmbodiedEntitySpaceHashUpdater::operator()(CAbstractSpaceHash<CEmbodiedEntity>& c_space_hash,
                                                     CEmbodiedEntity& c_element) {
       /* Update the bounding box */
-      c_element.UpdateBoundingBox();
+      c_element.Update();
       /* Translate the min corner of the bounding box into the map's coordinate */
       c_space_hash.SpaceToHashTable(m_nMinX, m_nMinY, m_nMinZ, c_element.GetBoundingBox().MinCorner);
       /* Translate the max corner of the bounding box into the map's coordinate */                                     

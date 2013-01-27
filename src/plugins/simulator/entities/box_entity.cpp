@@ -5,8 +5,8 @@
  */
 
 #include "box_entity.h"
-#include <argos3/core/utility/math/general.h>
 #include <argos3/core/utility/math/matrix/rotationmatrix3.h>
+#include <argos3/core/simulator/space/space.h>
 
 namespace argos {
 
@@ -15,9 +15,22 @@ namespace argos {
    public:
 
     	CBoxEmbodiedEntity(CBoxEntity* pc_parent,
-                         const CVector3& c_half_size) :
+                         const CVector3& c_size) :
          CEmbodiedEntity(pc_parent),
-         m_cHalfSize(c_half_size) {}
+         m_cHalfSize(c_size * 0.5f) {}
+
+    	CBoxEmbodiedEntity(CBoxEntity* pc_parent,
+                         const std::string& str_id,
+                         const CVector3& c_position,
+                         const CQuaternion& c_orientation,
+                         bool b_movable,
+                         const CVector3& c_size):
+         CEmbodiedEntity(pc_parent,
+                         str_id,
+                         c_position,
+                         c_orientation,
+                         b_movable),
+         m_cHalfSize(c_size * 0.5f) {}
 
    protected:
 
@@ -41,16 +54,34 @@ namespace argos {
 
    CBoxEntity::CBoxEntity():
       CComposableEntity(NULL),
-      m_pcLEDEquippedEntity(new CLedEquippedEntity(this)),
-      m_fMass(1.0f) {
-   }
+      m_pcEmbodiedEntity(NULL),
+      m_pcLEDEquippedEntity(NULL),
+      m_fMass(1.0f) {}
 
    /****************************************/
    /****************************************/
 
-   CBoxEntity::~CBoxEntity() {
-    	delete m_pcEmbodiedEntity;
-    	delete m_pcLEDEquippedEntity;
+   CBoxEntity::CBoxEntity(const std::string& str_id,
+                          const CVector3& c_position,
+                          const CQuaternion& c_orientation,
+                          bool b_movable,
+                          const CVector3& c_size,
+                          Real f_mass) :
+      CComposableEntity(NULL, str_id),
+      m_pcEmbodiedEntity(
+         new CBoxEmbodiedEntity(this,
+                                str_id,
+                                c_position,
+                                c_orientation,
+                                b_movable,
+                                c_size)),
+      m_pcLEDEquippedEntity(
+         new CLEDEquippedEntity(this,
+                                str_id,
+                                m_pcEmbodiedEntity)),
+      m_fMass(f_mass) {
+      AddComponent(*m_pcEmbodiedEntity);
+      AddComponent(*m_pcLEDEquippedEntity);
    }
 
    /****************************************/
@@ -59,7 +90,7 @@ namespace argos {
    void CBoxEntity::Init(TConfigurationNode& t_tree) {
       try {
          /* Init parent */
-         CEntity::Init(t_tree);
+         CComposableEntity::Init(t_tree);
          /* Parse XML to get the size */
          GetNodeAttribute(t_tree, "size", m_cSize);
          /* Parse XML to get the movable attribute */         
@@ -72,33 +103,24 @@ namespace argos {
          else {
             m_fMass = 0.0f;
          }
-         /* Init LED equipped entity component */
-         m_pcLEDEquippedEntity->Init(t_tree);
-         if(NodeExists(t_tree, "leds")) {
-            TConfigurationNode& tLEDs = GetNode(t_tree, "leds");
-            /* Go through the led entries */
-            CVector3 cPosition;
-            CColor cColor;
-            TConfigurationNodeIterator itLED("led");
-            for(itLED = itLED.begin(&tLEDs);
-                itLED != itLED.end();
-                ++itLED) {
-               GetNodeAttribute(*itLED, "position", cPosition);
-               GetNodeAttribute(*itLED, "color", cColor);
-               m_vecBaseLEDPositions.push_back(cPosition);
-               m_pcLEDEquippedEntity->AddLed(cPosition, cColor);
-            }
-         }
-
          /* Create embodied entity using parsed data */
-         m_pcEmbodiedEntity = new CBoxEmbodiedEntity(this, m_cSize * 0.5f);
+         m_pcEmbodiedEntity = new CBoxEmbodiedEntity(this, m_cSize);
+         AddComponent(*m_pcEmbodiedEntity);
          m_pcEmbodiedEntity->Init(t_tree);
          m_pcEmbodiedEntity->SetMovable(bMovable);
-
+         /* Init LED equipped entity component */
+         m_pcLEDEquippedEntity = new CLEDEquippedEntity(this,
+                                                        GetId() + ".leds",
+                                                        m_pcEmbodiedEntity);
+         AddComponent(*m_pcLEDEquippedEntity);
+         if(NodeExists(t_tree, "leds")) {
+            TConfigurationNode& tLEDs = GetNode(t_tree, "leds");
+            m_pcLEDEquippedEntity->Init(tLEDs);
+         }
          UpdateComponents();
       }
       catch(CARGoSException& ex) {
-         THROW_ARGOSEXCEPTION_NESTED("Failed to initialize entity \"" << GetId() << "\".", ex);
+         THROW_ARGOSEXCEPTION_NESTED("Failed to initialize box entity \"" << GetId() << "\".", ex);
       }
    }
 
@@ -111,52 +133,6 @@ namespace argos {
       m_pcLEDEquippedEntity->Reset();
       /* Update components */
       UpdateComponents();
-   }
-
-   /****************************************/
-   /****************************************/
-
-   void CBoxEntity::Destroy() {
-      m_pcEmbodiedEntity->Destroy();
-      m_pcLEDEquippedEntity->Destroy();
-   }
-
-   /****************************************/
-   /****************************************/
-
-   CEntity& CBoxEntity::GetComponent(const std::string& str_component) {
-      if(str_component == "embodied_entity") {
-         return *m_pcEmbodiedEntity;
-      }
-      else if(str_component == "led_equipped_entity") {
-         return *m_pcLEDEquippedEntity;
-      }
-      else {
-         THROW_ARGOSEXCEPTION("A box does not have a component of type \"" << str_component << "\"");
-      }
-   }
-
-   /****************************************/
-   /****************************************/
-
-   bool CBoxEntity::HasComponent(const std::string& str_component) {
-      return (str_component == "embodied_entity"     ||
-              str_component == "led_equipped_entity" );
-   }
-
-   /****************************************/
-   /****************************************/
-
-   void CBoxEntity::UpdateComponents() {
-      /* Set LED position and update led equipped entity */
-      CVector3 cLEDPosition;
-      for(UInt32 i = 0; i < m_pcLEDEquippedEntity->GetAllLeds().size(); ++i) {
-         cLEDPosition = m_vecBaseLEDPositions[i];
-         cLEDPosition.Rotate(m_pcEmbodiedEntity->GetOrientation());
-         cLEDPosition += GetEmbodiedEntity().GetPosition();
-         m_pcLEDEquippedEntity->SetLedPosition(i, cLEDPosition);
-      }
-      m_pcEmbodiedEntity->UpdateBoundingBox();
    }
 
    /****************************************/
@@ -238,5 +214,36 @@ namespace argos {
                    "around the box.\n",
                    "Usable"
       );
+
+   /****************************************/
+   /****************************************/
+
+   class CSpaceOperationAddBoxEntity : public CSpaceOperationAddEntity {
+   public:
+      void ApplyTo(CSpace& c_space, CBoxEntity& c_entity) {
+         c_space.AddEntity(c_entity);
+         c_space.AddEntity(c_entity.GetEmbodiedEntity());
+         c_space.AddEntity(c_entity.GetLEDEquippedEntity());
+      }
+   };
+   REGISTER_SPACE_OPERATION(CSpaceOperationAddEntity,
+                            CSpaceOperationAddBoxEntity,
+                            CBoxEntity);
+
+   class CSpaceOperationRemoveBoxEntity : public CSpaceOperationRemoveEntity {
+   public:
+      void ApplyTo(CSpace& c_space, CBoxEntity& c_entity) {
+         c_space.RemoveEntity(c_entity.GetLEDEquippedEntity());
+         c_space.RemoveEntity(c_entity.GetEmbodiedEntity());
+         c_space.RemoveEntity(c_entity);
+      }
+   };
+
+   REGISTER_SPACE_OPERATION(CSpaceOperationRemoveEntity,
+                            CSpaceOperationRemoveBoxEntity,
+                            CBoxEntity);
+
+   /****************************************/
+   /****************************************/
 
 }

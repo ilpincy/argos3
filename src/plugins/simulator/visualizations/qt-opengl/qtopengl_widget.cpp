@@ -91,9 +91,11 @@ namespace argos {
       }
 #endif
       /* Set the texture directory */
-      std::string strSTDBaseDirectory(CSimulator::GetInstance().GetInstallationDirectory());
-      strSTDBaseDirectory += "/simulator/visualizations/qt-opengl/textures/";
-      m_strBaseDirectory = strSTDBaseDirectory.c_str();
+      /** @todo: FIX QTOPENGL WIDGET TEXTURE PATH */
+      // std::string strSTDBaseDirectory(CSimulator::GetInstance().GetInstallationDirectory());
+      // strSTDBaseDirectory += "/simulator/visualizations/qt-opengl/textures/";
+      // m_strBaseDirectory = strSTDBaseDirectory.c_str();
+      m_strBaseDirectory = "/home/pincy/Fabrica/argos3/src/plugins/simulator/visualizations/qt-opengl/textures/";
       /* Initialize the arena */
       makeCurrent();
       initializeGL();
@@ -197,12 +199,12 @@ namespace argos {
       }
       glPopMatrix();
       /* Draw the objects */
-      CEntity::TVector& vecEntities = m_cSpace.GetEntityVector();
+      CEntity::TVector& vecEntities = m_cSpace.GetRootEntityVector();
       for(CEntity::TVector::iterator itEntities = vecEntities.begin();
           itEntities != vecEntities.end();
           ++itEntities) {
          glPushMatrix();
-         //@todo CallEntityOperation<CQTOpenGLOperationDraw, CQTOpenGLWidget, void>(*this, **itEntities);
+         CallEntityOperation<CQTOpenGLOperationDraw, CQTOpenGLWidget, void>(*this, **itEntities);
          //@todo m_cUserFunctions.Draw(**itEntities);
          glPopMatrix();
       }

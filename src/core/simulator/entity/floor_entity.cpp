@@ -19,21 +19,17 @@ namespace argos {
 
    public:
 
-      CFloorColorFromImageFile(const std::string& str_file_name,
-                               Real f_arena_width,
-                               Real f_arena_height) :
-         m_cHalfArenaSize(f_arena_width * 0.5f,
-                          f_arena_height * 0.5f) {
-         if(!m_cImage.load(str_file_name.c_str())) {
-            THROW_ARGOSEXCEPTION("Could not load image \"" <<
-                                 str_file_name <<
-                                 "\"");
-         }
-         m_fArenaToImageCoordinateXFactor = m_cImage.getWidth() / f_arena_width;
-         m_fArenaToImageCoordinateYFactor = m_cImage.getHeight() / f_arena_height;
+      CFloorColorFromImageFile(const std::string& str_path) {
+         const CVector3& cArenaSize = CSimulator::GetInstance().GetSpace().GetArenaSize();
+         m_cHalfArenaSize.Set(
+            cArenaSize.GetX() * 0.5f,
+            cArenaSize.GetY() * 0.5f);
+         LoadImage(str_path);
       }
 
-      virtual ~CFloorColorFromImageFile() {}
+      virtual void Reset() {
+         LoadImage(m_strImageFileName);
+      }
 
       virtual CColor GetColorAtPoint(Real f_x,
                                      Real f_y) {
@@ -74,8 +70,22 @@ namespace argos {
          m_cImage.save(str_path.c_str());
       }
 
-      virtual std::string GetImageFileName() const {
+      virtual const std::string& GetImageFileName() const {
          return m_strImageFileName;
+      }
+
+   protected:
+
+      void LoadImage(const std::string& str_path) {
+         m_strImageFileName = str_path;
+         if(!m_cImage.load(m_strImageFileName.c_str())) {
+            THROW_ARGOSEXCEPTION("Could not load image \"" <<
+                                 m_strImageFileName <<
+                                 "\"");
+         }
+         const CVector3& cArenaSize = CSimulator::GetInstance().GetSpace().GetArenaSize();
+         m_fArenaToImageCoordinateXFactor = m_cImage.getWidth() / cArenaSize.GetX();
+         m_fArenaToImageCoordinateYFactor = m_cImage.getHeight() / cArenaSize.GetY();
       }
 
    private:
@@ -95,16 +105,13 @@ namespace argos {
 
    public:
 
-      CFloorColorFromLoopFunctions(UInt32 un_pixels_per_meter,
-                                   Real f_arena_width,
-                                   Real f_arena_height) :
+      CFloorColorFromLoopFunctions(UInt32 un_pixels_per_meter) :
          m_cLoopFunctions(CSimulator::GetInstance().GetLoopFunctions()),
-         m_unPixelsPerMeter(un_pixels_per_meter),
-         m_cHalfArenaSize(f_arena_width * 0.5f,
-                          f_arena_height * 0.5f) {
-      }
-
-      virtual ~CFloorColorFromLoopFunctions() {
+         m_unPixelsPerMeter(un_pixels_per_meter) {
+         const CVector3& cArenaSize = CSimulator::GetInstance().GetSpace().GetArenaSize();
+         m_cHalfArenaSize.Set(
+            cArenaSize.GetX() * 0.5f,
+            cArenaSize.GetY() * 0.5f);
       }
 
       virtual CColor GetColorAtPoint(Real f_x,
@@ -146,7 +153,32 @@ namespace argos {
 
    CFloorEntity::CFloorEntity() :
       CEntity(NULL),
+      m_eColorSource(UNSET),
       m_pcColorSource(NULL),
+      m_bHasChanged(true) {}
+
+   /****************************************/
+   /****************************************/
+
+   CFloorEntity::CFloorEntity(const std::string& str_id,
+                              const std::string& str_file_name) :
+      CEntity(NULL, str_id),
+      m_eColorSource(FROM_IMAGE),
+      m_pcColorSource(NULL),
+      m_bHasChanged(true) {
+      std::string strFileName = str_file_name;
+      ExpandEnvVariables(strFileName);
+      m_pcColorSource = new CFloorColorFromImageFile(strFileName);
+   }
+
+   /****************************************/
+   /****************************************/
+
+   CFloorEntity::CFloorEntity(const std::string& str_id,
+                              UInt32 un_pixels_per_meter) :
+      CEntity(NULL, str_id),
+      m_eColorSource(FROM_LOOP_FUNCTIONS),
+      m_pcColorSource(new CFloorColorFromLoopFunctions(un_pixels_per_meter)),
       m_bHasChanged(true) {}
 
    /****************************************/
@@ -164,27 +196,25 @@ namespace argos {
    void CFloorEntity::Init(TConfigurationNode& t_tree) {
       /* Init parent */
       CEntity::Init(t_tree);
-      /* Get arena size */
-      m_cFloorSize = CSimulator::GetInstance().GetSpace().GetArenaSize();
       /* Parse XML */
-      GetNodeAttribute(t_tree, "source", m_strColorSource);
-      if(m_strColorSource == "image") {
+      std::string strColorSource;
+      GetNodeAttribute(t_tree, "source", strColorSource);
+      if(strColorSource == "image") {
+         m_eColorSource = FROM_IMAGE;
          std::string strPath;
          GetNodeAttribute(t_tree, "path", strPath);
          ExpandEnvVariables(strPath);
-         m_pcColorSource = new CFloorColorFromImageFile(strPath,
-                                                        m_cFloorSize.GetX(),
-                                                        m_cFloorSize.GetY());
+         m_pcColorSource = new CFloorColorFromImageFile(strPath);
       }
-      else if(m_strColorSource == "loop_functions") {
-         GetNodeAttribute(t_tree, "pixels_per_meter", m_unPixelsPerMeter);
-         m_pcColorSource = new CFloorColorFromLoopFunctions(m_unPixelsPerMeter,
-                                                            m_cFloorSize.GetX(),
-                                                            m_cFloorSize.GetY());
+      else if(strColorSource == "loop_functions") {
+         m_eColorSource = FROM_LOOP_FUNCTIONS;
+         UInt32 unPixelsPerMeter;
+         GetNodeAttribute(t_tree, "pixels_per_meter", unPixelsPerMeter);
+         m_pcColorSource = new CFloorColorFromLoopFunctions(unPixelsPerMeter);
       }
       else {
          THROW_ARGOSEXCEPTION("Unknown image source \"" <<
-                              m_strColorSource <<
+                              strColorSource <<
                               "\" for the floor entity \"" <<
                               GetId() <<
                               "\"");
@@ -195,13 +225,7 @@ namespace argos {
    /****************************************/
 
    void CFloorEntity::Reset() {
-      /* Recompute the color source from the loop function */
-      if(m_strColorSource == "loop_functions") {
-         delete m_pcColorSource;
-         m_pcColorSource = new CFloorColorFromLoopFunctions(m_unPixelsPerMeter,
-                                                            m_cFloorSize.GetX(),
-                                                            m_cFloorSize.GetY());
-      }
+      m_pcColorSource->Reset();
    }
 
    /****************************************/

@@ -5,7 +5,7 @@
   <!-- * General configuration * -->
   <!-- ************************* -->
   <framework>
-    <experiment length="1" ticks_per_second="10" />
+    <experiment length="3" ticks_per_second="1" />
   </framework>
 
   <!-- *************** -->
@@ -39,7 +39,7 @@
   <!-- * Visualization * -->
   <!-- ****************** -->
   <visualization>
-    <!-- qt-opengl /-->
+    <qt-opengl />
   </visualization>
 
 </argos-configuration>

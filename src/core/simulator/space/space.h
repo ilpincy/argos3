@@ -105,6 +105,10 @@ namespace argos {
          return m_vecEntities;
       }
 
+      inline CEntity::TVector& GetRootEntityVector() {
+         return m_vecRootEntities;
+      }
+
       inline CEntity& GetEntity(const std::string& str_id) {
          CEntity::TMap::const_iterator it = m_mapEntitiesPerId.find(str_id);
          if ( it != m_mapEntitiesPerId.end()) {
@@ -157,6 +161,9 @@ namespace argos {
             THROW_ARGOSEXCEPTION("Error inserting a " << c_entity.GetTypeDescription() << " entity with id \"" << c_entity.GetId() << "\". An entity with that id exists already.");
          }
          /* Add the entity to the indexes */
+         if(!c_entity.HasParent()) {
+            m_vecRootEntities.push_back(&c_entity);
+         }
          m_vecEntities.push_back(&c_entity);
          m_mapEntitiesPerId[c_entity.GetId()] = &c_entity;
          m_mapEntitiesPerTypePerId[c_entity.GetTypeDescription()][c_entity.GetId()] = &c_entity;
@@ -170,15 +177,20 @@ namespace argos {
             /* Search for entity in the index per type per id */
             TMapPerType::iterator itMapPerTypePerId = itMapPerType->second.find(c_entity.GetId());
             if(itMapPerTypePerId != itMapPerType->second.end()) {
-               /* Get iterators for other indexes */
+               /* Remove the entity from the indexes */
                CEntity::TVector::iterator itVec = find(m_vecEntities.begin(),
                                                        m_vecEntities.end(),
                                                        &c_entity);
-               CEntity::TMap::iterator itMap = m_mapEntitiesPerId.find(c_entity.GetId());
-               /* Remove the entity from the indexes */
                m_vecEntities.erase(itVec);
-               m_mapEntitiesPerId.erase(itMap);
+               CEntity::TMap::iterator itMap = m_mapEntitiesPerId.find(c_entity.GetId());
                itMapPerType->second.erase(itMapPerTypePerId);
+               m_mapEntitiesPerId.erase(itMap);
+               if(!c_entity.HasParent()) {
+                  CEntity::TVector::iterator itRootVec = find(m_vecRootEntities.begin(),
+                                                              m_vecRootEntities.end(),
+                                                              &c_entity);
+                  m_vecEntities.erase(itRootVec);
+               }
                /* Remove entity object */
                c_entity.Destroy();
                delete &c_entity;
@@ -290,6 +302,9 @@ namespace argos {
 
       /** A vector of entities. */
       CEntity::TVector m_vecEntities;
+
+      /** A vector of all the entities without a parent */
+      CEntity::TVector m_vecRootEntities;
 
       /** A map of entities. */
       CEntity::TMap m_mapEntitiesPerId;

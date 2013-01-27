@@ -15,6 +15,7 @@
 
 namespace argos {
    class CEntity;
+   class CComposableEntity;
    class CSpace;
 }
 
@@ -43,8 +44,11 @@ namespace argos {
 
    public:
 
-      CEntity(CEntity* pc_parent) :
-         m_pcParent(pc_parent) {}
+      CEntity(CComposableEntity* pc_parent);
+
+      CEntity(CComposableEntity* pc_parent,
+              const std::string& str_id);
+
       virtual ~CEntity() {}
 
       virtual void Init(TConfigurationNode& t_tree);
@@ -57,30 +61,26 @@ namespace argos {
          return m_strId;
       }
 
-      inline virtual void SetId(const std::string& str_id) {
-         m_strId = str_id;
-      }
-
       inline bool HasParent() {
          return (m_pcParent != NULL);
       }
 
-      inline CEntity& GetParent() {
+      inline CComposableEntity& GetParent() {
          return *m_pcParent;
       }
 
-      inline void SetParent(CEntity& c_parent) {
+      inline void SetParent(CComposableEntity& c_parent) {
          m_pcParent = &c_parent;
       }
 
       virtual std::string GetTypeDescription() const = 0;
 
-      virtual void Update() = 0;
+      virtual void Update() {}
 
    private:
 
+      CComposableEntity* m_pcParent;
       std::string m_strId;
-      CEntity* m_pcParent;
 
    };
 

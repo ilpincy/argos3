@@ -19,7 +19,8 @@ namespace argos {
 
       ENABLE_VTABLE();
 
-      CRABEquippedEntity(CEntity* pc_parent, size_t un_msg_size) :
+      CRABEquippedEntity(CComposableEntity* pc_parent,
+                         size_t un_msg_size) :
          CEntity(pc_parent),
          m_unMsgSize(un_msg_size),
          m_punData(new UInt8[un_msg_size]),

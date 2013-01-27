@@ -24,22 +24,22 @@ namespace argos {
       ENABLE_VTABLE();
 
       CBoxEntity();
-      virtual ~CBoxEntity();
+
+      CBoxEntity(const std::string& str_id,
+                 const CVector3& c_position,
+                 const CQuaternion& c_orientation,
+                 bool b_movable,
+                 const CVector3& c_size,
+                 Real f_mass = 1.0f);
 
       virtual void Init(TConfigurationNode& t_tree);
       virtual void Reset();
-      virtual void Destroy();
-
-      virtual CEntity& GetComponent(const std::string& str_component);
-      virtual bool HasComponent(const std::string& str_component);
-
-      virtual void UpdateComponents();
 
       inline CEmbodiedEntity& GetEmbodiedEntity() {
          return *m_pcEmbodiedEntity;
       }
 
-      inline CLedEquippedEntity& GetLEDEquippedEntity() {
+      inline CLEDEquippedEntity& GetLEDEquippedEntity() {
          return *m_pcLEDEquippedEntity;
       }
 
@@ -66,8 +66,7 @@ namespace argos {
    private:
 
       CEmbodiedEntity*      m_pcEmbodiedEntity;
-      CLedEquippedEntity*   m_pcLEDEquippedEntity;
-      std::vector<CVector3> m_vecBaseLEDPositions;
+      CLEDEquippedEntity*   m_pcLEDEquippedEntity;
       CVector3              m_cSize;
       Real                  m_fMass;
 

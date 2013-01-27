@@ -13,13 +13,21 @@ namespace argos {
    /****************************************/
 
    CLightEntity::CLightEntity() :
-      CPositionalEntity(NULL),
-      m_cLEDEquippedEntity(this),
-      m_fInitIntensity(0.0f),
-      m_fIntensity(0.0f),
-      m_cInitColor(CColor::BLACK) {
-      m_cLEDEquippedEntity.AddLed(CVector3());
-   }
+      CLEDEntity(NULL),
+      m_fIntensity(1.0f) {}
+      
+   /****************************************/
+   /****************************************/
+
+   CLightEntity::CLightEntity(const std::string& str_id,
+                              const CVector3& c_position,
+                              const CColor& c_color,
+                              Real f_intensity) :
+      CLEDEntity(NULL,
+                 str_id,
+                 c_position,
+                 c_color),
+      m_fIntensity(f_intensity) {}
 
    /****************************************/
    /****************************************/
@@ -27,38 +35,13 @@ namespace argos {
    void CLightEntity::Init(TConfigurationNode& t_tree) {
       try {
          /* Init parent */
-         CPositionalEntity::Init(t_tree);
-         /* Init component */
-         m_cLEDEquippedEntity.Init(t_tree);
+         CLEDEntity::Init(t_tree);
          /* Parse XML */
-         GetNodeAttribute(t_tree, "color", m_cInitColor);
-         GetNodeAttribute(t_tree, "intensity", m_fInitIntensity);
-         SetIntensity(m_fInitIntensity);
-         /* Initialize the LED entity */
-         m_cLEDEquippedEntity.SetLedPosition(0, GetPosition());
-         m_cLEDEquippedEntity.SetLedColor(0, m_cInitColor);
+         GetNodeAttribute(t_tree, "intensity", m_fIntensity);
       }
       catch(CARGoSException& ex) {
          THROW_ARGOSEXCEPTION_NESTED("Error while initializing light entity", ex);
       }
-   }
-
-   /****************************************/
-   /****************************************/
-
-   void CLightEntity::Reset() {
-      CPositionalEntity::Reset();
-      m_cLEDEquippedEntity.Reset();
-      m_cLEDEquippedEntity.SetLedColor(0, m_cInitColor);
-      SetIntensity(m_fInitIntensity);
-   }
-
-   /****************************************/
-   /****************************************/
-
-   void CLightEntity::Destroy() {
-      m_cLEDEquippedEntity.Destroy();
-      CPositionalEntity::Reset();
    }
 
    /****************************************/
@@ -110,7 +93,6 @@ namespace argos {
    public:
       void ApplyTo(CSpace& c_space, CLightEntity& c_entity) {
          c_space.AddEntity(c_entity);
-         c_space.AddEntity(c_entity.GetLEDEquippedEntity());
       }
    };
    REGISTER_SPACE_OPERATION(CSpaceOperationAddEntity,
@@ -121,7 +103,6 @@ namespace argos {
    public:
       void ApplyTo(CSpace& c_space, CLightEntity& c_entity) {
          c_space.RemoveEntity(c_entity);
-         c_space.RemoveEntity(c_entity.GetLEDEquippedEntity());
       }
    };
 

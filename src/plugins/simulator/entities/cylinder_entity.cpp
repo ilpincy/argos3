@@ -6,6 +6,7 @@
 
 #include "cylinder_entity.h"
 #include <argos3/core/utility/math/matrix/rotationmatrix3.h>
+#include <argos3/core/simulator/space/space.h>
 
 namespace argos {
 
@@ -17,12 +18,29 @@ namespace argos {
    public:
 
     	CCylinderEmbodiedEntity(CCylinderEntity* pc_parent,
-                              Real f_cylinder_radius,
-                              Real f_cylinder_height) :
+                              Real f_radius,
+                              Real f_height) :
          CEmbodiedEntity(pc_parent) {
-         m_cHalfSize.SetX(f_cylinder_radius);
-         m_cHalfSize.SetY(f_cylinder_radius);
-         m_cHalfSize.SetZ(f_cylinder_height * 0.5f);
+         m_cHalfSize.SetX(f_radius);
+         m_cHalfSize.SetY(f_radius);
+         m_cHalfSize.SetZ(f_height * 0.5f);
+      }
+
+    	CCylinderEmbodiedEntity(CCylinderEntity* pc_parent,
+                              const std::string& str_id,
+                              const CVector3& c_position,
+                              const CQuaternion& c_orientation,
+                              bool b_movable,
+                              Real f_radius,
+                              Real f_height) :
+         CEmbodiedEntity(pc_parent,
+                         str_id,
+                         c_position,
+                         c_orientation,
+                         b_movable) {
+         m_cHalfSize.SetX(f_radius);
+         m_cHalfSize.SetY(f_radius);
+         m_cHalfSize.SetZ(f_height * 0.5f);
       }
 
    protected:
@@ -47,16 +65,37 @@ namespace argos {
 
    CCylinderEntity::CCylinderEntity() :
       CComposableEntity(NULL),
-      m_pcLEDEquippedEntity(new CLedEquippedEntity(this)),
+      m_pcEmbodiedEntity(NULL),
+      m_pcLEDEquippedEntity(NULL),
       m_fMass(1.0f) {
    }
 
    /****************************************/
    /****************************************/
 
-   CCylinderEntity::~CCylinderEntity() {
-    	delete m_pcEmbodiedEntity;
-    	delete m_pcLEDEquippedEntity;
+   CCylinderEntity::CCylinderEntity(const std::string& str_id,
+                                    const CVector3& c_position,
+                                    const CQuaternion& c_orientation,
+                                    bool b_movable,
+                                    Real f_radius,
+                                    Real f_height,
+                                    Real f_mass) :
+      CComposableEntity(NULL, str_id),
+      m_pcEmbodiedEntity(
+         new CCylinderEmbodiedEntity(this,
+                                     str_id,
+                                     c_position,
+                                     c_orientation,
+                                     b_movable,
+                                     f_radius,
+                                     f_height)),
+      m_pcLEDEquippedEntity(
+         new CLEDEquippedEntity(this,
+                                str_id,
+                                m_pcEmbodiedEntity)),
+      m_fMass(f_mass) {
+      AddComponent(*m_pcEmbodiedEntity);
+      AddComponent(*m_pcLEDEquippedEntity);
    }
 
    /****************************************/
@@ -65,7 +104,7 @@ namespace argos {
    void CCylinderEntity::Init(TConfigurationNode& t_tree) {
       try {
          /* Init parent */
-         CEntity::Init(t_tree);
+         CComposableEntity::Init(t_tree);
          /* Parse XML to get the radius */
          GetNodeAttribute(t_tree, "radius", m_fRadius);
          /* Parse XML to get the height */
@@ -80,28 +119,20 @@ namespace argos {
          else {
             m_fMass = 0.0f;
          }
-         /* Init LED equipped entity component */
-         m_pcLEDEquippedEntity->Init(t_tree);
-         if(NodeExists(t_tree, "leds")) {
-            TConfigurationNode& tLEDs = GetNode(t_tree, "leds");
-            /* Go through the led entries */
-            CVector3 cPosition;
-            CColor cColor;
-            TConfigurationNodeIterator itLED("led");
-            for(itLED = itLED.begin(&tLEDs);
-                itLED != itLED.end();
-                ++itLED) {
-               GetNodeAttribute(*itLED, "position", cPosition);
-               GetNodeAttribute(*itLED, "color", cColor);
-               m_vecBaseLEDPositions.push_back(cPosition);
-               m_pcLEDEquippedEntity->AddLed(cPosition, cColor);
-            }
-         }
          /* Create embodied entity using parsed data */
          m_pcEmbodiedEntity = new CCylinderEmbodiedEntity(this, m_fRadius, m_fHeight);
+         AddComponent(*m_pcEmbodiedEntity);
          m_pcEmbodiedEntity->Init(t_tree);
          m_pcEmbodiedEntity->SetMovable(bMovable);
-
+         /* Init LED equipped entity component */
+         m_pcLEDEquippedEntity = new CLEDEquippedEntity(this,
+                                                        GetId() + ".leds",
+                                                        m_pcEmbodiedEntity);
+         AddComponent(*m_pcLEDEquippedEntity);
+         if(NodeExists(t_tree, "leds")) {
+            TConfigurationNode& tLEDs = GetNode(t_tree, "leds");
+            m_pcLEDEquippedEntity->Init(tLEDs);
+         }
          UpdateComponents();
       }
       catch(CARGoSException& ex) {
@@ -123,52 +154,6 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CCylinderEntity::Destroy() {
-      m_pcEmbodiedEntity->Destroy();
-      m_pcLEDEquippedEntity->Destroy();
-   }
-
-   /****************************************/
-   /****************************************/
-
-   CEntity& CCylinderEntity::GetComponent(const std::string& str_component) {
-      if(str_component == "embodied_entity") {
-         return *m_pcEmbodiedEntity;
-      }
-      else if(str_component == "led_equipped_entity") {
-         return *m_pcLEDEquippedEntity;
-      }
-      else {
-         THROW_ARGOSEXCEPTION("A cylinder does not have a component of type \"" << str_component << "\"");
-      }
-   }
-
-   /****************************************/
-   /****************************************/
-
-   bool CCylinderEntity::HasComponent(const std::string& str_component) {
-      return (str_component == "embodied_entity"     ||
-              str_component == "led_equipped_entity" );
-   }
-
-   /****************************************/
-   /****************************************/
-
-   void CCylinderEntity::UpdateComponents() {
-      /* Set LED position and update led equipped entity */
-      CVector3 cLEDPosition;
-      for(UInt32 i = 0; i < m_pcLEDEquippedEntity->GetAllLeds().size(); ++i) {
-         cLEDPosition = m_vecBaseLEDPositions[i];
-         cLEDPosition.Rotate(m_pcEmbodiedEntity->GetOrientation());
-         cLEDPosition += GetEmbodiedEntity().GetPosition();
-         m_pcLEDEquippedEntity->SetLedPosition(i, cLEDPosition);
-      }
-      m_pcEmbodiedEntity->UpdateBoundingBox();
-   }
-
-   /****************************************/
-   /****************************************/
-
    REGISTER_ENTITY(CCylinderEntity,
                    "cylinder",
                    "1.0",
@@ -183,7 +168,7 @@ namespace argos {
                    "To declare an unmovable object (i.e., a column) you need the following:\n\n"
                    "  <arena ...>\n"
                    "    ...\n"
-                   "    <cylinder id=\"box1\"\n"
+                   "    <cylinder id=\"cyl1\"\n"
                    "              position=\"0.4,2.3,0.25\"\n"
                    "              orientation=\"45,90,0\"\n"
                    "              radius=\"0.8\"\n"
@@ -194,7 +179,7 @@ namespace argos {
                    "To declare a movable object you need the following:\n\n"
                    "  <arena ...>\n"
                    "    ...\n"
-                   "    <cylinder id=\"box1\"\n"
+                   "    <cylinder id=\"cyl1\"\n"
                    "              position=\"0.4,2.3,0.25\"\n"
                    "              orientation=\"45,90,0\"\n"
                    "              radius=\"0.8\"\n"
@@ -249,5 +234,36 @@ namespace argos {
                    "different colors and are located around the cylinder.\n",
                    "Usable"
       );
+
+   /****************************************/
+   /****************************************/
+
+   class CSpaceOperationAddCylinderEntity : public CSpaceOperationAddEntity {
+   public:
+      void ApplyTo(CSpace& c_space, CCylinderEntity& c_entity) {
+         c_space.AddEntity(c_entity);
+         c_space.AddEntity(c_entity.GetEmbodiedEntity());
+         c_space.AddEntity(c_entity.GetLEDEquippedEntity());
+      }
+   };
+   REGISTER_SPACE_OPERATION(CSpaceOperationAddEntity,
+                            CSpaceOperationAddCylinderEntity,
+                            CCylinderEntity);
+
+   class CSpaceOperationRemoveCylinderEntity : public CSpaceOperationRemoveEntity {
+   public:
+      void ApplyTo(CSpace& c_space, CCylinderEntity& c_entity) {
+         c_space.RemoveEntity(c_entity.GetLEDEquippedEntity());
+         c_space.RemoveEntity(c_entity.GetEmbodiedEntity());
+         c_space.RemoveEntity(c_entity);
+      }
+   };
+
+   REGISTER_SPACE_OPERATION(CSpaceOperationRemoveEntity,
+                            CSpaceOperationRemoveCylinderEntity,
+                            CCylinderEntity);
+
+   /****************************************/
+   /****************************************/
 
 }
