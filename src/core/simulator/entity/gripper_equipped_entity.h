@@ -23,29 +23,27 @@ namespace argos {
    class CEmbodiedEntity;
 }
 
-#include <argos3/core/simulator/entity/entity.h>
+#include <argos3/core/simulator/entity/positional_entity.h>
 #include <argos3/core/utility/math/vector3.h>
 
 namespace argos {
-   class CGripperEquippedEntity : public CEntity {
+
+   class CGripperEquippedEntity : public CPositionalEntity {
 
    public:
 
       ENABLE_VTABLE();
 
-      CGripperEquippedEntity(CComposableEntity* pc_parent) :
-         CEntity(pc_parent),
-         m_fLogicLockState(0.0f),
-         m_fNativeLockState(0.0f),
-         m_pcGrippedEntity(NULL) {}
+   public:
 
-      virtual ~CGripperEquippedEntity() {}
+      CGripperEquippedEntity(CComposableEntity* pc_parent);
 
-      virtual void Reset() {
-         m_fLogicLockState = 0.0f;
-      }
+      CGripperEquippedEntity(CComposableEntity* pc_parent,
+                             const std::string& str_id,
+                             const CVector3& c_position,
+                             const CQuaternion& c_orientation);
 
-      virtual void Update() {}
+      virtual void Reset();
 
       inline Real GetLogicLockState() const {
          return m_fLogicLockState;
@@ -63,11 +61,11 @@ namespace argos {
          m_fNativeLockState = f_native_lock_state;
       }
 
-      inline virtual bool IsLocked() const {
+      inline bool IsLocked() const {
          return m_fLogicLockState > 0.5f;
       }
 
-      inline virtual bool IsUnlocked() const {
+      inline bool IsUnlocked() const {
          return !IsLocked();
       }
 
@@ -87,23 +85,7 @@ namespace argos {
          return (m_pcGrippedEntity != NULL);
       }
 
-      inline const CVector3& GetPosition() const {
-         return m_cPosition;
-      }
-
-      inline void SetPosition(const CVector3& c_position) {
-         m_cPosition = c_position;
-      }
-
-      inline const CVector3& GetDirection() const {
-         return m_cDirection;
-      }
-
-      inline void SetDirection(const CVector3& c_direction) {
-         m_cDirection = c_direction;
-      }
-
-      inline virtual std::string GetTypeDescription() const {
+      virtual std::string GetTypeDescription() const {
          return "gripper_equipped_entity";
       }
 
@@ -112,8 +94,6 @@ namespace argos {
       Real m_fLogicLockState;
       Real m_fNativeLockState;
       CEmbodiedEntity* m_pcGrippedEntity;
-      CVector3 m_cPosition;
-      CVector3 m_cDirection;
       
    };
 }
