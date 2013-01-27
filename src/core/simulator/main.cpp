@@ -36,11 +36,9 @@ int main(int n_argc, char** ppch_argv) {
    CSimulator& cSimulator = CSimulator::GetInstance();
    /* Configure the command line options */
    CARGoSCommandLineArgParser cACLAP(cSimulator);
-
    try {
       /* Parse command line */
       cACLAP.Parse(n_argc, ppch_argv);
-
       switch(cACLAP.GetAction()) {
          case CARGoSCommandLineArgParser::ACTION_RUN_EXPERIMENT:
             CDynamicLoading::LoadAllLibraries();
@@ -48,22 +46,18 @@ int main(int n_argc, char** ppch_argv) {
             cSimulator.LoadExperiment();
             cSimulator.Execute();
             break;
-
          case CARGoSCommandLineArgParser::ACTION_QUERY:
             /** @todo Plugin query machinery */
             CDynamicLoading::LoadAllLibraries();
             QueryPlugins(cACLAP.GetQuery());
             break;
-
          case CARGoSCommandLineArgParser::ACTION_SHOW_HELP:
             cACLAP.PrintUsage(LOG);
             break;
-
          case CARGoSCommandLineArgParser::ACTION_UNKNOWN:
             /* Should never get here */
             break;
       }
-
       /* Done, destroy stuff */
       cSimulator.Destroy();
    }

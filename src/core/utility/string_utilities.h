@@ -164,6 +164,7 @@ namespace argos {
        * Searches into str_buffer for occurrences of an environment variable
        * of the form $VAR and substitutes them with the value of the variable
        * @param str_buffer the string to modify.
+       * @return the modified string
        */
       std::string& ExpandEnvVariables(std::string& str_buffer);
 
