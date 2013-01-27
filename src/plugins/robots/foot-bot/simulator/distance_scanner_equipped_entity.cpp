@@ -12,8 +12,17 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   CDistanceScannerEquippedEntity::CDistanceScannerEquippedEntity(CEntity* pc_parent) :
+   CDistanceScannerEquippedEntity::CDistanceScannerEquippedEntity(CComposableEntity* pc_parent) :
       CEntity(pc_parent),
+      m_unMode(MODE_OFF),
+      m_fRotationSpeed(0.0f) {}
+   
+   /****************************************/
+   /****************************************/
+
+   CDistanceScannerEquippedEntity::CDistanceScannerEquippedEntity(CComposableEntity* pc_parent,
+                                                                  const std::string& str_id) :
+      CEntity(pc_parent, str_id),
       m_unMode(MODE_OFF),
       m_fRotationSpeed(0.0f) {}
    
@@ -29,12 +38,20 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CDistanceScannerEquippedEntity::UpdateRotation() {
+   void CDistanceScannerEquippedEntity::Update() {
       if(m_unMode == MODE_SPEED_CONTROL &&
          m_fRotationSpeed != 0.0f) {
          m_cRotation += CRadians(m_fRotationSpeed * CPhysicsEngine::GetSimulationClockTick());
          m_cRotation.UnsignedNormalize();
       }
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CDistanceScannerEquippedEntity::SetRotation(const CRadians& c_rotation) {
+      m_cRotation = c_rotation;
+      m_cRotation.UnsignedNormalize();
    }
 
    /****************************************/

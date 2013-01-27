@@ -29,9 +29,11 @@ namespace argos {
       typedef std::map<std::string, CControllableEntity*> TMap;
 
    public:
+
       CControllableEntity(CComposableEntity* pc_parent) :
          CEntity(pc_parent),
          m_pcController(NULL) {}
+
       virtual ~CControllableEntity();
 
       virtual void Init(TConfigurationNode& t_tree);
@@ -62,7 +64,7 @@ namespace argos {
 
       virtual void Act();
 
-      inline virtual std::string GetTypeDescription() const {
+      virtual std::string GetTypeDescription() const {
          return "controllable_entity";
       }
 
@@ -78,11 +80,11 @@ namespace argos {
          m_vecIntersectionPoints.push_back(cPoint);
       }
 
-      inline std::vector< std::pair<bool, CRay> >& GetCheckedRays() {
+      inline std::vector<std::pair<bool, CRay> >& GetCheckedRays() {
          return m_vecCheckedRays;
       }
 
-      inline std::vector< CVector3 >& GetIntersectionPoints() {
+      inline std::vector<CVector3>& GetIntersectionPoints() {
          return m_vecIntersectionPoints;
       }
 
@@ -94,8 +96,8 @@ namespace argos {
       std::map<std::string, CActuator*> m_mapActuators;
       std::map<std::string, CSensor*> m_mapSensors;
 
-      std::vector< std::pair<bool, CRay> > m_vecCheckedRays;
-      std::vector< CVector3 > m_vecIntersectionPoints;
+      std::vector<std::pair<bool, CRay> > m_vecCheckedRays;
+      std::vector<CVector3> m_vecIntersectionPoints;
 
    };
 

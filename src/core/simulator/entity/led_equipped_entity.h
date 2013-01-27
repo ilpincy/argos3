@@ -29,7 +29,7 @@ namespace argos {
    public:
 
       CLEDEquippedEntity(CComposableEntity* pc_parent,
-                         CPositionalEntity* pc_reference = NULL);
+                         CPositionalEntity* pc_reference);
 
       CLEDEquippedEntity(CComposableEntity* pc_parent,
                          const std::string& str_id,

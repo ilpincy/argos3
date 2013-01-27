@@ -18,14 +18,10 @@ namespace argos {
 
       ENABLE_VTABLE();
 
-      CWiFiEquippedEntity(CEntity* pc_parent) :
-         CEntity(pc_parent) {}
+      CWiFiEquippedEntity(CComposableEntity* pc_parent);
 
-      virtual ~CWiFiEquippedEntity() {}
-
-      virtual void Reset() {}
-
-      virtual void Update() {}
+      CWiFiEquippedEntity(CComposableEntity* pc_parent,
+                          const std::string& str_id);
 
       virtual std::string GetTypeDescription() const {
          return "wifi_equipped_entity";

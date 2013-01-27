@@ -215,7 +215,7 @@ namespace argos {
       glRotatef(fGripperOrientation, 0.0f, 0.0f, 1.0f);
       /* Place the grippable part of the gripper module (LEDs) */
       glPushMatrix();
-      CLedEquippedEntity& cLEDEquippedEntity = c_entity.GetLEDEquippedEntity();
+      CLEDEquippedEntity& cLEDEquippedEntity = c_entity.GetLEDEquippedEntity();
       for(UInt32 i = 0; i < 12; i++) {
          const CColor& cColor = cLEDEquippedEntity.GetLED(i).GetColor();
          glRotatef(m_fLEDAngleSlice, 0.0f, 0.0f, 1.0f);

@@ -18,38 +18,42 @@ namespace argos {
 
       ENABLE_VTABLE();
 
-      CWheeledEntity(CEntity* pc_parent) :
+   public:
+
+      CWheeledEntity(CComposableEntity* pc_parent) :
          CEntity(pc_parent) {
-         ::bzero(m_cWheelSpeed, NUM_WHEELS * sizeof(Real));
+         ::memset(m_cWheelSpeed, 0, NUM_WHEELS * sizeof(Real));
       }
-      virtual ~CWheeledEntity() {}
+
+      CWheeledEntity(CComposableEntity* pc_parent,
+                     const std::string& str_id) :
+         CEntity(pc_parent, str_id) {
+         ::memset(m_cWheelSpeed, 0, NUM_WHEELS * sizeof(Real));
+      }
 
       virtual void Reset() {
-         /* Reset speeds */
-         ::bzero(m_cWheelSpeed, NUM_WHEELS * sizeof(Real));
+         ::memset(m_cWheelSpeed, 0, NUM_WHEELS * sizeof(Real));
       }
 
-      virtual void Update() {}
-
-      virtual void GetSpeed(Real* f_speed) {
+      void GetSpeed(Real* f_speed) {
          ::memcpy(f_speed, m_cWheelSpeed, NUM_WHEELS * sizeof(Real));
       }
 
-      virtual void SetSpeed(Real f_speed[NUM_WHEELS]) {
+      void SetSpeed(Real f_speed[NUM_WHEELS]) {
          ::memcpy(m_cWheelSpeed, f_speed, NUM_WHEELS * sizeof(Real));
       }
 
-      virtual const CVector3& GetWheelPosition(UInt32 un_index) const {
+      const CVector3& GetWheelPosition(UInt32 un_index) const {
          return m_cWheelPosition[un_index];
       }
 
-      virtual void SetWheelPosition(UInt32 un_index,
-                                           const CVector3& c_position) {
+      void SetWheelPosition(UInt32 un_index,
+                            const CVector3& c_position) {
          m_cWheelPosition[un_index] = c_position;
       }
 
       virtual std::string GetTypeDescription() const {
-         return "wheeled_entity<" + ToString(NUM_WHEELS) +">";
+         return "wheeled_entity<" + ToString(NUM_WHEELS) + ">";
       }
 
    private:
@@ -72,37 +76,42 @@ namespace argos {
 
       ENABLE_VTABLE();
 
-      CWheeledEntity(CEntity* pc_parent) :
+   public:
+
+      CWheeledEntity(CComposableEntity* pc_parent) :
          CEntity(pc_parent) {
          m_cWheelSpeed[0] = 0.0f;
          m_cWheelSpeed[1] = 0.0f;
       }
-      virtual ~CWheeledEntity() {}
 
-      virtual void Reset() {
-         /* Reset speeds */
+      CWheeledEntity(CComposableEntity* pc_parent,
+                     const std::string& str_id) :
+         CEntity(pc_parent, str_id) {
          m_cWheelSpeed[0] = 0.0f;
          m_cWheelSpeed[1] = 0.0f;
       }
 
-      virtual void Update() {}
+      virtual void Reset() {
+         m_cWheelSpeed[0] = 0.0f;
+         m_cWheelSpeed[1] = 0.0f;
+      }
 
-      virtual void GetSpeed(Real* f_speed) {
+      void GetSpeed(Real* f_speed) {
          f_speed[0] = m_cWheelSpeed[0];
          f_speed[1] = m_cWheelSpeed[1];
       }
 
-      virtual void SetSpeed(Real f_speed[2]) {
+      void SetSpeed(Real f_speed[2]) {
          m_cWheelSpeed[0] = f_speed[0];
          m_cWheelSpeed[1] = f_speed[1];
       }
 
-      virtual const CVector3& GetWheelPosition(UInt32 un_index) const {
+      const CVector3& GetWheelPosition(UInt32 un_index) const {
          return m_cWheelPosition[un_index];
       }
 
-      virtual void SetWheelPosition(UInt32 un_index,
-                                           const CVector3& c_position) {
+      void SetWheelPosition(UInt32 un_index,
+                            const CVector3& c_position) {
          m_cWheelPosition[un_index] = c_position;
       }
 

@@ -76,40 +76,16 @@ namespace argos {
 
    CFootBotEntity::CFootBotEntity() :
       CComposableEntity(NULL),
-      m_pcEmbodiedEntity(new CFootBotEmbodiedEntity(this)),
-      m_pcControllableEntity(new CControllableEntity(this)),
-      m_pcWheeledEntity(new CWheeledEntity<2>(this)),
-      m_pcLEDEquippedEntity(new CLedEquippedEntity(this)),
-      m_pcGripperEquippedEntity(new CGripperEquippedEntity(this)),
-      m_pcDistanceScannerEquippedEntity(new CDistanceScannerEquippedEntity(this)),
-      m_pcRABEquippedEntity(new CRABEquippedEntity(this, 10)),
-      m_pcWiFiEquippedEntity(new CWiFiEquippedEntity(this)),
+      m_pcEmbodiedEntity(NULL),
+      m_pcControllableEntity(NULL),
+      m_pcWheeledEntity(NULL),
+      m_pcLEDEquippedEntity(NULL),
+      m_pcGripperEquippedEntity(NULL),
+      m_pcDistanceScannerEquippedEntity(NULL),
+      m_pcRABEquippedEntity(NULL),
+      m_pcWiFiEquippedEntity(NULL),
       m_fTurretRotationSpeed(0.0f),
       m_unTurretMode(0) {
-      /* Left wheel position */
-      m_pcWheeledEntity->SetWheelPosition(0, CVector3(0.0f,  FOOTBOT_HALF_INTERWHEEL_DISTANCE, 0.0f));
-      /* Right wheel position */
-      m_pcWheeledEntity->SetWheelPosition(1, CVector3(0.0f, -FOOTBOT_HALF_INTERWHEEL_DISTANCE, 0.0f));
-      /* Add LEDs [0-11] and beacon [12] */
-      for(UInt32 i = 0; i < 13; ++i) {
-         m_pcLEDEquippedEntity->AddLed(CVector3());
-      }
-      /* Gripper position */
-      m_pcGripperEquippedEntity->SetPosition(CVector3(FOOTBOT_RADIUS, 0.0f, FOOTBOT_GRIPPER_ELEVATION));
-   }
-
-   /****************************************/
-   /****************************************/
-
-   CFootBotEntity::~CFootBotEntity() {
-      delete m_pcEmbodiedEntity;
-      delete m_pcControllableEntity;
-      delete m_pcWheeledEntity;
-      delete m_pcLEDEquippedEntity;
-      delete m_pcGripperEquippedEntity;
-      delete m_pcDistanceScannerEquippedEntity;
-      delete m_pcRABEquippedEntity;
-      delete m_pcWiFiEquippedEntity;
    }
 
    /****************************************/
@@ -117,17 +93,53 @@ namespace argos {
 
    void CFootBotEntity::Init(TConfigurationNode& t_tree) {
       try {
-         /* Init parent */
-         CEntity::Init(t_tree);
-         /* Init components */
+         /*
+          * Init parent
+          */
+         CComposableEntity::Init(t_tree);
+         /*
+          * Create and init components
+          */
+         /* Embodied entity */
+         m_pcEmbodiedEntity = new CFootBotEmbodiedEntity(this);
+         AddComponent(*m_pcEmbodiedEntity);
          m_pcEmbodiedEntity->Init(t_tree);
+         /* Controllable entity */
+         m_pcControllableEntity = new CControllableEntity(this);
+         AddComponent(*m_pcControllableEntity);
          m_pcControllableEntity->Init(t_tree);
+         /* Wheeled entity and wheel positions (left, right) */
+         m_pcWheeledEntity = new CWheeledEntity<2>(this);
+         AddComponent(*m_pcWheeledEntity);
+         m_pcWheeledEntity->SetWheelPosition(0, CVector3(0.0f,  FOOTBOT_HALF_INTERWHEEL_DISTANCE, 0.0f));
+         m_pcWheeledEntity->SetWheelPosition(1, CVector3(0.0f, -FOOTBOT_HALF_INTERWHEEL_DISTANCE, 0.0f));
          m_pcWheeledEntity->Init(t_tree);
+         /* LED equipped entity, with LEDs [0-11] and beacon [12] */
+         m_pcLEDEquippedEntity = new CLEDEquippedEntity(this,
+                                                        m_pcEmbodiedEntity);
+         AddComponent(*m_pcLEDEquippedEntity);
+         for(UInt32 i = 0; i < 13; ++i) {
+            m_pcLEDEquippedEntity->AddLED(CVector3());
+         }
          m_pcLEDEquippedEntity->Init(t_tree);
+         /* Gripper equipped entity */
+         m_pcGripperEquippedEntity = new CGripperEquippedEntity(this);
+         AddComponent(*m_pcLEDEquippedEntity);
+         m_pcGripperEquippedEntity->SetPosition(CVector3(FOOTBOT_RADIUS, 0.0f, FOOTBOT_GRIPPER_ELEVATION));
          m_pcGripperEquippedEntity->Init(t_tree);
+         /* Distance scanner */
+         m_pcDistanceScannerEquippedEntity = new CDistanceScannerEquippedEntity(this);
+         AddComponent(*m_pcDistanceScannerEquippedEntity);
          m_pcDistanceScannerEquippedEntity->Init(t_tree);
+         /* RAB equipped entity */
+         m_pcRABEquippedEntity = new CRABEquippedEntity(this, 10);
+         AddComponent(*m_pcRABEquippedEntity);
          m_pcRABEquippedEntity->Init(t_tree);
+         /* WiFi equipped entity */
+         m_pcWiFiEquippedEntity = new CWiFiEquippedEntity(this);
+         AddComponent(*m_pcWiFiEquippedEntity);
          m_pcWiFiEquippedEntity->Init(t_tree);
+         /* Init components */
          UpdateComponents();
       }
       catch(CARGoSException& ex) {
@@ -140,14 +152,7 @@ namespace argos {
 
    void CFootBotEntity::Reset() {
       /* Reset all components */
-      m_pcEmbodiedEntity->Reset();
-      m_pcControllableEntity->Reset();
-      m_pcWheeledEntity->Reset();
-      m_pcLEDEquippedEntity->Reset();
-      m_pcGripperEquippedEntity->Reset();
-      m_pcDistanceScannerEquippedEntity->Reset();
-      m_pcRABEquippedEntity->Reset();
-      m_pcWiFiEquippedEntity->Reset();
+      CComposableEntity::Reset();
       m_cTurretRotation = CRadians::ZERO;
       m_fTurretRotationSpeed = 0.0f;
       m_unTurretMode = 0;
@@ -159,14 +164,7 @@ namespace argos {
    /****************************************/
 
    void CFootBotEntity::Destroy() {
-      m_pcEmbodiedEntity->Destroy();
-      m_pcControllableEntity->Destroy();
-      m_pcWheeledEntity->Destroy();
-      m_pcLEDEquippedEntity->Destroy();
-      m_pcGripperEquippedEntity->Destroy();
-      m_pcDistanceScannerEquippedEntity->Destroy();
-      m_pcRABEquippedEntity->Destroy(); 
-      m_pcWiFiEquippedEntity->Destroy(); 
+      CComposableEntity::Destroy();
       m_cTurretRotation = CRadians::ZERO;
       m_fTurretRotationSpeed = 0.0f;
       m_unTurretMode = 0;
@@ -175,58 +173,11 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   CEntity& CFootBotEntity::GetComponent(const std::string& str_component) {
-      if(str_component == "embodied_entity") {
-         return *m_pcEmbodiedEntity;
-      }
-      else if(str_component == "controllable_entity") {
-         return *m_pcControllableEntity;
-      }
-      else if(str_component == "wheeled_entity<2>") {
-         return *m_pcWheeledEntity;
-      }
-      else if(str_component == "led_equipped_entity") {
-         return *m_pcLEDEquippedEntity;
-      }
-      else if(str_component == "gripper_equipped_entity") {
-         return *m_pcGripperEquippedEntity;
-      }
-      else if(str_component == "distance_scanner_equipped_entity") {
-         return *m_pcDistanceScannerEquippedEntity;
-      }
-      else if(str_component == "rab_equipped_entity") {
-         return *m_pcRABEquippedEntity;
-      }
-      else if(str_component == "wifi_equipped_entity") {
-         return *m_pcWiFiEquippedEntity;
-      }
-      else {
-         THROW_ARGOSEXCEPTION("A foot-bot does not have a component of type \"" << str_component << "\"");
-      }
-   }
-
-   /****************************************/
-   /****************************************/
-
-   bool CFootBotEntity::HasComponent(const std::string& str_component) {
-      return (str_component == "embodied_entity"                  ||
-              str_component == "controllable_entity"              ||
-              str_component == "wheeled_entity<2>"                ||
-              str_component == "led_equipped_entity"              ||
-              str_component == "gripper_equipped_entity"          ||
-              str_component == "distance_scanner_equipped_entity" ||
-              str_component == "rab_equipped_entity" ||
-              str_component == "wifi_equipped_entity");
-   }
-
-   /****************************************/
-   /****************************************/
-
    void CFootBotEntity::UpdateComponents() {
-      SetLedPosition();
-      m_pcDistanceScannerEquippedEntity->UpdateRotation();
-      m_pcEmbodiedEntity->UpdateBoundingBox();
+      m_pcEmbodiedEntity->Update();
+      m_pcDistanceScannerEquippedEntity->Update();
       m_pcRABEquippedEntity->SetPosition(m_pcEmbodiedEntity->GetPosition());
+      SetLEDPosition();
    }
 
    /****************************************/
@@ -239,9 +190,9 @@ namespace argos {
    cLEDPosition.RotateZ(cLEDAngle);                                             \
    cLEDPosition.Rotate(m_pcEmbodiedEntity->GetOrientation());                   \
    cLEDPosition += cEntityPosition;                                             \
-   m_pcLEDEquippedEntity->SetLedPosition(IDX, cLEDPosition);
+   m_pcLEDEquippedEntity->SetLEDPosition(IDX, cLEDPosition);
    
-   void CFootBotEntity::SetLedPosition() {
+   void CFootBotEntity::SetLEDPosition() {
       /* Set LED positions */
       const CVector3& cEntityPosition = GetEmbodiedEntity().GetPosition();
       CVector3 cLEDPosition;
@@ -263,7 +214,7 @@ namespace argos {
       cLEDPosition.Set(0.0f, 0.0f, FOOTBOT_BEACON_ELEVATION);
       cLEDPosition.Rotate(m_pcEmbodiedEntity->GetOrientation());
       cLEDPosition += cEntityPosition;
-      m_pcLEDEquippedEntity->SetLedPosition(12, cLEDPosition);
+      m_pcLEDEquippedEntity->SetLEDPosition(12, cLEDPosition);
    }
 
    /****************************************/

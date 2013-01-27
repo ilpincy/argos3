@@ -27,7 +27,9 @@ namespace argos {
 
       CMediumEntity();
 
-      inline virtual std::string GetTypeDescription() const {
+      CMediumEntity(const std::string& str_id);
+
+      virtual std::string GetTypeDescription() const {
          return "medium_entity";
       }
 

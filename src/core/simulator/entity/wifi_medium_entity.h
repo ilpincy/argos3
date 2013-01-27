@@ -20,13 +20,13 @@ namespace argos {
 
       ENABLE_VTABLE();
 
-      CWiFiMediumEntity(CEntity* pc_parent) :
-         CMediumEntity(pc_parent) {}
-      virtual ~CWiFiMediumEntity() {}
+   public:
 
-      virtual void Update() {}
-
-      inline virtual std::string GetTypeDescription() const {
+      CWiFiMediumEntity();
+      
+      CWiFiMediumEntity(const std::string& str_id);
+         
+      virtual std::string GetTypeDescription() const {
          return "wifi_medium_entity";
       }
 

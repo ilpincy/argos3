@@ -13,8 +13,7 @@ namespace argos {
    class CEmbodiedEntity;
    class CFootBotEntity;
    class CGripperEquippedEntity;
-   class CLedEquippedEntity;
-   class CQuaternion;
+   class CLEDEquippedEntity;
    class CRABEquippedEntity;
    class CWiFiEquippedEntity;
 }
@@ -31,14 +30,10 @@ namespace argos {
       ENABLE_VTABLE();
 
       CFootBotEntity();
-      virtual ~CFootBotEntity();
 
       virtual void Init(TConfigurationNode& t_tree);
       virtual void Reset();
       virtual void Destroy();
-
-      virtual CEntity& GetComponent(const std::string& str_component);
-      virtual bool HasComponent(const std::string& str_component);
 
       virtual void UpdateComponents();
       
@@ -54,7 +49,7 @@ namespace argos {
          return *m_pcWheeledEntity;
       }
 
-      inline CLedEquippedEntity& GetLEDEquippedEntity() {
+      inline CLEDEquippedEntity& GetLEDEquippedEntity() {
          return *m_pcLEDEquippedEntity;
       }
 
@@ -104,14 +99,14 @@ namespace argos {
 
    private:
 
-      void SetLedPosition();
+      void SetLEDPosition();
 
    private:
 
       CEmbodiedEntity*                m_pcEmbodiedEntity;
       CControllableEntity*            m_pcControllableEntity;
       CWheeledEntity<2>*              m_pcWheeledEntity;
-      CLedEquippedEntity*             m_pcLEDEquippedEntity;
+      CLEDEquippedEntity*             m_pcLEDEquippedEntity;
       CGripperEquippedEntity*         m_pcGripperEquippedEntity;
       CDistanceScannerEquippedEntity* m_pcDistanceScannerEquippedEntity;
       CRABEquippedEntity*             m_pcRABEquippedEntity;

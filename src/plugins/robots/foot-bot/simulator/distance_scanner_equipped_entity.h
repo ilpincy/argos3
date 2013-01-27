@@ -31,12 +31,14 @@ namespace argos {
 
    public:
 
-      CDistanceScannerEquippedEntity(CEntity* pc_parent);
-      virtual ~CDistanceScannerEquippedEntity() {}
+      CDistanceScannerEquippedEntity(CComposableEntity* pc_parent);
+
+      CDistanceScannerEquippedEntity(CComposableEntity* pc_parent,
+                                     const std::string& str_id);
 
       virtual void Reset();
 
-      virtual void Update() {}
+      virtual void Update();
 
       inline UInt32 GetMode() const {
          return m_unMode;
@@ -50,10 +52,7 @@ namespace argos {
          return m_cRotation;
       }
 
-      inline void SetRotation(const CRadians& c_rotation) {
-         m_cRotation = c_rotation;
-         m_cRotation.UnsignedNormalize();
-      }
+      inline void SetRotation(const CRadians& c_rotation);
 
       inline Real GetRotationSpeed() const {
          return m_fRotationSpeed;
@@ -62,8 +61,6 @@ namespace argos {
       inline void SetRotationSpeed(Real f_speed) {
          m_fRotationSpeed = f_speed;
       }
-
-      void UpdateRotation();
 
       virtual std::string GetTypeDescription() const {
          return "distance_scanner_equipped_entity";

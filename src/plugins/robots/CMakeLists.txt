@@ -1,4 +1,4 @@
 #
 # Compile foot-bot-related code
 #
-#add_subdirectory(foot-bot)
+add_subdirectory(foot-bot)

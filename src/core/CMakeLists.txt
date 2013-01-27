@@ -82,7 +82,8 @@ set(ARGOS3_HEADERS_SIMULATOR_ENTITY
   simulator/entity/medium_entity.h
   simulator/entity/positional_entity.h
   simulator/entity/rab_equipped_entity.h
-#  simulator/entity/wifi_medium_entity.h
+  simulator/entity/wifi_equipped_entity.h
+  simulator/entity/wifi_medium_entity.h
 )
 # argos3/core/simulator/physics_engine
 set(ARGOS3_HEADERS_SIMULATOR_PHYSICSENGINE
@@ -160,6 +161,8 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
     simulator/entity/medium_entity.cpp
     simulator/entity/positional_entity.cpp
     simulator/entity/rab_equipped_entity.cpp
+    simulator/entity/wifi_equipped_entity.cpp
+    simulator/entity/wifi_medium_entity.cpp
     ${ARGOS3_HEADERS_SIMULATOR_PHYSICSENGINE}
     simulator/physics_engine/physics_engine.cpp
     ${ARGOS3_HEADERS_SIMULATOR_VISUALIZATION}
