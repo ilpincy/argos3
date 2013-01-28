@@ -186,11 +186,10 @@ namespace argos {
    public:
       void ApplyTo(CQTOpenGLWidget& c_visualization,
                    CCylinderEntity& c_entity) {
+         static CQTOpenGLCylinder m_cModel;
          c_visualization.DrawPositionalEntity(c_entity.GetEmbodiedEntity());
          m_cModel.Draw(c_entity);
       }
-   private:
-      CQTOpenGLCylinder m_cModel;
    };
 
    REGISTER_ENTITY_OPERATION(CQTOpenGLOperationDraw, CQTOpenGLWidget, CQTOpenGLOperationDrawCylinder, void, CCylinderEntity);

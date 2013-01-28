@@ -94,11 +94,10 @@ namespace argos {
    public:
       void ApplyTo(CQTOpenGLWidget& c_visualization,
                    CLightEntity& c_entity) {
+         static CQTOpenGLLight m_cModel;
          c_visualization.DrawPositionalEntity(c_entity);
          m_cModel.Draw(c_entity);
       }
-   private:
-      CQTOpenGLLight m_cModel;
    };
 
    REGISTER_ENTITY_OPERATION(CQTOpenGLOperationDraw, CQTOpenGLWidget, CQTOpenGLOperationDrawLight, void, CLightEntity);
