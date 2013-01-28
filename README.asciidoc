@@ -16,6 +16,8 @@ ARGoS is a physics-based simulators for robotics. Its main features are:
 
 ARGoS is very flexible, extremely efficient, and easy to use.
 
+Starting from version 3, ARGoS is released under the terms of the MIT license.
+
 Downloading ARGoS
 ------------------
 
