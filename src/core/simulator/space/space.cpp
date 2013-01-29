@@ -1,9 +1,9 @@
 /**
  * @file <argos3/core/simulator/space/space.cpp>
  *
- * @brief This file provides the implementation of the Swarmanoid 3D Space.
+ * @brief This file provides the implementation of the space.
  *
- * This file provides the implementation of the Swarmanoid 3D Space.
+ * This file provides the implementation of the space.
  *
  * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */
