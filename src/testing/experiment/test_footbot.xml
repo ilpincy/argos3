@@ -1,0 +1,45 @@
+<?xml version="1.0" ?>
+<argos-configuration>
+
+  <!-- ************************* -->
+  <!-- * General configuration * -->
+  <!-- ************************* -->
+  <framework>
+    <experiment length="3" ticks_per_second="1" />
+  </framework>
+
+  <!-- *************** -->
+  <!-- * Controllers * -->
+  <!-- *************** -->
+  <controllers>
+    <test_footbot_controller />
+  </controllers>
+
+  <!-- *********************** -->
+  <!-- * Arena configuration * -->
+  <!-- *********************** -->
+  <!-- Note: rotations are specified and performed in ZYX order (opposite of ARGoS1) -->
+  <arena size="2, 2, 1">
+
+    <foot-bot id="fb0" position="0,0,0" orientation="0,0,0" controller="x" />
+
+  </arena>
+
+  <!-- ******************* -->
+  <!-- * Physics engines * -->
+  <!-- ******************* -->
+  <physics_engines />
+
+  <!-- ************************************ -->
+  <!-- * Arena -> Physics Engines mapping * -->
+  <!-- ************************************ -->
+  <arena_physics />
+
+  <!-- ****************** -->
+  <!-- * Visualization * -->
+  <!-- ****************** -->
+  <visualization>
+    <!-- qt-opengl / -->
+  </visualization>
+
+</argos-configuration>
