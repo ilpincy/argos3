@@ -345,7 +345,8 @@ namespace argos {
          pcRobot->SetId(c_entity.GetId());
          /* Go through actuators */
          TConfigurationNode& tActuators = GetNode(*(itController->second), "actuators");
-         for(TConfigurationNodeIterator itAct = itAct.begin(&tActuators);
+         TConfigurationNodeIterator itAct;
+         for(itAct = itAct.begin(&tActuators);
              itAct != itAct.end();
              ++itAct) {
             /* itAct->Value() is the name of the current actuator */
@@ -361,7 +362,8 @@ namespace argos {
          }
          /* Go through sensors */
          TConfigurationNode& tSensors = GetNode(*(itController->second), "sensors");
-         for(TConfigurationNodeIterator itSens = itSens.begin(&tSensors);
+         TConfigurationNodeIterator itSens;
+         for(itSens = itSens.begin(&tSensors);
              itSens != itSens.end();
              ++itSens) {
             /* itSens->Value() is the name of the current actuator */

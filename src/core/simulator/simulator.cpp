@@ -24,13 +24,6 @@
 #include <argos3/core/simulator/entity/embodied_entity.h>
 #include <argos3/core/simulator/physics_engine/physics_engine_entity.h>
 
-const std::string CONFIGURATION_CLOCKTICK = "clocktick";
-const std::string CONFIGURATION_MAXCLOCK = "maxclock";
-const std::string CONFIGURATION_RANDOMSEED = "random_seed";
-const std::string CONFIGURATION_CONTROLLER_PATH = "controller_path";
-const std::string CONFIGURATION_MAPPING_ENGINE_ID = "id";
-const std::string CONFIGURATION_MAPPING_ENTITY_ID = "id";
-
 namespace argos {
 
    /****************************************/
@@ -418,17 +411,28 @@ namespace argos {
          try {
             std::string strLibrary;
             std::string strId;
-            for(TConfigurationNodeIterator it = it.begin(&t_tree);
+            TConfigurationNodeIterator it;
+            for(it = it.begin(&t_tree);
                 it != it.end(); ++it) {
-               /* Get library name */
-               GetNodeAttribute(*it, "library", strLibrary);
-               /* Load library */
-               CDynamicLoading::LoadLibrary(strLibrary);
                /* Get controller id */
-               GetNodeAttribute(*it, "id", strId);
+               try {
+                  GetNodeAttribute(*it, "id", strId);
+               }
+               catch(CARGoSException& ex) {
+                  std::string strValue;
+                  it->GetValue(&strValue);
+                  THROW_ARGOSEXCEPTION_NESTED("Controller type \"" << strValue << "\" has no assigned id.", ex);
+               }
                /* Bomb out if id is already in map */
                if(m_mapControllerConfig.find(strId) != m_mapControllerConfig.end()) {
                   THROW_ARGOSEXCEPTION("Controller id \"" << strId << "\" duplicated");
+               }
+               /* Optionally, process "library" attribute if present */
+               if(NodeAttributeExists(*it, "library")) {
+                  /* Get library name */
+                  GetNodeAttribute(*it, "library", strLibrary);
+                  /* Load library */
+                  CDynamicLoading::LoadLibrary(strLibrary);
                }
                /* Store XML info in map by id */
                m_mapControllerConfig.insert(std::pair<std::string, TConfigurationNode*>(strId, &(*it)));
