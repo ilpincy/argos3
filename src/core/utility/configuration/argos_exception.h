@@ -68,10 +68,12 @@ namespace argos {
        * @param pc_nested a pointer to the nested exception
        */
       CARGoSException(const std::string& str_what, std::exception* pc_nested = NULL) throw() :
-         m_strWhat("CARGoSException thrown: " + str_what), m_pcNested(pc_nested) {
+         m_strWhat("[FATAL] " + str_what), m_pcNested(pc_nested) {
          if (m_pcNested != NULL) {
             std::ostringstream w;
-            w << m_strWhat << " [nested: \"" << m_pcNested->what() << "\"]";
+            w << m_strWhat
+              << std::endl
+              << m_pcNested->what();
             m_strWhat = w.str();
          }
       }
@@ -106,11 +108,11 @@ namespace argos {
 /**
  * This macro throws an ARGoS exception with the passed message.
  */
-#define THROW_ARGOSEXCEPTION(message) { std::ostringstream what; what << __FILE__ << ":" << __LINE__ << std::endl << "        " << message; throw CARGoSException(what.str()); }
+#define THROW_ARGOSEXCEPTION(message) { std::ostringstream what; what << message; throw CARGoSException(what.str()); }
 /**
  * This macro throws an ARGoS exception with the passed message and nesting the passed exception.
  */
-#define THROW_ARGOSEXCEPTION_NESTED(message, nested) { std::ostringstream what; what << __FILE__ << ":" << __LINE__ << std::endl << "        " << message; throw CARGoSException(what.str(), &nested); }
+#define THROW_ARGOSEXCEPTION_NESTED(message, nested) { std::ostringstream what; what << message; throw CARGoSException(what.str(), &nested); }
 
 #ifndef NDEBUG
 /**

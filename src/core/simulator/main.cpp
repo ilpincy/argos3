@@ -64,7 +64,7 @@ int main(int n_argc, char** ppch_argv) {
    catch(std::exception& ex) {
       /* A fatal error occurred: dispose of data, print error and exit */
       cSimulator.Destroy();
-      LOGERR << "[FATAL] " << ex.what() << std::endl;
+      LOGERR << ex.what() << std::endl;
       LOG.Flush();
       LOGERR.Flush();
       return 1;
