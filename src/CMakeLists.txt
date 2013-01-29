@@ -75,6 +75,15 @@ endif(ARGOS_WRAPPERS)
 include(${CMAKE_SOURCE_DIR}/cmake/ARGoSCreateDocs.cmake)
 
 #
+# Create .gdbinit file for GDB support
+# It is placed in the same directory as the argos3 executable
+#
+configure_file(
+  ${CMAKE_SOURCE_DIR}/scripts/gdbinit.in
+  ${CMAKE_BINARY_DIR}/core/.gdbinit
+  @ONLY)
+
+#
 # Install extra stuff
 #
 # Configuration file for /etc/ld.so.conf.d/
