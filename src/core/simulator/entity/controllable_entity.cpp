@@ -7,14 +7,46 @@
 #include "controllable_entity.h"
 #include <argos3/core/simulator/actuator.h>
 #include <argos3/core/simulator/sensor.h>
+#include <argos3/core/simulator/simulator.h>
+#include <argos3/core/simulator/entity/composable_entity.h>
+#include <argos3/core/simulator/space/space.h>
 
 namespace argos {
 
    /****************************************/
    /****************************************/
 
-   CControllableEntity::~CControllableEntity()
-   {
+   CControllableEntity::CControllableEntity(CComposableEntity* pc_parent) :
+      CEntity(pc_parent),
+      m_pcController(NULL) {}
+
+   /****************************************/
+   /****************************************/
+
+   CControllableEntity::CControllableEntity(CComposableEntity* pc_parent,
+                                            const std::string& str_id,
+                                            const std::string& str_controller_id) :
+      CEntity(pc_parent, str_id),
+      m_pcController(NULL) {
+      SetController(str_controller_id);
+   }
+
+   /****************************************/
+   /****************************************/
+
+   CControllableEntity::CControllableEntity(CComposableEntity* pc_parent,
+                                            const std::string& str_id,
+                                            const std::string& str_controller_id,
+                                            TConfigurationNode& t_controller_config) :
+      CEntity(pc_parent, str_id),
+      m_pcController(NULL) {
+      SetController(str_controller_id, t_controller_config);
+   }
+
+   /****************************************/
+   /****************************************/
+
+   CControllableEntity::~CControllableEntity() {
       if(m_pcController != NULL) {
          delete m_pcController;
       }
@@ -23,13 +55,24 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CControllableEntity::Init(TConfigurationNode& t_tree)
-   {
+   void CControllableEntity::Init(TConfigurationNode& t_tree) {
       try {
          /* Init parent */
          CEntity::Init(t_tree);
-         /* Get the controller of the controllable */
-         GetNodeAttribute(t_tree, "controller", m_strControllerId);
+         /* Get the controller id */
+         std::string strControllerId;
+         GetNodeAttribute(t_tree, "controller", strControllerId);
+         /* Check if the tree has parameters to pass to the controller */
+         if(NodeExists(t_tree, "controller_parameters")) {
+            /* Set the controller */
+            SetController(strControllerId,
+                          GetNode(t_tree,
+                                  "controller_parameters"));
+         }
+         else {
+            /* Set the controller */
+            SetController(strControllerId);
+         }
       }
       catch(CARGoSException& ex) {
          THROW_ARGOSEXCEPTION_NESTED("Failed to initialize controllable entity \"" << GetId() << "\".", ex);
@@ -39,12 +82,10 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CControllableEntity::Reset()
-   {
+   void CControllableEntity::Reset() {
       /* Clear rays */
       m_vecCheckedRays.clear();
       m_vecIntersectionPoints.clear();
-
       /* Reset sensors */
       for(std::map<std::string, CSensor*>::iterator it = m_mapSensors.begin();
           it != m_mapSensors.end(); ++it) {
@@ -62,12 +103,10 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CControllableEntity::Destroy()
-   {
+   void CControllableEntity::Destroy() {
       /* Clear rays */
       m_vecCheckedRays.clear();
       m_vecIntersectionPoints.clear();
-
       /* Destroy sensors */
       for(std::map<std::string, CSensor*>::iterator it = m_mapSensors.begin();
           it != m_mapSensors.end(); ++it) {
@@ -86,19 +125,75 @@ namespace argos {
 
    /****************************************/
    /****************************************/
-
-   void CControllableEntity::SetController(CCI_Controller& pc_controller) {
-      /* Set the controller */
-      m_pcController = &pc_controller;
-      /* Set the simulated actuator list */
-      for(CCI_Actuator::TMap::iterator it = m_pcController->GetRobot().GetAllActuators().begin();
-          it != m_pcController->GetRobot().GetAllActuators().end(); ++it) {
-         m_mapActuators[it->first] = dynamic_cast<CActuator*>(it->second);
+   
+   void CControllableEntity::SetController(const std::string& str_controller_id) {
+      try {
+         TConfigurationNode& tConfig = CSimulator::GetInstance().GetConfigForController(str_controller_id);
+         TConfigurationNode& tParams = GetNode(tConfig, "params");
+         SetController(str_controller_id, tParams);
       }
-      /* Set the simulated sensor list */
-      for(CCI_Sensor::TMap::iterator it = m_pcController->GetRobot().GetAllSensors().begin();
-          it != m_pcController->GetRobot().GetAllSensors().end(); ++it) {
-         m_mapSensors[it->first] = dynamic_cast<CSensor*>(it->second);
+      catch(CARGoSException& ex) {
+         THROW_ARGOSEXCEPTION_NESTED("Can't set controller for controllable entity \"" << GetId() << "\"", ex);
+      }
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CControllableEntity::SetController(const std::string& str_controller_id,
+                                           TConfigurationNode& t_parameters) {
+      try {
+         /* Look in the map for the parsed XML configuration of the wanted controller */
+         TConfigurationNode& tConfig = CSimulator::GetInstance().GetConfigForController(str_controller_id);
+         /* tConfig is the base of the XML section of the wanted controller */
+         std::string strImpl;
+         /* Create a robot class to contain the sensors and actuators */
+         CCI_Robot* pcRobot = new CCI_Robot();
+         pcRobot->SetId(GetParent().GetId());
+         /* Go through actuators */
+         TConfigurationNode& tActuators = GetNode(tConfig, "actuators");
+         TConfigurationNodeIterator itAct;
+         for(itAct = itAct.begin(&tActuators);
+             itAct != itAct.end();
+             ++itAct) {
+            /* itAct->Value() is the name of the current actuator */
+            GetNodeAttribute(*itAct, "implementation", strImpl);
+            CCI_Actuator* pcCIAct = CFactory<CCI_Actuator>::New(itAct->Value() + "$$" + strImpl);
+            CActuator* pcAct = dynamic_cast<CActuator*>(pcCIAct);
+            if(pcAct == NULL) {
+               THROW_ARGOSEXCEPTION("[BUG] Actuator <\"" << itAct->Value() << "\", \"" << strImpl << "\"> does not inherit from CActuator");
+            }
+            pcAct->SetEntity(GetParent());
+            m_mapActuators[itAct->Value()] = pcAct;
+            pcCIAct->Init(*itAct);
+            pcRobot->AddActuator(itAct->Value(), pcCIAct);
+         }
+         /* Go through sensors */
+         TConfigurationNode& tSensors = GetNode(tConfig, "sensors");
+         TConfigurationNodeIterator itSens;
+         for(itSens = itSens.begin(&tSensors);
+             itSens != itSens.end();
+             ++itSens) {
+            /* itSens->Value() is the name of the current actuator */
+            GetNodeAttribute(*itSens, "implementation", strImpl);
+            CCI_Sensor* pcCISens = CFactory<CCI_Sensor>::New(itSens->Value() + "$$" + strImpl);
+            CSensor* pcSens = dynamic_cast<CSensor*>(pcCISens);
+            if(pcSens == NULL) {
+               THROW_ARGOSEXCEPTION("[BUG] Sensor <\"" << itSens->Value() << "\", \"" << strImpl << "\"> does not inherit from CSensor");
+            }
+            pcSens->SetEntity(GetParent());
+            m_mapSensors[itSens->Value()] = pcSens;
+            pcCISens->Init(*itSens);
+            pcRobot->AddSensor(itSens->Value(), pcCISens);
+         }
+         /* Create and configure the controller */
+         m_pcController = CFactory<CCI_Controller>::New(tConfig.Value());
+         m_pcController->SetRobot(*pcRobot);
+         m_pcController->SetId(str_controller_id);
+         m_pcController->Init(t_parameters);
+      }
+      catch(CARGoSException& ex) {
+         THROW_ARGOSEXCEPTION_NESTED("Can't set controller for controllable entity \"" << GetId() << "\"", ex);
       }
    }
 
@@ -108,10 +203,21 @@ namespace argos {
    void CControllableEntity::Sense() {
       m_vecCheckedRays.clear();
       m_vecIntersectionPoints.clear();
-
       for(std::map<std::string, CSensor*>::iterator it = m_mapSensors.begin();
           it != m_mapSensors.end(); ++it) {
          it->second->Update();
+      }
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CControllableEntity::ControlStep() {
+      if(m_pcController != NULL) {
+         m_pcController->ControlStep();
+      }
+      else {
+         THROW_ARGOSEXCEPTION("Entity " << GetId() << " does not have any controller associated.");
       }
    }
 
@@ -124,6 +230,35 @@ namespace argos {
          it->second->Update();
       }
    }
+
+   /****************************************/
+   /****************************************/
+
+   class CSpaceOperationAddControllableEntity : public CSpaceOperationAddEntity {
+   public:
+      void ApplyTo(CSpace& c_space, CControllableEntity& c_entity) {
+         LOGERR << "[DEBUG] CSpaceOperationAddControllableEntity on " << c_entity.GetId() << std::endl;
+         LOGERR.Flush();
+         c_space.AddEntity(c_entity);
+         c_space.AddControllableEntity(c_entity);
+      }
+   };
+   REGISTER_SPACE_OPERATION(CSpaceOperationAddEntity,
+                            CSpaceOperationAddControllableEntity,
+                            CControllableEntity);
+
+   class CSpaceOperationRemoveControllableEntity : public CSpaceOperationRemoveEntity {
+   public:
+      void ApplyTo(CSpace& c_space, CControllableEntity& c_entity) {
+         LOGERR << "[DEBUG] CSpaceOperationRemoveControllableEntity on " << c_entity.GetId() << std::endl;
+         LOGERR.Flush();
+         c_space.RemoveControllableEntity(c_entity);
+         c_space.RemoveEntity(c_entity);
+      }
+   };
+   REGISTER_SPACE_OPERATION(CSpaceOperationRemoveEntity,
+                            CSpaceOperationRemoveControllableEntity,
+                            CControllableEntity);
 
    /****************************************/
    /****************************************/

@@ -80,6 +80,17 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   TConfigurationNode& CSimulator::GetConfigForController(const std::string& str_id) {
+      TControllerConfigurationMap::iterator it = m_mapControllerConfig.find(str_id);
+      if(it == m_mapControllerConfig.end()) {
+         THROW_ARGOSEXCEPTION("Can't find XML configuration for controller id \"" << str_id << "\"");
+      }
+      return *(it->second);
+   }
+
+   /****************************************/
+   /****************************************/
+
    void CSimulator::LoadExperiment() {
       /* Build configuration tree */
       m_tConfiguration.LoadFile(m_strExperimentConfigFileName);
@@ -556,26 +567,6 @@ namespace argos {
                CEntity& cEntity = **itMatchingEntities;
                /* Add the entity to the engine */
                pcEngine->AddEntity(cEntity);
-               /* Is the entity composable with a controllable component? */
-               CComposableEntity* pcComposableEntity = dynamic_cast<CComposableEntity*>(&cEntity);
-               if(pcComposableEntity != NULL &&
-                  pcComposableEntity->HasComponent("controllable_entity")) {
-                  /* The entity is controllable, there's more to do: associating a controller */
-                  CControllableEntity& cControllableEntity = pcComposableEntity->GetComponent<CControllableEntity>("controllable_entity");
-                  /* Try to get the <parameters> section in the robot entity */
-                  if(NodeExists(*itEntities, "parameters")) {
-                     /* Use the <parameters> section in the robot entity */
-                     TConfigurationNode& tControllerParameters = GetNode(*itEntities, "parameters");
-                     AssignController(cControllableEntity.GetControllerId(),
-                                      tControllerParameters,
-                                      *pcComposableEntity);
-                  }
-                  else {
-                     /* Use the <parameters> section in the controller section */
-                     AssignController(cControllableEntity.GetControllerId(),
-                                      *pcComposableEntity);
-                  }
-               }
             }
          }
       }

@@ -30,9 +30,16 @@ namespace argos {
 
    public:
 
-      CControllableEntity(CComposableEntity* pc_parent) :
-         CEntity(pc_parent),
-         m_pcController(NULL) {}
+      CControllableEntity(CComposableEntity* pc_parent);
+
+      CControllableEntity(CComposableEntity* pc_parent,
+                          const std::string& str_id,
+                          const std::string& str_controller_id);
+
+      CControllableEntity(CComposableEntity* pc_parent,
+                          const std::string& str_id,
+                          const std::string& str_controller_id,
+                          TConfigurationNode& t_controller_config);
 
       virtual ~CControllableEntity();
 
@@ -40,27 +47,24 @@ namespace argos {
       virtual void Reset();
       virtual void Destroy();
 
-      virtual void Update() {}
-
-      inline const std::string& GetControllerId() const {
-         return m_strControllerId;
-      }
-
       inline CCI_Controller& GetController() {
          return *m_pcController;
       }
-      void SetController(CCI_Controller& pc_controller);
+
+      /**
+       * Creates and assigns a controller with the given id.
+       */
+      void SetController(const std::string& str_controller_id);
+
+      /**
+       * Creates and assigns a controller with the given id and the given XML parameters.
+       */
+      void SetController(const std::string& str_controller_id,
+                         TConfigurationNode& t_parameters);
 
       virtual void Sense();
 
-      inline void ControlStep() {
-         if(m_pcController != NULL) {
-            m_pcController->ControlStep();
-         }
-         else {
-            THROW_ARGOSEXCEPTION("Entity " << GetId() << " does not have any controller associated. Did you add it to the <arena_physics> section?");
-         }
-      }
+      void ControlStep();
 
       virtual void Act();
 
@@ -90,7 +94,6 @@ namespace argos {
 
    protected:
 
-      std::string m_strControllerId;
       CCI_Controller* m_pcController;
 
       std::map<std::string, CActuator*> m_mapActuators;

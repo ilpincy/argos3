@@ -89,26 +89,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   class CSpaceOperationAddLightEntity : public CSpaceOperationAddEntity {
-   public:
-      void ApplyTo(CSpace& c_space, CLightEntity& c_entity) {
-         c_space.AddEntity(c_entity);
-      }
-   };
-   REGISTER_SPACE_OPERATION(CSpaceOperationAddEntity,
-                            CSpaceOperationAddLightEntity,
-                            CLightEntity);
-
-   class CSpaceOperationRemoveLightEntity : public CSpaceOperationRemoveEntity {
-   public:
-      void ApplyTo(CSpace& c_space, CLightEntity& c_entity) {
-         c_space.RemoveEntity(c_entity);
-      }
-   };
-
-   REGISTER_SPACE_OPERATION(CSpaceOperationRemoveEntity,
-                            CSpaceOperationRemoveLightEntity,
-                            CLightEntity);
+   REGISTER_STANDARD_SPACE_OPERATIONS_ON_ENTITY(CLightEntity);
 
    /****************************************/
    /****************************************/

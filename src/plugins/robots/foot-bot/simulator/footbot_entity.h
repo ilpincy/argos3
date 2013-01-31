@@ -29,6 +29,8 @@ namespace argos {
 
       ENABLE_VTABLE();
 
+   public:
+
       CFootBotEntity();
 
       virtual void Init(TConfigurationNode& t_tree);
@@ -45,7 +47,7 @@ namespace argos {
          return *m_pcControllableEntity;
       }
 
-      inline CWheeledEntity<2>& GetWheeledEntity() {
+      inline CWheeledEntity& GetWheeledEntity() {
          return *m_pcWheeledEntity;
       }
 
@@ -105,7 +107,7 @@ namespace argos {
 
       CEmbodiedEntity*                m_pcEmbodiedEntity;
       CControllableEntity*            m_pcControllableEntity;
-      CWheeledEntity<2>*              m_pcWheeledEntity;
+      CWheeledEntity*                 m_pcWheeledEntity;
       CLEDEquippedEntity*             m_pcLEDEquippedEntity;
       CGripperEquippedEntity*         m_pcGripperEquippedEntity;
       CDistanceScannerEquippedEntity* m_pcDistanceScannerEquippedEntity;

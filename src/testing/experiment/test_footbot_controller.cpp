@@ -43,7 +43,7 @@ void CTestFootBotController::Destroy() {
 /****************************************/
 
 void CTestFootBotController::ControlStep() {
-   RLOG << "CTestFootBotController::Destroy()"
+   RLOG << "CTestFootBotController::ControlStep()"
         << std::endl;
 }
 

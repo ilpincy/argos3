@@ -54,7 +54,7 @@ namespace argos {
       itControllers = itControllers.begin(&tControllersTree);
       while(!found && itControllers != itControllers.end()) {
          GetNodeAttribute(*itControllers, "id", strControllerId);
-         if(strControllerId == cControllableEntity.GetControllerId()) {
+         if(strControllerId == cControllableEntity.GetController().GetId()) {
             found = true;
          }
          else {
@@ -65,7 +65,7 @@ namespace argos {
       ARGOS_ASSERT(found,
                    "[FATAL] The entity \"" <<
                    c_entity.GetId() << "\" has been associated with a controller with id \"" <<
-                   cControllableEntity.GetControllerId() <<
+                   cControllableEntity.GetController().GetId() <<
                    "\", but a controller with this id wasn't found in the <controllers> section of the XML file.");
       /* Now itControllers points to the right controller subtree */
       /* Get the parameters subtree */

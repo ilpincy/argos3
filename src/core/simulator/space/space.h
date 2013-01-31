@@ -24,21 +24,6 @@ namespace argos {
 
 namespace argos {
 
-   template <typename ACTION>
-   class CSpaceOperation : public CEntityOperation<ACTION, CSpace, void> {
-   public:
-      virtual ~CSpaceOperation() {}
-   };
-
-   class CSpaceOperationAddEntity : public CSpaceOperation<CSpaceOperationAddEntity> {
-   public:
-      virtual ~CSpaceOperationAddEntity() {}
-   };
-   class CSpaceOperationRemoveEntity : public CSpaceOperation<CSpaceOperationRemoveEntity> {
-   public:
-      virtual ~CSpaceOperationRemoveEntity() {}
-   };
-
    /****************************************/
    /****************************************/
 
@@ -342,9 +327,76 @@ namespace argos {
       CPhysicsEngine::TVector* m_ptPhysicsEngines;
    };
 
+   /****************************************/
+   /****************************************/
+
+   template <typename ACTION>
+   class CSpaceOperation : public CEntityOperation<ACTION, CSpace, void> {
+   public:
+      virtual ~CSpaceOperation() {}
+   };
+
+   class CSpaceOperationAddEntity : public CSpaceOperation<CSpaceOperationAddEntity> {
+   public:
+      virtual ~CSpaceOperationAddEntity() {}
+   };
+   class CSpaceOperationRemoveEntity : public CSpaceOperation<CSpaceOperationRemoveEntity> {
+   public:
+      virtual ~CSpaceOperationRemoveEntity() {}
+   };
+
+   class CSpaceOperationAddBaseEntity : public CSpaceOperationAddEntity {
+   public:
+      void ApplyTo(CSpace& c_space, CEntity& c_entity) {
+         LOGERR << "[DEBUG] CSpaceOperationAddBaseEntity on " << c_entity.GetId() << std::endl;
+         LOGERR.Flush();
+         c_space.AddEntity(c_entity);
+      }
+   };
+
+   class CSpaceOperationRemoveBaseEntity : public CSpaceOperationRemoveEntity {
+   public:
+      void ApplyTo(CSpace& c_space, CEntity& c_entity) {
+         LOGERR << "[DEBUG] CSpaceOperationRemoveBaseEntity on " << c_entity.GetId() << std::endl;
+         LOGERR.Flush();
+         c_space.RemoveEntity(c_entity);
+      }
+   };
+
 }
 
-#define REGISTER_SPACE_OPERATION(ACTION, OPERATION, ENTITY) \
+   /****************************************/
+   /****************************************/
+
+#define REGISTER_SPACE_OPERATION(ACTION, OPERATION, ENTITY)             \
    REGISTER_ENTITY_OPERATION(ACTION, CSpace, OPERATION, void, ENTITY);
+
+#define REGISTER_STANDARD_SPACE_OPERATION_ADD_ENTITY(ENTITY)            \
+   REGISTER_SPACE_OPERATION(CSpaceOperationAddEntity,                   \
+                            CSpaceOperationAddBaseEntity,               \
+                            ENTITY);
+
+#define REGISTER_STANDARD_SPACE_OPERATION_REMOVE_ENTITY(ENTITY)         \
+   REGISTER_SPACE_OPERATION(CSpaceOperationRemoveEntity,                \
+                            CSpaceOperationRemoveBaseEntity,            \
+                            ENTITY);
+
+#define REGISTER_STANDARD_SPACE_OPERATIONS_ON_ENTITY(ENTITY) \
+   REGISTER_STANDARD_SPACE_OPERATION_ADD_ENTITY(ENTITY)      \
+   REGISTER_STANDARD_SPACE_OPERATION_REMOVE_ENTITY(ENTITY)
+
+#define REGISTER_STANDARD_SPACE_OPERATION_ADD_COMPOSABLE(ENTITY)        \
+   REGISTER_SPACE_OPERATION(CSpaceOperationAddEntity,                   \
+                            CSpaceOperationAddComposableEntity,         \
+                            ENTITY);
+
+#define REGISTER_STANDARD_SPACE_OPERATION_REMOVE_COMPOSABLE(ENTITY)     \
+   REGISTER_SPACE_OPERATION(CSpaceOperationRemoveEntity,                \
+                            CSpaceOperationRemoveComposableEntity,      \
+                            ENTITY);
+
+#define REGISTER_STANDARD_SPACE_OPERATIONS_ON_COMPOSABLE(ENTITY)  \
+   REGISTER_STANDARD_SPACE_OPERATION_ADD_COMPOSABLE(ENTITY)       \
+   REGISTER_STANDARD_SPACE_OPERATION_REMOVE_COMPOSABLE(ENTITY)
 
 #endif

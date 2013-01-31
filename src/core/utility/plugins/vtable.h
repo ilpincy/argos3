@@ -84,6 +84,8 @@
 #include <vector>
 #include <cstddef>
 
+#include <argos3/core/utility/logging/argos_log.h>
+
 namespace argos {
 
    /**
@@ -115,8 +117,8 @@ namespace argos {
       size_t& unTag = STagHolder<const DERIVED, const BASE>::Tag;
       if(unTag == 0) {
          /* First call of this function, generate non-zero tag */
-         ++STagCounter<BASE>::Count;
-         unTag = STagCounter<BASE>::Count;
+         ++STagCounter<const BASE>::Count;
+         unTag = STagCounter<const BASE>::Count;
       }
       return unTag;
    }
@@ -179,6 +181,10 @@ namespace argos {
             un_index = GetTag<BASE, BASE>();
          }
          return m_vecVTable[un_index];
+      }
+
+      inline size_t Size() const {
+         return m_vecVTable.size();
       }
 
    private:

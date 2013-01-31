@@ -6,6 +6,7 @@
 
 #include "distance_scanner_equipped_entity.h"
 #include <argos3/core/simulator/physics_engine/physics_engine.h>
+#include <argos3/core/simulator/space/space.h>
 
 namespace argos {
 
@@ -53,6 +54,11 @@ namespace argos {
       m_cRotation = c_rotation;
       m_cRotation.UnsignedNormalize();
    }
+
+   /****************************************/
+   /****************************************/
+
+   REGISTER_STANDARD_SPACE_OPERATIONS_ON_ENTITY(CDistanceScannerEquippedEntity);
 
    /****************************************/
    /****************************************/

@@ -14,6 +14,7 @@
 #include <argos3/core/simulator/entity/embodied_entity.h>
 #include <argos3/core/simulator/entity/controllable_entity.h>
 #include <argos3/core/utility/math/matrix/rotationmatrix3.h>
+#include <argos3/core/simulator/space/space.h>
 
 namespace argos {
 
@@ -104,27 +105,23 @@ namespace argos {
          m_pcEmbodiedEntity = new CFootBotEmbodiedEntity(this);
          AddComponent(*m_pcEmbodiedEntity);
          m_pcEmbodiedEntity->Init(t_tree);
-         /* Controllable entity */
-         m_pcControllableEntity = new CControllableEntity(this);
-         AddComponent(*m_pcControllableEntity);
-         m_pcControllableEntity->Init(t_tree);
          /* Wheeled entity and wheel positions (left, right) */
-         m_pcWheeledEntity = new CWheeledEntity<2>(this);
+         m_pcWheeledEntity = new CWheeledEntity(this, 2);
          AddComponent(*m_pcWheeledEntity);
          m_pcWheeledEntity->SetWheelPosition(0, CVector3(0.0f,  FOOTBOT_HALF_INTERWHEEL_DISTANCE, 0.0f));
          m_pcWheeledEntity->SetWheelPosition(1, CVector3(0.0f, -FOOTBOT_HALF_INTERWHEEL_DISTANCE, 0.0f));
          m_pcWheeledEntity->Init(t_tree);
          /* LED equipped entity, with LEDs [0-11] and beacon [12] */
          m_pcLEDEquippedEntity = new CLEDEquippedEntity(this,
+                                                        GetId() + ".led_equipped_entity",
                                                         m_pcEmbodiedEntity);
          AddComponent(*m_pcLEDEquippedEntity);
          for(UInt32 i = 0; i < 13; ++i) {
             m_pcLEDEquippedEntity->AddLED(CVector3());
          }
-         m_pcLEDEquippedEntity->Init(t_tree);
          /* Gripper equipped entity */
          m_pcGripperEquippedEntity = new CGripperEquippedEntity(this);
-         AddComponent(*m_pcLEDEquippedEntity);
+         AddComponent(*m_pcGripperEquippedEntity);
          m_pcGripperEquippedEntity->SetPosition(CVector3(FOOTBOT_RADIUS, 0.0f, FOOTBOT_GRIPPER_ELEVATION));
          m_pcGripperEquippedEntity->Init(t_tree);
          /* Distance scanner */
@@ -139,7 +136,12 @@ namespace argos {
          m_pcWiFiEquippedEntity = new CWiFiEquippedEntity(this);
          AddComponent(*m_pcWiFiEquippedEntity);
          m_pcWiFiEquippedEntity->Init(t_tree);
-         /* Init components */
+         /* Controllable entity
+            It must be the last one, for actuators/sensors to link to composing entities correctly */
+         m_pcControllableEntity = new CControllableEntity(this);
+         AddComponent(*m_pcControllableEntity);
+         m_pcControllableEntity->Init(t_tree);
+         /* Update components */
          UpdateComponents();
       }
       catch(CARGoSException& ex) {
@@ -260,5 +262,13 @@ namespace argos {
                    "None for the time being.\n",
                    "Under development"
       );
+
+   /****************************************/
+   /****************************************/
+
+   REGISTER_STANDARD_SPACE_OPERATIONS_ON_COMPOSABLE(CFootBotEntity);
+
+   /****************************************/
+   /****************************************/
 
 }

@@ -44,7 +44,7 @@ namespace argos {
    private:
 
       CFootBotEntity& m_cFootBotEntity;
-      CWheeledEntity<2>& m_cWheeledEntity;
+      CWheeledEntity& m_cWheeledEntity;
       CGripperEquippedEntity& m_cGripperEntity;
 
       cpFloat  m_fMass;

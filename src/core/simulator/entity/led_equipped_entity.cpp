@@ -5,20 +5,21 @@
  */
 
 #include "led_equipped_entity.h"
+#include <argos3/core/simulator/space/space.h>
 
 namespace argos {
 
    /****************************************/
    /****************************************/
-   
+
    CLEDEquippedEntity::CLEDEquippedEntity(CComposableEntity* pc_parent,
                                           CPositionalEntity* pc_reference) :
       CComposableEntity(pc_parent),
       m_pcReferenceEntity(pc_reference) {}
-   
+
    /****************************************/
    /****************************************/
-   
+
    CLEDEquippedEntity::CLEDEquippedEntity(CComposableEntity* pc_parent,
                                           const std::string& str_id,
                                           CPositionalEntity* pc_reference) :
@@ -73,6 +74,7 @@ namespace argos {
             c_position,
             c_color);
       m_tLEDs.push_back(pcLED);
+      AddComponent(*pcLED);
    }
 
    /****************************************/
@@ -160,6 +162,11 @@ namespace argos {
          }
       }
    }
+
+   /****************************************/
+   /****************************************/
+
+   REGISTER_STANDARD_SPACE_OPERATIONS_ON_COMPOSABLE(CLEDEquippedEntity);
 
    /****************************************/
    /****************************************/

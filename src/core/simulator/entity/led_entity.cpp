@@ -5,6 +5,7 @@
  */
 
 #include "led_entity.h"
+#include <argos3/core/simulator/space/space.h>
 
 namespace argos {
 
@@ -60,6 +61,11 @@ namespace argos {
          c_space_hash.UpdateCell(m_nI, m_nJ, m_nK, c_element);
       }
    }
+
+   /****************************************/
+   /****************************************/
+
+   REGISTER_STANDARD_SPACE_OPERATIONS_ON_ENTITY(CLEDEntity);
 
    /****************************************/
    /****************************************/

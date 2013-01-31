@@ -7,6 +7,8 @@
 
 #include "entity.h"
 #include "composable_entity.h"
+#include <argos3/core/utility/logging/argos_log.h>
+#include <argos3/core/simulator/space/space.h>
 
 namespace argos {
 
@@ -14,7 +16,8 @@ namespace argos {
    /****************************************/
 
    CEntity::CEntity(CComposableEntity* pc_parent) :
-      m_pcParent(pc_parent) {}
+      m_pcParent(pc_parent) {
+   }
 
    /****************************************/
    /****************************************/
@@ -22,7 +25,8 @@ namespace argos {
    CEntity::CEntity(CComposableEntity* pc_parent,
                     const std::string& str_id) :
       m_pcParent(pc_parent),
-      m_strId(str_id) {}
+      m_strId(str_id) {
+   }
 
    /****************************************/
    /****************************************/
@@ -53,6 +57,22 @@ namespace argos {
          }
       }
    }
+
+   /****************************************/
+   /****************************************/
+
+   INIT_VTABLE_FOR(CEntity);
+
+   /****************************************/
+   /****************************************/
+
+   REGISTER_SPACE_OPERATION(CSpaceOperationAddEntity,
+                            CSpaceOperationAddBaseEntity,
+                            CEntity);
+
+   REGISTER_SPACE_OPERATION(CSpaceOperationRemoveEntity,
+                            CSpaceOperationRemoveBaseEntity,
+                            CEntity);
 
    /****************************************/
    /****************************************/

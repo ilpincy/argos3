@@ -247,6 +247,11 @@ namespace argos {
       }
 
       /**
+       * Returns the XML portion relative to the controller with the given ID
+       */
+      TConfigurationNode& GetConfigForController(const std::string& str_id);
+
+      /**
        * Loads the XML configuration file.
        * The XML configuration file is parsed by this function.
        * The variable m_tConfigurationRoot is set here.
@@ -304,91 +309,6 @@ namespace argos {
        * @see CLoopFunctions::IsExperimentFinished()
        */
       bool IsExperimentFinished() const;
-
-      /**
-       * Assigns a new controller to an entity.
-       * The entity is assumed to be composable, and must have a controllable entity component.
-       * @param str_controller_id The id of the controller to create.
-       * @param c_entity The entity to which the controller will be assigned.
-       */
-      template<class ENTITY>
-      void AssignController(const std::string& str_controller_id,
-                            ENTITY& c_entity) {
-         /* Look in the map for the parsed XML configuration of the wanted controller */
-         TControllerConfigurationMap::iterator it = m_mapControllerConfig.find(str_controller_id);
-         if(it == m_mapControllerConfig.end()) {
-            THROW_ARGOSEXCEPTION("Controller id \"" << str_controller_id << "\" not found");
-         }
-         AssignController(str_controller_id, *(it->second), c_entity);
-      }
-      
-      /**
-       * Assigns a new controller to an entity.
-       * The entity is assumed to be composable, and must have a controllable entity component.
-       * @param str_controller_id The id of the controller to create.
-       * @param t_parameters A parsed XML tree to configure this controller
-       * @param c_entity The entity to which the controller will be assigned.
-       */
-      template<class ENTITY>
-      void AssignController(const std::string& str_controller_id,
-                            TConfigurationNode& t_parameters,
-                            ENTITY& c_entity) {
-         /* Look in the map for the parsed XML configuration of the wanted controller */
-         TControllerConfigurationMap::iterator itController = m_mapControllerConfig.find(str_controller_id);
-         if(itController == m_mapControllerConfig.end()) {
-            THROW_ARGOSEXCEPTION("Controller id \"" << str_controller_id << "\" not found");
-         }
-         /* Now itController->second points to the base section of the wanted controller */
-         std::string strImpl;
-         /* Create a robot class to contain the sensors and actuators */
-         CCI_Robot* pcRobot = new CCI_Robot();
-         pcRobot->SetId(c_entity.GetId());
-         /* Go through actuators */
-         TConfigurationNode& tActuators = GetNode(*(itController->second), "actuators");
-         TConfigurationNodeIterator itAct;
-         for(itAct = itAct.begin(&tActuators);
-             itAct != itAct.end();
-             ++itAct) {
-            /* itAct->Value() is the name of the current actuator */
-            GetNodeAttribute(*itAct, "implementation", strImpl);
-            CCI_Actuator* pcCIAct = CFactory<CCI_Actuator>::New(itAct->Value() + "$$" + strImpl);
-            CActuator* pcAct = dynamic_cast<CActuator*>(pcCIAct);
-            if(pcAct == NULL) {
-               THROW_ARGOSEXCEPTION("[BUG] Actuator <\"" << itAct->Value() << "\", \"" << strImpl << "\"> does not inherit from CActuator");
-            }
-            pcAct->SetEntity(c_entity);
-            pcCIAct->Init(t_parameters);
-            pcRobot->AddActuator(itAct->Value(), pcCIAct);
-         }
-         /* Go through sensors */
-         TConfigurationNode& tSensors = GetNode(*(itController->second), "sensors");
-         TConfigurationNodeIterator itSens;
-         for(itSens = itSens.begin(&tSensors);
-             itSens != itSens.end();
-             ++itSens) {
-            /* itSens->Value() is the name of the current actuator */
-            GetNodeAttribute(*itSens, "implementation", strImpl);
-            CCI_Sensor* pcCISens = CFactory<CCI_Sensor>::New(itSens->Value() + "$$" + strImpl);
-            CSensor* pcSens = dynamic_cast<CSensor*>(pcCISens);
-            if(pcSens == NULL) {
-               THROW_ARGOSEXCEPTION("[BUG] Sensor <\"" << itSens->Value() << "\", \"" << strImpl << "\"> does not inherit from CSensor");
-            }
-            pcSens->SetEntity(c_entity);
-            pcCISens->Init(t_parameters);
-            pcRobot->AddSensor(itSens->Value(), pcCISens);
-         }
-         /* Create and configure the controller */
-         CCI_Controller* pcController = CFactory<CCI_Controller>::New(itController->second->Value());
-         pcController->SetRobot(*pcRobot);
-         pcController->SetId(str_controller_id);
-         pcController->Init(t_parameters);
-         /* Assign the controller to the controllable entity associated to this entity */
-         if(!c_entity.HasComponent("controllable_entity")) {
-            THROW_ARGOSEXCEPTION("[BUG] Entity \"" << c_entity.GetId() << "\" does not have a controllable entity");
-         }
-         CControllableEntity& cControllable = c_entity.template GetComponent<CControllableEntity>("controllable_entity");
-         cControllable.SetController(*pcController);
-      }
       
    private:
 

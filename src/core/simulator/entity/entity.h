@@ -73,7 +73,9 @@ namespace argos {
          m_pcParent = &c_parent;
       }
 
-      virtual std::string GetTypeDescription() const = 0;
+      virtual std::string GetTypeDescription() const {
+         return "entity";
+      }
 
       virtual void Update() {}
 

@@ -23,49 +23,6 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   class CSpaceOperationAddControllableEntity : public CSpaceOperationAddEntity {
-   public:
-      void ApplyTo(CSpace& c_space, CControllableEntity& c_entity) {
-         c_space.AddControllableEntity(c_entity);
-      }
-   };
-   REGISTER_SPACE_OPERATION(CSpaceOperationAddEntity,
-                            CSpaceOperationAddControllableEntity,
-                            CControllableEntity);
-
-   class CSpaceOperationRemoveControllableEntity : public CSpaceOperationRemoveEntity {
-   public:
-      void ApplyTo(CSpace& c_space, CControllableEntity& c_entity) {
-         c_space.RemoveControllableEntity(c_entity);
-      }
-   };
-   REGISTER_SPACE_OPERATION(CSpaceOperationRemoveEntity,
-                            CSpaceOperationRemoveControllableEntity,
-                            CControllableEntity);
-
-   class CSpaceOperationAddMediumEntity : public CSpaceOperationAddEntity {
-   public:
-      void ApplyTo(CSpace& c_space, CMediumEntity& c_entity) {
-         c_space.AddMediumEntity(c_entity);
-      }
-   };
-   REGISTER_SPACE_OPERATION(CSpaceOperationAddEntity,
-                            CSpaceOperationAddMediumEntity,
-                            CMediumEntity);
-
-   class CSpaceOperationRemoveMediumEntity : public CSpaceOperationRemoveEntity {
-   public:
-      void ApplyTo(CSpace& c_space, CMediumEntity& c_entity) {
-         c_space.RemoveMediumEntity(c_entity);
-      }
-   };
-   REGISTER_SPACE_OPERATION(CSpaceOperationRemoveEntity,
-                            CSpaceOperationRemoveMediumEntity,
-                            CMediumEntity);
-
-   /****************************************/
-   /****************************************/
-
    class CSpace::CRayEmbodiedEntityIntersectionMethod {
    public:
       CRayEmbodiedEntityIntersectionMethod(CSpace& c_space) : m_cSpace(c_space) {}

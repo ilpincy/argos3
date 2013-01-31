@@ -18,6 +18,7 @@ namespace argos {
 }
 
 #include <argos3/core/simulator/entity/entity.h>
+#include <argos3/core/simulator/space/space.h>
 
 namespace argos {
    class CComposableEntity : public CEntity {
@@ -62,11 +63,46 @@ namespace argos {
 
       CEntity::TMultiMap::iterator FindComponent(const std::string& str_component);
 
+      inline CEntity::TMultiMap& GetComponents() {
+         return m_mapComponents;
+      }
+
    private:
 
       CEntity::TMultiMap m_mapComponents;
 
    };
+
+   class CSpaceOperationAddComposableEntity : public CSpaceOperationAddEntity {
+   public:
+      void ApplyTo(CSpace& c_space, CComposableEntity& c_entity) {
+         LOGERR << "[DEBUG] CSpaceOperationAddComposableEntity on " << c_entity.GetId() << std::endl;
+         LOGERR.Flush();
+         c_space.AddEntity(c_entity);
+         for(CEntity::TMultiMap::iterator it = c_entity.GetComponents().begin();
+             it != c_entity.GetComponents().end();
+             ++it) {
+            LOGERR << "[DEBUG] Processing entity type " << it->second->GetTypeDescription() << std::endl;
+            LOGERR.Flush();
+            CallEntityOperation<CSpaceOperationAddEntity, CSpace, void>(c_space, *(it->second));
+         }
+      }
+   };
+   
+   class CSpaceOperationRemoveComposableEntity : public CSpaceOperationRemoveEntity {
+   public:
+      void ApplyTo(CSpace& c_space, CComposableEntity& c_entity) {
+         LOGERR << "[DEBUG] CSpaceOperationRemoveComposableEntity on " << c_entity.GetId() << std::endl;
+         LOGERR.Flush();
+         for(CEntity::TMultiMap::iterator it = c_entity.GetComponents().begin();
+             it != c_entity.GetComponents().end();
+             ++it) {
+            CallEntityOperation<CSpaceOperationRemoveEntity, CSpace, void>(c_space, *(it->second));
+         }
+         c_space.RemoveEntity(c_entity);
+      }
+   };
+
 }
 
 #endif
