@@ -88,6 +88,24 @@ Compiling the documentation
  $ cd build_simulator # or 'cd build_myrobot'
  $ make doc
 
+ARGoS sources under Eclipse
++++++++++++++++++++++++++++
+
+To use Eclipse with the ARGoS sources, you must have the CDT installed
+(http://www.eclipse.org/cdt/). Optionally, you can also install CMakeEd
+(http://cmakeed.sourceforge.net/) to modify the +CMakeLists.txt+ files
+comfortably from within Eclipse.   
+
+To configure the ARGoS sources for Eclipse, execute CMake as follows:  
+
+ $ cd argos3
+ $ cmake -G "Eclipse CDT4 - Unix Makefiles" src/
+
+Now open Eclipse. Click on _File_ -> _Import..._, select
+_Existing project into workspace_, and click on _Next_. Set the base +argos3+
+directory as the root directory in the dialog that appears. Click on _Next_
+and you're ready to go.
+
 Advanced compilation configuration
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
