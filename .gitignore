@@ -15,8 +15,5 @@ argos3
 argos3.conf
 argos3_simulator.pc
 cmake_install.cmake
-core/
 doinst.sh
-plugins/
 slack-desc
-testing/

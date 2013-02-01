@@ -1,5 +1,5 @@
 /**
- * @file <argos3/core/simulator/entity/wheeled_entity.h>
+ * @file <argos3/core/simulator/entity/wheeled_entity.cpp>
  *
  * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */
