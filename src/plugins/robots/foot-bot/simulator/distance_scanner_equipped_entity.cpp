@@ -1,7 +1,7 @@
 /**
  * @file <argos3/plugins/robots/foot-bot/simulator/distance_scanner_equipped_entity.cpp>
  *
- * @author Carlo Pinciroli - <cpinciroli@ulb.ac.be>
+ * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */
 
 #include "distance_scanner_equipped_entity.h"
