@@ -348,8 +348,6 @@ namespace argos {
    class CSpaceOperationAddBaseEntity : public CSpaceOperationAddEntity {
    public:
       void ApplyTo(CSpace& c_space, CEntity& c_entity) {
-         LOGERR << "[DEBUG] CSpaceOperationAddBaseEntity on " << c_entity.GetId() << std::endl;
-         LOGERR.Flush();
          c_space.AddEntity(c_entity);
       }
    };
@@ -357,8 +355,6 @@ namespace argos {
    class CSpaceOperationRemoveBaseEntity : public CSpaceOperationRemoveEntity {
    public:
       void ApplyTo(CSpace& c_space, CEntity& c_entity) {
-         LOGERR << "[DEBUG] CSpaceOperationRemoveBaseEntity on " << c_entity.GetId() << std::endl;
-         LOGERR.Flush();
          c_space.RemoveEntity(c_entity);
       }
    };
