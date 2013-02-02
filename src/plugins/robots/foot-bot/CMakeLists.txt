@@ -19,21 +19,21 @@ set(ARGOS3_HEADERS_PLUGINS_ROBOTS_FOOTBOT_CONTROLINTERFACE
   control_interface/ci_footbot_motor_ground_sensor.h
   control_interface/ci_footbot_omnidirectional_camera_sensor.h
   control_interface/ci_footbot_proximity_sensor.h
-  control_interface/ci_footbot_rfid_sensor.h
+  control_interface/ci_footbot_range_and_bearing_actuator.h
+  control_interface/ci_footbot_range_and_bearing_sensor.h
   control_interface/ci_footbot_turret_actuator.h
   control_interface/ci_footbot_turret_encoder_sensor.h
   control_interface/ci_footbot_turret_torque_sensor.h
   control_interface/ci_footbot_wheel_speed_sensor.h
-  control_interface/ci_footbot_wheels_actuator.h
-  control_interface/ci_range_and_bearing_actuator.h
-  control_interface/ci_range_and_bearing_sensor.h)
+  control_interface/ci_footbot_wheels_actuator.h)
 
 # argos3/plugins/robots/foot-bot/simulator
 if(ARGOS_BUILD_FOR_SIMULATOR)
   set(ARGOS3_HEADERS_PLUGINS_ROBOTS_FOOTBOT_SIMULATOR
     simulator/footbot_entity.h
     simulator/distance_scanner_equipped_entity.h
-    simulator/dynamics2d_footbot_entity.h)
+    simulator/dynamics2d_footbot_entity.h
+    simulator/footbot_wheels_actuator.h)
 endif(ARGOS_BUILD_FOR_SIMULATOR)
 
 #
@@ -59,7 +59,8 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
     ${ARGOS3_HEADERS_PLUGINS_ROBOTS_FOOTBOT_SIMULATOR}
     simulator/footbot_entity.cpp
     simulator/distance_scanner_equipped_entity.cpp
-    simulator/dynamics2d_footbot_entity.cpp)
+    simulator/dynamics2d_footbot_entity.cpp
+    simulator/footbot_wheels_actuator.cpp)
 endif(ARGOS_BUILD_FOR_SIMULATOR)
 
 #
@@ -70,10 +71,11 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
   if(ARGOS_COMPILE_QTOPENGL)
     set(ARGOS3_HEADERS_PLUGINS_ROBOTS_FOOTBOT_SIMULATOR
       ${ARGOS3_HEADERS_PLUGINS_ROBOTS_FOOTBOT_SIMULATOR}
-      qtopengl_footbot.h)
-    set(ARGOS3_SOURCES_PLUGINS_ROBOTS_FOOTBOT_SIMULATOR
-      ${ARGOS3_SOURCES_PLUGINS_ROBOTS_FOOTBOT_SIMULATOR}
-      qtopengl_footbot.cpp)
+      simulator/qtopengl_footbot.h)
+    set(ARGOS3_SOURCES_PLUGINS_ROBOTS_FOOTBOT
+      ${ARGOS3_SOURCES_PLUGINS_ROBOTS_FOOTBOT}
+      simulator/qtopengl_footbot.h
+      simulator/qtopengl_footbot.cpp)
   endif(ARGOS_COMPILE_QTOPENGL)
 endif(ARGOS_BUILD_FOR_SIMULATOR)
 
