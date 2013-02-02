@@ -21,6 +21,7 @@ void CTestFootBotController::Init(TConfigurationNode& t_tree) {
         << t_tree
         << ")"
         << std::endl;
+   m_pcWheels = GetActuator<CCI_FootBotWheelsActuator>("footbot_wheels");
 }
 
 /****************************************/
@@ -45,6 +46,7 @@ void CTestFootBotController::Destroy() {
 void CTestFootBotController::ControlStep() {
    RLOG << "CTestFootBotController::ControlStep()"
         << std::endl;
+   m_pcWheels->SetLinearVelocity(5,5);
 }
 
 /****************************************/

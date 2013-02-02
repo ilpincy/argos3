@@ -13,7 +13,9 @@
   <!-- *************** -->
   <controllers>
     <test_footbot_controller id="x">
-      <actuators />
+      <actuators>
+        <footbot_wheels implementation="default" />
+      </actuators>
       <sensors />
       <params />
     </test_footbot_controller>
@@ -32,12 +34,18 @@
   <!-- ******************* -->
   <!-- * Physics engines * -->
   <!-- ******************* -->
-  <physics_engines />
+  <physics_engines>
+    <dynamics2d id="dyn2d" />
+  </physics_engines>
 
   <!-- ************************************ -->
   <!-- * Arena -> Physics Engines mapping * -->
   <!-- ************************************ -->
-  <arena_physics />
+  <arena_physics>
+    <engine id="dyn2d">
+      <entity id="fb[[:digit:]]*" />
+    </engine>
+  </arena_physics>
 
   <!-- ****************** -->
   <!-- * Visualization * -->
