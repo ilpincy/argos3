@@ -1,5 +1,5 @@
 /**
- * @file <argos3/core/control_interface/ci_controller.h>
+ * @file <argos3/core/control_interface/ci_controller.cpp>
  *
  * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */
