@@ -39,7 +39,6 @@ namespace argos {
 #include <argos3/core/utility/datatypes/datatypes.h>
 #include <argos3/core/control_interface/ci_actuator.h>
 #include <argos3/core/control_interface/ci_sensor.h>
-#include <argos3/core/control_interface/ci_robot.h>
 #include <argos3/core/control_interface/ci_controller.h>
 #include <argos3/core/simulator/physics_engine/physics_engine.h>
 #include <argos3/core/simulator/entity/controllable_entity.h>

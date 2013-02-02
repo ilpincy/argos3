@@ -176,7 +176,7 @@ namespace argos {
 
 }
 
-#define RLOG    LOG    << "[" << GetRobot().GetId() << "] "
-#define RLOGERR LOGERR << "[" << GetRobot().GetId() << "] "
+#define RLOG    LOG    << "[" << GetId() << "] "
+#define RLOGERR LOGERR << "[" << GetId() << "] "
 
 #endif

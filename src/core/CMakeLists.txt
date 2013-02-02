@@ -59,7 +59,6 @@ set(ARGOS3_HEADERS_UTILITY_MATH_MATRIX
 set(ARGOS3_HEADERS_CONTROLINTERFACE
   control_interface/ci_actuator.h
   control_interface/ci_controller.h
-  control_interface/ci_robot.h
   control_interface/ci_sensor.h)
 # argos3/core/simulator
 set(ARGOS3_HEADERS_SIMULATOR
@@ -136,7 +135,7 @@ set(ARGOS3_SOURCES_CORE
   utility/math/matrix/transformationmatrix3.cpp
   utility/math/matrix/transformationmatrix2.cpp
   ${ARGOS3_HEADERS_CONTROLINTERFACE}
-  control_interface/ci_robot.cpp)
+  control_interface/ci_controller.cpp)
 # Compile dynamic library loading only if enabled
 if(ARGOS_DYNAMIC_LIBRARY_LOADING)
   set(ARGOS3_SOURCES_CORE ${ARGOS3_SOURCES_CORE} utility/plugins/dynamic_loading.cpp)

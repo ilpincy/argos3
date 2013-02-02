@@ -28,8 +28,13 @@ namespace argos {
 
    public:
 
-      virtual ~CCI_Actuator() = 0;
+      virtual ~CCI_Actuator() {}
 
+      virtual void Init(TConfigurationNode& t_node) {}
+
+      virtual void Reset() {}
+
+      virtual void Destroy() {}
    };
 
 }

@@ -1,17 +1,17 @@
 /**
- * @file <argos3/core/control_interface/ci_robot.cpp>
+ * @file <argos3/core/control_interface/ci_controller.h>
  *
  * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */
 
-#include "ci_robot.h"
+#include "ci_controller.h"
 
 namespace argos {
 
    /****************************************/
    /****************************************/
 
-   CCI_Robot::~CCI_Robot() {
+   CCI_Controller::~CCI_Controller() {
       /* Delete actuators*/
       for(CCI_Actuator::TMap::iterator itActuators = m_mapActuators.begin();
           itActuators != m_mapActuators.end();

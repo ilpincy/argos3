@@ -147,9 +147,9 @@ namespace argos {
          TConfigurationNode& tConfig = CSimulator::GetInstance().GetConfigForController(str_controller_id);
          /* tConfig is the base of the XML section of the wanted controller */
          std::string strImpl;
-         /* Create a robot class to contain the sensors and actuators */
-         CCI_Robot* pcRobot = new CCI_Robot();
-         pcRobot->SetId(GetParent().GetId());
+         /* Create the controller */
+         m_pcController = CFactory<CCI_Controller>::New(tConfig.Value());
+         m_pcController->SetId(GetParent().GetId());
          /* Go through actuators */
          TConfigurationNode& tActuators = GetNode(tConfig, "actuators");
          TConfigurationNodeIterator itAct;
@@ -158,15 +158,11 @@ namespace argos {
              ++itAct) {
             /* itAct->Value() is the name of the current actuator */
             GetNodeAttribute(*itAct, "implementation", strImpl);
-            CCI_Actuator* pcCIAct = CFactory<CCI_Actuator>::New(itAct->Value() + "$$" + strImpl);
-            CActuator* pcAct = dynamic_cast<CActuator*>(pcCIAct);
-            if(pcAct == NULL) {
-               THROW_ARGOSEXCEPTION("[BUG] Actuator <\"" << itAct->Value() << "\", \"" << strImpl << "\"> does not inherit from CActuator");
-            }
+            CActuator* pcAct = CFactory<CActuator>::New(itAct->Value() + "$$" + strImpl);
             pcAct->SetEntity(GetParent());
             m_mapActuators[itAct->Value()] = pcAct;
-            pcCIAct->Init(*itAct);
-            pcRobot->AddActuator(itAct->Value(), pcCIAct);
+            pcAct->Init(*itAct);
+            m_pcController->AddActuator(itAct->Value(), pcAct);
          }
          /* Go through sensors */
          TConfigurationNode& tSensors = GetNode(tConfig, "sensors");
@@ -176,20 +172,13 @@ namespace argos {
              ++itSens) {
             /* itSens->Value() is the name of the current actuator */
             GetNodeAttribute(*itSens, "implementation", strImpl);
-            CCI_Sensor* pcCISens = CFactory<CCI_Sensor>::New(itSens->Value() + "$$" + strImpl);
-            CSensor* pcSens = dynamic_cast<CSensor*>(pcCISens);
-            if(pcSens == NULL) {
-               THROW_ARGOSEXCEPTION("[BUG] Sensor <\"" << itSens->Value() << "\", \"" << strImpl << "\"> does not inherit from CSensor");
-            }
+            CSensor* pcSens = CFactory<CSensor>::New(itSens->Value() + "$$" + strImpl);
             pcSens->SetEntity(GetParent());
             m_mapSensors[itSens->Value()] = pcSens;
-            pcCISens->Init(*itSens);
-            pcRobot->AddSensor(itSens->Value(), pcCISens);
+            pcSens->Init(*itSens);
+            m_pcController->AddSensor(itSens->Value(), pcSens);
          }
-         /* Create and configure the controller */
-         m_pcController = CFactory<CCI_Controller>::New(tConfig.Value());
-         m_pcController->SetRobot(*pcRobot);
-         m_pcController->SetId(str_controller_id);
+         /* Configure the controller */
          m_pcController->Init(t_parameters);
       }
       catch(CARGoSException& ex) {
@@ -237,8 +226,6 @@ namespace argos {
    class CSpaceOperationAddControllableEntity : public CSpaceOperationAddEntity {
    public:
       void ApplyTo(CSpace& c_space, CControllableEntity& c_entity) {
-         LOGERR << "[DEBUG] CSpaceOperationAddControllableEntity on " << c_entity.GetId() << std::endl;
-         LOGERR.Flush();
          c_space.AddEntity(c_entity);
          c_space.AddControllableEntity(c_entity);
       }
@@ -250,8 +237,6 @@ namespace argos {
    class CSpaceOperationRemoveControllableEntity : public CSpaceOperationRemoveEntity {
    public:
       void ApplyTo(CSpace& c_space, CControllableEntity& c_entity) {
-         LOGERR << "[DEBUG] CSpaceOperationRemoveControllableEntity on " << c_entity.GetId() << std::endl;
-         LOGERR.Flush();
          c_space.RemoveControllableEntity(c_entity);
          c_space.RemoveEntity(c_entity);
       }
