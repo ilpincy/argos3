@@ -1,8 +1,6 @@
 /**
  * @file <argos3/core/simulator/sensor.h>
  *
- * @brief This file provides the definition of
- *
  * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */
 
@@ -26,11 +24,31 @@ namespace argos {
    public:
 
       virtual ~CSensor() = 0;
+
       virtual CEntity& GetEntity() = 0;
+
       virtual void SetEntity(CEntity& c_entity) = 0;
+
       virtual void Update() = 0;
    };
 
 }
+
+#define REGISTER_SENSOR(CLASSNAME,                          \
+                        LABEL,                              \
+                        IMPLEMENTATION,                     \
+                        AUTHOR,                             \
+                        VERSION,                            \
+                        BRIEF_DESCRIPTION,                  \
+                        LONG_DESCRIPTION,                   \
+                        STATUS)                             \
+   REGISTER_SYMBOL(CSensor,                                 \
+                   CLASSNAME,                               \
+                   LABEL "$$" IMPLEMENTATION,               \
+                   AUTHOR,                                  \
+                   VERSION,                                 \
+                   BRIEF_DESCRIPTION,                       \
+                   LONG_DESCRIPTION,                        \
+                   STATUS)
 
 #endif
