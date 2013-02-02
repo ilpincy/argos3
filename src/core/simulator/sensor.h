@@ -44,7 +44,7 @@ namespace argos {
       virtual void SetEntity(CEntity& c_entity) {
          m_pcEntity = dynamic_cast<ENTITY*>(&c_entity);
          if(m_pcEntity == NULL) {
-            THROW_ARGOSEXCEPTION("Cannot associate an sensor to a robot of type \"" << c_entity.GetTypeDescription() << "\"");
+            THROW_ARGOSEXCEPTION("Cannot associate this sensor to an entity of type \"" << c_entity.GetTypeDescription() << "\"");
          }
       }
 
