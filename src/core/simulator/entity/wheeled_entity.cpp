@@ -40,7 +40,7 @@ namespace argos {
    /****************************************/
 
    CWheeledEntity::~CWheeledEntity() {
-      delete[] m_pfWheelSpeeds;
+      delete[] m_pcWheelPositions;
       delete[] m_pfWheelSpeeds;
    }
 
