@@ -21,8 +21,8 @@ namespace argos {
       /* Buffer to contain the search results */
       TQueryResult tResult;
       /* Search among the plugins */
-      QuerySearchPlugins<CActuator>(str_query, tResult);
-      QuerySearchPlugins<CSensor>(str_query, tResult);
+      QuerySearchPlugins<CAbstractSimulatedActuator>(str_query, tResult);
+      QuerySearchPlugins<CAbstractSimulatedSensor>(str_query, tResult);
       QuerySearchPlugins<CPhysicsEngine>(str_query, tResult);
       QuerySearchPlugins<CVisualization>(str_query, tResult);
       QuerySearchPlugins<CEntity>(str_query, tResult);
@@ -36,6 +36,7 @@ namespace argos {
             LOG << "[ " << tResult[i].Label << " ] " << std::endl;
             LOG << tResult[i].BriefDescription << std::endl;
             LOG << "by " << tResult[i].Author << std::endl;
+            LOG << "Version: " << tResult[i].Version << std::endl;
             LOG << "Status: " << tResult[i].Status << std::endl << std::endl;
             LOG << tResult[i].LongDescription << std::endl;
             LOG << "==============================================================================" << std::endl << std::endl;
@@ -48,9 +49,9 @@ namespace argos {
 
    void QueryPlugins(const std::string& str_query) {
       if(str_query == "actuators") {
-         QueryShowList<CActuator>("AVAILABLE ACTUATORS");
+         QueryShowList<CAbstractSimulatedActuator>("AVAILABLE ACTUATORS");
       } else if(str_query == "sensors") {
-         QueryShowList<CSensor>("AVAILABLE SENSORS");
+         QueryShowList<CAbstractSimulatedSensor>("AVAILABLE SENSORS");
       } else if(str_query == "physics_engines") {
          QueryShowList<CPhysicsEngine>("AVAILABLE PHYSICS ENGINES");
       } else if(str_query == "visualizations") {
@@ -58,8 +59,8 @@ namespace argos {
       } else if(str_query == "entities") {
          QueryShowList<CEntity>("AVAILABLE ENTITIES");
       } else if(str_query == "all") {
-         QueryShowList<CActuator>("AVAILABLE ACTUATORS");
-         QueryShowList<CSensor>("AVAILABLE SENSORS");
+         QueryShowList<CAbstractSimulatedActuator>("AVAILABLE ACTUATORS");
+         QueryShowList<CAbstractSimulatedSensor>("AVAILABLE SENSORS");
          QueryShowList<CPhysicsEngine>("AVAILABLE PHYSICS ENGINES");
          QueryShowList<CVisualization>("AVAILABLE VISUALIZATIONS");
          QueryShowList<CEntity>("AVAILABLE ENTITIES");

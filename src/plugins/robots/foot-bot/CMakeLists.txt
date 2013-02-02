@@ -30,9 +30,10 @@ set(ARGOS3_HEADERS_PLUGINS_ROBOTS_FOOTBOT_CONTROLINTERFACE
 # argos3/plugins/robots/foot-bot/simulator
 if(ARGOS_BUILD_FOR_SIMULATOR)
   set(ARGOS3_HEADERS_PLUGINS_ROBOTS_FOOTBOT_SIMULATOR
-    simulator/footbot_entity.h
     simulator/distance_scanner_equipped_entity.h
     simulator/dynamics2d_footbot_entity.h
+    simulator/footbot_leds_actuator.h
+    simulator/footbot_entity.h
     simulator/footbot_wheels_actuator.h)
 endif(ARGOS_BUILD_FOR_SIMULATOR)
 
@@ -57,9 +58,10 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
   set(ARGOS3_SOURCES_PLUGINS_ROBOTS_FOOTBOT
     ${ARGOS3_SOURCES_PLUGINS_ROBOTS_FOOTBOT}
     ${ARGOS3_HEADERS_PLUGINS_ROBOTS_FOOTBOT_SIMULATOR}
-    simulator/footbot_entity.cpp
     simulator/distance_scanner_equipped_entity.cpp
     simulator/dynamics2d_footbot_entity.cpp
+    simulator/footbot_entity.cpp
+    simulator/footbot_leds_actuator.cpp
     simulator/footbot_wheels_actuator.cpp)
 endif(ARGOS_BUILD_FOR_SIMULATOR)
 
@@ -82,7 +84,7 @@ endif(ARGOS_BUILD_FOR_SIMULATOR)
 #
 # Create foot-bot simulator plugin
 #
-add_library(argos3plugin_${ARGOS_BUILD_FOR}_footbot MODULE ${ARGOS3_SOURCES_PLUGINS_ROBOTS_FOOTBOT})
+add_library(argos3plugin_${ARGOS_BUILD_FOR}_footbot SHARED ${ARGOS3_SOURCES_PLUGINS_ROBOTS_FOOTBOT})
 target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_footbot argos3plugin_${ARGOS_BUILD_FOR}_dynamics2d)
 if(ARGOS_COMPILE_QTOPENGL)
   target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_footbot argos3plugin_${ARGOS_BUILD_FOR}_qtopengl)

@@ -22,6 +22,7 @@ void CTestFootBotController::Init(TConfigurationNode& t_tree) {
         << ")"
         << std::endl;
    m_pcWheels = GetActuator<CCI_FootBotWheelsActuator>("footbot_wheels");
+   m_pcLEDs   = GetActuator<CCI_FootBotLEDsActuator>  ("footbot_leds"  );
 }
 
 /****************************************/
@@ -47,6 +48,7 @@ void CTestFootBotController::ControlStep() {
    RLOG << "CTestFootBotController::ControlStep()"
         << std::endl;
    m_pcWheels->SetLinearVelocity(5,5);
+   m_pcLEDs->SetAllColors(CColor::RED);
 }
 
 /****************************************/

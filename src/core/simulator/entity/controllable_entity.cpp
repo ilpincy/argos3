@@ -87,12 +87,12 @@ namespace argos {
       m_vecCheckedRays.clear();
       m_vecIntersectionPoints.clear();
       /* Reset sensors */
-      for(std::map<std::string, CSensor*>::iterator it = m_mapSensors.begin();
+      for(std::map<std::string, CAbstractSimulatedSensor*>::iterator it = m_mapSensors.begin();
           it != m_mapSensors.end(); ++it) {
          it->second->Reset();
       }
       /* Reset actuators */
-      for(std::map<std::string, CActuator*>::iterator it = m_mapActuators.begin();
+      for(std::map<std::string, CAbstractSimulatedActuator*>::iterator it = m_mapActuators.begin();
           it != m_mapActuators.end(); ++it) {
          it->second->Reset();
       }
@@ -108,12 +108,12 @@ namespace argos {
       m_vecCheckedRays.clear();
       m_vecIntersectionPoints.clear();
       /* Destroy sensors */
-      for(std::map<std::string, CSensor*>::iterator it = m_mapSensors.begin();
+      for(std::map<std::string, CAbstractSimulatedSensor*>::iterator it = m_mapSensors.begin();
           it != m_mapSensors.end(); ++it) {
          it->second->Destroy();
       }
       /* Destroy actuators */
-      for(std::map<std::string, CActuator*>::iterator it = m_mapActuators.begin();
+      for(std::map<std::string, CAbstractSimulatedActuator*>::iterator it = m_mapActuators.begin();
           it != m_mapActuators.end(); ++it) {
          it->second->Destroy();
       }
@@ -158,7 +158,7 @@ namespace argos {
              ++itAct) {
             /* itAct->Value() is the name of the current actuator */
             GetNodeAttribute(*itAct, "implementation", strImpl);
-            CActuator* pcAct = CFactory<CActuator>::New(itAct->Value() + "$$" + strImpl);
+            CAbstractSimulatedActuator* pcAct = CFactory<CAbstractSimulatedActuator>::New(itAct->Value() + " (" + strImpl + ")");
             pcAct->SetEntity(GetParent());
             m_mapActuators[itAct->Value()] = pcAct;
             pcAct->Init(*itAct);
@@ -172,7 +172,7 @@ namespace argos {
              ++itSens) {
             /* itSens->Value() is the name of the current actuator */
             GetNodeAttribute(*itSens, "implementation", strImpl);
-            CSensor* pcSens = CFactory<CSensor>::New(itSens->Value() + "$$" + strImpl);
+            CAbstractSimulatedSensor* pcSens = CFactory<CAbstractSimulatedSensor>::New(itSens->Value() + " (" + strImpl + ")");
             pcSens->SetEntity(GetParent());
             m_mapSensors[itSens->Value()] = pcSens;
             pcSens->Init(*itSens);
@@ -192,7 +192,7 @@ namespace argos {
    void CControllableEntity::Sense() {
       m_vecCheckedRays.clear();
       m_vecIntersectionPoints.clear();
-      for(std::map<std::string, CSensor*>::iterator it = m_mapSensors.begin();
+      for(std::map<std::string, CAbstractSimulatedSensor*>::iterator it = m_mapSensors.begin();
           it != m_mapSensors.end(); ++it) {
          it->second->Update();
       }
@@ -214,7 +214,7 @@ namespace argos {
    /****************************************/
 
    void CControllableEntity::Act() {
-      for(std::map<std::string, CActuator*>::iterator it = m_mapActuators.begin();
+      for(std::map<std::string, CAbstractSimulatedActuator*>::iterator it = m_mapActuators.begin();
           it != m_mapActuators.end(); ++it) {
          it->second->Update();
       }

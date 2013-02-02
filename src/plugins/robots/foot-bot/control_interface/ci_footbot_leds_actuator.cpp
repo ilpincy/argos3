@@ -56,7 +56,6 @@ namespace argos {
    void CCI_FootBotLEDsActuator::SetSingleIntensity(UInt32 un_led_number,
                                                     UInt32 un_intensity) {
       m_tLEDSettings[un_led_number].SetAlpha(un_intensity);
-
       SetSingleColor(un_led_number, m_tLEDSettings[un_led_number]);
    }
 
@@ -64,9 +63,9 @@ namespace argos {
    /****************************************/
 
    void CCI_FootBotLEDsActuator::SetAllIntensities(UInt32 un_intensity) {
-      for (UInt32 i = 0; i < NUM_LEDS; ++i)
+      for (UInt32 i = 0; i < NUM_LEDS; ++i) {
          m_tLEDSettings[i].SetAlpha(un_intensity);
-
+      }
       SetAllColors(m_tLEDSettings);
    }
 

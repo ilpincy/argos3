@@ -5,7 +5,7 @@
   <!-- * General configuration * -->
   <!-- ************************* -->
   <framework>
-    <experiment length="1" ticks_per_second="1" />
+    <experiment length="1" ticks_per_second="10" />
   </framework>
 
   <!-- *************** -->
@@ -15,6 +15,7 @@
     <test_footbot_controller id="x">
       <actuators>
         <footbot_wheels implementation="default" />
+        <footbot_leds implementation="default" />
       </actuators>
       <sensors />
       <params />
@@ -51,7 +52,7 @@
   <!-- * Visualization * -->
   <!-- ****************** -->
   <visualization>
-    <!-- qt-opengl / -->
+    <qt-opengl />
   </visualization>
 
 </argos-configuration>

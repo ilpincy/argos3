@@ -25,7 +25,7 @@ namespace argos {
    /****************************************/
    
    void CFootBotWheelsActuator::SetEntity(CEntity& c_entity) {
-      CFootBotActuator::SetEntity(c_entity);
+      CSimulatedActuator<CFootBotEntity>::SetEntity(c_entity);
       m_pcWheeledEntity = &(GetEntity().GetWheeledEntity());
    }
 
@@ -93,9 +93,9 @@ REGISTER_ACTUATOR(CFootBotWheelsActuator,
                   "footbot_wheels", "default",
                   "Carlo Pinciroli [ilpincy@gmail.com]",
                   "1.0",
-                  "The foot-bot wheels actuator",
+                  "The foot-bot wheels actuator.",
                   "This actuator controls the foot-bot wheels. For a complete description of its\n"
-                  "usage, refer to the common interface.\n\n"
+                  "usage, refer to the the ci_footbot_wheels_actuator.h file.\n\n"
                   "REQUIRED XML CONFIGURATION\n\n"
                   "  <controllers>\n"
                   "    ...\n"
@@ -112,9 +112,23 @@ REGISTER_ACTUATOR(CFootBotWheelsActuator,
                   "  </controllers>\n\n"
                   "OPTIONAL XML CONFIGURATION\n\n"
                   "It is possible to specify noisy speed in order to match the characteristics\n"
-                  "of the real robot. This can be done with the xml parameter: 'noise_std_dev',\n" 
+                  "of the real robot. This can be done with the attribute: 'noise_std_dev',\n" 
                   "which indicates the standard deviation of a gaussian noise applied to the\n"
-                  "desired velocity of the wheels.",
+                  "desired velocity of the wheels:\n\n"
+                  "  <controllers>\n"
+                  "    ...\n"
+                  "    <my_controller ...>\n"
+                  "      ...\n"
+                  "      <actuators>\n"
+                  "        ...\n"
+                  "        <footbot_wheels implementation=\"default\"\n"
+                  "                        noise_std_dev=\"1\" />\n"
+                  "        ...\n"
+                  "      </actuators>\n"
+                  "      ...\n"
+                  "    </my_controller>\n"
+                  "    ...\n"
+                  "  </controllers>\n",
                   "Usable"
    );
    

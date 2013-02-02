@@ -51,7 +51,7 @@ namespace argos {
    public:
 
       static const UInt32 NUM_LEDS;
-      typedef std::vector<CColor> TLEDSettings;
+      typedef std::vector<CColor> TSettings;
 
    public:
 
@@ -81,7 +81,7 @@ namespace argos {
        */
       virtual void SetSingleColor(UInt32 un_led_number,
                                   const CColor& c_color) = 0;
-
+      
       /**
        *
        * @brief Sets the color of the whole LED ring.
@@ -106,7 +106,7 @@ namespace argos {
        * @param c_colors color to set for each LED.
        *
        */
-      virtual void SetAllColors(const TLEDSettings& c_colors) = 0;
+      virtual void SetAllColors(const TSettings& c_colors) = 0;
 
       /**
        *
@@ -132,7 +132,7 @@ namespace argos {
 
    protected:
 
-      TLEDSettings m_tLEDSettings;
+      TSettings m_tLEDSettings;
 
    };
 

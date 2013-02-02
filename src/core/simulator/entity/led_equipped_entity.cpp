@@ -134,12 +134,12 @@ namespace argos {
    /****************************************/
 
    void CLEDEquippedEntity::SetAllLEDsColors(const std::vector<CColor>& vec_colors) {
-      ARGOS_ASSERT(vec_colors.size() == m_tLEDs.size(),
+      ARGOS_ASSERT(vec_colors.size() <= m_tLEDs.size(),
                    "CLEDEquippedEntity::SetAllLEDsColors(), id=\"" <<
                    GetId() <<
                    "\": number of LEDs (" <<
                    m_tLEDs.size() <<
-                   ") does not match the passed color vector size (" <<
+                   ") is lower than the passed color vector size (" <<
                    vec_colors.size() <<
                    ")");
       for(UInt32 i = 0; i < vec_colors.size(); ++i) {

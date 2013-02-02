@@ -15,14 +15,14 @@ namespace argos {
 }
 
 #include <argos3/plugins/robots/foot-bot/control_interface/ci_footbot_wheels_actuator.h>
-#include <argos3/plugins/robots/foot-bot/simulator/footbot_actuator.h>
 #include <argos3/plugins/robots/foot-bot/simulator/footbot_entity.h>
+#include <argos3/core/simulator/actuator.h>
 #include <argos3/core/simulator/entity/wheeled_entity.h>
 #include <argos3/core/utility/math/rng.h>
 
 namespace argos {
 
-   class CFootBotWheelsActuator : public CFootBotActuator,
+   class CFootBotWheelsActuator : public CSimulatedActuator<CFootBotEntity>,
                                   public CCI_FootBotWheelsActuator {
 
    public:

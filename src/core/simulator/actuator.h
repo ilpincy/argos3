@@ -8,30 +8,59 @@
 #define ACTUATOR_H
 
 namespace argos {
-   class CActuator;
+   class CAbstractSimulatedActuator;
    class CEntity;
 }
 
 #include <argos3/core/control_interface/ci_actuator.h>
 
-#include <string>
-#include <map>
-
 namespace argos {
 
-   class CActuator : virtual public CCI_Actuator {
+   /****************************************/
+   /****************************************/
+
+   class CAbstractSimulatedActuator : virtual public CCI_Actuator {
 
    public:
 
-      virtual ~CActuator() {}
-
+      virtual ~CAbstractSimulatedActuator() {}
       virtual CEntity& GetEntity() = 0;
-
       virtual void SetEntity(CEntity& c_entity) = 0;
-
       virtual void Update() = 0;
+   };
+
+   /****************************************/
+   /****************************************/
+
+   template<class ENTITY>
+   class CSimulatedActuator : public CAbstractSimulatedActuator {
+
+   public:
+
+      CSimulatedActuator() :
+         m_pcEntity(NULL) {}
+
+      virtual ~CSimulatedActuator() {}
+
+      virtual ENTITY& GetEntity() {
+         return *m_pcEntity;
+      }
+
+      virtual void SetEntity(CEntity& c_entity) {
+         m_pcEntity = dynamic_cast<ENTITY*>(&c_entity);
+         if(m_pcEntity == NULL) {
+            THROW_ARGOSEXCEPTION("Cannot associate an actuator to a robot of type \"" << c_entity.GetTypeDescription() << "\"");
+         }
+      }
+
+   private:
+
+      ENTITY* m_pcEntity;
 
    };
+
+   /****************************************/
+   /****************************************/
 
 }
 
@@ -43,9 +72,9 @@ namespace argos {
                           BRIEF_DESCRIPTION,                \
                           LONG_DESCRIPTION,                 \
                           STATUS)                           \
-   REGISTER_SYMBOL(CActuator,                               \
+   REGISTER_SYMBOL(CAbstractSimulatedActuator,              \
                    CLASSNAME,                               \
-                   LABEL "$$" IMPLEMENTATION,               \
+                   LABEL " (" IMPLEMENTATION ")",           \
                    AUTHOR,                                  \
                    VERSION,                                 \
                    BRIEF_DESCRIPTION,                       \
