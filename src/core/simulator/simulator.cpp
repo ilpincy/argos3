@@ -15,8 +15,8 @@
 #include <argos3/core/utility/plugins/dynamic_loading.h>
 #include <argos3/core/utility/math/rng.h>
 #include <argos3/core/simulator/space/space_no_threads.h>
-#include <argos3/core/simulator/space/space_multi_thread_scatter_gather.h>
-#include <argos3/core/simulator/space/space_multi_thread_h_dispatch.h>
+#include <argos3/core/simulator/space/space_multi_thread_balance_quantity.h>
+#include <argos3/core/simulator/space/space_multi_thread_balance_length.h>
 #include <argos3/core/simulator/visualization/visualization.h>
 #include <argos3/core/simulator/physics_engine/physics_engine.h>
 #include <argos3/core/simulator/loop_functions.h>
@@ -301,18 +301,24 @@ namespace argos {
             }
             else {
                LOG << "[INFO] Using " << m_unThreads << " parallel threads" << std::endl;
-               std::string strThreadingMethod = "scatter-gather";
+               std::string strThreadingMethod = "balance_quantity";
                GetNodeAttributeOrDefault(tSystem, "method", strThreadingMethod, strThreadingMethod);
-               if(strThreadingMethod == "scatter-gather") {
-                  LOG << "[INFO] Using threading method \"scatter-gather\"" << std::endl;
-                  m_pcSpace = new CSpaceMultiThreadScatterGather;
+               if(strThreadingMethod == "balance_quantity") {
+                  LOG << "[INFO]   Method \"balance_quantity\" chosen: threads will be assigned the same"
+                      << std::endl
+                      << "[INFO]   number of tasks, independently of the task length."
+                      << std::endl;
+                  m_pcSpace = new CSpaceMultiThreadBalanceQuantity;
                }
-               else if(strThreadingMethod == "h-dispatch") {
-                  LOG << "[INFO] Using threading method \"h-dispatch\"" << std::endl;
-                  m_pcSpace = new CSpaceMultiThreadHDispatch;
+               else if(strThreadingMethod == "balance_length") {
+                  LOG << "[INFO]   Method \"balance_quantity\" chosen: threads will be assigned different"
+                      << std::endl
+                      << "[INFO]   numbers of tasks, depending on the task length."
+                      << std::endl;
+                  m_pcSpace = new CSpaceMultiThreadBalanceLength;
                }
                else {
-                  THROW_ARGOSEXCEPTION("Error parsing the <system> tag. Unknown threading method \"" << strThreadingMethod << "\". Available methods: \"scatter-gather\" and \"h-dispatch\".");
+                  THROW_ARGOSEXCEPTION("Error parsing the <system> tag. Unknown threading method \"" << strThreadingMethod << "\". Available methods: \"balance_quantity\" and \"balance_length\".");
                }
             }
          }

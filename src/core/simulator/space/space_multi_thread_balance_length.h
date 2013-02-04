@@ -8,8 +8,8 @@
  * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */
 
-#ifndef SPACE_MULTI_THREAD_H_DISPATCH_H
-#define SPACE_MULTI_THREAD_H_DISPATCH_H
+#ifndef SPACE_MULTI_THREAD_BALANCE_LENGTH_H
+#define SPACE_MULTI_THREAD_BALANCE_LENGTH_H
 
 namespace argos {
    class CSpace;
@@ -19,12 +19,12 @@ namespace argos {
 
 namespace argos {
 
-   class CSpaceMultiThreadHDispatch : public CSpace {
+   class CSpaceMultiThreadBalanceLength : public CSpace {
 
    public:
 
-      CSpaceMultiThreadHDispatch() {}
-      virtual ~CSpaceMultiThreadHDispatch() {}
+      CSpaceMultiThreadBalanceLength() {}
+      virtual ~CSpaceMultiThreadBalanceLength() {}
 
       virtual void Init(TConfigurationNode& t_tree);
       virtual void Destroy();
@@ -39,17 +39,17 @@ namespace argos {
       void StartThreads();
       void DispatchThread(UInt32 un_id);
       void SlaveThread(UInt32 un_id);
-      friend void* LaunchThreadHDispatch(void* p_data);
+      friend void* LaunchThreadBalanceLength(void* p_data);
 
    private:
 
       /** Thread date */
       struct SThreadLaunchData {
          UInt32 ThreadId;
-         CSpaceMultiThreadHDispatch* Space;
+         CSpaceMultiThreadBalanceLength* Space;
          
          SThreadLaunchData(UInt32 un_thread_id,
-                           CSpaceMultiThreadHDispatch* pc_space) :
+                           CSpaceMultiThreadBalanceLength* pc_space) :
             ThreadId(un_thread_id),
             Space(pc_space) {}
       };

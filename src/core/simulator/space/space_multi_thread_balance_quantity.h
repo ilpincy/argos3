@@ -1,22 +1,18 @@
 /**
  * @file <argos3/core/simulator/space/space_multi_thread_scatter_gather.h>
  *
- * @brief This file provides the definition of the Swarmanoid 3D Space.
- *
- * This file provides the definition of the Swarmanoid 3D Space.
- *
  * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */
 
-#ifndef SPACE_MULTI_THREAD_SCATTER_GATHER_H
-#define SPACE_MULTI_THREAD_SCATTER_GATHER_H
+#ifndef SPACE_MULTI_THREAD_BALANCE_QUANTITY_H
+#define SPACE_MULTI_THREAD_BALANCE_QUANTITY_H
 
 #include <argos3/core/simulator/space/space.h>
 #include <pthread.h>
 
 namespace argos {
 
-   class CSpaceMultiThreadScatterGather : public CSpace {
+   class CSpaceMultiThreadBalanceQuantity : public CSpace {
 
       /****************************************/
       /****************************************/
@@ -25,10 +21,10 @@ namespace argos {
       
       struct SUpdateThreadData {
          UInt32 ThreadId;
-         CSpaceMultiThreadScatterGather* Space;
+         CSpaceMultiThreadBalanceQuantity* Space;
          
          SUpdateThreadData(UInt32 un_thread_id,
-                           CSpaceMultiThreadScatterGather* pc_space) :
+                           CSpaceMultiThreadBalanceQuantity* pc_space) :
             ThreadId(un_thread_id),
             Space(pc_space) {}
       };
@@ -65,11 +61,11 @@ namespace argos {
 
    public:
 
-      CSpaceMultiThreadScatterGather() :
+      CSpaceMultiThreadBalanceQuantity() :
          m_psUpdateThreadData(NULL),
          m_ptUpdateThreads(NULL),
          m_bIsControllableEntityAssignmentRecalculationNeeded(true) {}
-      virtual ~CSpaceMultiThreadScatterGather() {}
+      virtual ~CSpaceMultiThreadBalanceQuantity() {}
 
       virtual void Init(TConfigurationNode& t_tree);
       virtual void Destroy();
@@ -88,7 +84,7 @@ namespace argos {
 
       void StartThreads();
       void UpdateThread(UInt32 un_id);
-      friend void* LaunchUpdateThreadScatterGather(void* p_data);
+      friend void* LaunchUpdateThreadBalanceQuantity(void* p_data);
 
    };
 

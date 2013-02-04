@@ -1,14 +1,10 @@
 /**
  * @file <argos3/core/simulator/space/space_multi_thread_h_dispatch.cpp>
  *
- * @brief This file provides the implementation of the Swarmanoid 3D Space.
- *
- * This file provides the implementation of the Swarmanoid 3D Space.
- *
  * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */
 
-#include "space_multi_thread_h_dispatch.h"
+#include "space_multi_thread_balance_length.h"
 #include <argos3/core/simulator/simulator.h>
 #include <argos3/core/utility/profiler/profiler.h>
 
@@ -39,7 +35,7 @@ namespace argos {
       pthread_mutex_unlock(sData.StartPhysicsPhaseMutex);
    }
 
-   void* LaunchThreadHDispatch(void* p_data) {
+   void* LaunchThreadBalanceLength(void* p_data) {
       /* Set up thread-safe buffers for this new thread */
       LOG.AddThreadSafeBuffer();
       LOGERR.AddThreadSafeBuffer();
@@ -47,7 +43,7 @@ namespace argos {
       pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
       pthread_setcanceltype(PTHREAD_CANCEL_DEFERRED, NULL);
       /* Get a handle to the thread launch data */
-      CSpaceMultiThreadHDispatch::SThreadLaunchData* psData = reinterpret_cast<CSpaceMultiThreadHDispatch::SThreadLaunchData*>(p_data);
+      CSpaceMultiThreadBalanceLength::SThreadLaunchData* psData = reinterpret_cast<CSpaceMultiThreadBalanceLength::SThreadLaunchData*>(p_data);
       /* Create cancellation data */
       SCleanupThreadData sCancelData;
       sCancelData.StartSenseControlPhaseMutex = &(psData->Space->m_tStartSenseControlPhaseMutex);
@@ -71,7 +67,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CSpaceMultiThreadHDispatch::STaskData::Reset() {
+   void CSpaceMultiThreadBalanceLength::STaskData::Reset() {
       Index = 0;
       Used = false;
       Done = false;
@@ -80,7 +76,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CSpaceMultiThreadHDispatch::Init(TConfigurationNode& t_tree) {
+   void CSpaceMultiThreadBalanceLength::Init(TConfigurationNode& t_tree) {
       /* Initialize the space */
       CSpace::Init(t_tree);
 
@@ -110,7 +106,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CSpaceMultiThreadHDispatch::Destroy() {
+   void CSpaceMultiThreadBalanceLength::Destroy() {
       /* Destroy the threads to update the controllable entities */
       int nErrors;
       if(m_ptThreads != NULL) {
@@ -154,7 +150,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CSpaceMultiThreadHDispatch::SetPhysicsEngines(CPhysicsEngine::TVector& t_engines) {
+   void CSpaceMultiThreadBalanceLength::SetPhysicsEngines(CPhysicsEngine::TVector& t_engines) {
       CSpace::SetPhysicsEngines(t_engines);
       StartThreads();
    }
@@ -176,7 +172,7 @@ namespace argos {
    }                                                                                        \
    pthread_mutex_unlock(&m_tStart ## PHASE ## PhaseMutex);
 
-   void CSpaceMultiThreadHDispatch::UpdateControllableEntities() {
+   void CSpaceMultiThreadBalanceLength::UpdateControllableEntities() {
       /* Reset the idle thread count */
       m_unSenseControlPhaseIdleCounter = CSimulator::GetInstance().GetNumThreads();
       m_unActPhaseIdleCounter = CSimulator::GetInstance().GetNumThreads();
@@ -192,7 +188,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CSpaceMultiThreadHDispatch::UpdatePhysics() {
+   void CSpaceMultiThreadBalanceLength::UpdatePhysics() {
       /* Physics phase */
       MAIN_START_PHASE(Physics);
       MAIN_WAIT_FOR_END_OF(Physics);
@@ -207,7 +203,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CSpaceMultiThreadHDispatch::StartThreads() {
+   void CSpaceMultiThreadBalanceLength::StartThreads() {
       int nErrors;
       /* Create the threads to update the controllable entities */
       m_ptThreads = new pthread_t[CSimulator::GetInstance().GetNumThreads() + 1];
@@ -218,7 +214,7 @@ namespace argos {
          /* Create the thread */
          if((nErrors = pthread_create(m_ptThreads + i,
                                       NULL,
-                                      LaunchThreadHDispatch,
+                                      LaunchThreadBalanceLength,
                                       reinterpret_cast<void*>(m_psThreadData[i])))) {
             THROW_ARGOSEXCEPTION("Error creating thread: " << ::strerror(nErrors));
          }
@@ -264,7 +260,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CSpaceMultiThreadHDispatch::DispatchThread(UInt32 un_id) {
+   void CSpaceMultiThreadBalanceLength::DispatchThread(UInt32 un_id) {
       while(1) {
          THREAD_WAIT_FOR_START_OF(SenseControl);
          THREAD_DISPATCH_TASK(m_vecControllableEntities);
@@ -308,7 +304,7 @@ namespace argos {
    }                                                                \
    pthread_testcancel();
 
-   void CSpaceMultiThreadHDispatch::SlaveThread(UInt32 un_id) {
+   void CSpaceMultiThreadBalanceLength::SlaveThread(UInt32 un_id) {
       /* Task index */
       size_t unTaskIndex;
       while(1) {

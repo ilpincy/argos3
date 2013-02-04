@@ -96,8 +96,8 @@ set(ARGOS3_HEADERS_SIMULATOR_SPACE
   simulator/space/space.h
   simulator/space/space_hash.h
   simulator/space/space_hash_native.h
-  simulator/space/space_multi_thread_h_dispatch.h
-  simulator/space/space_multi_thread_scatter_gather.h
+  simulator/space/space_multi_thread_balance_length.h
+  simulator/space/space_multi_thread_balance_quantity.h
   simulator/space/space_no_threads.h)
 
 #
@@ -169,8 +169,8 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
     simulator/visualization/visualization.cpp
     ${ARGOS3_HEADERS_SIMULATOR_SPACE}
     simulator/space/space.cpp
-    simulator/space/space_multi_thread_h_dispatch.cpp
-    simulator/space/space_multi_thread_scatter_gather.cpp
+    simulator/space/space_multi_thread_balance_length.cpp
+    simulator/space/space_multi_thread_balance_quantity.cpp
     simulator/space/space_no_threads.cpp)
 endif(ARGOS_BUILD_FOR_SIMULATOR)
 
