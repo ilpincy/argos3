@@ -22,23 +22,6 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   template <typename ACTION>
-   class CDynamics2DOperation : public CEntityOperation<ACTION, CDynamics2DEngine, void> {
-   public:
-      virtual ~CDynamics2DOperation() {}
-   };
-   class CDynamics2DOperationAddEntity : public CDynamics2DOperation<CDynamics2DOperationAddEntity> {
-   public:
-      virtual ~CDynamics2DOperationAddEntity() {}
-   };
-   class CDynamics2DOperationRemoveEntity : public CDynamics2DOperation<CDynamics2DOperationRemoveEntity> {
-   public:
-      virtual ~CDynamics2DOperationRemoveEntity() {}
-   };
-
-   /****************************************/
-   /****************************************/
-
    struct SDynamics2DEngineGripperData {
       cpSpace* Space;
       CGripperEquippedEntity& GripperEntity;
@@ -63,6 +46,7 @@ namespace argos {
          SHAPE_NORMAL = 0,
          SHAPE_GRIPPABLE,
          SHAPE_CLAW_GRIPPER,
+
          SHAPE_MAGNETIC_GRIPPER
       };
 
@@ -162,9 +146,7 @@ namespace argos {
 
       void AddPhysicsEntity(const std::string& str_id,
                             CDynamics2DEntity& c_entity);
-      void AddControllableEntity(CControllableEntity& c_entity);
       void RemovePhysicsEntity(const std::string& str_id);
-      void RemoveControllableEntity(const std::string& str_id);
 
    private:
 
@@ -186,6 +168,65 @@ namespace argos {
       CDynamics2DEntity::TMap m_tPhysicsEntities;
 
    };
+
+   /****************************************/
+   /****************************************/
+
+   template <typename ACTION>
+   class CDynamics2DOperation : public CEntityOperation<ACTION, CDynamics2DEngine, void> {
+   public:
+      virtual ~CDynamics2DOperation() {}
+   };
+
+   class CDynamics2DOperationAddEntity : public CDynamics2DOperation<CDynamics2DOperationAddEntity> {
+   public:
+      virtual ~CDynamics2DOperationAddEntity() {}
+   };
+
+   class CDynamics2DOperationRemoveEntity : public CDynamics2DOperation<CDynamics2DOperationRemoveEntity> {
+   public:
+      virtual ~CDynamics2DOperationRemoveEntity() {}
+   };
+
+#define REGISTER_DYNAMICS2D_OPERATION(ACTION, OPERATION, ENTITY)        \
+   REGISTER_ENTITY_OPERATION(ACTION, CDynamics2DEngine, OPERATION, void, ENTITY);
+
+#define REGISTER_STANDARD_DYNAMICS2D_OPERATION_ADD_ENTITY(SPACE_ENTITY, DYN2D_ENTITY) \
+   class CDynamics2DOperationAdd ## SPACE_ENTITY : public CDynamics2DOperationAddEntity { \
+   public:                                                              \
+   CDynamics2DOperationAdd ## SPACE_ENTITY() {}                         \
+   virtual ~CDynamics2DOperationAdd ## SPACE_ENTITY() {}                \
+   void ApplyTo(CDynamics2DEngine& c_engine,                            \
+                SPACE_ENTITY& c_entity) {                               \
+      c_engine.AddPhysicsEntity(c_entity.GetId(),                       \
+                                *new DYN2D_ENTITY(c_engine,             \
+                                                  c_entity));           \
+   }                                                                    \
+   };                                                                   \
+   REGISTER_DYNAMICS2D_OPERATION(CDynamics2DOperationAddEntity,         \
+                                 CDynamics2DOperationAdd ## SPACE_ENTITY, \
+                                 SPACE_ENTITY);
+   
+#define REGISTER_STANDARD_DYNAMICS2D_OPERATION_REMOVE_ENTITY(SPACE_ENTITY) \
+   class CDynamics2DOperationRemove ## SPACE_ENTITY : public CDynamics2DOperationRemoveEntity { \
+   public:                                                              \
+   CDynamics2DOperationRemove ## SPACE_ENTITY() {}                      \
+   virtual ~CDynamics2DOperationRemove ## SPACE_ENTITY() {}             \
+   void ApplyTo(CDynamics2DEngine& c_engine,                            \
+                SPACE_ENTITY& c_entity) {                               \
+      c_engine.RemovePhysicsEntity(c_entity.GetId());                   \
+   }                                                                    \
+   };                                                                   \
+   REGISTER_DYNAMICS2D_OPERATION(CDynamics2DOperationRemoveEntity,      \
+                                 CDynamics2DOperationRemove ## SPACE_ENTITY, \
+                                 SPACE_ENTITY);
+   
+#define REGISTER_STANDARD_DYNAMICS2D_OPERATIONS_ON_ENTITY(SPACE_ENTITY, DYN2D_ENTITY) \
+   REGISTER_STANDARD_DYNAMICS2D_OPERATION_ADD_ENTITY(SPACE_ENTITY, DYN2D_ENTITY)      \
+   REGISTER_STANDARD_DYNAMICS2D_OPERATION_REMOVE_ENTITY(SPACE_ENTITY)
+
+   /****************************************/
+   /****************************************/
 
 }
 

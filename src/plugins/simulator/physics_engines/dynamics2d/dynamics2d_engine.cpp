@@ -7,7 +7,6 @@
 #include "dynamics2d_engine.h"
 #include <argos3/core/simulator/simulator.h>
 #include <argos3/core/simulator/entity/embodied_entity.h>
-#include <argos3/core/simulator/entity/controllable_entity.h>
 #include <argos3/core/simulator/entity/gripper_equipped_entity.h>
 
 #include <cmath>
@@ -359,13 +358,6 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CDynamics2DEngine::AddControllableEntity(CControllableEntity& c_entity) {
-      m_tControllableEntities[c_entity.GetId()] = &c_entity;
-   }
-
-   /****************************************/
-   /****************************************/
-
    void CDynamics2DEngine::RemovePhysicsEntity(const std::string& str_id) {
       CDynamics2DEntity::TMap::iterator it = m_tPhysicsEntities.find(str_id);
       if(it != m_tPhysicsEntities.end()) {
@@ -374,19 +366,6 @@ namespace argos {
       }
       else {
          THROW_ARGOSEXCEPTION("Dynamics2D entity id \"" << str_id << "\" not found in dynamics 2D engine \"" << GetId() << "\"");
-      }
-   }
-
-   /****************************************/
-   /****************************************/
-
-   void CDynamics2DEngine::RemoveControllableEntity(const std::string& str_id) {
-      CControllableEntity::TMap::iterator it = m_tControllableEntities.find(str_id);
-      if(it != m_tControllableEntities.end()) {
-         m_tControllableEntities.erase(it);
-      }
-      else {
-         THROW_ARGOSEXCEPTION("Controllable entity id \"" << str_id << "\" not found in dynamics 2D engine \"" << GetId() << "\"");
       }
    }
 
