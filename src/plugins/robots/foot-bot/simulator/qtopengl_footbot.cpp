@@ -971,9 +971,9 @@ namespace argos {
       void ApplyTo(CQTOpenGLWidget& c_visualization,
                    CFootBotEntity& c_entity) {
          static CQTOpenGLFootBot m_cModel;
+         c_visualization.DrawRays(c_entity.GetControllableEntity());
          c_visualization.DrawPositionalEntity(c_entity.GetEmbodiedEntity());
          m_cModel.Draw(c_entity);
-         c_visualization.DrawRays(c_entity.GetControllableEntity());
       }
    };
 

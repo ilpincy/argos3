@@ -32,8 +32,9 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
   set(ARGOS3_HEADERS_PLUGINS_ROBOTS_FOOTBOT_SIMULATOR
     simulator/distance_scanner_equipped_entity.h
     simulator/dynamics2d_footbot_entity.h
-    simulator/footbot_leds_actuator.h
     simulator/footbot_entity.h
+    simulator/footbot_leds_actuator.h
+    simulator/footbot_proximity_sensor.h
     simulator/footbot_wheels_actuator.h)
 endif(ARGOS_BUILD_FOR_SIMULATOR)
 
@@ -62,6 +63,7 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
     simulator/dynamics2d_footbot_entity.cpp
     simulator/footbot_entity.cpp
     simulator/footbot_leds_actuator.cpp
+    simulator/footbot_proximity_sensor.cpp
     simulator/footbot_wheels_actuator.cpp)
 endif(ARGOS_BUILD_FOR_SIMULATOR)
 
