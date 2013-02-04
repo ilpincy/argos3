@@ -1,5 +1,5 @@
 /**
- * @file <argos3/core/simulator/space/space_multi_thread_h_dispatch.cpp>
+ * @file <argos3/core/simulator/space/space_multi_thread_balance_length.cpp>
  *
  * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */

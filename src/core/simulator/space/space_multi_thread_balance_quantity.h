@@ -1,5 +1,5 @@
 /**
- * @file <argos3/core/simulator/space/space_multi_thread_scatter_gather.h>
+ * @file <argos3/core/simulator/space/space_multi_thread_balance_quantity.h>
  *
  * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */
