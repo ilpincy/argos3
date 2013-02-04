@@ -232,7 +232,27 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   REGISTER_STANDARD_SPACE_OPERATIONS_ON_ENTITY(CEmbodiedEntity);
+   class CSpaceOperationAddEmbodiedEntity : public CSpaceOperationAddEntity {
+   public:
+      void ApplyTo(CSpace& c_space, CEmbodiedEntity& c_entity) {
+         c_space.AddEntity(c_entity);
+         if(c_space.IsUsingSpaceHash()) {
+            c_space.GetEmbodiedEntitiesSpaceHash().AddElement(c_entity);
+         }
+      }
+   };
+   REGISTER_SPACE_OPERATION(CSpaceOperationAddEntity, CSpaceOperationAddEmbodiedEntity, CEmbodiedEntity);
+   
+   class CSpaceOperationRemoveEmbodiedEntity : public CSpaceOperationRemoveEntity {
+   public:
+      void ApplyTo(CSpace& c_space, CEmbodiedEntity& c_entity) {
+         if(c_space.IsUsingSpaceHash()) {
+            c_space.GetEmbodiedEntitiesSpaceHash().RemoveElement(c_entity);
+         }
+         c_space.RemoveEntity(c_entity);
+      }
+   };
+   REGISTER_SPACE_OPERATION(CSpaceOperationRemoveEntity, CSpaceOperationRemoveEmbodiedEntity, CEmbodiedEntity);
 
    /****************************************/
    /****************************************/

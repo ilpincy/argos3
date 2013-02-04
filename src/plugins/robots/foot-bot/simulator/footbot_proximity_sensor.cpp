@@ -36,7 +36,7 @@ namespace argos {
       m_bShowRays(false),
       m_bCalibrated(true),
       m_pcRNG(NULL),
-      m_fNoiseLevel(0.0f) {}
+      m_bAddNoise(false) {}
 
    /****************************************/
    /****************************************/
@@ -55,8 +55,16 @@ namespace argos {
          /* Show rays? */
          GetNodeAttributeOrDefault(t_tree, "show_rays", m_bShowRays, m_bShowRays);
          /* Parse noise level */
-         GetNodeAttributeOrDefault(t_tree, "noise_level", m_fNoiseLevel, m_fNoiseLevel);
-         m_fNoiseLevel *= READING_RANGE.GetMax();
+         Real fNoiseLevel = 0.0f;
+         GetNodeAttributeOrDefault(t_tree, "noise_level", fNoiseLevel, fNoiseLevel);
+         if(fNoiseLevel < 0.0f) {
+            THROW_ARGOSEXCEPTION("Can't specify a negative value for the noise level of the foot-bot proximity sensor");
+         }
+         else if(fNoiseLevel > 0.0f) {
+            m_bAddNoise = true;
+            m_cNoiseRange.Set(-fNoiseLevel * READING_RANGE.GetMax(),
+                              fNoiseLevel * READING_RANGE.GetMax());
+         }
          /* Parse calibration flag */
          GetNodeAttributeOrDefault(t_tree, "calibrate", m_bCalibrated, m_bCalibrated);
          /* Random number generator*/
@@ -113,7 +121,7 @@ namespace argos {
                GetEntity().GetControllableEntity().AddCheckedRay(true, cScanningRay);
             }
             /* There is an intersection */
-            fDistance = (cScanningRay.GetDistance(sIntersection.TOnRay) - FOOTBOT_RADIUS ) * 100.f;
+            fDistance = (cScanningRay.GetDistance(sIntersection.TOnRay) - FOOTBOT_RADIUS) * 100.f;
             if(fDistance < 0.0) {
                fDistance = 0.0;
             }
@@ -123,26 +131,19 @@ namespace argos {
          else {
             /* No intersection */
             m_tReadings[i].Value = 0.0f;
-            if(m_bShowRays) GetEntity().GetControllableEntity().AddCheckedRay(false, cScanningRay);
+            if(m_bShowRays) {
+               GetEntity().GetControllableEntity().AddCheckedRay(false, cScanningRay);
+            }
          }
-
          /* Apply noise to the sensor */
-         if( m_fNoiseLevel > 0.0f ) {
-            AddNoise(i);
+         if(m_bAddNoise) {
+            m_tReadings[i].Value += m_pcRNG->Uniform(m_cNoiseRange);
          }
-	 
          /* Normalize reading between 0 and 1, only if calibration has been performed */
          if( m_bCalibrated ) {
             m_tReadings[i].Value = READING_RANGE.NormalizeValue(m_tReadings[i].Value);
          }
       }
-   }
-
-   /****************************************/
-   /****************************************/
-
-   void CFootBotProximitySensor::AddNoise(UInt32 un_sensor_index) {
-      m_tReadings[un_sensor_index].Value += m_pcRNG->Uniform(CRange<Real>(-m_fNoiseLevel, m_fNoiseLevel));
    }
 
    /****************************************/

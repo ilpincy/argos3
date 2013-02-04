@@ -44,11 +44,6 @@ namespace argos {
 
    private:
 
-      /* Adds noise to the sensor reading */
-      virtual void AddNoise(UInt32 un_sensor_index);
-
-   private:
-
       CSpace& m_cSpace;
       CSpaceHash<CEmbodiedEntity, CEmbodiedEntitySpaceHashUpdater>& m_cEmbodiedSpaceHash;
       CEmbodiedEntity* m_pcEmbodiedEntity;
@@ -63,7 +58,10 @@ namespace argos {
       CRandom::CRNG* m_pcRNG;
 
       /* Noise parameter */
-      Real m_fNoiseLevel;
+      bool m_bAddNoise;
+
+      /** Noise range */
+      CRange<Real> m_cNoiseRange;
 
    };
 

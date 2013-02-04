@@ -110,7 +110,7 @@ namespace argos {
          m_pcEmbodiedEntity->SetMovable(bMovable);
          /* Init LED equipped entity component */
          m_pcLEDEquippedEntity = new CLEDEquippedEntity(this,
-                                                        GetId() + ".leds",
+                                                        GetId() + ".led_equipped_entity",
                                                         m_pcEmbodiedEntity);
          AddComponent(*m_pcLEDEquippedEntity);
          if(NodeExists(t_tree, "leds")) {

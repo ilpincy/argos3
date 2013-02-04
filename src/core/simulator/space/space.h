@@ -19,8 +19,8 @@ namespace argos {
 #include <argos3/core/simulator/entity/embodied_entity.h>
 #include <argos3/core/simulator/entity/controllable_entity.h>
 #include <argos3/core/simulator/entity/medium_entity.h>
-//#include <argos3/core/simulator/entity/led_entity.h>
-//#include <argos3/core/simulator/entity/rab_equipped_entity.h>
+#include <argos3/core/simulator/entity/led_entity.h>
+#include <argos3/core/simulator/entity/rab_equipped_entity.h>
 
 namespace argos {
 
@@ -216,8 +216,7 @@ namespace argos {
          }
       }
 
-/*
-      inline CSpaceHash<CLedEntity, CLEDEntitySpaceHashUpdater>& GetLEDEntitiesSpaceHash() {
+      inline CSpaceHash<CLEDEntity, CLEDEntitySpaceHashUpdater>& GetLEDEntitiesSpaceHash() {
          if(IsUsingSpaceHash()) {
             return *m_pcLEDEntitiesSpaceHash;
          }
@@ -225,9 +224,7 @@ namespace argos {
             THROW_ARGOSEXCEPTION("Attempted to access the space hash of LED entities, but in the XML the user chose not to use it. Maybe you use a sensor or an actuator that references it directly?");
          }
       }
-*/
 
-/*
       inline CSpaceHash<CRABEquippedEntity, CRABEquippedEntitySpaceHashUpdater>& GetRABEquippedEntitiesSpaceHash() {
          if(IsUsingSpaceHash()) {
             return *m_pcRABEquippedEntitiesSpaceHash;
@@ -236,7 +233,6 @@ namespace argos {
             THROW_ARGOSEXCEPTION("Attempted to access the space hash of RAB equipped entities, but in the XML the user chose not to use it. Maybe you use a sensor or an actuator that references it directly?");
          }
       }
-*/
 
    protected:
 
@@ -245,13 +241,7 @@ namespace argos {
       virtual void AddMediumEntity(CMediumEntity& c_entity);
       virtual void RemoveMediumEntity(CMediumEntity& c_entity);
       
-      inline void UpdateSpaceData() {
-         if(IsUsingSpaceHash()) {
-            m_pcEmbodiedEntitiesSpaceHash->Update();
-//            m_pcLEDEntitiesSpaceHash->Update();
-//            m_pcRABEquippedEntitiesSpaceHash->Update();
-         }
-      }
+      void UpdateSpaceData();
       
       virtual void UpdateControllableEntities() = 0;
       virtual void UpdatePhysics() = 0;
@@ -303,10 +293,10 @@ namespace argos {
       CSpaceHash<CEmbodiedEntity, CEmbodiedEntitySpaceHashUpdater>* m_pcEmbodiedEntitiesSpaceHash;
 
       /** The space hash of LED entities */
-//      CSpaceHash<CLedEntity, CLEDEntitySpaceHashUpdater>* m_pcLEDEntitiesSpaceHash;
+      CSpaceHash<CLEDEntity, CLEDEntitySpaceHashUpdater>* m_pcLEDEntitiesSpaceHash;
 
       /** The space hash of RAB equipped entities */
-//      CSpaceHash<CRABEquippedEntity, CRABEquippedEntitySpaceHashUpdater>* m_pcRABEquippedEntitiesSpaceHash;
+      CSpaceHash<CRABEquippedEntity, CRABEquippedEntitySpaceHashUpdater>* m_pcRABEquippedEntitiesSpaceHash;
 
       /** A vector of controllable entities */
       CControllableEntity::TVector m_vecControllableEntities;

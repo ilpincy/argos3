@@ -202,7 +202,9 @@ namespace argos {
       }
 
       /* Destroy the visualization */
-      if(m_pcVisualization != NULL) m_pcVisualization->Destroy();
+      if(m_pcVisualization != NULL) {
+         m_pcVisualization->Destroy();
+      }
 
       /* Close physics engines */
       for(CPhysicsEngine::TMap::iterator it = m_mapPhysicsEngines.begin();
@@ -224,9 +226,12 @@ namespace argos {
       }
 
       /* Free up factory data */
-      CFactory<CEntity>::Destroy();
       CFactory<CPhysicsEngine>::Destroy();
       CFactory<CVisualization>::Destroy();
+      CFactory<CAbstractSimulatedActuator>::Destroy();
+      CFactory<CAbstractSimulatedSensor>::Destroy();
+      CFactory<CCI_Controller>::Destroy();
+      CFactory<CEntity>::Destroy();
 
       /* Stop profiling and flush the data */
       if(IsProfiling()) {

@@ -5,7 +5,7 @@
   <!-- * General configuration * -->
   <!-- ************************* -->
   <framework>
-    <experiment length="1" ticks_per_second="10" />
+    <experiment length="10" ticks_per_second="10" />
   </framework>
 
   <!-- *************** -->
@@ -17,7 +17,10 @@
         <footbot_wheels implementation="default" />
         <footbot_leds implementation="default" />
       </actuators>
-      <sensors />
+      <sensors>
+        <footbot_proximity implementation="rot_z_only"
+                           show_rays="true" />
+      </sensors>
       <params />
     </test_footbot_controller>
   </controllers>
@@ -25,11 +28,9 @@
   <!-- *********************** -->
   <!-- * Arena configuration * -->
   <!-- *********************** -->
-  <!-- Note: rotations are specified and performed in ZYX order (opposite of ARGoS1) -->
   <arena size="2, 2, 1">
-
+    <box id="b0" position="0.5,0,0.1" orientation="0,0,0" size="0.2, 0.5, 0.2" movable="false" />
     <foot-bot id="fb0" position="0,0,0" orientation="0,0,0" controller="x" />
-
   </arena>
 
   <!-- ******************* -->
@@ -45,6 +46,7 @@
   <arena_physics>
     <engine id="dyn2d">
       <entity id="fb[[:digit:]]*" />
+      <entity id="b[[:digit:]]*" />
     </engine>
   </arena_physics>
 
@@ -52,7 +54,7 @@
   <!-- * Visualization * -->
   <!-- ****************** -->
   <visualization>
-    <qt-opengl />
+    <!-- qt-opengl / -->
   </visualization>
 
 </argos-configuration>

@@ -65,7 +65,27 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   REGISTER_STANDARD_SPACE_OPERATIONS_ON_ENTITY(CLEDEntity);
+   class CSpaceOperationAddLEDEntity : public CSpaceOperationAddEntity {
+   public:
+      void ApplyTo(CSpace& c_space, CLEDEntity& c_entity) {
+         c_space.AddEntity(c_entity);
+         if(c_space.IsUsingSpaceHash()) {
+            c_space.GetLEDEntitiesSpaceHash().AddElement(c_entity);
+         }
+      }
+   };
+   REGISTER_SPACE_OPERATION(CSpaceOperationAddEntity, CSpaceOperationAddLEDEntity, CLEDEntity);
+   
+   class CSpaceOperationRemoveLEDEntity : public CSpaceOperationRemoveEntity {
+   public:
+      void ApplyTo(CSpace& c_space, CLEDEntity& c_entity) {
+         if(c_space.IsUsingSpaceHash()) {
+            c_space.GetLEDEntitiesSpaceHash().RemoveElement(c_entity);
+         }
+         c_space.RemoveEntity(c_entity);
+      }
+   };
+   REGISTER_SPACE_OPERATION(CSpaceOperationRemoveEntity, CSpaceOperationRemoveLEDEntity, CLEDEntity);
 
    /****************************************/
    /****************************************/

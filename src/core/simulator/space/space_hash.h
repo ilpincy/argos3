@@ -61,7 +61,7 @@ namespace argos {
        * Adds an element to the space hash.
        * @param c_element The element to add.
        */
-      inline virtual void AddElement(Element& c_element) {
+      virtual void AddElement(Element& c_element) {
          m_tElements.insert(&c_element);
       }
 
@@ -101,7 +101,7 @@ namespace argos {
        * The size corresponds to the number of buckets.
        * @param un_size The size of the space hash.
        */
-      inline virtual void SetSize(size_t un_size) {
+      virtual void SetSize(size_t un_size) {
          m_unSize = un_size;
       }
 
@@ -129,7 +129,7 @@ namespace argos {
        * The size is measured in meters.
        * @param c_cell_size The new size for the cells of the space hash.
        */
-      inline virtual void SetCellSize(const CVector3& c_cell_size) {
+      virtual void SetCellSize(const CVector3& c_cell_size) {
          m_cCellSize = c_cell_size;
          m_cInvCellSize.Set(1.0f / m_cCellSize.GetX(),
                             1.0f / m_cCellSize.GetY(),
@@ -161,7 +161,7 @@ namespace argos {
        * @param un_axis the axis: 0 -> X, 1 -> Y, 2 -> Z.
        * @return The X/Y/Z coordinate of the corresponding space hash cell.
        */
-      inline virtual SInt32 SpaceToHashTable(Real f_coord,
+      virtual SInt32 SpaceToHashTable(Real f_coord,
                                              UInt32 un_axis) {
          return RoundClosestToZero(f_coord * GetInvCellSize()[un_axis]);
       }
@@ -172,7 +172,7 @@ namespace argos {
        * @param un_axis the axis: 0 -> X, 1 -> Y, 2 -> Z.
        * @return The X/Y/Z coordinate in the space.
        */
-      inline virtual Real HashTableToSpace(SInt32 n_coord,
+      virtual Real HashTableToSpace(SInt32 n_coord,
                                            UInt32 un_axis) {
          return n_coord * m_cCellSize[un_axis];
       }
@@ -185,7 +185,7 @@ namespace argos {
        * @param n_k The Z coordinate of the space hash cell.
        * @param c_pos The value position in meters.
        */
-      inline virtual void SpaceToHashTable(SInt32& n_i,
+      virtual void SpaceToHashTable(SInt32& n_i,
                                            SInt32& n_j,
                                            SInt32& n_k,
                                            const CVector3& c_pos) {
@@ -205,6 +205,8 @@ namespace argos {
                              SInt32 n_j,
                              SInt32 n_k,
                              TElementList& t_elements) = 0;
+
+      virtual void Dump(CARGoSLog& c_os) = 0;
 
    protected:
 
@@ -304,7 +306,7 @@ namespace argos {
        * It calls the updater for all the elements held by the space hash.
        * @see CSpaceHashUpdater
        */
-      inline virtual void Update() {
+      virtual void Update() {
          /* Go through all the entities */
          for(typename CAbstractSpaceHash<Element>::TElementList::const_iterator el = CAbstractSpaceHash<Element>::GetElements().begin();
              el != CAbstractSpaceHash<Element>::GetElements().end(); ++el) {

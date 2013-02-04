@@ -279,6 +279,29 @@ namespace argos {
          return bNewElements;
       }
 
+      virtual void Dump(CARGoSLog& c_os) {
+         for(size_t i = 0; i < CSpaceHash<Element,Updater>::GetSize(); ++i) {
+            if((m_psBuckets[i].StoreTimestamp == m_unCurrentStoreTimestamp) &&
+               !m_psBuckets[i].Empty()) {
+               c_os << "BUCKET " << i << std::endl;
+               for(typename SBucket::SBucketData* psCur = m_psBuckets[i].ElementList;
+                   psCur;
+                   psCur = psCur->Next) {
+                  c_os << "   "
+                       << psCur->Elem->GetId()
+                       << " ("
+                       << psCur->I
+                       << ","
+                       << psCur->J
+                       << ","
+                       << psCur->K
+                       << ")"
+                       << std::endl;
+               }
+            }
+         }
+      }
+      
    private:
 
       /**

@@ -47,7 +47,6 @@ int main(int n_argc, char** ppch_argv) {
             cSimulator.Execute();
             break;
          case CARGoSCommandLineArgParser::ACTION_QUERY:
-            /** @todo Plugin query machinery */
             CDynamicLoading::LoadAllLibraries();
             QueryPlugins(cACLAP.GetQuery());
             break;

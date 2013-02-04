@@ -60,8 +60,8 @@ namespace argos {
    CSpace::CSpace() :
       m_unSimulationClock(0),
       m_pcEmbodiedEntitiesSpaceHash(NULL),
-//      m_pcLEDEntitiesSpaceHash(NULL),
-//      m_pcRABEquippedEntitiesSpaceHash(NULL),
+      m_pcLEDEntitiesSpaceHash(NULL),
+      m_pcRABEquippedEntitiesSpaceHash(NULL),
       m_pcFloorEntity(NULL),
       m_bUseSpaceHash(true),
       m_pcRayEmbodiedEntityIntersectionMethod(NULL),
@@ -80,8 +80,8 @@ namespace argos {
       if(m_bUseSpaceHash) {
          m_pcRayEmbodiedEntityIntersectionMethod = new CRayEmbodiedEntityIntersectionSpaceHash(*this);
          m_pcEmbodiedEntitiesSpaceHash = new CSpaceHashNative<CEmbodiedEntity, CEmbodiedEntitySpaceHashUpdater>;
-//         m_pcLEDEntitiesSpaceHash = new CSpaceHashNative<CLedEntity, CLEDEntitySpaceHashUpdater>;
-//         m_pcRABEquippedEntitiesSpaceHash = new CSpaceHashNative<CRABEquippedEntity, CRABEquippedEntitySpaceHashUpdater>;
+         m_pcLEDEntitiesSpaceHash = new CSpaceHashNative<CLEDEntity, CLEDEntitySpaceHashUpdater>;
+         m_pcRABEquippedEntitiesSpaceHash = new CSpaceHashNative<CRABEquippedEntity, CRABEquippedEntitySpaceHashUpdater>;
       }
       else {
          LOG << "[INFO] Space hashing is off." << std::endl;
@@ -131,16 +131,16 @@ namespace argos {
       	 m_pcEmbodiedEntitiesSpaceHash->SetSize(unBuckets);
          m_pcEmbodiedEntitiesSpaceHash->SetCellSize(cCellSize);
          LOG << "[INFO] Embodied entity space hash: " << unBuckets << " buckets, cell size = <" << cCellSize << ">." << std::endl;
-//         GetNodeAttributeOrDefault<size_t>(t_tree, "led_entity_space_hash_buckets", unBuckets, 100000u);
-//         GetNodeAttributeOrDefault(t_tree, "led_entity_space_hash_cell_size", cCellSize, CVector3(0.2, 0.2, 0.3));
-//         m_pcLEDEntitiesSpaceHash->SetSize(unBuckets);
-//         m_pcLEDEntitiesSpaceHash->SetCellSize(cCellSize);
-//         LOG << "[INFO] LED entity space hash: " << unBuckets << " buckets, cell size = <" << cCellSize << ">." << std::endl;
-//         GetNodeAttributeOrDefault<size_t>(t_tree, "rab_equipped_entity_space_hash_buckets", unBuckets, 100000u);
-//         GetNodeAttributeOrDefault(t_tree, "rab_equipped_entity_space_hash_cell_size", cCellSize, CVector3(1, 1, 1));
-//         m_pcRABEquippedEntitiesSpaceHash->SetSize(unBuckets);
-//         m_pcRABEquippedEntitiesSpaceHash->SetCellSize(cCellSize);
-//         LOG << "[INFO] RAB equipped entity space hash: " << unBuckets << " buckets, cell size = <" << cCellSize << ">." << std::endl;
+         GetNodeAttributeOrDefault<size_t>(t_tree, "led_entity_space_hash_buckets", unBuckets, 100000u);
+         GetNodeAttributeOrDefault(t_tree, "led_entity_space_hash_cell_size", cCellSize, CVector3(0.2, 0.2, 0.3));
+         m_pcLEDEntitiesSpaceHash->SetSize(unBuckets);
+         m_pcLEDEntitiesSpaceHash->SetCellSize(cCellSize);
+         LOG << "[INFO] LED entity space hash: " << unBuckets << " buckets, cell size = <" << cCellSize << ">." << std::endl;
+         GetNodeAttributeOrDefault<size_t>(t_tree, "rab_equipped_entity_space_hash_buckets", unBuckets, 100000u);
+         GetNodeAttributeOrDefault(t_tree, "rab_equipped_entity_space_hash_cell_size", cCellSize, CVector3(1, 1, 1));
+         m_pcRABEquippedEntitiesSpaceHash->SetSize(unBuckets);
+         m_pcRABEquippedEntitiesSpaceHash->SetCellSize(cCellSize);
+         LOG << "[INFO] RAB equipped entity space hash: " << unBuckets << " buckets, cell size = <" << cCellSize << ">." << std::endl;
       }
    }
 
@@ -171,8 +171,8 @@ namespace argos {
       delete m_pcRayEmbodiedEntityIntersectionMethod;
       /* Get rid of the space hashes, if used */
       delete m_pcEmbodiedEntitiesSpaceHash;
-     // delete m_pcLEDEntitiesSpaceHash;
-     // delete m_pcRABEquippedEntitiesSpaceHash;
+      delete m_pcLEDEntitiesSpaceHash;
+      delete m_pcRABEquippedEntitiesSpaceHash;
    }
 
    /****************************************/
@@ -328,13 +328,30 @@ namespace argos {
 
    void CSpace::RemoveMediumEntity(CMediumEntity& c_entity) {
       CMediumEntity::TVector::iterator it = find(m_vecMediumEntities.begin(),
-                                                       m_vecMediumEntities.end(),
-                                                       &c_entity);
+                                                 m_vecMediumEntities.end(),
+                                                 &c_entity);
       if(it != m_vecMediumEntities.end()) {
          m_vecMediumEntities.erase(it);
       }
    }
       
+   /****************************************/
+   /****************************************/
+
+   void CSpace::UpdateSpaceData() {
+      if(IsUsingSpaceHash()) {
+         m_pcEmbodiedEntitiesSpaceHash->Update();
+         LOGERR << "*** EMBODIED ENTITIES ***" << std::endl;
+         m_pcEmbodiedEntitiesSpaceHash->Dump(LOGERR);
+         m_pcLEDEntitiesSpaceHash->Update();
+         LOGERR << "*** LED ENTITIES ***" << std::endl;
+         m_pcLEDEntitiesSpaceHash->Dump(LOGERR);
+         m_pcRABEquippedEntitiesSpaceHash->Update();
+         LOGERR << "*** RAB ENTITIES ***" << std::endl;
+         m_pcRABEquippedEntitiesSpaceHash->Dump(LOGERR);
+      }
+   }
+
    /****************************************/
    /****************************************/
 
