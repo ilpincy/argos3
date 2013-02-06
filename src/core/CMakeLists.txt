@@ -101,7 +101,8 @@ set(ARGOS3_HEADERS_SIMULATOR_SPACE
   simulator/space/space_no_threads.h)
 # argos3/core/wrappers/lua
 set(ARGOS3_HEADERS_WRAPPERS_LUA
-  wrappers/lua/lua_controller.h)
+  wrappers/lua/lua_controller.h
+  wrappers/lua/lua_utility.h)
 
 #
 # Source files
@@ -181,7 +182,8 @@ if(LUA51_FOUND)
   set(ARGOS3_SOURCES_CORE
     ${ARGOS3_SOURCES_CORE}
     ${ARGOS3_HEADERS_WRAPPERS_LUA}
-    wrappers/lua/lua_controller.cpp)
+    wrappers/lua/lua_controller.cpp
+    wrappers/lua/lua_utility.cpp)
 endif(LUA51_FOUND)
 
 

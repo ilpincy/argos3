@@ -26,10 +26,6 @@ namespace argos {
          return m_ptLuaState;
       }
 
-      virtual void LoadScript(const std::string& str_filename);
-
-      void DumpGlobals();
-
    protected:
 
       virtual void CreateLuaVariables() = 0;
@@ -37,8 +33,6 @@ namespace argos {
       virtual void SensorReadingsToLuaVariables() = 0;
 
       virtual void LuaVariablesToActuatorSettings() = 0;
-
-      void CallLuaFunction(const std::string& str_function);
 
    private:
 
