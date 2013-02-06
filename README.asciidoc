@@ -55,6 +55,10 @@ If you want to create the documentation you need:
 * To create the HTML version of this README:
 ** _asciidoc_ >= 8.6.2
 
+If you want to create the Lua wrapper you need:
+
+* _lua_ == 5.1
+
 Compiling the code
 ~~~~~~~~~~~~~~~~~~
 
@@ -119,7 +123,6 @@ The compilation of ARGoS can be configured through a set of CMake options:
 | +ARGOS_BUILD_FOR+           | _STRING_  | Target of compilation (+simulator+ or robot name) [+simulator+]
 | +ARGOS_THREADSAFE_LOG+      | _BOOLEAN_ | Use or not the thread-safe version of +LOG+/+LOGERR+. [+ON+]
 | +ARGOS_DYNAMIC_LOADING+     | _BOOLEAN_ | Compile (and use) dynamic loading facilities [+ON+]
-| +ARGOS_WRAPPERS+            | _BOOLEAN_ | Compile _SWIG_-based scripting wrappers [+OFF+]
 | +ARGOS_USE_DOUBLE+          | _BOOLEAN_ | Use +double+ (+ON+) or +float+ (+OFF+) [+ON+]
 | +ARGOS_DOCUMENTATION+       | _BOOLEAN_ | Create documentation (API, manpage, etc.) [+ON+]
 | +ARGOS_USE_GOOGLEPERFTOOLS+ | _BOOLEAN_ | Use Google PerfTools in +Debug+ builds, if present [+ON+]
@@ -134,7 +137,6 @@ wanted to set explictly all the default values, you would write:
          -DARGOS_BUILD_FOR=simulator \
          -DARGOS_THREADSAFE_LOG=ON \
          -DARGOS_DYNAMIC_LOADING=ON \
-         -DARGOS_WRAPPERS=OFF \
          -DARGOS_USE_DOUBLE=ON \
          -DARGOS_DOCUMENTATION=ON \
          -DARGOS_USE_GOOGLEPERFTOOLS=ON \

@@ -99,6 +99,9 @@ set(ARGOS3_HEADERS_SIMULATOR_SPACE
   simulator/space/space_multi_thread_balance_length.h
   simulator/space/space_multi_thread_balance_quantity.h
   simulator/space/space_no_threads.h)
+# argos3/core/wrappers/lua
+set(ARGOS3_HEADERS_WRAPPERS_LUA
+  wrappers/lua/lua_controller.h)
 
 #
 # Source files
@@ -173,6 +176,14 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
     simulator/space/space_multi_thread_balance_quantity.cpp
     simulator/space/space_no_threads.cpp)
 endif(ARGOS_BUILD_FOR_SIMULATOR)
+# Compile Lua wrapper only if Lua was found
+if(LUA51_FOUND)
+  set(ARGOS3_SOURCES_CORE
+    ${ARGOS3_SOURCES_CORE}
+    ${ARGOS3_HEADERS_WRAPPERS_LUA}
+    wrappers/lua/lua_controller.cpp)
+endif(LUA51_FOUND)
+
 
 #
 # Create core ARGoS3 library
@@ -196,6 +207,10 @@ endif(GSL_FOUND)
 if(FREEIMAGE_FOUND)
   target_link_libraries(argos3core_${ARGOS_BUILD_FOR} ${FREEIMAGE_LIBRARIES})
 endif(FREEIMAGE_FOUND)
+# Link Lua library if necessary
+if(LUA51_FOUND)
+  target_link_libraries(argos3core_${ARGOS_BUILD_FOR} ${LUA_LIBRARIES})
+endif(LUA51_FOUND)
 
 #
 # Core library installation
@@ -211,12 +226,15 @@ install(FILES ${ARGOS3_HEADERS_UTILITY_MATH}                  DESTINATION includ
 install(FILES ${ARGOS3_HEADERS_UTILITY_MATH_MATRIX}           DESTINATION include/argos3/core/utility/math/matrix)
 install(FILES ${ARGOS3_HEADERS_CONTROLINTERFACE}              DESTINATION include/argos3/core/control_interface)
 if(ARGOS_BUILD_FOR_SIMULATOR)
-  install(FILES ${ARGOS3_HEADERS_SIMULATOR}                     DESTINATION include/argos3/core/simulator)
-  install(FILES ${ARGOS3_HEADERS_SIMULATOR_ENTITY}              DESTINATION include/argos3/core/simulator/entity)
-  install(FILES ${ARGOS3_HEADERS_SIMULATOR_PHYSICSENGINE}       DESTINATION include/argos3/core/simulator/physics_engine)
-  install(FILES ${ARGOS3_HEADERS_SIMULATOR_VISUALIZATION}       DESTINATION include/argos3/core/simulator/visualization)
-  install(FILES ${ARGOS3_HEADERS_SIMULATOR_SPACE}               DESTINATION include/argos3/core/simulator/space)
+  install(FILES ${ARGOS3_HEADERS_SIMULATOR}                   DESTINATION include/argos3/core/simulator)
+  install(FILES ${ARGOS3_HEADERS_SIMULATOR_ENTITY}            DESTINATION include/argos3/core/simulator/entity)
+  install(FILES ${ARGOS3_HEADERS_SIMULATOR_PHYSICSENGINE}     DESTINATION include/argos3/core/simulator/physics_engine)
+  install(FILES ${ARGOS3_HEADERS_SIMULATOR_VISUALIZATION}     DESTINATION include/argos3/core/simulator/visualization)
+  install(FILES ${ARGOS3_HEADERS_SIMULATOR_SPACE}             DESTINATION include/argos3/core/simulator/space)
 endif(ARGOS_BUILD_FOR_SIMULATOR)
+if(LUA51_FOUND)
+  install(FILES ${ARGOS3_HEADERS_WRAPPERS_LUA}                DESTINATION include/argos3/core/wrappers/lua)
+endif(LUA51_FOUND)
 install(TARGETS argos3core_${ARGOS_BUILD_FOR}
   RUNTIME DESTINATION bin
   LIBRARY DESTINATION lib/argos3

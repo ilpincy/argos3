@@ -95,3 +95,9 @@ endif(ARGOS_DOCUMENTATION)
 # Check for ASCIIDoc
 #
 find_package(ASCIIDoc)
+
+#
+# Check for Lua 5.1
+#
+find_package(Lua51)
+include_directories(${LUA_INCLUDE_DIR})

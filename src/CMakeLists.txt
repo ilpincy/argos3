@@ -65,9 +65,6 @@ endif(NOT EXISTS ${CMAKE_BINARY_DIR}/argos3)
 add_subdirectory(core)
 add_subdirectory(plugins)
 add_subdirectory(testing)
-if(ARGOS_WRAPPERS)
-  add_subdirectory(wrappers)
-endif(ARGOS_WRAPPERS)
 
 #
 # Create documentation

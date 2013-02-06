@@ -32,4 +32,20 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   bool CCI_Controller::HasActuator(const std::string& str_actuator_type) const {
+      CCI_Actuator::TMap::const_iterator it = m_mapActuators.find(str_actuator_type);
+      return (it != m_mapActuators.end());
+   }
+
+   /****************************************/
+   /****************************************/
+
+   bool CCI_Controller::HasSensor(const std::string& str_sensor_type) const {
+      CCI_Sensor::TMap::const_iterator it = m_mapSensors.find(str_sensor_type);
+      return (it != m_mapSensors.end());
+   }
+
+   /****************************************/
+   /****************************************/
+
 }

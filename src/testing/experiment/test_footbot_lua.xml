@@ -5,24 +5,22 @@
   <!-- * General configuration * -->
   <!-- ************************* -->
   <framework>
-    <experiment length="0" ticks_per_second="10" />
+    <experiment length="1" ticks_per_second="1" />
   </framework>
 
   <!-- *************** -->
   <!-- * Controllers * -->
   <!-- *************** -->
   <controllers>
-    <test_footbot_controller id="x">
+    <footbot_lua_controller id="x">
       <actuators>
         <footbot_wheels implementation="default" />
-        <footbot_leds implementation="default" />
       </actuators>
       <sensors>
-        <footbot_proximity implementation="rot_z_only"
-                           show_rays="true" />
+        <footbot_proximity implementation="rot_z_only" />
       </sensors>
-      <params />
-    </test_footbot_controller>
+      <params script="../../src/testing/experiment/test_script.lua" />
+    </footbot_lua_controller>
   </controllers>
 
   <!-- *********************** -->

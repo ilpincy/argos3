@@ -26,7 +26,6 @@ set(ARGOS3_HEADERS_PLUGINS_ROBOTS_FOOTBOT_CONTROLINTERFACE
   control_interface/ci_footbot_turret_torque_sensor.h
   control_interface/ci_footbot_wheel_speed_sensor.h
   control_interface/ci_footbot_wheels_actuator.h)
-
 # argos3/plugins/robots/foot-bot/simulator
 if(ARGOS_BUILD_FOR_SIMULATOR)
   set(ARGOS3_HEADERS_PLUGINS_ROBOTS_FOOTBOT_SIMULATOR
@@ -37,6 +36,11 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
     simulator/footbot_proximity_sensor.h
     simulator/footbot_wheels_actuator.h)
 endif(ARGOS_BUILD_FOR_SIMULATOR)
+# argos3/plugins/robots/foot-bot/wrappers/lua
+if(LUA51_FOUND)
+  set(ARGOS3_HEADERS_PLUGINS_ROBOTS_FOOTBOT_WRAPPERS_LUA
+    wrappers/lua/footbot_lua_controller.h)
+endif(LUA51_FOUND)
 
 #
 # Foot-bot sources
@@ -65,12 +69,7 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
     simulator/footbot_leds_actuator.cpp
     simulator/footbot_proximity_sensor.cpp
     simulator/footbot_wheels_actuator.cpp)
-endif(ARGOS_BUILD_FOR_SIMULATOR)
-
-#
-# Compile the graphical visualization only if the necessary libraries have been found
-#
-if(ARGOS_BUILD_FOR_SIMULATOR)
+  # Compile the graphical visualization only if the necessary libraries have been found
   include(ARGoSCheckQTOpenGL)
   if(ARGOS_COMPILE_QTOPENGL)
     set(ARGOS3_HEADERS_PLUGINS_ROBOTS_FOOTBOT_SIMULATOR
@@ -84,7 +83,16 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
 endif(ARGOS_BUILD_FOR_SIMULATOR)
 
 #
-# Create foot-bot simulator plugin
+# Compile Lua 5.1 wrapping
+#
+if(LUA51_FOUND)
+  set(ARGOS3_SOURCES_PLUGINS_ROBOTS_FOOTBOT
+    ${ARGOS3_HEADERS_PLUGINS_ROBOTS_FOOTBOT_WRAPPERS_LUA}
+    wrappers/lua/footbot_lua_controller.cpp)
+endif(LUA51_FOUND)
+
+#
+# Create foot-bot plugin
 #
 add_library(argos3plugin_${ARGOS_BUILD_FOR}_footbot SHARED ${ARGOS3_SOURCES_PLUGINS_ROBOTS_FOOTBOT})
 target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_footbot argos3plugin_${ARGOS_BUILD_FOR}_dynamics2d)
@@ -95,8 +103,12 @@ endif(ARGOS_COMPILE_QTOPENGL)
 install(FILES ${ARGOS3_HEADERS_PLUGINS_ROBOTS_FOOTBOT_CONTROLINTERFACE} DESTINATION include/argos3/plugins/robots/foot-bot/control_interface)
 
 if(ARGOS_BUILD_FOR_SIMULATOR)
-  install(FILES ${ARGOS3_HEADERS_PLUGINS_ROBOTS_FOOTBOT_SIMULATOR}        DESTINATION include/argos3/plugins/robots/foot-bot/simulator)
+  install(FILES ${ARGOS3_HEADERS_PLUGINS_ROBOTS_FOOTBOT_SIMULATOR}      DESTINATION include/argos3/plugins/robots/foot-bot/simulator)
 endif(ARGOS_BUILD_FOR_SIMULATOR)
+
+if(LUA51_FOUND)
+  install(FILES ${ARGOS3_HEADERS_PLUGINS_ROBOTS_FOOTBOT_WRAPPERS_LUA}   DESTINATION include/argos3/plugins/robots/foot-bot/wrappers/lua)
+endif(LUA51_FOUND)
 
 install(TARGETS argos3plugin_${ARGOS_BUILD_FOR}_footbot
   RUNTIME DESTINATION bin

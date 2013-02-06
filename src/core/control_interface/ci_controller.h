@@ -50,14 +50,6 @@ namespace argos {
          return false;
       }
 
-      virtual CCI_Actuator* InsertActuator(const std::string& str_actuator_type) {
-          return NULL;
-      }
-
-      virtual CCI_Sensor* InsertSensor(const std::string& str_sensor_type) {
-          return NULL;
-      }
-
       template<typename ACTUATOR_IMPL>
       ACTUATOR_IMPL* GetActuator(const std::string& str_actuator_type) {
          CCI_Actuator::TMap::const_iterator it = m_mapActuators.find(str_actuator_type);
@@ -93,6 +85,10 @@ namespace argos {
             THROW_ARGOSEXCEPTION("Unknown sensor type " << str_sensor_type << " requested in controller. Did you add it to the XML file?");
          }
       }
+
+      bool HasActuator(const std::string& str_id) const;
+
+      bool HasSensor(const std::string& str_id) const;
 
       inline CCI_Actuator::TMap& GetAllActuators() {
     	  return m_mapActuators;
