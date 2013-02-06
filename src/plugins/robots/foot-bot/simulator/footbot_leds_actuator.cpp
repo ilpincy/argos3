@@ -26,42 +26,27 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CFootBotLEDsActuator::SetSingleColor(UInt32 un_led_number,
-                                             const CColor& c_color) {
-      m_tLEDSettings[un_led_number] = c_color;
-   }
-
-   /****************************************/
-   /****************************************/
-
    void CFootBotLEDsActuator::SetAllColors(const CColor& c_color) {
       /* No for loop - much faster than with */
-      m_tLEDSettings[0] = c_color;
-      m_tLEDSettings[1] = c_color;
-      m_tLEDSettings[2] = c_color;
-      m_tLEDSettings[3] = c_color;
-      m_tLEDSettings[4] = c_color;
-      m_tLEDSettings[5] = c_color;
-      m_tLEDSettings[6] = c_color;
-      m_tLEDSettings[7] = c_color;
-      m_tLEDSettings[8] = c_color;
-      m_tLEDSettings[9] = c_color;
-      m_tLEDSettings[10] = c_color;
-      m_tLEDSettings[11] = c_color;
-   }
-
-   /****************************************/
-   /****************************************/
-
-   void CFootBotLEDsActuator::SetAllColors(const TSettings& c_colors) {
-      m_tLEDSettings = c_colors;
+      m_tSettings[0] = c_color;
+      m_tSettings[1] = c_color;
+      m_tSettings[2] = c_color;
+      m_tSettings[3] = c_color;
+      m_tSettings[4] = c_color;
+      m_tSettings[5] = c_color;
+      m_tSettings[6] = c_color;
+      m_tSettings[7] = c_color;
+      m_tSettings[8] = c_color;
+      m_tSettings[9] = c_color;
+      m_tSettings[10] = c_color;
+      m_tSettings[11] = c_color;
    }
 
    /****************************************/
    /****************************************/
 
    void CFootBotLEDsActuator::Update() {
-      m_pcLEDEquippedEntity->SetAllLEDsColors(m_tLEDSettings);
+      m_pcLEDEquippedEntity->SetAllLEDsColors(m_tSettings);
    }
 
    /****************************************/

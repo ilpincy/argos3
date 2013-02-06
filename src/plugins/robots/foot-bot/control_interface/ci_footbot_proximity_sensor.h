@@ -37,29 +37,11 @@ namespace argos {
    class CCI_FootBotProximitySensor;
 }
 
-#include <argos3/core/control_interface/ci_sensor.h>
-#include <argos3/core/utility/math/angles.h>
+#include <argos3/core/control_interface/ci_ring_proximity_sensor.h>
 
 namespace argos {
 
-   class CCI_FootBotProximitySensor : virtual public CCI_Sensor {
-
-   public:
-
-      struct SReading {
-         Real Value;
-         CRadians Angle;
-
-         SReading() :
-            Value(0.0f) {}
-
-         SReading(Real f_value,
-                  const CRadians& c_angle) :
-            Value(f_value),
-            Angle(c_angle) {}
-      };
-
-      typedef std::vector<SReading> TReadings;
+   class CCI_FootBotProximitySensor : public CCI_RingProximitySensor {
 
    public:
 
@@ -71,18 +53,8 @@ namespace argos {
       CCI_FootBotProximitySensor();
       virtual ~CCI_FootBotProximitySensor() {}
 
-      inline const TReadings& GetReadings() const {
-         return m_tReadings;
-      }
-
-   protected:
-
-      TReadings m_tReadings;
-
    };
 
-   std::ostream& operator<<(std::ostream& c_os, const CCI_FootBotProximitySensor::SReading& s_reading);
-   std::ostream& operator<<(std::ostream& c_os, const CCI_FootBotProximitySensor::TReadings& t_readings);
 }
 
 #endif

@@ -1,5 +1,8 @@
 #include "footbot_lua_controller.h"
 #include <argos3/core/utility/logging/argos_log.h>
+#include <argos3/plugins/robots/foot-bot/control_interface/ci_footbot_proximity_sensor.h>
+#include <argos3/plugins/robots/foot-bot/control_interface/ci_footbot_wheels_actuator.h>
+#include <argos3/plugins/robots/foot-bot/control_interface/ci_footbot_leds_actuator.h>
 
 namespace argos {
 
@@ -24,53 +27,25 @@ namespace argos {
        * Go through devices and add the necessary items to the table
        */
       if(HasActuator("footbot_wheels")) {
-         m_pcWheels = GetActuator<CCI_FootBotWheelsActuator>("footbot_wheels");
-         lua_pushliteral(GetLuaState(), "wheel_speed");
-         lua_newtable   (GetLuaState()               );
-         lua_pushliteral(GetLuaState(),        "left");
-         lua_pushnumber (GetLuaState(),             0);
-         lua_settable   (GetLuaState(),            -3);
-         lua_pushliteral(GetLuaState(),       "right");
-         lua_pushnumber (GetLuaState(),             0);
-         lua_settable   (GetLuaState(),            -3);
-         lua_settable   (GetLuaState(),            -3);
+         m_pcWheels = new CLuaDifferentialSteeringActuator(
+            *GetActuator<CCI_FootBotWheelsActuator>("footbot_wheels"),
+            GetLuaState(),
+            "wheel_speed");
+         m_pcWheels->CreateLuaVariables();
       }
       if(HasActuator("footbot_leds")) {
-         m_pcLEDs = GetActuator<CCI_FootBotLEDsActuator>("footbot_leds");
-         lua_pushliteral(GetLuaState(), "leds");
-         lua_newtable   (GetLuaState());
-         for(size_t i = 0; i < CCI_FootBotLEDsActuator::NUM_LEDS; ++i) {
-            lua_pushnumber(GetLuaState(), i+1);
-            lua_newtable(GetLuaState());
-            lua_pushliteral(GetLuaState(), "red");
-            lua_pushnumber(GetLuaState(), 0);
-            lua_settable(GetLuaState(), -3);
-            lua_pushliteral(GetLuaState(), "green");
-            lua_pushnumber(GetLuaState(), 0);
-            lua_settable(GetLuaState(), -3);
-            lua_pushliteral(GetLuaState(), "blue");
-            lua_pushnumber(GetLuaState(), 0);
-            lua_settable(GetLuaState(), -3);
-            lua_settable(GetLuaState(), -3);
-         }
-         lua_settable(GetLuaState(), -3);
+         m_pcLEDs = new CLuaLEDsActuator(
+            *GetActuator<CCI_FootBotLEDsActuator>("footbot_leds"),
+            GetLuaState(),
+            "leds");
+         m_pcLEDs->CreateLuaVariables();
       }
       if(HasSensor("footbot_proximity")) {
-         m_pcProximity = GetSensor<CCI_FootBotProximitySensor>("footbot_proximity");
-         lua_pushliteral(GetLuaState(), "proximity");
-         lua_newtable   (GetLuaState());
-         for(size_t i = 0; i < CCI_FootBotProximitySensor::NUM_READINGS; ++i) {
-            lua_pushnumber(GetLuaState(), i+1);
-            lua_newtable(GetLuaState());
-            lua_pushliteral(GetLuaState(), "angle");
-            lua_pushnumber(GetLuaState(), m_pcProximity->GetReadings()[i].Angle.GetValue());
-            lua_settable(GetLuaState(), -3);
-            lua_pushliteral(GetLuaState(), "value");
-            lua_pushnumber(GetLuaState(), m_pcProximity->GetReadings()[i].Value);
-            lua_settable(GetLuaState(), -3);
-            lua_settable(GetLuaState(), -3);
-         }
-         lua_settable(GetLuaState(), -3);
+         m_pcProximity = new CLuaRingProximitySensor(
+            *GetSensor<CCI_FootBotProximitySensor>("footbot_proximity"),
+            GetLuaState(),
+            "proximity");
+         m_pcProximity->CreateLuaVariables();
       }
       /*
        * Set the name of the table
@@ -90,15 +65,7 @@ namespace argos {
        * Go through the sensors
        */
       if(m_pcProximity) {
-         lua_getfield(GetLuaState(), -1, "proximity");
-         for(size_t i = 0; i < CCI_FootBotProximitySensor::NUM_READINGS; ++i) {
-            lua_pushnumber(GetLuaState(), i+1);
-            lua_gettable  (GetLuaState(), -2);
-            lua_pushnumber(GetLuaState(), m_pcProximity->GetReadings()[i].Value);
-            lua_setfield  (GetLuaState(), -2, "value");
-            lua_pop(GetLuaState(), 1);
-         }
-         lua_pop(GetLuaState(), 1);
+         m_pcProximity->ReadingsToLuaVariables();
       }
       /*
        * Pop the footbot state table
@@ -117,32 +84,8 @@ namespace argos {
       /*
        * Go through the actuators
        */
-      if(m_pcWheels) {
-         lua_getfield(GetLuaState(), -1, "wheel_speed");
-         lua_getfield(GetLuaState(), -1, "left");
-         lua_getfield(GetLuaState(), -2, "right");
-         m_pcWheels->SetLinearVelocity(lua_tonumber(GetLuaState(), -2),
-                                       lua_tonumber(GetLuaState(), -1));
-         lua_pop(GetLuaState(), 3);
-      }
-      if(m_pcLEDs) {
-         lua_getfield(GetLuaState(), -1, "leds");
-         CCI_FootBotLEDsActuator::TSettings tLEDs(CCI_FootBotLEDsActuator::NUM_LEDS);
-         for(size_t i = 0; i < CCI_FootBotLEDsActuator::NUM_LEDS; ++i) {
-            lua_pushnumber(GetLuaState(), i+1);
-            lua_gettable  (GetLuaState(), -2);
-            lua_getfield  (GetLuaState(), -1, "red");
-            lua_getfield  (GetLuaState(), -2, "green");
-            lua_getfield  (GetLuaState(), -3, "blue");
-            tLEDs[i].Set(lua_tonumber(GetLuaState(), -3),
-                         lua_tonumber(GetLuaState(), -2),
-                         lua_tonumber(GetLuaState(), -1));
-            LOGERR << "[DEBUG] tLEDs[" << i << "] = " << tLEDs[i] << std::endl;
-            lua_pop(GetLuaState(), 4);
-         }
-         lua_pop(GetLuaState(), 1);
-         m_pcLEDs->SetAllColors(tLEDs);
-      }
+      if(m_pcWheels) m_pcWheels->LuaVariablesToSettings();
+      if(m_pcLEDs) m_pcLEDs->LuaVariablesToSettings();
       /*
        * Pop the footbot state table
        */

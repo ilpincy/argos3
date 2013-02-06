@@ -50,9 +50,6 @@ namespace argos {
    
    void CFootBotWheelsActuator::SetLinearVelocity(Real f_left_velocity,
                                                   Real f_right_velocity) {
-      CCI_FootBotWheelsActuator::FOOTBOT_WHEELS_SPEED_RANGE.TruncValue(f_left_velocity);
-      CCI_FootBotWheelsActuator::FOOTBOT_WHEELS_SPEED_RANGE.TruncValue(f_right_velocity);
-
       /* Convert speeds in m/s */
       m_fCurrentVelocity[FOOTBOT_LEFT_WHEEL] = f_left_velocity * 0.01f;
       m_fCurrentVelocity[FOOTBOT_RIGHT_WHEEL] = f_right_velocity * 0.01f;

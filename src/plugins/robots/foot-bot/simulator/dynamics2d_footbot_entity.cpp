@@ -462,31 +462,6 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   // class CDynamics2DOperationAddFootBotEntity : public CDynamics2DOperationAddEntity {
-   // public:
-   //    CDynamics2DOperationAddFootBotEntity() {}
-   //    virtual ~CDynamics2DOperationAddFootBotEntity() {}
-   //    void ApplyTo(CDynamics2DEngine& c_engine,
-   //                 CFootBotEntity& c_footbot) {
-   //       c_engine.AddPhysicsEntity(c_footbot.GetId(),
-   //                                 *new CDynamics2DFootBotEntity(c_engine,
-   //                                                               c_footbot));
-   //    }
-   // };
-
-   // class CDynamics2DOperationRemoveFootBotEntity : public CDynamics2DOperationRemoveEntity {
-   // public:
-   //    CDynamics2DOperationRemoveFootBotEntity() {}
-   //    virtual ~CDynamics2DOperationRemoveFootBotEntity() {}
-   //    void ApplyTo(CDynamics2DEngine& c_engine,
-   //                 CFootBotEntity& c_footbot) {
-   //       c_engine.RemovePhysicsEntity(c_footbot.GetId());
-   //    }
-   // };
-
-   // REGISTER_ENTITY_OPERATION(CDynamics2DOperationAddEntity, CDynamics2DEngine, CDynamics2DOperationAddFootBotEntity, void, CFootBotEntity);
-   // REGISTER_ENTITY_OPERATION(CDynamics2DOperationRemoveEntity, CDynamics2DEngine, CDynamics2DOperationRemoveFootBotEntity, void, CFootBotEntity);
-
    REGISTER_STANDARD_DYNAMICS2D_OPERATIONS_ON_ENTITY(CFootBotEntity, CDynamics2DFootBotEntity);
 
    /****************************************/

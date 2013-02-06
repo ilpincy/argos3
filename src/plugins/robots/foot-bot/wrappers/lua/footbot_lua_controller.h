@@ -1,7 +1,7 @@
 #include <argos3/core/wrappers/lua/lua_controller.h>
-#include <argos3/plugins/robots/foot-bot/control_interface/ci_footbot_wheels_actuator.h>
-#include <argos3/plugins/robots/foot-bot/control_interface/ci_footbot_leds_actuator.h>
-#include <argos3/plugins/robots/foot-bot/control_interface/ci_footbot_proximity_sensor.h>
+#include <argos3/core/wrappers/lua/lua_ring_proximity_sensor.h>
+#include <argos3/core/wrappers/lua/lua_differential_steering_actuator.h>
+#include <argos3/core/wrappers/lua/lua_leds_actuator.h>
 
 namespace argos {
 
@@ -23,9 +23,9 @@ namespace argos {
 
    private:
 
-      CCI_FootBotWheelsActuator* m_pcWheels;
-      CCI_FootBotLEDsActuator* m_pcLEDs;
-      CCI_FootBotProximitySensor* m_pcProximity;
+      CLuaDifferentialSteeringActuator* m_pcWheels;
+      CLuaLEDsActuator*                 m_pcLEDs;
+      CLuaRingProximitySensor*          m_pcProximity;
 
    };
 

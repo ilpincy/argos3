@@ -25,37 +25,17 @@ namespace argos {
    class CCI_FootBotWheelsActuator;
 }
 
-#include <argos3/core/control_interface/ci_actuator.h>
+#include <argos3/core/control_interface/ci_differential_steering_actuator.h>
 #include <argos3/core/utility/math/range.h>
 
 namespace argos {
 
-   class CCI_FootBotWheelsActuator : virtual public CCI_Actuator {
+   class CCI_FootBotWheelsActuator : virtual public CCI_DifferentialSteeringActuator {
 
    public:
 
-      static const CRange<Real> FOOTBOT_WHEELS_SPEED_RANGE;
-
-   public:
-
-      /**
-       *
-       * @brief Destructor.
-       *
-       */
       virtual ~CCI_FootBotWheelsActuator() {
       }
-
-      /**
-       * @brief Sets the linear velocity of the two wheels.
-       * Velocities are expressed in cm per second, actuated values
-       * are truncated is they exceed the maximum allowed.
-       *
-       * @param f_left_velocity desired left wheel velocity.
-       * @param f_right_velocity desired right wheel velocity.
-       */
-      virtual void SetLinearVelocity(Real f_left_velocity,
-                                     Real f_right_velocity) = 0;
 
    protected:
 
@@ -69,11 +49,6 @@ namespace argos {
       /** speed conversion factors */
       static Real PULSE_TPID_TO_CM_SEC;
       static Real CM_SEC_TO_PULSE_TPID;
-
-      Real m_fCurrentVelocity[2];
-
-      friend class CCI_FootBotWheelSpeedSensor;
-      friend class CRealFootBotWheelSpeedSensor;
 
    };
 

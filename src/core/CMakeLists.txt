@@ -59,6 +59,9 @@ set(ARGOS3_HEADERS_UTILITY_MATH_MATRIX
 set(ARGOS3_HEADERS_CONTROLINTERFACE
   control_interface/ci_actuator.h
   control_interface/ci_controller.h
+  control_interface/ci_differential_steering_actuator.h
+  control_interface/ci_leds_actuator.h
+  control_interface/ci_ring_proximity_sensor.h
   control_interface/ci_sensor.h)
 # argos3/core/simulator
 set(ARGOS3_HEADERS_SIMULATOR
@@ -101,7 +104,12 @@ set(ARGOS3_HEADERS_SIMULATOR_SPACE
   simulator/space/space_no_threads.h)
 # argos3/core/wrappers/lua
 set(ARGOS3_HEADERS_WRAPPERS_LUA
+  wrappers/lua/lua_actuator.h
   wrappers/lua/lua_controller.h
+  wrappers/lua/lua_differential_steering_actuator.h
+  wrappers/lua/lua_leds_actuator.h
+  wrappers/lua/lua_ring_proximity_sensor.h
+  wrappers/lua/lua_sensor.h
   wrappers/lua/lua_utility.h)
 
 #
@@ -139,7 +147,9 @@ set(ARGOS3_SOURCES_CORE
   utility/math/matrix/transformationmatrix3.cpp
   utility/math/matrix/transformationmatrix2.cpp
   ${ARGOS3_HEADERS_CONTROLINTERFACE}
-  control_interface/ci_controller.cpp)
+  control_interface/ci_controller.cpp
+  control_interface/ci_leds_actuator.cpp
+  control_interface/ci_ring_proximity_sensor.cpp)
 # Compile dynamic library loading only if enabled
 if(ARGOS_DYNAMIC_LIBRARY_LOADING)
   set(ARGOS3_SOURCES_CORE ${ARGOS3_SOURCES_CORE} utility/plugins/dynamic_loading.cpp)
@@ -183,6 +193,9 @@ if(LUA51_FOUND)
     ${ARGOS3_SOURCES_CORE}
     ${ARGOS3_HEADERS_WRAPPERS_LUA}
     wrappers/lua/lua_controller.cpp
+    wrappers/lua/lua_differential_steering_actuator.cpp
+    wrappers/lua/lua_leds_actuator.cpp
+    wrappers/lua/lua_ring_proximity_sensor.cpp
     wrappers/lua/lua_utility.cpp)
 endif(LUA51_FOUND)
 

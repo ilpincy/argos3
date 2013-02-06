@@ -11,8 +11,6 @@ namespace argos {
    /****************************************/
    /****************************************/
    
-   const CRange<Real> CCI_FootBotWheelsActuator::FOOTBOT_WHEELS_SPEED_RANGE(-30.0f,30.0f);
-
    // period of the PID speed controller, in seconds
    Real CCI_FootBotWheelsActuator::T_PID = 0.005;
    // conversion factors got from experimental data

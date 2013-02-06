@@ -34,12 +34,7 @@ namespace argos {
 
       virtual void SetEntity(CEntity& c_entity);
 
-      virtual void SetSingleColor(UInt32 un_led_number,
-                                  const CColor& c_color);
-
       virtual void SetAllColors(const CColor& c_color);
-
-      virtual void SetAllColors(const TSettings& c_colors);
 
       virtual void Update();
       virtual void Reset();
