@@ -127,14 +127,9 @@ namespace argos {
    /****************************************/
    
    void CControllableEntity::SetController(const std::string& str_controller_id) {
-      try {
-         TConfigurationNode& tConfig = CSimulator::GetInstance().GetConfigForController(str_controller_id);
-         TConfigurationNode& tParams = GetNode(tConfig, "params");
-         SetController(str_controller_id, tParams);
-      }
-      catch(CARGoSException& ex) {
-         THROW_ARGOSEXCEPTION_NESTED("Can't set controller for controllable entity \"" << GetId() << "\"", ex);
-      }
+      TConfigurationNode& tConfig = CSimulator::GetInstance().GetConfigForController(str_controller_id);
+      TConfigurationNode& tParams = GetNode(tConfig, "params");
+      SetController(str_controller_id, tParams);
    }
 
    /****************************************/
