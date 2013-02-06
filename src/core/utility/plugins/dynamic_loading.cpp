@@ -36,7 +36,10 @@ namespace argos {
          /* Not already loaded, load the library and bomb out in case of failure */
          tHandle = ::dlopen(str_lib.c_str(), RTLD_NOW);
          if(tHandle == NULL) {
-            THROW_ARGOSEXCEPTION(::dlerror());
+            THROW_ARGOSEXCEPTION("Can't load library \""
+                                 << str_lib
+                                 << "\", "
+                                 << ::dlerror());
          }
          /* Store the handle to the loaded library */
          m_tOpenLibs[str_lib] = tHandle;
