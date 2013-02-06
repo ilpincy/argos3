@@ -96,7 +96,7 @@ namespace argos {
       }
 
       virtual std::string GetTypeDescription() const {
-         return "footbot_entity";
+         return "footbot";
       }
 
    private:

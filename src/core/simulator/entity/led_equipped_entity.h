@@ -69,7 +69,7 @@ namespace argos {
       }
 
       virtual std::string GetTypeDescription() const {
-         return "led_equipped_entity";
+         return "leds";
       }
 
    protected:

@@ -30,7 +30,7 @@ namespace argos {
       CMediumEntity(const std::string& str_id);
 
       virtual std::string GetTypeDescription() const {
-         return "medium_entity";
+         return "medium";
       }
 
    };

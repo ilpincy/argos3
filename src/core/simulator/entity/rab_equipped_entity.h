@@ -57,7 +57,7 @@ namespace argos {
       void ClearData();
 
       virtual std::string GetTypeDescription() const {
-         return "rab_equipped_entity";
+         return "rab";
       }
 
    protected:

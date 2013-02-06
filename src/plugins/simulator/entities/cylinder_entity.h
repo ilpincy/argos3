@@ -72,7 +72,7 @@ namespace argos {
       }
 
       virtual std::string GetTypeDescription() const {
-         return "cylinder_entity";
+         return "cylinder";
       }
 
    private:

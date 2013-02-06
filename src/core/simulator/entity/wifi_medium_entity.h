@@ -27,7 +27,7 @@ namespace argos {
       CWiFiMediumEntity(const std::string& str_id);
          
       virtual std::string GetTypeDescription() const {
-         return "wifi_medium_entity";
+         return "wifi_medium";
       }
 
    };

@@ -60,7 +60,7 @@ namespace argos {
       }
 
       virtual std::string GetTypeDescription() const {
-         return "box_entity";
+         return "box";
       }
 
    private:

@@ -70,7 +70,7 @@ namespace argos {
                           bool b_check_only = false);
 
       virtual std::string GetTypeDescription() const {
-         return "positional_entity";
+         return "position";
       }
 
    private:

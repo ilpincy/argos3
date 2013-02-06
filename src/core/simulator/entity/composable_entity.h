@@ -40,6 +40,10 @@ namespace argos {
 
       virtual void Update();
 
+      virtual std::string GetTypeDescription() const {
+         return "composite";
+      }
+
       virtual void UpdateComponents();
 
       void AddComponent(CEntity& c_component);

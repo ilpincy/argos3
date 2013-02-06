@@ -101,7 +101,7 @@ namespace argos {
       virtual void Update();
 
       virtual std::string GetTypeDescription() const {
-         return "embodied_entity";
+         return "body";
       }
 
    protected:

@@ -86,7 +86,7 @@ namespace argos {
       }
 
       virtual std::string GetTypeDescription() const {
-         return "gripper_equipped_entity";
+         return "gripper";
       }
 
    private:

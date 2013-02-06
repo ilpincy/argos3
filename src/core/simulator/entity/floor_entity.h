@@ -103,7 +103,7 @@ namespace argos {
       }
 
       virtual std::string GetTypeDescription() const {
-         return "floor_entity";
+         return "floor";
       }
 
       virtual void Update() {}

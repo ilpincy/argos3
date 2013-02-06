@@ -45,7 +45,7 @@ namespace argos {
       }
 
       virtual std::string GetTypeDescription() const {
-         return "wheeled_entity";
+         return "wheels";
       }
 
    private:

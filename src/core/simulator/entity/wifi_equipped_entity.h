@@ -24,7 +24,7 @@ namespace argos {
                           const std::string& str_id);
 
       virtual std::string GetTypeDescription() const {
-         return "wifi_equipped_entity";
+         return "wifi";
       }
 
    };
