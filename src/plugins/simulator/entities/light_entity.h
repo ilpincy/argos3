@@ -13,7 +13,7 @@ namespace argos {
 }
 
 #include <argos3/core/simulator/entity/positional_entity.h>
-#include <argos3/core/simulator/entity/led_equipped_entity.h>
+#include <argos3/plugins/simulator/entities/led_equipped_entity.h>
 
 namespace argos {
 

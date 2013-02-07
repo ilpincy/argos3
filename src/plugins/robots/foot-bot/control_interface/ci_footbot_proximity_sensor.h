@@ -37,7 +37,7 @@ namespace argos {
    class CCI_FootBotProximitySensor;
 }
 
-#include <argos3/core/control_interface/ci_ring_proximity_sensor.h>
+#include <argos3/plugins/robots/generic/control_interface/ci_ring_proximity_sensor.h>
 
 namespace argos {
 

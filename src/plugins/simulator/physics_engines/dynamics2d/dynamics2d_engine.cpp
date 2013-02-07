@@ -7,7 +7,7 @@
 #include "dynamics2d_engine.h"
 #include <argos3/core/simulator/simulator.h>
 #include <argos3/core/simulator/entity/embodied_entity.h>
-#include <argos3/core/simulator/entity/gripper_equipped_entity.h>
+#include <argos3/plugins/simulator/entities/gripper_equipped_entity.h>
 
 #include <cmath>
 

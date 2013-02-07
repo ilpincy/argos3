@@ -1,3 +1,9 @@
+
+/**
+ * @file <argos3/plugins/robots/foot-bot/wrappers/lua/footbot_lua_controller.cpp>
+ *
+ * @author Carlo Pinciroli <ilpincy@gmail.com>
+ */
 #include "footbot_lua_controller.h"
 #include <argos3/core/utility/logging/argos_log.h>
 #include <argos3/plugins/robots/foot-bot/control_interface/ci_footbot_proximity_sensor.h>

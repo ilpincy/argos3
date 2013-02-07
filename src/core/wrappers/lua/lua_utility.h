@@ -1,3 +1,9 @@
+
+/**
+ * @file <argos3/core/wrappers/lua/lua_utility.h>
+ *
+ * @author Carlo Pinciroli <ilpincy@gmail.com>
+ */
 #include <argos3/core/utility/logging/argos_log.h>
 
 extern "C" {

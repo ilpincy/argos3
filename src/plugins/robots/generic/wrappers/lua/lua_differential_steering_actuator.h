@@ -1,3 +1,9 @@
+
+/**
+ * @file <argos3/core/wrappers/lua/lua_differential_steering_actuator.h>
+ *
+ * @author Carlo Pinciroli <ilpincy@gmail.com>
+ */
 #ifndef LUA_DIFFERENTIAL_STEERING_ACTUATOR_H
 #define LUA_DIFFERENTIAL_STEERING_ACTUATOR_H
 
@@ -6,7 +12,7 @@ namespace argos {
 }
 
 #include <argos3/core/wrappers/lua/lua_actuator.h>
-#include <argos3/core/control_interface/ci_differential_steering_actuator.h>
+#include <argos3/plugins/robots/generic/control_interface/ci_differential_steering_actuator.h>
 
 namespace argos {
 

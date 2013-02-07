@@ -1,3 +1,9 @@
+
+/**
+ * @file <argos3/core/wrappers/lua/lua_leds_actuator.cpp>
+ *
+ * @author Carlo Pinciroli <ilpincy@gmail.com>
+ */
 #include "lua_leds_actuator.h"
 
 namespace argos {

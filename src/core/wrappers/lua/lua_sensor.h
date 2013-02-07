@@ -1,3 +1,9 @@
+
+/**
+ * @file <argos3/core/wrappers/lua/lua_sensor.h>
+ *
+ * @author Carlo Pinciroli <ilpincy@gmail.com>
+ */
 #ifndef LUA_SENSOR_H
 #define LUA_SENSOR_H
 

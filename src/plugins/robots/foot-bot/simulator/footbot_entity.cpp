@@ -6,11 +6,11 @@
 
 #include "footbot_entity.h"
 
-#include <argos3/core/simulator/entity/gripper_equipped_entity.h>
+#include <argos3/plugins/simulator/entities/gripper_equipped_entity.h>
 #include <argos3/core/simulator/entity/rab_equipped_entity.h>
 #include "distance_scanner_equipped_entity.h"
-#include <argos3/core/simulator/entity/led_equipped_entity.h>
-#include <argos3/core/simulator/entity/wifi_equipped_entity.h>
+#include <argos3/plugins/simulator/entities/led_equipped_entity.h>
+#include <argos3/plugins/simulator/entities/wifi_equipped_entity.h>
 #include <argos3/core/simulator/entity/embodied_entity.h>
 #include <argos3/core/simulator/entity/controllable_entity.h>
 #include <argos3/core/utility/math/matrix/rotationmatrix3.h>

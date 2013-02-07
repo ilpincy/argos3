@@ -25,7 +25,7 @@ namespace argos {
    class CCI_FootBotWheelsActuator;
 }
 
-#include <argos3/core/control_interface/ci_differential_steering_actuator.h>
+#include <argos3/plugins/robots/generic/control_interface/ci_differential_steering_actuator.h>
 #include <argos3/core/utility/math/range.h>
 
 namespace argos {

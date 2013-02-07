@@ -1,3 +1,9 @@
+
+/**
+ * @file <argos3/testing/experiment/test_footbot_controller.cpp>
+ *
+ * @author Carlo Pinciroli <ilpincy@gmail.com>
+ */
 #include "test_footbot_controller.h"
 #include <argos3/core/utility/logging/argos_log.h>
 

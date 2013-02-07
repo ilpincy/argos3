@@ -1,3 +1,9 @@
+
+/**
+ * @file <argos3/core/wrappers/lua/lua_actuator.h>
+ *
+ * @author Carlo Pinciroli <ilpincy@gmail.com>
+ */
 #ifndef LUA_ACTUATOR_H
 #define LUA_ACTUATOR_H
 

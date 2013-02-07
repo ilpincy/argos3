@@ -1,3 +1,9 @@
+
+/**
+ * @file <argos3/core/wrappers/lua/lua_controller.h>
+ *
+ * @author Carlo Pinciroli <ilpincy@gmail.com>
+ */
 #include <argos3/core/control_interface/ci_controller.h>
 
 extern "C" {

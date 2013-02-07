@@ -1,3 +1,9 @@
+
+/**
+ * @file <argos3/core/control_interface/ci_leds_actuator.cpp>
+ *
+ * @author Carlo Pinciroli <ilpincy@gmail.com>
+ */
 #include "ci_leds_actuator.h"
 
 namespace argos {

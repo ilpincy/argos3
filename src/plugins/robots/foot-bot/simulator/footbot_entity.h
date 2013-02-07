@@ -19,7 +19,7 @@ namespace argos {
 }
 
 #include <argos3/core/simulator/entity/composable_entity.h>
-#include <argos3/core/simulator/entity/wheeled_entity.h>
+#include <argos3/plugins/simulator/entities/wheeled_entity.h>
 
 namespace argos {
 

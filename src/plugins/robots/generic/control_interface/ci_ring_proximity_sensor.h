@@ -1,3 +1,9 @@
+
+/**
+ * @file <argos3/core/control_interface/ci_ring_proximity_sensor.h>
+ *
+ * @author Carlo Pinciroli <ilpincy@gmail.com>
+ */
 #ifndef CCI_RING_PROXIMITY_SENSOR_H
 #define CCI_RING_PROXIMITY_SENSOR_H
 

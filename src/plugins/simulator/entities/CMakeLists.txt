@@ -5,7 +5,12 @@
 set(ARGOS3_HEADERS_PLUGINS_SIMULATOR_ENTITIES
   box_entity.h
   cylinder_entity.h
-  light_entity.h)
+  gripper_equipped_entity.h
+  led_equipped_entity.h
+  light_entity.h
+  wheeled_entity.h
+  wifi_equipped_entity.h
+  wifi_medium_entity.h)
 
 #
 # Source files
@@ -14,7 +19,12 @@ set(ARGOS3_SOURCES_PLUGINS_SIMULATOR_ENTITIES
   ${ARGOS3_HEADERS_PLUGINS_SIMULATOR_ENTITIES}
   box_entity.cpp
   cylinder_entity.cpp
-  light_entity.cpp)
+  gripper_equipped_entity.cpp
+  led_equipped_entity.cpp
+  light_entity.cpp
+  wheeled_entity.cpp
+  wifi_equipped_entity.cpp
+  wifi_medium_entity.cpp)
 
 #
 # Create entity plugin library

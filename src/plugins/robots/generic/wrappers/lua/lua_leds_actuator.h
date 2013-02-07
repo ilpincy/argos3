@@ -1,3 +1,9 @@
+
+/**
+ * @file <argos3/core/wrappers/lua/lua_leds_actuator.h>
+ *
+ * @author Carlo Pinciroli <ilpincy@gmail.com>
+ */
 #ifndef LUA_LEDS_ACTUATOR
 #define LUA_LEDS_ACTUATOR
 
@@ -6,7 +12,7 @@ namespace argos {
 }
 
 #include <argos3/core/wrappers/lua/lua_actuator.h>
-#include <argos3/core/control_interface/ci_leds_actuator.h>
+#include <argos3/plugins/robots/generic/control_interface/ci_leds_actuator.h>
 
 namespace argos {
 

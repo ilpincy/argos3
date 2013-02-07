@@ -6,7 +6,7 @@
 
 #include "dynamics2d_footbot_entity.h"
 #include <argos3/core/simulator/entity/embodied_entity.h>
-#include <argos3/core/simulator/entity/gripper_equipped_entity.h>
+#include <argos3/plugins/simulator/entities/gripper_equipped_entity.h>
 #include <argos3/plugins/simulator/physics_engines/dynamics2d/dynamics2d_engine.h>
 
 namespace argos {

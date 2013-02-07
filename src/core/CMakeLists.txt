@@ -59,9 +59,6 @@ set(ARGOS3_HEADERS_UTILITY_MATH_MATRIX
 set(ARGOS3_HEADERS_CONTROLINTERFACE
   control_interface/ci_actuator.h
   control_interface/ci_controller.h
-  control_interface/ci_differential_steering_actuator.h
-  control_interface/ci_leds_actuator.h
-  control_interface/ci_ring_proximity_sensor.h
   control_interface/ci_sensor.h)
 # argos3/core/simulator
 set(ARGOS3_HEADERS_SIMULATOR
@@ -78,15 +75,10 @@ set(ARGOS3_HEADERS_SIMULATOR_ENTITY
   simulator/entity/embodied_entity.h
   simulator/entity/entity.h
   simulator/entity/floor_entity.h
-  simulator/entity/gripper_equipped_entity.h
   simulator/entity/led_entity.h
-  simulator/entity/led_equipped_entity.h
   simulator/entity/medium_entity.h
   simulator/entity/positional_entity.h
-  simulator/entity/rab_equipped_entity.h
-  simulator/entity/wheeled_entity.h
-  simulator/entity/wifi_equipped_entity.h
-  simulator/entity/wifi_medium_entity.h)
+  simulator/entity/rab_equipped_entity.h)
 # argos3/core/simulator/physics_engine
 set(ARGOS3_HEADERS_SIMULATOR_PHYSICSENGINE
   simulator/physics_engine/physics_engine.h
@@ -106,9 +98,6 @@ set(ARGOS3_HEADERS_SIMULATOR_SPACE
 set(ARGOS3_HEADERS_WRAPPERS_LUA
   wrappers/lua/lua_actuator.h
   wrappers/lua/lua_controller.h
-  wrappers/lua/lua_differential_steering_actuator.h
-  wrappers/lua/lua_leds_actuator.h
-  wrappers/lua/lua_ring_proximity_sensor.h
   wrappers/lua/lua_sensor.h
   wrappers/lua/lua_utility.h)
 
@@ -147,9 +136,7 @@ set(ARGOS3_SOURCES_CORE
   utility/math/matrix/transformationmatrix3.cpp
   utility/math/matrix/transformationmatrix2.cpp
   ${ARGOS3_HEADERS_CONTROLINTERFACE}
-  control_interface/ci_controller.cpp
-  control_interface/ci_leds_actuator.cpp
-  control_interface/ci_ring_proximity_sensor.cpp)
+  control_interface/ci_controller.cpp)
 # Compile dynamic library loading only if enabled
 if(ARGOS_DYNAMIC_LIBRARY_LOADING)
   set(ARGOS3_SOURCES_CORE ${ARGOS3_SOURCES_CORE} utility/plugins/dynamic_loading.cpp)
@@ -168,15 +155,10 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
     simulator/entity/embodied_entity.cpp
     simulator/entity/entity.cpp
     simulator/entity/floor_entity.cpp
-    simulator/entity/gripper_equipped_entity.cpp
     simulator/entity/led_entity.cpp
-    simulator/entity/led_equipped_entity.cpp
     simulator/entity/medium_entity.cpp
     simulator/entity/positional_entity.cpp
     simulator/entity/rab_equipped_entity.cpp
-    simulator/entity/wheeled_entity.cpp
-    simulator/entity/wifi_equipped_entity.cpp
-    simulator/entity/wifi_medium_entity.cpp
     ${ARGOS3_HEADERS_SIMULATOR_PHYSICSENGINE}
     simulator/physics_engine/physics_engine.cpp
     ${ARGOS3_HEADERS_SIMULATOR_VISUALIZATION}
@@ -193,9 +175,6 @@ if(LUA51_FOUND)
     ${ARGOS3_SOURCES_CORE}
     ${ARGOS3_HEADERS_WRAPPERS_LUA}
     wrappers/lua/lua_controller.cpp
-    wrappers/lua/lua_differential_steering_actuator.cpp
-    wrappers/lua/lua_leds_actuator.cpp
-    wrappers/lua/lua_ring_proximity_sensor.cpp
     wrappers/lua/lua_utility.cpp)
 endif(LUA51_FOUND)
 
@@ -242,6 +221,7 @@ install(FILES ${ARGOS3_HEADERS_UTILITY_MATH_MATRIX}           DESTINATION includ
 install(FILES ${ARGOS3_HEADERS_CONTROLINTERFACE}              DESTINATION include/argos3/core/control_interface)
 if(ARGOS_BUILD_FOR_SIMULATOR)
   install(FILES ${ARGOS3_HEADERS_SIMULATOR}                   DESTINATION include/argos3/core/simulator)
+  install(FILES ${ARGOS3_HEADERS_SIMULATOR_ACTUATORS}         DESTINATION include/argos3/core/simulator/actuators)
   install(FILES ${ARGOS3_HEADERS_SIMULATOR_ENTITY}            DESTINATION include/argos3/core/simulator/entity)
   install(FILES ${ARGOS3_HEADERS_SIMULATOR_PHYSICSENGINE}     DESTINATION include/argos3/core/simulator/physics_engine)
   install(FILES ${ARGOS3_HEADERS_SIMULATOR_VISUALIZATION}     DESTINATION include/argos3/core/simulator/visualization)

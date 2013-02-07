@@ -13,6 +13,7 @@ namespace argos {
 }
 
 #include <argos3/core/control_interface/ci_actuator.h>
+#include <argos3/core/simulator/entity/entity.h>
 
 namespace argos {
 

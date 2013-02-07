@@ -1,3 +1,9 @@
+
+/**
+ * @file <argos3/core/wrappers/lua/lua_ring_proximity_sensor.h>
+ *
+ * @author Carlo Pinciroli <ilpincy@gmail.com>
+ */
 #ifndef LUA_RING_PROXIMITY_SENSOR_H
 #define LUA_RING_PROXIMITY_SENSOR_H
 
@@ -6,7 +12,7 @@ namespace argos {
 }
 
 #include <argos3/core/wrappers/lua/lua_sensor.h>
-#include <argos3/core/control_interface/ci_ring_proximity_sensor.h>
+#include <argos3/plugins/robots/generic/control_interface/ci_ring_proximity_sensor.h>
 
 namespace argos {
 

@@ -6,7 +6,7 @@
 
 #include "qtopengl_box.h"
 #include <argos3/core/utility/math/vector2.h>
-#include <argos3/core/simulator/entity/led_equipped_entity.h>
+#include <argos3/plugins/simulator/entities/led_equipped_entity.h>
 #include <argos3/plugins/simulator/entities/box_entity.h>
 #include <argos3/plugins/simulator/visualizations/qt-opengl/qtopengl_widget.h>
 

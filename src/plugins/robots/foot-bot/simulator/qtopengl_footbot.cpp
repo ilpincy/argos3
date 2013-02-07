@@ -10,8 +10,8 @@
 #include <argos3/core/simulator/entity/embodied_entity.h>
 #include <argos3/core/utility/math/vector2.h>
 #include <argos3/core/utility/math/vector3.h>
-#include <argos3/core/simulator/entity/led_equipped_entity.h>
-#include <argos3/core/simulator/entity/gripper_equipped_entity.h>
+#include <argos3/plugins/simulator/entities/led_equipped_entity.h>
+#include <argos3/plugins/simulator/entities/gripper_equipped_entity.h>
 #include <argos3/plugins/simulator/visualizations/qt-opengl/qtopengl_widget.h>
 
 namespace argos {
