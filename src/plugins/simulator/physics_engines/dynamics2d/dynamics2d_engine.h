@@ -198,9 +198,16 @@ namespace argos {
    virtual ~CDynamics2DOperationAdd ## SPACE_ENTITY() {}                \
    void ApplyTo(CDynamics2DEngine& c_engine,                            \
                 SPACE_ENTITY& c_entity) {                               \
+      DYN2D_ENTITY* pcPhysEntity = new DYN2D_ENTITY(c_engine,           \
+                                                    c_entity);          \
       c_engine.AddPhysicsEntity(c_entity.GetId(),                       \
-                                *new DYN2D_ENTITY(c_engine,             \
-                                                  c_entity));           \
+                                *pcPhysEntity);                         \
+      c_entity.                                                         \
+         GetComponent<CEmbodiedEntity>("body").                         \
+         AddPhysicsEngine(c_engine);                                    \
+      c_entity.                                                         \
+         GetComponent<CEmbodiedEntity>("body").                         \
+         AddPhysicsEngineEntity(c_engine.GetId(), *pcPhysEntity);       \
    }                                                                    \
    };                                                                   \
    REGISTER_DYNAMICS2D_OPERATION(CDynamics2DOperationAddEntity,         \
@@ -215,6 +222,12 @@ namespace argos {
    void ApplyTo(CDynamics2DEngine& c_engine,                            \
                 SPACE_ENTITY& c_entity) {                               \
       c_engine.RemovePhysicsEntity(c_entity.GetId());                   \
+      c_entity.                                                         \
+         GetComponent<CEmbodiedEntity>("body").                         \
+         RemovePhysicsEngine(c_engine);                                 \
+      c_entity.                                                         \
+         GetComponent<CEmbodiedEntity>("body").                         \
+         RemovePhysicsEngineEntity(c_engine.GetId());                   \
    }                                                                    \
    };                                                                   \
    REGISTER_DYNAMICS2D_OPERATION(CDynamics2DOperationRemoveEntity,      \
@@ -222,7 +235,7 @@ namespace argos {
                                  SPACE_ENTITY);
    
 #define REGISTER_STANDARD_DYNAMICS2D_OPERATIONS_ON_ENTITY(SPACE_ENTITY, DYN2D_ENTITY) \
-   REGISTER_STANDARD_DYNAMICS2D_OPERATION_ADD_ENTITY(SPACE_ENTITY, DYN2D_ENTITY)      \
+   REGISTER_STANDARD_DYNAMICS2D_OPERATION_ADD_ENTITY(SPACE_ENTITY, DYN2D_ENTITY) \
    REGISTER_STANDARD_DYNAMICS2D_OPERATION_REMOVE_ENTITY(SPACE_ENTITY)
 
    /****************************************/
