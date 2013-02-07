@@ -69,7 +69,7 @@ namespace argos {
       virtual void Act();
 
       virtual std::string GetTypeDescription() const {
-         return "controllable_entity";
+         return "controller";
       }
 
       inline void AddCheckedRay(bool b_obstructed,

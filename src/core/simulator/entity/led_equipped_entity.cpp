@@ -70,7 +70,7 @@ namespace argos {
       CLEDEntity* pcLED =
          new CLEDEntity(
             this,
-            GetId() + ".led_entity[" + ToString(m_tLEDs.size()) + "]",
+            GetId() + ".led[" + ToString(m_tLEDs.size()) + "]",
             c_position,
             c_color);
       m_tLEDs.push_back(pcLED);

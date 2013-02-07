@@ -113,7 +113,7 @@ namespace argos {
          m_pcWheeledEntity->Init(t_tree);
          /* LED equipped entity, with LEDs [0-11] and beacon [12] */
          m_pcLEDEquippedEntity = new CLEDEquippedEntity(this,
-                                                        GetId() + ".led_equipped_entity",
+                                                        GetId() + ".leds",
                                                         m_pcEmbodiedEntity);
          AddComponent(*m_pcLEDEquippedEntity);
          for(UInt32 i = 0; i < 13; ++i) {

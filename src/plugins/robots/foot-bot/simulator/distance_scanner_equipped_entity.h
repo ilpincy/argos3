@@ -63,7 +63,7 @@ namespace argos {
       }
 
       virtual std::string GetTypeDescription() const {
-         return "distance_scanner_equipped_entity";
+         return "distance_scanner";
       }
 
    private:
