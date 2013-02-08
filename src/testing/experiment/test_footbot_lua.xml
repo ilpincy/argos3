@@ -14,11 +14,17 @@
   <controllers>
     <lua_footbot_controller id="x">
       <actuators>
-        <footbot_wheels implementation="default" />
-        <footbot_leds implementation="default" />
+        <differential_steering implementation="default" />
+        <leds implementation="default" />
       </actuators>
       <sensors>
-        <footbot_proximity implementation="rot_z_only" show_rays="true" />
+        <ring_proximity implementation="default"
+                        show_rays="true"
+                        radius="0.08"
+                        range="0.5"
+                        num_sensors="8"
+                        center="0,0,0.1"
+                        start_angle="30" />
       </sensors>
       <params script="../../src/testing/experiment/test_script.lua" />
     </lua_footbot_controller>

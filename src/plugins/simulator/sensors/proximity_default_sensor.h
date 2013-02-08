@@ -4,8 +4,8 @@
  * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */
 
-#ifndef PROXIMITY_SENSOR_H
-#define PROXIMITY_SENSOR_H
+#ifndef PROXIMITY_DEFAULT_SENSOR_H
+#define PROXIMITY_DEFAULT_SENSOR_H
 
 #include <string>
 #include <map>
@@ -22,7 +22,7 @@ namespace argos {
 namespace argos {
 
    class CProximityDefaultSensor : public CSimulatedSensor,
-                                   public CCI_ProximitySensor {
+                                   virtual public CCI_ProximitySensor {
 
    public:
 

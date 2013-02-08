@@ -46,9 +46,9 @@ namespace argos {
             "leds");
          m_pcLEDs->CreateLuaVariables();
       }
-      if(HasSensor("proximity")) {
+      if(HasSensor("ring_proximity")) {
          m_pcProximity = new CLuaRingProximitySensor(
-            *GetSensor<CCI_RingProximitySensor>("proximity"),
+            *GetSensor<CCI_RingProximitySensor>("ring_proximity"),
             GetLuaState(),
             "proximity");
          m_pcProximity->CreateLuaVariables();

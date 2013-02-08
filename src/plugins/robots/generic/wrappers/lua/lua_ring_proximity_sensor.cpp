@@ -18,10 +18,10 @@ namespace argos {
          lua_pushnumber(GetLuaState(), i+1);
          lua_newtable(GetLuaState());
          lua_pushstring(GetLuaState(), "angle");
-         lua_pushnumber(GetLuaState(), GetSensor().GetReadings()[i].Angle.GetValue());
+         lua_pushnumber(GetLuaState(), GetSensor().GetAngles()[i].GetValue());
          lua_settable(GetLuaState(), -3);
          lua_pushstring(GetLuaState(), "value");
-         lua_pushnumber(GetLuaState(), GetSensor().GetReadings()[i].Value);
+         lua_pushnumber(GetLuaState(), GetSensor().GetReadings()[i]);
          lua_settable(GetLuaState(), -3);
          lua_settable(GetLuaState(), -3);
       }
@@ -36,7 +36,7 @@ namespace argos {
       for(size_t i = 0; i < GetSensor().GetReadings().size(); ++i) {
          lua_pushnumber(GetLuaState(), i+1);
          lua_gettable  (GetLuaState(), -2);
-         lua_pushnumber(GetLuaState(), GetSensor().GetReadings()[i].Value);
+         lua_pushnumber(GetLuaState(), GetSensor().GetReadings()[i]);
          lua_setfield  (GetLuaState(), -2, "value");
          lua_pop(GetLuaState(), 1);
       }

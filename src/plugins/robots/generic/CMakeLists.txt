@@ -20,8 +20,7 @@ endif(LUA51_FOUND)
 #
 set(ARGOS3_SOURCES_PLUGINS_ROBOTS_GENERIC
   ${ARGOS3_HEADERS_PLUGINS_ROBOTS_GENERIC_CONTROLINTERFACE}
-  control_interface/ci_leds_actuator.cpp
-  control_interface/ci_ring_proximity_sensor.cpp)
+  control_interface/ci_leds_actuator.cpp)
 
 #
 # Compile Lua 5.1 wrapping

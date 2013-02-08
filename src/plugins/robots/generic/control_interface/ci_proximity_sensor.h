@@ -18,19 +18,15 @@ namespace argos {
 
    public:
 
-      typedef std::vector<Real> TReadings;
-
-   public:
-
       virtual ~CCI_ProximitySensor() {}
 
-      inline const TReadings& GetReadings() const {
+      inline const std::vector<Real>& GetReadings() const {
          return m_tReadings;
       }
 
    protected:
 
-      TReadings m_tReadings;
+      std::vector<Real> m_tReadings;
 
    };
 

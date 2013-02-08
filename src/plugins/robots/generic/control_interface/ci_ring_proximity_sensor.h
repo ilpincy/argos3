@@ -15,43 +15,22 @@ namespace argos {
 
 namespace argos {
 
-   class CCI_RingProximitySensor : public CCI_ProximitySensor {
-
-   public:
-
-      struct SReading {
-         Real Value;
-         CRadians Angle;
-
-         SReading() :
-            Value(0.0f) {}
-
-         SReading(Real f_value,
-                  const CRadians& c_angle) :
-            Value(f_value),
-            Angle(c_angle) {}
-      };
-
-      typedef std::vector<SReading> TReadings;
+   class CCI_RingProximitySensor : virtual public CCI_ProximitySensor {
 
    public:
 
       virtual ~CCI_RingProximitySensor() {}
 
-      inline const TReadings& GetReadings() const {
-         return m_tReadings;
+      inline const std::vector<CRadians>& GetAngles() const {
+         return m_tAngles;
       }
 
    protected:
 
-      TReadings m_tReadings;
+      std::vector<CRadians> m_tAngles;
 
    };
 
-   std::ostream& operator<<(std::ostream& c_os,
-                            const CCI_RingProximitySensor::SReading& s_reading);
-   std::ostream& operator<<(std::ostream& c_os,
-                            const CCI_RingProximitySensor::TReadings& t_readings);
 }
 
 #endif
