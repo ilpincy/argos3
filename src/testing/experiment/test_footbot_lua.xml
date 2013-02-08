@@ -12,7 +12,7 @@
   <!-- * Controllers * -->
   <!-- *************** -->
   <controllers>
-    <footbot_lua_controller id="x">
+    <lua_footbot_controller id="x">
       <actuators>
         <footbot_wheels implementation="default" />
         <footbot_leds implementation="default" />
@@ -21,7 +21,7 @@
         <footbot_proximity implementation="rot_z_only" show_rays="true" />
       </sensors>
       <params script="../../src/testing/experiment/test_script.lua" />
-    </footbot_lua_controller>
+    </lua_footbot_controller>
   </controllers>
 
   <!-- *********************** -->

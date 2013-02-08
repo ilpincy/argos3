@@ -14,12 +14,12 @@
   <controllers>
     <test_footbot_controller id="x">
       <actuators>
-        <footbot_wheels implementation="default" />
-        <footbot_leds implementation="default" />
+        <differential_steering implementation="default" />
+        <leds                  implementation="default" />
       </actuators>
       <sensors>
-        <footbot_proximity implementation="rot_z_only"
-                           show_rays="true" />
+        <!-- footbot_proximity implementation="rot_z_only"
+             show_rays="true" / -->
       </sensors>
       <params />
     </test_footbot_controller>
