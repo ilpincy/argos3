@@ -57,9 +57,11 @@ namespace argos {
 #ifdef ARGOS_DOUBLE_PRECISION
 #define Log  ::log
 #define Sqrt ::sqrt
+#define Exp ::exp
 #else
 #define Log ::logf
 #define Sqrt ::sqrtf
+#define Exp ::expf
 #endif
 
     /****************************************/
