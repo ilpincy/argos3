@@ -31,6 +31,10 @@ namespace argos {
 
       virtual void Reset();
 
+      inline UInt32 GetNumWheels() const {
+         return m_unNumWheels;
+      }
+
       void GetSpeed(Real* pf_speeds);
 
       void SetSpeed(Real* pf_speeds);
