@@ -39,6 +39,7 @@ namespace argos {
             LOG << "Version: " << tResult[i].Version << std::endl;
             LOG << "Status: " << tResult[i].Status << std::endl << std::endl;
             LOG << tResult[i].LongDescription << std::endl;
+            LOG << std::endl;
             LOG << "==============================================================================" << std::endl << std::endl;
          }
       }
@@ -48,6 +49,9 @@ namespace argos {
    /****************************************/
 
    void QueryPlugins(const std::string& str_query) {
+      bool bIsLogColored = LOG.IsColoredOutput();
+      LOG.DisableColoredOutput();
+      LOGERR.DisableColoredOutput();
       if(str_query == "actuators") {
          QueryShowList<CSimulatedActuator>("AVAILABLE ACTUATORS");
       } else if(str_query == "sensors") {
@@ -66,6 +70,10 @@ namespace argos {
          QueryShowList<CEntity>("AVAILABLE ENTITIES");
       } else {
          QueryShowPluginDescription(str_query);
+      }
+      if(bIsLogColored) {
+         LOG.EnableColoredOutput();
+         LOGERR.EnableColoredOutput();
       }
    }
 
