@@ -11,16 +11,16 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   CCI_RingProximitySensor::CCI_RingProximitySensor(size_t un_num_sensors) :
-      m_tReadings(un_num_sensors) {
-      // Set the values for the proximity sensor angles
-      CRadians cSensorSpacing = CRadians::TWO_PI / un_num_sensors;
-      CRadians cSensorHalfSpacing = cSensorSpacing / 2.0f;
-      for(UInt32 i = 0; i < un_num_sensors; ++i) {
-         m_tReadings[i].Angle = cSensorHalfSpacing + i * cSensorSpacing;
-         m_tReadings[i].Angle.SignedNormalize();
-      }
-   }
+   // CCI_RingProximitySensor::CCI_RingProximitySensor(size_t un_num_sensors) :
+   //    m_tReadings(un_num_sensors) {
+   //    // Set the values for the proximity sensor angles
+   //    CRadians cSensorSpacing = CRadians::TWO_PI / un_num_sensors;
+   //    CRadians cSensorHalfSpacing = cSensorSpacing / 2.0f;
+   //    for(UInt32 i = 0; i < un_num_sensors; ++i) {
+   //       m_tReadings[i].Angle = cSensorHalfSpacing + i * cSensorSpacing;
+   //       m_tReadings[i].Angle.SignedNormalize();
+   //    }
+   // }
 
    /****************************************/
    /****************************************/

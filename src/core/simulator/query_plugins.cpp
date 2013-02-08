@@ -21,8 +21,8 @@ namespace argos {
       /* Buffer to contain the search results */
       TQueryResult tResult;
       /* Search among the plugins */
-      QuerySearchPlugins<CAbstractSimulatedActuator>(str_query, tResult);
-      QuerySearchPlugins<CAbstractSimulatedSensor>(str_query, tResult);
+      QuerySearchPlugins<CSimulatedActuator>(str_query, tResult);
+      QuerySearchPlugins<CSimulatedSensor>(str_query, tResult);
       QuerySearchPlugins<CPhysicsEngine>(str_query, tResult);
       QuerySearchPlugins<CVisualization>(str_query, tResult);
       QuerySearchPlugins<CEntity>(str_query, tResult);
@@ -49,9 +49,9 @@ namespace argos {
 
    void QueryPlugins(const std::string& str_query) {
       if(str_query == "actuators") {
-         QueryShowList<CAbstractSimulatedActuator>("AVAILABLE ACTUATORS");
+         QueryShowList<CSimulatedActuator>("AVAILABLE ACTUATORS");
       } else if(str_query == "sensors") {
-         QueryShowList<CAbstractSimulatedSensor>("AVAILABLE SENSORS");
+         QueryShowList<CSimulatedSensor>("AVAILABLE SENSORS");
       } else if(str_query == "physics_engines") {
          QueryShowList<CPhysicsEngine>("AVAILABLE PHYSICS ENGINES");
       } else if(str_query == "visualizations") {
@@ -59,8 +59,8 @@ namespace argos {
       } else if(str_query == "entities") {
          QueryShowList<CEntity>("AVAILABLE ENTITIES");
       } else if(str_query == "all") {
-         QueryShowList<CAbstractSimulatedActuator>("AVAILABLE ACTUATORS");
-         QueryShowList<CAbstractSimulatedSensor>("AVAILABLE SENSORS");
+         QueryShowList<CSimulatedActuator>("AVAILABLE ACTUATORS");
+         QueryShowList<CSimulatedSensor>("AVAILABLE SENSORS");
          QueryShowList<CPhysicsEngine>("AVAILABLE PHYSICS ENGINES");
          QueryShowList<CVisualization>("AVAILABLE VISUALIZATIONS");
          QueryShowList<CEntity>("AVAILABLE ENTITIES");

@@ -4,7 +4,7 @@
  * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */
 
-#include "footbot_leds_actuator.h"
+#include "leds_default_actuator.h"
 #include <argos3/core/utility/logging/argos_log.h>
 
 namespace argos {
@@ -12,47 +12,28 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   CFootBotLEDsActuator::CFootBotLEDsActuator() :
+   CLEDsDefaultActuator::CLEDsDefaultActuator() :
       m_pcLEDEquippedEntity(NULL) {}
 
    /****************************************/
    /****************************************/
 
-   void CFootBotLEDsActuator::SetEntity(CEntity& c_entity) {
-      CSimulatedActuator<CFootBotEntity>::SetEntity(c_entity);
-      m_pcLEDEquippedEntity = &(GetEntity().GetLEDEquippedEntity());
+   void CLEDsDefaultActuator::SetRobot(CComposableEntity& c_entity) {
+      m_pcLEDEquippedEntity = &(c_entity.GetComponent<CLEDEquippedEntity>("leds"));
+      m_tSettings.resize(m_pcLEDEquippedEntity->GetAllLEDs().size());
    }
 
    /****************************************/
    /****************************************/
 
-   void CFootBotLEDsActuator::SetAllColors(const CColor& c_color) {
-      /* No for loop - much faster than with */
-      m_tSettings[0] = c_color;
-      m_tSettings[1] = c_color;
-      m_tSettings[2] = c_color;
-      m_tSettings[3] = c_color;
-      m_tSettings[4] = c_color;
-      m_tSettings[5] = c_color;
-      m_tSettings[6] = c_color;
-      m_tSettings[7] = c_color;
-      m_tSettings[8] = c_color;
-      m_tSettings[9] = c_color;
-      m_tSettings[10] = c_color;
-      m_tSettings[11] = c_color;
-   }
-
-   /****************************************/
-   /****************************************/
-
-   void CFootBotLEDsActuator::Update() {
+   void CLEDsDefaultActuator::Update() {
       m_pcLEDEquippedEntity->SetAllLEDsColors(m_tSettings);
    }
 
    /****************************************/
    /****************************************/
 
-   void CFootBotLEDsActuator::Reset() {
+   void CLEDsDefaultActuator::Reset() {
       SetAllColors(CColor::BLACK);
    }
 
@@ -61,13 +42,13 @@ namespace argos {
 
 }
 
-REGISTER_ACTUATOR(CFootBotLEDsActuator,
-                  "footbot_leds", "default",
+REGISTER_ACTUATOR(CLEDsDefaultActuator,
+                  "leds", "default",
                   "Carlo Pinciroli [ilpincy@gmail.com]",
                   "1.0",
-                  "The foot-bot LED actuator.",
-                  "This actuator controls the foot-bot LEDs. For a complete description of its\n"
-                  "usage, refer to the ci_footbot_leds_actuator.h file.\n\n"
+                  "The LEDs actuator.",
+                  "This actuator controls a group of LEDs. For a complete description of its\n"
+                  "usage, refer to the ci_leds_actuator.h file.\n\n"
                   "REQUIRED XML CONFIGURATION\n\n"
                   "  <controllers>\n"
                   "    ...\n"
@@ -75,7 +56,7 @@ REGISTER_ACTUATOR(CFootBotLEDsActuator,
                   "      ...\n"
                   "      <actuators>\n"
                   "        ...\n"
-                  "        <footbot_leds implementation=\"default\" />\n"
+                  "        <leds implementation=\"default\" />\n"
                   "        ...\n"
                   "      </actuators>\n"
                   "      ...\n"

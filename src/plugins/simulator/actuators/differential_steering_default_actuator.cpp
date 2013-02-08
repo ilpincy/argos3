@@ -24,9 +24,16 @@ namespace argos {
    /****************************************/
    /****************************************/
    
-   void CDifferentialSteeringDefaultActuator::SetEntity(CEntity& c_entity) {
-      CSimulatedActuator<CComposableEntity>::SetEntity(c_entity);
-      m_pcWheeledEntity = &(GetEntity().GetComponent<CWheeledEntity>("wheels"));
+   void CDifferentialSteeringDefaultActuator::SetRobot(CComposableEntity& c_entity) {
+      try {
+         m_pcWheeledEntity = &(c_entity.GetComponent<CWheeledEntity>("wheels"));
+         if(m_pcWheeledEntity->GetNumWheels() != 2) {
+            THROW_ARGOSEXCEPTION("The differential steering actuator can be associated only to a robot with 2 wheels");
+         }
+      }
+      catch(CARGoSException& ex) {
+         THROW_ARGOSEXCEPTION_NESTED("Error setting differential steering actuator to entity \"" << c_entity.GetId() << "\"", ex);
+      }
    }
 
    /****************************************/

@@ -22,7 +22,7 @@ namespace argos {
 
 namespace argos {
 
-   class CDifferentialSteeringDefaultActuator : public CSimulatedActuator<CComposableEntity>,
+   class CDifferentialSteeringDefaultActuator : public CSimulatedActuator,
                                                 public CCI_DifferentialSteeringActuator {
 
    public:
@@ -44,18 +44,8 @@ namespace argos {
        */
       virtual ~CDifferentialSteeringDefaultActuator() {}
 
-      /**
-       * @brief Sets entity that is equipped with these steering.
-       *
-       * @param c_entity entity equipped with the steering.
-       */
-      virtual void SetEntity(CEntity& c_entity);
+      virtual void SetRobot(CComposableEntity& c_entity);
 
-      /**
-       * @brief Initializes the steering.
-       *
-       * @param t_tree XML configuration tree.
-       */
       virtual void Init(TConfigurationNode& t_tree);
 
       /**

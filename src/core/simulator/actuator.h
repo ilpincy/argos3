@@ -8,7 +8,7 @@
 #define ACTUATOR_H
 
 namespace argos {
-   class CAbstractSimulatedActuator;
+   class CSimulatedActuator;
    class CEntity;
 }
 
@@ -17,51 +17,17 @@ namespace argos {
 
 namespace argos {
 
-   /****************************************/
-   /****************************************/
-
-   class CAbstractSimulatedActuator : virtual public CCI_Actuator {
+   class CSimulatedActuator : virtual public CCI_Actuator {
 
    public:
-
-      virtual ~CAbstractSimulatedActuator() {}
-      virtual CEntity& GetEntity() = 0;
-      virtual void SetEntity(CEntity& c_entity) = 0;
-      virtual void Update() = 0;
-   };
-
-   /****************************************/
-   /****************************************/
-
-   template<class ENTITY>
-   class CSimulatedActuator : public CAbstractSimulatedActuator {
-
-   public:
-
-      CSimulatedActuator() :
-         m_pcEntity(NULL) {}
 
       virtual ~CSimulatedActuator() {}
 
-      virtual ENTITY& GetEntity() {
-         return *m_pcEntity;
-      }
+      virtual void SetRobot(CComposableEntity& c_entity) = 0;
 
-      virtual void SetEntity(CEntity& c_entity) {
-         m_pcEntity = dynamic_cast<ENTITY*>(&c_entity);
-         if(m_pcEntity == NULL) {
-            THROW_ARGOSEXCEPTION("Cannot associate this actuator to an entity of type \"" << c_entity.GetTypeDescription() << "\"");
-         }
-      }
-
-   private:
-
-      ENTITY* m_pcEntity;
+      virtual void Update() = 0;
 
    };
-
-   /****************************************/
-   /****************************************/
 
 }
 
@@ -73,7 +39,7 @@ namespace argos {
                           BRIEF_DESCRIPTION,                \
                           LONG_DESCRIPTION,                 \
                           STATUS)                           \
-   REGISTER_SYMBOL(CAbstractSimulatedActuator,              \
+   REGISTER_SYMBOL(CSimulatedActuator,                      \
                    CLASSNAME,                               \
                    LABEL " (" IMPLEMENTATION ")",           \
                    AUTHOR,                                  \

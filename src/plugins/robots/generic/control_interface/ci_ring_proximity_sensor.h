@@ -1,4 +1,3 @@
-
 /**
  * @file <argos3/core/control_interface/ci_ring_proximity_sensor.h>
  *
@@ -11,12 +10,12 @@ namespace argos {
    class CCI_RingProximitySensor;
 }
 
-#include <argos3/core/control_interface/ci_sensor.h>
+#include <argos3/plugins/robots/generic/control_interface/ci_proximity_sensor.h>
 #include <argos3/core/utility/math/angles.h>
 
 namespace argos {
 
-   class CCI_RingProximitySensor : virtual public CCI_Sensor {
+   class CCI_RingProximitySensor : public CCI_ProximitySensor {
 
    public:
 
@@ -37,7 +36,6 @@ namespace argos {
 
    public:
 
-      CCI_RingProximitySensor(size_t un_num_sensors);
       virtual ~CCI_RingProximitySensor() {}
 
       inline const TReadings& GetReadings() const {

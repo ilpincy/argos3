@@ -24,7 +24,7 @@ namespace argos {
 
    public:
 
-      CCI_LEDsActuator(size_t un_num_leds);
+      CCI_LEDsActuator() {}
 
       virtual ~CCI_LEDsActuator() {}
 

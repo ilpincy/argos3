@@ -183,7 +183,6 @@ endif(LUA51_FOUND)
 # Create core ARGoS3 library
 #
 add_library(argos3core_${ARGOS_BUILD_FOR} SHARED ${ARGOS3_SOURCES_CORE})
-set_target_properties(argos3core_${ARGOS_BUILD_FOR} PROPERTIES VERSION ${CPACK_PACKAGE_VERSION})
 link_googleperftools_to(argos3core_${ARGOS_BUILD_FOR})
 # Link DLFCN library if necessary
 if(ARGOS_DYNAMIC_LIBRARY_LOADING)

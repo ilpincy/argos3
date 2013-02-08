@@ -11,12 +11,6 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   CCI_LEDsActuator::CCI_LEDsActuator(size_t un_num_leds) :
-      m_tSettings(un_num_leds) {}
-
-   /****************************************/
-   /****************************************/
-   
    void CCI_LEDsActuator::SetSingleColor(UInt32 un_led_number,
                                          const CColor& c_color) {
       m_tSettings[un_led_number] = c_color;

@@ -228,8 +228,8 @@ namespace argos {
       /* Free up factory data */
       CFactory<CPhysicsEngine>::Destroy();
       CFactory<CVisualization>::Destroy();
-      CFactory<CAbstractSimulatedActuator>::Destroy();
-      CFactory<CAbstractSimulatedSensor>::Destroy();
+      CFactory<CSimulatedActuator>::Destroy();
+      CFactory<CSimulatedSensor>::Destroy();
       CFactory<CCI_Controller>::Destroy();
       CFactory<CEntity>::Destroy();
 

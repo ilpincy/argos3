@@ -17,40 +17,15 @@ namespace argos {
 
 namespace argos {
 
-   class CAbstractSimulatedSensor : virtual public CCI_Sensor {
+   class CSimulatedSensor : virtual public CCI_Sensor {
 
    public:
-
-      virtual ~CAbstractSimulatedSensor() {}
-      virtual CEntity& GetEntity() = 0;
-      virtual void SetEntity(CEntity& c_entity) = 0;
-      virtual void Update() = 0;
-   };
-
-   template<class ENTITY>
-   class CSimulatedSensor : public CAbstractSimulatedSensor {
-
-   public:
-
-      CSimulatedSensor() :
-         m_pcEntity(NULL) {}
 
       virtual ~CSimulatedSensor() {}
 
-      virtual ENTITY& GetEntity() {
-         return *m_pcEntity;
-      }
+      virtual void SetRobot(CComposableEntity& c_entity) = 0;
 
-      virtual void SetEntity(CEntity& c_entity) {
-         m_pcEntity = dynamic_cast<ENTITY*>(&c_entity);
-         if(m_pcEntity == NULL) {
-            THROW_ARGOSEXCEPTION("Cannot associate this sensor to an entity of type \"" << c_entity.GetTypeDescription() << "\"");
-         }
-      }
-
-   private:
-
-      ENTITY* m_pcEntity;
+      virtual void Update() = 0;
 
    };
 
@@ -67,7 +42,7 @@ namespace argos {
                         BRIEF_DESCRIPTION,                  \
                         LONG_DESCRIPTION,                   \
                         STATUS)                             \
-   REGISTER_SYMBOL(CAbstractSimulatedSensor,                \
+   REGISTER_SYMBOL(CSimulatedSensor,                        \
                    CLASSNAME,                               \
                    LABEL " (" IMPLEMENTATION ")",           \
                    AUTHOR,                                  \

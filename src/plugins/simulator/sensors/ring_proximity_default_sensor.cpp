@@ -1,21 +1,22 @@
 /**
- * @file <argos3/plugins/robots/foot-bot/simulator/footbot_proximity_sensor.cpp>
+ * @file <argos3/plugins/robots/foot-bot/simulator/ring_proximity_sensor.cpp>
  *
  * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */
 
 #include <argos3/core/simulator/entity/embodied_entity.h>
+#include <argos3/core/simulator/entity/composable_entity.h>
 #include <argos3/core/simulator/simulator.h>
 
-#include "footbot_proximity_sensor.h"
+#include "ring_proximity_default_sensor.h"
 
 namespace argos {
 
    /****************************************/
    /****************************************/
 
-   static const Real FOOTBOT_RADIUS     = 0.085036758f;
-   static const Real RAY_END_DISTANCE   = FOOTBOT_RADIUS + 0.1f;
+   static const Real RING_RADIUS     = 0.085036758f;
+   static const Real RAY_END_DISTANCE   = RING_RADIUS + 0.1f;
    static const Real SENSOR_ELEVATION   = 0.06f; //TODO: fix (measured by hand...)
 
    /****************************************/
@@ -29,7 +30,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   CFootBotProximitySensor::CFootBotProximitySensor() :
+   CRingProximityDefaultSensor::CRingProximityDefaultSensor() :
       m_cSpace(CSimulator::GetInstance().GetSpace()),
       m_cEmbodiedSpaceHash(m_cSpace.GetEmbodiedEntitiesSpaceHash()),
       m_pcEmbodiedEntity(NULL),
@@ -41,17 +42,16 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CFootBotProximitySensor::SetEntity(CEntity& c_entity) {
-      CSimulatedSensor<CFootBotEntity>::SetEntity(c_entity);
-      m_pcEmbodiedEntity = &(GetEntity().GetEmbodiedEntity());
+   void CRingProximityDefaultSensor::SetRobot(CComposableEntity& c_entity) {
+      m_pcEmbodiedEntity = &(c_entity.GetComponent<CEmbodiedEntity>("body"));
    }
 
    /****************************************/
    /****************************************/
 
-   void CFootBotProximitySensor::Init(TConfigurationNode& t_tree) {
+   void CRingProximityDefaultSensor::Init(TConfigurationNode& t_tree) {
       try {
-         CCI_FootBotProximitySensor::Init(t_tree);
+         CCI_RingProximitySensor::Init(t_tree);
          /* Show rays? */
          GetNodeAttributeOrDefault(t_tree, "show_rays", m_bShowRays, m_bShowRays);
          /* Parse noise level */
@@ -78,8 +78,8 @@ namespace argos {
    /****************************************/
    /****************************************/
    
-   void CFootBotProximitySensor::Reset() {
-      for(UInt32 i = 0; i < CCI_FootBotProximitySensor::NUM_READINGS; ++i) {
+   void CRingProximityDefaultSensor::Reset() {
+      for(UInt32 i = 0; i < CCI_RingProximitySensor::NUM_READINGS; ++i) {
          m_tReadings[i].Value = 0.0f;
       }
    }
@@ -87,7 +87,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CFootBotProximitySensor::Update() {
+   void CRingProximityDefaultSensor::Update() {
       /* We make the assumption that the foot-bot is rotated only around Z */
       /* Get the foot-bot orientation */
       CRadians cTmp1, cTmp2, cOrientationZ;
@@ -104,7 +104,7 @@ namespace argos {
       cRayStart.SetZ(SENSOR_ELEVATION);
       cRayStart += m_pcEmbodiedEntity->GetPosition();
       /* Go through the sensors */
-      for(UInt32 i = 0; i < CCI_FootBotProximitySensor::NUM_READINGS; ++i) {
+      for(UInt32 i = 0; i < CCI_RingProximitySensor::NUM_READINGS; ++i) {
          /* Compute ray for sensor i */
          cRayEnd = CVector3::X;
          cRayEnd.RotateZ(m_tReadings[i].Angle + cOrientationZ);
@@ -121,7 +121,7 @@ namespace argos {
                GetEntity().GetControllableEntity().AddCheckedRay(true, cScanningRay);
             }
             /* There is an intersection */
-            fDistance = (cScanningRay.GetDistance(sIntersection.TOnRay) - FOOTBOT_RADIUS) * 100.f;
+            fDistance = (cScanningRay.GetDistance(sIntersection.TOnRay) - RING_RADIUS) * 100.f;
             if(fDistance < 0.0) {
                fDistance = 0.0;
             }
@@ -149,13 +149,13 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   REGISTER_SENSOR(CFootBotProximitySensor,
-                   "footbot_proximity", "rot_z_only",
+   REGISTER_SENSOR(CRingProximityDefaultSensor,
+                   "ring_proximity", "rot_z_only",
                    "Carlo Pinciroli [ilpincy@gmail.com]",
                    "1.0",
                    "The foot-bot proximity sensor (optimized for 2D)",
                    "This sensor accesses the foot-bot proximity sensor. For a complete\n"
-                   "description of its usage, refer to the ci_footbot_proximity_sensor.h file.\n"
+                   "description of its usage, refer to the ci_ring_proximity_sensor.h file.\n"
                    "In this implementation, the readings are calculated under the assumption that\n"
                    "the foot-bot is always parallel to the XY plane, i.e., it rotates only around\n"
                    "the Z axis. This implementation is faster than a 3D one and should be used\n"
@@ -167,7 +167,7 @@ namespace argos {
                    "      ...\n"
                    "      <sensors>\n"
                    "        ...\n"
-                   "        <footbot_proximity implementation=\"rot_z_only\" />\n"
+                   "        <ring_proximity implementation=\"rot_z_only\" />\n"
                    "        ...\n"
                    "      </sensors>\n"
                    "      ...\n"
@@ -188,7 +188,7 @@ namespace argos {
                    "      ...\n"
                    "      <sensors>\n"
                    "        ...\n"
-                   "        <footbot_proximity implementation=\"rot_z_only\"\n"
+                   "        <ring_proximity implementation=\"rot_z_only\"\n"
                    "                           show_rays=\"true\" />\n"
                    "        ...\n"
                    "      </sensors>\n"
@@ -206,7 +206,7 @@ namespace argos {
                    "      ...\n"
                    "      <sensors>\n"
                    "        ...\n"
-                   "        <footbot_proximity implementation=\"rot_z_only\"\n"
+                   "        <ring_proximity implementation=\"rot_z_only\"\n"
                    "                           noise_level=\"0.05\" />\n"
                    "        ...\n"
                    "      </sensors>\n"
@@ -221,7 +221,7 @@ namespace argos {
                    "      ...\n"
                    "      <sensors>\n"
                    "        ...\n"
-                   "        <footbot_motor_ground implementation=\"rot_z_only\"\n"
+                   "        <ring_motor_ground implementation=\"rot_z_only\"\n"
                    "                              calibrate=\"true\" />\n"
                    "        ...\n"
                    "      </sensors>\n"

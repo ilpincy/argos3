@@ -4,11 +4,11 @@
  *
  * @author Carlo Pinciroli <ilpincy@gmail.com>
  */
-#include "footbot_lua_controller.h"
+#include "lua_footbot_controller.h"
 #include <argos3/core/utility/logging/argos_log.h>
-#include <argos3/plugins/robots/foot-bot/control_interface/ci_footbot_proximity_sensor.h>
-#include <argos3/plugins/robots/foot-bot/control_interface/ci_footbot_wheels_actuator.h>
-#include <argos3/plugins/robots/foot-bot/control_interface/ci_footbot_leds_actuator.h>
+#include <argos3/plugins/robots/generic/control_interface/ci_ring_proximity_sensor.h>
+#include <argos3/plugins/robots/generic/control_interface/ci_differential_steering_actuator.h>
+#include <argos3/plugins/robots/generic/control_interface/ci_leds_actuator.h>
 
 namespace argos {
 
@@ -32,23 +32,23 @@ namespace argos {
       /*
        * Go through devices and add the necessary items to the table
        */
-      if(HasActuator("footbot_wheels")) {
+      if(HasActuator("differential_steering")) {
          m_pcWheels = new CLuaDifferentialSteeringActuator(
-            *GetActuator<CCI_FootBotWheelsActuator>("footbot_wheels"),
+            *GetActuator<CCI_DifferentialSteeringActuator>("differential_steering"),
             GetLuaState(),
             "wheel_speed");
          m_pcWheels->CreateLuaVariables();
       }
-      if(HasActuator("footbot_leds")) {
+      if(HasActuator("leds")) {
          m_pcLEDs = new CLuaLEDsActuator(
-            *GetActuator<CCI_FootBotLEDsActuator>("footbot_leds"),
+            *GetActuator<CCI_LEDsActuator>("leds"),
             GetLuaState(),
             "leds");
          m_pcLEDs->CreateLuaVariables();
       }
-      if(HasSensor("footbot_proximity")) {
+      if(HasSensor("proximity")) {
          m_pcProximity = new CLuaRingProximitySensor(
-            *GetSensor<CCI_FootBotProximitySensor>("footbot_proximity"),
+            *GetSensor<CCI_RingProximitySensor>("proximity"),
             GetLuaState(),
             "proximity");
          m_pcProximity->CreateLuaVariables();
@@ -101,6 +101,6 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   REGISTER_CONTROLLER(CFootBotLuaController, "footbot_lua_controller");
+   REGISTER_CONTROLLER(CFootBotLuaController, "lua_footbot_controller");
 
 }

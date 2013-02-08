@@ -5,6 +5,7 @@
 set(ARGOS3_HEADERS_PLUGINS_ROBOTS_GENERIC_CONTROLINTERFACE
   control_interface/ci_differential_steering_actuator.h
   control_interface/ci_leds_actuator.h
+  control_interface/ci_proximity_sensor.h
   control_interface/ci_ring_proximity_sensor.h)
 # argos3/plugins/robots/generic/wrappers/lua
 if(LUA51_FOUND)

@@ -5,8 +5,6 @@
 set(ARGOS3_HEADERS_PLUGINS_ROBOTS_FOOTBOT_CONTROLINTERFACE
   control_interface/ci_footbot_accelerometer_sensor.h
   control_interface/ci_footbot_base_ground_sensor.h
-  control_interface/ci_footbot_base_leds_actuator.h
-  control_interface/ci_footbot_beacon_actuator.h
   control_interface/ci_footbot_ceiling_camera_sensor.h
   control_interface/ci_footbot_distance_scanner_actuator.h
   control_interface/ci_footbot_distance_scanner_sensor.h
@@ -14,32 +12,26 @@ set(ARGOS3_HEADERS_PLUGINS_ROBOTS_FOOTBOT_CONTROLINTERFACE
   control_interface/ci_footbot_gripper_actuator.h
   control_interface/ci_footbot_gripper_sensor.h
   control_interface/ci_footbot_gyroscopic_sensor.h
-  control_interface/ci_footbot_leds_actuator.h
   control_interface/ci_footbot_light_sensor.h
   control_interface/ci_footbot_motor_ground_sensor.h
   control_interface/ci_footbot_omnidirectional_camera_sensor.h
-  control_interface/ci_footbot_proximity_sensor.h
   control_interface/ci_footbot_range_and_bearing_actuator.h
   control_interface/ci_footbot_range_and_bearing_sensor.h
   control_interface/ci_footbot_turret_actuator.h
   control_interface/ci_footbot_turret_encoder_sensor.h
   control_interface/ci_footbot_turret_torque_sensor.h
-  control_interface/ci_footbot_wheel_speed_sensor.h
-  control_interface/ci_footbot_wheels_actuator.h)
+  control_interface/ci_footbot_wheel_speed_sensor.h)
 # argos3/plugins/robots/foot-bot/simulator
 if(ARGOS_BUILD_FOR_SIMULATOR)
   set(ARGOS3_HEADERS_PLUGINS_ROBOTS_FOOTBOT_SIMULATOR
     simulator/distance_scanner_equipped_entity.h
     simulator/dynamics2d_footbot_entity.h
-    simulator/footbot_entity.h
-    simulator/footbot_leds_actuator.h
-    simulator/footbot_proximity_sensor.h
-    simulator/footbot_wheels_actuator.h)
+    simulator/footbot_entity.h)
 endif(ARGOS_BUILD_FOR_SIMULATOR)
 # argos3/plugins/robots/foot-bot/wrappers/lua
 if(LUA51_FOUND)
   set(ARGOS3_HEADERS_PLUGINS_ROBOTS_FOOTBOT_WRAPPERS_LUA
-    wrappers/lua/footbot_lua_controller.h)
+    wrappers/lua/lua_footbot_controller.h)
 endif(LUA51_FOUND)
 
 #
@@ -48,16 +40,12 @@ endif(LUA51_FOUND)
 set(ARGOS3_SOURCES_PLUGINS_ROBOTS_FOOTBOT
   ${ARGOS3_HEADERS_PLUGINS_ROBOTS_FOOTBOT_CONTROLINTERFACE}
   control_interface/ci_footbot_base_ground_sensor.cpp
-  control_interface/ci_footbot_base_leds_actuator.cpp
   control_interface/ci_footbot_gripper_actuator.cpp
-  control_interface/ci_footbot_leds_actuator.cpp
   control_interface/ci_footbot_light_sensor.cpp
   control_interface/ci_footbot_motor_ground_sensor.cpp
-  control_interface/ci_footbot_proximity_sensor.cpp
   control_interface/ci_footbot_turret_actuator.cpp
   control_interface/ci_footbot_turret_encoder_sensor.cpp
-  control_interface/ci_footbot_turret_torque_sensor.cpp
-  control_interface/ci_footbot_wheels_actuator.cpp)
+  control_interface/ci_footbot_turret_torque_sensor.cpp)
 
 if(ARGOS_BUILD_FOR_SIMULATOR)
   set(ARGOS3_SOURCES_PLUGINS_ROBOTS_FOOTBOT
@@ -65,10 +53,7 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
     ${ARGOS3_HEADERS_PLUGINS_ROBOTS_FOOTBOT_SIMULATOR}
     simulator/distance_scanner_equipped_entity.cpp
     simulator/dynamics2d_footbot_entity.cpp
-    simulator/footbot_entity.cpp
-    simulator/footbot_leds_actuator.cpp
-    simulator/footbot_proximity_sensor.cpp
-    simulator/footbot_wheels_actuator.cpp)
+    simulator/footbot_entity.cpp)
   # Compile the graphical visualization only if the necessary libraries have been found
   include(ARGoSCheckQTOpenGL)
   if(ARGOS_COMPILE_QTOPENGL)
@@ -89,14 +74,17 @@ if(LUA51_FOUND)
   set(ARGOS3_SOURCES_PLUGINS_ROBOTS_FOOTBOT
     ${ARGOS3_SOURCES_PLUGINS_ROBOTS_FOOTBOT}
     ${ARGOS3_HEADERS_PLUGINS_ROBOTS_FOOTBOT_WRAPPERS_LUA}
-    wrappers/lua/footbot_lua_controller.cpp)
+    wrappers/lua/lua_footbot_controller.cpp)
 endif(LUA51_FOUND)
 
 #
 # Create foot-bot plugin
 #
 add_library(argos3plugin_${ARGOS_BUILD_FOR}_footbot SHARED ${ARGOS3_SOURCES_PLUGINS_ROBOTS_FOOTBOT})
-target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_footbot argos3plugin_${ARGOS_BUILD_FOR}_genericrobot argos3plugin_${ARGOS_BUILD_FOR}_dynamics2d)
+target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_footbot
+  argos3plugin_${ARGOS_BUILD_FOR}_genericrobot
+  argos3plugin_${ARGOS_BUILD_FOR}_actuators
+  argos3plugin_${ARGOS_BUILD_FOR}_dynamics2d)
 if(ARGOS_COMPILE_QTOPENGL)
   target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_footbot argos3plugin_${ARGOS_BUILD_FOR}_qtopengl)
 endif(ARGOS_COMPILE_QTOPENGL)
