@@ -53,7 +53,7 @@ void CTestFootBotController::Destroy() {
 void CTestFootBotController::ControlStep() {
    RLOG << "CTestFootBotController::ControlStep()"
         << std::endl;
-   m_pcWheels->SetLinearVelocity(5,5);
+   m_pcWheels->SetLinearVelocity(4,5);
    m_pcLEDs->SetAllColors(CColor::RED);
 }
 

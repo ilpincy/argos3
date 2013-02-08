@@ -5,7 +5,7 @@
   <!-- * General configuration * -->
   <!-- ************************* -->
   <framework>
-    <experiment length="1" ticks_per_second="5" />
+    <experiment length="0" ticks_per_second="10" />
   </framework>
 
   <!-- *************** -->
@@ -18,8 +18,11 @@
         <leds                  implementation="default" />
       </actuators>
       <sensors>
-        <!-- footbot_proximity implementation="rot_z_only"
-             show_rays="true" / -->
+        <proximity implementation="default" show_rays="true">
+          <sensor position="0.1,0.0,0.1" direction="1,0,0" range="0.5" />
+          <sensor position="0.0,0.08,0.1" direction="0,1,0" range="0.5" />
+          <sensor position="-0.08,0.0,0.1" direction="-1,1,0" range="0.5" />
+        </proximity>
       </sensors>
       <params />
     </test_footbot_controller>
@@ -29,7 +32,7 @@
   <!-- * Arena configuration * -->
   <!-- *********************** -->
   <arena size="2, 2, 1">
-    <box id="b0" position="0.2,0,0.1" orientation="0,0,0" size="0.2, 0.5, 0.2" movable="false" />
+    <box id="b0" position="1,0,0.1" orientation="0,0,0" size="0.2, 0.5, 0.2" movable="false" />
     <foot-bot id="fb0" position="0,0,0" orientation="0,0,0" controller="x" />
   </arena>
 
