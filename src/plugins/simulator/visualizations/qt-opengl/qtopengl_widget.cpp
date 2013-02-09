@@ -25,10 +25,11 @@
 namespace argos {
 
    static const Real ASPECT_RATIO = 4.0f / 3.0f;
+   static const UInt32 SELECT_BUFFER_SIZE = 128;
 
    /****************************************/
    /****************************************/
-   
+
    CQTOpenGLWidget::CQTOpenGLWidget(QWidget* pc_parent,
                                     CQTOpenGLUserFunctions& c_user_functions) :
       QGLWidget(pc_parent),
@@ -39,10 +40,12 @@ namespace argos {
       m_nDrawFrameEvery(1),
       m_nFrameCounter(0),
       m_bMouseGrabbed(false),
+      m_bShiftPressed(false),
       m_bInvertMouse(false),
       m_cSimulator(CSimulator::GetInstance()),
       m_cSpace(m_cSimulator.GetSpace()),
-      m_bUsingFloorTexture(false)
+      m_bUsingFloorTexture(false),
+      m_punSelectionBuffer(new GLuint[SELECT_BUFFER_SIZE])
 #ifdef QTOPENGL_WITH_SDL
       , m_cJoystick(this)
 #endif
@@ -110,7 +113,6 @@ namespace argos {
 #ifdef QTOPENGL_WITH_SDL
       m_cJoystick.close();
 #endif
-
       deleteTexture(m_unGroundTexture);
       glDeleteLists(1, m_unArenaList);
 
@@ -119,6 +121,7 @@ namespace argos {
          glDeleteLists(1, m_unFloorList);
       }
 
+      delete[] m_punSelectionBuffer;
       delete[] m_pfLightAmbient;
       delete[] m_pfLightDiffuse;
       delete[] m_pfLight0Position;
@@ -246,6 +249,85 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   void CQTOpenGLWidget::SelectInScene(UInt32 un_x,
+                                       UInt32 un_y) {
+      /* Used to store the viewport size */
+      GLint nViewport[4];
+      /* Set the selection buffer */
+      glSelectBuffer(SELECT_BUFFER_SIZE, m_punSelectionBuffer);
+      /* Switch to select mode */
+      glRenderMode(GL_SELECT);
+      /* Set the projection matrix */
+      glMatrixMode(GL_PROJECTION);
+      glPushMatrix();
+      glLoadIdentity();
+      /* Set the viewport */
+      glGetIntegerv(GL_VIEWPORT, nViewport);
+      gluPickMatrix(un_x,
+                    nViewport[3]-un_y,
+                    5, 5,
+                    nViewport);
+      gluPerspective(m_cCamera.GetActiveSettings().YFieldOfView.GetValue(),
+                     ASPECT_RATIO,
+                     0.1f, 1000.0f);
+      glMatrixMode(GL_MODELVIEW);
+      /* Prepare name stack */
+      glInitNames();
+      /* Draw the objects */
+      CEntity::TVector& vecEntities = m_cSpace.GetRootEntityVector();
+      for(size_t i = 0; i < vecEntities.size(); ++i) {
+         glPushName(i);
+         glPushMatrix();
+         CallEntityOperation<CQTOpenGLOperationDraw, CQTOpenGLWidget, void>(*this, *vecEntities[i]);
+         glPopMatrix();
+         glPopName();
+      }
+      /* Restore the original projection matrix */
+      glMatrixMode(GL_PROJECTION);
+      glPopMatrix();
+      glMatrixMode(GL_MODELVIEW);
+      glFlush();
+      /* Return to normal rendering mode and get hit count */
+      bool bWasSelected = m_sSelectionInfo.IsSelected;
+      UInt32 unHits = glRenderMode(GL_RENDER);
+      if (unHits == 0) {
+         /* No hits, deselect what was selected */
+         m_sSelectionInfo.IsSelected = false;
+      }
+      else {
+         /* There are hits!
+          * Process them, keeping the closest hit
+          */
+         GLuint unNames;
+         GLuint* punByte;
+         GLuint unMinZ;
+         GLuint* punName;
+         punByte = m_punSelectionBuffer;
+         unMinZ = 0xffffffff;
+         for (UInt32 i = 0; i < unHits; i++) {	
+            unNames = *punByte;
+            ++punByte;
+            if (*punByte < unMinZ) {
+               unMinZ = *punByte;
+               punName = punByte+2;
+            }
+            punByte += unNames+2;
+         }
+         printf("[DEBUG] The selected robot is \"%s\"\n", m_cSpace.GetRootEntityVector()[*punName]->GetId().c_str());
+         m_sSelectionInfo.Index = *punName;
+         m_sSelectionInfo.IsSelected = ! m_sSelectionInfo.IsSelected;
+      }
+      if(m_sSelectionInfo.IsSelected) {
+         emit EntitySelected(m_sSelectionInfo.Index);
+      }
+      else if(! bWasSelected) {
+         emit EntityDeselected(m_sSelectionInfo.Index);
+      }
+   }
+
+   /****************************************/
+   /****************************************/
+
    void CQTOpenGLWidget::DrawPositionalEntity(CPositionalEntity& c_entity) {
       /* Get the position of the entity */
       const CVector3& cPosition = c_entity.GetPosition();
@@ -293,7 +375,7 @@ namespace argos {
          glEnable(GL_LIGHTING);
       }
    }
-   
+
    /****************************************/
    /****************************************/
 
@@ -528,8 +610,15 @@ namespace argos {
    /****************************************/
 
    void CQTOpenGLWidget::mousePressEvent(QMouseEvent* pc_event) {
-      m_bMouseGrabbed = true;
-      m_cMouseGrabPos = pc_event->pos();
+      if(!m_bShiftPressed) {
+         m_bMouseGrabbed = true;
+         m_cMouseGrabPos = pc_event->pos();
+      }
+      else {
+         m_bMouseGrabbed = false;
+         SelectInScene(pc_event->pos().x(),
+                       pc_event->pos().y());
+      }
    }
 
    /****************************************/
@@ -543,45 +632,50 @@ namespace argos {
    /****************************************/
 
    void CQTOpenGLWidget::keyPressEvent(QKeyEvent* pc_event) {
-      switch(pc_event->key()) {
-         case Qt::Key_W:
-         case Qt::Key_Up:
-            /* Forwards */
-            m_mapPressedKeys[DIRECTION_UP] = true;
-            reactToKeyEvent();
-            break;
-         case Qt::Key_S:
-         case Qt::Key_Down:
-            /* Backwards */
-            m_mapPressedKeys[DIRECTION_DOWN] = true;
-            reactToKeyEvent();
-            break;
-         case Qt::Key_A:
-         case Qt::Key_Left:
-            /* Left */
-            m_mapPressedKeys[DIRECTION_LEFT] = true;
-            reactToKeyEvent();
-            break;
-         case Qt::Key_D:
-         case Qt::Key_Right:
-            /* Right */
-            m_mapPressedKeys[DIRECTION_RIGHT] = true;
-            reactToKeyEvent();
-            break;
-         case Qt::Key_E:
-            /* Up */
-            m_mapPressedKeys[DIRECTION_FORWARDS] = true;
-            reactToKeyEvent();
-            break;
-         case Qt::Key_Q:
-            /* Up */
-            m_mapPressedKeys[DIRECTION_BACKWARDS] = true;
-            reactToKeyEvent();
-            break;
-         default:
-            /* Unknown key */
-            QGLWidget::keyPressEvent(pc_event);
-            break;
+      if(pc_event->modifiers() == Qt::ShiftModifier) {
+         m_bShiftPressed = true;
+      }
+      else {
+         switch(pc_event->key()) {
+            case Qt::Key_W:
+            case Qt::Key_Up:
+               /* Forwards */
+               m_mapPressedKeys[DIRECTION_UP] = true;
+               reactToKeyEvent();
+               break;
+            case Qt::Key_S:
+            case Qt::Key_Down:
+               /* Backwards */
+               m_mapPressedKeys[DIRECTION_DOWN] = true;
+               reactToKeyEvent();
+               break;
+            case Qt::Key_A:
+            case Qt::Key_Left:
+               /* Left */
+               m_mapPressedKeys[DIRECTION_LEFT] = true;
+               reactToKeyEvent();
+               break;
+            case Qt::Key_D:
+            case Qt::Key_Right:
+               /* Right */
+               m_mapPressedKeys[DIRECTION_RIGHT] = true;
+               reactToKeyEvent();
+               break;
+            case Qt::Key_E:
+               /* Up */
+               m_mapPressedKeys[DIRECTION_FORWARDS] = true;
+               reactToKeyEvent();
+               break;
+            case Qt::Key_Q:
+               /* Up */
+               m_mapPressedKeys[DIRECTION_BACKWARDS] = true;
+               reactToKeyEvent();
+               break;
+            default:
+               /* Unknown key */
+               QGLWidget::keyPressEvent(pc_event);
+               break;
+         }
       }
    }
 
@@ -590,31 +684,36 @@ namespace argos {
 
    void CQTOpenGLWidget::keyReleaseEvent(QKeyEvent* pc_event) {
       QGLWidget::keyPressEvent(pc_event);
-      switch(pc_event->key()) {
-         case Qt::Key_Up:
-            /* Forwards */
-            m_mapPressedKeys[DIRECTION_UP] = false;
-            reactToKeyEvent();
-            break;
-         case Qt::Key_Down:
-            /* Backwards */
-            m_mapPressedKeys[DIRECTION_DOWN] = false;
-            reactToKeyEvent();
-            break;
-         case Qt::Key_Left:
-            /* Left */
-            m_mapPressedKeys[DIRECTION_LEFT] = false;
-            reactToKeyEvent();
-            break;
-         case Qt::Key_Right:
-            /* Right */
-            m_mapPressedKeys[DIRECTION_RIGHT] = false;
-            reactToKeyEvent();
-            break;
-         default:
-            /* Unknown key */
-            QGLWidget::keyPressEvent(pc_event);
-            break;
+      if(pc_event->modifiers() == Qt::ShiftModifier) {
+         m_bShiftPressed = false;
+      }
+      else {
+         switch(pc_event->key()) {
+            case Qt::Key_Up:
+               /* Forwards */
+               m_mapPressedKeys[DIRECTION_UP] = false;
+               reactToKeyEvent();
+               break;
+            case Qt::Key_Down:
+               /* Backwards */
+               m_mapPressedKeys[DIRECTION_DOWN] = false;
+               reactToKeyEvent();
+               break;
+            case Qt::Key_Left:
+               /* Left */
+               m_mapPressedKeys[DIRECTION_LEFT] = false;
+               reactToKeyEvent();
+               break;
+            case Qt::Key_Right:
+               /* Right */
+               m_mapPressedKeys[DIRECTION_RIGHT] = false;
+               reactToKeyEvent();
+               break;
+            default:
+               /* Unknown key */
+               QGLWidget::keyPressEvent(pc_event);
+               break;
+         }
       }
    }
 

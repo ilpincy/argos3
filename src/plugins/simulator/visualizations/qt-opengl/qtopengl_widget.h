@@ -68,6 +68,11 @@ namespace argos {
          void Init(TConfigurationNode& t_tree);
       };
 
+      struct SSelectionInfo {
+         bool IsSelected;
+         size_t Index;
+      };
+
    public:
 
       CQTOpenGLWidget(QWidget* pc_parent,
@@ -79,7 +84,10 @@ namespace argos {
                             int n_height);
       virtual void paintEvent(QPaintEvent*);
 
-      virtual void DrawScene();
+      void DrawScene();
+
+      void SelectInScene(UInt32 un_x,
+                         UInt32 un_y);
 
       void DrawPositionalEntity(CPositionalEntity& c_entity);
 
@@ -113,6 +121,8 @@ namespace argos {
 
       void StepDone(int n_step);
       void SimulationDone();
+      void EntitySelected(size_t un_index);
+      void EntityDeselected(size_t un_index);
 
    public slots:
 
@@ -150,8 +160,10 @@ namespace argos {
       SInt32 m_nFrameCounter;
 
       bool m_bMouseGrabbed;
+      bool m_bShiftPressed;
       QPoint m_cMouseGrabPos;
       bool m_bInvertMouse;
+      SSelectionInfo m_sSelectionInfo;
 
       CSimulator& m_cSimulator;
       CSpace& m_cSpace;
@@ -169,6 +181,7 @@ namespace argos {
 
       GLuint m_unArenaList;
       GLuint m_unFloorList;
+      GLuint* m_punSelectionBuffer;
 
 #ifdef QTOPENGL_WITH_SDL
       CQTOpenGLJoystick m_cJoystick;
