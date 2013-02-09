@@ -31,10 +31,11 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   CQTOpenGLWidget::CQTOpenGLWidget(QWidget* pc_parent,
+   CQTOpenGLWidget::CQTOpenGLWidget(const QGLFormat& c_format,
+                                    QWidget* pc_parent,
                                     CQTOpenGLMainWindow* pc_main_window,
                                     CQTOpenGLUserFunctions& c_user_functions) :
-      QGLWidget(pc_parent),
+      QGLWidget(c_format, pc_parent),
       pcMainWindow(pc_main_window),
       m_cUserFunctions(c_user_functions),
       nTimerId(-1),

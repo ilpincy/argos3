@@ -80,7 +80,8 @@ namespace argos {
 
    public:
 
-      CQTOpenGLWidget(QWidget* pc_parent,
+      CQTOpenGLWidget(const QGLFormat& c_format,
+                      QWidget* pc_parent,
                       CQTOpenGLMainWindow* pc_main_window,
                       CQTOpenGLUserFunctions& c_user_functions);
       virtual ~CQTOpenGLWidget();

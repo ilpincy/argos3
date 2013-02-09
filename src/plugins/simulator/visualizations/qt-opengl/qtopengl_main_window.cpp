@@ -204,7 +204,6 @@ namespace argos {
    void CQTOpenGLMainWindow::ReadSettingsPostCreation() {
       QSettings cSettings;
       cSettings.beginGroup("MainWindow");
-      m_pcToggleAntiAliasingAction->setChecked(cSettings.value("anti-aliasing").toBool());
       restoreState(cSettings.value("docks").toByteArray());
       cSettings.endGroup();
    }
@@ -419,18 +418,34 @@ namespace argos {
    void CQTOpenGLMainWindow::CreateOpenGLWidget(TConfigurationNode& t_tree) {
       /* Create user functions */
       m_pcUserFunctions = CreateUserFunctions(t_tree);
-      /* Set up OpenGL features */
-      QGLFormat cGLFormat = QGLFormat::defaultFormat();
-      cGLFormat.setSampleBuffers(m_pcToggleAntiAliasingAction->isChecked());
-      cGLFormat.setStencil(false);
-      QGLFormat::setDefaultFormat(cGLFormat);
+      /* Initialize OpenGL settings */
+      QGLFormat cGLFormat;
+      cGLFormat.setSampleBuffers(true);
       /* Create the widget */
       QWidget* pcPlaceHolder = new QWidget(this);
-      m_pcOpenGLWidget = new CQTOpenGLWidget(pcPlaceHolder, this, *m_pcUserFunctions);
+      m_pcOpenGLWidget = new CQTOpenGLWidget(cGLFormat, pcPlaceHolder, this, *m_pcUserFunctions);
       m_pcOpenGLWidget->setCursor(QCursor(Qt::OpenHandCursor));
       m_pcOpenGLWidget->GetCamera().Init(t_tree);
       m_pcOpenGLWidget->GetFrameGrabData().Init(t_tree);
-      m_pcToggleAntiAliasingAction->setChecked(cGLFormat.sampleBuffers());
+      if(cGLFormat.sampleBuffers()) {
+         /* Get OpenGL settings */
+         QSettings cSettings;
+         bool bAntiAliasing;
+         cSettings.beginGroup("MainWindow");
+         if(cSettings.contains("anti-aliasing")) {
+            bAntiAliasing = cSettings.value("anti-aliasing").toBool();
+         }
+         else {
+            bAntiAliasing = true;
+         }
+         cSettings.endGroup();
+         m_pcToggleAntiAliasingAction->setChecked(bAntiAliasing);
+         m_pcOpenGLWidget->SetAntiAliasing(bAntiAliasing);
+      }
+      else {
+         m_pcToggleAntiAliasingAction->setChecked(false);
+         m_pcToggleAntiAliasingAction->setEnabled(false);
+      }
       /* Invert mouse controls? */
       bool bInvertMouse;
       GetNodeAttributeOrDefault(t_tree, "invert_mouse", bInvertMouse, false);
