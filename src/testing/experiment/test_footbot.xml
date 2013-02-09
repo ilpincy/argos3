@@ -35,6 +35,9 @@
   <!-- *********************** -->
   <arena size="2, 2, 1">
     <box id="b0" position="1,0,0.1" orientation="0,0,0" size="0.2, 0.5, 0.2" movable="false" />
+    <box id="b1" position="0,1,0.1" orientation="0,0,0" size="0.2, 0.5, 0.2" movable="true" mass="1" />
+    <cylinder id="c0" position="-1,0,0.1" orientation="0,0,0" radius="0.1" height="0.1" movable="false" />
+    <cylinder id="c1" position="0,-1,0.1" orientation="0,0,0" radius="0.1" height="0.1" movable="true" mass="1" />
     <foot-bot id="fb0" position="0,0,0" orientation="0,0,0" controller="x" />
   </arena>
 
@@ -52,6 +55,7 @@
     <engine id="dyn2d">
       <entity id="fb[[:digit:]]*" />
       <entity id="b[[:digit:]]*" />
+      <entity id="c[[:digit:]]*" />
     </engine>
   </arena_physics>
 

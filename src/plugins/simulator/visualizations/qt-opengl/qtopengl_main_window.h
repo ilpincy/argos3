@@ -42,6 +42,14 @@ namespace argos {
       CQTOpenGLMainWindow(TConfigurationNode& t_tree);
       virtual ~CQTOpenGLMainWindow();
 
+      inline const QString& GetIconDir() const {
+         return m_strIconDir;
+      }
+
+      inline const QString& GetTextureDir() const {
+         return m_strTextureDir;
+      }
+
    private:
 
       void ReadSettingsPreCreation();
@@ -89,6 +97,7 @@ namespace argos {
 
       CQTOpenGLWidget* m_pcOpenGLWidget;
       QString m_strIconDir;
+      QString m_strTextureDir;
 
       QAction* m_pcPlayAction;
       QAction* m_pcStepAction;

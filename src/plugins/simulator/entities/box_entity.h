@@ -39,7 +39,15 @@ namespace argos {
          return *m_pcEmbodiedEntity;
       }
 
+      inline const CEmbodiedEntity& GetEmbodiedEntity() const {
+         return *m_pcEmbodiedEntity;
+      }
+
       inline CLEDEquippedEntity& GetLEDEquippedEntity() {
+         return *m_pcLEDEquippedEntity;
+      }
+
+      inline const CLEDEquippedEntity& GetLEDEquippedEntity() const {
          return *m_pcLEDEquippedEntity;
       }
 

@@ -16,6 +16,11 @@ namespace argos {
    /****************************************/
 
    static const Real LED_RADIUS = 0.01f;
+   const GLfloat MOVABLE_COLOR[]    = { 0.0f, 1.0f, 0.0f, 1.0f };
+   const GLfloat NONMOVABLE_COLOR[] = { 0.7f, 0.7f, 0.7f, 1.0f };
+   const GLfloat SPECULAR[]         = { 0.0f, 0.0f, 0.0f, 1.0f };
+   const GLfloat SHININESS[]        = { 0.0f                   };
+   const GLfloat EMISSION[]         = { 0.0f, 0.0f, 0.0f, 1.0f };
 
    /****************************************/
    /****************************************/
@@ -81,6 +86,12 @@ namespace argos {
 
    void CQTOpenGLCylinder::Draw(CCylinderEntity& c_entity) {
       /* Draw the body */
+      if(c_entity.GetEmbodiedEntity().IsMovable()) {
+         glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, MOVABLE_COLOR);
+      }
+      else {
+         glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, NONMOVABLE_COLOR);
+      }
       glPushMatrix();
       glScalef(c_entity.GetRadius(), c_entity.GetRadius(), c_entity.GetHeight());
       glCallList(m_unBodyList);
@@ -96,14 +107,9 @@ namespace argos {
       glEnable(GL_NORMALIZE);
 
       /* Set the material */
-      const GLfloat pfColor[]     = { 0.0f, 1.0f, 0.0f, 1.0f };
-      const GLfloat pfSpecular[]  = { 0.0f, 0.0f, 0.0f, 1.0f };
-      const GLfloat pfShininess[] = { 0.0f                   };
-      const GLfloat pfEmission[]  = { 0.0f, 0.0f, 0.0f, 1.0f };
-      glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, pfColor);
-      glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, pfSpecular);
-      glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, pfShininess);
-      glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, pfEmission);
+	      glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, SPECULAR);
+	      glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, SHININESS);
+	      glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, EMISSION);
 
       /* Let's start the actual shape */
       /* Side surface */

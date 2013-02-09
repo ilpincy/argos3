@@ -9,6 +9,7 @@
 
 namespace argos {
    class CQTOpenGLWidget;
+   class CQTOpenGLMainWindow;
    class CSpace;
    class CSimulator;
    class CQTOpenGLBox;
@@ -71,11 +72,16 @@ namespace argos {
       struct SSelectionInfo {
          bool IsSelected;
          size_t Index;
+
+         SSelectionInfo() :
+            IsSelected(false),
+            Index(0) {}
       };
 
    public:
 
       CQTOpenGLWidget(QWidget* pc_parent,
+                      CQTOpenGLMainWindow* pc_main_window,
                       CQTOpenGLUserFunctions& c_user_functions);
       virtual ~CQTOpenGLWidget();
 
@@ -151,6 +157,7 @@ namespace argos {
 
    private:
 
+      CQTOpenGLMainWindow* pcMainWindow;
       CQTOpenGLUserFunctions& m_cUserFunctions;
 
       SInt32 nTimerId;
@@ -199,8 +206,6 @@ namespace argos {
       };
 
       QMap<EDirection, int> m_mapPressedKeys;
-
-      QString m_strBaseDirectory;
    };
 
 }

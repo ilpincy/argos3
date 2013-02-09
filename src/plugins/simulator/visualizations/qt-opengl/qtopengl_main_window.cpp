@@ -25,7 +25,6 @@
 #include <QtGui/QStatusBar>
 #include <QtGui/QWidget>
 #include <QLabel>
-#include <QSettings>
 #include <QCloseEvent>
 #include <QMessageBox>
 #include <QDir>
@@ -34,6 +33,7 @@
 #include <QToolBar>
 #include <QLayout>
 #include <QMenuBar>
+#include <QSettings>
 
 #include <cstdio>
 
@@ -128,12 +128,10 @@ namespace argos {
       m_pcUserFunctions(NULL) {
       /* Main window settings */
       std::string strTitle;
-      GetNodeAttributeOrDefault<std::string>(t_tree, "title", strTitle, "ARGoS v2.0");
+      GetNodeAttributeOrDefault<std::string>(t_tree, "title", strTitle, "ARGoS v3.0");
       setWindowTitle(tr(strTitle.c_str()));
-      /** Installation directory */
-      std::string strIconDir = CSimulator::GetInstance().GetInstallationDirectory();
-      strIconDir += "/simulator/visualizations/qt-opengl/icons/";
-      m_strIconDir = strIconDir.c_str();
+      /* Restore settings, if any */
+      ReadSettingsPreCreation();
       /* Add a status bar */
       m_pcStatusbar = new QStatusBar(this);
       setStatusBar(m_pcStatusbar);
@@ -142,8 +140,6 @@ namespace argos {
       CreateCameraActions();
       // CreatePOVRayActions();
       CreateHelpActions();
-      /* Restore settings, if any */
-      ReadSettingsPreCreation();
       /* Create the central widget */
       CreateOpenGLWidget(t_tree);
       /* Create menus */
@@ -183,7 +179,22 @@ namespace argos {
       cSettings.beginGroup("MainWindow");
       resize(cSettings.value("size", QSize(640,480)).toSize());
       move(cSettings.value("position", QPoint(0,0)).toPoint());
-      m_pcToggleAntiAliasingAction->setChecked(cSettings.value("anti-aliasing").toBool());
+      if(cSettings.contains("icon_dir")) {
+         m_strIconDir = cSettings.value("icon_dir").toString();
+      }
+      else {
+         std::string strIconDir = CSimulator::GetInstance().GetInstallationDirectory();
+         strIconDir += "/share/argos3/plugins/visualizations/qt-opengl/icons/";
+         m_strIconDir = strIconDir.c_str();
+      }
+      if(cSettings.contains("texture_dir")) {
+         m_strTextureDir = cSettings.value("texture_dir").toString();
+      }
+      else {
+         std::string strTextureDir = CSimulator::GetInstance().GetInstallationDirectory();
+         strTextureDir += "/share/argos3/plugins/visualizations/qt-opengl/textures/";
+         m_strTextureDir = strTextureDir.c_str();
+      }
       cSettings.endGroup();
    }
 
@@ -193,6 +204,7 @@ namespace argos {
    void CQTOpenGLMainWindow::ReadSettingsPostCreation() {
       QSettings cSettings;
       cSettings.beginGroup("MainWindow");
+      m_pcToggleAntiAliasingAction->setChecked(cSettings.value("anti-aliasing").toBool());
       restoreState(cSettings.value("docks").toByteArray());
       cSettings.endGroup();
    }
@@ -207,6 +219,8 @@ namespace argos {
       cSettings.setValue("size", size());
       cSettings.setValue("position", pos());
       cSettings.setValue("anti-aliasing", m_pcToggleAntiAliasingAction->isChecked());
+      cSettings.setValue("icon_dir", m_strIconDir);
+      cSettings.setValue("texture_dir", m_strTextureDir);
       cSettings.endGroup();
    }
 
@@ -215,11 +229,8 @@ namespace argos {
 
    void CQTOpenGLMainWindow::CreateSimulationActions() {
       /* Add the play button */
-      std::string strSTDBaseDirectory(CSimulator::GetInstance().GetInstallationDirectory());
-      strSTDBaseDirectory += "/simulator/visualizations/qt-opengl/icons/";
-      QString strBaseDirectory(strSTDBaseDirectory.c_str());
       QIcon cPlayIcon;
-      cPlayIcon.addPixmap(QPixmap(strBaseDirectory + "play.png"));
+      cPlayIcon.addPixmap(QPixmap(m_strIconDir + "/play.png"));
       m_pcPlayAction = new QAction(cPlayIcon, tr("&Play"), this);
       m_pcPlayAction->setToolTip(tr("Play/pause simulation"));
       m_pcPlayAction->setStatusTip(tr("Play/pause simulation"));
@@ -227,14 +238,14 @@ namespace argos {
       m_pcPlayAction->setShortcut(Qt::Key_P);
       /* Add the pause/step button */
       QIcon cStepIcon;
-      cStepIcon.addPixmap(QPixmap(strBaseDirectory + "step.png"));
+      cStepIcon.addPixmap(QPixmap(m_strIconDir + "/step.png"));
       m_pcStepAction = new QAction(cStepIcon, tr("&Step"), this);
       m_pcStepAction->setToolTip(tr("Step simulation"));
       m_pcStepAction->setStatusTip(tr("Step simulation"));
       m_pcStepAction->setShortcut(Qt::Key_S);
       /* Add the fast forward button */
       QIcon cFastForwardIcon;
-      cFastForwardIcon.addPixmap(QPixmap(strBaseDirectory + "fast_forward.png"));
+      cFastForwardIcon.addPixmap(QPixmap(m_strIconDir + "/fast_forward.png"));
       m_pcFastForwardAction = new QAction(cFastForwardIcon, tr("&Fast Forward"), this);
       m_pcFastForwardAction->setToolTip(tr("Fast forward simulation"));
       m_pcFastForwardAction->setStatusTip(tr("Fast forward simulation"));
@@ -242,14 +253,14 @@ namespace argos {
       m_pcFastForwardAction->setShortcut(Qt::Key_F);
       /* Add the reset button */
       QIcon cResetIcon;
-      cResetIcon.addPixmap(QPixmap(strBaseDirectory + "reset.png"));
+      cResetIcon.addPixmap(QPixmap(m_strIconDir + "/reset.png"));
       m_pcResetAction = new QAction(cResetIcon, tr("&Reset"), this);
       m_pcResetAction->setToolTip(tr("Reset simulation"));
       m_pcResetAction->setStatusTip(tr("Reset simulation"));
       m_pcResetAction->setShortcut(Qt::Key_R);
       /* Add the capture button */
       QIcon cCaptureIcon;
-      cCaptureIcon.addPixmap(QPixmap(strBaseDirectory + "record.png"));
+      cCaptureIcon.addPixmap(QPixmap(m_strIconDir + "/record.png"));
       m_pcCaptureAction = new QAction(cCaptureIcon, tr("&Capture"), this);
       m_pcCaptureAction->setToolTip(tr("Capture frames"));
       m_pcCaptureAction->setStatusTip(tr("Capture frames"));
@@ -268,7 +279,7 @@ namespace argos {
       /* Add the switch camera buttons */
       m_pcSwitchCameraActionGroup = new QActionGroup(this);
       QIcon cCameraIcon;
-      cCameraIcon.addPixmap(QPixmap(m_strIconDir + "camera.png"));
+      cCameraIcon.addPixmap(QPixmap(m_strIconDir + "/camera.png"));
       for(UInt32 i = 0; i < 12; ++i) {
          QAction* pcAction = new QAction(cCameraIcon, tr(QString("Camera %1").arg(i+1).toAscii().data()), m_pcSwitchCameraActionGroup);
          pcAction->setToolTip(tr(QString("Switch to camera %1").arg(i+1).toAscii().data()));
@@ -358,7 +369,8 @@ namespace argos {
    /****************************************/
 
    void CQTOpenGLMainWindow::CreateCameraToolBar() {
-      m_pcCameraToolBar = addToolBar(tr("Camera"));
+      m_pcCameraToolBar = new QToolBar(tr("Camera"));
+      m_pcCameraToolBar->setAllowedAreas(Qt::LeftToolBarArea | Qt::RightToolBarArea | Qt::BottomToolBarArea);
       m_pcCameraToolBar->setObjectName("CameraToolBar");
       m_pcCameraToolBar->addActions(m_pcSwitchCameraActions);
       m_pcCameraToolBar->addSeparator();
@@ -370,6 +382,7 @@ namespace argos {
       m_pcFocalLength->setRange(1.0f, 999.0f);
       m_pcFocalLength->setValue(m_pcOpenGLWidget->GetCamera().GetSetting(0).LensFocalLength * 1000.0f);
       m_pcCameraToolBar->addWidget(m_pcFocalLength);
+      addToolBar(Qt::LeftToolBarArea, m_pcCameraToolBar);
    }
 
    /****************************************/
@@ -413,7 +426,7 @@ namespace argos {
       QGLFormat::setDefaultFormat(cGLFormat);
       /* Create the widget */
       QWidget* pcPlaceHolder = new QWidget(this);
-      m_pcOpenGLWidget = new CQTOpenGLWidget(pcPlaceHolder, *m_pcUserFunctions);
+      m_pcOpenGLWidget = new CQTOpenGLWidget(pcPlaceHolder, this, *m_pcUserFunctions);
       m_pcOpenGLWidget->setCursor(QCursor(Qt::OpenHandCursor));
       m_pcOpenGLWidget->GetCamera().Init(t_tree);
       m_pcOpenGLWidget->GetFrameGrabData().Init(t_tree);
@@ -451,7 +464,6 @@ namespace argos {
       /* Add the dockable window to the main widget */
       m_pcLogDock->setWidget(m_pcDockLogBuffer);
       addDockWidget(Qt::RightDockWidgetArea, m_pcLogDock);
-
       /* Create a dockable window */
       m_pcLogErrDock = new QDockWidget(tr("LogErr"), this);
       m_pcLogErrDock->setObjectName("LogErrDockWindow");

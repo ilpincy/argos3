@@ -5,6 +5,7 @@
  */
 
 #include "qtopengl_widget.h"
+#include "qtopengl_main_window.h"
 #include "qtopengl_user_functions.h"
 
 #include <argos3/core/utility/logging/argos_log.h>
@@ -31,8 +32,10 @@ namespace argos {
    /****************************************/
 
    CQTOpenGLWidget::CQTOpenGLWidget(QWidget* pc_parent,
+                                    CQTOpenGLMainWindow* pc_main_window,
                                     CQTOpenGLUserFunctions& c_user_functions) :
       QGLWidget(pc_parent),
+      pcMainWindow(pc_main_window),
       m_cUserFunctions(c_user_functions),
       nTimerId(-1),
       m_bAntiAliasing(false),
@@ -93,12 +96,6 @@ namespace argos {
          m_cJoystick.open(0);
       }
 #endif
-      /* Set the texture directory */
-      /** @todo: FIX QTOPENGL WIDGET TEXTURE PATH */
-      // std::string strSTDBaseDirectory(CSimulator::GetInstance().GetInstallationDirectory());
-      // strSTDBaseDirectory += "/simulator/visualizations/qt-opengl/textures/";
-      // m_strBaseDirectory = strSTDBaseDirectory.c_str();
-      m_strBaseDirectory = "/home/pincy/Fabrica/argos3/src/plugins/simulator/visualizations/qt-opengl/textures/";
       /* Initialize the arena */
       makeCurrent();
       initializeGL();
@@ -523,7 +520,7 @@ namespace argos {
       glDisable(GL_LIGHTING);
       /* Set up the texture parameters for the floor
          (here we refer to the standard floor, not the floor entity) */
-      QImage cGroundTexture(QString(m_strBaseDirectory + "ground.png"));
+      QImage cGroundTexture(pcMainWindow->GetTextureDir() + "/ground.png");
       m_unGroundTexture = bindTexture(cGroundTexture);
       /* The texture covers the object like a decal */
       glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
