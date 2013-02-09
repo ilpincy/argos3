@@ -1,5 +1,5 @@
 /**
- * @file <argos3/plugins/robots/foot-bot/simulator/footbot_leds_actuator.h>
+ * @file <argos3/plugins/simulator/actuators/leds_default_actuator.h>
  *
  * @brief This file provides the definition of
  *

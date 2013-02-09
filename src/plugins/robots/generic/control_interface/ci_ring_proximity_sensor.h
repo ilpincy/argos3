@@ -1,5 +1,5 @@
 /**
- * @file <argos3/core/control_interface/ci_ring_proximity_sensor.h>
+ * @file <argos3/plugins/robots/generic/control_interface/ci_ring_proximity_sensor.h>
  *
  * @author Carlo Pinciroli <ilpincy@gmail.com>
  */

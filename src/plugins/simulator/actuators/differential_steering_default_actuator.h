@@ -1,5 +1,5 @@
 /**
- * @file <argos3/core/simulator/actuators/differential_steering_default_actuator.h>
+ * @file <argos3/plugins/simulator/actuators/differential_steering_default_actuator.h>
  *
  * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */

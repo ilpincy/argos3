@@ -1,6 +1,6 @@
 
 /**
- * @file <argos3/plugins/robots/foot-bot/wrappers/lua/footbot_lua_controller.cpp>
+ * @file <argos3/plugins/robots/foot-bot/wrappers/lua/lua_footbot_controller.cpp>
  *
  * @author Carlo Pinciroli <ilpincy@gmail.com>
  */

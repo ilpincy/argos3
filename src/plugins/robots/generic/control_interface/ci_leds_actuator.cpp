@@ -1,6 +1,6 @@
 
 /**
- * @file <argos3/core/control_interface/ci_leds_actuator.cpp>
+ * @file <argos3/plugins/robots/generic/control_interface/ci_leds_actuator.cpp>
  *
  * @author Carlo Pinciroli <ilpincy@gmail.com>
  */

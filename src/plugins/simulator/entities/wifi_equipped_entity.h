@@ -1,5 +1,5 @@
 /**
- * @file <argos3/core/simulator/entity/wifi_equipped_entity.h>
+ * @file <argos3/plugins/simulator/entities/wifi_equipped_entity.h>
  *
  * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */

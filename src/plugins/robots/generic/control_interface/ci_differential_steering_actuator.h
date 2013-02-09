@@ -1,6 +1,6 @@
 
 /**
- * @file <argos3/core/control_interface/ci_differential_steering_actuator.h>
+ * @file <argos3/plugins/robots/generic/control_interface/ci_differential_steering_actuator.h>
  *
  * @author Carlo Pinciroli <ilpincy@gmail.com>
  */

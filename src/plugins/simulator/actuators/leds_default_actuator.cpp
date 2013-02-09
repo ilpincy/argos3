@@ -1,5 +1,5 @@
 /**
- * @file <argos3/plugins/robots/foot-bot/simulator/footbot_leds_actuator.cpp>
+ * @file <argos3/plugins/simulator/actuators/leds_default_actuator.cpp>
  *
  * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */

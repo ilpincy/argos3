@@ -1,6 +1,6 @@
 
 /**
- * @file <argos3/core/wrappers/lua/lua_ring_proximity_sensor.h>
+ * @file <argos3/plugins/robots/generic/wrappers/lua/lua_ring_proximity_sensor.h>
  *
  * @author Carlo Pinciroli <ilpincy@gmail.com>
  */

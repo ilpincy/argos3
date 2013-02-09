@@ -1,6 +1,6 @@
 
 /**
- * @file <argos3/core/wrappers/lua/lua_leds_actuator.cpp>
+ * @file <argos3/plugins/robots/generic/wrappers/lua/lua_leds_actuator.cpp>
  *
  * @author Carlo Pinciroli <ilpincy@gmail.com>
  */
