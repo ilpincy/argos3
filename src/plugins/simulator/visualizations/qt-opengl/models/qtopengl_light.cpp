@@ -90,7 +90,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   class CQTOpenGLOperationDrawLight : public CQTOpenGLOperationDraw {
+   class CQTOpenGLOperationDrawLightNormal : public CQTOpenGLOperationDrawNormal {
    public:
       void ApplyTo(CQTOpenGLWidget& c_visualization,
                    CLightEntity& c_entity) {
@@ -100,7 +100,22 @@ namespace argos {
       }
    };
 
-   REGISTER_ENTITY_OPERATION(CQTOpenGLOperationDraw, CQTOpenGLWidget, CQTOpenGLOperationDrawLight, void, CLightEntity);
+   class CQTOpenGLOperationDrawLightSelected : public CQTOpenGLOperationDrawSelected {
+   public:
+      void ApplyTo(CQTOpenGLWidget& c_visualization,
+                   CLightEntity& c_entity) {
+         static CQTOpenGLLight m_cModel;
+         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+         c_visualization.DrawPositionalEntity(c_entity);
+         glScalef(1.1, 1.1, 1.1);
+         m_cModel.Draw(c_entity);
+         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+      }
+   };
+
+   REGISTER_ENTITY_OPERATION(CQTOpenGLOperationDrawNormal, CQTOpenGLWidget, CQTOpenGLOperationDrawLightNormal, void, CLightEntity);
+
+   REGISTER_ENTITY_OPERATION(CQTOpenGLOperationDrawSelected, CQTOpenGLWidget, CQTOpenGLOperationDrawLightSelected, void, CLightEntity);
 
    /****************************************/
    /****************************************/

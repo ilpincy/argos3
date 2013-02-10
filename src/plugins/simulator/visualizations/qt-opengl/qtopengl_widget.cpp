@@ -207,17 +207,14 @@ namespace argos {
           itEntities != vecEntities.end();
           ++itEntities) {
          glPushMatrix();
-         CallEntityOperation<CQTOpenGLOperationDraw, CQTOpenGLWidget, void>(*this, **itEntities);
+         CallEntityOperation<CQTOpenGLOperationDrawNormal, CQTOpenGLWidget, void>(*this, **itEntities);
          //@todo m_cUserFunctions.Draw(**itEntities);
          glPopMatrix();
       }
       /* Draw the selected object, if necessary */
       if(m_sSelectionInfo.IsSelected) {
          glPushMatrix();
-         glScalef(1.1, 1.1, 1.1);
-         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-         CallEntityOperation<CQTOpenGLOperationDraw, CQTOpenGLWidget, void>(*this, *vecEntities[m_sSelectionInfo.Index]);
-         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+         CallEntityOperation<CQTOpenGLOperationDrawSelected, CQTOpenGLWidget, void>(*this, *vecEntities[m_sSelectionInfo.Index]);
          glPopMatrix();
       }
       if(m_bAntiAliasing) {
@@ -287,7 +284,7 @@ namespace argos {
       for(size_t i = 0; i < vecEntities.size(); ++i) {
          glPushName(i);
          glPushMatrix();
-         CallEntityOperation<CQTOpenGLOperationDraw, CQTOpenGLWidget, void>(*this, *vecEntities[i]);
+         CallEntityOperation<CQTOpenGLOperationDrawNormal, CQTOpenGLWidget, void>(*this, *vecEntities[i]);
          glPopMatrix();
          glPopName();
       }
