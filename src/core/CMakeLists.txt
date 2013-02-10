@@ -42,8 +42,8 @@ set(ARGOS3_HEADERS_UTILITY_MATH
   utility/math/general.h
   utility/math/quaternion.h
   utility/math/range.h
-  utility/math/ray.h
-  utility/math/segment.h
+  utility/math/ray2.h
+  utility/math/ray3.h
   utility/math/vector2.h
   utility/math/vector3.h
   utility/math/rng.h)
@@ -127,7 +127,6 @@ set(ARGOS3_SOURCES_CORE
   ${ARGOS3_HEADERS_UTILITY_MATH}
   ${ARGOS3_HEADERS_UTILITY_MATH_MATRIX}
   utility/math/angles.cpp
-  utility/math/segment.cpp
   utility/math/vector2.cpp
   utility/math/vector3.cpp
   utility/math/rng.cpp

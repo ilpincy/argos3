@@ -191,16 +191,19 @@ namespace argos {
          return *this;
       }
 
-      inline CVector2 ProjectOntoXY() const {
-         return CVector2(m_fX,m_fY);
+      inline CVector2& ProjectOntoXY(CVector2& c_proj) const {
+         c_proj.Set(m_fX,m_fY);
+         return c_proj;
       }
 
-      inline CVector2 ProjectOntoYZ() const {
-         return CVector2(m_fY,m_fZ);
+      inline CVector2& ProjectOntoYZ(CVector2& c_proj) const {
+         c_proj.Set(m_fY,m_fZ);
+         return c_proj;
       }
 
-      inline CVector2 ProjectOntoXZ() const {
-         return CVector2(m_fX,m_fZ);
+      inline CVector2& ProjectOntoXZ(CVector2& c_proj) const {
+         c_proj.Set(m_fX,m_fZ);
+         return c_proj;
       }
 
       inline CVector3& Negate() {

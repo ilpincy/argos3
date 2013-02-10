@@ -128,7 +128,7 @@ namespace argos {
    /****************************************/
 
    bool CDynamics2DBoxEntity::CheckIntersectionWithRay(Real& f_t_on_ray,
-                                                       const CRay& c_ray) const {
+                                                       const CRay3& c_ray) const {
       cpSegmentQueryInfo tInfo;
       if(cpShapeSegmentQuery(m_ptShape,
                              cpv(c_ray.GetStart().GetX(), c_ray.GetStart().GetY()),

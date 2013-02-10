@@ -11,7 +11,7 @@
 
 namespace argos {
    class CSpace;
-   class CRay;
+   class CRay3;
    class CFloorEntity;
 }
 
@@ -107,7 +107,7 @@ namespace argos {
                                const std::string& str_pattern);
 
       bool GetClosestEmbodiedEntityIntersectedByRay(SEntityIntersectionItem<CEmbodiedEntity>& s_data,
-                                                    const CRay& c_ray,
+                                                    const CRay3& c_ray,
                                                     const TEmbodiedEntitySet& set_ignored_entities = TEmbodiedEntitySet());
 
       inline CEntity::TMap& GetEntityMapPerId() {
@@ -253,11 +253,11 @@ namespace argos {
       void AddBoxStrip(TConfigurationNode& t_tree);
 
       bool GetClosestEmbodiedEntityIntersectedByRaySpaceHash(SEntityIntersectionItem<CEmbodiedEntity>& s_data,
-                                                             const CRay& c_ray,
+                                                             const CRay3& c_ray,
                                                              const TEmbodiedEntitySet& set_ignored_entities);
 
       bool GetClosestEmbodiedEntityIntersectedByRayEntitySweep(SEntityIntersectionItem<CEmbodiedEntity>& s_data,
-                                                               const CRay& c_ray,
+                                                               const CRay3& c_ray,
                                                                const TEmbodiedEntitySet& set_ignored_entities);
 
    protected:

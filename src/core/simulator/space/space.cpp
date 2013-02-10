@@ -28,7 +28,7 @@ namespace argos {
       CRayEmbodiedEntityIntersectionMethod(CSpace& c_space) : m_cSpace(c_space) {}
       virtual ~CRayEmbodiedEntityIntersectionMethod() {}
       virtual bool operator()(SEntityIntersectionItem<CEmbodiedEntity>& s_data,
-                              const CRay& c_ray,
+                              const CRay3& c_ray,
                               const TEmbodiedEntitySet& set_ignored_entities) = 0;
    protected:
       CSpace& m_cSpace;
@@ -38,7 +38,7 @@ namespace argos {
    public:
       CRayEmbodiedEntityIntersectionSpaceHash(CSpace& c_space) : CSpace::CRayEmbodiedEntityIntersectionMethod(c_space) {}
       virtual bool operator()(CSpace::SEntityIntersectionItem<CEmbodiedEntity>& s_data,
-                              const CRay& c_ray,
+                              const CRay3& c_ray,
                               const TEmbodiedEntitySet& set_ignored_entities) {
          return m_cSpace.GetClosestEmbodiedEntityIntersectedByRaySpaceHash(s_data, c_ray, set_ignored_entities);
       }
@@ -48,7 +48,7 @@ namespace argos {
    public:
       CRayEmbodiedEntityIntersectionEntitySweep(CSpace& c_space) : CSpace::CRayEmbodiedEntityIntersectionMethod(c_space) {}
       virtual bool operator()(CSpace::SEntityIntersectionItem<CEmbodiedEntity>& s_data,
-                              const CRay& c_ray,
+                              const CRay3& c_ray,
                               const TEmbodiedEntitySet& set_ignored_entities) {
          return m_cSpace.GetClosestEmbodiedEntityIntersectedByRayEntitySweep(s_data, c_ray, set_ignored_entities);
       }
@@ -208,7 +208,7 @@ namespace argos {
    /****************************************/
 
    static bool CalculateClosestCollision(CSpace::SEntityIntersectionItem<CEmbodiedEntity>& s_data,
-                                         const CRay& c_ray,
+                                         const CRay3& c_ray,
                                          const TEmbodiedEntitySet& set_found_entities) {
       /* Look for the first entity that actually intersects the ray */
       Real fLowestTSoFar = 0.0f;
@@ -246,7 +246,7 @@ namespace argos {
    /****************************************/
 
    bool CSpace::GetClosestEmbodiedEntityIntersectedByRay(CSpace::SEntityIntersectionItem<CEmbodiedEntity>& s_data,
-                                                         const CRay& c_ray,
+                                                         const CRay3& c_ray,
                                                          const TEmbodiedEntitySet& set_ignored_entities) {
       return (*m_pcRayEmbodiedEntityIntersectionMethod)(s_data, c_ray, set_ignored_entities);
    }
@@ -730,7 +730,7 @@ namespace argos {
    /****************************************/
 
    bool CSpace::GetClosestEmbodiedEntityIntersectedByRaySpaceHash(SEntityIntersectionItem<CEmbodiedEntity>& s_data,
-                                                                  const CRay& c_ray,
+                                                                  const CRay3& c_ray,
                                                                   const TEmbodiedEntitySet& set_ignored_entities) {
       /* Buffer for embodied entities found along the ray */
       TEmbodiedEntitySet tFoundEntities;
@@ -982,7 +982,7 @@ namespace argos {
    /****************************************/
 
    bool CSpace::GetClosestEmbodiedEntityIntersectedByRayEntitySweep(SEntityIntersectionItem<CEmbodiedEntity>& s_data,
-                                                                    const CRay& c_ray,
+                                                                    const CRay3& c_ray,
                                                                     const TEmbodiedEntitySet& set_ignored_entities) {
       return false;
    }

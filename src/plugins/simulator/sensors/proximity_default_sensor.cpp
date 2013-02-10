@@ -95,7 +95,7 @@ namespace argos {
    
    void CProximityDefaultSensor::Update() {
       /* Ray used for scanning the environment for obstacles */
-      CRay cScanningRay;
+      CRay3 cScanningRay;
       CVector3 cRayStart, cRayEnd;
       /* Buffers to contain data about the intersection */
       CSpace::SEntityIntersectionItem<CEmbodiedEntity> sIntersection;

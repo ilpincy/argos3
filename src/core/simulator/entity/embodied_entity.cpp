@@ -126,7 +126,7 @@ namespace argos {
    /****************************************/
 
    bool CEmbodiedEntity::CheckIntersectionWithRay(Real& f_distance,
-                                                  const CRay& c_ray) const {
+                                                  const CRay3& c_ray) const {
       for(UInt32 i = 0; i < m_tPhysicsEngineEntityVector.size(); ++i)
          if(m_tPhysicsEngineEntityVector[i]->CheckIntersectionWithRay(f_distance, c_ray)) {
             return true;

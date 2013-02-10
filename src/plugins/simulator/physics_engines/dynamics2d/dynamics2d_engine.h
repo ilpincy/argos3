@@ -12,6 +12,7 @@ namespace argos {
    class CGripperEquippedEntity;
 }
 
+#include <argos3/core/utility/math/ray2.h>
 #include <argos3/core/simulator/entity/controllable_entity.h>
 #include <argos3/core/simulator/physics_engine/physics_engine.h>
 #include <argos3/plugins/simulator/physics_engines/dynamics2d/dynamics2d_entity.h>
@@ -56,7 +57,7 @@ namespace argos {
       };
 
       struct SBoundarySegment {
-         CSegment Segment;
+         CRay2 Segment;
          enum {
             SEGMENT_TYPE_WALL,
             SEGMENT_TYPE_GATE

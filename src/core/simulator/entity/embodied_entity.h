@@ -14,7 +14,7 @@ namespace argos {
 
 #include <argos3/core/simulator/entity/positional_entity.h>
 #include <argos3/core/simulator/space/space_hash.h>
-#include <argos3/core/utility/math/ray.h>
+#include <argos3/core/utility/math/ray3.h>
 #include <argos3/core/utility/math/quaternion.h>
 #include <argos3/core/simulator/physics_engine/physics_engine.h>
 #include <argos3/core/simulator/physics_engine/physics_engine_entity.h>
@@ -92,7 +92,7 @@ namespace argos {
       const CPhysicsEngineEntity& GetPhysicsEngineEntity(const std::string& str_engine_id) const;
 
       virtual bool CheckIntersectionWithRay(Real& f_distance,
-                                            const CRay& c_ray) const;
+                                            const CRay3& c_ray) const;
 
       virtual bool MoveTo(const CVector3& c_position,
                           const CQuaternion& c_orientation,

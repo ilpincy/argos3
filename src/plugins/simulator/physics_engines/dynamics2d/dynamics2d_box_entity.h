@@ -21,7 +21,7 @@ namespace argos {
       virtual ~CDynamics2DBoxEntity();
 
       virtual bool CheckIntersectionWithRay(Real& f_t_on_ray,
-                                            const CRay& c_ray) const;
+                                            const CRay3& c_ray) const;
 
       virtual bool MoveTo(const CVector3& c_position,
                           const CQuaternion& c_orientation,

@@ -12,7 +12,7 @@
 namespace argos {
    class CPhysicsEngineEntity;
    class CEmbodiedEntity;
-   class CRay;
+   class CRay3;
    class CVector3;
    class CQuaternion;
 }
@@ -42,7 +42,7 @@ namespace argos {
       }
 
       virtual bool CheckIntersectionWithRay(Real& f_t_on_ray,
-                                            const CRay& c_ray) const = 0;
+                                            const CRay3& c_ray) const = 0;
 
       virtual bool MoveTo(const CVector3& c_position,
                           const CQuaternion& c_orientation,

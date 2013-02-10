@@ -15,7 +15,7 @@ namespace argos {
 
 #include <argos3/core/simulator/entity/entity.h>
 #include <argos3/core/control_interface/ci_controller.h>
-#include <argos3/core/utility/math/ray.h>
+#include <argos3/core/utility/math/ray3.h>
 
 namespace argos {
 
@@ -73,18 +73,18 @@ namespace argos {
       }
 
       inline void AddCheckedRay(bool b_obstructed,
-                                const CRay& c_ray) {
+                                const CRay3& c_ray) {
          m_vecCheckedRays.push_back(std::make_pair(b_obstructed, c_ray));
       }
 
-      inline void AddIntersectionPoint(const CRay& c_ray,
+      inline void AddIntersectionPoint(const CRay3& c_ray,
                                        Real f_t_on_ray) {
          CVector3 cPoint;
          c_ray.GetPoint(cPoint, f_t_on_ray);
          m_vecIntersectionPoints.push_back(cPoint);
       }
 
-      inline std::vector<std::pair<bool, CRay> >& GetCheckedRays() {
+      inline std::vector<std::pair<bool, CRay3> >& GetCheckedRays() {
          return m_vecCheckedRays;
       }
 
@@ -99,7 +99,7 @@ namespace argos {
       std::map<std::string, CSimulatedActuator*> m_mapActuators;
       std::map<std::string, CSimulatedSensor*> m_mapSensors;
 
-      std::vector<std::pair<bool, CRay> > m_vecCheckedRays;
+      std::vector<std::pair<bool, CRay3> > m_vecCheckedRays;
       std::vector<CVector3> m_vecIntersectionPoints;
 
    };

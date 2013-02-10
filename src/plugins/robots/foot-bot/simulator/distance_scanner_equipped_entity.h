@@ -13,7 +13,6 @@ namespace argos {
 
 #include <argos3/core/simulator/entity/entity.h>
 #include <argos3/core/utility/math/vector3.h>
-#include <argos3/core/utility/math/ray.h>
 
 namespace argos {
 

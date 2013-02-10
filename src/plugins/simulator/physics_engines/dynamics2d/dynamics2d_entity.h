@@ -33,7 +33,7 @@ namespace argos {
       virtual ~CDynamics2DEntity() {}
 
       virtual bool CheckIntersectionWithRay(Real& f_distance,
-                                            const CRay& c_ray) const = 0;
+                                            const CRay3& c_ray) const = 0;
 
       virtual bool MoveTo(const CVector3& c_position,
                           const CQuaternion& c_orientation,

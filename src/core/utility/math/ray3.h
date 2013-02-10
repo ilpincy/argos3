@@ -1,36 +1,35 @@
-
 /**
- * @file <argos3/core/utility/math/ray.h>
+ * @file <argos3/core/utility/math/ray3.h>
  *
  * @author Carlo Pinciroli <ilpincy@gmail.com>
  */
-#ifndef CRAY_H
-#define CRAY_H
+
+#ifndef RAY3_H
+#define RAY3_H
 
 namespace argos {
-   class CRay;
+   class CRay3;
 }
 
 #include <argos3/core/utility/math/vector3.h>
-#include <argos3/core/utility/math/segment.h>
 
 namespace argos {
 
-   class CRay {
+   class CRay3 {
 
    public:
 
-      CRay() {
+      CRay3() {
       }
 
-      CRay(const CVector3& c_start,
-           const CVector3& c_end) :
+      CRay3(const CVector3& c_start,
+            const CVector3& c_end) :
          m_cStart(c_start), m_cEnd(c_end) {
       }
 
-      CRay(const CVector3& c_start,
-           const CVector3& c_direction,
-           Real f_length) {
+      CRay3(const CVector3& c_start,
+            const CVector3& c_direction,
+            Real f_length) {
          Set(c_start, c_direction, f_length);
       }
 
@@ -95,34 +94,20 @@ namespace argos {
       inline void GetPoint(CVector3& c_point,
                            Real f_t) const {
          ARGOS_ASSERT(f_t >= 0.0f && f_t <= 1.0f,
-                      "CRay::GetPoint(): the f_t parameter must be in the range [0:1], but f_t = " << f_t);
+                      "CRay3::GetPoint(): the f_t parameter must be in the range [0:1], but f_t = " << f_t);
          c_point.SetX(m_cStart.GetX() + f_t * (m_cEnd.GetX() - m_cStart.GetX()));
          c_point.SetY(m_cStart.GetY() + f_t * (m_cEnd.GetY() - m_cStart.GetY()));
          c_point.SetZ(m_cStart.GetZ() + f_t * (m_cEnd.GetZ() - m_cStart.GetZ()));
       }
 
-      /* Returns the distance from the ray start to the point on the line corresponding to f_t,
+      /* Returns the distance from the ray3 start to the point on the line corresponding to f_t,
          which is in the range [0:1] */
       inline Real GetDistance(Real f_t) const {
          ARGOS_ASSERT(f_t >= 0.0f && f_t <= 1.0f,
-                      "CRay::GetDistance(): the f_t parameter must be in the range [0:1], but f_t = " << f_t);
+                      "CRay3::GetDistance(): the f_t parameter must be in the range [0:1], but f_t = " << f_t);
          return ::sqrt(Square(f_t * (m_cEnd.GetX() - m_cStart.GetX())) +
                        Square(f_t * (m_cEnd.GetY() - m_cStart.GetY())) +
                        Square(f_t * (m_cEnd.GetZ() - m_cStart.GetZ())));
-      }
-
-      /* Return a segment that is the projection of the ray onto the
-	 specified plane */
-      inline CSegment ProjectOntoXY() const {
-	return CSegment(m_cStart.ProjectOntoXY(),m_cEnd.ProjectOntoXY());
-      }
-
-      inline CSegment ProjectOntoXZ() const {
-	return CSegment(m_cStart.ProjectOntoXZ(),m_cEnd.ProjectOntoXZ());
-      }
-
-      inline CSegment ProjectOntoYZ() const {
-	return CSegment(m_cStart.ProjectOntoYZ(),m_cEnd.ProjectOntoYZ());
       }
 
    private:

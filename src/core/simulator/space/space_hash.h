@@ -10,12 +10,10 @@
 namespace argos {
    class CSpace;
    class CVector3;
-   class CRay;
+   class CRay3;
 }
 
-#include <argos3/core/utility/datatypes/datatypes.h>
-#include <argos3/core/utility/math/vector3.h>
-#include <argos3/core/utility/math/ray.h>
+#include <argos3/core/utility/math/ray3.h>
 #include <tr1/unordered_set>
 
 namespace argos {
