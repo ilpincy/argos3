@@ -239,6 +239,10 @@ namespace argos {
          cpBodySetAngle(m_ptActualBaseBody, fOldA);
       }
       else {
+         /* Zero speed and applied forces of base control body */
+         m_ptControlBaseBody->v = cpvzero;
+         m_ptControlBaseBody->w = 0.0f;
+         cpBodyResetForces(m_ptControlBaseBody);
          /* Update the active space hash if the movement is actual */
          cpSpaceReindexShape(m_cEngine.GetPhysicsSpace(), m_ptBaseShape);
       }
