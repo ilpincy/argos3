@@ -15,7 +15,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   static CRange<Real> UNIT(0.0f, 0.1f);
+   static CRange<Real> UNIT(0.0f, 1.0f);
 
    /****************************************/
    /****************************************/
@@ -121,7 +121,7 @@ namespace argos {
                                                             sIntersection.TOnRay);
                m_pcControllableEntity->AddCheckedRay(true, cScanningRay);
             }
-            CalculateReading(cScanningRay.GetDistance(sIntersection.TOnRay));
+            m_tReadings[i] = CalculateReading(cScanningRay.GetDistance(sIntersection.TOnRay));
          }
          else {
             /* No intersection */
