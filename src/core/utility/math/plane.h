@@ -5,7 +5,7 @@ namespace argos {
    class CPlane;
 }
 
-#include <argos3/utility/math/vector3.h>
+#include <argos3/core/utility/math/vector3.h>
 
 namespace argos {
 
@@ -21,7 +21,7 @@ namespace argos {
          m_cPosition(c_position),
          m_cNormal(c_normal) {}
 
-      ~Plane() {}
+      ~CPlane() {}
 
       inline const CVector3& GetPosition() const {
          return m_cPosition;
@@ -47,3 +47,5 @@ namespace argos {
    };
 
 }
+
+#endif

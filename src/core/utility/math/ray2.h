@@ -89,21 +89,15 @@ namespace argos {
          c_buffer -= m_cStart;
       }
 
-      /* Returns the point on the line corresponding to f_t,
-         which is in the range [0:1] */
+      /* Returns the point on the line corresponding to f_t */
       inline void GetPoint(CVector2& c_point,
                            Real f_t) const {
-         ARGOS_ASSERT(f_t >= 0.0f && f_t <= 1.0f,
-                      "CRay2::GetPoint(): the f_t parameter must be in the range [0:1], but f_t = " << f_t);
          c_point.SetX(m_cStart.GetX() + f_t * (m_cEnd.GetX() - m_cStart.GetX()));
          c_point.SetY(m_cStart.GetY() + f_t * (m_cEnd.GetY() - m_cStart.GetY()));
       }
 
-      /* Returns the distance from the ray2 start to the point on the line corresponding to f_t,
-         which is in the range [0:1] */
+      /* Returns the distance from the ray2 start to the point on the line corresponding to f_t */
       inline Real GetDistance(Real f_t) const {
-         ARGOS_ASSERT(f_t >= 0.0f && f_t <= 1.0f,
-                      "CRay2::GetDistance(): the f_t parameter must be in the range [0:1], but f_t = " << f_t);
          return ::sqrt(Square(f_t * (m_cEnd.GetX() - m_cStart.GetX())) +
                        Square(f_t * (m_cEnd.GetY() - m_cStart.GetY())));
       }

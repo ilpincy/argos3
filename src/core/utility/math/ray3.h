@@ -9,6 +9,7 @@
 
 namespace argos {
    class CRay3;
+   class CPlane;
 }
 
 #include <argos3/core/utility/math/vector3.h>
@@ -82,33 +83,37 @@ namespace argos {
          return (m_cEnd - m_cStart).Length();
       }
 
-      inline void ToVector(CVector3& c_buffer) const {
+      inline CVector3& ToVector(CVector3& c_buffer) const {
          /* Same as, but faster than
             c_buffer = m_cEnd - m_cStart; */
          c_buffer = m_cEnd;
          c_buffer -= m_cStart;
+         return c_buffer;
       }
 
-      /* Returns the point on the line corresponding to f_t,
-         which is in the range [0:1] */
+      /* Returns the point on the line corresponding to f_t */
       inline void GetPoint(CVector3& c_point,
                            Real f_t) const {
-         ARGOS_ASSERT(f_t >= 0.0f && f_t <= 1.0f,
-                      "CRay3::GetPoint(): the f_t parameter must be in the range [0:1], but f_t = " << f_t);
          c_point.SetX(m_cStart.GetX() + f_t * (m_cEnd.GetX() - m_cStart.GetX()));
          c_point.SetY(m_cStart.GetY() + f_t * (m_cEnd.GetY() - m_cStart.GetY()));
          c_point.SetZ(m_cStart.GetZ() + f_t * (m_cEnd.GetZ() - m_cStart.GetZ()));
       }
 
-      /* Returns the distance from the ray3 start to the point on the line corresponding to f_t,
-         which is in the range [0:1] */
+      /* Returns the distance from the ray3 start to the point on the line corresponding to f_t */
       inline Real GetDistance(Real f_t) const {
-         ARGOS_ASSERT(f_t >= 0.0f && f_t <= 1.0f,
-                      "CRay3::GetDistance(): the f_t parameter must be in the range [0:1], but f_t = " << f_t);
          return ::sqrt(Square(f_t * (m_cEnd.GetX() - m_cStart.GetX())) +
                        Square(f_t * (m_cEnd.GetY() - m_cStart.GetY())) +
                        Square(f_t * (m_cEnd.GetZ() - m_cStart.GetZ())));
       }
+
+      /*
+       * Calculates the ray-plane intersection point.
+       * @param c_plane The plane whose intersection with this ray must be calculated
+       * @param c_point The resulting intersection point is returned here
+       * @return true if intersection occurred, false if ray and plane are parallel or ray lies on plane
+       */
+      bool Intersects(const CPlane& c_plane,
+                      CVector3& c_point) const;
 
    private:
 

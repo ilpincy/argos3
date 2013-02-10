@@ -129,6 +129,7 @@ set(ARGOS3_SOURCES_CORE
   utility/math/angles.cpp
   utility/math/vector2.cpp
   utility/math/vector3.cpp
+  utility/math/ray3.cpp
   utility/math/rng.cpp
   utility/math/matrix/rotationmatrix3.cpp
   utility/math/matrix/rotationmatrix2.cpp

@@ -169,6 +169,20 @@ namespace argos {
 
       CVector3& Rotate(const CQuaternion& c_quaternion);
 
+      inline CRadians GetAngleWith(const CVector3& c_other) {
+         return CRadians(ACos(DotProduct(c_other) /
+                              (Length() *
+                               c_other.Length())));
+      }
+
+      inline CRadians GetXAngle() const {
+         return ATan2(m_fZ, m_fY);
+      }
+
+      inline CRadians GetYAngle() const {
+         return ATan2(m_fX, m_fZ);
+      }
+
       inline CRadians GetZAngle() const {
          return ATan2(m_fY, m_fX);
       }

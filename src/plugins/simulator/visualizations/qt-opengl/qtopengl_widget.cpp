@@ -9,9 +9,11 @@
 #include "qtopengl_user_functions.h"
 
 #include <argos3/core/utility/logging/argos_log.h>
+#include <argos3/core/utility/math/plane.h>
 #include <argos3/core/simulator/simulator.h>
 #include <argos3/core/simulator/space/space.h>
 #include <argos3/core/simulator/entity/floor_entity.h>
+#include <argos3/core/simulator/entity/composable_entity.h>
 
 #include <QDir>
 #include <QToolTip>
@@ -597,23 +599,28 @@ namespace argos {
 
    void CQTOpenGLWidget::mouseMoveEvent(QMouseEvent* pc_event) {
       if(m_bMouseGrabbed) {
-         if(pc_event->buttons() == Qt::LeftButton) {
-            if (m_bInvertMouse) m_cCamera.Rotate( pc_event->pos() - m_cMouseGrabPos);
-            else m_cCamera.Rotate( m_cMouseGrabPos - pc_event->pos());
-            m_cMouseGrabPos = pc_event->pos();
-            DrawScene();
-         }
-         else if(pc_event->buttons() == Qt::RightButton) {
-            QPoint cDelta(pc_event->pos() - m_cMouseGrabPos);
-            m_cCamera.Move(-cDelta.y(), cDelta.x(), 0);
-            m_cMouseGrabPos = pc_event->pos();
-            DrawScene();
-         }
-         else if(pc_event->buttons() == Qt::MidButton) {
-            QPoint cDelta(pc_event->pos() - m_cMouseGrabPos);
-            m_cCamera.Move(0, 0, cDelta.y());
-            m_cMouseGrabPos = pc_event->pos();
-            DrawScene();
+         if(! (pc_event->modifiers() & Qt::ControlModifier)) {
+            /*
+             * Camera movement
+             */
+            if(pc_event->buttons() == Qt::LeftButton) {
+               if (m_bInvertMouse) m_cCamera.Rotate( pc_event->pos() - m_cMouseGrabPos);
+               else m_cCamera.Rotate( m_cMouseGrabPos - pc_event->pos());
+               m_cMouseGrabPos = pc_event->pos();
+               DrawScene();
+            }
+            else if(pc_event->buttons() == Qt::RightButton) {
+               QPoint cDelta(pc_event->pos() - m_cMouseGrabPos);
+               m_cCamera.Move(-cDelta.y(), cDelta.x(), 0);
+               m_cMouseGrabPos = pc_event->pos();
+               DrawScene();
+            }
+            else if(pc_event->buttons() == Qt::MidButton) {
+               QPoint cDelta(pc_event->pos() - m_cMouseGrabPos);
+               m_cCamera.Move(0, 0, cDelta.y());
+               m_cMouseGrabPos = pc_event->pos();
+               DrawScene();
+            }
          }
       }
    }
@@ -637,7 +644,39 @@ namespace argos {
    /****************************************/
 
    void CQTOpenGLWidget::mouseReleaseEvent(QMouseEvent* pc_event) {
-      m_bMouseGrabbed = false;
+      if(m_bMouseGrabbed &&
+         m_sSelectionInfo.IsSelected &&
+         pc_event->modifiers() & Qt::ControlModifier) {
+         m_bMouseGrabbed = false;
+         CPositionalEntity* pcPosEntity = dynamic_cast<CPositionalEntity*>(
+            m_cSpace.GetRootEntityVector()[m_sSelectionInfo.Index]);
+         if(pcPosEntity == NULL) {
+            CComposableEntity* pcCompEntity = dynamic_cast<CComposableEntity*>(
+               m_cSpace.GetRootEntityVector()[m_sSelectionInfo.Index]);
+            if(pcCompEntity->HasComponent("position")) {
+               pcPosEntity = &pcCompEntity->GetComponent<CPositionalEntity>("position");
+            }
+            else if(pcCompEntity->HasComponent("body")) {
+               pcPosEntity = &pcCompEntity->GetComponent<CPositionalEntity>("body");
+            }
+            else {
+               return;
+            }
+         }
+         CPlane cXYPlane(pcPosEntity->GetPosition(), CVector3::Z);
+         CRay3 cMouseRay = GetCamera().
+            ProjectRayFromMousePosIntoWorld(pc_event->pos().x(),
+                                            pc_event->pos().y());
+         CVector3 cNewPos;
+         if(cMouseRay.Intersects(cXYPlane, cNewPos)) {
+            pcPosEntity->MoveTo(cNewPos,
+                                pcPosEntity->GetOrientation());
+            DrawScene();
+         }
+      }
+      else {
+         m_bMouseGrabbed = false;
+      }
    }
 
    /****************************************/

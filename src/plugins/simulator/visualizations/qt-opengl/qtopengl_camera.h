@@ -15,7 +15,7 @@ class QPoint;
 
 #include <QObject>
 #include <argos3/core/utility/datatypes/datatypes.h>
-#include <argos3/core/utility/math/vector3.h>
+#include <argos3/core/utility/math/ray3.h>
 #include <argos3/core/utility/configuration/argos_configuration.h>
 
 #ifdef __APPLE__
@@ -107,6 +107,12 @@ namespace argos {
          return m_sSettings[m_unActiveSettings].LensFocalLength;
       }
 
+      CVector3 GetMousePosInWorld(SInt32 n_x,
+                                  SInt32 n_y) const;
+
+      CRay3 ProjectRayFromMousePosIntoWorld(SInt32 n_x,
+                                            SInt32 n_y) const;
+      
       void Rotate(const QPoint& c_delta);
 
       void Move(SInt32 n_forwards_backwards,

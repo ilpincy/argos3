@@ -81,35 +81,52 @@ namespace argos {
       /* Rotate around the local Y axis (Left)
          The rotation matrix corresponding to this rotation is:
          
-         | Fcos(a)-Usin(a)   L   Fsin(a)+Ucos(a) |
+         | Fcos(a)-Usin(a)   L   Ucos(a)+Fsin(a) |
          
          where a is c_angle
          L is the Left vector (local Y)
          U is the Up vector (local Z)
          F is the Forward vector (local X)
       */
-
-      /* Calculate the new Forward vector, given by:
-         Fcos(a)-Usin(a)
+      /* Calculate the new Up vector, given by:
+         Ucos(a)+Fsin(a)
       */
       /* Same, but faster than
-         Forward = Forward * Cos(c_angle) - Up * Sin(c_angle);
+         cNewUp = Up * Cos(c_angle) + Forward * Sin(c_angle);
       */
-      Forward *= Cos(c_angle);
-      Forward -= Up * Sin(c_angle);
-      Forward.Normalize();
-      /* Now calculate the new Up vector with a cross product
-         NOTE: the Left vector, being the rotation axis, remains
-         unchanged!
-      */
-      Up = Forward;
-      Up.CrossProduct(Left).Normalize();
-      /* Finally, update the Target vector */
-      /* Same, but faster than
-         Target = Position + Forward;
-         Target = Position;
-         Target += Forward;
-      */
+      CVector3 cNewUp(Up);
+      cNewUp *= Cos(c_angle);
+      cNewUp += Forward * Sin(c_angle);
+      /* Check whether the rotation exceeds the limits */
+      if(cNewUp.GetAngleWith(CVector3::Z) > CRadians::PI_OVER_TWO) {
+         /*
+          * The rotation exceeds the limits
+          * The camera Up vector would form an angle bigger than 90 degrees with
+          * the global Z axis
+          */
+         /* We force the Up vector to lie on the XY plane */
+         Up.SetZ(0.0f);
+         Up.Normalize();
+         if(Forward.GetZ() < 0.0f) {
+            /* Forward was looking down, set it to -Z */
+            Forward = -CVector3::Z;
+         }
+         else {
+            /* Forward was looking up, set it to Z */
+            Forward = CVector3::Z;
+         }
+      }
+      else {
+         /* The rotation is OK */
+         Up = cNewUp;
+         Up.Normalize();
+         /* Now calculate the new Forward vector with a cross product
+            NOTE: the Left vector, being the rotation axis, remains
+            unchanged!
+         */
+         Forward = Left;
+         Forward.CrossProduct(Up).Normalize();
+      }
    }
 
    /****************************************/
@@ -142,12 +159,6 @@ namespace argos {
       */
       Left = Up;
       Left.CrossProduct(Forward).Normalize();
-      /* Finally, update the Target vector */
-      /* Same, but faster than
-         Target = Position + Forward;
-         Target = Position;
-         Target += Forward;
-      */
    }
 
    /****************************************/
@@ -225,13 +236,6 @@ namespace argos {
          /* To calculate the new Up vector, a cross-product is enough */
          Up = Forward;
          Up.CrossProduct(Left).Normalize();
-         
-         /* Finally, update the Target vector */
-         /* Same, but faster than
-            Target = Position + Forward;
-            Target = Position;
-            Target += Forward;
-         */
       }
    }
 
@@ -293,15 +297,91 @@ namespace argos {
 
    void CQTOpenGLCamera::Rotate(const QPoint& c_delta) {
       m_sSettings[m_unActiveSettings]
-         .RotateLeftRight2(CRadians(-m_sSettings[m_unActiveSettings].RotationSensitivity * c_delta.x()));
-      m_sSettings[m_unActiveSettings]
          .RotateUpDown(CRadians(m_sSettings[m_unActiveSettings].RotationSensitivity * c_delta.y()));
+      m_sSettings[m_unActiveSettings]
+         .RotateLeftRight2(CRadians(-m_sSettings[m_unActiveSettings].RotationSensitivity * c_delta.x()));
       m_sSettings[m_unActiveSettings]
          .Target = m_sSettings[m_unActiveSettings].Position;
       m_sSettings[m_unActiveSettings]
          .Target += m_sSettings[m_unActiveSettings].Forward;
    }
    
+   /****************************************/
+   /****************************************/
+
+   CVector3 CQTOpenGLCamera::GetMousePosInWorld(SInt32 n_x,
+                                                SInt32 n_y) const {
+      /* Get current viewport */
+      GLint nViewport[4];
+      glGetIntegerv(GL_VIEWPORT, nViewport);
+      /* Get OpenGL matrices */
+      GLdouble fModelViewMatrix[16];
+      GLdouble fProjectionMatrix[16];
+      glGetDoublev(GL_MODELVIEW_MATRIX, fModelViewMatrix);
+      glGetDoublev(GL_PROJECTION_MATRIX, fProjectionMatrix);
+      /*
+       * Convert mouse position in window into a 3D representation
+       */
+      /* The x coordinate stays the same */
+      GLfloat fWinX = n_x;
+      /* The y coordinate of the window is top-left; in OpenGL is bottom-left */
+      GLfloat fWinY = nViewport[3] - n_y;
+      /* Read the z coordinate from the depth buffer in the back buffer */
+      GLfloat fWinZ;
+      glReadBuffer(GL_BACK);
+      glReadPixels(n_x, (GLint)fWinY, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &fWinZ);
+      /* Get the actual position in the world */
+      GLdouble fWorldX, fWorldY, fWorldZ;
+      gluUnProject(fWinX, fWinY, fWinZ,
+                   fModelViewMatrix, fProjectionMatrix, nViewport,
+                   &fWorldX, &fWorldY, &fWorldZ);
+      /*
+       * Swap coordinates when creating the ray
+       * In ARGoS, the up vector is the Z-axis, while in OpenGL it is the Y-axis
+       */
+      return CVector3(fWorldX, fWorldZ, fWorldY);
+   }
+
+   /****************************************/
+   /****************************************/
+
+   CRay3 CQTOpenGLCamera::ProjectRayFromMousePosIntoWorld(SInt32 n_x,
+                                                          SInt32 n_y) const {
+      /* Get current viewport */
+      GLint nViewport[4];
+      glGetIntegerv(GL_VIEWPORT, nViewport);
+      /* Get OpenGL matrices */
+      GLdouble fModelViewMatrix[16];
+      GLdouble fProjectionMatrix[16];
+      glGetDoublev(GL_MODELVIEW_MATRIX, fModelViewMatrix);
+      glGetDoublev(GL_PROJECTION_MATRIX, fProjectionMatrix);
+      /*
+       * Convert mouse position in window into OpenGL representation
+       */
+      /* The x coordinate stays the same */
+      GLfloat fWinX = n_x;
+      /* The y coordinate of the window is top-left; in OpenGL is bottom-left */
+      GLfloat fWinY = nViewport[3] - n_y;
+      /*
+       * Get the position of the ray start in the world
+       * The ray starts at the near clipping plane (depth = 0.0f)
+       */
+      GLdouble fRayStartX, fRayStartY, fRayStartZ;
+      gluUnProject(fWinX, fWinY, 0.0f,
+                   fModelViewMatrix, fProjectionMatrix, nViewport,
+                   &fRayStartX, &fRayStartY, &fRayStartZ);
+      /*
+       * Get the position of the ray end in the world
+       * The ray starts at the far clipping plane (depth = 1.0f)
+       */
+      GLdouble fRayEndX, fRayEndY, fRayEndZ;
+      gluUnProject(fWinX, fWinY, 1.0f,
+                   fModelViewMatrix, fProjectionMatrix, nViewport,
+                   &fRayEndX, &fRayEndY, &fRayEndZ);
+      return CRay3(CVector3(fRayStartX, fRayStartY, fRayStartZ),
+                   CVector3(fRayEndX, fRayEndY, fRayEndZ));
+   }
+
    /****************************************/
    /****************************************/
 
