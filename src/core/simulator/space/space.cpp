@@ -277,24 +277,24 @@ namespace argos {
       /* Update medium entities */
       UpdateMediumEntities();
       /* @todo remove this, it's only for debugging */
-      LOGERR << "[t=" << m_unSimulationClock << "]" << std::endl;
-      LOGERR << "ALL ENTITIES" << std::endl;
-      for(CEntity::TVector::iterator it = m_vecEntities.begin();
-          it != m_vecEntities.end();
-          ++it) {
-         LOGERR << "   "
-                << (*it)->GetId()
-                << std::endl;
-      }
-      LOGERR << "ROOT ENTITIES" << std::endl;
-      for(CEntity::TVector::iterator it = m_vecRootEntities.begin();
-          it != m_vecRootEntities.end();
-          ++it) {
-         LOGERR << "   "
-                << (*it)->GetId()
-                << std::endl;
-      }
-      LOGERR << std::endl;
+      // LOGERR << "[t=" << m_unSimulationClock << "]" << std::endl;
+      // LOGERR << "ALL ENTITIES" << std::endl;
+      // for(CEntity::TVector::iterator it = m_vecEntities.begin();
+      //     it != m_vecEntities.end();
+      //     ++it) {
+      //    LOGERR << "   "
+      //           << (*it)->GetId()
+      //           << std::endl;
+      // }
+      // LOGERR << "ROOT ENTITIES" << std::endl;
+      // for(CEntity::TVector::iterator it = m_vecRootEntities.begin();
+      //     it != m_vecRootEntities.end();
+      //     ++it) {
+      //    LOGERR << "   "
+      //           << (*it)->GetId()
+      //           << std::endl;
+      // }
+      // LOGERR << std::endl;
    }
 
    /****************************************/
@@ -339,16 +339,17 @@ namespace argos {
    /****************************************/
 
    void CSpace::UpdateSpaceData() {
+      /** @todo remove these */
       if(IsUsingSpaceHash()) {
          m_pcEmbodiedEntitiesSpaceHash->Update();
-         LOGERR << "*** EMBODIED ENTITIES ***" << std::endl;
-         m_pcEmbodiedEntitiesSpaceHash->Dump(LOGERR);
+         // LOGERR << "*** EMBODIED ENTITIES ***" << std::endl;
+         // m_pcEmbodiedEntitiesSpaceHash->Dump(LOGERR);
          m_pcLEDEntitiesSpaceHash->Update();
-         LOGERR << "*** LED ENTITIES ***" << std::endl;
-         m_pcLEDEntitiesSpaceHash->Dump(LOGERR);
+         // LOGERR << "*** LED ENTITIES ***" << std::endl;
+         // m_pcLEDEntitiesSpaceHash->Dump(LOGERR);
          m_pcRABEquippedEntitiesSpaceHash->Update();
-         LOGERR << "*** RAB ENTITIES ***" << std::endl;
-         m_pcRABEquippedEntitiesSpaceHash->Dump(LOGERR);
+         // LOGERR << "*** RAB ENTITIES ***" << std::endl;
+         // m_pcRABEquippedEntitiesSpaceHash->Dump(LOGERR);
       }
    }
 
