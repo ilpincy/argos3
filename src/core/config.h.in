@@ -1,7 +1,14 @@
 /*
- * System-dependent extension for dynamic libraries
+ * Whether the build was done with dynamic loading or not
  */
-#define ARGOS_DYNAMIC_LIBRARY_EXTENSION "@ARGOS_DYNAMIC_LIBRARY_EXTENSION@"
+#cmakedefine ARGOS_DYNAMIC_LIBRARY_LOADING
+
+#ifdef ARGOS_DYNAMIC_LIBRARY_LOADING
+   /*
+    * System-dependent extension for dynamic libraries
+    */
+#  define ARGOS_DYNAMIC_LIBRARY_EXTENSION "@ARGOS_DYNAMIC_LIBRARY_EXTENSION@"
+#endif
 
 /*
  * Install prefix for ARGoS
@@ -12,3 +19,13 @@
  * Whether on not to use double
  */
 #cmakedefine ARGOS_USE_DOUBLE
+
+/*
+ * Whether Lua was found or not
+ */
+#cmakedefine LUA_FOUND
+
+/*
+ * Whether to use the ARGoS threadsafe log
+ */
+#cmakedefine ARGOS_THREADSAFE_LOG

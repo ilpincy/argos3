@@ -27,9 +27,6 @@ option(ARGOS_THREADSAFE_LOG "ON -> compile thread-safe version of log, OFF -> co
 if((NOT ARGOS_THREADSAFE_LOG) AND (ARGOS_BUILD_FOR STREQUAL "SIMULATOR"))
   message(FATAL_ERROR "When compiling for the simulator, ARGOS_THREADSAFE_LOG must be ON")
 endif((NOT ARGOS_THREADSAFE_LOG) AND (ARGOS_BUILD_FOR STREQUAL "SIMULATOR"))
-if(ARGOS_THREADSAFE_LOG)
-  add_definitions(-DARGOS_THREADSAFE_LOG)
-endif(ARGOS_THREADSAFE_LOG)
 
 #
 # Compile support for dynamic library loading or not

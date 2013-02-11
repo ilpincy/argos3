@@ -16,6 +16,7 @@
 #ifndef ARGOSLOG_H
 #define ARGOSLOG_H
 
+#include <argos3/core/config.h>
 #include <iomanip>
 #include <string>
 #include <iostream>
