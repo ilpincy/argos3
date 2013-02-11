@@ -18,7 +18,7 @@ namespace argos {
          lua_pushnumber(GetLuaState(), i+1);
          lua_newtable(GetLuaState());
          lua_pushstring(GetLuaState(), "angle");
-         lua_pushnumber(GetLuaState(), GetSensor().GetAngles()[i].GetValue());
+         lua_pushnumber(GetLuaState(), ToDegrees(GetSensor().GetAngles()[i]).GetValue());
          lua_settable(GetLuaState(), -3);
          lua_pushstring(GetLuaState(), "value");
          lua_pushnumber(GetLuaState(), GetSensor().GetReadings()[i]);
