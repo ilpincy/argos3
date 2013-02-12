@@ -97,11 +97,58 @@ namespace argos {
       size_t unTop = lua_gettop(pt_state);
       c_log << "Elements in stack: " << unTop << std::endl;
       for(size_t i = unTop; i > 0; --i) {
-         c_log << "[" << lua_typename(pt_state, lua_type(pt_state, i)) << "] ";
+         c_log << "#" << i << " [" << lua_typename(pt_state, lua_type(pt_state, i)) << "] ";
          PrintStackEntry(c_log, pt_state, i);
          c_log << std::endl;
       }
       c_log << "*** LUA STACK END ***" << std::endl;
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CLuaUtility::RegisterLoggerWrapper(lua_State* pt_state) {
+      lua_pushcfunction(pt_state, LOGWrapper);
+      lua_setglobal(pt_state, "log");
+      lua_pushcfunction(pt_state, LOGERRWrapper);
+      lua_setglobal(pt_state, "logerr");
+   }
+   
+   /****************************************/
+   /****************************************/
+
+   int CLuaUtility::LOGWrapper(lua_State* pt_state) {
+      return LoggerWrapper(LOG, pt_state);
+   }
+      
+   /****************************************/
+   /****************************************/
+
+   int CLuaUtility::LOGERRWrapper(lua_State* pt_state) {
+      return LoggerWrapper(LOGERR, pt_state);
+   }
+
+   /****************************************/
+   /****************************************/
+
+   int CLuaUtility::LoggerWrapper(CARGoSLog& c_log,
+                                  lua_State* pt_state) {
+      /* Get number of arguments */
+      UInt32 unArgc = lua_gettop(pt_state);
+      /* Send arguments to log one by one */
+      UInt32 unType;
+      for(UInt32 i = 1; i <= unArgc; ++i) {
+         unType = lua_type(pt_state, i);
+         switch(unType) {
+            case LUA_TBOOLEAN: c_log << lua_toboolean(pt_state, i); break;
+            case LUA_TNUMBER:  c_log << lua_tonumber (pt_state, i); break;
+            case LUA_TSTRING:  c_log << lua_tostring (pt_state, i); break;
+            default: c_log << lua_typename (pt_state, unType); break;
+         }
+      }
+      c_log << std::endl;
+      /* No result is calculated */
+      return 0;
    }
 
    /****************************************/

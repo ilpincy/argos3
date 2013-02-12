@@ -37,6 +37,8 @@ namespace argos {
          std::string strScriptFileName;
          GetNodeAttribute(t_tree, "script", strScriptFileName);
          CLuaUtility::LoadScript(m_ptLuaState, strScriptFileName);
+         /* Register functions */
+         CLuaUtility::RegisterLoggerWrapper(m_ptLuaState);
          /* Create and set variables */
          CreateLuaVariables();
          SensorReadingsToLuaVariables();
@@ -58,7 +60,7 @@ namespace argos {
       CLuaUtility::CallFunction(m_ptLuaState, "step");
       /* Set actuator variables */
       LuaVariablesToActuatorSettings();
-      CLuaUtility::PrintGlobals(LOGERR, m_ptLuaState);
+      //CLuaUtility::PrintGlobals(LOGERR, m_ptLuaState);
    }
 
    /****************************************/

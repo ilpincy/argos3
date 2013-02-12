@@ -31,7 +31,18 @@ namespace argos {
       
       static void PrintStack(CARGoSLog& c_log,
                              lua_State* pt_state);
+
+      static void RegisterLoggerWrapper(lua_State* pt_state);
       
+   private:
+      
+      static int LOGWrapper(lua_State* pt_state);
+      
+      static int LOGERRWrapper(lua_State* pt_state);
+
+      static int LoggerWrapper(CARGoSLog& c_log,
+                               lua_State* pt_state);
+
    };
 
 }
