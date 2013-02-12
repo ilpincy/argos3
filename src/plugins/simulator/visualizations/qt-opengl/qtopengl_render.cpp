@@ -1,12 +1,6 @@
 /**
  * @file <argos3/plugins/simulator/visualizations/qt-opengl/qtopengl_render.cpp>
  *
- * @brief This file contains the definition of the CRender interface.
- *
- * This file contains the definition of the CRender interface. Such interface
- * is the base for all the visualisations (OpenGL, OGRE, gnuplot, blender,
- * etc.) in ARGOS.
- *
  * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */
 
@@ -27,8 +21,6 @@ namespace argos {
 
    void CQTOpenGLRender::Init(TConfigurationNode& t_tree) {
       /* Parse options from the XML */
-      /* Splash screen */
-      GetNodeAttributeOrDefault(t_tree, "splash", m_bShowSplashScreen, true);
       /* Intel fix */
       bool bIntelFix;
       GetNodeAttributeOrDefault(t_tree, "intel_fix", bIntelFix, false);
@@ -41,7 +33,7 @@ namespace argos {
       }
       m_ppcOptions = new char*[m_nOptionNum];
       m_ppcOptions[0] = new char[6];
-      ::strcpy(m_ppcOptions[0], "argos");
+      ::strcpy(m_ppcOptions[0], "argos3");
       if(bIntelFix) {
          m_ppcOptions[1] = new char[16];
          ::strcpy(m_ppcOptions[1], "-graphicssystem");
@@ -59,19 +51,9 @@ namespace argos {
       try {
          /* Set some data about the application */
          m_pcApplication->setApplicationName("ARGoS");
-         m_pcApplication->setApplicationVersion("2.0");
+         m_pcApplication->setApplicationVersion("3.0");
          m_pcApplication->setOrganizationName("Iridia-ULB");
          m_pcApplication->setOrganizationDomain("iridia.ulb.ac.be");
-         /* Draw the splash screen, if needed */
-         QSplashScreen* pcSplashScreen = NULL;
-         if(m_bShowSplashScreen) {
-            std::string strSTDBaseDirectory(CSimulator::GetInstance().GetInstallationDirectory());
-            strSTDBaseDirectory += "/simulator/visualizations/qt-opengl/resources/";
-            QString strBaseDirectory(strSTDBaseDirectory.c_str());
-            QPixmap cPixmap(strBaseDirectory + "argos_logo.png");
-            pcSplashScreen = new QSplashScreen(cPixmap);
-            pcSplashScreen->show();
-         }
          /* Draw the main window */
          m_pcMainWindow = new CQTOpenGLMainWindow(m_tConfTree);
          m_pcMainWindow->show();
@@ -79,11 +61,6 @@ namespace argos {
          LOGERR.Flush();
          /* This effectively starts the experiment */
          m_pcApplication->exec();
-         /* Dispose of the splash screen */
-         if(m_bShowSplashScreen) {
-            pcSplashScreen->finish(m_pcMainWindow);
-            delete pcSplashScreen;
-         }
       }
       catch(CARGoSException& ex) {
          THROW_ARGOSEXCEPTION_NESTED("Error while executing the experiment.", ex);
@@ -115,17 +92,7 @@ namespace argos {
                           "    <qtopengl_render />\n"
                           "  </visualizations>\n\n"
                           "OPTIONAL XML CONFIGURATION\n\n"
-                          "The <qtopengl_render> tag has two optional attributes: 'id' and 'splash'.\n"
-                          "The attribute 'id' is ignored. It is there for compatibility with the plugin\n"
-                          "system, but it's never used.\n"
-                          "The attribute 'splash' can take as value 'true' or 'false'. When 'true' is\n"
-                          "specified, a splash screen is shown while ARGoS is loading. When 'false', the\n"
-                          "splash screen is not shown. The default, if the attribute is unspecified, is\n"
-                          "'true'. Example:\n\n"
-                          "  <visualizations>\n"
-                          "    <qtopengl_render splash=\"false\"/>\n"
-                          "  </visualizations>\n\n"
-                          "Furthermore, it is possible to set some camera parameters. There are 10 available\n"
+                          "It is possible to set some camera parameters. There are 10 available\n"
                           "cameras to use. You can switch from one to the other by clicking on the\n"
                           "graphical view (to give it focus) and then pressing the keys 0-9.\n"
                           "To configure position and orientation of specific cameras, say cameras 0 to 3,\n"
