@@ -16,7 +16,7 @@ namespace argos {
 
 namespace argos {
 
-   class CCI_LEDsActuator : virtual public CCI_Actuator {
+   class CCI_LEDsActuator : public CCI_Actuator {
 
    public:
 
@@ -85,6 +85,12 @@ namespace argos {
        * @param un_intensity color to set for each LED.
        */
       virtual void SetAllIntensities(UInt8 un_intensity);
+
+#ifdef ARGOS_WITH_LUA
+      virtual void CreateLuaVariables(lua_State* pt_lua_state);
+
+      virtual void LuaVariablesToSettings(lua_State* pt_lua_state);
+#endif
 
    protected:
 

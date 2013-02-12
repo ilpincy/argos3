@@ -12,7 +12,7 @@
   <!-- * Controllers * -->
   <!-- *************** -->
   <controllers>
-    <lua_footbot_controller id="x">
+    <lua_controller id="x">
       <actuators>
         <differential_steering implementation="default" />
         <leds implementation="default" />
@@ -27,7 +27,7 @@
                         start_angle="30" />
       </sensors>
       <params script="../../src/testing/experiment/test_script.lua" />
-    </lua_footbot_controller>
+    </lua_controller>
   </controllers>
 
   <!-- *********************** -->

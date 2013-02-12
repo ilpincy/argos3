@@ -96,9 +96,7 @@ set(ARGOS3_HEADERS_SIMULATOR_SPACE
   simulator/space/space_no_threads.h)
 # argos3/core/wrappers/lua
 set(ARGOS3_HEADERS_WRAPPERS_LUA
-  wrappers/lua/lua_actuator.h
   wrappers/lua/lua_controller.h
-  wrappers/lua/lua_sensor.h
   wrappers/lua/lua_utility.h)
 
 #

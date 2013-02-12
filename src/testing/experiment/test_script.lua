@@ -1,9 +1,9 @@
 function init()
    io.write("init");
-   footbot.wheel_speed.left = 5
-   footbot.wheel_speed.right = 5
-   footbot.leds[6].red = 255
-   footbot.leds[7].green = 255
+   robot.wheels.left = 5
+   robot.wheels.right = 5
+   robot.leds[6].red = 255
+   robot.leds[7].green = 255
 end
 
 function step()

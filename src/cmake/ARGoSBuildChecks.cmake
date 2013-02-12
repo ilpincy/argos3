@@ -99,4 +99,7 @@ find_package(ASCIIDoc)
 # Check for Lua 5.1
 #
 find_package(Lua51)
-include_directories(${LUA_INCLUDE_DIR})
+if(LUA51_FOUND)
+  set(ARGOS_WITH_LUA ON)
+  include_directories(${LUA_INCLUDE_DIR})
+endif(LUA51_FOUND)

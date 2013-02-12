@@ -16,15 +16,20 @@ namespace argos {
 
 namespace argos {
 
-   class CCI_DifferentialSteeringActuator : virtual public CCI_Actuator {
+   class CCI_DifferentialSteeringActuator : public CCI_Actuator {
 
    public:
 
-      virtual ~CCI_DifferentialSteeringActuator() {
-      }
+      virtual ~CCI_DifferentialSteeringActuator() {}
 
       virtual void SetLinearVelocity(Real f_left_velocity,
                                      Real f_right_velocity) = 0;
+
+#ifdef ARGOS_WITH_LUA
+      virtual void CreateLuaVariables(lua_State* pt_lua_state);
+
+      virtual void LuaVariablesToSettings(lua_State* pt_lua_state);
+#endif
 
    protected:
 

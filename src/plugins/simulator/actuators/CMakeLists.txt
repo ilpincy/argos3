@@ -18,7 +18,9 @@ set(ARGOS3_SOURCES_PLUGINS_SIMULATOR_ACTUATORS
 # Create entity plugin library
 #
 add_library(argos3plugin_${ARGOS_BUILD_FOR}_actuators SHARED ${ARGOS3_SOURCES_PLUGINS_SIMULATOR_ACTUATORS})
-target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_actuators argos3plugin_${ARGOS_BUILD_FOR}_entities)
+target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_actuators
+  argos3plugin_${ARGOS_BUILD_FOR}_entities
+  argos3plugin_${ARGOS_BUILD_FOR}_genericrobot)
 
 #
 # Core library installation

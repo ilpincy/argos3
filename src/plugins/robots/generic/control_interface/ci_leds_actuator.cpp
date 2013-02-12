@@ -52,4 +52,50 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+#ifdef ARGOS_WITH_LUA
+   void CCI_LEDsActuator::CreateLuaVariables(lua_State* pt_lua_state) {
+      lua_pushstring(pt_lua_state, "leds");
+      lua_newtable  (pt_lua_state);
+      for(size_t i = 0; i < GetNumLEDs(); ++i) {
+         lua_pushnumber(pt_lua_state,     i+1);
+         lua_newtable  (pt_lua_state         );
+         lua_pushstring(pt_lua_state,   "red");
+         lua_pushnumber(pt_lua_state,       0);
+         lua_settable  (pt_lua_state,      -3);
+         lua_pushstring(pt_lua_state, "green");
+         lua_pushnumber(pt_lua_state,       0);
+         lua_settable  (pt_lua_state,      -3);
+         lua_pushstring(pt_lua_state,  "blue");
+         lua_pushnumber(pt_lua_state,       0);
+         lua_settable  (pt_lua_state,      -3);
+         lua_settable  (pt_lua_state,      -3);
+      }
+      lua_settable(pt_lua_state, -3);
+   }
+#endif
+
+   /****************************************/
+   /****************************************/
+
+#ifdef ARGOS_WITH_LUA
+   void CCI_LEDsActuator::LuaVariablesToSettings(lua_State* pt_lua_state) {
+      lua_getfield(pt_lua_state, -1, "leds");
+      for(size_t i = 0; i < GetNumLEDs(); ++i) {
+         lua_pushnumber(pt_lua_state, i+1);
+         lua_gettable  (pt_lua_state, -2);
+         lua_getfield  (pt_lua_state, -1, "red");
+         lua_getfield  (pt_lua_state, -2, "green");
+         lua_getfield  (pt_lua_state, -3, "blue");
+         m_tSettings[i].Set(lua_tonumber(pt_lua_state, -3),
+                            lua_tonumber(pt_lua_state, -2),
+                            lua_tonumber(pt_lua_state, -1));
+         lua_pop(pt_lua_state, 4);
+      }
+      lua_pop(pt_lua_state, 1);
+   }
+#endif
+
+   /****************************************/
+   /****************************************/
+
 }

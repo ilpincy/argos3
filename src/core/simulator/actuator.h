@@ -8,16 +8,12 @@
 #define ACTUATOR_H
 
 namespace argos {
-   class CSimulatedActuator;
-   class CEntity;
+   class CComposableEntity;
 }
-
-#include <argos3/core/control_interface/ci_actuator.h>
-#include <argos3/core/simulator/entity/entity.h>
 
 namespace argos {
 
-   class CSimulatedActuator : virtual public CCI_Actuator {
+   class CSimulatedActuator {
 
    public:
 

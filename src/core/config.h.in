@@ -21,9 +21,9 @@
 #cmakedefine ARGOS_USE_DOUBLE
 
 /*
- * Whether Lua was found or not
+ * Whether ARGoS was compiled with Lua support
  */
-#cmakedefine LUA_FOUND
+#cmakedefine ARGOS_WITH_LUA
 
 /*
  * Whether to use the ARGoS threadsafe log

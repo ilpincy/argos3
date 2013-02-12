@@ -28,11 +28,6 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
     simulator/dynamics2d_footbot_entity.h
     simulator/footbot_entity.h)
 endif(ARGOS_BUILD_FOR_SIMULATOR)
-# argos3/plugins/robots/foot-bot/wrappers/lua
-if(LUA51_FOUND)
-  set(ARGOS3_HEADERS_PLUGINS_ROBOTS_FOOTBOT_WRAPPERS_LUA
-    wrappers/lua/lua_footbot_controller.h)
-endif(LUA51_FOUND)
 
 #
 # Foot-bot sources
@@ -68,16 +63,6 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
 endif(ARGOS_BUILD_FOR_SIMULATOR)
 
 #
-# Compile Lua 5.1 wrapping
-#
-if(LUA51_FOUND)
-  set(ARGOS3_SOURCES_PLUGINS_ROBOTS_FOOTBOT
-    ${ARGOS3_SOURCES_PLUGINS_ROBOTS_FOOTBOT}
-    ${ARGOS3_HEADERS_PLUGINS_ROBOTS_FOOTBOT_WRAPPERS_LUA}
-    wrappers/lua/lua_footbot_controller.cpp)
-endif(LUA51_FOUND)
-
-#
 # Create foot-bot plugin
 #
 add_library(argos3plugin_${ARGOS_BUILD_FOR}_footbot SHARED ${ARGOS3_SOURCES_PLUGINS_ROBOTS_FOOTBOT})
@@ -94,10 +79,6 @@ install(FILES ${ARGOS3_HEADERS_PLUGINS_ROBOTS_FOOTBOT_CONTROLINTERFACE} DESTINAT
 if(ARGOS_BUILD_FOR_SIMULATOR)
   install(FILES ${ARGOS3_HEADERS_PLUGINS_ROBOTS_FOOTBOT_SIMULATOR}      DESTINATION include/argos3/plugins/robots/foot-bot/simulator)
 endif(ARGOS_BUILD_FOR_SIMULATOR)
-
-if(LUA51_FOUND)
-  install(FILES ${ARGOS3_HEADERS_PLUGINS_ROBOTS_FOOTBOT_WRAPPERS_LUA}   DESTINATION include/argos3/plugins/robots/foot-bot/wrappers/lua)
-endif(LUA51_FOUND)
 
 install(TARGETS argos3plugin_${ARGOS_BUILD_FOR}_footbot
   RUNTIME DESTINATION bin

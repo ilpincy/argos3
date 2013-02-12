@@ -7,17 +7,13 @@
 #ifndef SENSOR_H
 #define SENSOR_H
 
-/* To avoid dependency problems when including */
 namespace argos {
-   class CAbstractSensor;
-   class CEntity;
+   class CComposableEntity;
 }
 
-#include <argos3/core/control_interface/ci_sensor.h>
-
 namespace argos {
 
-   class CSimulatedSensor : virtual public CCI_Sensor {
+   class CSimulatedSensor {
 
    public:
 

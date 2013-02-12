@@ -13,10 +13,18 @@ namespace argos {
    class CCI_Sensor;
 }
 
+#include <argos3/core/config.h>
 #include <argos3/core/utility/datatypes/datatypes.h>
 #include <argos3/core/utility/configuration/base_configurable_resource.h>
-
 #include <map>
+
+#ifdef ARGOS_WITH_LUA
+extern "C" {
+#include <lua.h>
+#include <lualib.h>
+#include <lauxlib.h>
+}
+#endif
 
 namespace argos {
 
@@ -35,6 +43,13 @@ namespace argos {
       virtual void Reset() {}
 
       virtual void Destroy() {}
+
+#ifdef ARGOS_WITH_LUA
+      virtual void CreateLuaVariables(lua_State* pt_lua_state) = 0;
+
+      virtual void ReadingsToLuaVariables(lua_State* pt_lua_state) = 0;
+#endif
+
    };
 
 }

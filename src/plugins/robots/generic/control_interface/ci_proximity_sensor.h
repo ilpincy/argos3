@@ -14,7 +14,7 @@ namespace argos {
 
 namespace argos {
 
-   class CCI_ProximitySensor : virtual public CCI_Sensor {
+   class CCI_ProximitySensor : public CCI_Sensor {
 
    public:
 
@@ -23,6 +23,12 @@ namespace argos {
       inline const std::vector<Real>& GetReadings() const {
          return m_tReadings;
       }
+
+#ifdef ARGOS_WITH_LUA
+      virtual void CreateLuaVariables(lua_State* pt_lua_state);
+
+      virtual void ReadingsToLuaVariables(lua_State* pt_lua_state);
+#endif
 
    protected:
 

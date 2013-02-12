@@ -25,6 +25,12 @@ namespace argos {
          return m_tAngles;
       }
 
+#ifdef ARGOS_WITH_LUA
+      virtual void CreateLuaVariables(lua_State* pt_lua_state);
+
+      virtual void ReadingsToLuaVariables(lua_State* pt_lua_state);
+#endif
+
    protected:
 
       std::vector<CRadians> m_tAngles;

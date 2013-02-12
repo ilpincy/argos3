@@ -32,13 +32,11 @@ namespace argos {
          return m_ptLuaState;
       }
 
-   protected:
+      virtual void CreateLuaVariables();
 
-      virtual void CreateLuaVariables() = 0;
+      virtual void SensorReadingsToLuaVariables();
 
-      virtual void SensorReadingsToLuaVariables() = 0;
-
-      virtual void LuaVariablesToActuatorSettings() = 0;
+      virtual void LuaVariablesToActuatorSettings();
 
    private:
 
