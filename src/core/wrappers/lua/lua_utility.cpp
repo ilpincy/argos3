@@ -108,10 +108,8 @@ namespace argos {
    /****************************************/
 
    void CLuaUtility::RegisterLoggerWrapper(lua_State* pt_state) {
-      lua_pushcfunction(pt_state, LOGWrapper);
-      lua_setglobal(pt_state, "log");
-      lua_pushcfunction(pt_state, LOGERRWrapper);
-      lua_setglobal(pt_state, "logerr");
+      lua_register(pt_state, "log", LOGWrapper);
+      lua_register(pt_state, "logerr", LOGERRWrapper);
    }
    
    /****************************************/
