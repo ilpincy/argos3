@@ -25,18 +25,22 @@ namespace argos {
 
    public slots:
 
-      void NewFile();
-      void OpenFile(const QString& str_path = QString());
-      void SaveFile(const QString& str_path = QString());
+      void New();
+      void Open();
+      bool Save();
+      bool SaveAs();
       void Execute();
       void CodeModified();
 
    private:
 
+      bool MaybeSave();
       void PopulateLuaControllers();
       void CreateCodeEditor();
       void CreateFileActions();
       void CreateLuaActions();
+      void OpenFile(const QString& str_path = QString());
+      bool SaveFile(const QString& str_path = QString());
       void SetCurrentFile(const QString& str_path);
 
    private:

@@ -1,4 +1,5 @@
 #include "qtopengl_lua_editor.h"
+#include "qtopengl_lua_syntax_highlighter.h"
 
 #include <argos3/core/wrappers/lua/lua_controller.h>
 #include <argos3/core/simulator/simulator.h>
@@ -47,76 +48,91 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CQTOpenGLLuaEditor::NewFile() {
-      m_pcCodeEditor->clear();
-   }
-
-   /****************************************/
-   /****************************************/
-
-   void CQTOpenGLLuaEditor::OpenFile(const QString& str_path) {
-      m_strFileName = str_path;
-      if (m_strFileName.isNull())
-         m_strFileName = QFileDialog::getOpenFileName(this,
-                                                      tr("Open File"),
-                                                      "",
-                                                      "Lua Files (*.lua)");
-      if (!m_strFileName.isEmpty()) {
-         QFile cFile(m_strFileName);
-         if(cFile.open(QFile::ReadOnly | QFile::Text)) {
-            m_pcCodeEditor->setPlainText(cFile.readAll());
-            SetCurrentFile(m_strFileName);
-         }
+   void CQTOpenGLLuaEditor::New() {
+      if(MaybeSave()) {
+         m_pcCodeEditor->clear();
+         SetCurrentFile("");
       }
    }
 
    /****************************************/
    /****************************************/
 
-   void CQTOpenGLLuaEditor::SaveFile(const QString& str_path) {
-      QString strNewFileName = str_path;
-      if (strNewFileName.isNull()) {
-         strNewFileName = m_strFileName;
-      }
-      if (strNewFileName.isNull()) {
-         strNewFileName = QFileDialog::getSaveFileName(this,
-                                                       tr("Save File"),
-                                                       "",
-                                                       "Lua Files (*.lua)");
-      }
-      if (!strNewFileName.isEmpty()) {
-         QFile cFile(m_strFileName);
-         if(cFile.open(QFile::WriteOnly | QFile::Text)) {
-            QTextStream cOut(&cFile);
-            QApplication::setOverrideCursor(Qt::WaitCursor);
-            cOut << m_pcCodeEditor->toPlainText();
-            QApplication::restoreOverrideCursor();
-            SetCurrentFile(strNewFileName);
-            statusBar()->showMessage(tr("File saved"), 2000);
+   void CQTOpenGLLuaEditor::Open() {
+      if(MaybeSave()) {
+         QString strNewFileName =
+            QFileDialog::getOpenFileName(this,
+                                         tr("Open File"),
+                                         "",
+                                         "Lua Files (*.lua)");
+         if (!strNewFileName.isEmpty()) {
+            OpenFile(strNewFileName);
          }
       }
+   }
+         
+   /****************************************/
+   /****************************************/
+
+   bool CQTOpenGLLuaEditor::Save() {
+      if (m_strFileName.isEmpty()) {
+         return SaveAs();
+      } else {
+         return SaveFile(m_strFileName);
+      }
+   }
+
+   /****************************************/
+   /****************************************/
+
+   bool CQTOpenGLLuaEditor::SaveAs() {
+      QString strNewFileName =
+         QFileDialog::getSaveFileName(this,
+                                      tr("Save File"),
+                                      "",
+                                      "Lua Files (*.lua)");
+      if (strNewFileName.isEmpty())
+         return false;
+      return SaveFile(strNewFileName);
    }
 
    /****************************************/
    /****************************************/
 
    void CQTOpenGLLuaEditor::Execute() {
+      if(MaybeSave()) {
+         QApplication::setOverrideCursor(Qt::WaitCursor);
+         for(size_t i = 0; i < m_vecControllers.size(); ++i) {
+            m_vecControllers[i]->SetLuaScript(m_strFileName.toStdString());
+         }
+         QApplication::restoreOverrideCursor();
+         statusBar()->showMessage(tr("Execution started"), 2000);
+      }
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CQTOpenGLLuaEditor::CodeModified() {
+      setWindowModified(m_pcCodeEditor->document()->isModified());
+   }
+
+   /****************************************/
+   /****************************************/
+
+   bool CQTOpenGLLuaEditor::MaybeSave() {
       if(m_pcCodeEditor->document()->isModified()) {
          QMessageBox::StandardButton tReply;
          tReply = QMessageBox::warning(this, tr("ARGoS v3.0 - Lua Editor"),
                                        tr("The document has been modified.\n"
                                           "Do you want to save your changes?"),
-                                       QMessageBox::Save | QMessageBox::Cancel);
-         if(tReply == QMessageBox::Cancel) {
-            return;
-         }
+                                       QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+         if (tReply == QMessageBox::Save)
+            return Save();
+         else if (tReply == QMessageBox::Cancel)
+            return false;
       }
-      QApplication::setOverrideCursor(Qt::WaitCursor);
-      for(size_t i = 0; i < m_vecControllers.size(); ++i) {
-         m_vecControllers[i]->SetLuaScript(m_strFileName.toStdString());
-      }
-      QApplication::restoreOverrideCursor();
-      statusBar()->showMessage(tr("Execution started"), 2000);
+      return true;
    }
 
    /****************************************/
@@ -152,6 +168,7 @@ namespace argos {
       cFont.setPointSize(10);
       m_pcCodeEditor = new QPlainTextEdit(this);
       m_pcCodeEditor->setFont(cFont);
+      CQTOpenGLLuaSyntaxHighlighter* pcSyntaxHighlighter = new CQTOpenGLLuaSyntaxHighlighter(m_pcCodeEditor->document());
       setCentralWidget(m_pcCodeEditor);
    }
 
@@ -161,12 +178,16 @@ namespace argos {
    void CQTOpenGLLuaEditor::CreateFileActions() {
       QMenu* pcFileMenu = new QMenu(tr("&File"), this);
       menuBar()->addMenu(pcFileMenu);
-      pcFileMenu->addAction(tr("&New"), this, SLOT(NewFile()),
+      pcFileMenu->addAction(tr("&New"), this, SLOT(New()),
                             QKeySequence(tr("Ctrl+N",
                                             "File|New")));
-      pcFileMenu->addAction(tr("&Open..."), this, SLOT(OpenFile()),
+      pcFileMenu->addAction(tr("&Open..."), this, SLOT(Open()),
                             QKeySequence(tr("Ctrl+O",
                                             "File|Open")));
+      pcFileMenu->addAction(tr("&Save"), this, SLOT(Save()),
+                            QKeySequence(tr("Ctrl+S",
+                                            "File|Save")));
+      pcFileMenu->addAction(tr("S&ave As..."), this, SLOT(SaveAs()));
    }
 
    /****************************************/
@@ -178,6 +199,46 @@ namespace argos {
       pcLuaMenu->addAction(tr("&Execute"), this, SLOT(Execute()),
                            QKeySequence(tr("Ctrl+X",
                                            "Lua|Execute")));
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CQTOpenGLLuaEditor::OpenFile(const QString& str_path) {
+      QFile cFile(str_path);
+      if(! cFile.open(QFile::ReadOnly | QFile::Text)) {
+         QMessageBox::warning(this, tr("ARGoS v3.0 - Lua Editor"),
+                              tr("Cannot read file %1:\n%2.")
+                              .arg(str_path)
+                              .arg(cFile.errorString()));
+         return;
+      }
+      QApplication::setOverrideCursor(Qt::WaitCursor);
+      m_pcCodeEditor->setPlainText(cFile.readAll());
+      QApplication::restoreOverrideCursor();
+      SetCurrentFile(str_path);
+      statusBar()->showMessage(tr("File loaded"), 2000);
+   }
+
+   /****************************************/
+   /****************************************/
+
+   bool CQTOpenGLLuaEditor::SaveFile(const QString& str_path) {
+      QFile cFile(str_path);
+      if(! cFile.open(QFile::WriteOnly | QFile::Text)) {
+         QMessageBox::warning(this, tr("ARGoS v3.0 - Lua Editor"),
+                              tr("Cannot write file %1:\n%2.")
+                              .arg(str_path)
+                              .arg(cFile.errorString()));
+         return false;
+      }
+      QTextStream cOut(&cFile);
+      QApplication::setOverrideCursor(Qt::WaitCursor);
+      cOut << m_pcCodeEditor->toPlainText();
+      QApplication::restoreOverrideCursor();
+      SetCurrentFile(str_path);
+      statusBar()->showMessage(tr("File saved"), 2000);
+      return true;
    }
 
    /****************************************/
@@ -200,11 +261,4 @@ namespace argos {
    /****************************************/
    /****************************************/
    
-   void CQTOpenGLLuaEditor::CodeModified() {
-      setWindowModified(m_pcCodeEditor->document()->isModified());
-   }
-
-   /****************************************/
-   /****************************************/
-
 }

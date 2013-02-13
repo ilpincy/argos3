@@ -20,7 +20,8 @@ endif(SDL_FOUND)
 if(ARGOS_WITH_LUA)
   set(ARGOS3_MOC_HEADERS_PLUGINS_SIMULATOR_VISUALIZATIONS_QTOPENGL
     ${ARGOS3_MOC_HEADERS_PLUGINS_SIMULATOR_VISUALIZATIONS_QTOPENGL}
-    qtopengl_lua_editor.h)
+    qtopengl_lua_editor.h
+    qtopengl_lua_syntax_highlighter.h)
 endif(ARGOS_WITH_LUA)
 # all base headers
 set(ARGOS3_HEADERS_PLUGINS_SIMULATOR_VISUALIZATIONS_QTOPENGL
@@ -61,7 +62,8 @@ endif(SDL_FOUND)
 if(ARGOS_WITH_LUA)
   set(ARGOS3_SOURCES_PLUGINS_SIMULATOR_VISUALIZATIONS_QTOPENGL
     ${ARGOS3_SOURCES_PLUGINS_SIMULATOR_VISUALIZATIONS_QTOPENGL}
-    qtopengl_lua_editor.cpp)
+    qtopengl_lua_editor.cpp
+    qtopengl_lua_syntax_highlighter.cpp)
 endif(ARGOS_WITH_LUA)
 
 #
