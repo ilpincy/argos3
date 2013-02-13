@@ -12,7 +12,12 @@
   <!-- * Controllers * -->
   <!-- *************** -->
   <controllers>
+
+    <!-- ***************************************************** -->
+    <!-- * This is the Lua controller to associate to robots * -->
+    <!-- ***************************************************** -->
     <lua_controller id="lua">
+      <!-- Normal actuator/sensor configuration follows -->
       <actuators>
         <differential_steering implementation="default" />
         <leds implementation="default" />
@@ -26,9 +31,12 @@
                         center="0,0,0.1"
                         start_angle="7.5" />
       </sensors>
-      <!-- params script="../../src/testing/experiment/test_script.lua" / -->
+      <!-- No required configuration -->
       <params />
+      <!-- Optionally, you can pass a script as a controller parameter:
+           <params script="../../src/testing/experiment/test_script.lua" /> -->
     </lua_controller>
+
   </controllers>
 
   <!-- *********************** -->
@@ -71,7 +79,12 @@
   <!-- * Visualization * -->
   <!-- ****************** -->
   <visualization>
+
+    <!-- ************************************************************************ -->
+    <!-- * To activate the Lua editor, just use the 'lua_editor' flag attribute * -->
+    <!-- ************************************************************************ -->
     <qt-opengl lua_editor="true" />
+
   </visualization>
 
 </argos-configuration>

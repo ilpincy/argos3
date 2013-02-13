@@ -12,25 +12,27 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CLuaUtility::LoadScript(lua_State* pt_state,
+   bool CLuaUtility::LoadScript(lua_State* pt_state,
                                 const std::string& str_filename) {
       if(luaL_loadfile(pt_state, str_filename.c_str())) {
-         THROW_ARGOSEXCEPTION("Could not load Lua script file \"" << lua_tostring(pt_state, -1) << "\"");
+         return false;
       }
       if(lua_pcall(pt_state, 0, 0, 0)) {
-         THROW_ARGOSEXCEPTION("Error starting Lua script \"" << str_filename << "\": " << lua_tostring(pt_state, -1));
+         return false;
       }
+      return true;
    }
 
    /****************************************/
    /****************************************/
 
-   void CLuaUtility::CallFunction(lua_State* pt_state,
+   bool CLuaUtility::CallFunction(lua_State* pt_state,
                                   const std::string& str_function) {
       lua_getglobal(pt_state, str_function.c_str());
       if(lua_pcall(pt_state, 0, 0, 0)) {
-         THROW_ARGOSEXCEPTION("Could not execute Lua script file: " << lua_tostring(pt_state, -1));
+         return false;
       }
+      return true;
    }
 
    /****************************************/

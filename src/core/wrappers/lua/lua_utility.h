@@ -20,10 +20,10 @@ namespace argos {
 
    public:
       
-      static void LoadScript(lua_State* pt_state,
+      static bool LoadScript(lua_State* pt_state,
                              const std::string& str_filename);
       
-      static void CallFunction(lua_State* pt_state,
+      static bool CallFunction(lua_State* pt_state,
                                const std::string& str_function);
 
       static void PrintGlobals(CARGoSLog& c_log,

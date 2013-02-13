@@ -1,6 +1,8 @@
 #include "qtopengl_lua_main_window.h"
 #include "qtopengl_lua_editor.h"
 #include "qtopengl_lua_syntax_highlighter.h"
+#include "qtopengl_main_window.h"
+#include "qtopengl_widget.h"
 
 #include <argos3/core/wrappers/lua/lua_controller.h>
 #include <argos3/core/simulator/simulator.h>
@@ -16,14 +18,16 @@
 #include <QSettings>
 #include <QStatusBar>
 #include <QTextStream>
+#include <QToolBar>
 
 namespace argos {
 
    /****************************************/
    /****************************************/
 
-   CQTOpenGLLuaMainWindow::CQTOpenGLLuaMainWindow(QWidget* pc_parent) :
-      QMainWindow(pc_parent) {
+   CQTOpenGLLuaMainWindow::CQTOpenGLLuaMainWindow(CQTOpenGLMainWindow* pc_parent) :
+      QMainWindow(pc_parent),
+      m_pcMainWindow(pc_parent) {
       /* Add a status bar */
       m_pcStatusbar = new QStatusBar(this);
       setStatusBar(m_pcStatusbar);
@@ -33,12 +37,15 @@ namespace argos {
       CreateCodeEditor();
       /* Create actions */
       CreateFileActions();
-      CreateLuaActions();
+      CreateEditActions();
+      CreateCodeActions();
       /* Set empty file */
       SetCurrentFile("");
       /* Connect text modification signal to modification slot */
       connect(m_pcCodeEditor->document(), SIGNAL(contentsChanged()),
               this, SLOT(CodeModified()));
+      connect(&(m_pcMainWindow->GetOpenGLWidget()), SIGNAL(StepDone(int)),
+              this, SLOT(CheckLuaStatus(int)));
       ReadSettings();
    }
 
@@ -46,6 +53,7 @@ namespace argos {
    /****************************************/
 
    CQTOpenGLLuaMainWindow::~CQTOpenGLLuaMainWindow() {
+      WriteSettings();
    }
 
    /****************************************/
@@ -201,29 +209,127 @@ namespace argos {
    /****************************************/
 
    void CQTOpenGLLuaMainWindow::CreateFileActions() {
-      QMenu* pcFileMenu = new QMenu(tr("&File"), this);
-      menuBar()->addMenu(pcFileMenu);
-      pcFileMenu->addAction(tr("&New"), this, SLOT(New()),
-                            QKeySequence(tr("Ctrl+N",
-                                            "File|New")));
-      pcFileMenu->addAction(tr("&Open..."), this, SLOT(Open()),
-                            QKeySequence(tr("Ctrl+O",
-                                            "File|Open")));
-      pcFileMenu->addAction(tr("&Save"), this, SLOT(Save()),
-                            QKeySequence(tr("Ctrl+S",
-                                            "File|Save")));
-      pcFileMenu->addAction(tr("S&ave As..."), this, SLOT(SaveAs()));
+      QIcon cFileNewIcon;
+      cFileNewIcon.addPixmap(QPixmap(m_pcMainWindow->GetIconDir() + "/new.png"));
+      m_pcFileNewAction = new QAction(cFileNewIcon, tr("&New"), this);
+      m_pcFileNewAction->setToolTip(tr("Create a new file"));
+      m_pcFileNewAction->setStatusTip(tr("Create a new file"));
+      m_pcFileNewAction->setShortcut(QKeySequence::New);
+      connect(m_pcFileNewAction, SIGNAL(triggered()),
+              this, SLOT(New()));
+      QIcon cFileOpenIcon;
+      cFileOpenIcon.addPixmap(QPixmap(m_pcMainWindow->GetIconDir() + "/open.png"));
+      m_pcFileOpenAction = new QAction(cFileOpenIcon, tr("&Open..."), this);
+      m_pcFileOpenAction->setToolTip(tr("Open a file"));
+      m_pcFileOpenAction->setStatusTip(tr("Open a file"));
+      m_pcFileOpenAction->setShortcut(QKeySequence::Open);
+      connect(m_pcFileOpenAction, SIGNAL(triggered()),
+              this, SLOT(Open()));
+      QIcon cFileSaveIcon;
+      cFileSaveIcon.addPixmap(QPixmap(m_pcMainWindow->GetIconDir() + "/save.png"));
+      m_pcFileSaveAction = new QAction(cFileSaveIcon, tr("&Save"), this);
+      m_pcFileSaveAction->setToolTip(tr("Save the current file"));
+      m_pcFileSaveAction->setStatusTip(tr("Save the current file"));
+      m_pcFileSaveAction->setShortcut(QKeySequence::Save);
+      connect(m_pcFileSaveAction, SIGNAL(triggered()),
+              this, SLOT(Save()));
+      QIcon cFileSaveAsIcon;
+      cFileSaveAsIcon.addPixmap(QPixmap(m_pcMainWindow->GetIconDir() + "/saveas.png"));
+      m_pcFileSaveAsAction = new QAction(cFileSaveAsIcon, tr("S&ave as..."), this);
+      m_pcFileSaveAsAction->setToolTip(tr("Save the current file under a new name"));
+      m_pcFileSaveAsAction->setStatusTip(tr("Save the current file under a new name"));
+      m_pcFileSaveAsAction->setShortcut(QKeySequence::SaveAs);
+      connect(m_pcFileSaveAsAction, SIGNAL(triggered()),
+              this, SLOT(SaveAs()));
+      QMenu* pcMenu = menuBar()->addMenu(tr("&File"));
+      pcMenu->addAction(m_pcFileNewAction);
+      pcMenu->addSeparator();
+      pcMenu->addAction(m_pcFileOpenAction);
+      pcMenu->addSeparator();
+      pcMenu->addAction(m_pcFileSaveAction);
+      pcMenu->addAction(m_pcFileSaveAsAction);
+      QToolBar* pcToolBar = addToolBar(tr("File"));
+      pcToolBar->addAction(m_pcFileNewAction);
+      pcToolBar->addAction(m_pcFileOpenAction);
+      pcToolBar->addAction(m_pcFileSaveAction);
    }
 
    /****************************************/
    /****************************************/
 
-   void CQTOpenGLLuaMainWindow::CreateLuaActions() {
-      QMenu* pcLuaMenu = new QMenu(tr("&Lua"), this);
-      menuBar()->addMenu(pcLuaMenu);
-      pcLuaMenu->addAction(tr("&Execute"), this, SLOT(Execute()),
-                           QKeySequence(tr("Ctrl+E",
-                                           "Lua|Execute")));
+   void CQTOpenGLLuaMainWindow::CreateEditActions() {
+      QIcon cEditUndoIcon;
+      cEditUndoIcon.addPixmap(QPixmap(m_pcMainWindow->GetIconDir() + "/undo.png"));
+      m_pcEditUndoAction = new QAction(cEditUndoIcon, tr("&Undo"), this);
+      m_pcEditUndoAction->setToolTip(tr("Undo last operation"));
+      m_pcEditUndoAction->setStatusTip(tr("Undo last operation"));
+      m_pcEditUndoAction->setShortcut(QKeySequence::Undo);
+      connect(m_pcEditUndoAction, SIGNAL(triggered()),
+              m_pcCodeEditor, SLOT(undo()));
+      QIcon cEditRedoIcon;
+      cEditRedoIcon.addPixmap(QPixmap(m_pcMainWindow->GetIconDir() + "/redo.png"));
+      m_pcEditRedoAction = new QAction(cEditRedoIcon, tr("&Redo"), this);
+      m_pcEditRedoAction->setToolTip(tr("Redo last operation"));
+      m_pcEditRedoAction->setStatusTip(tr("Redo last operation"));
+      m_pcEditRedoAction->setShortcut(QKeySequence::Redo);
+      connect(m_pcEditRedoAction, SIGNAL(triggered()),
+              m_pcCodeEditor, SLOT(redo()));
+      QIcon cEditCopyIcon;
+      cEditCopyIcon.addPixmap(QPixmap(m_pcMainWindow->GetIconDir() + "/copy.png"));
+      m_pcEditCopyAction = new QAction(cEditCopyIcon, tr("&Copy"), this);
+      m_pcEditCopyAction->setToolTip(tr("Copy selected text into clipboard"));
+      m_pcEditCopyAction->setStatusTip(tr("Copy selected text into clipboard"));
+      m_pcEditCopyAction->setShortcut(QKeySequence::Copy);
+      connect(m_pcEditCopyAction, SIGNAL(triggered()),
+              m_pcCodeEditor, SLOT(copy()));
+      QIcon cEditCutIcon;
+      cEditCutIcon.addPixmap(QPixmap(m_pcMainWindow->GetIconDir() + "/cut.png"));
+      m_pcEditCutAction = new QAction(cEditCutIcon, tr("&Cut"), this);
+      m_pcEditCutAction->setToolTip(tr("Move selected text into clipboard"));
+      m_pcEditCutAction->setStatusTip(tr("Move selected text into clipboard"));
+      m_pcEditCutAction->setShortcut(QKeySequence::Cut);
+      connect(m_pcEditCutAction, SIGNAL(triggered()),
+              m_pcCodeEditor, SLOT(cut()));
+      QIcon cEditPasteIcon;
+      cEditPasteIcon.addPixmap(QPixmap(m_pcMainWindow->GetIconDir() + "/paste.png"));
+      m_pcEditPasteAction = new QAction(cEditPasteIcon, tr("&Paste"), this);
+      m_pcEditPasteAction->setToolTip(tr("Paste text from clipboard"));
+      m_pcEditPasteAction->setStatusTip(tr("Paste text from clipboard"));
+      m_pcEditPasteAction->setShortcut(QKeySequence::Paste);
+      connect(m_pcEditPasteAction, SIGNAL(triggered()),
+              m_pcCodeEditor, SLOT(paste()));
+      QMenu* pcMenu = menuBar()->addMenu(tr("&Edit"));
+      pcMenu->addAction(m_pcEditUndoAction);
+      pcMenu->addAction(m_pcEditRedoAction);
+      pcMenu->addSeparator();
+      pcMenu->addAction(m_pcEditCopyAction);
+      pcMenu->addAction(m_pcEditCutAction);
+      pcMenu->addAction(m_pcEditPasteAction);
+      QToolBar* pcToolBar = addToolBar(tr("Edit"));
+      pcToolBar->addAction(m_pcEditUndoAction);
+      pcToolBar->addAction(m_pcEditRedoAction);
+      pcToolBar->addSeparator();
+      pcToolBar->addAction(m_pcEditCopyAction);
+      pcToolBar->addAction(m_pcEditCutAction);
+      pcToolBar->addAction(m_pcEditPasteAction);
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CQTOpenGLLuaMainWindow::CreateCodeActions() {
+      QIcon cCodeExecuteIcon;
+      cCodeExecuteIcon.addPixmap(QPixmap(m_pcMainWindow->GetIconDir() + "/execute.png"));
+      m_pcCodeExecuteAction = new QAction(cCodeExecuteIcon, tr("&Execute"), this);
+      m_pcCodeExecuteAction->setToolTip(tr("Execute code"));
+      m_pcCodeExecuteAction->setStatusTip(tr("Execute code"));
+      m_pcCodeExecuteAction->setShortcut(tr("Ctrl+E"));
+      connect(m_pcCodeExecuteAction, SIGNAL(triggered()),
+              this, SLOT(Execute()));
+      QMenu* pcMenu = menuBar()->addMenu(tr("&Code"));
+      pcMenu->addAction(m_pcCodeExecuteAction);
+      QToolBar* pcToolBar = addToolBar(tr("Code"));
+      pcToolBar->addAction(m_pcCodeExecuteAction);
    }
 
    /****************************************/
@@ -285,12 +391,18 @@ namespace argos {
    
    /****************************************/
    /****************************************/
-   
-   void CQTOpenGLLuaMainWindow::closeEvent(QCloseEvent* pc_event) {
-      WriteSettings();
-      pc_event->accept();
-   }
 
+   void CQTOpenGLLuaMainWindow::CheckLuaStatus(int n_step) {
+      for(size_t i = 0; i < m_vecControllers.size(); ++i) {
+         if(! m_vecControllers[i]->IsOK()) {
+            printf("[t=%d] [%s] %s\n",
+                   n_step,
+                   m_vecControllers[i]->GetId().c_str(),
+                   m_vecControllers[i]->GetErrorMessage().c_str());
+         }
+      }
+   }
+   
    /****************************************/
    /****************************************/
 

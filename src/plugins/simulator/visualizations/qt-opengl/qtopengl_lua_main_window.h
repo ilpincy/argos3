@@ -8,6 +8,7 @@ namespace argos {
    class CLuaController;
 }
 
+class QAction;
 class QStatusBar;
 
 #include <QMainWindow>
@@ -20,7 +21,7 @@ namespace argos {
 
    public:
 
-      CQTOpenGLLuaMainWindow(QWidget* pc_parent);
+      CQTOpenGLLuaMainWindow(CQTOpenGLMainWindow* pc_parent);
       virtual ~CQTOpenGLLuaMainWindow();
 
    public slots:
@@ -31,6 +32,7 @@ namespace argos {
       bool SaveAs();
       void Execute();
       void CodeModified();
+      void CheckLuaStatus(int n_step);
 
    private:
 
@@ -40,11 +42,11 @@ namespace argos {
       void WriteSettings();
       void CreateCodeEditor();
       void CreateFileActions();
-      void CreateLuaActions();
+      void CreateEditActions();
+      void CreateCodeActions();
       void OpenFile(const QString& str_path = QString());
       bool SaveFile(const QString& str_path = QString());
       void SetCurrentFile(const QString& str_path);
-      virtual void closeEvent(QCloseEvent* pc_event);
 
    private:
 
@@ -53,6 +55,19 @@ namespace argos {
       CQTOpenGLLuaEditor* m_pcCodeEditor;
       std::vector<CLuaController*> m_vecControllers;
       QString m_strFileName;
+
+      QAction* m_pcFileNewAction;
+      QAction* m_pcFileOpenAction;
+      QAction* m_pcFileSaveAction;
+      QAction* m_pcFileSaveAsAction;
+      QAction* m_pcEditUndoAction;
+      QAction* m_pcEditRedoAction;
+      QAction* m_pcEditCopyAction;
+      QAction* m_pcEditCutAction;
+      QAction* m_pcEditPasteAction;
+      QAction* m_pcEditFindAction;
+      QAction* m_pcEditSubstituteAction;
+      QAction* m_pcCodeExecuteAction;
 
    };
 

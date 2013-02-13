@@ -16,7 +16,8 @@ namespace argos {
 
    CLuaController::CLuaController() :
       m_ptLuaState(NULL),
-      m_bScriptActive(false) {
+      m_bScriptActive(false),
+      m_bIsOK(true) {
    }
 
    /****************************************/
@@ -30,15 +31,14 @@ namespace argos {
 
    void CLuaController::Init(TConfigurationNode& t_tree) {
       try {
-         /* Create a new Lua stack */
-         m_ptLuaState = luaL_newstate();
-         /* Load the Lua libraries */
-         luaL_openlibs(m_ptLuaState);
          /* Load script */
          std::string strScriptFileName;
          GetNodeAttributeOrDefault(t_tree, "script", strScriptFileName, strScriptFileName);
          if(strScriptFileName != "") {
             SetLuaScript(strScriptFileName);
+            if(! m_bIsOK) {
+               THROW_ARGOSEXCEPTION("Error loading Lua script \"" << strScriptFileName << "\": " << lua_tostring(m_ptLuaState, -1));
+            }
          }
       }
       catch(CARGoSException& ex) {
@@ -50,13 +50,17 @@ namespace argos {
    /****************************************/
 
    void CLuaController::ControlStep() {
-      if(m_bScriptActive) {
+      if(m_bScriptActive && m_bIsOK) {
          /* Update Lua variables through sensor readings */
          SensorReadingsToLuaVariables();
          /* Execute script step function */
-         CLuaUtility::CallFunction(m_ptLuaState, "step");
-         /* Set actuator variables */
-         LuaVariablesToActuatorSettings();
+         if(CLuaUtility::CallFunction(m_ptLuaState, "step")) {
+            /* Set actuator variables */
+            LuaVariablesToActuatorSettings();
+         }
+         else {
+            m_bIsOK = false;
+         }
          //CLuaUtility::PrintGlobals(LOGERR, m_ptLuaState);
       }
    }
@@ -65,9 +69,9 @@ namespace argos {
    /****************************************/
 
    void CLuaController::Reset() {
-      if(m_bScriptActive) {
+      if(m_bScriptActive && m_bIsOK) {
          /* Execute script reset function */
-         CLuaUtility::CallFunction(m_ptLuaState, "reset");
+         m_bIsOK = CLuaUtility::CallFunction(m_ptLuaState, "reset");
       }
    }
 
@@ -75,12 +79,16 @@ namespace argos {
    /****************************************/
 
    void CLuaController::Destroy() {
-      if(m_bScriptActive) {
+      if(m_bScriptActive && m_bIsOK) {
          /* Execute script destroy function */
-         CLuaUtility::CallFunction(m_ptLuaState, "destroy");
-         /* Close Lua */
-         lua_close(m_ptLuaState);
-         m_bScriptActive = false;
+         if(CLuaUtility::CallFunction(m_ptLuaState, "destroy")) {
+            /* Close Lua */
+            lua_close(m_ptLuaState);
+            m_bScriptActive = false;
+         }
+         else {
+            m_bIsOK = false;
+         }
       }
    }
 
@@ -88,15 +96,31 @@ namespace argos {
    /****************************************/
 
    void CLuaController::SetLuaScript(const std::string& str_script) {
+      /* First, delete old script */
+      if(m_bScriptActive) {
+         lua_close(m_ptLuaState);
+         m_bScriptActive = false;
+      }
+      /* Create a new Lua stack */
+      m_ptLuaState = luaL_newstate();
+      /* Load the Lua libraries */
+      luaL_openlibs(m_ptLuaState);
       /* Load script */
-      CLuaUtility::LoadScript(m_ptLuaState, str_script);
+      if(!CLuaUtility::LoadScript(m_ptLuaState, str_script)) {
+         m_bIsOK = false;
+         return;
+      }
       /* Register functions */
       CLuaUtility::RegisterLoggerWrapper(m_ptLuaState);
       /* Create and set variables */
       CreateLuaVariables();
       SensorReadingsToLuaVariables();
       /* Execute script init function */
-      CLuaUtility::CallFunction(m_ptLuaState, "init");
+      if(!CLuaUtility::CallFunction(m_ptLuaState, "init")) {
+         m_bIsOK = false;
+         return;
+      }
+      m_bIsOK = true;
       m_bScriptActive = true;
    }
 
@@ -151,6 +175,18 @@ namespace argos {
       }
       /* Pop the robot state table */
       lua_pop(m_ptLuaState, 1);
+   }
+
+   /****************************************/
+   /****************************************/
+
+   std::string CLuaController::GetErrorMessage() {
+      if(m_bIsOK) {
+         return "OK";
+      }
+      else {
+         return lua_tostring(m_ptLuaState, -1);
+      }
    }
 
    /****************************************/

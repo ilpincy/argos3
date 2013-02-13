@@ -40,10 +40,17 @@ namespace argos {
 
       void LuaVariablesToActuatorSettings();
 
+      inline bool IsOK() const {
+         return m_bIsOK;
+      }
+
+      std::string GetErrorMessage();
+
    private:
 
       lua_State* m_ptLuaState;
       bool m_bScriptActive;
+      bool m_bIsOK;
 
    };
 
