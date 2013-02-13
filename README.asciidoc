@@ -2,19 +2,21 @@ ARGoS README
 =============
 :Author: Carlo Pinciroli
 :Email:  ilpincy@gmail.com
-:Date:   November 12th, 2012
+:Date:   February 13th, 2013
 
 What is ARGoS?
 ---------------
 
-ARGoS is a physics-based simulators for robotics. Its main features are:
+ARGoS is a physics-based simulator to designed to simulate large-scale robot
+swarms. Benchmark results show that ARGoS can perform physics-accurate
+simulation involving thousands of robots in a fraction of real time.
+ARGoS' main features are:
 
-* Parallel and modular architecture;
+* Multi-threaded and deeply modular architecture, more flexible than any
+  simulator with equivalent features;
 * The possibility to run multiple physics engines at the same time;
 * The possibility to divide the physical space in region, and assign different
   regions to different physics engines.
-
-ARGoS is very flexible, extremely efficient, and easy to use.
 
 Starting from version 3, ARGoS is released under the terms of the MIT license.
 
