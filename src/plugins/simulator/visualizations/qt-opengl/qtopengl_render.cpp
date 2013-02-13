@@ -60,8 +60,8 @@ namespace argos {
          m_pcMainWindow->show();
          /* Create Lua editor if required */
          if(m_bLuaEditor) {
-            m_pcQTOpenGLLuaEditor = new CQTOpenGLLuaEditor(m_pcMainWindow);
-            m_pcQTOpenGLLuaEditor->show();
+            m_pcQTOpenGLLuaMainWindow = new CQTOpenGLLuaMainWindow(m_pcMainWindow);
+            m_pcQTOpenGLLuaMainWindow->show();
          }
          LOG.Flush();
          LOGERR.Flush();
@@ -79,7 +79,7 @@ namespace argos {
    void CQTOpenGLRender::Destroy() {
       /* Destroy the Lua editor */
       if(m_bLuaEditor) {
-         delete m_pcQTOpenGLLuaEditor;
+         delete m_pcQTOpenGLLuaMainWindow;
       }
       /* Destroy the main window */
       delete m_pcMainWindow;

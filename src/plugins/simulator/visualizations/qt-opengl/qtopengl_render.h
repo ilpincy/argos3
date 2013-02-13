@@ -15,7 +15,7 @@ class QApplication;
 
 #include <argos3/core/simulator/visualization/visualization.h>
 #include <argos3/plugins/simulator/visualizations/qt-opengl/qtopengl_main_window.h>
-#include <argos3/plugins/simulator/visualizations/qt-opengl/qtopengl_lua_editor.h>
+#include <argos3/plugins/simulator/visualizations/qt-opengl/qtopengl_lua_main_window.h>
 
 namespace argos {
 
@@ -25,7 +25,7 @@ namespace argos {
 
       QApplication* m_pcApplication;
       CQTOpenGLMainWindow* m_pcMainWindow;
-      CQTOpenGLLuaEditor* m_pcQTOpenGLLuaEditor;
+      CQTOpenGLLuaMainWindow* m_pcQTOpenGLLuaMainWindow;
       char** m_ppcOptions;
       SInt32 m_nOptionNum;
       TConfigurationNode m_tConfTree;

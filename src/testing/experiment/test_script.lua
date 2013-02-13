@@ -1,31 +1,37 @@
 -- create an empty table for a 2d vector
 vec2 = {}
+
 -- vec2 constructor
 function vec2:new_xy(x, y)
    local obj = {x = x, y = y}
    setmetatable(obj, {__index = vec2})
    return obj
 end
+
 -- vec2 constructor from length and angle
 function vec2:new_la(length, angle)
    local obj = {x = length*math.cos(angle), y = length*math.cos(angle)}
    setmetatable(obj, {__index = vec2})
    return obj
 end
+
 -- vec2 sum
 function vec2:add(v)
    self.x = self.x + v.x
    self.y = self.y + v.y
 end
+
 -- vec2 scale
 function vec2:scale(s)
    self.x = self.x / s
    self.y = self.y / s
 end
+
 -- vec2 angle
 function vec2:angle()
    return math.atan2(self.y, self.x)
 end
+
 -- vec2 length
 function vec2:length()
    return math.sqrt(self.x^2 + self.y^2)

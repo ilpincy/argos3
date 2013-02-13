@@ -1,55 +1,72 @@
-#ifndef LUA_EDITOR
-#define LUA_EDITOR
+#ifndef QTOPENGL_LUA_EDITOR_H
+#define QTOPENGL_LUA_EDITOR_H
 
 namespace argos {
    class CQTOpenGLLuaEditor;
-   class CQTOpenGLMainWindow;
-   class CLuaController;
 }
 
-class QStatusBar;
-class QPlainTextEdit;
-
-#include <QMainWindow>
+#include <QPlainTextEdit>
 
 namespace argos {
 
-   class CQTOpenGLLuaEditor : public QMainWindow {
+   /****************************************/
+   /****************************************/
+
+   class CQTOpenGLLuaEditor : public QPlainTextEdit {
 
       Q_OBJECT
 
    public:
 
-      CQTOpenGLLuaEditor(CQTOpenGLMainWindow* pc_main_window);
-      virtual ~CQTOpenGLLuaEditor();
+      CQTOpenGLLuaEditor(QWidget* pc_parent);
+      virtual ~CQTOpenGLLuaEditor() {}
+      
+      void LineNumberAreaPaintEvent(QPaintEvent* pc_event);
+      int LineNumberAreaWidth();
 
-   public slots:
+   protected:
 
-      void New();
-      void Open();
-      bool Save();
-      bool SaveAs();
-      void Execute();
-      void CodeModified();
+      void resizeEvent(QResizeEvent* pc_event);
 
-   private:
+   private slots:
 
-      bool MaybeSave();
-      void PopulateLuaControllers();
-      void CreateCodeEditor();
-      void CreateFileActions();
-      void CreateLuaActions();
-      void OpenFile(const QString& str_path = QString());
-      bool SaveFile(const QString& str_path = QString());
-      void SetCurrentFile(const QString& str_path);
+      void UpdateLineNumberAreaWidth(int);
+      void HighlightCurrentLine();
+      void UpdateLineNumberArea(const QRect& c_rect, int n_dy);
 
    private:
 
-      CQTOpenGLMainWindow* m_pcMainWindow;
-      QStatusBar* m_pcStatusbar;
-      QPlainTextEdit* m_pcCodeEditor;
-      std::vector<CLuaController*> m_vecControllers;
-      QString m_strFileName;
+      /********************/
+      /********************/
+
+      class CLineNumberArea : public QWidget {
+
+      public:
+         CLineNumberArea(CQTOpenGLLuaEditor* pc_editor) :
+            QWidget(pc_editor) {
+            m_pcEditor = pc_editor;
+         }
+
+         QSize sizeHint() const {
+            return QSize(m_pcEditor->LineNumberAreaWidth(), 0);
+         }
+
+      protected:
+
+         void paintEvent(QPaintEvent* pc_event) {
+            m_pcEditor->LineNumberAreaPaintEvent(pc_event);
+         }
+
+      private:
+
+         CQTOpenGLLuaEditor* m_pcEditor;
+
+      };
+
+      /********************/
+      /********************/
+
+      CLineNumberArea* m_pcLineNumberArea;
 
    };
 
