@@ -42,6 +42,10 @@ namespace argos {
       CQTOpenGLMainWindow(TConfigurationNode& t_tree);
       virtual ~CQTOpenGLMainWindow();
 
+      inline CQTOpenGLWidget& GetOpenGLWidget() {
+         return *m_pcOpenGLWidget;
+      }
+
       inline const QString& GetIconDir() const {
          return m_strIconDir;
       }

@@ -526,8 +526,8 @@ namespace argos {
       /* Is the entity composable with an embodied component? */
       CComposableEntity* pcComposableTest = dynamic_cast<CComposableEntity*>(pc_entity);
       if(pcComposableTest != NULL) {
-         if(pcComposableTest->HasComponent("embodied_entity")) {
-            return &(pcComposableTest->GetComponent<CEmbodiedEntity>("embodied_entity"));
+         if(pcComposableTest->HasComponent("body")) {
+            return &(pcComposableTest->GetComponent<CEmbodiedEntity>("body"));
          }
       }
       /* No embodied entity found */
@@ -593,7 +593,7 @@ namespace argos {
          /* Copy the entity XML tree */
          TConfigurationNode tEntityTree = *itEntity;
          /* Set progressive ID */
-         SetNodeAttribute(tEntityTree, "id", strBaseId + "_" + ToString(i+unBaseNum));
+         SetNodeAttribute(tEntityTree, "id", strBaseId + ToString(i+unBaseNum));
          /* Go on until the entity is placed with no collisions or
             the max number of trials has been exceeded */
          UInt32 unTrials = 0;
@@ -639,7 +639,7 @@ namespace argos {
          }
          while(!bDone);
          /* Add entity */
-         AddEntity(*pcEntity);
+         CallEntityOperation<CSpaceOperationAddEntity, CSpace, void>(*this, *pcEntity);
       }
       /* Delete the generators, now unneeded */
       delete pcPositionGenerator;

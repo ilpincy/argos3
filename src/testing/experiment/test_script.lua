@@ -38,12 +38,10 @@ delta = 0.1
 
 -- Controller init
 function init()
-   log("LUA init");
 end
 
 -- Controller step
 function step()
-   log("LUA step");
    accum = vec2:new_xy(0, 0)
    for i = 1,8 do
       vec = vec2:new_la(robot.proximity[i].value,
@@ -71,10 +69,8 @@ end
 
 -- Controller reset
 function reset()
-   log("LUA reset");
 end
 
 -- Controller destroy
 function destroy()
-   log("LUA destroy");
 end

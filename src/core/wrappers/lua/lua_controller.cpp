@@ -15,7 +15,8 @@ namespace argos {
    /****************************************/
 
    CLuaController::CLuaController() :
-      m_ptLuaState(NULL) {
+      m_ptLuaState(NULL),
+      m_bScriptActive(false) {
    }
 
    /****************************************/
@@ -35,15 +36,10 @@ namespace argos {
          luaL_openlibs(m_ptLuaState);
          /* Load script */
          std::string strScriptFileName;
-         GetNodeAttribute(t_tree, "script", strScriptFileName);
-         CLuaUtility::LoadScript(m_ptLuaState, strScriptFileName);
-         /* Register functions */
-         CLuaUtility::RegisterLoggerWrapper(m_ptLuaState);
-         /* Create and set variables */
-         CreateLuaVariables();
-         SensorReadingsToLuaVariables();
-         /* Execute script init function */
-         CLuaUtility::CallFunction(m_ptLuaState, "init");
+         GetNodeAttributeOrDefault(t_tree, "script", strScriptFileName, strScriptFileName);
+         if(strScriptFileName != "") {
+            SetLuaScript(strScriptFileName);
+         }
       }
       catch(CARGoSException& ex) {
          THROW_ARGOSEXCEPTION_NESTED("Error initializing Lua controller", ex);
@@ -54,31 +50,54 @@ namespace argos {
    /****************************************/
 
    void CLuaController::ControlStep() {
-      /* Update Lua variables through sensor readings */
-      SensorReadingsToLuaVariables();
-      /* Execute script step function */
-      CLuaUtility::CallFunction(m_ptLuaState, "step");
-      /* Set actuator variables */
-      LuaVariablesToActuatorSettings();
-      //CLuaUtility::PrintGlobals(LOGERR, m_ptLuaState);
+      if(m_bScriptActive) {
+         /* Update Lua variables through sensor readings */
+         SensorReadingsToLuaVariables();
+         /* Execute script step function */
+         CLuaUtility::CallFunction(m_ptLuaState, "step");
+         /* Set actuator variables */
+         LuaVariablesToActuatorSettings();
+         //CLuaUtility::PrintGlobals(LOGERR, m_ptLuaState);
+      }
    }
 
    /****************************************/
    /****************************************/
 
    void CLuaController::Reset() {
-      /* Execute script reset function */
-      CLuaUtility::CallFunction(m_ptLuaState, "reset");
+      if(m_bScriptActive) {
+         /* Execute script reset function */
+         CLuaUtility::CallFunction(m_ptLuaState, "reset");
+      }
    }
 
    /****************************************/
    /****************************************/
 
    void CLuaController::Destroy() {
-      /* Execute script destroy function */
-      CLuaUtility::CallFunction(m_ptLuaState, "destroy");
-      /* Close Lua */
-      lua_close(m_ptLuaState);
+      if(m_bScriptActive) {
+         /* Execute script destroy function */
+         CLuaUtility::CallFunction(m_ptLuaState, "destroy");
+         /* Close Lua */
+         lua_close(m_ptLuaState);
+         m_bScriptActive = false;
+      }
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CLuaController::SetLuaScript(const std::string& str_script) {
+      /* Load script */
+      CLuaUtility::LoadScript(m_ptLuaState, str_script);
+      /* Register functions */
+      CLuaUtility::RegisterLoggerWrapper(m_ptLuaState);
+      /* Create and set variables */
+      CreateLuaVariables();
+      SensorReadingsToLuaVariables();
+      /* Execute script init function */
+      CLuaUtility::CallFunction(m_ptLuaState, "init");
+      m_bScriptActive = true;
    }
 
    /****************************************/

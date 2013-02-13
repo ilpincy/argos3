@@ -55,7 +55,6 @@ namespace argos {
             cPos += cRingCenter;
             cDir.Set(fRange, 0.0f, 0.0f);
             cDir.RotateZ(m_tAngles[i]);
-            cDir += cPos;
             m_vecSensors[i] = new SSensor(cPos, cDir, fRange);
          }
       }

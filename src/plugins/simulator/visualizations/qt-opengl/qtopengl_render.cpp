@@ -21,6 +21,7 @@ namespace argos {
 
    void CQTOpenGLRender::Init(TConfigurationNode& t_tree) {
       /* Parse options from the XML */
+      GetNodeAttributeOrDefault(t_tree, "lua_editor", m_bLuaEditor, m_bLuaEditor);
       /* Intel fix */
       bool bIntelFix;
       GetNodeAttributeOrDefault(t_tree, "intel_fix", bIntelFix, false);
@@ -57,6 +58,11 @@ namespace argos {
          /* Draw the main window */
          m_pcMainWindow = new CQTOpenGLMainWindow(m_tConfTree);
          m_pcMainWindow->show();
+         /* Create Lua editor if required */
+         if(m_bLuaEditor) {
+            m_pcQTOpenGLLuaEditor = new CQTOpenGLLuaEditor(m_pcMainWindow);
+            m_pcQTOpenGLLuaEditor->show();
+         }
          LOG.Flush();
          LOGERR.Flush();
          /* This effectively starts the experiment */
@@ -71,8 +77,13 @@ namespace argos {
    /****************************************/
 
    void CQTOpenGLRender::Destroy() {
-      /* Destroy the QT application */
+      /* Destroy the Lua editor */
+      if(m_bLuaEditor) {
+         delete m_pcQTOpenGLLuaEditor;
+      }
+      /* Destroy the main window */
       delete m_pcMainWindow;
+      /* Destroy the QT application */
       delete m_pcApplication;
    }
 
