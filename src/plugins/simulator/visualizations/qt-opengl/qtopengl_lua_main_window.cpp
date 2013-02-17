@@ -87,7 +87,17 @@ namespace argos {
          }
       }
    }
-         
+
+   /****************************************/
+   /****************************************/
+
+   void CQTOpenGLLuaMainWindow::OpenRecentFile() {
+      QAction* pcAction = qobject_cast<QAction*>(sender());
+      if (pcAction) {
+         OpenFile(pcAction->data().toString());
+      }
+   }
+
    /****************************************/
    /****************************************/
 
@@ -267,6 +277,12 @@ namespace argos {
       m_pcFileOpenAction->setShortcut(QKeySequence::Open);
       connect(m_pcFileOpenAction, SIGNAL(triggered()),
               this, SLOT(Open()));
+      for (int i = 0; i < MAX_RECENT_FILES; ++i) {
+         m_pcFileOpenRecentAction[i] = new QAction(this);
+         m_pcFileOpenRecentAction[i]->setVisible(false);
+         connect(m_pcFileOpenRecentAction[i], SIGNAL(triggered()),
+                 this, SLOT(OpenRecentFile()));
+      }
       QIcon cFileSaveIcon;
       cFileSaveIcon.addPixmap(QPixmap(m_pcMainWindow->GetIconDir() + "/save.png"));
       m_pcFileSaveAction = new QAction(cFileSaveIcon, tr("&Save"), this);
@@ -290,10 +306,15 @@ namespace argos {
       pcMenu->addSeparator();
       pcMenu->addAction(m_pcFileSaveAction);
       pcMenu->addAction(m_pcFileSaveAsAction);
+      m_pcFileSeparateRecentAction = pcMenu->addSeparator();
+      for (int i = 0; i < MAX_RECENT_FILES; ++i) {
+         pcMenu->addAction(m_pcFileOpenRecentAction[i]);
+      }
       QToolBar* pcToolBar = addToolBar(tr("File"));
       pcToolBar->addAction(m_pcFileNewAction);
       pcToolBar->addAction(m_pcFileOpenAction);
       pcToolBar->addAction(m_pcFileSaveAction);
+      UpdateRecentFiles();
    }
 
    /****************************************/
@@ -433,15 +454,28 @@ namespace argos {
       m_pcCodeEditor->document()->setModified(false);
       setWindowModified(false);
       QString strShownName;
-      if (m_strFileName.isEmpty()) {
+      if(m_strFileName.isEmpty()) {
          strShownName = "untitled";
       }
       else {
-         strShownName = QFileInfo(m_strFileName).fileName();
+         strShownName = StrippedFileName(m_strFileName);
       }
       setWindowTitle(tr("%1[*] - ARGoS v3.0 - Lua Editor").arg(strShownName));
+      if(!m_strFileName.isEmpty()) {
+         QSettings cSettings;
+         cSettings.beginGroup("LuaEditor");
+         QStringList listFiles = cSettings.value("recent_files").toStringList();
+         listFiles.removeAll(m_strFileName);
+         listFiles.prepend(m_strFileName);
+         while(listFiles.size() > MAX_RECENT_FILES) {
+            listFiles.removeLast();
+         }
+         cSettings.setValue("recent_files", listFiles);
+         cSettings.endGroup();
+         UpdateRecentFiles();
+      }
    }
-   
+
    /****************************************/
    /****************************************/
 
@@ -494,6 +528,33 @@ namespace argos {
          m_pcCodeEditor->setTextCursor(cCursor);
          m_pcCodeEditor->setFocus();
       }
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CQTOpenGLLuaMainWindow::UpdateRecentFiles() {
+      QSettings cSettings;
+      cSettings.beginGroup("LuaEditor");
+      QStringList listFiles = cSettings.value("recent_files").toStringList();
+      int nRecentFiles = qMin(listFiles.size(), (int)MAX_RECENT_FILES);
+      for(int i = 0; i < nRecentFiles; ++i) {
+         m_pcFileOpenRecentAction[i]->setText(tr("&%1 %2").arg(i+1).arg(StrippedFileName(listFiles[i])));
+         m_pcFileOpenRecentAction[i]->setData(listFiles[i]);
+         m_pcFileOpenRecentAction[i]->setVisible(true);
+      }
+      for(int i = nRecentFiles; i < MAX_RECENT_FILES; ++i) {
+         m_pcFileOpenRecentAction[i]->setVisible(false);
+      }
+      m_pcFileSeparateRecentAction->setVisible(nRecentFiles > 0);
+      cSettings.endGroup();
+   }
+
+   /****************************************/
+   /****************************************/
+
+   QString CQTOpenGLLuaMainWindow::StrippedFileName(const QString& str_path) {
+      return QFileInfo(str_path).fileName();
    }
 
    /****************************************/

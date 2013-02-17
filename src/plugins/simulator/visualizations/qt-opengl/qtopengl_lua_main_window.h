@@ -30,6 +30,7 @@ namespace argos {
 
       void New();
       void Open();
+      void OpenRecentFile();
       bool Save();
       bool SaveAs();
       void Execute();
@@ -52,10 +53,15 @@ namespace argos {
       void OpenFile(const QString& str_path = QString());
       bool SaveFile(const QString& str_path = QString());
       void SetCurrentFile(const QString& str_path);
+      void UpdateRecentFiles();
+
+      QString StrippedFileName(const QString& str_path);
 
       virtual void closeEvent(QCloseEvent* pc_event);
 
    private:
+
+      enum { MAX_RECENT_FILES = 5 };
 
       CQTOpenGLMainWindow* m_pcMainWindow;
       QStatusBar* m_pcStatusbar;
@@ -68,8 +74,10 @@ namespace argos {
 
       QAction* m_pcFileNewAction;
       QAction* m_pcFileOpenAction;
+      QAction* m_pcFileOpenRecentAction[MAX_RECENT_FILES];
       QAction* m_pcFileSaveAction;
       QAction* m_pcFileSaveAsAction;
+      QAction* m_pcFileSeparateRecentAction;
       QAction* m_pcEditUndoAction;
       QAction* m_pcEditRedoAction;
       QAction* m_pcEditCopyAction;
