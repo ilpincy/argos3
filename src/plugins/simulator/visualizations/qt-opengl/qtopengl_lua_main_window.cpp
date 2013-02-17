@@ -1,5 +1,6 @@
 #include "qtopengl_lua_main_window.h"
 #include "qtopengl_lua_editor.h"
+#include "qtopengl_lua_find_dialog.h"
 #include "qtopengl_lua_syntax_highlighter.h"
 #include "qtopengl_main_window.h"
 #include "qtopengl_widget.h"
@@ -11,7 +12,9 @@
 #include <argos3/core/simulator/entity/controllable_entity.h>
 
 #include <QApplication>
+#include <QDockWidget>
 #include <QFileDialog>
+#include <QHeaderView>
 #include <QMenu>
 #include <QMenuBar>
 #include <QMessageBox>
@@ -19,6 +22,7 @@
 #include <QStatusBar>
 #include <QTextStream>
 #include <QToolBar>
+#include <QTableWidget>
 
 namespace argos {
 
@@ -27,10 +31,16 @@ namespace argos {
 
    CQTOpenGLLuaMainWindow::CQTOpenGLLuaMainWindow(CQTOpenGLMainWindow* pc_parent) :
       QMainWindow(pc_parent),
-      m_pcMainWindow(pc_parent) {
+      m_pcMainWindow(pc_parent),
+      m_pcStatusbar(NULL),
+      m_pcCodeEditor(NULL),
+      m_pcFindDialog(NULL),
+      m_pcLuaMessageTable(NULL) {
       /* Add a status bar */
       m_pcStatusbar = new QStatusBar(this);
       setStatusBar(m_pcStatusbar);
+      /* Create the Lua message table */
+      CreateLuaMessageTable();
       /* Populate list of Lua controllers */
       PopulateLuaControllers();
       /* Create editor */
@@ -41,11 +51,7 @@ namespace argos {
       CreateCodeActions();
       /* Set empty file */
       SetCurrentFile("");
-      /* Connect text modification signal to modification slot */
-      connect(m_pcCodeEditor->document(), SIGNAL(contentsChanged()),
-              this, SLOT(CodeModified()));
-      connect(&(m_pcMainWindow->GetOpenGLWidget()), SIGNAL(StepDone(int)),
-              this, SLOT(CheckLuaStatus(int)));
+      /* Read settings */
       ReadSettings();
    }
 
@@ -119,6 +125,16 @@ namespace argos {
          QApplication::restoreOverrideCursor();
          statusBar()->showMessage(tr("Execution started"), 2000);
       }
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CQTOpenGLLuaMainWindow::Find() {
+      if(! m_pcFindDialog) {
+         m_pcFindDialog = new CQTOpenGLLuaFindDialog(this);
+      }
+      m_pcFindDialog->show();
    }
 
    /****************************************/
@@ -203,6 +219,32 @@ namespace argos {
       m_pcCodeEditor->setFont(cFont);
       new CQTOpenGLLuaSyntaxHighlighter(m_pcCodeEditor->document());
       setCentralWidget(m_pcCodeEditor);
+      connect(m_pcCodeEditor->document(), SIGNAL(contentsChanged()),
+              this, SLOT(CodeModified()));
+      connect(&(m_pcMainWindow->GetOpenGLWidget()), SIGNAL(StepDone(int)),
+              this, SLOT(CheckLuaStatus(int)));
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CQTOpenGLLuaMainWindow::CreateLuaMessageTable() {
+      QDockWidget* pcLuaMsgDock = new QDockWidget(tr("Messages"), this);
+      pcLuaMsgDock->setObjectName("LuaMessageDock");
+      m_pcLuaMessageTable = new QTableWidget();
+      m_pcLuaMessageTable->setColumnCount(3);
+      QStringList listHeaders;
+      listHeaders << tr("Robot")
+                  << tr("Line")
+                  << tr("Message");
+      m_pcLuaMessageTable->setHorizontalHeaderLabels(listHeaders);
+      m_pcLuaMessageTable->horizontalHeader()->setStretchLastSection(true);
+      m_pcLuaMessageTable->setSelectionBehavior(QAbstractItemView::SelectRows);
+      m_pcLuaMessageTable->setSelectionMode(QAbstractItemView::SingleSelection);
+      pcLuaMsgDock->setWidget(m_pcLuaMessageTable);
+      addDockWidget(Qt::BottomDockWidgetArea, pcLuaMsgDock);
+      connect(m_pcLuaMessageTable, SIGNAL(itemSelectionChanged()),
+              this, SLOT(HandleMsgTableSelection()));
    }
 
    /****************************************/
@@ -298,6 +340,14 @@ namespace argos {
       m_pcEditPasteAction->setShortcut(QKeySequence::Paste);
       connect(m_pcEditPasteAction, SIGNAL(triggered()),
               m_pcCodeEditor, SLOT(paste()));
+      QIcon cEditFindIcon;
+      cEditFindIcon.addPixmap(QPixmap(m_pcMainWindow->GetIconDir() + "/find.png"));
+      m_pcEditFindAction = new QAction(cEditFindIcon, tr("&Find/Replace"), this);
+      m_pcEditFindAction->setToolTip(tr("Find/replace text"));
+      m_pcEditFindAction->setStatusTip(tr("Find/replace text"));
+      m_pcEditFindAction->setShortcut(QKeySequence::Find);
+      connect(m_pcEditFindAction, SIGNAL(triggered()),
+              this, SLOT(Find()));
       QMenu* pcMenu = menuBar()->addMenu(tr("&Edit"));
       pcMenu->addAction(m_pcEditUndoAction);
       pcMenu->addAction(m_pcEditRedoAction);
@@ -305,6 +355,8 @@ namespace argos {
       pcMenu->addAction(m_pcEditCopyAction);
       pcMenu->addAction(m_pcEditCutAction);
       pcMenu->addAction(m_pcEditPasteAction);
+      pcMenu->addSeparator();
+      pcMenu->addAction(m_pcEditFindAction);
       QToolBar* pcToolBar = addToolBar(tr("Edit"));
       pcToolBar->addAction(m_pcEditUndoAction);
       pcToolBar->addAction(m_pcEditRedoAction);
@@ -312,6 +364,7 @@ namespace argos {
       pcToolBar->addAction(m_pcEditCopyAction);
       pcToolBar->addAction(m_pcEditCutAction);
       pcToolBar->addAction(m_pcEditPasteAction);
+      pcToolBar->addAction(m_pcEditFindAction);
    }
 
    /****************************************/
@@ -393,16 +446,63 @@ namespace argos {
    /****************************************/
 
    void CQTOpenGLLuaMainWindow::CheckLuaStatus(int n_step) {
+      static std::vector<std::string> vecFields;
+      int nRow = 0;
+      m_pcLuaMessageTable->clearContents();
+      m_pcLuaMessageTable->setRowCount(m_vecControllers.size());
       for(size_t i = 0; i < m_vecControllers.size(); ++i) {
          if(! m_vecControllers[i]->IsOK()) {
-            printf("[t=%d] [%s] %s\n",
-                   n_step,
-                   m_vecControllers[i]->GetId().c_str(),
-                   m_vecControllers[i]->GetErrorMessage().c_str());
+            vecFields.clear();
+            Tokenize(m_vecControllers[i]->GetErrorMessage(), vecFields, ":");
+            m_pcLuaMessageTable->setItem(
+               nRow, 0,
+               new QTableWidgetItem(
+                  QString::fromStdString(m_vecControllers[i]->GetId())));
+            m_pcLuaMessageTable->setItem(
+               nRow, 1,
+               new QTableWidgetItem(
+                  QString::fromStdString(vecFields[1])));
+            m_pcLuaMessageTable->setItem(
+               nRow, 2,
+               new QTableWidgetItem(
+                  QString::fromStdString(vecFields[2])));
+            ++nRow;
          }
       }
    }
-   
+
+   /****************************************/
+   /****************************************/
+
+   void CQTOpenGLLuaMainWindow::HandleMsgTableSelection() {
+      QList<QTableWidgetItem*> listSel = m_pcLuaMessageTable->selectedItems();
+      if(! listSel.empty()) {
+         int nLine = listSel[1]->data(Qt::DisplayRole).toInt();
+         QTextCursor cCursor = m_pcCodeEditor->textCursor();
+         int nCurLine = cCursor.blockNumber();
+         if(nCurLine < nLine) {
+            cCursor.movePosition(QTextCursor::NextBlock,
+                                 QTextCursor::MoveAnchor,
+                                 nLine - nCurLine - 1);
+         }
+         else if(nCurLine > nLine) {
+            cCursor.movePosition(QTextCursor::PreviousBlock,
+                                 QTextCursor::MoveAnchor,
+                                 nCurLine - nLine + 1);
+         }
+         cCursor.movePosition(QTextCursor::StartOfBlock);
+         m_pcCodeEditor->setTextCursor(cCursor);
+         m_pcCodeEditor->setFocus();
+      }
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CQTOpenGLLuaMainWindow::closeEvent(QCloseEvent* pc_event) {
+      pc_event->ignore();
+   }
+
    /****************************************/
    /****************************************/
 

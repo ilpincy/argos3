@@ -4,12 +4,14 @@
 namespace argos {
    class CQTOpenGLLuaMainWindow;
    class CQTOpenGLLuaEditor;
+   class CQTOpenGLLuaFindDialog;
    class CQTOpenGLMainWindow;
    class CLuaController;
 }
 
 class QAction;
 class QStatusBar;
+class QTableWidget;
 
 #include <QMainWindow>
 
@@ -31,8 +33,10 @@ namespace argos {
       bool Save();
       bool SaveAs();
       void Execute();
+      void Find();
       void CodeModified();
       void CheckLuaStatus(int n_step);
+      void HandleMsgTableSelection();
 
    private:
 
@@ -41,6 +45,7 @@ namespace argos {
       void ReadSettings();
       void WriteSettings();
       void CreateCodeEditor();
+      void CreateLuaMessageTable();
       void CreateFileActions();
       void CreateEditActions();
       void CreateCodeActions();
@@ -48,11 +53,16 @@ namespace argos {
       bool SaveFile(const QString& str_path = QString());
       void SetCurrentFile(const QString& str_path);
 
+      virtual void closeEvent(QCloseEvent* pc_event);
+
    private:
 
       CQTOpenGLMainWindow* m_pcMainWindow;
       QStatusBar* m_pcStatusbar;
       CQTOpenGLLuaEditor* m_pcCodeEditor;
+      CQTOpenGLLuaFindDialog* m_pcFindDialog;
+      QTableWidget* m_pcLuaMessageTable;
+
       std::vector<CLuaController*> m_vecControllers;
       QString m_strFileName;
 
@@ -66,7 +76,6 @@ namespace argos {
       QAction* m_pcEditCutAction;
       QAction* m_pcEditPasteAction;
       QAction* m_pcEditFindAction;
-      QAction* m_pcEditSubstituteAction;
       QAction* m_pcCodeExecuteAction;
 
    };

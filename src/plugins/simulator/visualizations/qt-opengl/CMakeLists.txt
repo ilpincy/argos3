@@ -21,6 +21,7 @@ if(ARGOS_WITH_LUA)
   set(ARGOS3_MOC_HEADERS_PLUGINS_SIMULATOR_VISUALIZATIONS_QTOPENGL
     ${ARGOS3_MOC_HEADERS_PLUGINS_SIMULATOR_VISUALIZATIONS_QTOPENGL}
     qtopengl_lua_editor.h
+    qtopengl_lua_find_dialog.h
     qtopengl_lua_main_window.h
     qtopengl_lua_syntax_highlighter.h)
 endif(ARGOS_WITH_LUA)
@@ -64,6 +65,7 @@ if(ARGOS_WITH_LUA)
   set(ARGOS3_SOURCES_PLUGINS_SIMULATOR_VISUALIZATIONS_QTOPENGL
     ${ARGOS3_SOURCES_PLUGINS_SIMULATOR_VISUALIZATIONS_QTOPENGL}
     qtopengl_lua_editor.cpp
+    qtopengl_lua_find_dialog.cpp
     qtopengl_lua_main_window.cpp
     qtopengl_lua_syntax_highlighter.cpp)
 endif(ARGOS_WITH_LUA)
