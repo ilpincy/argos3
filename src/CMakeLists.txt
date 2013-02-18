@@ -81,6 +81,15 @@ configure_file(
   @ONLY)
 
 #
+# Create setup_envsh file for bash support
+# It is placed in the base build directory
+#
+configure_file(
+  ${CMAKE_SOURCE_DIR}/scripts/setup_env.sh.in
+  ${CMAKE_BINARY_DIR}/setup_env.sh
+  @ONLY)
+
+#
 # Install extra stuff
 #
 # Configuration file for /etc/ld.so.conf.d/
