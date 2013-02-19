@@ -43,7 +43,7 @@ namespace argos {
          case LUA_TBOOLEAN: c_log << lua_toboolean(pt_state, n_index); break;
          case LUA_TNUMBER: c_log << lua_tonumber(pt_state, n_index); break;
          case LUA_TSTRING: c_log << lua_tostring(pt_state, n_index); break;
-         default: break;
+         default: c_log << lua_topointer(pt_state, n_index); break;
       }
    }
 
@@ -62,6 +62,7 @@ namespace argos {
             if(lua_type(pt_state, -1) != LUA_TFUNCTION &&
                (lua_type(pt_state, -2) != LUA_TSTRING ||
                 (std::string(lua_tostring(pt_state, -2)) != "_G" &&
+                 std::string(lua_tostring(pt_state, -2)) != "_VERSION" &&
                  std::string(lua_tostring(pt_state, -2)) != "package" &&
                  std::string(lua_tostring(pt_state, -2)) != "string" &&
                  std::string(lua_tostring(pt_state, -2)) != "os" &&
@@ -88,6 +89,7 @@ namespace argos {
       RecursivePrintGlobals(c_log, pt_state, 0);
       lua_pop(pt_state, 1);
       c_log << "*** LUA GLOBALS END ***" << std::endl;
+      c_log.Flush();
    }
 
    /****************************************/
@@ -104,6 +106,7 @@ namespace argos {
          c_log << std::endl;
       }
       c_log << "*** LUA STACK END ***" << std::endl;
+      c_log.Flush();
    }
 
    /****************************************/
