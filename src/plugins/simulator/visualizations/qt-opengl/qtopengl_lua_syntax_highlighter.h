@@ -1,3 +1,9 @@
+
+/**
+ * @file <argos3/plugins/simulator/visualizations/qt-opengl/qtopengl_lua_syntax_highlighter.h>
+ *
+ * @author Carlo Pinciroli <ilpincy@gmail.com>
+ */
 #ifndef QTOPENGL_LUA_SYNTAX_HIGHLIGHTER_H
 #define QTOPENGL_LUA_SYNTAX_HIGHLIGHTER_H
 

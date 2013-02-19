@@ -1,3 +1,9 @@
+
+/**
+ * @file <argos3/plugins/simulator/visualizations/qt-opengl/qtopengl_lua_main_window.cpp>
+ *
+ * @author Carlo Pinciroli <ilpincy@gmail.com>
+ */
 #include "qtopengl_lua_main_window.h"
 #include "qtopengl_lua_editor.h"
 #include "qtopengl_lua_find_dialog.h"

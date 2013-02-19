@@ -1,3 +1,9 @@
+
+/**
+ * @file <argos3/plugins/robots/generic/control_interface/ci_proximity_sensor.cpp>
+ *
+ * @author Carlo Pinciroli <ilpincy@gmail.com>
+ */
 #include "ci_proximity_sensor.h"
 
 namespace argos {

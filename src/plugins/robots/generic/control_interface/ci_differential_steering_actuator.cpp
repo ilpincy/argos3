@@ -1,3 +1,9 @@
+
+/**
+ * @file <argos3/plugins/robots/generic/control_interface/ci_differential_steering_actuator.cpp>
+ *
+ * @author Carlo Pinciroli <ilpincy@gmail.com>
+ */
 #include "ci_differential_steering_actuator.h"
 
 namespace argos {

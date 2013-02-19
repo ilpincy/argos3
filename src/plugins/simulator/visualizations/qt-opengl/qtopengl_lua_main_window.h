@@ -1,3 +1,9 @@
+
+/**
+ * @file <argos3/plugins/simulator/visualizations/qt-opengl/qtopengl_lua_main_window.h>
+ *
+ * @author Carlo Pinciroli <ilpincy@gmail.com>
+ */
 #ifndef QTOPENGL_LUA_MAIN_WINDOW_H
 #define QTOPENGL_LUA_MAIN_WINDOW_H
 

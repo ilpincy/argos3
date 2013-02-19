@@ -1,3 +1,9 @@
+
+/**
+ * @file <argos3/core/utility/math/plane.h>
+ *
+ * @author Carlo Pinciroli <ilpincy@gmail.com>
+ */
 #ifndef PLANE_H
 #define PLANE_H
 

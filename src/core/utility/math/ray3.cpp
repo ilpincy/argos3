@@ -1,3 +1,9 @@
+
+/**
+ * @file <argos3/core/utility/math/ray3.cpp>
+ *
+ * @author Carlo Pinciroli <ilpincy@gmail.com>
+ */
 #include "ray3.h"
 #include "plane.h"
 

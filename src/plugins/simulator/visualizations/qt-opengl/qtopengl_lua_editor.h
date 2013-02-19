@@ -1,3 +1,9 @@
+
+/**
+ * @file <argos3/plugins/simulator/visualizations/qt-opengl/qtopengl_lua_editor.h>
+ *
+ * @author Carlo Pinciroli <ilpincy@gmail.com>
+ */
 #ifndef QTOPENGL_LUA_EDITOR_H
 #define QTOPENGL_LUA_EDITOR_H
 
