@@ -40,13 +40,14 @@ set(ARGOS3_HEADERS_UTILITY_PROFILER
 set(ARGOS3_HEADERS_UTILITY_MATH
   utility/math/angles.h
   utility/math/general.h
+  utility/math/plane.h
   utility/math/quaternion.h
   utility/math/range.h
   utility/math/ray2.h
   utility/math/ray3.h
+  utility/math/rng.h
   utility/math/vector2.h
-  utility/math/vector3.h
-  utility/math/rng.h)
+  utility/math/vector3.h)
 # argos3/core/utility/math/matrix
 set(ARGOS3_HEADERS_UTILITY_MATH_MATRIX
   utility/math/matrix/matrix.h

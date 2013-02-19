@@ -26,7 +26,7 @@ add_library(argos3plugin_${ARGOS_BUILD_FOR}_genericrobot SHARED ${ARGOS3_SOURCES
 #
 # Install stuff
 #
-install(FILES ${ARGOS3_HEADERS_PLUGINS_ROBOTS_GENERIC_CONTROLINTERFACE} DESTINATION include/argos3/plugins/robots/foot-bot/control_interface)
+install(FILES ${ARGOS3_HEADERS_PLUGINS_ROBOTS_GENERIC_CONTROLINTERFACE} DESTINATION include/argos3/plugins/robots/generic/control_interface)
 install(TARGETS argos3plugin_${ARGOS_BUILD_FOR}_genericrobot
   RUNTIME DESTINATION bin
   LIBRARY DESTINATION lib/argos3
