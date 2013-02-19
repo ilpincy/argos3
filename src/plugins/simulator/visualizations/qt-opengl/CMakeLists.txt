@@ -88,6 +88,7 @@ if(SDL_FOUND)
  target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_qtopengl ${SDL_LIBRARY})
 endif(SDL_FOUND)
 
+install(DIRECTORY icons textures DESTINATION include/argos3/plugins/simulator/visualizations/qt-opengl)
 install(FILES ${ARGOS3_HEADERS_PLUGINS_SIMULATOR_VISUALIZATIONS_QTOPENGL_MODELS} DESTINATION include/argos3/plugins/simulator/visualizations/qt-opengl/models)
 install(FILES ${ARGOS3_HEADERS_PLUGINS_SIMULATOR_VISUALIZATIONS_QTOPENGL}        DESTINATION include/argos3/plugins/simulator/visualizations/qt-opengl)
 install(TARGETS argos3plugin_${ARGOS_BUILD_FOR}_qtopengl

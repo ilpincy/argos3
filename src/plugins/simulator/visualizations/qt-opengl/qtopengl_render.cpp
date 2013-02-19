@@ -90,6 +90,26 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   CQTOpenGLMainWindow& CQTOpenGLRender::GetMainWindow() {
+      if(m_pcMainWindow == NULL) {
+         THROW_ARGOSEXCEPTION("CQTOpenGLRender::GetMainWindow(): no main window created");
+      }
+      return *m_pcMainWindow;
+   }
+
+   /****************************************/
+   /****************************************/
+
+   CQTOpenGLLuaMainWindow& CQTOpenGLRender::GetLuaMainWindow() {
+      if(m_pcQTOpenGLLuaMainWindow == NULL) {
+         THROW_ARGOSEXCEPTION("CQTOpenGLRender::GetLuaMainWindow(): no Lua main window created");
+      }
+      return *m_pcQTOpenGLLuaMainWindow;
+   }
+
+   /****************************************/
+   /****************************************/
+
    REGISTER_VISUALIZATION(CQTOpenGLRender,
                           "qt-opengl",
                           "Carlo Pinciroli [ilpincy@gmail.com]",

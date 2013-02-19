@@ -21,16 +21,6 @@ namespace argos {
 
    class CQTOpenGLRender : public CVisualization {
 
-   protected:
-
-      QApplication* m_pcApplication;
-      CQTOpenGLMainWindow* m_pcMainWindow;
-      CQTOpenGLLuaMainWindow* m_pcQTOpenGLLuaMainWindow;
-      char** m_ppcOptions;
-      SInt32 m_nOptionNum;
-      TConfigurationNode m_tConfTree;
-      bool m_bLuaEditor;
-
    public:
 
       CQTOpenGLRender() :
@@ -47,6 +37,20 @@ namespace argos {
       virtual void Execute();
 
       virtual void Destroy();
+
+      CQTOpenGLMainWindow& GetMainWindow();
+
+      CQTOpenGLLuaMainWindow& GetLuaMainWindow();
+
+   private:
+
+      QApplication* m_pcApplication;
+      CQTOpenGLMainWindow* m_pcMainWindow;
+      CQTOpenGLLuaMainWindow* m_pcQTOpenGLLuaMainWindow;
+      char** m_ppcOptions;
+      SInt32 m_nOptionNum;
+      TConfigurationNode m_tConfTree;
+      bool m_bLuaEditor;
 
    };
 
