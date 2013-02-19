@@ -13,11 +13,13 @@ namespace argos {
    class CQTOpenGLLuaFindDialog;
    class CQTOpenGLMainWindow;
    class CLuaController;
+   class CComposableEntity;
 }
 
 class QAction;
 class QStatusBar;
 class QTableWidget;
+class QTreeView;
 
 #include <QMainWindow>
 
@@ -44,6 +46,8 @@ namespace argos {
       void CodeModified();
       void CheckLuaStatus(int n_step);
       void HandleMsgTableSelection();
+      void HandleEntitySelection(size_t un_index);
+      void HandleEntityDeselection(size_t);
 
    private:
 
@@ -53,6 +57,7 @@ namespace argos {
       void WriteSettings();
       void CreateCodeEditor();
       void CreateLuaMessageTable();
+      void CreateLuaStateDock();
       void CreateFileActions();
       void CreateEditActions();
       void CreateCodeActions();
@@ -74,8 +79,11 @@ namespace argos {
       CQTOpenGLLuaEditor* m_pcCodeEditor;
       CQTOpenGLLuaFindDialog* m_pcFindDialog;
       QTableWidget* m_pcLuaMessageTable;
+      QDockWidget* m_pcLuaStateDock;
+      QTreeView* m_pcLuaStateTree;
 
       std::vector<CLuaController*> m_vecControllers;
+      std::vector<CComposableEntity*> m_vecRobots;
       QString m_strFileName;
 
       QAction* m_pcFileNewAction;

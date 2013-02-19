@@ -23,7 +23,9 @@ if(ARGOS_WITH_LUA)
     qtopengl_lua_editor.h
     qtopengl_lua_find_dialog.h
     qtopengl_lua_main_window.h
-    qtopengl_lua_syntax_highlighter.h)
+    qtopengl_lua_syntax_highlighter.h
+    qtopengl_lua_variabletree_item.h
+    qtopengl_lua_variabletree_model.h)
 endif(ARGOS_WITH_LUA)
 # all base headers
 set(ARGOS3_HEADERS_PLUGINS_SIMULATOR_VISUALIZATIONS_QTOPENGL
@@ -31,6 +33,11 @@ set(ARGOS3_HEADERS_PLUGINS_SIMULATOR_VISUALIZATIONS_QTOPENGL
   qtopengl_render.h
   qtopengl_log_stream.h
   qtopengl_user_functions.h)
+if(ARGOS_WITH_LUA)
+  set(ARGOS3_HEADERS_PLUGINS_SIMULATOR_VISUALIZATIONS_QTOPENGL
+    ${ARGOS3_HEADERS_PLUGINS_SIMULATOR_VISUALIZATIONS_QTOPENGL}
+    qtopengl_lua_variabletree_item.h)
+endif(ARGOS_WITH_LUA)
 
 #
 # Run the moc utility
@@ -67,7 +74,9 @@ if(ARGOS_WITH_LUA)
     qtopengl_lua_editor.cpp
     qtopengl_lua_find_dialog.cpp
     qtopengl_lua_main_window.cpp
-    qtopengl_lua_syntax_highlighter.cpp)
+    qtopengl_lua_syntax_highlighter.cpp
+    qtopengl_lua_variabletree_item.cpp
+    qtopengl_lua_variabletree_model.cpp)
 endif(ARGOS_WITH_LUA)
 
 #

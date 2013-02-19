@@ -1,4 +1,3 @@
-
 /**
  * @file <argos3/plugins/simulator/visualizations/qt-opengl/qtopengl_lua_main_window.cpp>
  *
@@ -8,6 +7,7 @@
 #include "qtopengl_lua_editor.h"
 #include "qtopengl_lua_find_dialog.h"
 #include "qtopengl_lua_syntax_highlighter.h"
+#include "qtopengl_lua_variabletree_model.h"
 #include "qtopengl_main_window.h"
 #include "qtopengl_widget.h"
 
@@ -16,6 +16,7 @@
 #include <argos3/core/simulator/space/space.h>
 #include <argos3/core/simulator/entity/composable_entity.h>
 #include <argos3/core/simulator/entity/controllable_entity.h>
+#include <argos3/core/wrappers/lua/lua_utility.h>
 
 #include <QApplication>
 #include <QDockWidget>
@@ -29,6 +30,7 @@
 #include <QTextStream>
 #include <QToolBar>
 #include <QTableWidget>
+#include <QTreeView>
 
 namespace argos {
 
@@ -49,6 +51,8 @@ namespace argos {
       CreateLuaMessageTable();
       /* Populate list of Lua controllers */
       PopulateLuaControllers();
+      /* Create the Lua state dock */
+      CreateLuaStateDock();
       /* Create editor */
       CreateCodeEditor();
       /* Create actions */
@@ -191,6 +195,7 @@ namespace argos {
          CLuaController* pcLuaController = dynamic_cast<CLuaController*>(&(pcControllable->GetController()));
          if(pcLuaController) {
             m_vecControllers.push_back(pcLuaController);
+            m_vecRobots.push_back(&pcControllable->GetParent());
          }
          else {
             LOGERR << "[WARNING] Entity \""
@@ -247,6 +252,8 @@ namespace argos {
    void CQTOpenGLLuaMainWindow::CreateLuaMessageTable() {
       QDockWidget* pcLuaMsgDock = new QDockWidget(tr("Messages"), this);
       pcLuaMsgDock->setObjectName("LuaMessageDock");
+      pcLuaMsgDock->setFeatures(QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable);
+      pcLuaMsgDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea | Qt::BottomDockWidgetArea);
       m_pcLuaMessageTable = new QTableWidget();
       m_pcLuaMessageTable->setColumnCount(3);
       QStringList listHeaders;
@@ -261,6 +268,24 @@ namespace argos {
       addDockWidget(Qt::BottomDockWidgetArea, pcLuaMsgDock);
       connect(m_pcLuaMessageTable, SIGNAL(itemSelectionChanged()),
               this, SLOT(HandleMsgTableSelection()));
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CQTOpenGLLuaMainWindow::CreateLuaStateDock() {
+      m_pcLuaStateDock = new QDockWidget(tr("Variables"), this);
+      m_pcLuaStateDock->setObjectName("LuaStateDock");
+      m_pcLuaStateDock->setFeatures(QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable);
+      m_pcLuaStateDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea | Qt::BottomDockWidgetArea);
+      m_pcLuaStateTree = new QTreeView();
+      m_pcLuaStateDock->setWidget(m_pcLuaStateTree);
+      addDockWidget(Qt::LeftDockWidgetArea, m_pcLuaStateDock);
+      m_pcLuaStateDock->hide();
+      connect(&(m_pcMainWindow->GetOpenGLWidget()), SIGNAL(EntitySelected(size_t)),
+              this, SLOT(HandleEntitySelection(size_t)));
+      connect(&(m_pcMainWindow->GetOpenGLWidget()), SIGNAL(EntityDeselected(size_t)),
+              this, SLOT(HandleEntityDeselection(size_t)));
    }
 
    /****************************************/
@@ -534,6 +559,39 @@ namespace argos {
          m_pcCodeEditor->setTextCursor(cCursor);
          m_pcCodeEditor->setFocus();
       }
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CQTOpenGLLuaMainWindow::HandleEntitySelection(size_t un_index) {
+      CComposableEntity* pcSelectedEntity = dynamic_cast<CComposableEntity*>(CSimulator::GetInstance().GetSpace().GetRootEntityVector()[un_index]);
+      if(pcSelectedEntity != NULL) {
+         bool bFound = false;
+         size_t i = 0;
+         while(!bFound && i < m_vecRobots.size()) {
+            if(m_vecRobots[i] == pcSelectedEntity) {
+               bFound = true;
+            }
+            else {
+               ++i;
+            }
+         }
+         if(bFound &&
+            m_vecControllers[i]->GetLuaState() != NULL) {
+            CQTOpenGLLuaVariableTreeModel* pcModel = new CQTOpenGLLuaVariableTreeModel(m_vecControllers[i]->GetLuaState(), m_pcLuaStateTree);
+            m_pcLuaStateTree->setModel(pcModel);
+            m_pcLuaStateTree->expandAll();
+            m_pcLuaStateDock->show();
+         }
+      }
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CQTOpenGLLuaMainWindow::HandleEntityDeselection(size_t) {
+      m_pcLuaStateDock->hide();
    }
 
    /****************************************/
