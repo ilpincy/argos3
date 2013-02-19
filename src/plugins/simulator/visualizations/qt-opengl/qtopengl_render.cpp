@@ -33,7 +33,7 @@ namespace argos {
          m_nOptionNum += 2;
       }
       m_ppcOptions = new char*[m_nOptionNum];
-      m_ppcOptions[0] = new char[6];
+      m_ppcOptions[0] = new char[7];
       ::strcpy(m_ppcOptions[0], "argos3");
       if(bIntelFix) {
          m_ppcOptions[1] = new char[16];
