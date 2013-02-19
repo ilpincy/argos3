@@ -1,7 +1,7 @@
 .\" Process this file with
 .\" groff -man -Tascii foo.1
 .\"
-.TH ARGoS3 1 "November 2012" Linux "User Commands"
+.TH ARGoS3 1 "February 2013" Linux "User Commands"
 .SH NAME
 ARGoS3 \- a parallel, multi-engine, multi-robot simulator
 .SH SYNOPSIS
@@ -92,7 +92,12 @@ can be written as (part of) the name of a specific plugin as returned by the
 above commands. In this case, you get a complete description of the matching
 plugins. For example:
 .P
-.B $ argos3 -q epuck_proximity
+.B $ argos3 -q led
+.P
+would return all the plugins containing the string
+.IR led ","
+such as the
+.IR "leds default actuator" "."
 .SH ENVIRONMENT
 .TP
 .B ARGOS_PLUGIN_PATH
