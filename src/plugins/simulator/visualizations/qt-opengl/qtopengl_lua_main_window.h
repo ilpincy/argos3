@@ -49,6 +49,7 @@ namespace argos {
       void HandleEntitySelection(size_t un_index);
       void HandleEntityDeselection(size_t);
       void VariableTreeChanged();
+      void FunctionTreeChanged();
 
    private:
 
@@ -58,7 +59,7 @@ namespace argos {
       void WriteSettings();
       void CreateCodeEditor();
       void CreateLuaMessageTable();
-      void CreateLuaStateDock();
+      void CreateLuaStateDocks();
       void CreateFileActions();
       void CreateEditActions();
       void CreateCodeActions();
@@ -80,8 +81,10 @@ namespace argos {
       CQTOpenGLLuaEditor* m_pcCodeEditor;
       CQTOpenGLLuaFindDialog* m_pcFindDialog;
       QTableWidget* m_pcLuaMessageTable;
-      QDockWidget* m_pcLuaStateDock;
-      QTreeView* m_pcLuaStateTree;
+      QDockWidget* m_pcLuaVariableDock;
+      QDockWidget* m_pcLuaFunctionDock;
+      QTreeView* m_pcLuaVariableTree;
+      QTreeView* m_pcLuaFunctionTree;
 
       std::vector<CLuaController*> m_vecControllers;
       std::vector<CComposableEntity*> m_vecRobots;

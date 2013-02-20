@@ -7,7 +7,7 @@
 #include "qtopengl_lua_editor.h"
 #include "qtopengl_lua_find_dialog.h"
 #include "qtopengl_lua_syntax_highlighter.h"
-#include "qtopengl_lua_variabletree_model.h"
+#include "qtopengl_lua_statetree_model.h"
 #include "qtopengl_main_window.h"
 #include "qtopengl_widget.h"
 
@@ -51,8 +51,8 @@ namespace argos {
       CreateLuaMessageTable();
       /* Populate list of Lua controllers */
       PopulateLuaControllers();
-      /* Create the Lua state dock */
-      CreateLuaStateDock();
+      /* Create the Lua state docks */
+      CreateLuaStateDocks();
       /* Create editor */
       CreateCodeEditor();
       /* Create actions */
@@ -142,8 +142,12 @@ namespace argos {
          for(size_t i = 0; i < m_vecControllers.size(); ++i) {
             m_vecControllers[i]->SetLuaScript(m_strFileName.toStdString());
          }
-         if(m_pcLuaStateDock->isVisible()) {
-            static_cast<CQTOpenGLLuaVariableTreeModel*>(m_pcLuaStateTree->model())->SetLuaState(
+         if(m_pcLuaVariableDock->isVisible()) {
+            static_cast<CQTOpenGLLuaStateTreeModel*>(m_pcLuaVariableTree->model())->SetLuaState(
+               m_vecControllers[m_unSelectedRobot]->GetLuaState());
+         }
+         if(m_pcLuaFunctionDock->isVisible()) {
+            static_cast<CQTOpenGLLuaStateTreeModel*>(m_pcLuaFunctionTree->model())->SetLuaState(
                m_vecControllers[m_unSelectedRobot]->GetLuaState());
          }
          QApplication::restoreOverrideCursor();
@@ -276,15 +280,26 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CQTOpenGLLuaMainWindow::CreateLuaStateDock() {
-      m_pcLuaStateDock = new QDockWidget(tr("Variables"), this);
-      m_pcLuaStateDock->setObjectName("LuaStateDock");
-      m_pcLuaStateDock->setFeatures(QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable);
-      m_pcLuaStateDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea | Qt::BottomDockWidgetArea);
-      m_pcLuaStateTree = new QTreeView();
-      m_pcLuaStateDock->setWidget(m_pcLuaStateTree);
-      addDockWidget(Qt::LeftDockWidgetArea, m_pcLuaStateDock);
-      m_pcLuaStateDock->hide();
+   void CQTOpenGLLuaMainWindow::CreateLuaStateDocks() {
+      /* Variable tree dock */
+      m_pcLuaVariableDock = new QDockWidget(tr("Variables"), this);
+      m_pcLuaVariableDock->setObjectName("LuaVariableDock");
+      m_pcLuaVariableDock->setFeatures(QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable);
+      m_pcLuaVariableDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea | Qt::BottomDockWidgetArea);
+      m_pcLuaVariableTree = new QTreeView();
+      m_pcLuaVariableDock->setWidget(m_pcLuaVariableTree);
+      addDockWidget(Qt::LeftDockWidgetArea, m_pcLuaVariableDock);
+      m_pcLuaVariableDock->hide();
+      /* Function tree dock */
+      m_pcLuaFunctionDock = new QDockWidget(tr("Functions"), this);
+      m_pcLuaFunctionDock->setObjectName("LuaFunctionDock");
+      m_pcLuaFunctionDock->setFeatures(QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable);
+      m_pcLuaFunctionDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea | Qt::BottomDockWidgetArea);
+      m_pcLuaFunctionTree = new QTreeView();
+      m_pcLuaFunctionDock->setWidget(m_pcLuaFunctionTree);
+      addDockWidget(Qt::LeftDockWidgetArea, m_pcLuaFunctionDock);
+      m_pcLuaFunctionDock->hide();
+      /* Connect stuff */
       connect(&(m_pcMainWindow->GetOpenGLWidget()), SIGNAL(EntitySelected(size_t)),
               this, SLOT(HandleEntitySelection(size_t)));
       connect(&(m_pcMainWindow->GetOpenGLWidget()), SIGNAL(EntityDeselected(size_t)),
@@ -345,6 +360,7 @@ namespace argos {
          pcMenu->addAction(m_pcFileOpenRecentAction[i]);
       }
       QToolBar* pcToolBar = addToolBar(tr("File"));
+      pcToolBar->setObjectName("FileToolBar");
       pcToolBar->addAction(m_pcFileNewAction);
       pcToolBar->addAction(m_pcFileOpenAction);
       pcToolBar->addAction(m_pcFileSaveAction);
@@ -413,6 +429,7 @@ namespace argos {
       pcMenu->addSeparator();
       pcMenu->addAction(m_pcEditFindAction);
       QToolBar* pcToolBar = addToolBar(tr("Edit"));
+      pcToolBar->setObjectName("EditToolBar");
       pcToolBar->addAction(m_pcEditUndoAction);
       pcToolBar->addAction(m_pcEditRedoAction);
       pcToolBar->addSeparator();
@@ -437,6 +454,7 @@ namespace argos {
       QMenu* pcMenu = menuBar()->addMenu(tr("&Code"));
       pcMenu->addAction(m_pcCodeExecuteAction);
       QToolBar* pcToolBar = addToolBar(tr("Code"));
+      pcToolBar->setObjectName("CodeToolBar");
       pcToolBar->addAction(m_pcCodeExecuteAction);
    }
 
@@ -582,16 +600,28 @@ namespace argos {
          }
          if(bFound &&
             m_vecControllers[m_unSelectedRobot]->GetLuaState() != NULL) {
-            CQTOpenGLLuaVariableTreeModel* pcModel = new CQTOpenGLLuaVariableTreeModel(m_vecControllers[m_unSelectedRobot]->GetLuaState(), m_pcLuaStateTree);
+            CQTOpenGLLuaStateTreeVariableModel* pcVarModel = new CQTOpenGLLuaStateTreeVariableModel(m_vecControllers[m_unSelectedRobot]->GetLuaState(), m_pcLuaVariableTree);
+            pcVarModel->Refresh(0);
             connect(&(m_pcMainWindow->GetOpenGLWidget()), SIGNAL(StepDone(int)),
-                    pcModel, SLOT(Refresh(int)));
-            connect(pcModel, SIGNAL(modelReset()),
+                    pcVarModel, SLOT(Refresh(int)));
+            connect(pcVarModel, SIGNAL(modelReset()),
                     this, SLOT(VariableTreeChanged()),
                     Qt::QueuedConnection);
-            m_pcLuaStateTree->setModel(pcModel);
-            m_pcLuaStateTree->setRootIndex(pcModel->index(0, 0));
-            m_pcLuaStateTree->expandAll();
-            m_pcLuaStateDock->show();
+            m_pcLuaVariableTree->setModel(pcVarModel);
+            m_pcLuaVariableTree->setRootIndex(pcVarModel->index(0, 0));
+            m_pcLuaVariableTree->expandAll();
+            m_pcLuaVariableDock->show();
+            CQTOpenGLLuaStateTreeFunctionModel* pcFunModel = new CQTOpenGLLuaStateTreeFunctionModel(m_vecControllers[m_unSelectedRobot]->GetLuaState(), m_pcLuaFunctionTree);
+            pcFunModel->Refresh(0);
+            connect(&(m_pcMainWindow->GetOpenGLWidget()), SIGNAL(StepDone(int)),
+                    pcFunModel, SLOT(Refresh(int)));
+            connect(pcFunModel, SIGNAL(modelReset()),
+                    this, SLOT(FunctionTreeChanged()),
+                    Qt::QueuedConnection);
+            m_pcLuaFunctionTree->setModel(pcFunModel);
+            m_pcLuaFunctionTree->setRootIndex(pcFunModel->index(0, 0));
+            m_pcLuaFunctionTree->expandAll();
+            m_pcLuaFunctionDock->show();
          }
       }
    }
@@ -601,18 +631,31 @@ namespace argos {
 
    void CQTOpenGLLuaMainWindow::HandleEntityDeselection(size_t) {
       disconnect(&(m_pcMainWindow->GetOpenGLWidget()), SIGNAL(StepDone(int)),
-                 m_pcLuaStateTree->model(), SLOT(Refresh(int)));
-      disconnect(m_pcLuaStateTree->model(), SIGNAL(modelReset()),
-                 this, SLOT(VariableTreeChanged()));
-      m_pcLuaStateDock->hide();
+                 m_pcLuaVariableTree->model(), SLOT(Refresh(int)));
+      disconnect(m_pcLuaVariableTree->model(), SIGNAL(modelReset()),
+                 this, SLOT(StateTreeChanged()));
+      m_pcLuaVariableDock->hide();
+      connect(&(m_pcMainWindow->GetOpenGLWidget()), SIGNAL(StepDone(int)),
+              m_pcLuaFunctionTree->model(), SLOT(Refresh(int)));
+      connect(m_pcLuaFunctionTree->model(), SIGNAL(modelReset()),
+              this, SLOT(FunctionTreeChanged()));
+      m_pcLuaFunctionDock->hide();
    }
 
    /****************************************/
    /****************************************/
 
    void CQTOpenGLLuaMainWindow::VariableTreeChanged() {
-      m_pcLuaStateTree->setRootIndex(m_pcLuaStateTree->model()->index(0, 0));
-      m_pcLuaStateTree->expandAll();
+      m_pcLuaVariableTree->setRootIndex(m_pcLuaVariableTree->model()->index(0, 0));
+      m_pcLuaVariableTree->expandAll();
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CQTOpenGLLuaMainWindow::FunctionTreeChanged() {
+      m_pcLuaFunctionTree->setRootIndex(m_pcLuaFunctionTree->model()->index(0, 0));
+      m_pcLuaFunctionTree->expandAll();
    }
 
    /****************************************/
