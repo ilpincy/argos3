@@ -519,7 +519,7 @@ namespace argos {
       connect(m_pcResetAction, SIGNAL(triggered()),
               m_pcOpenGLWidget, SLOT(ResetSimulation()));
       connect(m_pcResetAction, SIGNAL(triggered()),
-              this, SLOT(SimulationReset()));
+              this, SLOT(ResetSimulation()));
       /* Capture button toggled */
       connect(m_pcCaptureAction, SIGNAL(triggered(bool)),
               m_pcOpenGLWidget, SLOT(SetGrabFrame(bool)));
@@ -611,7 +611,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CQTOpenGLMainWindow::SimulationReset() {
+   void CQTOpenGLMainWindow::ResetSimulation() {
       m_pcPlayAction->setChecked(false);
       m_pcPlayAction->setEnabled(true);
       m_pcStepAction->setEnabled(true);
@@ -619,6 +619,7 @@ namespace argos {
       m_pcFastForwardAction->setEnabled(true);
       m_pcCaptureAction->setEnabled(true);
       m_pcCurrentStepLCD->display(0);
+      emit SimulationReset();
    }
 
    /****************************************/

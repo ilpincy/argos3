@@ -72,7 +72,6 @@ namespace argos {
          else {
             m_bIsOK = false;
          }
-         //CLuaUtility::PrintGlobals(LOGERR, m_ptLuaState);
       }
    }
 
@@ -80,9 +79,13 @@ namespace argos {
    /****************************************/
 
    void CLuaController::Reset() {
-      if(m_bScriptActive && m_bIsOK) {
-         /* Execute script reset function */
-         m_bIsOK = CLuaUtility::CallFunction(m_ptLuaState, "reset");
+      if(m_bScriptActive) {
+         if(m_bIsOK) {
+            m_bIsOK = CLuaUtility::CallFunction(m_ptLuaState, "reset");
+         }
+         else {
+            SetLuaScript(m_strScriptFileName);
+         }
       }
    }
 
@@ -111,6 +114,7 @@ namespace argos {
       if(m_bScriptActive) {
          lua_close(m_ptLuaState);
          m_bScriptActive = false;
+         m_strScriptFileName = "";
       }
       /* Create a new Lua stack */
       m_ptLuaState = luaL_newstate();
@@ -121,6 +125,7 @@ namespace argos {
          m_bIsOK = false;
          return;
       }
+      m_strScriptFileName = str_script;
       /* Register functions */
       CLuaUtility::RegisterLoggerWrapper(m_ptLuaState);
       /* Create and set variables */

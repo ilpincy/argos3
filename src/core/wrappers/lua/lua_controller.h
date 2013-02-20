@@ -49,6 +49,7 @@ namespace argos {
    private:
 
       lua_State* m_ptLuaState;
+      std::string m_strScriptFileName;
       bool m_bScriptActive;
       bool m_bIsOK;
 

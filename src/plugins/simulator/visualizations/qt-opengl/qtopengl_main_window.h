@@ -85,11 +85,12 @@ namespace argos {
    signals:
 
       void CameraSwitched(int);
+      void SimulationReset();
 
    public slots:
 
       void SimulationDone();
-      void SimulationReset();
+      void ResetSimulation();
       void CameraXMLPopUp();
       QString GetCameraXMLData();
       // void POVRaySceneXMLPopUp();
