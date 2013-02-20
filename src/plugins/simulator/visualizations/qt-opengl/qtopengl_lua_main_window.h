@@ -48,6 +48,7 @@ namespace argos {
       void HandleMsgTableSelection();
       void HandleEntitySelection(size_t un_index);
       void HandleEntityDeselection(size_t);
+      void VariableTreeChanged();
 
    private:
 
@@ -84,6 +85,7 @@ namespace argos {
 
       std::vector<CLuaController*> m_vecControllers;
       std::vector<CComposableEntity*> m_vecRobots;
+      size_t m_unSelectedRobot;
       QString m_strFileName;
 
       QAction* m_pcFileNewAction;

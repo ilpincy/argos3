@@ -11,6 +11,12 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   CQTOpenGLLuaVariableTreeItem::CQTOpenGLLuaVariableTreeItem(CQTOpenGLLuaVariableTreeItem* pc_parent) :
+      m_pcParent(pc_parent) {}
+
+   /****************************************/
+   /****************************************/
+
    CQTOpenGLLuaVariableTreeItem::CQTOpenGLLuaVariableTreeItem(QList<QVariant>& list_data,
                                                               CQTOpenGLLuaVariableTreeItem* pc_parent) :
       m_listData(list_data),

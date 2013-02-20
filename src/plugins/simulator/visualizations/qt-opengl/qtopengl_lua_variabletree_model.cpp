@@ -13,10 +13,8 @@ namespace argos {
                                                                 QObject* pc_parent) :
       QAbstractItemModel(pc_parent),
       m_ptState(pt_state) {
-      QList<QVariant> cHeader;
-      cHeader << tr("Variable") << tr("Value");
-      m_pcDataRoot = new CQTOpenGLLuaVariableTreeItem(cHeader);
-      SetupData();
+      m_pcDataRoot = new CQTOpenGLLuaVariableTreeItem();
+      Refresh(0);
    }
 
    /****************************************/
@@ -59,11 +57,14 @@ namespace argos {
    QVariant CQTOpenGLLuaVariableTreeModel::headerData(int n_section,
                                                       Qt::Orientation e_orientation,
                                                       int n_role) const {
-      if(e_orientation == Qt::Horizontal &&
-         n_role == Qt::DisplayRole) {
-         return m_pcDataRoot->GetData(n_section);
+      if(e_orientation != Qt::Horizontal ||
+         n_role != Qt::DisplayRole ||
+         n_section > 1) {
+         return QVariant();
       }
-      return QVariant();
+      else {
+         return n_section == 0 ? tr("Variable") : tr("Value");
+      }
    }
 
    /****************************************/
@@ -135,10 +136,23 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CQTOpenGLLuaVariableTreeModel::SetupData() {
+   void CQTOpenGLLuaVariableTreeModel::SetLuaState(lua_State* pt_state) {
+      m_ptState = pt_state;
+      Refresh(0);
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CQTOpenGLLuaVariableTreeModel::Refresh(int) {
+      beginResetModel();
+      delete m_pcDataRoot;
+      m_pcDataRoot = new CQTOpenGLLuaVariableTreeItem();
+      lua_pushnil(m_ptState);
       lua_getglobal(m_ptState, "_G");
       ProcessLuaState(m_ptState, m_pcDataRoot);
-      lua_pop(m_ptState, 1);
+      lua_pop(m_ptState, 2);
+      endResetModel();
    }
 
    /****************************************/

@@ -21,7 +21,7 @@ set(QT_USE_QTOPENGL true)
 find_package(Qt4)
 if(QT4_FOUND)
   # QT4 found, is it the minimum required version?
-  if(QT_VERSION_MAJOR GREATER 3 AND QT_VERSION_MINOR GREATER 4)
+  if(QT_VERSION_MAJOR GREATER 3 AND QT_VERSION_MINOR GREATER 5)
     # Is the QTOpenGL module present?
     if(QT_QTOPENGL_FOUND)
       # QT is OK, now check for OpenGL
@@ -63,9 +63,9 @@ if(QT4_FOUND)
       message(STATUS "QtOpenGL module not found. Skipping compilation of QT-OpenGL visualization.")
     endif(QT_QTOPENGL_FOUND)
 
-  else(QT_VERSION_MAJOR GREATER 3 AND QT_VERSION_MINOR GREATER 4)
-    message(STATUS "Minimum required version for Qt (>= 4.5) not found. Skipping compilation of QT-OpenGL visualization.")
-  endif(QT_VERSION_MAJOR GREATER 3 AND QT_VERSION_MINOR GREATER 4)
+  else(QT_VERSION_MAJOR GREATER 3 AND QT_VERSION_MINOR GREATER 5)
+    message(STATUS "Minimum required version for Qt (>= 4.6) not found. Skipping compilation of QT-OpenGL visualization.")
+  endif(QT_VERSION_MAJOR GREATER 3 AND QT_VERSION_MINOR GREATER 5)
   
 else(QT4_FOUND)
   message(STATUS "Qt4 not found, skipping compilation of QT-OpenGL visualization.")

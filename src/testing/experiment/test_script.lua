@@ -48,6 +48,7 @@ end
 
 -- Controller step
 function step()
+   log(robot.id .. " step")
    accum = vec2:new_xy(0, 0)
    for i = 1,8 do
       vec = vec2:new_la(robot.proximity[i].value,

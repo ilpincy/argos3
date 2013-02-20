@@ -46,9 +46,13 @@ namespace argos {
 
       virtual int columnCount(const QModelIndex& c_parent = QModelIndex()) const;
 
-   private:
+      void SetLuaState(lua_State* pt_state);
 
-      void SetupData();
+   public slots:
+
+      void Refresh(int);
+
+   private:
 
       void ProcessLuaState(lua_State* pt_state,
                            CQTOpenGLLuaVariableTreeItem* pc_item);

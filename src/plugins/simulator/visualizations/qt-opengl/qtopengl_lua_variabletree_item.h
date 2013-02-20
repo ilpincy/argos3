@@ -19,6 +19,7 @@ namespace argos {
 
    public:
 
+      CQTOpenGLLuaVariableTreeItem(CQTOpenGLLuaVariableTreeItem* pc_parent = 0);
       CQTOpenGLLuaVariableTreeItem(QList<QVariant>& list_data,
                                    CQTOpenGLLuaVariableTreeItem* pc_parent = 0);
       ~CQTOpenGLLuaVariableTreeItem();

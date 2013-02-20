@@ -142,6 +142,10 @@ namespace argos {
          for(size_t i = 0; i < m_vecControllers.size(); ++i) {
             m_vecControllers[i]->SetLuaScript(m_strFileName.toStdString());
          }
+         if(m_pcLuaStateDock->isVisible()) {
+            static_cast<CQTOpenGLLuaVariableTreeModel*>(m_pcLuaStateTree->model())->SetLuaState(
+               m_vecControllers[m_unSelectedRobot]->GetLuaState());
+         }
          QApplication::restoreOverrideCursor();
          statusBar()->showMessage(tr("Execution started"), 2000);
       }
@@ -233,9 +237,8 @@ namespace argos {
 
    void CQTOpenGLLuaMainWindow::CreateCodeEditor() {
       QFont cFont;
-      cFont.setFamily("Courier");
+      cFont.setFamily("Luxi Mono");
       cFont.setFixedPitch(true);
-      cFont.setPointSize(10);
       m_pcCodeEditor = new CQTOpenGLLuaEditor(this);
       m_pcCodeEditor->setFont(cFont);
       new CQTOpenGLLuaSyntaxHighlighter(m_pcCodeEditor->document());
@@ -568,19 +571,25 @@ namespace argos {
       CComposableEntity* pcSelectedEntity = dynamic_cast<CComposableEntity*>(CSimulator::GetInstance().GetSpace().GetRootEntityVector()[un_index]);
       if(pcSelectedEntity != NULL) {
          bool bFound = false;
-         size_t i = 0;
-         while(!bFound && i < m_vecRobots.size()) {
-            if(m_vecRobots[i] == pcSelectedEntity) {
+         m_unSelectedRobot = 0;
+         while(!bFound && m_unSelectedRobot < m_vecRobots.size()) {
+            if(m_vecRobots[m_unSelectedRobot] == pcSelectedEntity) {
                bFound = true;
             }
             else {
-               ++i;
+               ++m_unSelectedRobot;
             }
          }
          if(bFound &&
-            m_vecControllers[i]->GetLuaState() != NULL) {
-            CQTOpenGLLuaVariableTreeModel* pcModel = new CQTOpenGLLuaVariableTreeModel(m_vecControllers[i]->GetLuaState(), m_pcLuaStateTree);
+            m_vecControllers[m_unSelectedRobot]->GetLuaState() != NULL) {
+            CQTOpenGLLuaVariableTreeModel* pcModel = new CQTOpenGLLuaVariableTreeModel(m_vecControllers[m_unSelectedRobot]->GetLuaState(), m_pcLuaStateTree);
+            connect(&(m_pcMainWindow->GetOpenGLWidget()), SIGNAL(StepDone(int)),
+                    pcModel, SLOT(Refresh(int)));
+            connect(pcModel, SIGNAL(modelReset()),
+                    this, SLOT(VariableTreeChanged()),
+                    Qt::QueuedConnection);
             m_pcLuaStateTree->setModel(pcModel);
+            m_pcLuaStateTree->setRootIndex(pcModel->index(0, 0));
             m_pcLuaStateTree->expandAll();
             m_pcLuaStateDock->show();
          }
@@ -591,7 +600,19 @@ namespace argos {
    /****************************************/
 
    void CQTOpenGLLuaMainWindow::HandleEntityDeselection(size_t) {
+      disconnect(&(m_pcMainWindow->GetOpenGLWidget()), SIGNAL(StepDone(int)),
+                 m_pcLuaStateTree->model(), SLOT(Refresh(int)));
+      disconnect(m_pcLuaStateTree->model(), SIGNAL(modelReset()),
+                 this, SLOT(VariableTreeChanged()));
       m_pcLuaStateDock->hide();
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CQTOpenGLLuaMainWindow::VariableTreeChanged() {
+      m_pcLuaStateTree->setRootIndex(m_pcLuaStateTree->model()->index(0, 0));
+      m_pcLuaStateTree->expandAll();
    }
 
    /****************************************/
