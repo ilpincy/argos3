@@ -25,8 +25,10 @@
 #include <QMenu>
 #include <QMenuBar>
 #include <QMessageBox>
+#include <QProcess>
 #include <QSettings>
 #include <QStatusBar>
+#include <QTemporaryFile>
 #include <QTextStream>
 #include <QToolBar>
 #include <QTableWidget>
@@ -139,9 +141,38 @@ namespace argos {
    void CQTOpenGLLuaMainWindow::Execute() {
       if(MaybeSave()) {
          QApplication::setOverrideCursor(Qt::WaitCursor);
+         /* Clear the message table */
+         m_pcLuaMessageTable->clearContents();
+         m_pcLuaMessageTable->setRowCount(1);
+         /* Create temporary file to contain the bytecode */
+         QTemporaryFile cByteCode;
+         if(! cByteCode.open()) {
+            SetMessage(0, "ALL", "Can't create bytecode file.");
+            QApplication::restoreOverrideCursor();
+            return;
+         }
+         /* Compile script */
+         QProcess cLuaCompiler;
+         cLuaCompiler.start("luac", QStringList() << "-o" << cByteCode.fileName() << m_strFileName);
+         if(! cLuaCompiler.waitForStarted()) {
+            SetMessage(0, "ALL", QString(cLuaCompiler.readAllStandardError()));
+            QApplication::restoreOverrideCursor();
+            return;
+         }
+         if(! cLuaCompiler.waitForFinished()) {
+            SetMessage(0, "ALL", QString(cLuaCompiler.readAllStandardError()));
+            QApplication::restoreOverrideCursor();
+            return;
+         }
+         if(cLuaCompiler.exitCode() != 0) {
+            SetMessage(0, "ALL", QString(cLuaCompiler.readAllStandardError()));
+            QApplication::restoreOverrideCursor();
+            return;
+         }
+         SetMessage(0, "ALL", "Compilation successful.");
          /* Set the script for all the robots */
          for(size_t i = 0; i < m_vecControllers.size(); ++i) {
-            m_vecControllers[i]->SetLuaScript(m_strFileName.toStdString());
+            m_vecControllers[i]->SetLuaScript(cByteCode.fileName().toStdString());
          }
          /* Update Lua state if visible */
          if(m_pcLuaVariableDock->isVisible()) {
@@ -545,37 +576,18 @@ namespace argos {
    /****************************************/
 
    void CQTOpenGLLuaMainWindow::CheckLuaStatus(int n_step) {
-      static std::vector<std::string> vecFields;
       int nRow = 0;
       m_pcLuaMessageTable->clearContents();
       m_pcLuaMessageTable->setRowCount(m_vecControllers.size());
       for(size_t i = 0; i < m_vecControllers.size(); ++i) {
          if(! m_vecControllers[i]->IsOK()) {
-            vecFields.clear();
-            Tokenize(m_vecControllers[i]->GetErrorMessage(), vecFields, ":");
-            m_pcLuaMessageTable->setItem(
-               nRow, 0,
-               new QTableWidgetItem(
-                  QString::fromStdString(m_vecControllers[i]->GetId())));
-            if(vecFields.size() == 3) {
-               m_pcLuaMessageTable->setItem(
-                  nRow, 1,
-                  new QTableWidgetItem(
-                     QString::fromStdString(vecFields[1])));
-               m_pcLuaMessageTable->setItem(
-                  nRow, 2,
-                  new QTableWidgetItem(
-                     QString::fromStdString(vecFields[2])));
-            }
-            else {
-               m_pcLuaMessageTable->setItem(
-                  nRow, 2,
-                  new QTableWidgetItem(
-                     QString::fromStdString(m_vecControllers[i]->GetErrorMessage())));
-            }
+            SetMessage(i,
+                       QString::fromStdString(m_vecControllers[i]->GetId()),
+                       QString::fromStdString(m_vecControllers[i]->GetErrorMessage()));
             ++nRow;
          }
       }
+      m_pcLuaMessageTable->setRowCount(nRow);
    }
 
    /****************************************/
@@ -705,6 +717,33 @@ namespace argos {
       }
       m_pcFileSeparateRecentAction->setVisible(nRecentFiles > 0);
       cSettings.endGroup();
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CQTOpenGLLuaMainWindow::SetMessage(int n_row,
+                                           const QString& str_robot_id,
+                                           const QString& str_message) {
+      QStringList listFields = str_message.split(":",
+                                                 QString::KeepEmptyParts,
+                                                 Qt::CaseInsensitive);
+      m_pcLuaMessageTable->setItem(
+         n_row, 0,
+         new QTableWidgetItem(str_robot_id));
+      if(listFields.size() == 4) {
+         m_pcLuaMessageTable->setItem(
+            n_row, 1,
+            new QTableWidgetItem(listFields[2]));
+         m_pcLuaMessageTable->setItem(
+            n_row, 2,
+            new QTableWidgetItem(listFields[3]));
+      }
+      else {
+         m_pcLuaMessageTable->setItem(
+            n_row, 2,
+            new QTableWidgetItem(str_message));
+      }
    }
 
    /****************************************/
