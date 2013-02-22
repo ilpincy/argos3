@@ -114,13 +114,13 @@ namespace argos {
 
    void CQTOpenGLLuaStateTreeModel::SetLuaState(lua_State* pt_state) {
       m_ptState = pt_state;
-      Refresh(0);
+      Refresh();
    }
 
    /****************************************/
    /****************************************/
 
-   void CQTOpenGLLuaStateTreeModel::Refresh(int) {
+   void CQTOpenGLLuaStateTreeModel::Refresh() {
       beginResetModel();
       delete m_pcDataRoot;
       m_pcDataRoot = new CQTOpenGLLuaStateTreeItem();
@@ -130,6 +130,13 @@ namespace argos {
       m_pcDataRoot->SortChildren();
       lua_pop(m_ptState, 2);
       endResetModel();
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CQTOpenGLLuaStateTreeModel::Refresh(int) {
+      Refresh();
    }
 
    /****************************************/

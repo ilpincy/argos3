@@ -22,8 +22,8 @@ namespace argos {
 
    CQTOpenGLLuaFindDialog::CQTOpenGLLuaFindDialog(QWidget *parent) :
       QDialog(parent) {
-      m_pcLabel = new QLabel(tr("Find &what:"));
-      m_pcLineEdit = new QLineEdit;
+      m_pcLabel = new QLabel(tr("&Find text:"));
+      m_pcLineEdit = new QLineEdit();
       m_pcLabel->setBuddy(m_pcLineEdit);
 
       m_pcCaseCheckBox = new QCheckBox(tr("Match &case"));
@@ -41,7 +41,7 @@ namespace argos {
       m_pcButtonBox->addButton(m_pcFindButton, QDialogButtonBox::ActionRole);
       m_pcButtonBox->addButton(m_pcMoreButton, QDialogButtonBox::ActionRole);
 
-      m_pcExtension = new QWidget;
+      m_pcExtension = new QWidget();
 
       m_pcWholeWordsCheckBox = new QCheckBox(tr("&Whole words"));
       m_pcBackwardCheckBox = new QCheckBox(tr("Search &backward"));
@@ -50,24 +50,24 @@ namespace argos {
       connect(m_pcMoreButton, SIGNAL(toggled(bool)),
               m_pcExtension, SLOT(setVisible(bool)));
 
-      QVBoxLayout* m_pcExtensionLayout = new QVBoxLayout;
+      QVBoxLayout* m_pcExtensionLayout = new QVBoxLayout();
       m_pcExtensionLayout->setMargin(0);
       m_pcExtensionLayout->addWidget(m_pcWholeWordsCheckBox);
       m_pcExtensionLayout->addWidget(m_pcBackwardCheckBox);
       m_pcExtensionLayout->addWidget(m_pcSearchSelectionCheckBox);
       m_pcExtension->setLayout(m_pcExtensionLayout);
 
-      QHBoxLayout* m_pcTopLeftLayout = new QHBoxLayout;
+      QHBoxLayout* m_pcTopLeftLayout = new QHBoxLayout();
       m_pcTopLeftLayout->addWidget(m_pcLabel);
       m_pcTopLeftLayout->addWidget(m_pcLineEdit);
 
-      QVBoxLayout* m_pcLeftLayout = new QVBoxLayout;
+      QVBoxLayout* m_pcLeftLayout = new QVBoxLayout();
       m_pcLeftLayout->addLayout(m_pcTopLeftLayout);
       m_pcLeftLayout->addWidget(m_pcCaseCheckBox);
       m_pcLeftLayout->addWidget(m_pcFromStartCheckBox);
       m_pcLeftLayout->addStretch(1);
 
-      QGridLayout* m_pcMainLayout = new QGridLayout;
+      QGridLayout* m_pcMainLayout = new QGridLayout();
       m_pcMainLayout->setSizeConstraint(QLayout::SetFixedSize);
       m_pcMainLayout->addLayout(m_pcLeftLayout, 0, 0);
       m_pcMainLayout->addWidget(m_pcButtonBox, 0, 1);

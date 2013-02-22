@@ -49,6 +49,7 @@ namespace argos {
 
    public slots:
 
+      void Refresh();
       void Refresh(int);
 
    protected:

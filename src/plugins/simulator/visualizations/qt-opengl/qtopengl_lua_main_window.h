@@ -34,6 +34,10 @@ namespace argos {
       CQTOpenGLLuaMainWindow(CQTOpenGLMainWindow* pc_parent);
       virtual ~CQTOpenGLLuaMainWindow();
 
+   signals:
+
+      //void 
+
    public slots:
 
       void New();
