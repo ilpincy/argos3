@@ -23,7 +23,7 @@ namespace argos {
 namespace argos {
 
    class CProximityDefaultSensor : public CSimulatedSensor,
-                                   virtual public CCI_ProximitySensor {
+                                   public CCI_ProximitySensor {
 
    public:
 
@@ -39,6 +39,11 @@ namespace argos {
 
       virtual void Reset();
 
+      /**
+       * Calculates the proximity reading when the closest occluding object is located as the given distance.
+       * @param f_distance The distance of the closest occluding object in meters
+       * @returns A value in the range [0:1], where 0 means that the object is too far to be sensed, and 1 means the object is so close that it saturates the sensor.
+       */
       virtual Real CalculateReading(Real f_distance);
 
    protected:
