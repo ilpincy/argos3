@@ -50,7 +50,7 @@ namespace argos {
       virtual void Init(TConfigurationNode& t_tree);
 
       virtual std::string GetTypeDescription() const {
-         return "light";
+         return "light_sensors";
       }
 
       inline size_t GetNumSensors() const {
