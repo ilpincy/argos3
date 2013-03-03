@@ -207,13 +207,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   REGISTER_SPACE_OPERATION(CSpaceOperationAddEntity,
-                            CSpaceOperationAddComposableEntity,
-                            CComposableEntity);
-
-   REGISTER_SPACE_OPERATION(CSpaceOperationRemoveEntity,
-                            CSpaceOperationRemoveComposableEntity,
-                            CComposableEntity);
+   REGISTER_STANDARD_SPACE_OPERATIONS_ON_COMPOSABLE(CComposableEntity);
 
    /****************************************/
    /****************************************/

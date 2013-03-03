@@ -335,36 +335,40 @@ namespace argos {
       virtual ~CSpaceOperationRemoveEntity() {}
    };
 
-   class CSpaceOperationAddBaseEntity : public CSpaceOperationAddEntity {
-   public:
-      void ApplyTo(CSpace& c_space, CEntity& c_entity) {
-         c_space.AddEntity(c_entity);
-      }
-   };
-
-   class CSpaceOperationRemoveBaseEntity : public CSpaceOperationRemoveEntity {
-   public:
-      void ApplyTo(CSpace& c_space, CEntity& c_entity) {
-         c_space.RemoveEntity(c_entity);
-      }
-   };
-
 }
 
    /****************************************/
    /****************************************/
 
+#define SPACE_OPERATION_ADD_ENTITY(ENTITY)                                 \
+   class CSpaceOperationAdd ## ENTITY : public CSpaceOperationAddEntity {  \
+   public:                                                                 \
+      void ApplyTo(CSpace& c_space, ENTITY& c_entity) {                    \
+         c_space.AddEntity(c_entity);                                      \
+      }                                                                    \
+   };
+
+#define SPACE_OPERATION_REMOVE_ENTITY(ENTITY)                                   \
+   class CSpaceOperationRemove ## ENTITY : public CSpaceOperationRemoveEntity { \
+   public:                                                                      \
+      void ApplyTo(CSpace& c_space, ENTITY& c_entity) {                         \
+         c_space.RemoveEntity(c_entity);                                        \
+      }                                                                         \
+   };
+
 #define REGISTER_SPACE_OPERATION(ACTION, OPERATION, ENTITY)             \
    REGISTER_ENTITY_OPERATION(ACTION, CSpace, OPERATION, void, ENTITY);
 
 #define REGISTER_STANDARD_SPACE_OPERATION_ADD_ENTITY(ENTITY)            \
+   SPACE_OPERATION_ADD_ENTITY(ENTITY)                                   \
    REGISTER_SPACE_OPERATION(CSpaceOperationAddEntity,                   \
-                            CSpaceOperationAddBaseEntity,               \
+                            CSpaceOperationAdd ## ENTITY,               \
                             ENTITY);
 
 #define REGISTER_STANDARD_SPACE_OPERATION_REMOVE_ENTITY(ENTITY)         \
+   SPACE_OPERATION_REMOVE_ENTITY(ENTITY)                                \
    REGISTER_SPACE_OPERATION(CSpaceOperationRemoveEntity,                \
-                            CSpaceOperationRemoveBaseEntity,            \
+                            CSpaceOperationRemove ## ENTITY,            \
                             ENTITY);
 
 #define REGISTER_STANDARD_SPACE_OPERATIONS_ON_ENTITY(ENTITY) \
@@ -372,13 +376,15 @@ namespace argos {
    REGISTER_STANDARD_SPACE_OPERATION_REMOVE_ENTITY(ENTITY)
 
 #define REGISTER_STANDARD_SPACE_OPERATION_ADD_COMPOSABLE(ENTITY)        \
+   SPACE_OPERATION_ADD_COMPOSABLE_ENTITY(ENTITY)                        \
    REGISTER_SPACE_OPERATION(CSpaceOperationAddEntity,                   \
-                            CSpaceOperationAddComposableEntity,         \
+                            CSpaceOperationAdd ## ENTITY,               \
                             ENTITY);
 
-#define REGISTER_STANDARD_SPACE_OPERATION_REMOVE_COMPOSABLE(ENTITY)     \
-   REGISTER_SPACE_OPERATION(CSpaceOperationRemoveEntity,                \
-                            CSpaceOperationRemoveComposableEntity,      \
+#define REGISTER_STANDARD_SPACE_OPERATION_REMOVE_COMPOSABLE(ENTITY)        \
+   SPACE_OPERATION_REMOVE_COMPOSABLE_ENTITY(ENTITY)                        \
+   REGISTER_SPACE_OPERATION(CSpaceOperationRemoveEntity,                   \
+                            CSpaceOperationRemove ## ENTITY,               \
                             ENTITY);
 
 #define REGISTER_STANDARD_SPACE_OPERATIONS_ON_COMPOSABLE(ENTITY)  \

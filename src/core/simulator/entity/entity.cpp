@@ -90,13 +90,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   REGISTER_SPACE_OPERATION(CSpaceOperationAddEntity,
-                            CSpaceOperationAddBaseEntity,
-                            CEntity);
-
-   REGISTER_SPACE_OPERATION(CSpaceOperationRemoveEntity,
-                            CSpaceOperationRemoveBaseEntity,
-                            CEntity);
+   REGISTER_STANDARD_SPACE_OPERATIONS_ON_ENTITY(CEntity);
 
    /****************************************/
    /****************************************/
