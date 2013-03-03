@@ -114,8 +114,7 @@ namespace argos {
                                                         m_pcEmbodiedEntity);
          AddComponent(*m_pcLEDEquippedEntity);
          if(NodeExists(t_tree, "leds")) {
-            TConfigurationNode& tLEDs = GetNode(t_tree, "leds");
-            m_pcLEDEquippedEntity->Init(tLEDs);
+            m_pcLEDEquippedEntity->Init(GetNode(t_tree, "leds"));
          }
          UpdateComponents();
       }
