@@ -24,6 +24,7 @@
       </actuators>
       <sensors>
         <footbot_proximity implementation="default" show_rays="true" />
+        <light implementation="default" show_rays="true" />
       </sensors>
       <!-- No required configuration -->
       <params />
@@ -42,10 +43,16 @@
     <box id="be" position="0,-1,0.1" orientation="0,0,0" size="2, 0.1, 0.2" movable="false" />
     <box id="bw" position="0,1,0.1"  orientation="0,0,0" size="2, 0.1, 0.2" movable="false" />
 
+    <light id="l0"
+           position="1,1,1"
+           orientation="0,0,0"
+           color="yellow"
+           intensity="1" />
+
     <distribute>
       <position method="uniform" min="-1,-1,0" max="1,1,0" />
       <orientation method="gaussian" mean="0,0,0" std_dev="360,0,0" />
-      <entity quantity="10" max_trials="100">
+      <entity quantity="1" max_trials="100">
         <foot-bot id="fb"
                   controller="lua" />
       </entity>
@@ -77,7 +84,7 @@
     <!-- ************************************************************************ -->
     <!-- * To activate the Lua editor, just use the 'lua_editor' flag attribute * -->
     <!-- ************************************************************************ -->
-    <qt-opengl lua_editor="true" />
+    <!-- qt-opengl lua_editor="true" / -->
 
   </visualization>
 
