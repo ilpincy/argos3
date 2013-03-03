@@ -35,7 +35,7 @@ namespace argos {
    void CProximityDefaultSensor::SetRobot(CComposableEntity& c_entity) {
       m_pcEmbodiedEntity = &(c_entity.GetComponent<CEmbodiedEntity>("body"));
       m_pcControllableEntity = &(c_entity.GetComponent<CControllableEntity>("controller"));
-      m_pcProximityEntity = &(c_entity.GetComponent<CProximitySensorEquippedEntity>("proximity"));
+      m_pcProximityEntity = &(c_entity.GetComponent<CProximitySensorEquippedEntity>("proximity_sensors"));
       m_pcProximityEntity->SetCanBeEnabledIfDisabled(true);
       m_pcProximityEntity->SetEnabled(true);
       /* Ignore the sensing robot when checking for occlusions */
