@@ -34,6 +34,7 @@ namespace argos {
          /* Parse XML */
          CPositionalEntity::Init(t_tree);
          GetNodeAttribute(t_tree, "color", m_cInitColor);
+         m_cColor = m_cInitColor;
       }
       catch(CARGoSException& ex) {
          THROW_ARGOSEXCEPTION_NESTED("Error while initializing led entity", ex);
