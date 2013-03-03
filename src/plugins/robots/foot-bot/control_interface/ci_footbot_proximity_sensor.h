@@ -75,7 +75,7 @@ namespace argos {
       /**
        * Returns the readings of this sensor
        */
-      inline virtual const TReadings& GetReadings() const {
+      inline const TReadings& GetReadings() const {
          return m_tReadings;
       }
 
@@ -90,6 +90,9 @@ namespace argos {
       TReadings m_tReadings;
 
    };
+
+   std::ostream& operator<<(std::ostream& c_os, const CCI_FootBotProximitySensor::SReading& s_reading);
+   std::ostream& operator<<(std::ostream& c_os, const CCI_FootBotProximitySensor::TReadings& t_readings);
 
 }
 

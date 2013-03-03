@@ -22,6 +22,7 @@ namespace argos {
       m_tReadings(24) {
       for(size_t i = 0; i < 24; ++i) {
          m_tReadings[i].Angle = START_ANGLE + i * SPACING;
+         m_tReadings[i].Angle.SignedNormalize();
       }
    }
 
@@ -64,6 +65,31 @@ namespace argos {
    }
 #endif
 
+
+   /****************************************/
+   /****************************************/
+
+   std::ostream& operator<<(std::ostream& c_os,
+                            const CCI_FootBotProximitySensor::SReading& s_reading) {
+      c_os << "Value=<" << s_reading.Value
+           << ">, Angle=<" << s_reading.Angle << ">";
+      return c_os;
+   }
+
+   /****************************************/
+   /****************************************/
+
+   std::ostream& operator<<(std::ostream& c_os,
+                            const CCI_FootBotProximitySensor::TReadings& t_readings) {
+      if(! t_readings.empty()) {
+         c_os << "{ " << t_readings[0].Value << " }";
+         for(UInt32 i = 1; i < t_readings.size(); ++i) {
+            c_os << " { " << t_readings[0].Value << " }";
+         }
+         c_os << std::endl;
+      }
+      return c_os;
+   }
 
    /****************************************/
    /****************************************/
