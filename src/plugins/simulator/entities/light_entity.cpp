@@ -49,8 +49,8 @@ namespace argos {
 
    REGISTER_ENTITY(CLightEntity,
                    "light",
-                   "1.0",
                    "Carlo Pinciroli [ilpincy@gmail.com]",
+                   "1.0",
                    "A colored light.",
                    "The light entity is an entity that emits a light detectable by a robot camera\n"
                    "(as a normal LED) or by light sensors. A light is bodyless, therefore it must\n"
