@@ -35,22 +35,59 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   const UInt32 CCI_FootBotLightSensor::NUM_READINGS = 24;
-   const CRange<Real> CCI_FootBotLightSensor::READING_RANGE(0.0,4096.0);
+   static CRadians SPACING = CRadians(ARGOS_PI / 12.0f);
+   static CRadians START_ANGLE = SPACING * 0.5f;
 
    /****************************************/
    /****************************************/
 
    CCI_FootBotLightSensor::CCI_FootBotLightSensor() :
-      m_tReadings(NUM_READINGS) {
-      // Set the values for the light sensor angles
-      CRadians cSensorSpacing = CRadians::TWO_PI / CCI_FootBotLightSensor::NUM_READINGS;
-      CRadians cSensorHalfSpacing = cSensorSpacing / 2.0f;
-      for(UInt32 i = 0; i < CCI_FootBotLightSensor::NUM_READINGS; ++i) {
-         m_tReadings[i].Angle = cSensorHalfSpacing + i * cSensorSpacing;
+      m_tReadings(24) {
+      for(size_t i = 0; i < 24; ++i) {
+         m_tReadings[i].Angle = START_ANGLE + i * SPACING;
          m_tReadings[i].Angle.SignedNormalize();
       }
    }
+
+   /****************************************/
+   /****************************************/
+
+#ifdef ARGOS_WITH_LUA
+   void CCI_FootBotLightSensor::CreateLuaVariables(lua_State* pt_lua_state) {
+      lua_pushstring(pt_lua_state, "light");
+      lua_newtable  (pt_lua_state);
+      for(size_t i = 0; i < GetReadings().size(); ++i) {
+         lua_pushnumber(pt_lua_state, i+1                            );
+         lua_newtable  (pt_lua_state                                 );
+         lua_pushstring(pt_lua_state, "angle"                        );
+         lua_pushnumber(pt_lua_state, m_tReadings[i].Angle.GetValue());
+         lua_settable  (pt_lua_state, -3                             );
+         lua_pushstring(pt_lua_state, "value"                        );
+         lua_pushnumber(pt_lua_state, m_tReadings[i].Value           );
+         lua_settable  (pt_lua_state, -3                             );
+         lua_settable  (pt_lua_state, -3                             );
+      }
+      lua_settable(pt_lua_state, -3);
+   }
+#endif
+
+   /****************************************/
+   /****************************************/
+
+#ifdef ARGOS_WITH_LUA
+   void CCI_FootBotLightSensor::ReadingsToLuaVariables(lua_State* pt_lua_state) {
+      lua_getfield(pt_lua_state, -1, "light");
+      for(size_t i = 0; i < GetReadings().size(); ++i) {
+         lua_pushnumber(pt_lua_state, i+1                 );
+         lua_gettable  (pt_lua_state, -2                  );
+         lua_pushnumber(pt_lua_state, m_tReadings[i].Value);
+         lua_setfield  (pt_lua_state, -2, "value"         );
+         lua_pop(pt_lua_state, 1);
+      }
+      lua_pop(pt_lua_state, 1);
+   }
+#endif
+
 
    /****************************************/
    /****************************************/

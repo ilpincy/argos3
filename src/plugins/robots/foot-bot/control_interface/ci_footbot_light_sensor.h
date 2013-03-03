@@ -32,7 +32,6 @@
 #ifndef CCI_FOOTBOT_LIGHT_SENSOR_H
 #define CCI_FOOTBOT_LIGHT_SENSOR_H
 
-/* To avoid dependency problems when including */
 namespace argos {
    class CCI_FootBotLightSensor;
 }
@@ -43,7 +42,7 @@ namespace argos {
 
 namespace argos {
 
-   class CCI_FootBotLightSensor : virtual public CCI_Sensor {
+   class CCI_FootBotLightSensor : public CCI_Sensor {
 
    public:
 
@@ -68,17 +67,21 @@ namespace argos {
 
    public:
 
-      static const UInt32 NUM_READINGS;
-      static const CRange<Real> READING_RANGE;
-
-   public:
-
       CCI_FootBotLightSensor();
       virtual ~CCI_FootBotLightSensor() {}
 
+      /**
+       * Returns the readings of this sensor
+       */
       inline const TReadings& GetReadings() const {
          return m_tReadings;
       }
+
+#ifdef ARGOS_WITH_LUA
+      virtual void CreateLuaVariables(lua_State* pt_lua_state);
+
+      virtual void ReadingsToLuaVariables(lua_State* pt_lua_state);
+#endif
 
    protected:
 
@@ -87,6 +90,7 @@ namespace argos {
 
    std::ostream& operator<<(std::ostream& c_os, const CCI_FootBotLightSensor::SReading& s_reading);
    std::ostream& operator<<(std::ostream& c_os, const CCI_FootBotLightSensor::TReadings& t_readings);
+
 }
 
 #endif
