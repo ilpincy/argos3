@@ -15,7 +15,9 @@ namespace argos {
    CLEDEquippedEntity::CLEDEquippedEntity(CComposableEntity* pc_parent,
                                           CPositionalEntity* pc_reference) :
       CComposableEntity(pc_parent),
-      m_pcReferenceEntity(pc_reference) {}
+      m_pcReferenceEntity(pc_reference) {
+      SetCanBeEnabledIfDisabled(false);
+   }
 
    /****************************************/
    /****************************************/
@@ -24,7 +26,9 @@ namespace argos {
                                           const std::string& str_id,
                                           CPositionalEntity* pc_reference) :
       CComposableEntity(pc_parent, str_id),
-      m_pcReferenceEntity(pc_reference) {}
+      m_pcReferenceEntity(pc_reference) {
+      SetCanBeEnabledIfDisabled(false);
+   }
 
    /****************************************/
    /****************************************/
@@ -75,6 +79,27 @@ namespace argos {
             c_color);
       m_tLEDs.push_back(pcLED);
       AddComponent(*pcLED);
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CLEDEquippedEntity::AddLEDRing(const CVector3& c_center,
+                                       Real f_radius,
+                                       const CRadians& c_start_angle,
+                                       UInt32 un_num_leds,
+                                       const CColor& c_color) {
+      CRadians cLEDSpacing = CRadians::TWO_PI / un_num_leds;
+      CRadians cAngle;
+      CVector3 cPos;
+      for(UInt32 i = 0; i < un_num_leds; ++i) {
+         cAngle = c_start_angle + i * cLEDSpacing;
+         cAngle.SignedNormalize();
+         cPos.Set(f_radius, 0.0f, 0.0f);
+         cPos.RotateZ(cAngle);
+         cPos += c_center;
+         AddLED(cPos, c_color);
+      }
    }
 
    /****************************************/

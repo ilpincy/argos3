@@ -44,6 +44,12 @@ namespace argos {
       void AddLED(const CVector3& c_position,
                   const CColor& c_color = CColor::BLACK);
 
+      void AddLEDRing(const CVector3& c_center,
+                      Real f_radius,
+                      const CRadians& c_start_angle,
+                      UInt32 un_num_leds,
+                      const CColor& c_color = CColor::BLACK);
+
       CLEDEntity& GetLED(UInt32 un_index);
 
       inline CLEDEntity::TList& GetAllLEDs() {

@@ -44,6 +44,14 @@ namespace argos {
          return "composite";
       }
 
+      /**
+       * Enables or disables an entity
+       * @param b_enabled <tt>true</tt> if the entity is enabled, <tt>false</tt> otherwise
+       * @see CEntity::m_bEnabled
+       * @see CEntity::m_bCanBeEnabledIfDisabled
+       */
+      virtual void SetEnabled(bool b_enabled);
+
       virtual void UpdateComponents();
 
       void AddComponent(CEntity& c_component);

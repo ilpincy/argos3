@@ -21,6 +21,8 @@ namespace argos {
    void CLEDsDefaultActuator::SetRobot(CComposableEntity& c_entity) {
       m_pcLEDEquippedEntity = &(c_entity.GetComponent<CLEDEquippedEntity>("leds"));
       m_tSettings.resize(m_pcLEDEquippedEntity->GetAllLEDs().size());
+      m_pcLEDEquippedEntity->SetCanBeEnabledIfDisabled(true);
+      m_pcLEDEquippedEntity->SetEnabled(true);
    }
 
    /****************************************/
