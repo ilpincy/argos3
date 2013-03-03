@@ -178,9 +178,30 @@ namespace argos {
     * passed by const reference
     */
    template<typename T>
-   T any_cast(const CAny& c_any) {
+   const T& any_cast(const CAny& c_any) {
       /* Fall back to using pass-by-pointer version */
       const T* ptResult = any_cast<T>(&c_any);
+      /* Did the cast succeed? */
+      if(ptResult != NULL)
+         return *ptResult;
+      else {
+         char* pchDemangledOperandType = abi::__cxa_demangle(c_any.m_pcRef->GetType().name(), NULL, NULL, NULL);
+         char* pchDemangledTargetType = abi::__cxa_demangle(typeid(T).name(), NULL, NULL, NULL);
+         THROW_ARGOSEXCEPTION("Failed any_cast conversion from " <<
+                              pchDemangledOperandType <<
+                              " to " <<
+                              pchDemangledTargetType);
+      }
+   }
+
+   /**
+    * Performs a cast on the any type to the desired type, when the any type is
+    * passed by non-const reference
+    */
+   template<typename T>
+   T& any_cast(CAny& c_any) {
+      /* Fall back to using pass-by-pointer version */
+      T* ptResult = any_cast<T>(&c_any);
       /* Did the cast succeed? */
       if(ptResult != NULL)
          return *ptResult;
