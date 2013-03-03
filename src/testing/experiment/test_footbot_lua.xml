@@ -23,13 +23,7 @@
         <leds implementation="default" />
       </actuators>
       <sensors>
-        <ring_proximity implementation="default"
-                        show_rays="true"
-                        radius="0.08"
-                        range="0.2"
-                        num_sensors="24"
-                        center="0,0,0.1"
-                        start_angle="7.5" />
+        <footbot_proximity implementation="default" show_rays="true" />
       </sensors>
       <!-- No required configuration -->
       <params />

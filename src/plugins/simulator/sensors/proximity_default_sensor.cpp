@@ -4,9 +4,10 @@
  * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */
 
+#include <argos3/core/simulator/simulator.h>
 #include <argos3/core/simulator/entity/embodied_entity.h>
 #include <argos3/core/simulator/entity/composable_entity.h>
-#include <argos3/core/simulator/simulator.h>
+#include <argos3/plugins/simulator/entities/proximity_sensor_equipped_entity.h>
 
 #include "proximity_default_sensor.h"
 
@@ -31,19 +32,12 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   CProximityDefaultSensor::~CProximityDefaultSensor() {
-      while(!m_vecSensors.empty()) {
-         delete m_vecSensors.back();
-         m_vecSensors.pop_back();
-      }
-   }
-
-   /****************************************/
-   /****************************************/
-
    void CProximityDefaultSensor::SetRobot(CComposableEntity& c_entity) {
       m_pcEmbodiedEntity = &(c_entity.GetComponent<CEmbodiedEntity>("body"));
       m_pcControllableEntity = &(c_entity.GetComponent<CControllableEntity>("controller"));
+      m_pcProximityEntity = &(c_entity.GetComponent<CProximitySensorEquippedEntity>("proximity"));
+      m_pcProximityEntity->SetCanBeEnabledIfDisabled(true);
+      m_pcProximityEntity->SetEnabled(true);
       /* Ignore the sensing robot when checking for occlusions */
       m_tIgnoreMe.insert(m_pcEmbodiedEntity);
    }
@@ -67,23 +61,7 @@ namespace argos {
             m_cNoiseRange.Set(-fNoiseLevel, fNoiseLevel);
             m_pcRNG = CRandom::CreateRNG("argos");
          }
-         /* Parse proximity sensors */
-         if(t_tree.NoChildren()) {
-            THROW_ARGOSEXCEPTION("No sensors defined");
-         }
-         TConfigurationNodeIterator it;
-         CVector3 cPos, cDir;
-         Real fRange;
-         for(it = it.begin(&t_tree); it != it.end(); ++it) {
-            if(it->Value() != "sensor") {
-               THROW_ARGOSEXCEPTION("Parse error: expected <sensor />, read \"" << it->Value() << "\"");
-            }
-            GetNodeAttribute(*it, "position", cPos);
-            GetNodeAttribute(*it, "direction", cDir);
-            GetNodeAttribute(*it, "range", fRange);
-            m_vecSensors.push_back(new SSensor(cPos, cDir, fRange));
-         }
-         m_tReadings.resize(m_vecSensors.size());
+         m_tReadings.resize(m_pcProximityEntity->GetNumSensors());
       }
       catch(CARGoSException& ex) {
          THROW_ARGOSEXCEPTION_NESTED("Initialization error in default proximity sensor", ex);
@@ -100,13 +78,13 @@ namespace argos {
       /* Buffers to contain data about the intersection */
       CSpace::SEntityIntersectionItem<CEmbodiedEntity> sIntersection;
       /* Go through the sensors */
-      for(UInt32 i = 0; i < m_vecSensors.size(); ++i) {
+      for(UInt32 i = 0; i < m_tReadings.size(); ++i) {
          /* Compute ray for sensor i */
-         cRayStart = m_vecSensors[i]->Position;
+         cRayStart = m_pcProximityEntity->GetSensor(i).Position;
          cRayStart.Rotate(m_pcEmbodiedEntity->GetOrientation());
          cRayStart += m_pcEmbodiedEntity->GetPosition();
-         cRayEnd = m_vecSensors[i]->Position;
-         cRayEnd += m_vecSensors[i]->Direction;
+         cRayEnd = m_pcProximityEntity->GetSensor(i).Position;
+         cRayEnd += m_pcProximityEntity->GetSensor(i).Direction;
          cRayEnd.Rotate(m_pcEmbodiedEntity->GetOrientation());
          cRayEnd += m_pcEmbodiedEntity->GetPosition();
          cScanningRay.Set(cRayStart,cRayEnd);

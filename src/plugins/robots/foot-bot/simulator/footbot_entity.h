@@ -14,6 +14,8 @@ namespace argos {
    class CFootBotEntity;
    class CGripperEquippedEntity;
    class CLEDEquippedEntity;
+   class CLightSensorEquippedEntity;
+   class CProximitySensorEquippedEntity;
    class CRABEquippedEntity;
    class CWiFiEquippedEntity;
 }
@@ -67,6 +69,14 @@ namespace argos {
          return *m_pcRABEquippedEntity;
       }
 
+      inline CLightSensorEquippedEntity& GetLightSensorEquippedEntity() {
+         return *m_pcLightSensorEquippedEntity;
+      }
+
+      inline CProximitySensorEquippedEntity& GetProximitySensorEquippedEntity() {
+         return *m_pcProximitySensorEquippedEntity;
+      }
+
       inline CWiFiEquippedEntity& GetWiFiEquippedEntity() {
          return *m_pcWiFiEquippedEntity;
       }
@@ -105,13 +115,15 @@ namespace argos {
 
    private:
 
-      CEmbodiedEntity*                m_pcEmbodiedEntity;
       CControllableEntity*            m_pcControllableEntity;
-      CWheeledEntity*                 m_pcWheeledEntity;
-      CLEDEquippedEntity*             m_pcLEDEquippedEntity;
-      CGripperEquippedEntity*         m_pcGripperEquippedEntity;
       CDistanceScannerEquippedEntity* m_pcDistanceScannerEquippedEntity;
+      CEmbodiedEntity*                m_pcEmbodiedEntity;
+      CGripperEquippedEntity*         m_pcGripperEquippedEntity;
+      CLEDEquippedEntity*             m_pcLEDEquippedEntity;
+      CLightSensorEquippedEntity*     m_pcLightSensorEquippedEntity;
+      CProximitySensorEquippedEntity* m_pcProximitySensorEquippedEntity;
       CRABEquippedEntity*             m_pcRABEquippedEntity;
+      CWheeledEntity*                 m_pcWheeledEntity;
       CWiFiEquippedEntity*            m_pcWiFiEquippedEntity;
 
       CRadians                        m_cTurretRotation;

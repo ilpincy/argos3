@@ -6,37 +6,43 @@
 
 #include "footbot_entity.h"
 
-#include <argos3/plugins/simulator/entities/gripper_equipped_entity.h>
-#include <argos3/core/simulator/entity/rab_equipped_entity.h>
-#include "distance_scanner_equipped_entity.h"
-#include <argos3/plugins/simulator/entities/led_equipped_entity.h>
-#include <argos3/plugins/simulator/entities/wifi_equipped_entity.h>
-#include <argos3/core/simulator/entity/embodied_entity.h>
-#include <argos3/core/simulator/entity/controllable_entity.h>
 #include <argos3/core/utility/math/matrix/rotationmatrix3.h>
 #include <argos3/core/simulator/space/space.h>
+#include <argos3/core/simulator/entity/controllable_entity.h>
+#include <argos3/core/simulator/entity/embodied_entity.h>
+#include <argos3/core/simulator/entity/rab_equipped_entity.h>
+#include <argos3/plugins/simulator/entities/gripper_equipped_entity.h>
+#include <argos3/plugins/simulator/entities/led_equipped_entity.h>
+#include <argos3/plugins/simulator/entities/light_sensor_equipped_entity.h>
+#include <argos3/plugins/simulator/entities/proximity_sensor_equipped_entity.h>
+#include <argos3/plugins/simulator/entities/wifi_equipped_entity.h>
+#include "distance_scanner_equipped_entity.h"
 
 namespace argos {
 
    /****************************************/
    /****************************************/
 
-   static const Real FOOTBOT_RADIUS                   = 0.085036758f;
-   static const Real FOOTBOT_HEIGHT                   = 0.146899733f;
+   static const Real BODY_RADIUS                = 0.085036758f;
+   static const Real BODY_HEIGHT                = 0.146899733f;
 
-   static const Real FOOTBOT_LED_RING_RADIUS          = FOOTBOT_RADIUS + 0.005;
+   static const Real LED_RING_RADIUS            = BODY_RADIUS + 0.005;
 
-   static const Real FOOTBOT_INTERWHEEL_DISTANCE      = 0.14f;
-   static const Real FOOTBOT_HALF_INTERWHEEL_DISTANCE = FOOTBOT_INTERWHEEL_DISTANCE * 0.5f;
+   static const Real INTERWHEEL_DISTANCE        = 0.14f;
+   static const Real HALF_INTERWHEEL_DISTANCE   = INTERWHEEL_DISTANCE * 0.5f;
 
-   static const Real FOOTBOT_LED_RING_ELEVATION       = 0.085f;
-   static const Real FOOTBOT_BEACON_ELEVATION         = 0.174249733f;
+   static const Real PROXIMITY_SENSOR_RING_ELEVATION       = 0.06f;
+   static const Real PROXIMITY_SENSOR_RING_RADIUS          = BODY_RADIUS;
+   static const CRadians PROXIMITY_SENSOR_RING_START_ANGLE = CRadians((ARGOS_PI / 12.0f) * 0.5f);
+   static const Real PROXIMITY_SENSOR_RING_RANGE           = 0.1f;
 
-   static const Real FOOTBOT_GRIPPER_ELEVATION        = FOOTBOT_LED_RING_ELEVATION;
+   static const Real LED_RING_ELEVATION         = 0.085f;
+   static const Real BEACON_ELEVATION           = 0.174249733f;
 
-   /* We can't use CRadians::PI and the likes here because of the 'static initialization order fiasco' */
-   static const CRadians FOOTBOT_LED_ANGLE_SLICE      = CRadians(3.14159265358979323846264338327950288 / 6.0);
-   static const CRadians FOOTBOT_HALF_LED_ANGLE_SLICE = FOOTBOT_LED_ANGLE_SLICE * 0.5f;
+   static const Real GRIPPER_ELEVATION          = LED_RING_ELEVATION;
+
+   static const CRadians LED_ANGLE_SLICE        = CRadians(ARGOS_PI / 6.0);
+   static const CRadians HALF_LED_ANGLE_SLICE   = LED_ANGLE_SLICE * 0.5f;
 
    /****************************************/
    /****************************************/
@@ -47,9 +53,9 @@ namespace argos {
 
       CFootBotEmbodiedEntity(CFootBotEntity* pc_parent) :
          CEmbodiedEntity(pc_parent) {
-         m_cHalfSize.SetX(FOOTBOT_RADIUS);
-         m_cHalfSize.SetY(FOOTBOT_RADIUS);
-         m_cHalfSize.SetZ(FOOTBOT_HEIGHT * 0.5f);
+         m_cHalfSize.SetX(BODY_RADIUS);
+         m_cHalfSize.SetY(BODY_RADIUS);
+         m_cHalfSize.SetZ(BODY_HEIGHT * 0.5f);
       }
 
    protected:
@@ -77,13 +83,15 @@ namespace argos {
 
    CFootBotEntity::CFootBotEntity() :
       CComposableEntity(NULL),
-      m_pcEmbodiedEntity(NULL),
       m_pcControllableEntity(NULL),
-      m_pcWheeledEntity(NULL),
-      m_pcLEDEquippedEntity(NULL),
-      m_pcGripperEquippedEntity(NULL),
       m_pcDistanceScannerEquippedEntity(NULL),
+      m_pcEmbodiedEntity(NULL),
+      m_pcGripperEquippedEntity(NULL),
+      m_pcLEDEquippedEntity(NULL),
+      m_pcLightSensorEquippedEntity(NULL),
+      m_pcProximitySensorEquippedEntity(NULL),
       m_pcRABEquippedEntity(NULL),
+      m_pcWheeledEntity(NULL),
       m_pcWiFiEquippedEntity(NULL),
       m_fTurretRotationSpeed(0.0f),
       m_unTurretMode(0) {
@@ -108,8 +116,8 @@ namespace argos {
          /* Wheeled entity and wheel positions (left, right) */
          m_pcWheeledEntity = new CWheeledEntity(this, 2);
          AddComponent(*m_pcWheeledEntity);
-         m_pcWheeledEntity->SetWheelPosition(0, CVector3(0.0f,  FOOTBOT_HALF_INTERWHEEL_DISTANCE, 0.0f));
-         m_pcWheeledEntity->SetWheelPosition(1, CVector3(0.0f, -FOOTBOT_HALF_INTERWHEEL_DISTANCE, 0.0f));
+         m_pcWheeledEntity->SetWheelPosition(0, CVector3(0.0f,  HALF_INTERWHEEL_DISTANCE, 0.0f));
+         m_pcWheeledEntity->SetWheelPosition(1, CVector3(0.0f, -HALF_INTERWHEEL_DISTANCE, 0.0f));
          m_pcWheeledEntity->Init(t_tree);
          /* LED equipped entity, with LEDs [0-11] and beacon [12] */
          m_pcLEDEquippedEntity = new CLEDEquippedEntity(this,
@@ -119,10 +127,32 @@ namespace argos {
          for(UInt32 i = 0; i < 13; ++i) {
             m_pcLEDEquippedEntity->AddLED(CVector3());
          }
+         /* Proximity sensor equipped entity */
+         m_pcProximitySensorEquippedEntity =
+            new CProximitySensorEquippedEntity(this,
+                                               GetId() + ".proximity");
+         AddComponent(*m_pcProximitySensorEquippedEntity);
+         m_pcProximitySensorEquippedEntity->AddSensorRing(
+            CVector3(0.0f, 0.0f, PROXIMITY_SENSOR_RING_ELEVATION),
+            PROXIMITY_SENSOR_RING_RADIUS,
+            PROXIMITY_SENSOR_RING_START_ANGLE,
+            PROXIMITY_SENSOR_RING_RANGE,
+            24);
+         /* Light sensor equipped entity */
+         m_pcLightSensorEquippedEntity =
+            new CLightSensorEquippedEntity(this,
+                                           GetId() + ".light");
+         AddComponent(*m_pcLightSensorEquippedEntity);
+         m_pcLightSensorEquippedEntity->AddSensorRing(
+            CVector3(0.0f, 0.0f, PROXIMITY_SENSOR_RING_ELEVATION),
+            PROXIMITY_SENSOR_RING_RADIUS,
+            PROXIMITY_SENSOR_RING_START_ANGLE,
+            PROXIMITY_SENSOR_RING_RANGE,
+            24);
          /* Gripper equipped entity */
          m_pcGripperEquippedEntity = new CGripperEquippedEntity(this);
          AddComponent(*m_pcGripperEquippedEntity);
-         m_pcGripperEquippedEntity->SetPosition(CVector3(FOOTBOT_RADIUS, 0.0f, FOOTBOT_GRIPPER_ELEVATION));
+         m_pcGripperEquippedEntity->SetPosition(CVector3(BODY_RADIUS, 0.0f, GRIPPER_ELEVATION));
          m_pcGripperEquippedEntity->Init(t_tree);
          /* Distance scanner */
          m_pcDistanceScannerEquippedEntity = new CDistanceScannerEquippedEntity(this);
@@ -186,9 +216,9 @@ namespace argos {
    /****************************************/
    
 #define SET_RING_LED_POSITION(IDX)                                              \
-   cLEDPosition.Set(FOOTBOT_LED_RING_RADIUS, 0.0f, FOOTBOT_LED_RING_ELEVATION); \
+   cLEDPosition.Set(LED_RING_RADIUS, 0.0f, LED_RING_ELEVATION); \
    cLEDAngle = cLEDAnglePhase;                                                 \
-   cLEDAngle += FOOTBOT_LED_ANGLE_SLICE * IDX;                                  \
+   cLEDAngle += LED_ANGLE_SLICE * IDX;                                  \
    cLEDPosition.RotateZ(cLEDAngle);                                             \
    cLEDPosition.Rotate(m_pcEmbodiedEntity->GetOrientation());                   \
    cLEDPosition += cEntityPosition;                                             \
@@ -198,7 +228,7 @@ namespace argos {
       /* Set LED positions */
       const CVector3& cEntityPosition = GetEmbodiedEntity().GetPosition();
       CVector3 cLEDPosition;
-      CRadians cLEDAnglePhase = FOOTBOT_HALF_LED_ANGLE_SLICE + m_cTurretRotation;
+      CRadians cLEDAnglePhase = HALF_LED_ANGLE_SLICE + m_cTurretRotation;
       CRadians cLEDAngle;
       SET_RING_LED_POSITION(0);
       SET_RING_LED_POSITION(1);
@@ -213,7 +243,7 @@ namespace argos {
       SET_RING_LED_POSITION(10);
       SET_RING_LED_POSITION(11);
       /* Set beacon position */
-      cLEDPosition.Set(0.0f, 0.0f, FOOTBOT_BEACON_ELEVATION);
+      cLEDPosition.Set(0.0f, 0.0f, BEACON_ELEVATION);
       cLEDPosition.Rotate(m_pcEmbodiedEntity->GetOrientation());
       cLEDPosition += cEntityPosition;
       m_pcLEDEquippedEntity->SetLEDPosition(12, cLEDPosition);

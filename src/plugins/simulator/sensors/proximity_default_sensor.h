@@ -12,6 +12,7 @@
 
 namespace argos {
    class CProximityDefaultSensor;
+   class CProximitySensorEquippedEntity;
 }
 
 #include <argos3/plugins/robots/generic/control_interface/ci_proximity_sensor.h>
@@ -28,7 +29,7 @@ namespace argos {
 
       CProximityDefaultSensor();
 
-      virtual ~CProximityDefaultSensor();
+      virtual ~CProximityDefaultSensor() {}
 
       virtual void SetRobot(CComposableEntity& c_entity);
 
@@ -42,26 +43,11 @@ namespace argos {
 
    protected:
 
-      struct SSensor {
-         CVector3 Position;
-         CVector3 Direction;
-         SSensor(const CVector3& c_position,
-                 const CVector3& c_direction,
-                 Real f_range) :
-            Position(c_position),
-            Direction(c_direction) {
-            Direction.Normalize();
-            Direction *= f_range;
-         }
-      };
-
-   protected:
-
-      /** The list of sensors */
-      std::vector<SSensor*> m_vecSensors;
-
       /** Reference to embodied entity associated to this sensor */
       CEmbodiedEntity* m_pcEmbodiedEntity;
+
+      /** Reference to proximity sensor equipped entity associated to this sensor */
+      CProximitySensorEquippedEntity* m_pcProximityEntity;
 
       /** Reference to controllable entity associated to this sensor */
       CControllableEntity* m_pcControllableEntity;

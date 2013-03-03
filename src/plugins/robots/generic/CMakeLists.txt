@@ -5,8 +5,7 @@
 set(ARGOS3_HEADERS_PLUGINS_ROBOTS_GENERIC_CONTROLINTERFACE
   control_interface/ci_differential_steering_actuator.h
   control_interface/ci_leds_actuator.h
-  control_interface/ci_proximity_sensor.h
-  control_interface/ci_ring_proximity_sensor.h)
+  control_interface/ci_proximity_sensor.h)
 
 #
 # Generic robot sources
@@ -15,8 +14,7 @@ set(ARGOS3_SOURCES_PLUGINS_ROBOTS_GENERIC
   ${ARGOS3_HEADERS_PLUGINS_ROBOTS_GENERIC_CONTROLINTERFACE}
   control_interface/ci_differential_steering_actuator.cpp
   control_interface/ci_leds_actuator.cpp
-  control_interface/ci_proximity_sensor.cpp
-  control_interface/ci_ring_proximity_sensor.cpp)
+  control_interface/ci_proximity_sensor.cpp)
 
 #
 # Create generic robot plugin

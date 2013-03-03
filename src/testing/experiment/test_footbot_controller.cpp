@@ -29,7 +29,7 @@ void CTestFootBotController::Init(TConfigurationNode& t_tree) {
         << std::endl;
    m_pcWheels    = GetActuator<CCI_DifferentialSteeringActuator>("differential_steering");
    m_pcLEDs      = GetActuator<CCI_LEDsActuator>                ("leds"  );
-   m_pcProximity = GetSensor  <CCI_RingProximitySensor>         ("ring_proximity");
+   m_pcProximity = GetSensor  <CCI_FootBotProximitySensor>      ("footbot_proximity");
 }
 
 /****************************************/
