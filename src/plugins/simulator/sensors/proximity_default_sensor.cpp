@@ -140,7 +140,7 @@ namespace argos {
                    "proximity", "default",
                    "Carlo Pinciroli [ilpincy@gmail.com]",
                    "1.0",
-                   "A generic, configurable proximity sensor",
+                   "A generic proximity sensor",
                    "This sensor accesses a set of proximity sensors. The sensors all return a value\n"
                    "between 0 and 1, where 0 means nothing within range and 1 means an external\n"
                    "object is touching the sensor. Values between 0 and 1 depend on the distance of\n"
@@ -153,23 +153,13 @@ namespace argos {
                    "      ...\n"
                    "      <sensors>\n"
                    "        ...\n"
-                   "        <proximity implementation=\"default\">\n"
-                   "          <sensor position=\"0.1,0,0.1\" direction=\"1,0,0\" range=\"0.5\" />\n"
-                   "          <sensor position=\"0,0.1,0.1\" direction=\"0,1,0\" range=\"0.5\" />\n"
-                   "          ...\n"
-                   "        </proximity>\n"
+                   "        <proximity implementation=\"default\" />\n"
                    "        ...\n"
                    "      </sensors>\n"
                    "      ...\n"
                    "    </my_controller>\n"
                    "    ...\n"
                    "  </controllers>\n\n"
-                   "Each <sensor> tag sets the position of a new sensor. For each sensor, one must\n"
-                   "assign its offset with respect to the position of the robot's embodied entity\n"
-                   "(attribute \"position\"), the direction towards which the proximity sensor casts\n"
-                   "its ray (attribute \"direction\"), and range, i.e., the length of the ray\n"
-                   "(attribute \"range\"). The direction can be not normalized, because\n"
-                   "normalization is performed internally.\n\n"
                    "OPTIONAL XML CONFIGURATION\n\n"
                    "It is possible to draw the rays shot by the proximity sensor in the OpenGL\n"
                    "visualization. This can be useful for sensor debugging but also to understand\n"
@@ -185,11 +175,7 @@ namespace argos {
                    "      <sensors>\n"
                    "        ...\n"
                    "        <proximity implementation=\"default\"\n"
-                   "                   show_rays=\"true\">\n"
-                   "          <sensor position=\"0.1,0,0.1\" direction=\"1,0,0\" range=\"0.5\" />\n"
-                   "          <sensor position=\"0,0.1,0.1\" direction=\"0,1,0\" range=\"0.2\" />\n"
-                   "          ...\n"
-                   "        </proximity>\n"
+                   "                   show_rays=\"true\" />\n"
                    "        ...\n"
                    "      </sensors>\n"
                    "      ...\n"
@@ -207,17 +193,15 @@ namespace argos {
                    "      <sensors>\n"
                    "        ...\n"
                    "        <proximity implementation=\"default\"\n"
-                   "                   noise_level=\"0.1\">\n"
-                   "          <sensor position=\"0.1,0,0.1\" direction=\"1,0,0\" range=\"0.5\" />\n"
-                   "          <sensor position=\"0,0.1,0.1\" direction=\"0,1,0\" range=\"0.2\" />\n"
-                   "          ...\n"
-                   "        </proximity>\n"
+                   "                   noise_level=\"0.1\" />\n"
                    "        ...\n"
                    "      </sensors>\n"
                    "      ...\n"
                    "    </my_controller>\n"
                    "    ...\n"
-                   "  </controllers>",
+                   "  </controllers>\n\n"
+                   "OPTIONAL XML CONFIGURATION\n\n"
+                   "None.\n",
                    "Usable"
 		  );
 

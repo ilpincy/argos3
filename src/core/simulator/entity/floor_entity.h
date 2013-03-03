@@ -71,12 +71,27 @@ namespace argos {
       CFloorEntity(const std::string& str_id,
                    UInt32 un_pixels_per_meter);
 
+      /**
+       * Class destructor.
+       */
       virtual ~CFloorEntity();
 
+      /**
+       * Initializes the entity from an XML tree.
+       */
       virtual void Init(TConfigurationNode& t_tree);
 
+      /**
+       * Restores the initial state of the floor.
+       */
       virtual void Reset();
 
+      /**
+       * Returns the color at the given point.
+       * @param f_x The x coordinate on the floor
+       * @param f_y The y coordinate on the floor
+       * @returns the color at the given point
+       */
       inline CColor GetColorAtPoint(Real f_x,
                                     Real f_y) {
          ARGOS_ASSERT(m_pcColorSource != NULL,
@@ -86,18 +101,37 @@ namespace argos {
          return m_pcColorSource->GetColorAtPoint(f_x, f_y);
       }
 
+      /**
+       * Returns <tt>true</tt> if the floor color has changed.
+       * It is mainly used by the OpenGL visualization to know when to create a new texture.
+       * @return <tt>true</tt> if the floor color has changed.
+       */
       inline bool HasChanged() const {
          return m_bHasChanged;
       }
 
+      /**
+       * Marks the floor color as changed.
+       * @see HasChanged
+       */
       inline void SetChanged() {
          m_bHasChanged = true;
       }
 
+      /**
+       * Marks the floor color as not changed.
+       * @see HasChanged
+       */
       inline void ClearChanged() {
          m_bHasChanged = false;
       }
 
+      /**
+       * Saves the current floor color to the given file.
+       * Used by the OpenGL visualization to create a texture.
+       * The type of the file is inferred from the extension of the passed path.
+       * @param str_path The path of the output file.
+       */
       inline void SaveAsImage(const std::string& str_path) {
          m_pcColorSource->SaveAsImage(str_path);
       }
@@ -106,12 +140,21 @@ namespace argos {
          return "floor";
       }
 
-      virtual void Update() {}
-
    private:
 
+      /**
+       * Contains the type of color source for the floor.
+       */
       EColorSource       m_eColorSource;
+
+      /**
+       * Pointer to the actual color source for the floor.
+       */
       CFloorColorSource* m_pcColorSource;
+
+      /**
+       * Set to <tt>true</tt> when the floor color has changed.
+       */
       bool               m_bHasChanged;
    };
 }

@@ -82,7 +82,7 @@ namespace argos {
                    "intensity of the light affects the readings of the light sensors but not\n"
                    "those of the cameras.\n\n"
                    "OPTIONAL XML CONFIGURATION\n\n"
-                   "None for the time being.\n",
+                   "None.\n",
                    "Usable"
       );
 
