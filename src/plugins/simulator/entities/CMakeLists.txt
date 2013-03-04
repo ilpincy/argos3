@@ -6,6 +6,7 @@ set(ARGOS3_HEADERS_PLUGINS_SIMULATOR_ENTITIES
   box_entity.h
   cylinder_entity.h
   gripper_equipped_entity.h
+  ground_sensor_equipped_entity.h
   led_equipped_entity.h
   light_entity.h
   light_sensor_equipped_entity.h
@@ -22,6 +23,7 @@ set(ARGOS3_SOURCES_PLUGINS_SIMULATOR_ENTITIES
   box_entity.cpp
   cylinder_entity.cpp
   gripper_equipped_entity.cpp
+  ground_sensor_equipped_entity.cpp
   led_equipped_entity.cpp
   light_entity.cpp
   light_sensor_equipped_entity.cpp
