@@ -39,8 +39,6 @@ namespace argos {
       m_pcLightEntity = &(c_entity.GetComponent<CLightSensorEquippedEntity>("light_sensors"));
       m_pcLightEntity->SetCanBeEnabledIfDisabled(true);
       m_pcLightEntity->SetEnabled(true);
-      /* Ignore the sensing robot when checking for occlusions */
-      m_tIgnoreMe.insert(m_pcEmbodiedEntity);
    }
 
    /****************************************/
@@ -103,8 +101,7 @@ namespace argos {
                cScanningRay.Set(cRayStart, cLight.GetPosition());
                /* Check occlusions */
                if(! m_cSpace.GetClosestEmbodiedEntityIntersectedByRay(sIntersection,
-                                                                      cScanningRay,
-                                                                      m_tIgnoreMe)) {
+                                                                      cScanningRay)) {
                   /* No occlusion, the light is visibile */
                   if(m_bShowRays) {
                      m_pcControllableEntity->AddCheckedRay(false, cScanningRay);

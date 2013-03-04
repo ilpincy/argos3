@@ -78,9 +78,6 @@ namespace argos {
 
       /** Reference to the space hash of embodied entities */
       CSpaceHash<CEmbodiedEntity, CEmbodiedEntitySpaceHashUpdater>& m_cEmbodiedSpaceHash;
-
-      /** Used to calculate the ray intersection */
-      TEmbodiedEntitySet m_tIgnoreMe;
    };
 
 }
