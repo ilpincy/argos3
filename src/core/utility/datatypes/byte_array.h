@@ -66,6 +66,17 @@ namespace argos {
       }
 
       /**
+       * Returns the contents of the byte array as a const c-style array.
+       * The returned pointer is valid under two conditions:
+       * (i) the CByteArray object has not been deallocated, and
+       * (ii) the contents of the CByteArray object have not been changed.
+       * @return the contents of the byte array as a const c-style array.
+       */
+      inline const UInt8* ToCArray() const {
+         return !Empty() ? &m_vecBuffer[0] : NULL;
+      }
+
+      /**
        * Assignment operator.
        * Deep-copies the given byte array into the current byte array.
        */
