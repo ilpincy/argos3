@@ -50,6 +50,15 @@ namespace argos {
                  size_t un_size);
 
       /**
+       * Class constructor.
+       * Creates a byte array that contains <tt>un_size</tt> copies of <tt>un_value</tt>.
+       * @param un_size the initial size of the byte array.
+       * @param un_value the value to use to populate the byte array.
+       */
+      CByteArray(size_t un_size,
+                 UInt8 un_value = 0);
+
+      /**
        * Returns the current size of the byte array.
        * @return the current size of the byte array.
        */

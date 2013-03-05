@@ -19,6 +19,14 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   CByteArray::CByteArray(size_t un_size,
+                          UInt8 un_value) {
+      m_vecBuffer.assign(un_size, un_value);
+   }
+
+   /****************************************/
+   /****************************************/
+
    CByteArray& CByteArray::AddBuffer(const UInt8* pun_buffer,
                                      size_t un_size) {      
       for(size_t i = 0; i < un_size; ++i) {
