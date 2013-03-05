@@ -325,9 +325,11 @@ namespace argos {
    /****************************************/
 
    CByteArray& CByteArray::operator<<(const std::string& str_value) {
+      /* Insert string contents */
       for(size_t i = 0; i < str_value.size(); ++i) {
          *this << static_cast<UInt8>(str_value[i]);
       }
+      /* Terminate string with a \0 */
       *this << static_cast<UInt8>(0);
       return *this;
    }
@@ -336,8 +338,8 @@ namespace argos {
    /****************************************/
 
    CByteArray& CByteArray::operator>>(std::string& str_value) {
-      str_value.clear();
       if(Empty()) THROW_ARGOSEXCEPTION("Attempting to extract values from empty byte array");
+      str_value.clear();
       size_t i = 0;
       while(i < Size() && m_vecBuffer[i] != '\0') {
          str_value += m_vecBuffer[i];
