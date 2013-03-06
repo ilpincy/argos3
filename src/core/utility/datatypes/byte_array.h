@@ -50,6 +50,15 @@ namespace argos {
                  size_t un_size);
 
       /**
+       * Class constructor.
+       * Creates a byte array that contains <tt>un_size</tt> copies of <tt>un_value</tt>.
+       * @param un_size the initial size of the byte array.
+       * @param un_value the value to use to populate the byte array.
+       */
+      CByteArray(size_t un_size,
+                 UInt8 un_value = 0);
+
+      /**
        * Returns the current size of the byte array.
        * @return the current size of the byte array.
        */
@@ -63,6 +72,18 @@ namespace argos {
        */
       inline bool Empty() const {
          return m_vecBuffer.empty();
+      }
+
+      /**
+       * Returns the contents of the byte array as a const c-style array.
+       * The returned pointer is valid under two conditions:
+       * (i) the CByteArray object has not been deallocated, and
+       * (ii) the contents of the byte array have not been changed.
+       * If the byte array is empty, this method returns <tt>NULL</tt>.
+       * @return the contents of the byte array as a const c-style array.
+       */
+      inline const UInt8* ToCArray() const {
+         return !Empty() ? &m_vecBuffer[0] : NULL;
       }
 
       /**
