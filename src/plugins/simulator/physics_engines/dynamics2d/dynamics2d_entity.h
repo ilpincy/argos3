@@ -13,6 +13,7 @@ namespace argos {
 
 #include <argos3/core/simulator/physics_engine/physics_engine_entity.h>
 #include <argos3/plugins/simulator/physics_engines/dynamics2d/chipmunk-physics/include/chipmunk.h>
+#include <argos3/plugins/simulator/physics_engines/dynamics2d/dynamics2d_engine.h>
 #include <argos3/core/utility/math/vector3.h>
 #include <argos3/core/utility/math/quaternion.h>
 
@@ -28,8 +29,8 @@ namespace argos {
 
       CDynamics2DEntity(CDynamics2DEngine& c_engine,
                         CEmbodiedEntity& c_entity) :
-         CPhysicsEngineEntity(c_entity),
-         m_cEngine(c_engine) {}
+         CPhysicsEngineEntity(c_engine, c_entity),
+         m_cDyn2DEngine(c_engine) {}
       virtual ~CDynamics2DEntity() {}
 
       virtual bool CheckIntersectionWithRay(Real& f_distance,
@@ -48,7 +49,7 @@ namespace argos {
 
    protected:
 
-      CDynamics2DEngine& m_cEngine;
+      CDynamics2DEngine& m_cDyn2DEngine;
       CVector3 m_cSpacePosition;
       CQuaternion m_cSpaceOrientation;
 

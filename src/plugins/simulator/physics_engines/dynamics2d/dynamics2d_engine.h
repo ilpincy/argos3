@@ -9,13 +9,13 @@
 
 namespace argos {
    class CDynamics2DEngine;
+   class CDynamics2DEntity;
    class CGripperEquippedEntity;
 }
 
 #include <argos3/core/utility/math/ray2.h>
 #include <argos3/core/simulator/entity/controllable_entity.h>
 #include <argos3/core/simulator/physics_engine/physics_engine.h>
-#include <argos3/plugins/simulator/physics_engines/dynamics2d/dynamics2d_entity.h>
 #include <argos3/plugins/simulator/physics_engines/dynamics2d/chipmunk-physics/include/chipmunk.h>
 
 namespace argos {
@@ -83,6 +83,9 @@ namespace argos {
       virtual void Reset();
       virtual void Update();
       virtual void Destroy();
+
+      virtual bool IsPointContained(const CVector3& c_point);
+
       virtual UInt32 GetNumPhysicsEngineEntities();
       virtual void AddEntity(CEntity& c_entity);
       virtual void RemoveEntity(CEntity& c_entity);
@@ -91,7 +94,6 @@ namespace argos {
          return ! m_vecTransferData.empty();
       }
       virtual void TransferEntities();
-
       inline virtual bool IsEntityTransferActive() const {
          return m_bEntityTransferActive;
       }
@@ -132,19 +134,13 @@ namespace argos {
          m_ptSpace->gravity = cpv(c_gravity.GetX(), c_gravity.GetY());
       }
 
-      inline void PositionPhysicsToSpace(CVector3& c_new_pos,
-                                         const CVector3& c_original_pos,
-                                         const cpBody* pt_body) {
-         c_new_pos.SetX(pt_body->p.x);
-         c_new_pos.SetY(pt_body->p.y);
-         c_new_pos.SetZ(c_original_pos.GetZ());
-      }
+      void PositionPhysicsToSpace(CVector3& c_new_pos,
+                                  const CVector3& c_original_pos,
+                                  const cpBody* pt_body);
 
-      inline void OrientationPhysicsToSpace(CQuaternion& c_new_orient,
-                                            cpBody* pt_body) {
-         c_new_orient.FromAngleAxis(CRadians(pt_body->a), CVector3::Z);
-      }
-
+      void OrientationPhysicsToSpace(CQuaternion& c_new_orient,
+                                     cpBody* pt_body);
+      
       void AddPhysicsEntity(const std::string& str_id,
                             CDynamics2DEntity& c_entity);
       void RemovePhysicsEntity(const std::string& str_id);
@@ -166,7 +162,7 @@ namespace argos {
       bool m_bEntityTransferActive;
 
       CControllableEntity::TMap m_tControllableEntities;
-      CDynamics2DEntity::TMap m_tPhysicsEntities;
+      std::map<std::string, CDynamics2DEntity*> m_tPhysicsEntities;
 
    };
 
@@ -205,9 +201,6 @@ namespace argos {
                                 *pcPhysEntity);                         \
       c_entity.                                                         \
          GetComponent<CEmbodiedEntity>("body").                         \
-         AddPhysicsEngine(c_engine);                                    \
-      c_entity.                                                         \
-         GetComponent<CEmbodiedEntity>("body").                         \
          AddPhysicsEngineEntity(c_engine.GetId(), *pcPhysEntity);       \
    }                                                                    \
    };                                                                   \
@@ -223,9 +216,6 @@ namespace argos {
    void ApplyTo(CDynamics2DEngine& c_engine,                            \
                 SPACE_ENTITY& c_entity) {                               \
       c_engine.RemovePhysicsEntity(c_entity.GetId());                   \
-      c_entity.                                                         \
-         GetComponent<CEmbodiedEntity>("body").                         \
-         RemovePhysicsEngine(c_engine);                                 \
       c_entity.                                                         \
          GetComponent<CEmbodiedEntity>("body").                         \
          RemovePhysicsEngineEntity(c_engine.GetId());                   \

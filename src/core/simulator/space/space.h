@@ -75,25 +75,69 @@ namespace argos {
 
    public:
 
+      /**
+       * Class constructor.
+       */
       CSpace();
+
+      /**
+       * Class destructor.
+       */
       virtual ~CSpace() {}
 
+      /**
+       * Initializes the space using the <tt>&lt;arena&gt;</tt> section of the XML configuration file.
+       * @param t_tree the <tt>&lt;arena&gt;</tt> section of the XML configuration file.
+       */
       virtual void Init(TConfigurationNode& t_tree);
+
+      /**
+       * Reset the space and all its entities.
+       */
       virtual void Reset();
+
+      /**
+       * Destroys the space and all its entities.
+       */
       virtual void Destroy();
 
+      /**
+       * Returns the number of entities contained in the space.
+       */
       inline UInt32 GetNumberEntities() const {
          return m_vecEntities.size();
       }
 
+      /**
+       * Returns a vector of all the entities in the space.
+       * All entities are returned, i.e., all the components of a robot.
+       * @return a vector of all the entities in the space.
+       * @see GetRootEntityVector()
+       */
       inline CEntity::TVector& GetEntityVector() {
          return m_vecEntities;
       }
 
+      /**
+       * Returns a vector of all the root entities in the space.
+       * A root entity is an entity that has no parent.
+       * This method differs from GetEntityVector() in that the latter
+       * returns all entities including the components of a composable
+       * entity, while this method does not return any component, but only
+       * the parentless composables.
+       * @return a vector of all the root entities in the space.
+       * @see GetEntityVector()
+       */
       inline CEntity::TVector& GetRootEntityVector() {
          return m_vecRootEntities;
       }
 
+      /**
+       * Returns the entity with the given id.
+       * @param str_id The id of the wanted entity
+       * @return The entity with the given id.       
+       * @throws CARGoSException if an entity with the wanted id does not exist
+       */
       inline CEntity& GetEntity(const std::string& str_id) {
          CEntity::TMap::const_iterator it = m_mapEntitiesPerId.find(str_id);
          if ( it != m_mapEntitiesPerId.end()) {
@@ -103,42 +147,118 @@ namespace argos {
                               "\" when requesting entity from space.");
       }
 
+      /**
+       * Returns the entities matching a given pattern.
+       * The pattern must be a valid regexp.
+       * @param t_buffer A vector filled with all the entities that match the given pattern.
+       * @param str_pattern The pattern to match.
+       * @return The entity with the given id.       
+       * @throws CARGoSException if the regexp is not valid.
+       */
       void GetEntitiesMatching(CEntity::TVector& t_buffer,
                                const std::string& str_pattern);
 
+      /**
+       * Calculates the closest intersection point along the given ray.
+       * @param s_data Buffer containing the calculated intersection point, or lack thereof.
+       * @param c_ray The test ray.
+       * @param set_ignored_entities A list of entities that must be ignored if an intersection with them is detected.
+       */
       bool GetClosestEmbodiedEntityIntersectedByRay(SEntityIntersectionItem<CEmbodiedEntity>& s_data,
                                                     const CRay3& c_ray,
                                                     const TEmbodiedEntitySet& set_ignored_entities = TEmbodiedEntitySet());
 
+      /**
+       * Returns a map of all entities ordered by id.
+       * @return a map of all entities ordered by id.
+       */
       inline CEntity::TMap& GetEntityMapPerId() {
          return m_mapEntitiesPerId;
       }
 
+      /**
+       * Returns a nested map of entities, ordered by type and by id.
+       * The 'type' here refers to the string returned by CEntity::GetTypeDescription().
+       * Take this example:
+       * <code>
+       *    CSpace::TMapPerTypePerId& theMap = space.GetEntityMapPerTypePerId();
+       *    // theMap["box"] is a CSpace::TMapPerType containing all the box entities, ordered by id
+       *    // theMap["led"] is a CSpace::TMapPerType containing all the led entities, ordered by id
+       *    // etc.
+       *    CBoxEntity* box = any_cast<CBoxEntity*>(theMap["box"]["my_box_22"]);
+       *    // do stuff with the box ...
+       * </code>
+       * @returns a nested map of entities, ordered by type and by id.
+       * @see CEntity::GetTypeDescription()
+       * @see TMapPerType
+       * @see GetEntitiesByType()
+       */
       inline TMapPerTypePerId& GetEntityMapPerTypePerId() {
          return m_mapEntitiesPerTypePerId;
       }
 
+      /**
+       * Returns a map containing all the objects of a given type.
+       * The 'type' here refers to the string returned by CEntity::GetTypeDescription().
+       * Take this example:
+       * <code>
+       *    CSpace::TMapPerType& theMap = space.GetEntityMapByType("box");
+       *    CBoxEntity* box = any_cast<CBoxEntity*>(theMap["my_box"]);
+       *    // do stuff with the box ...
+       * </code>
+       * @param str_type The wanted type to search for.
+       * @return A map containing all the objects of a given type.
+       * @throws CARGoSException if the given type is not valid.
+       * @see CEntity::GetTypeDescription()
+       * @see TMapPerType
+       * @see GetEntityMapPerTypePerId()
+       */
       TMapPerType& GetEntitiesByType(const std::string& str_type);
 
+      /**
+       * Returns the floor entity.
+       * @throws CARGoSException if the floor entity has not been added to the arena.
+       * @return The floor entity.
+       */
       inline CFloorEntity& GetFloorEntity() {
          if(m_pcFloorEntity != NULL) return *m_pcFloorEntity;
-         else THROW_ARGOSEXCEPTION("No floor entity has been added to the space.");
+         else THROW_ARGOSEXCEPTION("No floor entity has been added to the arena.");
       }
 
+      /**
+       * Sets the floor entity.
+       * @param c_floor_entity The floor entity.
+       */
       inline void SetFloorEntity(CFloorEntity& c_floor_entity) {
          m_pcFloorEntity = &c_floor_entity;
       }
 
+      /**
+       * Returns <tt>true</tt> if positional entities are indexed using the space hash.
+       * @return <tt>true</tt> if positional entities are indexed using the space hash.
+       */
       inline bool IsUsingSpaceHash() const {
          return m_bUseSpaceHash;
       }
 
+      /**
+       * Sets the list of physics engines.
+       * This method is used internally.
+       */
       inline virtual void SetPhysicsEngines(CPhysicsEngine::TVector& t_engines) {
          m_ptPhysicsEngines = &t_engines;
       }
 
+      /**
+       * Updates the space.
+       */
       virtual void Update();
 
+      /**
+       * Adds an entity of the given type.
+       * This method is used internally, don't use it in your code.
+       * throws CARGoSException if the entity id already exists in the space indexes.
+       */
       template <typename ENTITY>
       void AddEntity(ENTITY& c_entity) {
          /* Check that the id of the entity is not already present */
@@ -154,6 +274,11 @@ namespace argos {
          m_mapEntitiesPerTypePerId[c_entity.GetTypeDescription()][c_entity.GetId()] = &c_entity;
       }
 
+      /**
+       * Removes an entity of the given type.
+       * This method is used internally, don't use it in your code.
+       * throws CARGoSException if the entity id does not exist in the space indexes.
+       */
       template <typename ENTITY>
       void RemoveEntity(ENTITY& c_entity) {
          /* Search for entity in the index per type */
@@ -187,26 +312,54 @@ namespace argos {
                               "\" has not been found in the indexes.");
       }
 
+      /**
+       * Returns the current value of the simulation clock.
+       * The clock is measured in ticks. You can set how much a tick is long in seconds in the XML.
+       * @return The current value of the simulation clock.
+       */
       inline UInt32 GetSimulationClock() const {
          return m_unSimulationClock;
       }
 
+      /**
+       * Sets a new value for the simulation clock.
+       * The clock is measured in ticks. You can set how much a tick is long in seconds in the XML.
+       * @param un_simulation_clock The new value for the simulation clock.
+       */
       inline void SetSimulationClock(UInt32 un_simulation_clock) {
          m_unSimulationClock = un_simulation_clock;
       }
 
+      /**
+       * Increases the simulation clock by the wanted value.
+       * The clock is measured in ticks. You can set how much a tick is long in seconds in the XML.
+       * @param un_increase The quantity to add to the current value of the simulation clock.
+       */
       inline void IncreaseSimulationClock(UInt32 un_increase = 1) {
          m_unSimulationClock += un_increase;
       }
 
+      /**
+       * Returns the arena size.
+       * @return the arena size.
+       */
       inline const CVector3& GetArenaSize() const {
          return m_cArenaSize;
       }
 
+      /**
+       * Sets the arena size.
+       * @return the arena size.
+       */
       inline void SetArenaSize(const CVector3& c_size) {
          m_cArenaSize = c_size;
       }
 
+      /**
+       * Returns the space hash containing the embodied entities.
+       * @return The space hash containing the embodied entities.
+       * @throw CARGoSException if the space hash is not being used.
+       */
       inline CSpaceHash<CEmbodiedEntity, CEmbodiedEntitySpaceHashUpdater>& GetEmbodiedEntitiesSpaceHash() {
          if(IsUsingSpaceHash()) {
             return *m_pcEmbodiedEntitiesSpaceHash;
@@ -216,6 +369,11 @@ namespace argos {
          }
       }
 
+      /**
+       * Returns the space hash containing the LED entities.
+       * @return The space hash containing the LED entities.
+       * @throw CARGoSException if the space hash is not being used.
+       */
       inline CSpaceHash<CLEDEntity, CLEDEntitySpaceHashUpdater>& GetLEDEntitiesSpaceHash() {
          if(IsUsingSpaceHash()) {
             return *m_pcLEDEntitiesSpaceHash;
@@ -225,6 +383,11 @@ namespace argos {
          }
       }
 
+      /**
+       * Returns the space hash containing the RAB equipped entities.
+       * @return The space hash containing the RAB equipped entities.
+       * @throw CARGoSException if the space hash is not being used.
+       */
       inline CSpaceHash<CRABEquippedEntity, CRABEquippedEntitySpaceHashUpdater>& GetRABEquippedEntitiesSpaceHash() {
          if(IsUsingSpaceHash()) {
             return *m_pcRABEquippedEntitiesSpaceHash;
@@ -240,6 +403,7 @@ namespace argos {
       virtual void RemoveControllableEntity(CControllableEntity& c_entity);
       virtual void AddMediumEntity(CMediumEntity& c_entity);
       virtual void RemoveMediumEntity(CMediumEntity& c_entity);
+      virtual void AddEntityToPhysicsEngine(CEmbodiedEntity& c_entity);
       
       void UpdateSpaceData();
       
@@ -266,6 +430,7 @@ namespace argos {
       friend class CSpaceOperationRemoveControllableEntity;
       friend class CSpaceOperationAddMediumEntity;
       friend class CSpaceOperationRemoveMediumEntity;
+      friend class CSpaceOperationAddEmbodiedEntity;
 
    protected:
 

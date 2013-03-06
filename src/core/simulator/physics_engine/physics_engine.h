@@ -11,6 +11,7 @@ namespace argos {
    class CPhysicsEngine;
    class CPhysicsEngineEntity;
    class CEntity;
+   class CVector3;
 }
 
 #include <map>
@@ -41,13 +42,33 @@ namespace argos {
 
       virtual void Update() = 0;
 
+      virtual bool IsPointContained(const CVector3& c_point) = 0;
+
       virtual UInt32 GetNumPhysicsEngineEntities() = 0;
+
+      /**
+       * Adds an entity to the physics engine.
+       * Important: when you implement this function, you must also take care of adding
+       * the physics engine entity to the associated embodied entity.
+       */
       virtual void AddEntity(CEntity& c_entity) = 0;
+
+      /**
+       * Removes an entity from the physics engine.
+       * Important: when you implement this function, you must also take care of removing
+       * the physics engine entity to the associated embodied entity.
+       */
       virtual void RemoveEntity(CEntity& c_entity) = 0;
-      inline virtual bool IsEntityTransferNeeded() const {
-         return false;
-      }
-      virtual void TransferEntities() {}
+
+      /**
+       * Returns <tt>true</tt> if this engine has entities that must be transferred to another engine.
+       */
+      virtual bool IsEntityTransferNeeded() const  = 0;
+
+      /**
+       * Executes the transfer of entities to other engines.
+       */
+      virtual void TransferEntities()  = 0;
 
       static Real GetSimulationClockTick();
       static Real GetInverseSimulationClockTick();

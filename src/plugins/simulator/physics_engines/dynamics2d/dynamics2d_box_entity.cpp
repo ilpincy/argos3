@@ -39,7 +39,7 @@ namespace argos {
          /* The box is movable */
          /* Create the body */
          m_ptBody =
-            cpSpaceAddBody(m_cEngine.GetPhysicsSpace(),
+            cpSpaceAddBody(m_cDyn2DEngine.GetPhysicsSpace(),
                            cpBodyNew(m_fMass,
                                      cpMomentForPoly(m_fMass,
                                                      4,
@@ -49,7 +49,7 @@ namespace argos {
          cpBodySetAngle(m_ptBody, cZAngle.GetValue());
          /* Create the geometry */
          m_ptShape =
-            cpSpaceAddShape(m_cEngine.GetPhysicsSpace(),
+            cpSpaceAddShape(m_cDyn2DEngine.GetPhysicsSpace(),
                             cpPolyShapeNew(m_ptBody,
                                            4,
                                            tVertices,
@@ -63,16 +63,16 @@ namespace argos {
          m_ptShape->u = 0.7;
          /* Friction with ground */
          m_ptLinearFriction =
-            cpSpaceAddConstraint(m_cEngine.GetPhysicsSpace(),
-                                 cpPivotJointNew2(m_cEngine.GetGroundBody(),
+            cpSpaceAddConstraint(m_cDyn2DEngine.GetPhysicsSpace(),
+                                 cpPivotJointNew2(m_cDyn2DEngine.GetGroundBody(),
                                                   m_ptBody,
                                                   cpvzero,
                                                   cpvzero));
          m_ptLinearFriction->maxBias = 0.0f; // disable joint correction
          m_ptLinearFriction->maxForce = 1.49f; // emulate linear friction (this is just slightly smaller than FOOTBOT_MAX_FORCE)
          m_ptAngularFriction =
-            cpSpaceAddConstraint(m_cEngine.GetPhysicsSpace(),
-                                 cpGearJointNew(m_cEngine.GetGroundBody(),
+            cpSpaceAddConstraint(m_cDyn2DEngine.GetPhysicsSpace(),
+                                 cpGearJointNew(m_cDyn2DEngine.GetGroundBody(),
                                                 m_ptBody,
                                                 0.0f,
                                                 1.0f));
@@ -89,8 +89,8 @@ namespace argos {
          tVertices[3] = cpvrotate(tVertices[3], tRot);
          /* Create the geometry */
          m_ptShape =
-            cpSpaceAddStaticShape(m_cEngine.GetPhysicsSpace(),
-                                  cpPolyShapeNew(m_cEngine.GetGroundBody(),
+            cpSpaceAddStaticShape(m_cDyn2DEngine.GetPhysicsSpace(),
+                                  cpPolyShapeNew(m_cDyn2DEngine.GetGroundBody(),
                                                  4,
                                                  tVertices,
                                                  cpv(cPosition.GetX(), cPosition.GetY())));
@@ -101,7 +101,12 @@ namespace argos {
          m_ptShape->e = 0.0;
          /* Little contact friction to help sliding away */
          m_ptShape->u = 0.1;
+         /* Calculate the bounding box once and forever */
+         CalculateBoundingBox();
       }
+      /* Precalculate Z-axis range of the bounding box */
+      GetBoundingBox().MinCorner.SetZ(GetEmbodiedEntity().GetPosition().GetZ() - m_fHalfHeight);
+      GetBoundingBox().MaxCorner.SetZ(GetEmbodiedEntity().GetPosition().GetZ() + m_fHalfHeight);
    }
    
    /****************************************/
@@ -109,17 +114,17 @@ namespace argos {
 
    CDynamics2DBoxEntity::~CDynamics2DBoxEntity() {
       if(m_ptBody != NULL) {
-         cpSpaceRemoveConstraint(m_cEngine.GetPhysicsSpace(), m_ptLinearFriction);
-         cpSpaceRemoveConstraint(m_cEngine.GetPhysicsSpace(), m_ptAngularFriction);
+         cpSpaceRemoveConstraint(m_cDyn2DEngine.GetPhysicsSpace(), m_ptLinearFriction);
+         cpSpaceRemoveConstraint(m_cDyn2DEngine.GetPhysicsSpace(), m_ptAngularFriction);
          cpConstraintFree(m_ptLinearFriction);
          cpConstraintFree(m_ptAngularFriction);
-         cpSpaceRemoveBody(m_cEngine.GetPhysicsSpace(), m_ptBody);
+         cpSpaceRemoveBody(m_cDyn2DEngine.GetPhysicsSpace(), m_ptBody);
          cpBodyFree(m_ptBody);
-         cpSpaceRemoveShape(m_cEngine.GetPhysicsSpace(), m_ptShape);
+         cpSpaceRemoveShape(m_cDyn2DEngine.GetPhysicsSpace(), m_ptShape);
       }
       else {
-         cpSpaceRemoveStaticShape(m_cEngine.GetPhysicsSpace(), m_ptShape);
-         cpSpaceReindexStatic(m_cEngine.GetPhysicsSpace());
+         cpSpaceRemoveStaticShape(m_cDyn2DEngine.GetPhysicsSpace(), m_ptShape);
+         cpSpaceReindexStatic(m_cDyn2DEngine.GetPhysicsSpace());
       }
       cpShapeFree(m_ptShape);
    }
@@ -183,7 +188,7 @@ namespace argos {
                                                tVertices,
                                                cpvzero);
          /* Check if there is a collision */
-         nCollision = cpSpaceShapeQuery(m_cEngine.GetPhysicsSpace(), ptTestShape, NULL, NULL);
+         nCollision = cpSpaceShapeQuery(m_cDyn2DEngine.GetPhysicsSpace(), ptTestShape, NULL, NULL);
          /* Dispose of the sensor shape */
          cpShapeFree(ptTestShape);
          if(b_check_only || nCollision) {
@@ -194,7 +199,7 @@ namespace argos {
          }
          else {
             /* Update the active space hash if the movement is actual */
-            cpSpaceReindexShape(m_cEngine.GetPhysicsSpace(), m_ptShape);
+            cpSpaceReindexShape(m_cDyn2DEngine.GetPhysicsSpace(), m_ptShape);
          }
       }
       else {
@@ -227,14 +232,26 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   void CDynamics2DBoxEntity::CalculateBoundingBox() {
+      GetBoundingBox().MinCorner.SetX(m_ptShape->bb.l);
+      GetBoundingBox().MinCorner.SetY(m_ptShape->bb.b);
+      GetBoundingBox().MaxCorner.SetX(m_ptShape->bb.r);
+      GetBoundingBox().MaxCorner.SetY(m_ptShape->bb.t);
+   }
+
+   /****************************************/
+   /****************************************/
+
    void CDynamics2DBoxEntity::UpdateEntityStatus() {
       if(m_ptBody != NULL) {
-         m_cEngine.PositionPhysicsToSpace(m_cSpacePosition, GetEmbodiedEntity().GetPosition(), m_ptBody);
+         /* Update bounding box */
+         CalculateBoundingBox();
+         /* Update entity position and orientation */
+         m_cDyn2DEngine.PositionPhysicsToSpace(m_cSpacePosition, GetEmbodiedEntity().GetPosition(), m_ptBody);
          GetEmbodiedEntity().SetPosition(m_cSpacePosition);
-         m_cEngine.OrientationPhysicsToSpace(m_cSpaceOrientation, m_ptBody);
+         m_cDyn2DEngine.OrientationPhysicsToSpace(m_cSpaceOrientation, m_ptBody);
          GetEmbodiedEntity().SetOrientation(m_cSpaceOrientation);
       }
-
       /* Update components */
       m_cBoxEntity.UpdateComponents();
    }

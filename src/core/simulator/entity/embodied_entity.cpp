@@ -18,7 +18,8 @@ namespace argos {
 
    CEmbodiedEntity::CEmbodiedEntity(CComposableEntity* pc_parent) :
       CPositionalEntity(pc_parent),
-      m_bMovable(true) {}
+      m_bMovable(true),
+      m_sBoundingBox(NULL) {}
 
    /****************************************/
    /****************************************/
@@ -32,7 +33,8 @@ namespace argos {
                         str_id,
                         c_position,
                         c_orientation),
-      m_bMovable(b_movable) {}
+      m_bMovable(b_movable),
+      m_sBoundingBox(NULL) {}
 
    /****************************************/
    /****************************************/
@@ -40,7 +42,6 @@ namespace argos {
    void CEmbodiedEntity::Init(TConfigurationNode& t_tree) {
       try {
          CPositionalEntity::Init(t_tree);
-         m_bBoundingBoxRecalculationNeeded = true;
          m_bMovable = true;
       }
       catch(CARGoSException& ex) {
@@ -51,40 +52,19 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CEmbodiedEntity::AddPhysicsEngine(CPhysicsEngine& c_physics_engine) {
-      m_tEngines.push_back(&c_physics_engine);
-   }
-
-   /****************************************/
-   /****************************************/
-
-   void CEmbodiedEntity::RemovePhysicsEngine(CPhysicsEngine& c_physics_engine) {
-      CPhysicsEngine::TVector::iterator it = std::find(m_tEngines.begin(),
-                                                       m_tEngines.end(),
-                                                       &c_physics_engine);
-      if(it == m_tEngines.end()) {
-         THROW_ARGOSEXCEPTION("Engine \"" << c_physics_engine.GetId() << "\" not found when removing it from entity id = \"" << GetId() << "\"");
+   const SBoundingBox& CEmbodiedEntity::GetBoundingBox() const {
+      if(GetPhysicsEngineEntitiesNum() == 0) {
+         /* No engine associated to this entity */
+         THROW_ARGOSEXCEPTION("CEmbodiedEntity::GetBoundingBox() : entity \"" << GetId() << "\" is not associated to any engine");
       }
-      m_tEngines.erase(it);
+      return *m_sBoundingBox;
    }
 
    /****************************************/
    /****************************************/
 
-   CPhysicsEngine& CEmbodiedEntity::GetPhysicsEngine(UInt32 un_index) const {
-      if(un_index >= m_tEngines.size()) {
-         THROW_ARGOSEXCEPTION("Index out of bound for physics engine query for entity " << GetId() <<
-                              ". Passed index = " << un_index << ", but " <<
-                              m_tEngines.size() << " engines were associated to this entity.");
-      }
-      return *(m_tEngines[un_index]);
-   }
-
-   /****************************************/
-   /****************************************/
-
-   UInt32 CEmbodiedEntity::GetPhysicsEngineNum() const {
-      return m_tEngines.size();
+   UInt32 CEmbodiedEntity::GetPhysicsEngineEntitiesNum() const {
+      return m_tPhysicsEngineEntityVector.size();
    }
 
    /****************************************/
@@ -92,8 +72,12 @@ namespace argos {
 
    void CEmbodiedEntity::AddPhysicsEngineEntity(const std::string& str_engine_id,
                                                 CPhysicsEngineEntity& c_physics_entity) {
+      if(m_bMovable && GetPhysicsEngineEntitiesNum() > 0) {
+         THROW_ARGOSEXCEPTION(GetId() << " is movable embodied entity and can't have more than 1 physics engine entity associated");
+      }
       m_tPhysicsEngineEntityMap[str_engine_id] = &c_physics_entity;
       m_tPhysicsEngineEntityVector.push_back(&c_physics_entity);
+      CalculateBoundingBox();
    }
 
    /****************************************/
@@ -109,6 +93,27 @@ namespace argos {
                                                                 itMap->second);
       m_tPhysicsEngineEntityMap.erase(itMap);
       m_tPhysicsEngineEntityVector.erase(itVec);
+      CalculateBoundingBox();
+   }
+
+   /****************************************/
+   /****************************************/
+
+   const CPhysicsEngineEntity& CEmbodiedEntity::GetPhysicsEngineEntity(size_t un_idx) const {
+      if(un_idx > m_tPhysicsEngineEntityVector.size()) {
+         THROW_ARGOSEXCEPTION("CEmbodiedEntity::GetPhysicsEngineEntity: entity \"" << GetId() << "\": the passed index " << un_idx << " is out of bounds, the max allowed is " << m_tPhysicsEngineEntityVector.size());
+      }
+      return *m_tPhysicsEngineEntityVector[un_idx];
+   }
+
+   /****************************************/
+   /****************************************/
+
+   CPhysicsEngineEntity& CEmbodiedEntity::GetPhysicsEngineEntity(size_t un_idx) {
+      if(un_idx > m_tPhysicsEngineEntityVector.size()) {
+         THROW_ARGOSEXCEPTION("CEmbodiedEntity::GetPhysicsEngineEntity: entity \"" << GetId() << "\": the passed index " << un_idx << " is out of bounds, the max allowed is " << m_tPhysicsEngineEntityVector.size());
+      }
+      return *m_tPhysicsEngineEntityVector[un_idx];
    }
 
    /****************************************/
@@ -125,12 +130,24 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   CPhysicsEngineEntity& CEmbodiedEntity::GetPhysicsEngineEntity(const std::string& str_engine_id) {
+      CPhysicsEngineEntity::TMap::iterator it = m_tPhysicsEngineEntityMap.find(str_engine_id);
+      if(it == m_tPhysicsEngineEntityMap.end()) {
+         THROW_ARGOSEXCEPTION("Entity \"" << GetId() << "\" has no associated entity in physics engine \"" << str_engine_id << "\"");
+      }
+      return *(it->second);
+   }
+
+   /****************************************/
+   /****************************************/
+
    bool CEmbodiedEntity::CheckIntersectionWithRay(Real& f_distance,
                                                   const CRay3& c_ray) const {
-      for(UInt32 i = 0; i < m_tPhysicsEngineEntityVector.size(); ++i)
+      for(UInt32 i = 0; i < m_tPhysicsEngineEntityVector.size(); ++i) {
          if(m_tPhysicsEngineEntityVector[i]->CheckIntersectionWithRay(f_distance, c_ray)) {
             return true;
          }
+      }
       return false;
    }
 
@@ -179,33 +196,47 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CEmbodiedEntity::Update() {
-      if(m_bBoundingBoxRecalculationNeeded) {
-         CalculateBoundingBox();
-         m_bBoundingBoxRecalculationNeeded = false;
-      }
+#define CHECK_CORNER(MINMAX, COORD, OP)                                    \
+   if(m_sBoundingBox->MINMAX ## Corner.Get ## COORD() OP sBBox.MINMAX ## Corner.Get ## COORD()) { \
+      m_sBoundingBox->MINMAX ## Corner.Set ## COORD(sBBox.MINMAX ## Corner.Get ## COORD());      \
    }
 
-   /****************************************/
-   /****************************************/
-
-   void CalculateBoundingBoxFromHalfSize(CEmbodiedEntity::SBoundingBox& s_bounding_box,
-                                         const CVector3& c_half_size,
-                                         const CVector3& c_center_pos,
-                                         const CRotationMatrix3& c_orientation) {
-      CVector3 cExtent(Abs(c_orientation(0) * c_half_size.GetX()) +
-                       Abs(c_orientation(1) * c_half_size.GetY()) +
-                       Abs(c_orientation(2) * c_half_size.GetZ()),
-                       Abs(c_orientation(3) * c_half_size.GetX()) +
-                       Abs(c_orientation(4) * c_half_size.GetY()) +
-                       Abs(c_orientation(5) * c_half_size.GetZ()),
-                       Abs(c_orientation(6) * c_half_size.GetX()) +
-                       Abs(c_orientation(7) * c_half_size.GetY()) +
-                       Abs(c_orientation(8) * c_half_size.GetZ()));
-      s_bounding_box.MinCorner =  c_center_pos;
-      s_bounding_box.MinCorner -= cExtent;
-      s_bounding_box.MaxCorner =  c_center_pos;
-      s_bounding_box.MaxCorner += cExtent;
+   void CEmbodiedEntity::CalculateBoundingBox() {
+      if(GetPhysicsEngineEntitiesNum() > 0) {
+         /*
+          * There is at least one physics engine entity associated
+          */
+         if(m_bMovable) {
+            /* The bounding box points directly to the associated model bounding box */
+            m_sBoundingBox = &m_tPhysicsEngineEntityVector[0]->GetBoundingBox();
+         }
+         else {
+            /* The bounding box is obtained taking the extrema of all the bboxes of all the engines */
+            if(m_sBoundingBox == NULL) {
+               m_sBoundingBox = new SBoundingBox();
+            }
+            *m_sBoundingBox = m_tPhysicsEngineEntityVector[0]->GetBoundingBox();
+            for(size_t i = 1; i < GetPhysicsEngineEntitiesNum(); ++i) {
+               const SBoundingBox& sBBox = m_tPhysicsEngineEntityVector[0]->GetBoundingBox();
+               CHECK_CORNER(Min, X, >);
+               CHECK_CORNER(Min, Y, >);
+               CHECK_CORNER(Min, Z, >);
+               CHECK_CORNER(Max, X, <);
+               CHECK_CORNER(Max, Y, <);
+               CHECK_CORNER(Max, Z, <);
+            }
+         }
+      }
+      else {
+         /*
+          * No physics engine entity associated
+          */
+         if(! m_bMovable && m_sBoundingBox != NULL) {
+            /* A non-movable entity has its own bounding box, delete it */
+            delete m_sBoundingBox;
+         }
+         m_sBoundingBox = NULL;
+      }
    }
 
    /****************************************/
@@ -213,8 +244,6 @@ namespace argos {
 
    void CEmbodiedEntitySpaceHashUpdater::operator()(CAbstractSpaceHash<CEmbodiedEntity>& c_space_hash,
                                                     CEmbodiedEntity& c_element) {
-      /* Update the bounding box */
-      c_element.Update();
       /* Translate the min corner of the bounding box into the map's coordinate */
       c_space_hash.SpaceToHashTable(m_nMinX, m_nMinY, m_nMinZ, c_element.GetBoundingBox().MinCorner);
       /* Translate the max corner of the bounding box into the map's coordinate */                                     
@@ -235,10 +264,13 @@ namespace argos {
    class CSpaceOperationAddEmbodiedEntity : public CSpaceOperationAddEntity {
    public:
       void ApplyTo(CSpace& c_space, CEmbodiedEntity& c_entity) {
+         /* Add entity to space */
          c_space.AddEntity(c_entity);
          if(c_space.IsUsingSpaceHash()) {
             c_space.GetEmbodiedEntitiesSpaceHash().AddElement(c_entity);
          }
+         /* Try to add entity to physics engine(s) */
+         c_space.AddEntityToPhysicsEngine(c_entity);
       }
    };
    REGISTER_SPACE_OPERATION(CSpaceOperationAddEntity, CSpaceOperationAddEmbodiedEntity, CEmbodiedEntity);
@@ -246,6 +278,16 @@ namespace argos {
    class CSpaceOperationRemoveEmbodiedEntity : public CSpaceOperationRemoveEntity {
    public:
       void ApplyTo(CSpace& c_space, CEmbodiedEntity& c_entity) {
+         /* Get a reference to the root entity */
+         CEntity* pcRoot = &c_entity;
+         while(pcRoot->HasParent()) {
+            pcRoot = &pcRoot->GetParent();
+         }
+         /* Remove entity from all physics engines */
+         while(c_entity.GetPhysicsEngineEntitiesNum() > 0) {
+            c_entity.GetPhysicsEngineEntity(0).GetEngine().RemoveEntity(*pcRoot);
+         }
+         /* Remove entity from space */
          if(c_space.IsUsingSpaceHash()) {
             c_space.GetEmbodiedEntitiesSpaceHash().RemoveElement(c_entity);
          }

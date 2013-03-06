@@ -20,11 +20,11 @@
       <!-- Normal actuator/sensor configuration follows -->
       <actuators>
         <differential_steering implementation="default" />
-        <leds implementation="default" />
+        <!-- leds implementation="default" / -->
       </actuators>
       <sensors>
-        <footbot_proximity implementation="default" show_rays="false" />
-        <light implementation="default" show_rays="true" />
+        <footbot_proximity implementation="default" show_rays="true" />
+        <!-- light implementation="default" show_rays="false" / -->
       </sensors>
       <!-- No required configuration -->
       <params />
@@ -38,10 +38,10 @@
   <!-- * Arena configuration * -->
   <!-- *********************** -->
   <arena size="2, 2, 1">
-    <box id="bn" position="1,0,0.1"  orientation="0,0,0" size="0.1, 2, 0.2" movable="false" />
-    <box id="bs" position="-1,0,0.1" orientation="0,0,0" size="0.1, 2, 0.2" movable="false" />
-    <box id="be" position="0,-1,0.1" orientation="0,0,0" size="2, 0.1, 0.2" movable="false" />
-    <box id="bw" position="0,1,0.1"  orientation="0,0,0" size="2, 0.1, 0.2" movable="false" />
+    <box id="bn" position="1,0,0"  orientation="0,0,0" size="0.1, 2, 0.2" movable="false" />
+    <box id="bs" position="-1,0,0" orientation="0,0,0" size="0.1, 2, 0.2" movable="false" />
+    <box id="be" position="0,-1,0" orientation="0,0,0" size="2, 0.1, 0.2" movable="false" />
+    <box id="bw" position="0,1,0"  orientation="0,0,0" size="2, 0.1, 0.2" movable="false" />
 
     <light id="l0"
            position="1,1,1"
@@ -49,14 +49,15 @@
            color="yellow"
            intensity="1" />
 
-    <distribute>
+    <!-- distribute>
       <position method="uniform" min="-1,-1,0" max="1,1,0" />
       <orientation method="gaussian" mean="0,0,0" std_dev="360,0,0" />
       <entity quantity="1" max_trials="100">
         <foot-bot id="fb"
                   controller="lua" />
       </entity>
-    </distribute>
+    </distribute -->
+    <foot-bot id="fb0" position="0,0,0" orientation="0,0,0" controller="lua" />
   </arena>
 
   <!-- ******************* -->
@@ -66,16 +67,6 @@
     <dynamics2d id="dyn2d" />
   </physics_engines>
 
-  <!-- ************************************ -->
-  <!-- * Arena -> Physics Engines mapping * -->
-  <!-- ************************************ -->
-  <arena_physics>
-    <engine id="dyn2d">
-      <entity id="fb[[:digit:]]*" />
-      <entity id="b[[:alpha:]]" />
-    </engine>
-  </arena_physics>
-
   <!-- ****************** -->
   <!-- * Visualization * -->
   <!-- ****************** -->
@@ -84,7 +75,12 @@
     <!-- ************************************************************************ -->
     <!-- * To activate the Lua editor, just use the 'lua_editor' flag attribute * -->
     <!-- ************************************************************************ -->
-    <qt-opengl lua_editor="true" />
+    <qt-opengl lua_editor="true">
+      <camera>
+        <placement idx="0" position="-2,0,2" look_at="0,0,0" lens_focal_length="20" />
+        <placement idx="1" position="0.884183,0.359128,0.490269" look_at="0.924486,-0.486744,-0.0415919" lens_focal_length="20" />
+      </camera>
+    </qt-opengl>
 
   </visualization>
 

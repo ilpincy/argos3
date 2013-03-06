@@ -13,56 +13,6 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   class CCylinderEmbodiedEntity : public CEmbodiedEntity {
-
-   public:
-
-    	CCylinderEmbodiedEntity(CCylinderEntity* pc_parent,
-                              Real f_radius,
-                              Real f_height) :
-         CEmbodiedEntity(pc_parent) {
-         m_cHalfSize.SetX(f_radius);
-         m_cHalfSize.SetY(f_radius);
-         m_cHalfSize.SetZ(f_height * 0.5f);
-      }
-
-    	CCylinderEmbodiedEntity(CCylinderEntity* pc_parent,
-                              const std::string& str_id,
-                              const CVector3& c_position,
-                              const CQuaternion& c_orientation,
-                              bool b_movable,
-                              Real f_radius,
-                              Real f_height) :
-         CEmbodiedEntity(pc_parent,
-                         str_id,
-                         c_position,
-                         c_orientation,
-                         b_movable) {
-         m_cHalfSize.SetX(f_radius);
-         m_cHalfSize.SetY(f_radius);
-         m_cHalfSize.SetZ(f_height * 0.5f);
-      }
-
-   protected:
-
-      virtual void CalculateBoundingBox() {
-         m_cOrientationMatrix.SetFromQuaternion(GetOrientation());
-         CalculateBoundingBoxFromHalfSize(GetBoundingBox(),
-                                          m_cHalfSize,
-                                          GetPosition(),
-                                          m_cOrientationMatrix);
-      }
-
-   private:
-
-      CVector3 m_cHalfSize;
-      CRotationMatrix3 m_cOrientationMatrix;
-
-   };
-
-   /****************************************/
-   /****************************************/
-
    CCylinderEntity::CCylinderEntity() :
       CComposableEntity(NULL),
       m_pcEmbodiedEntity(NULL),
@@ -82,13 +32,11 @@ namespace argos {
                                     Real f_mass) :
       CComposableEntity(NULL, str_id),
       m_pcEmbodiedEntity(
-         new CCylinderEmbodiedEntity(this,
-                                     str_id,
-                                     c_position,
-                                     c_orientation,
-                                     b_movable,
-                                     f_radius,
-                                     f_height)),
+         new CEmbodiedEntity(this,
+                             str_id,
+                             c_position,
+                             c_orientation,
+                             b_movable)),
       m_pcLEDEquippedEntity(
          new CLEDEquippedEntity(this,
                                 str_id,
@@ -120,7 +68,7 @@ namespace argos {
             m_fMass = 0.0f;
          }
          /* Create embodied entity using parsed data */
-         m_pcEmbodiedEntity = new CCylinderEmbodiedEntity(this, m_fRadius, m_fHeight);
+         m_pcEmbodiedEntity = new CEmbodiedEntity(this);
          AddComponent(*m_pcEmbodiedEntity);
          m_pcEmbodiedEntity->Init(t_tree);
          m_pcEmbodiedEntity->SetMovable(bMovable);

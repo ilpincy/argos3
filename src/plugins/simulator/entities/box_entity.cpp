@@ -10,45 +10,6 @@
 
 namespace argos {
 
-   class CBoxEmbodiedEntity : public CEmbodiedEntity {
-
-   public:
-
-    	CBoxEmbodiedEntity(CBoxEntity* pc_parent,
-                         const CVector3& c_size) :
-         CEmbodiedEntity(pc_parent),
-         m_cHalfSize(c_size * 0.5f) {}
-
-    	CBoxEmbodiedEntity(CBoxEntity* pc_parent,
-                         const std::string& str_id,
-                         const CVector3& c_position,
-                         const CQuaternion& c_orientation,
-                         bool b_movable,
-                         const CVector3& c_size):
-         CEmbodiedEntity(pc_parent,
-                         str_id,
-                         c_position,
-                         c_orientation,
-                         b_movable),
-         m_cHalfSize(c_size * 0.5f) {}
-
-   protected:
-
-      virtual void CalculateBoundingBox() {
-         m_cOrientationMatrix.SetFromQuaternion(GetOrientation());
-         CalculateBoundingBoxFromHalfSize(GetBoundingBox(),
-                                          m_cHalfSize,
-                                          GetPosition(),
-                                          m_cOrientationMatrix);
-      }
-
-   private:
-
-      CVector3 m_cHalfSize;
-      CRotationMatrix3 m_cOrientationMatrix;
-
-   };
-
    /****************************************/
    /****************************************/
 
@@ -69,12 +30,11 @@ namespace argos {
                           Real f_mass) :
       CComposableEntity(NULL, str_id),
       m_pcEmbodiedEntity(
-         new CBoxEmbodiedEntity(this,
-                                str_id,
-                                c_position,
-                                c_orientation,
-                                b_movable,
-                                c_size)),
+         new CEmbodiedEntity(this,
+                             str_id,
+                             c_position,
+                             c_orientation,
+                             b_movable)),
       m_pcLEDEquippedEntity(
          new CLEDEquippedEntity(this,
                                 str_id,
@@ -104,7 +64,7 @@ namespace argos {
             m_fMass = 0.0f;
          }
          /* Create embodied entity using parsed data */
-         m_pcEmbodiedEntity = new CBoxEmbodiedEntity(this, m_cSize);
+         m_pcEmbodiedEntity = new CEmbodiedEntity(this);
          AddComponent(*m_pcEmbodiedEntity);
          m_pcEmbodiedEntity->Init(t_tree);
          m_pcEmbodiedEntity->SetMovable(bMovable);

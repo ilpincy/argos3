@@ -26,21 +26,9 @@ namespace argos {
 
    public:
 
-      struct SBoundingBox {
-         CVector3 MinCorner;
-         CVector3 MaxCorner;
-
-         inline bool Intersects(const SBoundingBox& s_bb) const {
-            return
-               (MinCorner.GetX() < s_bb.MaxCorner.GetX()) && (MaxCorner.GetX() > s_bb.MinCorner.GetX()) &&
-               (MinCorner.GetY() < s_bb.MaxCorner.GetY()) && (MaxCorner.GetY() > s_bb.MinCorner.GetY()) &&
-               (MinCorner.GetZ() < s_bb.MaxCorner.GetZ()) && (MaxCorner.GetZ() > s_bb.MinCorner.GetZ());
-         }
-      };
+      ENABLE_VTABLE();
 
    public:
-
-      ENABLE_VTABLE();
 
       CEmbodiedEntity(CComposableEntity* pc_parent);
 
@@ -62,34 +50,22 @@ namespace argos {
          m_bMovable = b_movable;
       }
 
-      inline void SetPosition(const CVector3& c_position) {
-         CPositionalEntity::SetPosition(c_position);
-         m_bBoundingBoxRecalculationNeeded = true;
-      }
+      const SBoundingBox& GetBoundingBox() const;
 
-      inline void SetOrientation(const CQuaternion& c_orientation) {
-         CPositionalEntity::SetOrientation(c_orientation);
-         m_bBoundingBoxRecalculationNeeded = true;
-      }
-
-      inline SBoundingBox& GetBoundingBox() {
-         return m_sBoundingBox;
-      }
-
-      void AddPhysicsEngine(CPhysicsEngine& c_physics_engine);
-
-      void RemovePhysicsEngine(CPhysicsEngine& c_physics_engine);
-
-      CPhysicsEngine& GetPhysicsEngine(UInt32 un_index) const;
-
-      UInt32 GetPhysicsEngineNum() const;
+      UInt32 GetPhysicsEngineEntitiesNum() const;
 
       virtual void AddPhysicsEngineEntity(const std::string& str_engine_id,
                                           CPhysicsEngineEntity& c_physics_entity);
 
       void RemovePhysicsEngineEntity(const std::string& str_engine_id);
 
+      const CPhysicsEngineEntity& GetPhysicsEngineEntity(size_t un_idx) const;
+
+      CPhysicsEngineEntity& GetPhysicsEngineEntity(size_t un_idx);
+
       const CPhysicsEngineEntity& GetPhysicsEngineEntity(const std::string& str_engine_id) const;
+
+      CPhysicsEngineEntity& GetPhysicsEngineEntity(const std::string& str_engine_id);
 
       virtual bool CheckIntersectionWithRay(Real& f_distance,
                                             const CRay3& c_ray) const;
@@ -98,24 +74,20 @@ namespace argos {
                           const CQuaternion& c_orientation,
                           bool b_check_only = false);
 
-      virtual void Update();
-
       virtual std::string GetTypeDescription() const {
          return "body";
       }
 
    protected:
 
-      virtual void CalculateBoundingBox() = 0;
+      void CalculateBoundingBox();
       
    protected:
       
       bool m_bMovable;
-      CPhysicsEngine::TVector m_tEngines;
       CPhysicsEngineEntity::TMap m_tPhysicsEngineEntityMap;
       CPhysicsEngineEntity::TVector m_tPhysicsEngineEntityVector;
-      SBoundingBox m_sBoundingBox;
-      bool m_bBoundingBoxRecalculationNeeded;
+      SBoundingBox* m_sBoundingBox;
 
    };
 
@@ -125,14 +97,6 @@ namespace argos {
    typedef std::vector<CEmbodiedEntity*> TEmbodiedEntityVector;
    typedef std::map<std::string, CEmbodiedEntity*> TEmbodiedEntityMap;
    typedef std::tr1::unordered_set<CEmbodiedEntity*> TEmbodiedEntitySet;
-
-   /****************************************/
-   /****************************************/
-
-   void CalculateBoundingBoxFromHalfSize(CEmbodiedEntity::SBoundingBox& s_bounding_box,
-                                         const CVector3& c_half_size,
-                                         const CVector3& c_center_pos,
-                                         const CRotationMatrix3& c_orientation);
 
    /****************************************/
    /****************************************/

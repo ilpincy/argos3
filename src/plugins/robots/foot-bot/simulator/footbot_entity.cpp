@@ -47,40 +47,6 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   class CFootBotEmbodiedEntity : public CEmbodiedEntity {
-
-   public:
-
-      CFootBotEmbodiedEntity(CFootBotEntity* pc_parent) :
-         CEmbodiedEntity(pc_parent) {
-         m_cHalfSize.SetX(BODY_RADIUS);
-         m_cHalfSize.SetY(BODY_RADIUS);
-         m_cHalfSize.SetZ(BODY_HEIGHT * 0.5f);
-      }
-
-   protected:
-
-      virtual void CalculateBoundingBox() {
-         m_cCenterPos = GetPosition();
-         m_cCenterPos.SetZ(m_cCenterPos.GetZ() + m_cHalfSize.GetZ());
-         m_cOrientationMatrix.SetFromQuaternion(GetOrientation());
-         CalculateBoundingBoxFromHalfSize(GetBoundingBox(),
-                                          m_cHalfSize,
-                                          m_cCenterPos,
-                                          m_cOrientationMatrix);
-      }
-
-   private:
-
-      CVector3 m_cHalfSize;
-      CVector3 m_cCenterPos;
-      CRotationMatrix3 m_cOrientationMatrix;
-
-   };
-
-   /****************************************/
-   /****************************************/
-
    CFootBotEntity::CFootBotEntity() :
       CComposableEntity(NULL),
       m_pcControllableEntity(NULL),
@@ -110,7 +76,7 @@ namespace argos {
           * Create and init components
           */
          /* Embodied entity */
-         m_pcEmbodiedEntity = new CFootBotEmbodiedEntity(this);
+         m_pcEmbodiedEntity = new CEmbodiedEntity(this);
          AddComponent(*m_pcEmbodiedEntity);
          m_pcEmbodiedEntity->Init(t_tree);
          /* Wheeled entity and wheel positions (left, right) */

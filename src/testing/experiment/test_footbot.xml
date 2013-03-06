@@ -38,13 +38,37 @@
     <box id="b1" position="0,1,0.1" orientation="0,0,0" size="0.2, 0.5, 0.2" movable="true" mass="1" />
     <cylinder id="c0" position="-1,0,0.1" orientation="0,0,0" radius="0.1" height="0.1" movable="false" />
     <cylinder id="c1" position="0,-1,0.1" orientation="0,0,0" radius="0.1" height="0.1" movable="true" mass="1" />
+    <ground />
   </arena>
 
   <!-- ******************* -->
   <!-- * Physics engines * -->
   <!-- ******************* -->
   <physics_engines>
+
     <dynamics2d id="dyn2d" />
+
+    <dynamics3d id="flat_dyn3d">
+      <terrain type= "flat" />
+    </dynamics3d>
+
+    <dynamics3d id="rugged_dyn3d_file">
+      <terrain type= "heightmap">
+        <heightmap size="10,8"
+                   granularity="1,1"
+                   height_range="-0.1:0.5">
+          1,2,3,4,5,6,7,8,9,0,
+          1,2,3,4,5,6,7,8,9,0,
+          1,2,3,4,5,6,7,8,9,0,
+          1,2,3,4,5,6,7,8,9,0,
+          1,2,3,4,5,6,7,8,9,0,
+          1,2,3,4,5,6,7,8,9,0,
+          1,2,3,4,5,6,7,8,9,0,
+          1,2,3,4,5,6,7,8,9,0
+        </heightmap>
+      </terrain>
+    </dynamics3d>
+
   </physics_engines>
 
   <!-- ************************************ -->

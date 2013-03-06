@@ -50,7 +50,7 @@ namespace argos {
       m_unLastTurretMode(m_cFootBotEntity.GetTurretMode()) {
       /* Create the actual body with initial position and orientation */
       m_ptActualBaseBody =
-         cpSpaceAddBody(m_cEngine.GetPhysicsSpace(),
+         cpSpaceAddBody(m_cDyn2DEngine.GetPhysicsSpace(),
                         cpBodyNew(m_fMass,
                                   cpMomentForCircle(m_fMass,
                                                     0.0f,
@@ -65,7 +65,7 @@ namespace argos {
       m_ptControlBaseBody = cpBodyNew(INFINITY, INFINITY);
       /* Create the actual body geometry */
       m_ptBaseShape =
-         cpSpaceAddShape(m_cEngine.GetPhysicsSpace(),
+         cpSpaceAddShape(m_cDyn2DEngine.GetPhysicsSpace(),
                          cpCircleShapeNew(m_ptActualBaseBody,
                                           FOOTBOT_RADIUS,
                                           cpvzero));
@@ -78,14 +78,14 @@ namespace argos {
       m_ptBaseShape->u = 0.7;
       /* Constrain the actual base body to follow the control base body */
       m_ptBaseControlLinearMotion =
-         cpSpaceAddConstraint(m_cEngine.GetPhysicsSpace(),
+         cpSpaceAddConstraint(m_cDyn2DEngine.GetPhysicsSpace(),
                               cpPivotJointNew2(m_ptActualBaseBody,
                                                m_ptControlBaseBody,
                                                cpvzero,
                                                cpvzero));
       m_ptBaseControlLinearMotion->maxBias = 0.0f; /* disable joint correction */
       m_ptBaseControlLinearMotion->maxForce = FOOTBOT_MAX_FORCE; /* limit the dragging force */
-      m_ptBaseControlAngularMotion = cpSpaceAddConstraint(m_cEngine.GetPhysicsSpace(),
+      m_ptBaseControlAngularMotion = cpSpaceAddConstraint(m_cDyn2DEngine.GetPhysicsSpace(),
                                                cpGearJointNew(m_ptActualBaseBody,
                                                               m_ptControlBaseBody,
                                                               0.0f,
@@ -97,7 +97,7 @@ namespace argos {
       m_fCurrentWheelVelocityFromSensor[FOOTBOT_RIGHT_WHEEL] = 0.0f;
       /* Create the gripper body */      
       m_ptActualGripperBody =
-         cpSpaceAddBody(m_cEngine.GetPhysicsSpace(),
+         cpSpaceAddBody(m_cDyn2DEngine.GetPhysicsSpace(),
                         cpBodyNew(m_fMass / 20.0,
                                   cpMomentForCircle(m_fMass,
                                                     0.0f,
@@ -109,7 +109,7 @@ namespace argos {
                      m_cFootBotEntity.GetTurretRotation().GetValue());
       /* Create the gripper shape */
       m_ptGripperShape = 
-         cpSpaceAddShape(m_cEngine.GetPhysicsSpace(),
+         cpSpaceAddShape(m_cDyn2DEngine.GetPhysicsSpace(),
                          cpCircleShapeNew(m_ptActualGripperBody,
                                           0.02f,
                                           cpv(FOOTBOT_RADIUS, 0.0f)));
@@ -117,18 +117,18 @@ namespace argos {
       /* This object is a gripper */
       m_ptGripperShape->collision_type = CDynamics2DEngine::SHAPE_MAGNETIC_GRIPPER;
       /* Set the data associated to this gripper */
-      m_psGripperData = new SDynamics2DEngineGripperData(m_cEngine.GetPhysicsSpace(),
+      m_psGripperData = new SDynamics2DEngineGripperData(m_cDyn2DEngine.GetPhysicsSpace(),
                                                          m_cGripperEntity,
                                                          cpv(FOOTBOT_RADIUS, 0.0f));
       m_ptGripperShape->data = reinterpret_cast<void*>(m_psGripperData);
       /* Constrain the actual gripper body to follow the actual base body */
       m_ptBaseGripperLinearMotion =
-         cpSpaceAddConstraint(m_cEngine.GetPhysicsSpace(),
+         cpSpaceAddConstraint(m_cDyn2DEngine.GetPhysicsSpace(),
                               cpPivotJointNew2(m_ptActualBaseBody,
                                                m_ptActualGripperBody,
                                                cpvzero,
                                                cpvzero));
-      m_ptBaseGripperAngularMotion = cpSpaceAddConstraint(m_cEngine.GetPhysicsSpace(),
+      m_ptBaseGripperAngularMotion = cpSpaceAddConstraint(m_cDyn2DEngine.GetPhysicsSpace(),
                                                           cpGearJointNew(m_ptActualBaseBody,
                                                                          m_ptActualGripperBody,
                                                                          0.0f,
@@ -140,6 +140,9 @@ namespace argos {
          m_unLastTurretMode == MODE_POSITION_CONTROL) {
          TurretActiveToPassive();
       }
+      /* Precalculate Z-axis range of the bounding box */
+      GetBoundingBox().MinCorner.SetZ(GetEmbodiedEntity().GetPosition().GetZ());
+      GetBoundingBox().MaxCorner.SetZ(GetEmbodiedEntity().GetPosition().GetZ() + FOOTBOT_HEIGHT);
    }
 
    /****************************************/
@@ -150,10 +153,10 @@ namespace argos {
          case MODE_OFF:
          case MODE_PASSIVE:
             delete m_psGripperData;
-            cpSpaceRemoveConstraint(m_cEngine.GetPhysicsSpace(), m_ptBaseGripperLinearMotion);
-            cpSpaceRemoveConstraint(m_cEngine.GetPhysicsSpace(), m_ptBaseGripperAngularMotion);
-            cpSpaceRemoveBody(m_cEngine.GetPhysicsSpace(), m_ptActualGripperBody);
-            cpSpaceRemoveShape(m_cEngine.GetPhysicsSpace(), m_ptGripperShape);
+            cpSpaceRemoveConstraint(m_cDyn2DEngine.GetPhysicsSpace(), m_ptBaseGripperLinearMotion);
+            cpSpaceRemoveConstraint(m_cDyn2DEngine.GetPhysicsSpace(), m_ptBaseGripperAngularMotion);
+            cpSpaceRemoveBody(m_cDyn2DEngine.GetPhysicsSpace(), m_ptActualGripperBody);
+            cpSpaceRemoveShape(m_cDyn2DEngine.GetPhysicsSpace(), m_ptGripperShape);
             cpConstraintFree(m_ptBaseGripperLinearMotion);
             cpConstraintFree(m_ptBaseGripperAngularMotion);
             cpBodyFree(m_ptActualGripperBody);
@@ -162,10 +165,10 @@ namespace argos {
          case MODE_POSITION_CONTROL:
          case MODE_SPEED_CONTROL:
             delete m_psGripperData;
-            cpSpaceRemoveConstraint(m_cEngine.GetPhysicsSpace(), m_ptBaseGripperLinearMotion);
-            cpSpaceRemoveConstraint(m_cEngine.GetPhysicsSpace(), m_ptGripperControlAngularMotion);
-            cpSpaceRemoveBody(m_cEngine.GetPhysicsSpace(), m_ptActualGripperBody);
-            cpSpaceRemoveShape(m_cEngine.GetPhysicsSpace(), m_ptGripperShape);
+            cpSpaceRemoveConstraint(m_cDyn2DEngine.GetPhysicsSpace(), m_ptBaseGripperLinearMotion);
+            cpSpaceRemoveConstraint(m_cDyn2DEngine.GetPhysicsSpace(), m_ptGripperControlAngularMotion);
+            cpSpaceRemoveBody(m_cDyn2DEngine.GetPhysicsSpace(), m_ptActualGripperBody);
+            cpSpaceRemoveShape(m_cDyn2DEngine.GetPhysicsSpace(), m_ptGripperShape);
             cpConstraintFree(m_ptBaseGripperLinearMotion);
             cpConstraintFree(m_ptGripperControlAngularMotion);
             cpBodyFree(m_ptActualGripperBody);
@@ -173,10 +176,10 @@ namespace argos {
             cpShapeFree(m_ptGripperShape);
             break;
       }
-      cpSpaceRemoveConstraint(m_cEngine.GetPhysicsSpace(), m_ptBaseControlLinearMotion);
-      cpSpaceRemoveConstraint(m_cEngine.GetPhysicsSpace(), m_ptBaseControlAngularMotion);
-      cpSpaceRemoveBody(m_cEngine.GetPhysicsSpace(), m_ptActualBaseBody);
-      cpSpaceRemoveShape(m_cEngine.GetPhysicsSpace(), m_ptBaseShape);
+      cpSpaceRemoveConstraint(m_cDyn2DEngine.GetPhysicsSpace(), m_ptBaseControlLinearMotion);
+      cpSpaceRemoveConstraint(m_cDyn2DEngine.GetPhysicsSpace(), m_ptBaseControlAngularMotion);
+      cpSpaceRemoveBody(m_cDyn2DEngine.GetPhysicsSpace(), m_ptActualBaseBody);
+      cpSpaceRemoveShape(m_cDyn2DEngine.GetPhysicsSpace(), m_ptBaseShape);
       cpConstraintFree(m_ptBaseControlLinearMotion);
       cpConstraintFree(m_ptBaseControlAngularMotion);
       cpBodyFree(m_ptActualBaseBody);
@@ -229,7 +232,7 @@ namespace argos {
                                               FOOTBOT_RADIUS,
                                               cpvzero);
       /* Check if there is a collision */
-      SInt32 nCollision = cpSpaceShapeQuery(m_cEngine.GetPhysicsSpace(), ptTestShape, NULL, NULL);
+      SInt32 nCollision = cpSpaceShapeQuery(m_cDyn2DEngine.GetPhysicsSpace(), ptTestShape, NULL, NULL);
       /* Dispose of the sensor shape */
       cpShapeFree(ptTestShape);
       if(b_check_only || nCollision) {
@@ -244,7 +247,7 @@ namespace argos {
          m_ptControlBaseBody->w = 0.0f;
          cpBodyResetForces(m_ptControlBaseBody);
          /* Update the active space hash if the movement is actual */
-         cpSpaceReindexShape(m_cEngine.GetPhysicsSpace(), m_ptBaseShape);
+         cpSpaceReindexShape(m_cDyn2DEngine.GetPhysicsSpace(), m_ptBaseShape);
       }
       /* The movement is allowed if there is no collision */
       return !nCollision;
@@ -287,24 +290,36 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   void CDynamics2DFootBotEntity::CalculateBoundingBox() {
+      GetBoundingBox().MinCorner.SetX(m_ptBaseShape->bb.l);
+      GetBoundingBox().MinCorner.SetY(m_ptBaseShape->bb.b);
+      GetBoundingBox().MaxCorner.SetX(m_ptBaseShape->bb.r);
+      GetBoundingBox().MaxCorner.SetY(m_ptBaseShape->bb.t);
+   }
+
+   /****************************************/
+   /****************************************/
+
    void CDynamics2DFootBotEntity::UpdateEntityStatus() {
+      /* Update bounding box */
+      CalculateBoundingBox();
       /* Update foot-bot body position */
-      m_cEngine.PositionPhysicsToSpace(m_cSpacePosition, GetEmbodiedEntity().GetPosition(), m_ptActualBaseBody);
+      m_cDyn2DEngine.PositionPhysicsToSpace(m_cSpacePosition, GetEmbodiedEntity().GetPosition(), m_ptActualBaseBody);
       GetEmbodiedEntity().SetPosition(m_cSpacePosition);
       /* Update foot-bot body orientation */
-      m_cEngine.OrientationPhysicsToSpace(m_cSpaceOrientation, m_ptActualBaseBody);
+      m_cDyn2DEngine.OrientationPhysicsToSpace(m_cSpaceOrientation, m_ptActualBaseBody);
       GetEmbodiedEntity().SetOrientation(m_cSpaceOrientation);
       /* Update foot-bot turret rotation */
       m_cFootBotEntity.SetTurretRotation(CRadians(m_ptActualGripperBody->a - m_ptActualBaseBody->a));
       /* Update foot-bot components */
       m_cFootBotEntity.UpdateComponents();
       /* Check whether a transfer is necessary */
-      if(m_cEngine.IsEntityTransferActive()) {
+      if(m_cDyn2DEngine.IsEntityTransferActive()) {
          std::string strEngineId;
-         if(m_cEngine.CalculateTransfer(GetEmbodiedEntity().GetPosition().GetX(),
+         if(m_cDyn2DEngine.CalculateTransfer(GetEmbodiedEntity().GetPosition().GetX(),
                                         GetEmbodiedEntity().GetPosition().GetY(),
                                         strEngineId)) {
-            m_cEngine.ScheduleEntityForTransfer(m_cFootBotEntity, strEngineId);
+            m_cDyn2DEngine.ScheduleEntityForTransfer(m_cFootBotEntity, strEngineId);
          }
       }
    }
@@ -404,7 +419,7 @@ namespace argos {
                m_ptControlBaseBody->w +
                (PD_P_CONSTANT * (m_cFootBotEntity.GetTurretRotation().GetValue() - (m_ptActualGripperBody->a - m_ptActualBaseBody->a))
                 + PD_D_CONSTANT * (m_cFootBotEntity.GetTurretRotation().GetValue() - (m_ptActualGripperBody->a - m_ptActualBaseBody->a) - m_fPreviousTurretAngleError) )*
-               m_cEngine.GetInverseSimulationClockTick();
+               m_cDyn2DEngine.GetInverseSimulationClockTick();
             m_fPreviousTurretAngleError = m_cFootBotEntity.GetTurretRotation().GetValue() - (m_ptActualGripperBody->a - m_ptActualBaseBody->a);
             break;
          case MODE_SPEED_CONTROL:
@@ -430,12 +445,12 @@ namespace argos {
 
    void CDynamics2DFootBotEntity::TurretPassiveToActive() {
       /* Delete constraints to actual base body */
-      cpSpaceRemoveConstraint(m_cEngine.GetPhysicsSpace(), m_ptBaseGripperAngularMotion);
+      cpSpaceRemoveConstraint(m_cDyn2DEngine.GetPhysicsSpace(), m_ptBaseGripperAngularMotion);
       cpConstraintFree(m_ptBaseGripperAngularMotion);
       /* Create gripper control body */
       m_ptControlGripperBody = cpBodyNew(INFINITY, INFINITY);
       /* Create angular constraint from gripper control body to gripper actual body */
-      m_ptGripperControlAngularMotion = cpSpaceAddConstraint(m_cEngine.GetPhysicsSpace(),
+      m_ptGripperControlAngularMotion = cpSpaceAddConstraint(m_cDyn2DEngine.GetPhysicsSpace(),
                                                              cpGearJointNew(m_ptActualGripperBody,
                                                                             m_ptControlGripperBody,
                                                                             0.0f,
@@ -449,12 +464,12 @@ namespace argos {
 
    void CDynamics2DFootBotEntity::TurretActiveToPassive() {
       /* Delete constraint from actual gripper body to gripper control body */
-      cpSpaceRemoveConstraint(m_cEngine.GetPhysicsSpace(), m_ptGripperControlAngularMotion);
+      cpSpaceRemoveConstraint(m_cDyn2DEngine.GetPhysicsSpace(), m_ptGripperControlAngularMotion);
       cpConstraintFree(m_ptGripperControlAngularMotion);
       /* Delete control body */
       cpBodyFree(m_ptControlGripperBody);
       /* Create constraints from actual gripper body to actual base body */
-      m_ptBaseGripperAngularMotion = cpSpaceAddConstraint(m_cEngine.GetPhysicsSpace(),
+      m_ptBaseGripperAngularMotion = cpSpaceAddConstraint(m_cDyn2DEngine.GetPhysicsSpace(),
                                                           cpGearJointNew(m_ptActualBaseBody,
                                                                          m_ptActualGripperBody,
                                                                          0.0f,

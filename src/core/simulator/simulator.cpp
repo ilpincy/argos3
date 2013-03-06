@@ -107,10 +107,8 @@ namespace argos {
    void CSimulator::Init() {
       /* General configuration */
       InitFramework(GetNode(m_tConfigurationRoot, "framework"));
-
       /* Initialize controllers */
       InitControllers(GetNode(m_tConfigurationRoot, "controllers"));
-
       /* Create loop functions */
       bool bUserDefLoopFunctions;
       if(NodeExists(m_tConfigurationRoot, "loop_functions")) {
@@ -123,21 +121,14 @@ namespace argos {
          m_pcLoopFunctions = new CLoopFunctions;
          bUserDefLoopFunctions = false;
       }
-
-      /* Space */
-      InitSpace(GetNode(m_tConfigurationRoot, "arena"));
-
       /* Physics engines */
       InitPhysics(GetNode(m_tConfigurationRoot, "physics_engines"));
-
-      /* Initialise the mapping between physics engines and entities */
-      InitPhysicsEntitiesMapping(m_tConfigurationRoot);
-
+      /* Space */
+      InitSpace(GetNode(m_tConfigurationRoot, "arena"));
       /* Call user init function */
       if(bUserDefLoopFunctions) {
          m_pcLoopFunctions->Init(GetNode(m_tConfigurationRoot, "loop_functions"));
       }
-
       /* Initialise visualization */
       TConfigurationNodeIterator itVisualization;
       if(NodeExists(m_tConfigurationRoot, "visualization") &&
@@ -148,7 +139,6 @@ namespace argos {
          LOGERR << "[WARNING] No visualization selected." << std::endl;
          m_pcVisualization = new CVisualization();
       }
-
       /* Start profiling, if needed */
       if(IsProfiling()) {
          m_pcProfiler->Start();
@@ -474,7 +464,7 @@ namespace argos {
          m_pcSpace->Init(t_tree);
       }
       catch(CARGoSException& ex) {
-         THROW_ARGOSEXCEPTION_NESTED("Failed to initialize the space. Error in the <arena> subtree.", ex);
+         THROW_ARGOSEXCEPTION_NESTED("Failed to initialize the space.", ex);
       }
    }
 
@@ -538,49 +528,4 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CSimulator::InitPhysicsEntitiesMapping(TConfigurationNode& t_tree) {
-      /* Get the base node for the mappings */
-      TConfigurationNode tArenaPhysics;
-      tArenaPhysics = GetNode(t_tree, "arena_physics");
-      /* Cycle through the engines */
-      TConfigurationNodeIterator itEngines;
-      std::string strEngineId;
-      for(itEngines = itEngines.begin(&tArenaPhysics);
-          itEngines != itEngines.end();
-          ++itEngines) {
-         /* Get the id of the engine */
-         GetNodeAttribute(*itEngines, "id", strEngineId);
-         /* Get a reference to the respective physics engine object */
-         CPhysicsEngine::TMap::iterator itEngineMap = m_mapPhysicsEngines.find(strEngineId);
-         if (itEngineMap == m_mapPhysicsEngines.end()) {
-            THROW_ARGOSEXCEPTION("Unknown physics engine id \"" << strEngineId << "\" specified in the arena_physics section.");
-         }
-         CPhysicsEngine* pcEngine = itEngineMap->second;
-         /* Cycle through the entities associated to this engine and add them to it */
-         TConfigurationNodeIterator itEntities;
-         std::string strEntityId;
-         CEntity::TVector tMatchingEntities;
-         for(itEntities = itEntities.begin(&(*itEngines));
-             itEntities != itEntities.end();
-             ++itEntities) {
-            /* Clear the matching entities */
-            tMatchingEntities.clear();
-            /* Get the id of the entity */
-            GetNodeAttribute(*itEntities, "id", strEntityId);
-            /* Get a reference to the entities to add */
-            m_pcSpace->GetEntitiesMatching(tMatchingEntities, "^" + strEntityId + "$");
-            if(tMatchingEntities.size() == 0) {
-               THROW_ARGOSEXCEPTION("No entity matches the regular expression \"" << strEntityId << "\"");
-            }
-            /* Go through the matching entities */
-            for(CEntity::TVector::iterator itMatchingEntities = tMatchingEntities.begin();
-                itMatchingEntities != tMatchingEntities.end(); ++itMatchingEntities) {
-               CEntity& cEntity = **itMatchingEntities;
-               /* Add the entity to the engine */
-               pcEngine->AddEntity(cEntity);
-            }
-         }
-      }
-      m_pcSpace->SetPhysicsEngines(m_vecPhysicsEngines);
-   }
 }

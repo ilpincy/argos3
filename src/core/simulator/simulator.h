@@ -317,7 +317,6 @@ namespace argos {
       void InitSpace(TConfigurationNode& t_tree);
       void InitPhysics(TConfigurationNode& t_tree);
       void InitVisualization(TConfigurationNode& t_tree);
-      void InitPhysicsEntitiesMapping(TConfigurationNode& t_tree);
 
    private:
 

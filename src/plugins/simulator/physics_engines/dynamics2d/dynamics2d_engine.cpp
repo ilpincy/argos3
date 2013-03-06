@@ -8,6 +8,7 @@
 #include <argos3/core/simulator/simulator.h>
 #include <argos3/core/simulator/entity/embodied_entity.h>
 #include <argos3/plugins/simulator/entities/gripper_equipped_entity.h>
+#include <argos3/plugins/simulator/physics_engines/dynamics2d/dynamics2d_entity.h>
 
 #include <cmath>
 
@@ -290,6 +291,34 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   bool CDynamics2DEngine::IsPointContained(const CVector3& c_point) {
+      /* Check that Z-coordinate is within elevation */
+      if(c_point.GetZ() > m_fElevation || c_point.GetZ() < m_fElevation) {
+         return false;
+      }
+      if(! IsEntityTransferActive()) {
+         /* The engine has no boundaries on XY, so the wanted point is in for sure */
+         return true;
+      }
+      else {
+         /* Check the boundaries */
+         for(size_t i = 0; i < m_vecSegments.size(); ++i) {
+            const CVector2& cP0 = m_vecSegments[i].Segment.GetStart();
+            const CVector2& cP1 = m_vecSegments[i].Segment.GetEnd();
+            Real fCriterion =
+               (c_point.GetY() - cP0.GetY()) * (cP1.GetX() - cP0.GetX()) -
+               (c_point.GetX() - cP0.GetX()) * (cP1.GetY() - cP0.GetY());
+            if(fCriterion > 0.0f) {
+               return false;
+            }
+         }
+         return true;
+      }
+   }
+
+   /****************************************/
+   /****************************************/
+
    UInt32 CDynamics2DEngine::GetNumPhysicsEngineEntities() {
       return m_tPhysicsEntities.size();
    }
@@ -345,6 +374,25 @@ namespace argos {
          }
       }
       return false;
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CDynamics2DEngine::PositionPhysicsToSpace(CVector3& c_new_pos,
+                                                  const CVector3& c_original_pos,
+                                                  const cpBody* pt_body) {
+      c_new_pos.SetX(pt_body->p.x);
+      c_new_pos.SetY(pt_body->p.y);
+      c_new_pos.SetZ(c_original_pos.GetZ());
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CDynamics2DEngine::OrientationPhysicsToSpace(CQuaternion& c_new_orient,
+                                                     cpBody* pt_body) {
+      c_new_orient.FromAngleAxis(CRadians(pt_body->a), CVector3::Z);
    }
 
    /****************************************/

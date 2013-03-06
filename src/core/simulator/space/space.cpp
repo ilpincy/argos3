@@ -74,7 +74,8 @@ namespace argos {
    void CSpace::Init(TConfigurationNode& t_tree) {
       /* Get the arena size */
       GetNodeAttribute(t_tree, "size", m_cArenaSize);
-
+      /* Get the list of physics engines */
+      m_ptPhysicsEngines = &(CSimulator::GetInstance().GetPhysicsEngines());
       /* Should we use the space hash, and, if so, which one? */
       GetNodeAttributeOrDefault(t_tree, "hashing", m_bUseSpaceHash, true);
       if(m_bUseSpaceHash) {
@@ -87,9 +88,9 @@ namespace argos {
          LOG << "[INFO] Space hashing is off." << std::endl;
          m_pcRayEmbodiedEntityIntersectionMethod = new CRayEmbodiedEntityIntersectionEntitySweep(*this);
       }
-
-      /* Add and initialize all entities in XML */
-
+      /*
+       * Add and initialize all entities in XML
+       */
       /* Start from the entities placed manually */
       TConfigurationNodeIterator itArenaItem;
       for(itArenaItem = itArenaItem.begin(&t_tree);
@@ -102,7 +103,6 @@ namespace argos {
             CallEntityOperation<CSpaceOperationAddEntity, CSpace, void>(*this, *pcEntity);
          }
       }
-
       /* Place box strips */
       for(itArenaItem = itArenaItem.begin(&t_tree);
           itArenaItem != itArenaItem.end();
@@ -111,7 +111,6 @@ namespace argos {
             AddBoxStrip(*itArenaItem);
          }
       }
-
       /* Place the entities to distribute automatically */
       for(itArenaItem = itArenaItem.begin(&t_tree);
           itArenaItem != itArenaItem.end();
@@ -120,23 +119,22 @@ namespace argos {
             Distribute(*itArenaItem);
          }
       }
-
       if(IsUsingSpaceHash()) {
          /* Initialize the space hash */
          /** @todo make space cell sizing automatic, using the average bb size */
          size_t unBuckets;
          CVector3 cCellSize;
-         GetNodeAttributeOrDefault<size_t>(t_tree, "embodied_entity_space_hash_buckets", unBuckets, 100000u);
+         GetNodeAttributeOrDefault<size_t>(t_tree, "embodied_entity_space_hash_buckets", unBuckets, 10000u);
          GetNodeAttributeOrDefault(t_tree, "embodied_entity_space_hash_cell_size", cCellSize, CVector3(0.2, 0.2, 0.3));
       	 m_pcEmbodiedEntitiesSpaceHash->SetSize(unBuckets);
          m_pcEmbodiedEntitiesSpaceHash->SetCellSize(cCellSize);
          LOG << "[INFO] Embodied entity space hash: " << unBuckets << " buckets, cell size = <" << cCellSize << ">." << std::endl;
-         GetNodeAttributeOrDefault<size_t>(t_tree, "led_entity_space_hash_buckets", unBuckets, 100000u);
+         GetNodeAttributeOrDefault<size_t>(t_tree, "led_entity_space_hash_buckets", unBuckets, 10000u);
          GetNodeAttributeOrDefault(t_tree, "led_entity_space_hash_cell_size", cCellSize, CVector3(0.2, 0.2, 0.3));
          m_pcLEDEntitiesSpaceHash->SetSize(unBuckets);
          m_pcLEDEntitiesSpaceHash->SetCellSize(cCellSize);
          LOG << "[INFO] LED entity space hash: " << unBuckets << " buckets, cell size = <" << cCellSize << ">." << std::endl;
-         GetNodeAttributeOrDefault<size_t>(t_tree, "rab_equipped_entity_space_hash_buckets", unBuckets, 100000u);
+         GetNodeAttributeOrDefault<size_t>(t_tree, "rab_equipped_entity_space_hash_buckets", unBuckets, 10000u);
          GetNodeAttributeOrDefault(t_tree, "rab_equipped_entity_space_hash_cell_size", cCellSize, CVector3(1, 1, 1));
          m_pcRABEquippedEntitiesSpaceHash->SetSize(unBuckets);
          m_pcRABEquippedEntitiesSpaceHash->SetCellSize(cCellSize);
@@ -334,6 +332,50 @@ namespace argos {
          m_vecMediumEntities.erase(it);
       }
    }
+
+   /****************************************/
+   /****************************************/
+
+   void CSpace::AddEntityToPhysicsEngine(CEmbodiedEntity& c_entity) {
+      /* Get a reference to the root entity */
+      CEntity* pcToAdd = &c_entity;
+      while(pcToAdd->HasParent()) {
+         pcToAdd = &pcToAdd->GetParent();
+      }
+      /* Get a reference to the position of the entity */
+      const CVector3& cPos = c_entity.GetPosition();
+      /* Go through engines and check which ones could house the entity */
+      CPhysicsEngine::TVector vecPotentialEngines;
+      for(size_t i = 0; i < m_ptPhysicsEngines->size(); ++i) {
+         if((*m_ptPhysicsEngines)[i]->IsPointContained(cPos)) {
+            vecPotentialEngines.push_back((*m_ptPhysicsEngines)[i]);
+         }
+      }
+      /* If no engine can house the entity, bomb out */
+      if(vecPotentialEngines.empty()) {
+         THROW_ARGOSEXCEPTION("No physics engine can house entity \"" << pcToAdd->GetId() << "\".");
+      }
+      /* If the entity is not movable, add the entity to all the matching engines */
+      if(! c_entity.IsMovable()) {
+         for(size_t i = 0; i < vecPotentialEngines.size(); ++i) {
+            vecPotentialEngines[i]->AddEntity(*pcToAdd);
+         }
+      }
+      /* If the entity is movable, only one engine can be associated to the embodied entity */
+      else if(vecPotentialEngines.size() == 1) {
+         /* Only one engine matches, bingo! */
+         vecPotentialEngines[0]->AddEntity(*pcToAdd);
+      }
+      else {
+         /* More than one engine matches, bomb out */
+         std::ostringstream ossEngines;
+         ossEngines << "\"" << vecPotentialEngines[0]->GetId() << "\"";
+         for(size_t i = 1; i < vecPotentialEngines.size(); ++i) {
+            ossEngines << ", \"" << vecPotentialEngines[i]->GetId() << "\"";
+         }
+         THROW_ARGOSEXCEPTION("Multiple engines can house \"" << c_entity.GetId() << "\", but a movable entity and can only be added to a single engine. Conflicting engines: " << ossEngines);
+      }
+   }
       
    /****************************************/
    /****************************************/
@@ -434,7 +476,6 @@ namespace argos {
          m_cCenter(c_center),
          m_cDistances(c_distances),
          m_unNumEntityPlaced(0) {
-
          m_unLayout[0] = un_layout[0];
          m_unLayout[1] = un_layout[1];
          m_unLayout[2] = un_layout[2];
@@ -442,27 +483,23 @@ namespace argos {
          if( m_unLayout[0] == 0 || m_unLayout[1] == 0 || m_unLayout[2] == 0 ) {
             THROW_ARGOSEXCEPTION("'layout' values (distribute position, method 'grid') must all be different than 0");
          }
-
       }
 
       virtual CVector3 operator()(bool b_is_retry) {
          if(b_is_retry) {
             THROW_ARGOSEXCEPTION("Impossible to place entity #" << m_unNumEntityPlaced << " in grid");
          }
-
          CVector3 cReturn;
-
          if(m_unNumEntityPlaced < m_unLayout[0] * m_unLayout[1] * m_unLayout[2]) {
-            cReturn.SetX( m_cCenter.GetX() + ( m_unLayout[0] - 1 ) * m_cDistances.GetX() * 0.5 - ( m_unNumEntityPlaced  % m_unLayout[0] ) * m_cDistances.GetX());
-            cReturn.SetY( m_cCenter.GetY() + ( m_unLayout[1] - 1 ) * m_cDistances.GetY() * 0.5 - ( m_unNumEntityPlaced  / m_unLayout[0] ) % m_unLayout[1] * m_cDistances.GetY());
-            cReturn.SetZ( m_cCenter.GetZ() + ( m_unLayout[2] - 1 ) * m_cDistances.GetZ() * 0.5 - ( m_unNumEntityPlaced / ( m_unLayout[0] * m_unLayout[1] ) ) * m_cDistances.GetZ());
-            m_unNumEntityPlaced++;
+            cReturn.SetX(m_cCenter.GetX() + ( m_unLayout[0] - 1 ) * m_cDistances.GetX() * 0.5 - ( m_unNumEntityPlaced  % m_unLayout[0] ) * m_cDistances.GetX());
+            cReturn.SetY(m_cCenter.GetY() + ( m_unLayout[1] - 1 ) * m_cDistances.GetY() * 0.5 - ( m_unNumEntityPlaced  / m_unLayout[0] ) % m_unLayout[1] * m_cDistances.GetY());
+            cReturn.SetZ(m_cCenter.GetZ() + ( m_unLayout[2] - 1 ) * m_cDistances.GetZ() * 0.5 - ( m_unNumEntityPlaced / ( m_unLayout[0] * m_unLayout[1] ) ) * m_cDistances.GetZ());
+            ++m_unNumEntityPlaced;
          }
          else {
             THROW_ARGOSEXCEPTION("Distribute position, method 'grid': trying to place more entities than allowed "
                                  "by the 'layout', check your 'quantity' tag");
          }
-
          return cReturn;
       }
 

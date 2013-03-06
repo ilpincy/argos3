@@ -33,6 +33,8 @@ namespace argos {
 
       virtual void Reset();
 
+      virtual void CalculateBoundingBox();
+
       virtual void UpdateEntityStatus();
       virtual void UpdateFromEntityStatus();
 
