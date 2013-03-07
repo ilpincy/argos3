@@ -79,7 +79,7 @@ namespace argos {
       }
 
       /**
-       * Check whether an object in this engine intersects with the given ray.
+       * Check whether this object in this engine intersects the given ray.
        * @param f_t_on_ray In the parametric definition of <em>ray</em> = <em>starting_point</em> + <em>t</em> * <em>direction</em>, this parameter is <em>t</em>. A value between 0 and 1 means that the intersection point lies within the given ray; values outside this range mean that the intersection point is outside the ray extrema.
        * @param c_ray The test ray.
        * @returns <tt>true</tt> if an intersection was found, <tt>false</tt> otherwise.

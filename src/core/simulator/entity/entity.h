@@ -31,6 +31,44 @@ namespace argos {
 
 namespace argos {
 
+   /**
+    * The basic entity type.
+    * <p>
+    * The simulation data is organized into basic items referred to as
+    * <em>entities</em> ARGoS natively offers several entity types, and the
+    * user can customize them or add new ones if necessary. Each type of entity
+    * stores information about a specific aspect of the simulation.
+    * </p>
+    * <p>
+    * For instance, to store the complete state of a wheeled robot, a
+    * CComposableEntity is used. CComposableEntity are
+    * logical containers that are used to group other
+    * entities. CComposableEntity can be nested to form trees of
+    * arbitrary complexity. The CControllableEntity is a component
+    * that stores a reference to the user-defined control code and to the
+    * robot's sensors and actuators. The CEmbodiedEntity component
+    * stores the position, orientation and 3D bounding box of the robot. The
+    * current wheel speed is stored into the CWheeledEntity
+    * component. If the robot is equipped with colored LEDs, their state is
+    * stored in a component called CLEDEquippedEntity.
+    * </p>
+    * <p>
+    * Entity types are organized in hierarchies. For instance, the
+    * CEmbodiedEntity is an extension of the simpler CPositionalEntity,
+    * which contains just the position and orientation of an
+    * object, but not its bounding box. These design choices (entity
+    * composition and extension) ensure flexibility, enhance code reuse
+    * and diminish information redundancy.
+    * </p>
+    * <p>
+    * Entity types are indexed in efficient data structures optimized for
+    * access speed. In this way, the performance of the plug-ins that access
+    * the simulated 3D space is enhanced.  For example, positional entities
+    * and their extensions are indexed in several type-specific space
+    * hashes.
+    * @see CSpace
+    * @see CSpaceHash
+    */
    class CEntity : public CBaseConfigurableResource,
                    public EnableVTableFor<CEntity> {
 
@@ -38,45 +76,113 @@ namespace argos {
 
       ENABLE_VTABLE();
 
+      /** A vector of entities */
       typedef std::vector<CEntity*> TVector;
+
+      /** A map of entities */
       typedef std::tr1::unordered_map<std::string, CEntity*> TMap;
+
+      /** A multi-map of entities */
       typedef std::tr1::unordered_multimap<std::string, CEntity*> TMultiMap;
 
    public:
 
+      /**
+       * Class constructor.
+       * This constructor is meant to be used with the Init() method.
+       * @param pc_parent The parent of this entity.
+       */
       CEntity(CComposableEntity* pc_parent);
 
+      /**
+       * Class constructor.
+       * This constructor is meant to be standalone.
+       * You should not call Init() after using this constructor, or
+       * memory leaks are likely to happen.
+       * @param pc_parent The parent of this entity.
+       * @param str_id The id of this entity.
+       */
       CEntity(CComposableEntity* pc_parent,
               const std::string& str_id);
 
+      /**
+       * Class destructor.
+       */
       virtual ~CEntity() {}
 
+      /**
+       * Initializes the state of the entity from the XML configuration tree.
+       * If the id of the entity has not been set yet, this method sets an id for
+       * the entity. If the entity has no parent, this method parses the
+       * passed XML tree and looks for the <tt>id</tt> attribute, setting its value
+       * as id. If, instead, this entity has a parent, the id is set as
+       * <tt>GetParent().GetId() + "." + GetTypeDescription()</tt>.
+       * @throws CARGoSException if a parse error occurred
+       */
       virtual void Init(TConfigurationNode& t_tree);
 
+      /**
+       * Resets the state of the entity to whatever it was after Init() or the standalone constructor was called.
+       * The default implementation of this method does nothing.
+       */
       virtual void Reset() {}
 
+      /**
+       * Destroys the entity, undoing whatever was done by Init() or by the standalone constructor.
+       * The default implementation of this method does nothing.
+       */
       virtual void Destroy() {}
 
-      inline virtual const std::string& GetId() const {
+      /**
+       * Returns the id of this entity.
+       * @return The id of this entity.
+       */
+      inline const std::string& GetId() const {
          return m_strId;
       }
 
+      /**
+       * Returns <tt>true</tt> if this entity has a parent.
+       * @return <tt>true</tt> if this entity has a parent.
+       */
       inline bool HasParent() {
          return (m_pcParent != NULL);
       }
 
-      inline CComposableEntity& GetParent() {
-         return *m_pcParent;
-      }
+      /**
+       * Returns this entity's parent.
+       * @return This entity's parent.
+       * @throws CARGoSException if this entity has no parent.
+       */
+      CComposableEntity& GetParent();
 
+      /**
+       * Returns this entity's parent.
+       * @return This entity's parent.
+       * @throws CARGoSException if this entity has no parent.
+       */
+      const CComposableEntity& GetParent() const;
+
+      /**
+       * Sets this entity's parent.
+       * @param c_parent The new parent.
+       */
       inline void SetParent(CComposableEntity& c_parent) {
          m_pcParent = &c_parent;
       }
 
+      /**
+       * Returns a string label for this class.
+       * @return A string label for this class.
+       */
       virtual std::string GetTypeDescription() const {
          return "entity";
       }
 
+      /**
+       * Updates the state of this entity.
+       * The default implementation of this method does nothing.
+       */
       virtual void Update() {}
 
       /**

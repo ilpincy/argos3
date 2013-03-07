@@ -159,8 +159,8 @@ namespace argos {
    /****************************************/
 
    bool CDynamics2DBoxEntity::MoveTo(const CVector3& c_position,
-                                         const CQuaternion& c_orientation,
-                                         bool b_check_only) {
+                                     const CQuaternion& c_orientation,
+                                     bool b_check_only) {
       SInt32 nCollision;
       /* Check whether the box is movable or not */
       if(m_cBoxEntity.GetEmbodiedEntity().IsMovable()) {

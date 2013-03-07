@@ -64,6 +64,30 @@ namespace argos {
 
    /****************************************/
    /****************************************/
+   
+   CComposableEntity& CEntity::GetParent() {
+      if(m_pcParent != NULL) {
+         return *m_pcParent;
+      }
+      else {
+         THROW_ARGOSEXCEPTION("Entity \"" << GetId() << "\" has no parent");
+      }
+   }
+
+   /****************************************/
+   /****************************************/
+
+   const CComposableEntity& CEntity::GetParent() const {
+      if(m_pcParent != NULL) {
+         return *m_pcParent;
+      }
+      else {
+         THROW_ARGOSEXCEPTION("Entity \"" << GetId() << "\" has no parent");
+      }
+   }
+
+   /****************************************/
+   /****************************************/
 
    void CEntity::SetEnabled(bool b_enabled) {
       /* No need to set the state if the new one is the same as the old one */

@@ -78,10 +78,6 @@ namespace argos {
        */
       virtual void Update();
 
-      /**
-       * Returns a string label for this class.
-       * @return A string label for this class.
-       */
       virtual std::string GetTypeDescription() const {
          return "composite";
       }

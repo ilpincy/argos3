@@ -126,6 +126,30 @@ namespace argos {
    /****************************************/
    /****************************************/
    
+   const CCI_Controller& CControllableEntity::GetController() const {
+      if(m_pcController != NULL) {
+         return *m_pcController;
+      }
+      else {
+         THROW_ARGOSEXCEPTION("Entity " << GetId() << " does not have any controller associated.");
+      }
+   }
+   
+   /****************************************/
+   /****************************************/
+   
+   CCI_Controller& CControllableEntity::GetController() {
+      if(m_pcController != NULL) {
+         return *m_pcController;
+      }
+      else {
+         THROW_ARGOSEXCEPTION("Entity " << GetId() << " does not have any controller associated.");
+      }
+   }
+   
+   /****************************************/
+   /****************************************/
+   
    void CControllableEntity::SetController(const std::string& str_controller_id) {
       TConfigurationNode& tConfig = CSimulator::GetInstance().GetConfigForController(str_controller_id);
       TConfigurationNode& tParams = GetNode(tConfig, "params");
@@ -136,7 +160,7 @@ namespace argos {
    /****************************************/
 
    void CControllableEntity::SetController(const std::string& str_controller_id,
-                                           TConfigurationNode& t_parameters) {
+                                           TConfigurationNode& t_controller_config) {
       try {
          /* Look in the map for the parsed XML configuration of the wanted controller */
          TConfigurationNode& tConfig = CSimulator::GetInstance().GetConfigForController(str_controller_id);
@@ -182,7 +206,7 @@ namespace argos {
             m_pcController->AddSensor(itSens->Value(), pcCISens);
          }
          /* Configure the controller */
-         m_pcController->Init(t_parameters);
+         m_pcController->Init(t_controller_config);
       }
       catch(CARGoSException& ex) {
          THROW_ARGOSEXCEPTION_NESTED("Can't set controller for controllable entity \"" << GetId() << "\"", ex);
