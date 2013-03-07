@@ -94,7 +94,7 @@ namespace argos {
        * @param c_position The wanted position.
        * @param c_orientation The wanted orientation.
        * @param b_check_only If <tt>false</tt>, the movement is executed; otherwise, the object is not actually moved.
-       * @param <tt>true</tt> if no collisions were detected, <tt>false</tt> otherwise.
+       * @return <tt>true</tt> if no collisions were detected, <tt>false</tt> otherwise.
        */
       virtual bool MoveTo(const CVector3& c_position,
                           const CQuaternion& c_orientation,

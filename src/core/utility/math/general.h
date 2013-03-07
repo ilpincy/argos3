@@ -132,7 +132,7 @@ namespace argos {
 
     /**
      * Rounds the passed floating-point value to the closest lower integer.
-     * Profiled, it takes 50% the time of ::floor().
+     * Profiled, it takes 50% the time of <tt>floor()</tt>.
      * @return the closest lower integer to the passed value.
      */
     inline SInt32 Floor(Real f_value) {
@@ -143,7 +143,7 @@ namespace argos {
 
     /**
      * Rounds the passed floating-point value to the closest higher integer.
-     * Profiled, it takes 50% the time of ::ceil().
+     * Profiled, it takes 50% the time of <tt>ceil()</tt>.
      * @return the closest higher integer to the passed value.
      */
     inline SInt32 Ceil(Real f_value) {

@@ -193,11 +193,12 @@ namespace argos {
       }
 
       /**
-       * Looks for elements to process in a cell
+       * Looks for elements to process in a cell.
        * @param n_i The X coordinate of the space hash cell.
        * @param n_j The Y coordinate of the space hash cell.
        * @param n_k The Z coordinate of the space hash cell.
-       * @param The list of elements to process.
+       * @param t_elements The resulting list of elements to process.
+       * @return <tt>true</tt> if new elements were added to t_elements.
        */
       virtual bool CheckCell(SInt32 n_i,
                              SInt32 n_j,

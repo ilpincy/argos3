@@ -1,7 +1,7 @@
 /**
  * @file <argos3/core/control_interface/ci_sensor.h>
  *
- * @brief This file provides the basic interface for all actuators.
+ * @brief This file provides the basic interface for all sensors.
  *
  * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */
@@ -28,6 +28,9 @@ extern "C" {
 
 namespace argos {
 
+   /**
+    * The basic interface for all sensors.
+    */
    class CCI_Sensor : public CBaseConfigurableResource {
 
    public:
@@ -36,17 +39,51 @@ namespace argos {
 
    public:
 
+      /**
+       * Class destructor.
+       */
       virtual ~CCI_Sensor() {}
 
+      /**
+       * Initializes the sensor from the XML configuration tree.
+       * The default implementation of this method does nothing.
+       * @param t_node The XML configuration tree relative to this sensor.
+       * @see Reset()
+       * @see Destroy()
+       */
       virtual void Init(TConfigurationNode& t_node) {}
 
+      /**
+       * Resets the sensor to the state it had just after Init().
+       * The default implementation of this method does nothing.
+       * @see Init()
+       * @see Destroy()
+       */
       virtual void Reset() {}
 
+      /**
+       * Destroys the sensor.
+       * This method is supposed to undo whatever was done in Init().
+       * The default implementation of this method does nothing.
+       * @see Init()
+       * @see Reset()
+       */
       virtual void Destroy() {}
 
 #ifdef ARGOS_WITH_LUA
+      /**
+       * Creates the Lua variables for this sensor.
+       * The variables must be added to the <tt>robot</tt> table, as a nested table.
+       * @param pt_lua_state The current Lua state.
+       * @see ReadingsToLuaVariables()
+       */
       virtual void CreateLuaVariables(lua_State* pt_lua_state) = 0;
 
+      /**
+       * Writes the current sensor readings into the Lua state.
+       * @param pt_lua_state The current Lua state.
+       * @see CreateLuaVariables()
+       */
       virtual void ReadingsToLuaVariables(lua_State* pt_lua_state) = 0;
 #endif
 

@@ -28,6 +28,9 @@ extern "C" {
 
 namespace argos {
 
+   /**
+    * The basic interface for all actuators.
+    */
    class CCI_Actuator : public CBaseConfigurableResource {
 
    public:
@@ -36,17 +39,51 @@ namespace argos {
 
    public:
 
+      /**
+       * Class destructor.
+       */
       virtual ~CCI_Actuator() {}
 
+      /**
+       * Initializes the actuator from the XML configuration tree.
+       * The default implementation of this method does nothing.
+       * @param t_node The XML configuration tree relative to this actuator.
+       * @see Reset()
+       * @see Destroy()
+       */
       virtual void Init(TConfigurationNode& t_node) {}
 
+      /**
+       * Resets the actuator to the state it had just after Init().
+       * The default implementation of this method does nothing.
+       * @see Init()
+       * @see Destroy()
+       */
       virtual void Reset() {}
 
+      /**
+       * Destroys the actuator.
+       * This method is supposed to undo whatever was done in Init().
+       * The default implementation of this method does nothing.
+       * @see Init()
+       * @see Reset()
+       */
       virtual void Destroy() {}
 
 #ifdef ARGOS_WITH_LUA
+      /**
+       * Creates the Lua variables for this actuator.
+       * The variables must be added to the <tt>robot</tt> table, as a nested table.
+       * @param pt_lua_state The current Lua state.
+       * @see LuaVariablesToSettings()
+       */
       virtual void CreateLuaVariables(lua_State* pt_lua_state) = 0;
 
+      /**
+       * Reads the value of the Lua variables and sets the actuator values accordingly.
+       * @param pt_lua_state The current Lua state.
+       * @see CreateLuaVariables()
+       */
       virtual void LuaVariablesToSettings(lua_State* pt_lua_state) = 0;
 #endif
    };

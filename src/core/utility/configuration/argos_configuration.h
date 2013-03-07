@@ -178,14 +178,14 @@ namespace argos {
    /**
     * Returns the value of a node's attribute.
     * XML nodes can have attributes:
-    * <pre>
+    * <code>
     * <mynode attribute1="this is a string attribute"
     *         attribute2="-87"
     *         attribute3="-0.5, 12.3, 4" />
-    * </pre>
+    * </code>
     * This function is templetized. This means that you can pass any variable type to this function and parsing will occur
     * automatically. For instance:
-    * <pre>
+    * <code>
     * std::string strValue;
     * GetNodeAttribute(tMyNode, "attribute1", strValue); // tMyNode points to <mynode>
     *                                                    // strValue now is "this is a string attribute"
@@ -195,7 +195,7 @@ namespace argos {
     * CVector3 cValue;
     * GetNodeAttribute(tMyNode, "attribute3", cValue);   // tMyNode points to <mynode>
     *                                                    // cValue now is CVector3(-0.5, 12.3, 4)
-    * </pre>
+    * </code>
     * @param t_node the node
     * @param str_attribute the name of the wanted attribute
     * @param t_buffer a buffer where the value must be stored

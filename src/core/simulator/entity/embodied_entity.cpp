@@ -261,6 +261,9 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   /**
+    * @cond HIDDEN_SYMBOLS
+    */
    class CSpaceOperationAddEmbodiedEntity : public CSpaceOperationAddEntity {
    public:
       void ApplyTo(CSpace& c_space, CEmbodiedEntity& c_entity) {
@@ -295,6 +298,9 @@ namespace argos {
       }
    };
    REGISTER_SPACE_OPERATION(CSpaceOperationRemoveEntity, CSpaceOperationRemoveEmbodiedEntity, CEmbodiedEntity);
+   /**
+    * @endcond
+    */
 
    /****************************************/
    /****************************************/

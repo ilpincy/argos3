@@ -609,7 +609,7 @@ namespace argos {
    /** 
     * @brief Computes the arctangent of the passed values.
     *
-    * It internally uses the standard function ::atan2(y,x).
+    * It internally uses the standard function <tt>atan2(y,x)</tt>.
     * 
     * @param f_y the extent on the y axis
     * @param f_x the extent on the x axis

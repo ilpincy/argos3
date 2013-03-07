@@ -21,25 +21,67 @@ namespace argos {
 #include <argos3/core/simulator/space/space.h>
 
 namespace argos {
+
+   /**
+    * Basic class for an entity that contains other entities.
+    * Robots, as well as other complex objects, must extend this class.
+    * @see CEntity
+    */
    class CComposableEntity : public CEntity {
 
    public:
 
       ENABLE_VTABLE();
 
+   public:
+
+      /**
+       * Class constructor.
+       * This constructor is meant to be used with the Init() method.
+       * @param pc_parent The parent of this entity.
+       */
       CComposableEntity(CComposableEntity* pc_parent);
 
+      /**
+       * Class constructor.
+       * This constructor is meant to be standalone.
+       * You should not call Init() after using this constructor, or
+       * memory leaks are likely to happen.
+       * @param pc_parent The parent of this entity.
+       * @param str_id The id of this entity.
+       */
       CComposableEntity(CComposableEntity* pc_parent,
                         const std::string& str_id);
 
+      /**
+       * Class destructor.
+       */
       virtual ~CComposableEntity();
 
+      /**
+       * Resets the state of the entity to whatever it was after Init() or the standalone constructor was called.
+       * Internally calls Reset() for all the component entities.
+       */
       virtual void Reset();
 
+      /**
+       * Destroys the entity, undoing whatever was done by Init() or by the standalone constructor.
+       * Internally calls Destroy() for all the component entities.
+       */
       virtual void Destroy();
 
+      /**
+       * Updates the status of this entity.
+       * Internally calls UpdateComponents(). If you plan to overload this method, don't forget to call
+       * CComposableEntity::Update() or UpdateComponents() in your code.
+       * @see UpdateComponents()
+       */
       virtual void Update();
 
+      /**
+       * Returns a string label for this class.
+       * @return A string label for this class.
+       */
       virtual std::string GetTypeDescription() const {
          return "composite";
       }
@@ -52,14 +94,42 @@ namespace argos {
        */
       virtual void SetEnabled(bool b_enabled);
 
+      /**
+       * Calls the Update() method on all the components.
+       * @see Update()
+       */
       virtual void UpdateComponents();
 
+      /**
+       * Adds a component to this composable entity.
+       * @param c_component The component to add.
+       */
       void AddComponent(CEntity& c_component);
 
+      /**
+       * Removes a component from this composable entity.
+       * @param str_component The string label of the component to remove. The format of the label can be either <tt>label</tt> or <tt>label[N]</tt> to get the <tt>N+1</tt>-th component with the wanted string label.
+       * @see GetTypeDescription()
+       * @throws CARGoSException if the component was not found.
+       */
       CEntity& RemoveComponent(const std::string& str_component);
 
+      /**
+       * Returns the component with the passed string label.
+       * @param str_component The string label of the component to return. The format of the label can be either <tt>label</tt> or <tt>label[N]</tt> to get the <tt>N+1</tt>-th component with the wanted string label.
+       * @see GetTypeDescription()
+       * @throws CARGoSException if the component was not found.
+       */
       CEntity& GetComponent(const std::string& str_component);
 
+      /**
+       * Returns the component with the passed string label.
+       * This method internally performs a <tt>dynamic_cast</tt> and returns
+       * directly the desired type instead of CEntity.
+       * @param str_component The string label of the component to return. The format of the label can be either <tt>label</tt> or <tt>label[N]</tt> to get the <tt>N+1</tt>-th component with the wanted string label.
+       * @see GetTypeDescription()
+       * @throws CARGoSException if the component was not found or can't be cast to the target type.
+       */
       template <class E>
       E& GetComponent(const std::string& str_component) {
          E* pcComponent = dynamic_cast<E*>(&GetComponent(str_component));
@@ -71,10 +141,26 @@ namespace argos {
          }
       }
 
+      /**
+       * Returns <tt>true</tt> if this composable entity has a component with the given string label.
+       * @param str_component The string label of the component to check. The format of the label can be either <tt>label</tt> or <tt>label[N]</tt> to get the <tt>N+1</tt>-th component with the wanted string label.
+       * @return <tt>true</tt> if this composable entity has a component with the given string label.
+       * @see GetTypeDescription()
+       */
       bool HasComponent(const std::string& str_component);
 
+      /**
+       * Searches for a component with the given string label.
+       * @param str_component The string label of the component to find. The format of the label can be either <tt>label</tt> or <tt>label[N]</tt> to get the <tt>N+1</tt>-th component with the wanted string label.
+       * @return An iterator to the component found.
+       * @throws CARGoSException if the component was not found.
+       */
       CEntity::TMultiMap::iterator FindComponent(const std::string& str_component);
 
+      /**
+       * Returns the multimap of all the components.
+       * @return The multimap of all the components.
+       */
       inline CEntity::TMultiMap& GetComponents() {
          return m_mapComponents;
       }
@@ -85,6 +171,9 @@ namespace argos {
 
    };
 
+   /**
+    * @cond HIDDEN_SYMBOLS
+    */
 #define SPACE_OPERATION_ADD_COMPOSABLE_ENTITY(ENTITY)                   \
    class CSpaceOperationAdd ## ENTITY : public CSpaceOperationAddEntity { \
    public:                                                              \
@@ -110,6 +199,9 @@ namespace argos {
       c_space.RemoveEntity(c_entity);                                   \
    }                                                                    \
    };
+   /**
+    * @endcond
+    */
 
 }
 

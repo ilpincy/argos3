@@ -226,6 +226,9 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   /**
+    * @cond HIDDEN_SYMBOLS
+    */
    class CSpaceOperationAddControllableEntity : public CSpaceOperationAddEntity {
    public:
       void ApplyTo(CSpace& c_space, CControllableEntity& c_entity) {
@@ -247,6 +250,9 @@ namespace argos {
    REGISTER_SPACE_OPERATION(CSpaceOperationRemoveEntity,
                             CSpaceOperationRemoveControllableEntity,
                             CControllableEntity);
+   /**
+    * @endcond
+    */
 
    /****************************************/
    /****************************************/

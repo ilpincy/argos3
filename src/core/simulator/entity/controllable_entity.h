@@ -19,6 +19,10 @@ namespace argos {
 
 namespace argos {
 
+   /**
+    * An entity that contains a pointer to the user-defined controller.
+    * @see CComposableEntity
+    */
    class CControllableEntity : public CEntity {
 
    public:
