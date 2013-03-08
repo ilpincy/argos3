@@ -235,18 +235,24 @@ namespace argos {
       SInt32 nCollision = cpSpaceShapeQuery(m_cDyn2DEngine.GetPhysicsSpace(), ptTestShape, NULL, NULL);
       /* Dispose of the sensor shape */
       cpShapeFree(ptTestShape);
+      /* Should we keep this movement? */
       if(b_check_only || nCollision) {
-         /* Restore old body state if there was a collision or
-            it was only a check for movement */
+         /*
+          * No, because it was only a check or there was a collision
+          * Restore old body state
+          */
          m_ptActualBaseBody->p = tOldPos;
          cpBodySetAngle(m_ptActualBaseBody, fOldA);
       }
       else {
-         /* Zero speed and applied forces of base control body */
-         m_ptControlBaseBody->v = cpvzero;
-         m_ptControlBaseBody->w = 0.0f;
-         cpBodyResetForces(m_ptControlBaseBody);
-         /* Update the active space hash if the movement is actual */
+         /*
+          * It wasn't a check and there were no collisions
+          * Keep the movement and move the gripper body too
+          */
+         m_ptActualGripperBody->p = cpv(c_position.GetX(), c_position.GetY());
+         cpBodySetAngle(m_ptActualGripperBody,
+                        cZAngle.GetValue() + m_cFootBotEntity.GetTurretRotation().GetValue());
+         /* Update the active space hash */
          cpSpaceReindexShape(m_cDyn2DEngine.GetPhysicsSpace(), m_ptBaseShape);
       }
       /* The movement is allowed if there is no collision */
@@ -260,10 +266,12 @@ namespace argos {
       /* Reset body position */
       const CVector3& cPosition = GetEmbodiedEntity().GetInitPosition();
       m_ptActualBaseBody->p = cpv(cPosition.GetX(), cPosition.GetY());
+      m_ptActualGripperBody->p = cpv(cPosition.GetX(), cPosition.GetY());
       /* Reset body orientation */
       CRadians cXAngle, cYAngle, cZAngle;
       GetEmbodiedEntity().GetInitOrientation().ToEulerAngles(cZAngle, cYAngle, cXAngle);
       cpBodySetAngle(m_ptActualBaseBody, cZAngle.GetValue());
+      cpBodySetAngle(m_ptActualGripperBody, cZAngle.GetValue());
       /* Zero speed and applied forces of actual base body */
       m_ptActualBaseBody->v = cpvzero;
       m_ptActualBaseBody->w = 0.0f;
@@ -275,7 +283,6 @@ namespace argos {
       /* Release gripped objects */
       m_psGripperData->ClearConstraints();
       /* Zero speed and applied forces of actual gripper body */
-      cpBodySetAngle(m_ptActualGripperBody, cZAngle.GetValue());
       m_ptActualGripperBody->v = cpvzero;
       m_ptActualGripperBody->w = 0.0f;
       cpBodyResetForces(m_ptActualGripperBody);
