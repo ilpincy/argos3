@@ -5,7 +5,7 @@
   <!-- * General configuration * -->
   <!-- ************************* -->
   <framework>
-    <experiment length="0" ticks_per_second="10" />
+    <experiment length="10" ticks_per_second="10" />
   </framework>
 
   <!-- *************** -->
@@ -18,13 +18,7 @@
         <leds                  implementation="default" />
       </actuators>
       <sensors>
-        <ring_proximity implementation="default"
-                        show_rays="true"
-                        radius="0.08"
-                        range="0.5"
-                        num_sensors="8"
-                        center="0,0,0.1"
-                        start_angle="30" />
+        <footbot_proximity implementation="default" show_rays="true" />
       </sensors>
       <params />
     </test_footbot_controller>
@@ -34,41 +28,23 @@
   <!-- * Arena configuration * -->
   <!-- *********************** -->
   <arena size="2, 2, 1">
-    <box id="b0" position="1,0,0.1" orientation="0,0,0" size="0.2, 0.5, 0.2" movable="false" />
-    <box id="b1" position="0,1,0.1" orientation="0,0,0" size="0.2, 0.5, 0.2" movable="true" mass="1" />
-    <cylinder id="c0" position="-1,0,0.1" orientation="0,0,0" radius="0.1" height="0.1" movable="false" />
-    <cylinder id="c1" position="0,-1,0.1" orientation="0,0,0" radius="0.1" height="0.1" movable="true" mass="1" />
-    <ground />
+    <box id="b0" position="1,0,0" orientation="0,0,0" size="0.2, 0.5, 0.2" movable="false" />
+    <box id="b1" position="0,1,0" orientation="0,0,0" size="0.2, 0.5, 0.2" movable="true" mass="1" />
+    <distribute>
+      <position method="uniform" min="-1,-1,0" max="1,1,0" />
+      <orientation method="gaussian" mean="0,0,0" std_dev="360,0,0" />
+      <entity quantity="10" max_trials="100">
+        <foot-bot id="fb"
+                  controller="x" />
+      </entity>
+    </distribute>
   </arena>
 
   <!-- ******************* -->
   <!-- * Physics engines * -->
   <!-- ******************* -->
   <physics_engines>
-
     <dynamics2d id="dyn2d" />
-
-    <dynamics3d id="flat_dyn3d">
-      <terrain type= "flat" />
-    </dynamics3d>
-
-    <dynamics3d id="rugged_dyn3d_file">
-      <terrain type= "heightmap">
-        <heightmap size="10,8"
-                   granularity="1,1"
-                   height_range="-0.1:0.5">
-          1,2,3,4,5,6,7,8,9,0,
-          1,2,3,4,5,6,7,8,9,0,
-          1,2,3,4,5,6,7,8,9,0,
-          1,2,3,4,5,6,7,8,9,0,
-          1,2,3,4,5,6,7,8,9,0,
-          1,2,3,4,5,6,7,8,9,0,
-          1,2,3,4,5,6,7,8,9,0,
-          1,2,3,4,5,6,7,8,9,0
-        </heightmap>
-      </terrain>
-    </dynamics3d>
-
   </physics_engines>
 
   <!-- ************************************ -->
@@ -86,7 +62,7 @@
   <!-- * Visualization * -->
   <!-- ****************** -->
   <visualization>
-    <qt-opengl />
+    <!-- qt-opengl / -->
   </visualization>
 
 </argos-configuration>

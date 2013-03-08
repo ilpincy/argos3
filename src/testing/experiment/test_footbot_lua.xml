@@ -49,15 +49,15 @@
            color="yellow"
            intensity="1" />
 
-    <!-- distribute>
+    <distribute>
       <position method="uniform" min="-1,-1,0" max="1,1,0" />
       <orientation method="gaussian" mean="0,0,0" std_dev="360,0,0" />
-      <entity quantity="1" max_trials="100">
+      <entity quantity="10" max_trials="100">
         <foot-bot id="fb"
                   controller="lua" />
       </entity>
-    </distribute -->
-    <foot-bot id="fb0" position="0,0,0" orientation="0,0,0" controller="lua" />
+    </distribute>
+
   </arena>
 
   <!-- ******************* -->
