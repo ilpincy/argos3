@@ -579,9 +579,7 @@ namespace argos {
          /* The list is done */
          glEndList();
       }
-      catch(CARGoSException& ex) {
-         LOGERR << "[WARNING] No floor entity specified, the floor will be blank" << std::endl;
-      }
+      catch(CARGoSException& ex) {}
    }
 
    /****************************************/
