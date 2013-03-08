@@ -159,8 +159,8 @@ namespace argos {
             cpSpaceRemoveShape(m_cDyn2DEngine.GetPhysicsSpace(), m_ptGripperShape);
             cpConstraintFree(m_ptBaseGripperLinearMotion);
             cpConstraintFree(m_ptBaseGripperAngularMotion);
-            cpBodyFree(m_ptActualGripperBody);
             cpShapeFree(m_ptGripperShape);
+            cpBodyFree(m_ptActualGripperBody);
             break;
          case MODE_POSITION_CONTROL:
          case MODE_SPEED_CONTROL:
@@ -171,9 +171,9 @@ namespace argos {
             cpSpaceRemoveShape(m_cDyn2DEngine.GetPhysicsSpace(), m_ptGripperShape);
             cpConstraintFree(m_ptBaseGripperLinearMotion);
             cpConstraintFree(m_ptGripperControlAngularMotion);
+            cpShapeFree(m_ptGripperShape);
             cpBodyFree(m_ptActualGripperBody);
             cpBodyFree(m_ptControlGripperBody);
-            cpShapeFree(m_ptGripperShape);
             break;
       }
       cpSpaceRemoveConstraint(m_cDyn2DEngine.GetPhysicsSpace(), m_ptBaseControlLinearMotion);
@@ -182,9 +182,9 @@ namespace argos {
       cpSpaceRemoveShape(m_cDyn2DEngine.GetPhysicsSpace(), m_ptBaseShape);
       cpConstraintFree(m_ptBaseControlLinearMotion);
       cpConstraintFree(m_ptBaseControlAngularMotion);
+      cpShapeFree(m_ptBaseShape);
       cpBodyFree(m_ptActualBaseBody);
       cpBodyFree(m_ptControlBaseBody);
-      cpShapeFree(m_ptBaseShape);
    }
 
    /****************************************/
@@ -476,6 +476,13 @@ namespace argos {
                                                                          1.0f));
       m_ptBaseGripperAngularMotion->maxBias = 0.0f; /* disable joint correction */
       m_ptBaseGripperAngularMotion->maxForce = FOOTBOT_MAX_TORQUE; /* limit the dragging torque */
+   }
+
+   /****************************************/
+   /****************************************/
+
+   bool CDynamics2DFootBotEntity::IsCollidingWithSomething() const {
+      return cpSpaceShapeQuery(m_cDyn2DEngine.GetPhysicsSpace(), m_ptBaseShape, NULL, NULL) > 0;
    }
 
    /****************************************/

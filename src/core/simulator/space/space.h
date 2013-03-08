@@ -299,7 +299,7 @@ namespace argos {
                   CEntity::TVector::iterator itRootVec = find(m_vecRootEntities.begin(),
                                                               m_vecRootEntities.end(),
                                                               &c_entity);
-                  m_vecEntities.erase(itRootVec);
+                  m_vecRootEntities.erase(itRootVec);
                }
                /* Remove entity object */
                c_entity.Destroy();

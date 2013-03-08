@@ -162,8 +162,7 @@ namespace argos {
    void CSpace::Destroy() {
       /* Remove all entities */
       while(!m_vecRootEntities.empty()) {
-         delete m_vecRootEntities.back();
-         m_vecRootEntities.pop_back();
+         CallEntityOperation<CSpaceOperationRemoveEntity, CSpace, void>(*this, *m_vecRootEntities.back());
       }
       /* Get rid of the ray-embodied entity intersection method */
       delete m_pcRayEmbodiedEntityIntersectionMethod;
@@ -574,23 +573,21 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   static bool IsEntityColliding(std::tr1::unordered_set<CEmbodiedEntity*>& set_entities,
-                                 CEmbodiedEntity* pc_entity) {
-      /* We check for collisions just by checking bounding box intersection.
-         It's not very precise, but precision does not matter so much when scattering robots
-         and, besides, this keeps the architecture clean and simple.
-         When the arena is first initialized, physics engines do not exist yet, so no
-         precise collision can be checked. If we want to check at physics level, we should
-         have a two-phase initialization. Maybe in another life.
-         This method checks all embodied entities for intersection. It's definitely not
-         optimized, but since it's executed only at init time, nobody really cares.
-      */
-      for(std::tr1::unordered_set<CEmbodiedEntity*>::const_iterator it = set_entities.begin();
-          it != set_entities.end(); ++it) {
-         if((*it)->GetBoundingBox().Intersects(pc_entity->GetBoundingBox()))
-            return true;
+   static CPositionalEntity* GetPositionalEntity(CEntity* pc_entity) {
+      /* Is the entity positional itself? */
+      CPositionalEntity* pcPositionalTest = dynamic_cast<CPositionalEntity*>(pc_entity);
+      if(pcPositionalTest != NULL) {
+         return pcPositionalTest;
       }
-      return false;
+      /* Is the entity composable with a positional component? */
+      CComposableEntity* pcComposableTest = dynamic_cast<CComposableEntity*>(pc_entity);
+      if(pcComposableTest != NULL) {
+         if(pcComposableTest->HasComponent("position")) {
+            return &(pcComposableTest->GetComponent<CPositionalEntity>("position"));
+         }
+      }
+      /* No positional entity found */
+      return NULL;
    }
 
    /****************************************/
@@ -644,39 +641,58 @@ namespace argos {
             SetNodeAttribute(tEntityTree, "position", (*pcPositionGenerator)(bRetry));
             /* Set the orientation */
             SetNodeAttribute(tEntityTree, "orientation", (*pcOrientationGenerator)(bRetry));
-            /* Init the entity */
+            /* Init the entity (this also creates the components, if pcEntity is a composable) */
             pcEntity->Init(tEntityTree);
-            /* Get its embodied component */
+            /*
+             * Now that you have the entity and its components, check whether the entity is positional or embodied
+             * or has one such component.
+             * In case the entity is positional but not embodied, there's no need to check for collisions
+             * In case the entity is embodied, we must check for collisions
+             * To check for collisions, we add the entity in the place where it's supposed to be,
+             * then we ask the engine if that entity is colliding with something
+             * In case of collision, we remove the entity and try a different position/orientation
+             */
+            /* Check for embodied */
             CEmbodiedEntity* pcEmbodiedEntity = GetEmbodiedEntity(pcEntity);
             if(pcEmbodiedEntity == NULL) {
-               THROW_ARGOSEXCEPTION("Cannot distribute entities that are not embodied, and \"" << tEntityTree.Value() << "\" is not.");
-            }
-            /* Check if it's colliding with anything else */
-            if(IsEntityColliding(m_pcEmbodiedEntitiesSpaceHash->GetElements(), pcEmbodiedEntity)) {
-               /* Set retry to true */
-               bRetry = true;
-               /* Get rid of the entity */
-               pcEntity->Destroy();
-               delete pcEntity;
-               /* Increase the trial count */
-               ++unTrials;
-               /* Too many trials? */
-               if(unTrials > unMaxTrials) {
-                  /* Yes, bomb out */
-                  THROW_ARGOSEXCEPTION("Exceeded max trials when trying to distribute objects of type " <<
-                                       tEntityTree.Value() << " with base id \"" <<
-                                       strBaseId << "\". I managed to place only " << i << " objects.");
+               /* Check failed, then check for positional */
+               CPositionalEntity* pcPositionalEntity = GetPositionalEntity(pcEntity);
+               if(pcPositionalEntity == NULL) {
+                  THROW_ARGOSEXCEPTION("Cannot distribute entities that are not positional nor embodied, and \"" << tEntityTree.Value() << "\" is neither.");
                }
-               /* Retry with a new position */
+               else {
+                  /* Wherever we want to put the entity, it's OK, add it */
+                  CallEntityOperation<CSpaceOperationAddEntity, CSpace, void>(*this, *pcEntity);
+               }
             }
             else {
-               /* No collision, we're done with this entity */
-               bDone = true;
+               /* The entity is embodied */
+               /* Add it to the space and to the designated physics engine */
+               CallEntityOperation<CSpaceOperationAddEntity, CSpace, void>(*this, *pcEntity);
+               /* Check if it's colliding with anything else */
+               if(pcEmbodiedEntity->IsCollidingWithSomething()) {
+                  /* Set retry to true */
+                  bRetry = true;
+                  /* Get rid of the entity */
+                  CallEntityOperation<CSpaceOperationRemoveEntity, CSpace, void>(*this, *pcEntity);
+                  /* Increase the trial count */
+                  ++unTrials;
+                  /* Too many trials? */
+                  if(unTrials > unMaxTrials) {
+                     /* Yes, bomb out */
+                     THROW_ARGOSEXCEPTION("Exceeded max trials when trying to distribute objects of type " <<
+                                          tEntityTree.Value() << " with base id \"" <<
+                                          strBaseId << "\". I managed to place only " << i << " objects.");
+                  }
+                  /* Retry with a new position */
+               }
+               else {
+                  /* No collision, we're done with this entity */
+                  bDone = true;
+               }
             }
          }
          while(!bDone);
-         /* Add entity */
-         CallEntityOperation<CSpaceOperationAddEntity, CSpace, void>(*this, *pcEntity);
       }
       /* Delete the generators, now unneeded */
       delete pcPositionGenerator;

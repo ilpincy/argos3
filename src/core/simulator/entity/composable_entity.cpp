@@ -26,33 +26,11 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   CComposableEntity::~CComposableEntity() {
-      for(CEntity::TMultiMap::iterator it = m_mapComponents.begin();
-          it != m_mapComponents.end();
-          ++it) {
-         delete it->second;
-      }
-   }
-
-   /****************************************/
-   /****************************************/
-
    void CComposableEntity::Reset() {
       for(CEntity::TMultiMap::iterator it = m_mapComponents.begin();
           it != m_mapComponents.end();
           ++it) {
          it->second->Reset();
-      }
-   }
-
-   /****************************************/
-   /****************************************/
-
-   void CComposableEntity::Destroy() {
-      for(CEntity::TMultiMap::iterator it = m_mapComponents.begin();
-          it != m_mapComponents.end();
-          ++it) {
-         it->second->Destroy();
       }
    }
 

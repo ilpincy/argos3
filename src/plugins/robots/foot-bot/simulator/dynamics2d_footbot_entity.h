@@ -38,6 +38,8 @@ namespace argos {
       virtual void UpdateEntityStatus();
       virtual void UpdateFromEntityStatus();
 
+      virtual bool IsCollidingWithSomething() const;
+
    private:
 
       void TurretPassiveToActive();

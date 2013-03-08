@@ -196,6 +196,11 @@ namespace argos {
          m_pcVisualization->Destroy();
       }
 
+      /* Destroy simulated space */
+      if(m_pcSpace != NULL) {
+         m_pcSpace->Destroy();
+      }
+
       /* Close physics engines */
       for(CPhysicsEngine::TMap::iterator it = m_mapPhysicsEngines.begin();
           it != m_mapPhysicsEngines.end(); ++it) {
@@ -204,11 +209,6 @@ namespace argos {
       }
       m_mapPhysicsEngines.clear();
       m_vecPhysicsEngines.clear();
-
-      /* Destroy simulated space */
-      if(m_pcSpace != NULL) {
-         m_pcSpace->Destroy();
-      }
 
       /* Get rid of ARGoS category */
       if(CRandom::ExistsCategory("argos")) {

@@ -141,14 +141,49 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   bool CEmbodiedEntity::CheckIntersectionWithRay(Real& f_distance,
+   bool CEmbodiedEntity::CheckIntersectionWithRay(Real& f_t_on_ray,
                                                   const CRay3& c_ray) const {
-      for(UInt32 i = 0; i < m_tPhysicsEngineEntityVector.size(); ++i) {
-         if(m_tPhysicsEngineEntityVector[i]->CheckIntersectionWithRay(f_distance, c_ray)) {
+      /* If no model is associated, you can't call this function */
+      if(m_tPhysicsEngineEntityVector.empty()) {
+         THROW_ARGOSEXCEPTION("CEmbodiedEntity::CheckIntersectionWithRay() called on entity \"" << GetId() << "\", but this entity has not been added to any physics engine.");
+      }
+      /* Special case: if there is only one model, check that directly */
+      if(m_tPhysicsEngineEntityVector.size() == 1) {
+         return m_tPhysicsEngineEntityVector[0]->CheckIntersectionWithRay(f_t_on_ray, c_ray);
+      }
+      /* Multiple associations, go through them and find the closest intersection point */
+      else {
+         /* Search for the first match */
+         UInt32 i = 0;
+         bool bFoundFirst = false;
+         while(!bFoundFirst && i < m_tPhysicsEngineEntityVector.size()) {
+            if(m_tPhysicsEngineEntityVector[i]->CheckIntersectionWithRay(f_t_on_ray, c_ray)) {
+               bFoundFirst = true;
+            }
+            else {
+               ++i;
+            }
+         }
+         /* Did we find an intersection? */
+         if(!bFoundFirst) {
+            /* No, return false */
+            return false;
+         }
+         else {
+            /*
+             * Yes, we did
+             * Now, go through the remaining models and check if there is a closer match
+             */
+            Real fTOnRay;
+            for(size_t j = i+1; j < m_tPhysicsEngineEntityVector.size(); ++j) {
+               if(m_tPhysicsEngineEntityVector[j]->CheckIntersectionWithRay(fTOnRay, c_ray) &&
+                  fTOnRay < f_t_on_ray) {
+                  f_t_on_ray = fTOnRay;
+               }
+            }
             return true;
          }
       }
-      return false;
    }
 
    /****************************************/
@@ -236,6 +271,31 @@ namespace argos {
             delete m_sBoundingBox;
          }
          m_sBoundingBox = NULL;
+      }
+   }
+
+   /****************************************/
+   /****************************************/
+
+   bool CEmbodiedEntity::IsCollidingWithSomething() const {
+      /* If no model is associated, you can't call this function */
+      if(m_tPhysicsEngineEntityVector.empty()) {
+         THROW_ARGOSEXCEPTION("CEmbodiedEntity::IsCollidingWithSomething() called on entity \"" << GetId() << "\", but this entity has not been added to any physics engine.");
+      }
+      /* Special case: if there is only one model, check that directly */
+      if(m_tPhysicsEngineEntityVector.size() == 1) {
+         return m_tPhysicsEngineEntityVector[0]->IsCollidingWithSomething();
+      }
+      /* Multiple associations, go through them */
+      else {
+         /* Return true at the first detected collision */
+         for(size_t i = 0; i < m_tPhysicsEngineEntityVector.size(); ++i) {
+            if(m_tPhysicsEngineEntityVector[i]->IsCollidingWithSomething()) {
+               return true;
+            }
+         }
+         /* If you get here it's because there are collisions */
+         return false;
       }
    }
 

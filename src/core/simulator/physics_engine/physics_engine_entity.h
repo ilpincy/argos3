@@ -115,6 +115,12 @@ namespace argos {
        */
       virtual void CalculateBoundingBox() = 0;
 
+      /**
+       * Returns <tt>true</tt> if this model is colliding with another model.
+       * @return <tt>true</tt> if this model is colliding with another model.
+       */
+      virtual bool IsCollidingWithSomething() const = 0;
+
    protected:
 
       /**

@@ -56,19 +56,13 @@ namespace argos {
       /**
        * Class destructor.
        */
-      virtual ~CComposableEntity();
+      virtual ~CComposableEntity() {}
 
       /**
        * Resets the state of the entity to whatever it was after Init() or the standalone constructor was called.
        * Internally calls Reset() for all the component entities.
        */
       virtual void Reset();
-
-      /**
-       * Destroys the entity, undoing whatever was done by Init() or by the standalone constructor.
-       * Internally calls Destroy() for all the component entities.
-       */
-      virtual void Destroy();
 
       /**
        * Updates the status of this entity.

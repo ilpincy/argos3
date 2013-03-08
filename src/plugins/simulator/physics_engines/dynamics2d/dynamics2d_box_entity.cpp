@@ -118,9 +118,9 @@ namespace argos {
          cpSpaceRemoveConstraint(m_cDyn2DEngine.GetPhysicsSpace(), m_ptAngularFriction);
          cpConstraintFree(m_ptLinearFriction);
          cpConstraintFree(m_ptAngularFriction);
+         cpSpaceRemoveShape(m_cDyn2DEngine.GetPhysicsSpace(), m_ptShape);
          cpSpaceRemoveBody(m_cDyn2DEngine.GetPhysicsSpace(), m_ptBody);
          cpBodyFree(m_ptBody);
-         cpSpaceRemoveShape(m_cDyn2DEngine.GetPhysicsSpace(), m_ptShape);
       }
       else {
          cpSpaceRemoveStaticShape(m_cDyn2DEngine.GetPhysicsSpace(), m_ptShape);
@@ -254,6 +254,13 @@ namespace argos {
       }
       /* Update components */
       m_cBoxEntity.UpdateComponents();
+   }
+
+   /****************************************/
+   /****************************************/
+
+   bool CDynamics2DBoxEntity::IsCollidingWithSomething() const {
+      return cpSpaceShapeQuery(m_cDyn2DEngine.GetPhysicsSpace(), m_ptShape, NULL, NULL) > 0;
    }
 
    /****************************************/
