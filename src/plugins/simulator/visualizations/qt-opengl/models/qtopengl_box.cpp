@@ -94,6 +94,7 @@ namespace argos {
          glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, NONMOVABLE_COLOR);
       }
       glPushMatrix();
+      glTranslatef(0.0f, 0.0f, c_entity.GetSize().GetZ() * 0.5f);
       glScalef(c_entity.GetSize().GetX(), c_entity.GetSize().GetY(), c_entity.GetSize().GetZ());
       glCallList(m_unBodyList);
       glPopMatrix();

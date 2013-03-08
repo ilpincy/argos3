@@ -39,7 +39,6 @@ namespace argos {
    private:
 
       CBoxEntity&   m_cBoxEntity;
-      Real          m_fHalfHeight;
       cpFloat       m_fMass;
       cpShape*      m_ptShape;
       cpBody*       m_ptBody;

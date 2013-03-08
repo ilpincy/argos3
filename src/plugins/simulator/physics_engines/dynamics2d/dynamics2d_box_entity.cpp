@@ -21,7 +21,6 @@ namespace argos {
       m_ptBody(NULL) {
       /* Get the size of the entity */
       CVector3 cHalfSize = c_entity.GetSize() * 0.5f;
-      m_fHalfHeight = cHalfSize.GetZ();
       /* Create a polygonal object in the physics space */
       /* Start defining the vertices
          NOTE: points must be defined in a clockwise winding
@@ -105,8 +104,8 @@ namespace argos {
          CalculateBoundingBox();
       }
       /* Precalculate Z-axis range of the bounding box */
-      GetBoundingBox().MinCorner.SetZ(GetEmbodiedEntity().GetPosition().GetZ() - m_fHalfHeight);
-      GetBoundingBox().MaxCorner.SetZ(GetEmbodiedEntity().GetPosition().GetZ() + m_fHalfHeight);
+      GetBoundingBox().MinCorner.SetZ(GetEmbodiedEntity().GetPosition().GetZ());
+      GetBoundingBox().MaxCorner.SetZ(GetEmbodiedEntity().GetPosition().GetZ() + m_cBoxEntity.GetSize().GetZ());
    }
    
    /****************************************/
@@ -141,8 +140,8 @@ namespace argos {
                              &tInfo)) {
       	 CVector3 cIntersectionPoint;
       	 c_ray.GetPoint(cIntersectionPoint, tInfo.t);
-      	 if((cIntersectionPoint.GetZ() >= GetEmbodiedEntity().GetPosition().GetZ() - m_fHalfHeight) &&
-      			(cIntersectionPoint.GetZ() <= GetEmbodiedEntity().GetPosition().GetZ() + m_fHalfHeight) ) {
+      	 if((cIntersectionPoint.GetZ() >= GetEmbodiedEntity().GetPosition().GetZ()) &&
+      			(cIntersectionPoint.GetZ() <= GetEmbodiedEntity().GetPosition().GetZ() + m_cBoxEntity.GetSize().GetZ()) ) {
             f_t_on_ray = tInfo.t;
             return true;
       	 }
