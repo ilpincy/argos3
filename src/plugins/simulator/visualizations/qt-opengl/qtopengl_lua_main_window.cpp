@@ -155,24 +155,27 @@ namespace argos {
          QProcess cLuaCompiler;
          cLuaCompiler.start("luac", QStringList() << "-o" << cByteCode.fileName() << m_strFileName);
          if(! cLuaCompiler.waitForStarted()) {
-            SetMessage(0, "ALL", QString(cLuaCompiler.readAllStandardError()));
-            QApplication::restoreOverrideCursor();
-            return;
+            /* Fall back to sending script directly to robots */
+            for(size_t i = 0; i < m_vecControllers.size(); ++i) {
+               m_vecControllers[i]->SetLuaScript(m_strFileName.toStdString());
+            }
          }
-         if(! cLuaCompiler.waitForFinished()) {
-            SetMessage(0, "ALL", QString(cLuaCompiler.readAllStandardError()));
-            QApplication::restoreOverrideCursor();
-            return;
-         }
-         if(cLuaCompiler.exitCode() != 0) {
-            SetMessage(0, "ALL", QString(cLuaCompiler.readAllStandardError()));
-            QApplication::restoreOverrideCursor();
-            return;
-         }
-         SetMessage(0, "ALL", "Compilation successful.");
-         /* Set the script for all the robots */
-         for(size_t i = 0; i < m_vecControllers.size(); ++i) {
-            m_vecControllers[i]->SetLuaScript(cByteCode.fileName().toStdString());
+         else {
+            if(! cLuaCompiler.waitForFinished()) {
+               SetMessage(0, "ALL", QString(cLuaCompiler.readAllStandardError()));
+               QApplication::restoreOverrideCursor();
+               return;
+            }
+            if(cLuaCompiler.exitCode() != 0) {
+               SetMessage(0, "ALL", QString(cLuaCompiler.readAllStandardError()));
+               QApplication::restoreOverrideCursor();
+               return;
+            }
+            SetMessage(0, "ALL", "Compilation successful.");
+            /* Set the script for all the robots */
+            for(size_t i = 0; i < m_vecControllers.size(); ++i) {
+               m_vecControllers[i]->SetLuaScript(cByteCode.fileName().toStdString());
+            }
          }
          /* Update Lua state if visible */
          if(m_pcLuaVariableDock->isVisible()) {
