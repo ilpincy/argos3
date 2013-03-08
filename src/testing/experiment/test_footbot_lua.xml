@@ -58,6 +58,18 @@
       </entity>
     </distribute>
 
+    <distribute>
+      <position method="uniform" min="-1,-1,0" max="1,1,0" />
+      <orientation method="gaussian" mean="0,0,0" std_dev="360,0,0" />
+      <entity quantity="10" max_trials="100">
+        <cylinder id="cyl"
+                  radius="0.05"
+                  height="0.1"
+                  movable="true"
+                  mass="0.1" />
+      </entity>
+    </distribute>
+
   </arena>
 
   <!-- ******************* -->

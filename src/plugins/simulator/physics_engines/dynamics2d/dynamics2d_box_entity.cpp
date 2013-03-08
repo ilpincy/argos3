@@ -119,13 +119,14 @@ namespace argos {
          cpConstraintFree(m_ptAngularFriction);
          cpSpaceRemoveShape(m_cDyn2DEngine.GetPhysicsSpace(), m_ptShape);
          cpSpaceRemoveBody(m_cDyn2DEngine.GetPhysicsSpace(), m_ptBody);
+         cpShapeFree(m_ptShape);
          cpBodyFree(m_ptBody);
       }
       else {
          cpSpaceRemoveStaticShape(m_cDyn2DEngine.GetPhysicsSpace(), m_ptShape);
+         cpShapeFree(m_ptShape);
          cpSpaceReindexStatic(m_cDyn2DEngine.GetPhysicsSpace());
       }
-      cpShapeFree(m_ptShape);
    }
 
    /****************************************/
