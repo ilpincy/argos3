@@ -103,9 +103,10 @@ namespace argos {
          /* Calculate the bounding box once and forever */
          CalculateBoundingBox();
       }
-      /* Precalculate Z-axis range of the bounding box */
+      /* Calculate bounding box */
       GetBoundingBox().MinCorner.SetZ(GetEmbodiedEntity().GetPosition().GetZ());
       GetBoundingBox().MaxCorner.SetZ(GetEmbodiedEntity().GetPosition().GetZ() + m_cBoxEntity.GetSize().GetZ());
+      CalculateBoundingBox();
    }
    
    /****************************************/

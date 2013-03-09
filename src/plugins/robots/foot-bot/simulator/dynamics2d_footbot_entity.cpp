@@ -140,9 +140,10 @@ namespace argos {
          m_unLastTurretMode == MODE_POSITION_CONTROL) {
          TurretActiveToPassive();
       }
-      /* Precalculate Z-axis range of the bounding box */
+      /* Calculate bounding box */
       GetBoundingBox().MinCorner.SetZ(GetEmbodiedEntity().GetPosition().GetZ());
       GetBoundingBox().MaxCorner.SetZ(GetEmbodiedEntity().GetPosition().GetZ() + FOOTBOT_HEIGHT);
+      CalculateBoundingBox();
    }
 
    /****************************************/

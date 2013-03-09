@@ -981,12 +981,7 @@ namespace argos {
    public:
       void ApplyTo(CQTOpenGLWidget& c_visualization,
                    CFootBotEntity& c_entity) {
-         static CQTOpenGLFootBot m_cModel;
-         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-         c_visualization.DrawPositionalEntity(c_entity.GetEmbodiedEntity());
-         glScalef(1.2, 1.2, 1.2);
-         m_cModel.Draw(c_entity);
-         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+         c_visualization.DrawBoundingBox(c_entity.GetEmbodiedEntity());
       }
    };
 

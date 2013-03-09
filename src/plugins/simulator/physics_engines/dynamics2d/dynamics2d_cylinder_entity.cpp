@@ -80,9 +80,10 @@ namespace argos {
          /* Little contact friction to help sliding away */
          m_ptShape->u = 0.1;
       }
-      /* Precalculate Z-axis range of the bounding box */
+      /* Calculate bounding box */
       GetBoundingBox().MinCorner.SetZ(GetEmbodiedEntity().GetPosition().GetZ());
       GetBoundingBox().MaxCorner.SetZ(GetEmbodiedEntity().GetPosition().GetZ() + m_cCylinderEntity.GetHeight());
+      CalculateBoundingBox();
    }
 
    /****************************************/

@@ -390,6 +390,62 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   void CQTOpenGLWidget::DrawBoundingBox(CEmbodiedEntity& c_entity) {
+      const SBoundingBox& sBBox = c_entity.GetBoundingBox();
+      glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+      glDisable(GL_LIGHTING);
+      glLineWidth(3.0f);
+      glColor3f(1.0f, 1.0f, 1.0f);
+      /* This part covers the top and bottom faces (parallel to XY) */
+      glBegin(GL_QUADS);
+      /* Bottom face */
+      glNormal3f(0.0f, 0.0f, -1.0f);
+      glVertex3f(sBBox.MinCorner.GetX(), sBBox.MinCorner.GetY(), sBBox.MinCorner.GetZ());
+      glVertex3f(sBBox.MinCorner.GetX(), sBBox.MaxCorner.GetY(), sBBox.MinCorner.GetZ());
+      glVertex3f(sBBox.MaxCorner.GetX(), sBBox.MaxCorner.GetY(), sBBox.MinCorner.GetZ());
+      glVertex3f(sBBox.MaxCorner.GetX(), sBBox.MinCorner.GetY(), sBBox.MinCorner.GetZ());
+      /* Top face */
+      glNormal3f(0.0f, 0.0f, 1.0f);
+      glVertex3f(sBBox.MinCorner.GetX(), sBBox.MinCorner.GetY(), sBBox.MaxCorner.GetZ());
+      glVertex3f(sBBox.MaxCorner.GetX(), sBBox.MinCorner.GetY(), sBBox.MaxCorner.GetZ());
+      glVertex3f(sBBox.MaxCorner.GetX(), sBBox.MaxCorner.GetY(), sBBox.MaxCorner.GetZ());
+      glVertex3f(sBBox.MinCorner.GetX(), sBBox.MaxCorner.GetY(), sBBox.MaxCorner.GetZ());
+      glEnd();
+      /* This part covers the faces (South, East, North, West) */
+      glBegin(GL_QUADS);
+      /* South face */
+      glNormal3f(-1.0f, 0.0f, 0.0f);
+      glVertex3f(sBBox.MinCorner.GetX(), sBBox.MinCorner.GetY(), sBBox.MinCorner.GetZ());
+      glVertex3f(sBBox.MinCorner.GetX(), sBBox.MinCorner.GetY(), sBBox.MaxCorner.GetZ());
+      glVertex3f(sBBox.MinCorner.GetX(), sBBox.MaxCorner.GetY(), sBBox.MaxCorner.GetZ());
+      glVertex3f(sBBox.MinCorner.GetX(), sBBox.MaxCorner.GetY(), sBBox.MinCorner.GetZ());
+      /* East face */
+      glNormal3f(0.0f, -1.0f, 0.0f);
+      glVertex3f(sBBox.MinCorner.GetX(), sBBox.MinCorner.GetY(), sBBox.MinCorner.GetZ());
+      glVertex3f(sBBox.MaxCorner.GetX(), sBBox.MinCorner.GetY(), sBBox.MinCorner.GetZ());
+      glVertex3f(sBBox.MaxCorner.GetX(), sBBox.MinCorner.GetY(), sBBox.MaxCorner.GetZ());
+      glVertex3f(sBBox.MinCorner.GetX(), sBBox.MinCorner.GetY(), sBBox.MaxCorner.GetZ());
+      /* North face */
+      glNormal3f(1.0f, 0.0f, 0.0f);
+      glVertex3f(sBBox.MaxCorner.GetX(), sBBox.MinCorner.GetY(), sBBox.MinCorner.GetZ());
+      glVertex3f(sBBox.MaxCorner.GetX(), sBBox.MaxCorner.GetY(), sBBox.MinCorner.GetZ());
+      glVertex3f(sBBox.MaxCorner.GetX(), sBBox.MaxCorner.GetY(), sBBox.MaxCorner.GetZ());
+      glVertex3f(sBBox.MaxCorner.GetX(), sBBox.MinCorner.GetY(), sBBox.MaxCorner.GetZ());
+      /* West face */
+      glNormal3f(0.0f, 1.0f, 0.0f);
+      glVertex3f(sBBox.MinCorner.GetX(), sBBox.MaxCorner.GetY(), sBBox.MinCorner.GetZ());
+      glVertex3f(sBBox.MinCorner.GetX(), sBBox.MaxCorner.GetY(), sBBox.MaxCorner.GetZ());
+      glVertex3f(sBBox.MaxCorner.GetX(), sBBox.MaxCorner.GetY(), sBBox.MaxCorner.GetZ());
+      glVertex3f(sBBox.MaxCorner.GetX(), sBBox.MaxCorner.GetY(), sBBox.MinCorner.GetZ());
+      glEnd();
+      glEnable(GL_LIGHTING);
+      glLineWidth(1.0f);
+      glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+   }
+
+   /****************************************/
+   /****************************************/
+
    void CQTOpenGLWidget::resizeGL(int n_width,
                                   int n_height) {
       glViewport(0, 0, n_width, n_height);

@@ -16,6 +16,7 @@ namespace argos {
    class CQTOpenGLUserFunctions;
    class CPositionalEntity;
    class CControllableEntity;
+   class CEmbodiedEntity;
 }
 
 #ifdef QTOPENGL_WITH_SDL
@@ -104,6 +105,8 @@ namespace argos {
       void DrawPositionalEntity(CPositionalEntity& c_entity);
 
       void DrawRays(CControllableEntity& c_entity);
+
+      void DrawBoundingBox(CEmbodiedEntity& c_entity);
 
       inline virtual int heightForWidth(int w) const {
          return (w * 3) / 4;
