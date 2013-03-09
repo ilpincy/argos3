@@ -54,9 +54,8 @@ function step()
                         robot.proximity[i].angle)
       accum:add(vec)
    end
-   accum:scale(1/24)
    angle = accum:angle()
-   length = accum:length()
+   length = accum:length() / 24
    if angle > straight_range.min and
       angle < straight_range.max and
       length < delta then
