@@ -1,9 +1,9 @@
-
 /**
  * @file <argos3/plugins/robots/generic/control_interface/ci_leds_actuator.h>
  *
  * @author Carlo Pinciroli <ilpincy@gmail.com>
  */
+
 #ifndef CCI_LEDS_ACTUATOR_H
 #define CCI_LEDS_ACTUATOR_H
 
