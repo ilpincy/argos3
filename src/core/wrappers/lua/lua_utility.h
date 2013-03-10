@@ -23,8 +23,8 @@ namespace argos {
       static bool LoadScript(lua_State* pt_state,
                              const std::string& str_filename);
       
-      static bool CallFunction(lua_State* pt_state,
-                               const std::string& str_function);
+      static bool CallLuaFunction(lua_State* pt_state,
+                                  const std::string& str_function);
 
       static void PrintGlobals(CARGoSLog& c_log,
                                lua_State* pt_state);

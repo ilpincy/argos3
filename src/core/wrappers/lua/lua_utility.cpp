@@ -26,8 +26,8 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   bool CLuaUtility::CallFunction(lua_State* pt_state,
-                                  const std::string& str_function) {
+   bool CLuaUtility::CallLuaFunction(lua_State* pt_state,
+                                     const std::string& str_function) {
       lua_getglobal(pt_state, str_function.c_str());
       if(lua_pcall(pt_state, 0, 0, 0)) {
          return false;

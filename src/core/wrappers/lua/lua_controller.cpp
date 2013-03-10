@@ -65,7 +65,7 @@ namespace argos {
          /* Update Lua variables through sensor readings */
          SensorReadingsToLuaVariables();
          /* Execute script step function */
-         if(CLuaUtility::CallFunction(m_ptLuaState, "step")) {
+         if(CLuaUtility::CallLuaFunction(m_ptLuaState, "step")) {
             /* Set actuator variables */
             LuaVariablesToActuatorSettings();
          }
@@ -81,7 +81,7 @@ namespace argos {
    void CLuaController::Reset() {
       if(m_bScriptActive) {
          if(m_bIsOK) {
-            m_bIsOK = CLuaUtility::CallFunction(m_ptLuaState, "reset");
+            m_bIsOK = CLuaUtility::CallLuaFunction(m_ptLuaState, "reset");
          }
          else {
             SetLuaScript(m_strScriptFileName);
@@ -95,15 +95,10 @@ namespace argos {
    void CLuaController::Destroy() {
       if(m_bScriptActive && m_bIsOK) {
          /* Execute script destroy function */
-         if(CLuaUtility::CallFunction(m_ptLuaState, "destroy")) {
-            /* Close Lua */
-            lua_close(m_ptLuaState);
-            m_bScriptActive = false;
-         }
-         else {
-            m_bIsOK = false;
-         }
+         CLuaUtility::CallLuaFunction(m_ptLuaState, "destroy");
       }
+      /* Close Lua */
+      lua_close(m_ptLuaState);
    }
 
    /****************************************/
@@ -132,7 +127,7 @@ namespace argos {
       CreateLuaVariables();
       SensorReadingsToLuaVariables();
       /* Execute script init function */
-      if(!CLuaUtility::CallFunction(m_ptLuaState, "init")) {
+      if(!CLuaUtility::CallLuaFunction(m_ptLuaState, "init")) {
          m_bIsOK = false;
          return;
       }
