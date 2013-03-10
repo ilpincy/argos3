@@ -266,6 +266,9 @@ namespace argos {
       }
    };
 
+   /**
+    * @cond HIDDEN_SYMBOLS
+    */
    template <typename LABEL, typename PLUGIN, typename RETURN_TYPE>
    class CEntityOperationInstanceHolder {
    public:
@@ -300,8 +303,12 @@ namespace argos {
    private:
       std::vector<CEntityOperation<LABEL, PLUGIN, RETURN_TYPE>*> m_vecOperationInstances;
    };
+   /**
+    * @endcond
+    */
 
    /**
+    * @cond HIDDEN_SYMBOLS
     * Function that returns a reference to the static operation instance holder
     */
    template <typename LABEL, typename PLUGIN, typename RETURN_VALUE>
@@ -309,6 +316,9 @@ namespace argos {
       static CEntityOperationInstanceHolder<LABEL, PLUGIN, RETURN_VALUE> cHolder;
       return cHolder;
    }
+   /**
+    * @endcond
+    */
 
    /**
     * Calls the operation corresponding to the given context and operand
