@@ -2,12 +2,12 @@ ARGoS README
 =============
 :Author: Carlo Pinciroli
 :Email:  ilpincy@gmail.com
-:Date:   February 13th, 2013
+:Date:   March 10th, 2013
 
 What is ARGoS?
 ---------------
 
-ARGoS is a physics-based simulator to designed to simulate large-scale robot
+ARGoS is a physics-based simulator designed to simulate large-scale robot
 swarms. Benchmark results show that ARGoS can perform physics-accurate
 simulation involving thousands of robots in a fraction of real time.
 ARGoS' main features are:
