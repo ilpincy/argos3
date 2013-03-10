@@ -39,6 +39,35 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   static QString SCRIPT_TEMPLATE =
+      "-- Put your global variables here\n\n\n\n"
+      "--[[ This function is executed every time you press the 'execute'\n"
+      "     button ]]\n"
+      "function init()\n"
+      "   -- put your code here\n"
+      "end\n\n\n\n"
+      "--[[ This function is executed at each time step\n"
+      "     It must contain the logic of your controller ]]\n"
+      "function step()\n"
+      "   -- put your code here\n"
+      "end\n\n\n\n"
+      "--[[ This function is executed every time you press the 'reset'\n"
+      "     button in the GUI. It is supposed to restore the state\n"
+      "     of the controller to whatever it was right after init() was\n"
+      "     called. The state of sensors and actuators is reset\n"
+      "     automatically by ARGoS. ]]\n"
+      "function reset()\n"
+      "   -- put your code here\n"
+      "end\n\n\n\n"
+      "--[[ This function is executed only once, when the robot is removed\n"
+      "     from the simulation ]]\n"
+      "function destroy()\n"
+      "   -- put your code here\n"
+      "end\n";
+
+   /****************************************/
+   /****************************************/
+
    CQTOpenGLLuaMainWindow::CQTOpenGLLuaMainWindow(CQTOpenGLMainWindow* pc_parent) :
       QMainWindow(pc_parent),
       m_pcMainWindow(pc_parent),
@@ -79,7 +108,7 @@ namespace argos {
 
    void CQTOpenGLLuaMainWindow::New() {
       if(MaybeSave()) {
-         m_pcCodeEditor->clear();
+         m_pcCodeEditor->setPlainText(SCRIPT_TEMPLATE);
          SetCurrentFile("");
       }
    }
@@ -289,6 +318,7 @@ namespace argos {
       m_pcCodeEditor->setFont(cFont);
       new CQTOpenGLLuaSyntaxHighlighter(m_pcCodeEditor->document());
       setCentralWidget(m_pcCodeEditor);
+      m_pcCodeEditor->setPlainText(SCRIPT_TEMPLATE);
       /* Connect stuff */
       connect(m_pcCodeEditor->document(), SIGNAL(contentsChanged()),
               this, SLOT(CodeModified()));
