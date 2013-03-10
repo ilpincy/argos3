@@ -48,15 +48,15 @@ namespace argos {
       /* Get a reference to the gripper data */
       SDynamics2DEngineGripperData& sGripperData = *reinterpret_cast<SDynamics2DEngineGripperData*>(ptGripperShape->data);
       /* The gripper is locked or unlocked? */
-      if(sGripperData.GripperEntity.IsUnlocked()) {
-         /* The gripper is locked. If it was gripping an object,
+      if(!sGripperData.GripperEntity.IsLocked()) {
+         /* The gripper is unlocked. If it was gripping an object,
           * release it. Then, process the collision normally */
       	 if(sGripperData.GripperEntity.IsGripping()) {
             sGripperData.ClearConstraints();
       	 }
       }
       else if(! sGripperData.GripperEntity.IsGripping()) {
-         /* The gripper is unlocked and free, create the joints */
+         /* The gripper is locked and free, create the joints */
          /* Create a constraint */
          sGripperData.GripConstraint = cpSpaceAddConstraint(pt_space,
                                                             cpPivotJointNew(
@@ -77,7 +77,7 @@ namespace argos {
       /* Get a reference to the gripped entity */
       CEmbodiedEntity& cGrippedEntity = *reinterpret_cast<CEmbodiedEntity*>(ptGrippableShape->data);
       /* If the entities match, ignore the collision forever */
-      return (sGripperData.GripperEntity.GetId() != cGrippedEntity.GetId());
+      return (&(sGripperData.GripperEntity.GetParent()) != &(cGrippedEntity.GetParent()));
    }
 
    int MagneticGripperGrippableCollisionPreSolve(cpArbiter* pt_arb, cpSpace* pt_space, void* p_data) {
@@ -92,7 +92,7 @@ namespace argos {
        *    in this case, also precalculate the anchor point
        * Otherwise ignore it
        */
-      bool bGrippingJustUnlocked = (sGripperData.GripperEntity.IsGripping() && sGripperData.GripperEntity.IsUnlocked());
+      bool bGrippingJustUnlocked = (sGripperData.GripperEntity.IsGripping() && !sGripperData.GripperEntity.IsLocked());
       bool bNotGrippingJustLocked = (!sGripperData.GripperEntity.IsGripping() && sGripperData.GripperEntity.IsLocked());
       if(bNotGrippingJustLocked) {
          /* Calculate the anchor point on the grippable body

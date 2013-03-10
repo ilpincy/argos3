@@ -4,6 +4,7 @@
 # argos3/plugins/robots/generic/control_interface
 set(ARGOS3_HEADERS_PLUGINS_ROBOTS_GENERIC_CONTROLINTERFACE
   control_interface/ci_differential_steering_actuator.h
+  control_interface/ci_gripper_actuator.h
   control_interface/ci_ground_sensor.h
   control_interface/ci_leds_actuator.h
   control_interface/ci_light_sensor.h
@@ -15,6 +16,7 @@ set(ARGOS3_HEADERS_PLUGINS_ROBOTS_GENERIC_CONTROLINTERFACE
 set(ARGOS3_SOURCES_PLUGINS_ROBOTS_GENERIC
   ${ARGOS3_HEADERS_PLUGINS_ROBOTS_GENERIC_CONTROLINTERFACE}
   control_interface/ci_differential_steering_actuator.cpp
+  control_interface/ci_gripper_actuator.cpp
   control_interface/ci_ground_sensor.cpp
   control_interface/ci_leds_actuator.cpp
   control_interface/ci_light_sensor.cpp

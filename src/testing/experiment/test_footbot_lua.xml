@@ -5,7 +5,7 @@
   <!-- * General configuration * -->
   <!-- ************************* -->
   <framework>
-    <experiment length="0" ticks_per_second="10" />
+    <experiment length="11" ticks_per_second="10" />
   </framework>
 
   <!-- *************** -->
@@ -20,7 +20,8 @@
       <!-- Normal actuator/sensor configuration follows -->
       <actuators>
         <differential_steering implementation="default" />
-        <!-- leds implementation="default" / -->
+        <leds implementation="default" />
+        <footbot_gripper implementation="default" />
       </actuators>
       <sensors>
         <footbot_proximity implementation="default" show_rays="true" />
@@ -28,8 +29,8 @@
       </sensors>
       <!-- No required configuration -->
       <params />
-      <!-- Optionally, you can pass a script as a controller parameter:
-           <params script="../../src/testing/experiment/test_script.lua" /> -->
+      <!-- Optionally, you can pass a script as a controller parameter: -->
+      <!-- params script="../../src/testing/experiment/test_gripper.lua" / -->
     </lua_controller>
 
   </controllers>
@@ -43,32 +44,35 @@
     <box id="be" position="0,-1,0" orientation="0,0,0" size="2, 0.1, 0.2" movable="false" />
     <box id="bw" position="0,1,0"  orientation="0,0,0" size="2, 0.1, 0.2" movable="false" />
 
-    <light id="l0"
-           position="1,1,1"
-           orientation="0,0,0"
-           color="yellow"
-           intensity="1" />
+    <!-- <light id="l0" -->
+    <!--        position="1,1,1" -->
+    <!--        orientation="0,0,0" -->
+    <!--        color="yellow" -->
+    <!--        intensity="1" /> -->
 
-    <distribute>
-      <position method="uniform" min="-1,-1,0" max="1,1,0" />
-      <orientation method="gaussian" mean="0,0,0" std_dev="360,0,0" />
-      <entity quantity="10" max_trials="100">
-        <foot-bot id="fb"
-                  controller="lua" />
-      </entity>
-    </distribute>
+    <!-- <distribute> -->
+    <!--   <position method="uniform" min="-1,-1,0" max="1,1,0" /> -->
+    <!--   <orientation method="gaussian" mean="0,0,0" std_dev="360,0,0" /> -->
+    <!--   <entity quantity="10" max_trials="100"> -->
+    <!--     <foot-bot id="fb" -->
+    <!--               controller="lua" /> -->
+    <!--   </entity> -->
+    <!-- </distribute> -->
 
-    <distribute>
-      <position method="uniform" min="-1,-1,0" max="1,1,0" />
-      <orientation method="gaussian" mean="0,0,0" std_dev="360,0,0" />
-      <entity quantity="10" max_trials="100">
-        <cylinder id="cyl"
-                  radius="0.05"
-                  height="0.1"
-                  movable="true"
-                  mass="0.1" />
-      </entity>
-    </distribute>
+    <!-- <distribute> -->
+    <!--   <position method="uniform" min="-1,-1,0" max="1,1,0" /> -->
+    <!--   <orientation method="gaussian" mean="0,0,0" std_dev="360,0,0" /> -->
+    <!--   <entity quantity="10" max_trials="100"> -->
+    <!--     <cylinder id="cyl" -->
+    <!--               radius="0.05" -->
+    <!--               height="0.1" -->
+    <!--               movable="true" -->
+    <!--               mass="0.1" /> -->
+    <!--   </entity> -->
+    <!-- </distribute> -->
+
+    <foot-bot id="fb0" position="0,0,0" orientation="90,0,0" controller="lua" />
+    <cylinder id="cyl0" position="0,0.2,0" orientation="0,0,0" radius="0.05" height="0.1" movable="true" mass="0.1" />
 
   </arena>
 
@@ -87,12 +91,12 @@
     <!-- ************************************************************************ -->
     <!-- * To activate the Lua editor, just use the 'lua_editor' flag attribute * -->
     <!-- ************************************************************************ -->
-    <qt-opengl lua_editor="true">
+    <!-- qt-opengl lua_editor="true">
       <camera>
         <placement idx="0" position="-2,0,2" look_at="0,0,0" lens_focal_length="20" />
         <placement idx="1" position="0.884183,0.359128,0.490269" look_at="0.924486,-0.486744,-0.0415919" lens_focal_length="20" />
       </camera>
-    </qt-opengl>
+    </qt-opengl -->
 
   </visualization>
 

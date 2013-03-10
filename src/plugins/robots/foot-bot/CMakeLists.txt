@@ -28,6 +28,7 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
     simulator/distance_scanner_equipped_entity.h
     simulator/dynamics2d_footbot_entity.h
     simulator/footbot_entity.h
+    simulator/footbot_gripper_default_actuator.h
     simulator/footbot_light_rotzonly_sensor.h
     simulator/footbot_proximity_default_sensor.h)
 endif(ARGOS_BUILD_FOR_SIMULATOR)
@@ -53,6 +54,7 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
     simulator/distance_scanner_equipped_entity.cpp
     simulator/dynamics2d_footbot_entity.cpp
     simulator/footbot_entity.cpp
+    simulator/footbot_gripper_default_actuator.cpp
     simulator/footbot_light_rotzonly_sensor.cpp
     simulator/footbot_proximity_default_sensor.cpp)
   # Compile the graphical visualization only if the necessary libraries have been found

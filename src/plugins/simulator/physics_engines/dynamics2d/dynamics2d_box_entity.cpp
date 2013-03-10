@@ -55,7 +55,7 @@ namespace argos {
                                            cpvzero));
          /* This object is grippable */
          m_ptShape->collision_type = CDynamics2DEngine::SHAPE_GRIPPABLE;
-         m_ptShape->data = reinterpret_cast<void*>(&c_entity);
+         m_ptShape->data = reinterpret_cast<void*>(&GetEmbodiedEntity());
          /* No elasticity */
          m_ptShape->e = 0.0;
          /* Lots contact friction to help pushing */
@@ -201,6 +201,8 @@ namespace argos {
          else {
             /* Update the active space hash if the movement is actual */
             cpSpaceReindexShape(m_cDyn2DEngine.GetPhysicsSpace(), m_ptShape);
+            /* Update bounding box */
+            CalculateBoundingBox();
          }
       }
       else {

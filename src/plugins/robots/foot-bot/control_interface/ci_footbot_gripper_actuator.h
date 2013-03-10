@@ -37,57 +37,72 @@ namespace argos {
    public:
 
       /**
-       * @brief Constructor.
+       * Class constructor.
        */
-      CCI_FootBotGripperActuator() {}
+      CCI_FootBotGripperActuator();
 
       /**
-       * @brief Destructor.
+       * Class destructor.
        */
       virtual ~CCI_FootBotGripperActuator() {}
 
       /**
-       * @brief Sets gripper aperture in radians.
-       *
-       * @param c_aperture desired aperture.
+       * Sets the gripper aperture.
+       * @param c_aperture The desired aperture.
        */
-      virtual void SetAperture(const CRadians& c_aperture) = 0;
-
+      void SetAperture(const CRadians& c_aperture);
 
       /**
-       *
-       * @brief Disables the ASEBA routine that checks for a gripped object each time the gripper is opened
-       *
-       */
-      virtual void DisableCheckForObjectGrippedRoutine() = 0;
-
-      /**
-       *
-       * @brief Enables the ASEBA routine that checks for a gripped object each time the gripper is opened
-       *
+       * Enables the ASEBA routine that checks for a gripped object each time the gripper is opened
        */
       virtual void EnableCheckForObjectGrippedRoutine() = 0;
 
       /**
-       * @brief Sets gripper aperture to lock, positive direction.
+       * Disables the ASEBA routine that checks for a gripped object each time the gripper is opened
+       */
+      virtual void DisableCheckForObjectGrippedRoutine() = 0;
+
+      /**
+       * Sets gripper aperture to lock, positive direction.
        */
       inline void LockPositive() {
          SetAperture(LOCKED_POSITIVE);
       }
 
       /**
-       * @brief Sets gripper aperture to lock, negative direction.
+       * Sets gripper aperture to lock, negative direction.
        */
       inline void LockNegative() {
          SetAperture(LOCKED_NEGATIVE);
       }
 
       /**
-       * @brief Unlock gripper: objects are released.
+       * Unlock gripper: objects are released.
        */
       inline void Unlock() {
          SetAperture(UNLOCKED);
       }
+
+#ifdef ARGOS_WITH_LUA
+      /**
+       * Creates the Lua variables for this actuator.
+       * The variables must be added to the <tt>robot</tt> table, as a nested table.
+       * @param pt_lua_state The current Lua state.
+       * @see LuaVariablesToSettings()
+       */
+      virtual void CreateLuaVariables(lua_State* pt_lua_state);
+
+      /**
+       * Reads the value of the Lua variables and sets the actuator values accordingly.
+       * @param pt_lua_state The current Lua state.
+       * @see CreateLuaVariables()
+       */
+      virtual void LuaVariablesToSettings(lua_State* pt_lua_state);
+#endif
+
+   protected:
+
+      CRadians m_cAperture;
 
    };
 

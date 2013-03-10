@@ -99,7 +99,7 @@ namespace argos {
       m_ptGripperShape = 
          cpSpaceAddShape(m_cDyn2DEngine.GetPhysicsSpace(),
                          cpCircleShapeNew(m_ptActualGripperBody,
-                                          0.02f,
+                                          0.01f,
                                           cpv(FOOTBOT_RADIUS, 0.0f)));
       m_ptGripperShape->sensor = 1;
       /* This object is a gripper */
@@ -239,6 +239,8 @@ namespace argos {
                         cZAngle.GetValue() + m_cFootBotEntity.GetTurretRotation().GetValue());
          /* Update the active space hash */
          cpSpaceReindexShape(m_cDyn2DEngine.GetPhysicsSpace(), m_ptBaseShape);
+         /* Update bounding box */
+         CalculateBoundingBox();
       }
       /* The movement is allowed if there is no collision */
       return !nCollision;
@@ -331,7 +333,7 @@ namespace argos {
          m_cDiffSteering.Reset();
       }
       /* Is the gripper unlocked? */
-      if(m_psGripperData->GripperEntity.IsUnlocked()) {
+      if(!m_psGripperData->GripperEntity.IsLocked()) {
          /* The gripper is locked. If it was gripping an object,
           * release it. Then, process the collision normally */
       	 if(m_psGripperData->GripperEntity.IsGripping()) {
@@ -454,4 +456,3 @@ namespace argos {
    /****************************************/
 
 }
-

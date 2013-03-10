@@ -116,10 +116,12 @@ namespace argos {
             PROXIMITY_SENSOR_RING_RANGE,
             24);
          /* Gripper equipped entity */
-         m_pcGripperEquippedEntity = new CGripperEquippedEntity(this);
+         m_pcGripperEquippedEntity =
+            new CGripperEquippedEntity(this,
+                                       GetId() + ".gripper",
+                                       CVector3(BODY_RADIUS, 0.0f, GRIPPER_ELEVATION),
+                                       CVector3::X);
          AddComponent(*m_pcGripperEquippedEntity);
-         m_pcGripperEquippedEntity->SetPosition(CVector3(BODY_RADIUS, 0.0f, GRIPPER_ELEVATION));
-         m_pcGripperEquippedEntity->Init(t_tree);
          /* Distance scanner */
          m_pcDistanceScannerEquippedEntity = new CDistanceScannerEquippedEntity(this);
          AddComponent(*m_pcDistanceScannerEquippedEntity);
