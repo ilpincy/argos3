@@ -40,6 +40,7 @@ namespace argos {
       m_vecHighlightingRules.append(sRule);
 
       m_cMultiLineCommentFormat.setForeground(Qt::darkGray);
+      m_cMultiLineCommentFormat.setFontItalic(true);
       m_cCommentStartExpression = QRegExp("--\\[\\[");
       m_cCommentEndExpression = QRegExp("\\]\\]");
       
