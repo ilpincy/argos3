@@ -46,6 +46,10 @@ namespace argos {
       m_cFootBotEntity(c_entity),
       m_cWheeledEntity(m_cFootBotEntity.GetWheeledEntity()),
       m_cGripperEntity(c_entity.GetGripperEquippedEntity()),
+      m_cDiffSteering(c_engine,
+                      FOOTBOT_MAX_FORCE,
+                      FOOTBOT_MAX_TORQUE,
+                      FOOTBOT_INTERWHEEL_DISTANCE),
       m_fMass(1.6f),
       m_unLastTurretMode(m_cFootBotEntity.GetTurretMode()) {
       /* Create the actual body with initial position and orientation */
@@ -61,8 +65,6 @@ namespace argos {
       CRadians cXAngle, cYAngle, cZAngle;
       GetEmbodiedEntity().GetOrientation().ToEulerAngles(cZAngle, cYAngle, cXAngle);
       cpBodySetAngle(m_ptActualBaseBody, cZAngle.GetValue());
-      /* Create the control body with initial position and orientation */
-      m_ptControlBaseBody = cpBodyNew(INFINITY, INFINITY);
       /* Create the actual body geometry */
       m_ptBaseShape =
          cpSpaceAddShape(m_cDyn2DEngine.GetPhysicsSpace(),
@@ -76,25 +78,11 @@ namespace argos {
       m_ptBaseShape->e = 0.0;
       /* Lots of friction */
       m_ptBaseShape->u = 0.7;
-      /* Constrain the actual base body to follow the control base body */
-      m_ptBaseControlLinearMotion =
-         cpSpaceAddConstraint(m_cDyn2DEngine.GetPhysicsSpace(),
-                              cpPivotJointNew2(m_ptActualBaseBody,
-                                               m_ptControlBaseBody,
-                                               cpvzero,
-                                               cpvzero));
-      m_ptBaseControlLinearMotion->maxBias = 0.0f; /* disable joint correction */
-      m_ptBaseControlLinearMotion->maxForce = FOOTBOT_MAX_FORCE; /* limit the dragging force */
-      m_ptBaseControlAngularMotion = cpSpaceAddConstraint(m_cDyn2DEngine.GetPhysicsSpace(),
-                                               cpGearJointNew(m_ptActualBaseBody,
-                                                              m_ptControlBaseBody,
-                                                              0.0f,
-                                                              1.0f));
-      m_ptBaseControlAngularMotion->maxBias = 0.0f; /* disable joint correction */
-      m_ptBaseControlAngularMotion->maxForce = FOOTBOT_MAX_TORQUE; /* limit the dragging torque */
+      /* Constrain the actual base body to follow the diff steering control */
+      m_cDiffSteering.AttachTo(m_ptActualBaseBody);
       /* Zero the wheel velocity */
-      m_fCurrentWheelVelocityFromSensor[FOOTBOT_LEFT_WHEEL] = 0.0f;
-      m_fCurrentWheelVelocityFromSensor[FOOTBOT_RIGHT_WHEEL] = 0.0f;
+      m_fCurrentWheelVelocity[FOOTBOT_LEFT_WHEEL] = 0.0f;
+      m_fCurrentWheelVelocity[FOOTBOT_RIGHT_WHEEL] = 0.0f;
       /* Create the gripper body */      
       m_ptActualGripperBody =
          cpSpaceAddBody(m_cDyn2DEngine.GetPhysicsSpace(),
@@ -177,15 +165,11 @@ namespace argos {
             cpBodyFree(m_ptControlGripperBody);
             break;
       }
-      cpSpaceRemoveConstraint(m_cDyn2DEngine.GetPhysicsSpace(), m_ptBaseControlLinearMotion);
-      cpSpaceRemoveConstraint(m_cDyn2DEngine.GetPhysicsSpace(), m_ptBaseControlAngularMotion);
+      m_cDiffSteering.Detach();
       cpSpaceRemoveBody(m_cDyn2DEngine.GetPhysicsSpace(), m_ptActualBaseBody);
       cpSpaceRemoveShape(m_cDyn2DEngine.GetPhysicsSpace(), m_ptBaseShape);
-      cpConstraintFree(m_ptBaseControlLinearMotion);
-      cpConstraintFree(m_ptBaseControlAngularMotion);
       cpShapeFree(m_ptBaseShape);
       cpBodyFree(m_ptActualBaseBody);
-      cpBodyFree(m_ptControlBaseBody);
    }
 
    /****************************************/
@@ -278,9 +262,7 @@ namespace argos {
       m_ptActualBaseBody->w = 0.0f;
       cpBodyResetForces(m_ptActualBaseBody);
       /* Zero speed and applied forces of base control body */
-      m_ptControlBaseBody->v = cpvzero;
-      m_ptControlBaseBody->w = 0.0f;
-      cpBodyResetForces(m_ptControlBaseBody);
+      m_cDiffSteering.Reset();
       /* Release gripped objects */
       m_psGripperData->ClearConstraints();
       /* Zero speed and applied forces of actual gripper body */
@@ -337,46 +319,16 @@ namespace argos {
 
    void CDynamics2DFootBotEntity::UpdateFromEntityStatus() {
       /* Get wheel speeds from entity */
-      m_cWheeledEntity.GetSpeed(m_fCurrentWheelVelocityFromSensor);
+      m_cWheeledEntity.GetSpeed(m_fCurrentWheelVelocity);
       /* Do we want to move? */
-      if((m_fCurrentWheelVelocityFromSensor[FOOTBOT_LEFT_WHEEL] != 0.0f) ||
-         (m_fCurrentWheelVelocityFromSensor[FOOTBOT_RIGHT_WHEEL] != 0.0f)) {
-         /* Yeah, we do */
-         /*
-          * THE DIFFERENTIAL STEERING SYSTEM
-          *
-          * check http://rossum.sourceforge.net/papers/DiffSteer/
-          * for details
-          *
-          * Equations:
-          *
-          * w = (Vr - Vl) / b
-          * v = [ ((Vr + Vl) / 2) cos(a),
-          *       ((Vr + Vl) / 2) sin(a) ]
-          *
-          * where:
-          *        a  = body orientation
-          *        w  = body angular velocity
-          *        v  = body center linear velocity
-          *        Vr = right wheel velocity
-          *        Vl = left wheel velocity
-          *        b  = length of wheel axis
-          */
-         m_ptControlBaseBody->w =
-            (m_fCurrentWheelVelocityFromSensor[FOOTBOT_RIGHT_WHEEL] -
-             m_fCurrentWheelVelocityFromSensor[FOOTBOT_LEFT_WHEEL]) / 
-            FOOTBOT_INTERWHEEL_DISTANCE;
-         m_ptControlBaseBody->v =
-            cpvrotate(m_ptActualBaseBody->rot,
-                      cpv((m_fCurrentWheelVelocityFromSensor[FOOTBOT_LEFT_WHEEL] +
-                           m_fCurrentWheelVelocityFromSensor[FOOTBOT_RIGHT_WHEEL]) *
-                          0.5f,
-                          0.0f));
+      if((m_fCurrentWheelVelocity[FOOTBOT_LEFT_WHEEL] != 0.0f) ||
+         (m_fCurrentWheelVelocity[FOOTBOT_RIGHT_WHEEL] != 0.0f)) {
+         m_cDiffSteering.SetWheelVelocity(m_fCurrentWheelVelocity[FOOTBOT_LEFT_WHEEL],
+                                          m_fCurrentWheelVelocity[FOOTBOT_RIGHT_WHEEL]);
       }
       else {
          /* No, we don't want to move - zero all speeds */
-         m_ptControlBaseBody->w = 0.0f;
-         m_ptControlBaseBody->v = cpvzero;
+         m_cDiffSteering.Reset();
       }
       /* Is the gripper unlocked? */
       if(m_psGripperData->GripperEntity.IsUnlocked()) {
@@ -424,7 +376,7 @@ namespace argos {
          /* Position control mode is implemented using a PD controller */
          case MODE_POSITION_CONTROL:
             m_ptControlGripperBody->w =
-               m_ptControlBaseBody->w +
+               m_cDiffSteering.GetAngularVelocity() +
                (PD_P_CONSTANT * (m_cFootBotEntity.GetTurretRotation().GetValue() - (m_ptActualGripperBody->a - m_ptActualBaseBody->a))
                 + PD_D_CONSTANT * (m_cFootBotEntity.GetTurretRotation().GetValue() - (m_ptActualGripperBody->a - m_ptActualBaseBody->a) - m_fPreviousTurretAngleError) )*
                m_cDyn2DEngine.GetInverseSimulationClockTick();
@@ -432,7 +384,7 @@ namespace argos {
             break;
          case MODE_SPEED_CONTROL:
             m_ptControlGripperBody->w =
-               m_ptControlBaseBody->w +
+               m_cDiffSteering.GetAngularVelocity() +
                m_cFootBotEntity.GetTurretRotationSpeed();
             break;
          case MODE_OFF:

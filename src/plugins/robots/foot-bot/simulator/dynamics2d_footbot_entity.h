@@ -9,9 +9,11 @@
 
 namespace argos {
    class SDynamics2DEngineGripperData;
+   class CDynamics2DDifferentialSteeringControl;
 }
 
 #include <argos3/plugins/simulator/physics_engines/dynamics2d/dynamics2d_entity.h>
+#include <argos3/plugins/simulator/physics_engines/dynamics2d/dynamics2d_differentialsteering_control.h>
 #include <argos3/plugins/robots/foot-bot/simulator/footbot_entity.h>
 
 namespace argos {
@@ -51,15 +53,14 @@ namespace argos {
       CWheeledEntity& m_cWheeledEntity;
       CGripperEquippedEntity& m_cGripperEntity;
 
+      CDynamics2DDifferentialSteeringControl m_cDiffSteering;
+
       cpFloat  m_fMass;
       cpShape* m_ptBaseShape;
       cpShape* m_ptGripperShape;
       cpBody*  m_ptActualBaseBody;
-      cpBody*  m_ptControlBaseBody;
       cpBody*  m_ptActualGripperBody;
       cpBody*  m_ptControlGripperBody;
-      cpConstraint* m_ptBaseControlLinearMotion;
-      cpConstraint* m_ptBaseControlAngularMotion;
       cpConstraint* m_ptGripperControlLinearMotion;
       cpConstraint* m_ptGripperControlAngularMotion;
       cpConstraint* m_ptBaseGripperLinearMotion;
@@ -67,7 +68,7 @@ namespace argos {
 
       SDynamics2DEngineGripperData* m_psGripperData;
 
-      Real m_fCurrentWheelVelocityFromSensor[2];
+      Real m_fCurrentWheelVelocity[2];
       UInt8 m_unLastTurretMode;
 
       Real m_fPreviousTurretAngleError;
