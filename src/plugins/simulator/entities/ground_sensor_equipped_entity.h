@@ -29,11 +29,11 @@ namespace argos {
       };
 
       struct SSensor {
-         CVector2 Position;
+         CVector2 Offset;
          ESensorType Type;
          SSensor(const CVector2& c_position,
                  ESensorType e_type) :
-            Position(c_position),
+            Offset(c_position),
             Type(e_type) {}
       };
 
@@ -66,7 +66,7 @@ namespace argos {
          return m_tSensors;
       }
 
-      void AddSensor(const CVector2& c_position,
+      void AddSensor(const CVector2& c_offset,
                      ESensorType e_type);
 
       void AddSensorRing(const CVector2& c_center,

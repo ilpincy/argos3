@@ -84,27 +84,27 @@ namespace argos {
       /* Go through the sensors */
       for(UInt32 i = 0; i < m_tReadings.size(); ++i) {
          /* Calculate sensor position on the ground */
-         cSensorPos = m_pcGroundSensorEntity->GetSensor(i).Position;
+         cSensorPos = m_pcGroundSensorEntity->GetSensor(i).Offset;
          cSensorPos.Rotate(cRotZ);
          cSensorPos += cCenterPos;
          /* Get the color */
          const CColor& cColor = m_pcFloorEntity->GetColorAtPoint(cSensorPos.GetX(),
                                                                  cSensorPos.GetY());
          /* Set the reading */
-         switch(m_pcGroundSensorEntity->GetSensor(i).Type) {
-            case CGroundSensorEquippedEntity::TYPE_BLACK_WHITE:
-               m_tReadings[i] = cColor.ToGrayScale() / 255.0f;
-               break;
-            case CGroundSensorEquippedEntity::TYPE_GRAYSCALE:
-               m_tReadings[i] = cColor.ToGrayScale() / 255.0f;
-               break;
-         }
+         m_tReadings[i] = cColor.ToGrayScale() / 255.0f;
          /* Apply noise to the sensor */
          if(m_bAddNoise) {
             m_tReadings[i] += m_pcRNG->Uniform(m_cNoiseRange);
          }
-         /* Trunc the reading between 0 and 1 */
-         UNIT.TruncValue(m_tReadings[i]);
+         /* Is it a BW sensor? */
+         if(m_pcGroundSensorEntity->GetSensor(i).Type == CGroundSensorEquippedEntity::TYPE_BLACK_WHITE) {
+            /* Yes, set 0 or 1 */
+            m_tReadings[i] = m_tReadings[i] < 0.5f ? 0.0f : 1.0f;
+         }
+         else {
+            /* No, clamp the reading between 0 and 1 */
+            UNIT.TruncValue(m_tReadings[i]);
+         }
       }
    }
 

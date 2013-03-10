@@ -50,11 +50,11 @@ namespace argos {
          TConfigurationNodeIterator it;
          for(it = it.begin(&t_tree); it != it.end(); ++it) {
             if(it->Value() == "sensor") {
-               CVector2 cPos;
-               GetNodeAttribute(*it, "position", cPos);
+               CVector2 cOffset;
+               GetNodeAttribute(*it, "offset", cOffset);
                std::string strType;
                GetNodeAttribute(*it, "type", strType);
-               AddSensor(cPos, ParseType(strType));
+               AddSensor(cOffset, ParseType(strType));
             }
             else if(it->Value() == "ring") {
                CVector2 cRingCenter;
@@ -88,9 +88,9 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CGroundSensorEquippedEntity::AddSensor(const CVector2& c_position,
+   void CGroundSensorEquippedEntity::AddSensor(const CVector2& c_offset,
                                                ESensorType e_type) {
-      m_tSensors.push_back(new SSensor(c_position, e_type));
+      m_tSensors.push_back(new SSensor(c_offset, e_type));
    }
 
    /****************************************/
@@ -103,14 +103,14 @@ namespace argos {
                                                       UInt32 un_num_sensors) {
       CRadians cSensorSpacing = CRadians::TWO_PI / un_num_sensors;
       CRadians cAngle;
-      CVector2 cPos;
+      CVector2 cOffset;
       for(UInt32 i = 0; i < un_num_sensors; ++i) {
          cAngle = c_start_angle + i * cSensorSpacing;
          cAngle.SignedNormalize();
-         cPos.Set(f_radius, 0.0f);
-         cPos.Rotate(cAngle);
-         cPos += c_center;
-         AddSensor(cPos, e_type);
+         cOffset.Set(f_radius, 0.0f);
+         cOffset.Rotate(cAngle);
+         cOffset += c_center;
+         AddSensor(cOffset, e_type);
       }
    }
 
