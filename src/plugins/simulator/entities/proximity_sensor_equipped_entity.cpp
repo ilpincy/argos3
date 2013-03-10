@@ -50,12 +50,12 @@ namespace argos {
          TConfigurationNodeIterator it;
          for(it = it.begin(&t_tree); it != it.end(); ++it) {
             if(it->Value() == "sensor") {
-               CVector3 cPos, cDir;
+               CVector3 cOff, cDir;
                Real fRange;
-               GetNodeAttribute(*it, "position", cPos);
+               GetNodeAttribute(*it, "offset", cOff);
                GetNodeAttribute(*it, "direction", cDir);
                GetNodeAttribute(*it, "range", fRange);
-               AddSensor(cPos, cDir, fRange);
+               AddSensor(cOff, cDir, fRange);
             }
             else if(it->Value() == "ring") {
                CVector3 cRingCenter;
@@ -88,10 +88,10 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CProximitySensorEquippedEntity::AddSensor(const CVector3& c_position,
+   void CProximitySensorEquippedEntity::AddSensor(const CVector3& c_offset,
                                                   const CVector3& c_direction,
                                                   Real f_range) {
-      m_tSensors.push_back(new SSensor(c_position, c_direction, f_range));
+      m_tSensors.push_back(new SSensor(c_offset, c_direction, f_range));
    }
 
    /****************************************/
@@ -104,16 +104,16 @@ namespace argos {
                                                       UInt32 un_num_sensors) {
       CRadians cSensorSpacing = CRadians::TWO_PI / un_num_sensors;
       CRadians cAngle;
-      CVector3 cPos, cDir;
+      CVector3 cOff, cDir;
       for(UInt32 i = 0; i < un_num_sensors; ++i) {
          cAngle = c_start_angle + i * cSensorSpacing;
          cAngle.SignedNormalize();
-         cPos.Set(f_radius, 0.0f, 0.0f);
-         cPos.RotateZ(cAngle);
-         cPos += c_center;
+         cOff.Set(f_radius, 0.0f, 0.0f);
+         cOff.RotateZ(cAngle);
+         cOff += c_center;
          cDir.Set(f_range, 0.0f, 0.0f);
          cDir.RotateZ(cAngle);
-         AddSensor(cPos, cDir, f_range);
+         AddSensor(cOff, cDir, f_range);
       }
    }
 

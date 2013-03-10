@@ -24,12 +24,12 @@ namespace argos {
       ENABLE_VTABLE();
 
       struct SSensor {
-         CVector3 Position;
+         CVector3 Offset;
          CVector3 Direction;
-         SSensor(const CVector3& c_position,
+         SSensor(const CVector3& c_offset,
                  const CVector3& c_direction,
                  Real f_range) :
-            Position(c_position),
+            Offset(c_offset),
             Direction(c_direction) {
             Direction.Normalize();
             Direction *= f_range;
@@ -65,7 +65,7 @@ namespace argos {
          return m_tSensors;
       }
 
-      void AddSensor(const CVector3& c_position,
+      void AddSensor(const CVector3& c_offset,
                      const CVector3& c_direction,
                      Real f_range);
 
