@@ -1,8 +1,6 @@
 /**
  * @file <argos3/plugins/simulator/actuators/leds_default_actuator.h>
  *
- * @brief This file provides the definition of
- *
  * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */
 
