@@ -229,6 +229,9 @@ namespace argos {
          m_ptBody->v = cpvzero;
          m_ptBody->w = 0.0f;
          cpBodyResetForces(m_ptBody);
+         /* Update bounding box */
+         cpShapeCacheBB(m_ptShape);
+         CalculateBoundingBox();
       }
    }
 

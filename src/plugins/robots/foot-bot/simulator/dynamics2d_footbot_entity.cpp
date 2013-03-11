@@ -277,6 +277,9 @@ namespace argos {
          TurretActiveToPassive();
          m_unLastTurretMode = MODE_OFF;
       }
+      /* Update bounding box */
+      cpShapeCacheBB(m_ptBaseShape);
+      CalculateBoundingBox();
    }
 
    /****************************************/
