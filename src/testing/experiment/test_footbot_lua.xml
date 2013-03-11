@@ -25,6 +25,7 @@
       </actuators>
       <sensors>
         <footbot_proximity implementation="default" show_rays="true" />
+        <positioning implementation="default" />
         <!-- light implementation="default" show_rays="false" / -->
       </sensors>
       <!-- No required configuration -->
@@ -91,12 +92,12 @@
     <!-- ************************************************************************ -->
     <!-- * To activate the Lua editor, just use the 'lua_editor' flag attribute * -->
     <!-- ************************************************************************ -->
-    <!-- qt-opengl lua_editor="true">
+    <qt-opengl lua_editor="true">
       <camera>
         <placement idx="0" position="-2,0,2" look_at="0,0,0" lens_focal_length="20" />
         <placement idx="1" position="0.884183,0.359128,0.490269" look_at="0.924486,-0.486744,-0.0415919" lens_focal_length="20" />
       </camera>
-    </qt-opengl -->
+    </qt-opengl>
 
   </visualization>
 
