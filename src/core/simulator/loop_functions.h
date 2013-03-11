@@ -25,65 +25,177 @@ namespace argos {
 
 namespace argos {
 
+   /**
+    * A set of hook functions to customize an experimental run.
+    * <p>
+    * It is very difficult to identify a set of features that can cover all
+    * the possible use cases of multi-robot systems.  Even though some
+    * features, such as robot motion, are almost always necessary, many
+    * other features depend on the type of experiment considered. For
+    * instance, the metrics against which statistics must be calculated
+    * depend on the experiment. Also, if the environment presents custom
+    * dynamics, such as objects being added or removed as a result of the
+    * actions of the robots, these mechanisms need to be implemented in the
+    * simulator. The need for specific and often divergent features renders
+    * the design of a generic simulator extremely complex. Furthermore, the
+    * approach of trying to add a myriad of features in the attempt to cover
+    * every possible use case usually renders the learning curve of a tool
+    * much steeper, hindering usability and maintainability.
+    * </p>
+    * <p>
+    * To cope with these issues, we followed the common approach of
+    * providing user-defined function hooks in strategic points of the
+    * simulation loop. In ARGoS, these hooks are called <em>loop
+    * functions</em>.  The user can customize the initialization and the end of
+    * an experiment, and add custom functionality executed before and/or
+    * after each simulation step. It is also possible to define custom end
+    * conditions for an experiment.
+    * </p>
+    * <p>
+    * Loop functions allow one to access and modify the entire
+    * simulation. In this way, the user can collect figures and statistics,
+    * and store complex data for later analysis. It is also possible to
+    * interact with the simulation by moving, adding or removing entities in
+    * the environment, or by changing their internal state.
+    * </p>
+    * <p>
+    * Finally, loop functions can be used to prototype new features before
+    * they are promoted to the core ARGoS code.
+    * </p>
+    */
    class CLoopFunctions : public CBaseConfigurableResource {
 
-   protected:
-
-      CSimulator& m_cSimulator;
-      CSpace& m_cSpace;
-
    public:
 
-      struct SAdditionalLED {
-         CVector3 Position;
-         CColor Color;
-
-         SAdditionalLED() {}
-         
-         SAdditionalLED(const CVector3& c_position,
-                        const CColor& c_color) :
-            Position(c_position),
-            Color(c_color) {}
-      };
-
-   public:
-
+      /**
+       * Class constructor.
+       */
       CLoopFunctions() :
          m_cSimulator(CSimulator::GetInstance()),
          m_cSpace(m_cSimulator.GetSpace()) {
       }
+
+      /**
+       * Class destructor.
+       */
       virtual ~CLoopFunctions() {}
 
-      inline virtual void Init(TConfigurationNode& t_tree) {}
-      inline virtual void Reset() {}
-      inline virtual void Destroy() {}
+      /**
+       * Executes user-defined initialization logic.
+       * The default implementation of this method does nothing.
+       * @param t_tree The <tt>&lt;loop_functions&gt;</tt> XML configuration tree.
+       * @see Reset()
+       * @see Destroy()
+       */
+      virtual void Init(TConfigurationNode& t_tree) {}
 
-      inline virtual void PreStep() {}
-      inline virtual void PostStep() {}
+      /**
+       * Executes user-defined reset logic.
+       * This method should restore the state of the simulation at it was right
+       * after Init() was called.
+       * The default implementation of this method does nothing.
+       * @see Init()
+       */
+      virtual void Reset() {}
 
-      inline virtual bool IsExperimentFinished() {
+      /**
+       * Executes user-defined destruction logic.
+       * This method should undo whatever is done in Init().
+       * The default implementation of this method does nothing.
+       * @see Init()
+       */
+      virtual void Destroy() {}
+
+      /**
+       * Executes user-defined logic right before a simulation step is executed.
+       * The default implementation of this method does nothing.
+       * @see PostStep()
+       */
+      virtual void PreStep() {}
+
+      /**
+       * Executes user-defined logic right after a simulation step is executed.
+       * The default implementation of this method does nothing.
+       * @see PreStep()
+       */
+      virtual void PostStep() {}
+
+      /**
+       * Returns <tt>true</tt> if the experiment is finished.
+       * This method allows the user to specify experiment-specific ending conditions.
+       * The default implementation of this method returns always <tt>false</tt>.
+       * This means that the only ending conditions for an experiment are time limit
+       * expiration or GUI shutdown.
+       * @return <tt>true</tt> if the experiment is finished.
+       * @see CSimulator::IsExperimentFinished()
+       */
+      virtual bool IsExperimentFinished() {
          return false;
       }
 
-      inline virtual CColor GetFloorColor(const CVector2& c_position_on_plane) {
+      /**
+       * Returns the color of the floor in the specified point.
+       * This function is called if the floor entity was configured to take the loop functions
+       * as source. The floor color is used by the ground sensors to calculate their readings,
+       * and by the graphical visualization to create a texture to display on the arena floor.
+       * @param c_pos_on_floor The position on the floor.
+       * @return The color of the floor in the specified point.
+       * @see CFloorEntity
+       * @see CGroundSensorEquippedEntity
+       * @see CGroundRotZOnlySensor
+       */
+      virtual CColor GetFloorColor(const CVector2& c_pos_on_floor) {
          return CColor::BLACK;
       }
 
    protected:
 
-      inline virtual bool MoveEntity(CPositionalEntity& c_entity,
-                                     const CVector3& c_position,
-                                     const CQuaternion& c_orientation,
-                                     bool b_check_only) {
-         return c_entity.MoveTo(c_position, c_orientation, b_check_only);
-      }
+      /**
+       * Moves the entity to the wanted position and orientation.
+       * If the entity is embodied, the movement is allowed only if the
+       * object does not collide with anything once in the new position.
+       * If the entity is just positional, the movement is always allowed.
+       * @oaram c_entity The positional or embodied component of the entity to move.
+       * @param c_position The wanted position.
+       * @param c_orientation The wanted orientation.
+       * @param b_check_only If <tt>false</tt>, the movement is executed; otherwise, the object is not actually moved.
+       * @return <tt>true</tt> if no collisions were detected, <tt>false</tt> otherwise.
+       */
+      bool MoveEntity(CPositionalEntity& c_entity,
+                      const CVector3& c_position,
+                      const CQuaternion& c_orientation,
+                      bool b_check_only);
 
-      inline virtual void RemoveEntity(const std::string& str_entity_id) {
-         CEntity& entity = m_cSpace.GetEntity(str_entity_id);
-         RemoveEntity(entity);
-      }
+      /**
+       * Adds the passed entity to the simulation.
+       * Important: the entity must be created with a <tt>new</tt> statement or a CFactory::New() statement.
+       * In other words, the entity must be stored in the heap.
+       * If this is not the case, memory corruption will occur.
+       * @param c_entity A reference to the entity to add.
+       * @throws CARGoSException if an error occurs.
+       */
+      void AddEntity(CEntity& c_entity);
 
-      virtual void RemoveEntity(CEntity& c_entity);
+      /**
+       * Removes an entity from the simulation.
+       * @param str_entity_id The id of the entity to remove.
+       * @throws CARGoSException If an entity with the specified id was not found.
+       */
+      void RemoveEntity(const std::string& str_entity_id);
+
+      /**
+       * Removes an entity from the simulation.
+       * @param c_entity A reference to the entity to remove.
+       */
+      void RemoveEntity(CEntity& c_entity);
+
+   protected:
+
+      /** A reference to the CSimulator instance */
+      CSimulator& m_cSimulator;
+
+      /** A reference to the CSpace instance */
+      CSpace& m_cSpace;
 
    };
 }
