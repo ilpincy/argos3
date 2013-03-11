@@ -286,4 +286,23 @@ namespace argos {
                    "Ready for use"
       );
 
+   /****************************************/
+   /****************************************/
+
+   class CSpaceOperationAddCFloorEntity : public CSpaceOperationAddEntity {
+   public:
+      void ApplyTo(CSpace& c_space, CFloorEntity& c_entity) {
+         c_space.AddEntity(c_entity);
+         c_space.SetFloorEntity(c_entity);
+      }
+   };
+
+   REGISTER_SPACE_OPERATION(CSpaceOperationAddEntity,
+                            CSpaceOperationAddCFloorEntity,
+                            CFloorEntity);
+   REGISTER_STANDARD_SPACE_OPERATION_REMOVE_ENTITY(CFloorEntity);
+
+   /****************************************/
+   /****************************************/
+
 }
