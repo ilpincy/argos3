@@ -1,16 +1,14 @@
 /**
- * @file <argos3/core/simulator/physics_engine/physics_engine_entity.h>
- *
- * @brief This file provides the definition of the physics engine entity interface.
+ * @file <argos3/core/simulator/physics_engine/physics_model.h>
  *
  * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */
 
-#ifndef PHYSICS_ENGINE_ENTITY_H
-#define PHYSICS_ENGINE_ENTITY_H
+#ifndef PHYSICS_MODEL_H
+#define PHYSICS_MODEL_H
 
 namespace argos {
-   class CPhysicsEngineEntity;
+   class CPhysicsModel;
    class CPhysicsEngine;
    class CEmbodiedEntity;
    class CRay3;
@@ -37,42 +35,42 @@ namespace argos {
       }
    };
 
-   class CPhysicsEngineEntity {
+   class CPhysicsModel {
 
    public:
 
-      typedef std::map<std::string, CPhysicsEngineEntity*> TMap;
-      typedef std::vector<CPhysicsEngineEntity*> TVector;
+      typedef std::map<std::string, CPhysicsModel*> TMap;
+      typedef std::vector<CPhysicsModel*> TVector;
 
    public:
 
-      CPhysicsEngineEntity(CPhysicsEngine& c_engine,
-                           CEmbodiedEntity& c_entity) :
+      CPhysicsModel(CPhysicsEngine& c_engine,
+                    CEmbodiedEntity& c_entity) :
          m_cEngine(c_engine),
          m_cEmbodiedEntity(c_entity),
          m_sBoundingBox() {}
 
-      virtual ~CPhysicsEngineEntity() {}
+      virtual ~CPhysicsModel() {}
 
       /**
-       * Returns the physics engine associated to this physics engine entity.
-       * @return The physics engine associated to this physics engine entity.
+       * Returns the physics engine associated to this physics model.
+       * @return The physics engine associated to this physics model.
        */
       inline CPhysicsEngine& GetEngine() {
          return m_cEngine;
       }
 
       /**
-       * Returns the embodied entity associated to this physics engine entity.
-       * @return The embodied entity associated to this physics engine entity.
+       * Returns the embodied entity associated to this physics model.
+       * @return The embodied entity associated to this physics model.
        */
       inline CEmbodiedEntity& GetEmbodiedEntity() {
          return m_cEmbodiedEntity;
       }
 
       /**
-       * Returns the embodied entity associated to this physics engine entity.
-       * @return The embodied entity associated to this physics engine entity.
+       * Returns the embodied entity associated to this physics model.
+       * @return The embodied entity associated to this physics model.
        */
       inline const CEmbodiedEntity& GetEmbodiedEntity() const {
          return m_cEmbodiedEntity;
@@ -101,7 +99,7 @@ namespace argos {
                           bool b_check_only = false) = 0;
 
       /**
-       * Returns an axis-aligned box that contains the physics engine entity.
+       * Returns an axis-aligned box that contains the physics model.
        * The bounding box is often called AABB.
        * @returns The bounding box as a const struct.
        */
@@ -110,7 +108,7 @@ namespace argos {
       }
 
       /**
-       * Returns an axis-aligned box that contains the physics engine entity.
+       * Returns an axis-aligned box that contains the physics model.
        * The bounding box is often called AABB.
        */
       virtual void CalculateBoundingBox() = 0;
@@ -124,7 +122,7 @@ namespace argos {
    protected:
 
       /**
-       * Returns an axis-aligned box that contains the physics engine entity.
+       * Returns an axis-aligned box that contains the physics model.
        * The bounding box is often called AABB.
        * @returns The bounding box as a modifiable struct.
        */

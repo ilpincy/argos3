@@ -35,10 +35,10 @@ set(ARGOS3_HEADERS_PLUGINS_SIMULATOR_PHYSICS_ENGINES_DYNAMICS2D_CHIPMUNK
 # argos3/plugins/simulator/physics_engines/dynamics2d/chipmunk-physics/include
 # Headers of the 2d dynamics physics engine
 set(ARGOS3_HEADERS_PLUGINS_SIMULATOR_PHYSICS_ENGINES_DYNAMICS2D
-  dynamics2d_box_entity.h
-  dynamics2d_cylinder_entity.h
+  dynamics2d_box_model.h
+  dynamics2d_cylinder_model.h
   dynamics2d_differentialsteering_control.h
-  dynamics2d_entity.h
+  dynamics2d_model.h
   dynamics2d_engine.h
   dynamics2d_velocity_control.h)
 
@@ -82,8 +82,8 @@ set(ARGOS3_SOURCES_PLUGINS_SIMULATOR_PHYSICS_ENGINES_DYNAMICS2D_CHIPMUNK
 set(ARGOS3_SOURCES_PLUGINS_SIMULATOR_PHYSICS_ENGINES_DYNAMICS2D
   ${ARGOS3_SOURCES_PLUGINS_SIMULATOR_PHYSICS_ENGINES_DYNAMICS2D_CHIPMUNK}
   ${ARGOS3_HEADERS_PLUGINS_SIMULATOR_PHYSICS_ENGINES_DYNAMICS2D}
-  dynamics2d_box_entity.cpp
-  dynamics2d_cylinder_entity.cpp
+  dynamics2d_box_model.cpp
+  dynamics2d_cylinder_model.cpp
   dynamics2d_differentialsteering_control.cpp
   dynamics2d_engine.cpp
   dynamics2d_velocity_control.cpp)

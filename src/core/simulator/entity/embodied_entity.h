@@ -17,7 +17,7 @@ namespace argos {
 #include <argos3/core/utility/math/ray3.h>
 #include <argos3/core/utility/math/quaternion.h>
 #include <argos3/core/simulator/physics_engine/physics_engine.h>
-#include <argos3/core/simulator/physics_engine/physics_engine_entity.h>
+#include <argos3/core/simulator/physics_engine/physics_model.h>
 #include <algorithm>
 
 namespace argos {
@@ -42,7 +42,7 @@ namespace argos {
     * (walls, columns, etc.) and can be associated to multiple physics engines.
     * </p>
     * @see CPhysicsEngine
-    * @see CPhysicsEngineEntity
+    * @see CPhysicsModel
     */
    class CEmbodiedEntity : public CPositionalEntity {
 
@@ -124,17 +124,17 @@ namespace argos {
        * Returns the number of physics models associated to this entity.
        * @return The number of physics models associated to this entity.
        */
-      UInt32 GetPhysicsEngineEntitiesNum() const;
+      UInt32 GetPhysicsModelsNum() const;
 
       /**
        * Adds a new physics model to this embodied entity.
        * Internally it calls CalculateBoundingBox().
        * @param str_engine_id The id of the engine to which the physics model belongs.
        * @param c_physics_model The physics model to add.
-       * @see CPhysicsEngineEntity
+       * @see CPhysicsModel
        */
-      virtual void AddPhysicsEngineEntity(const std::string& str_engine_id,
-                                          CPhysicsEngineEntity& c_physics_model);
+      virtual void AddPhysicsModel(const std::string& str_engine_id,
+                                   CPhysicsModel& c_physics_model);
 
       /**
        * Removes a physics model from this embodied entity.
@@ -142,7 +142,7 @@ namespace argos {
        * @param str_engine_id The id of the engine to which the physics model belongs.
        * @throws CARGoSException if the engine id is not found.
        */
-      void RemovePhysicsEngineEntity(const std::string& str_engine_id);
+      void RemovePhysicsModel(const std::string& str_engine_id);
 
       /**
        * Returns a physics model associated to this entity.
@@ -150,7 +150,7 @@ namespace argos {
        * @return a physics model associated to this entity.
        * @throws CARGoSException if the index is out of bounds.
        */
-      const CPhysicsEngineEntity& GetPhysicsEngineEntity(size_t un_idx) const;
+      const CPhysicsModel& GetPhysicsModel(size_t un_idx) const;
 
       /**
        * Returns a physics model associated to this entity.
@@ -158,7 +158,7 @@ namespace argos {
        * @return a physics model associated to this entity.
        * @throws CARGoSException if the index is out of bounds.
        */
-      CPhysicsEngineEntity& GetPhysicsEngineEntity(size_t un_idx);
+      CPhysicsModel& GetPhysicsModel(size_t un_idx);
 
       /**
        * Returns a physics model associated to this entity.
@@ -166,7 +166,7 @@ namespace argos {
        * @return a physics model associated to this entity.
        * @throws CARGoSException if the engine id is not found.
        */
-      const CPhysicsEngineEntity& GetPhysicsEngineEntity(const std::string& str_engine_id) const;
+      const CPhysicsModel& GetPhysicsModel(const std::string& str_engine_id) const;
 
       /**
        * Returns a physics model associated to this entity.
@@ -174,7 +174,7 @@ namespace argos {
        * @return a physics model associated to this entity.
        * @throws CARGoSException if the engine id is not found.
        */
-      CPhysicsEngineEntity& GetPhysicsEngineEntity(const std::string& str_engine_id);
+      CPhysicsModel& GetPhysicsModel(const std::string& str_engine_id);
 
       /**
        * Checks whether the given ray is occluded by this entity.
@@ -185,7 +185,7 @@ namespace argos {
        * @param c_ray The test ray.
        * @return <tt>true</tt> if the ray is occluded by this entity.
        * @throws CARGoSException if this entity is not associated to any model.
-       * @see CPhysicsEngineEntity::CheckIntersectionWithRay()
+       * @see CPhysicsModel::CheckIntersectionWithRay()
        */
       virtual bool CheckIntersectionWithRay(Real& f_distance,
                                             const CRay3& c_ray) const;
@@ -199,7 +199,7 @@ namespace argos {
        * @param c_orientation The wanted orientation.
        * @param b_check_only If <tt>false</tt>, the movement is executed; otherwise, the object is not actually moved.
        * @return <tt>true</tt> if no collisions were detected, <tt>false</tt> otherwise.
-       * @see CPhysicsEngineEntity::MoveTo()
+       * @see CPhysicsModel::MoveTo()
        */
       virtual bool MoveTo(const CVector3& c_position,
                           const CQuaternion& c_orientation,
@@ -221,15 +221,15 @@ namespace argos {
        * Calculates the bounding box of this entity.
        * In case of association to multiple models, the resulting bounding
        * box is the largest that contains all the bounding boxes of each model.
-       * @see CPhysicsEngineEntity::CalculateBoundingBox()
+       * @see CPhysicsModel::CalculateBoundingBox()
        */
       void CalculateBoundingBox();
       
    protected:
       
       bool m_bMovable;
-      CPhysicsEngineEntity::TMap m_tPhysicsEngineEntityMap;
-      CPhysicsEngineEntity::TVector m_tPhysicsEngineEntityVector;
+      CPhysicsModel::TMap m_tPhysicsModelMap;
+      CPhysicsModel::TVector m_tPhysicsModelVector;
       SBoundingBox* m_sBoundingBox;
 
    };

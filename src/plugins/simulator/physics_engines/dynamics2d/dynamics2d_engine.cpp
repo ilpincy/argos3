@@ -8,7 +8,7 @@
 #include <argos3/core/simulator/simulator.h>
 #include <argos3/core/simulator/entity/embodied_entity.h>
 #include <argos3/plugins/simulator/entities/gripper_equipped_entity.h>
-#include <argos3/plugins/simulator/physics_engines/dynamics2d/dynamics2d_entity.h>
+#include <argos3/plugins/simulator/physics_engines/dynamics2d/dynamics2d_model.h>
 
 #include <cmath>
 
@@ -248,8 +248,8 @@ namespace argos {
    /****************************************/
 
    void CDynamics2DEngine::Reset() {
-      for(CDynamics2DEntity::TMap::iterator it = m_tPhysicsEntities.begin();
-          it != m_tPhysicsEntities.end(); ++it) {
+      for(CDynamics2DModel::TMap::iterator it = m_tPhysicsModels.begin();
+          it != m_tPhysicsModels.end(); ++it) {
          it->second->Reset();
       }
       cpSpaceReindexStatic(m_ptSpace);
@@ -260,15 +260,15 @@ namespace argos {
 
    void CDynamics2DEngine::Update() {
       /* Update the physics state from the entities */
-      for(CDynamics2DEntity::TMap::iterator it = m_tPhysicsEntities.begin();
-          it != m_tPhysicsEntities.end(); ++it) {
+      for(CDynamics2DModel::TMap::iterator it = m_tPhysicsModels.begin();
+          it != m_tPhysicsModels.end(); ++it) {
          it->second->UpdateFromEntityStatus();
       }
       /* Perform the step */
       cpSpaceStep(m_ptSpace, m_fSimulationClockTick);
       /* Update the simulated space */
-      for(CDynamics2DEntity::TMap::iterator it = m_tPhysicsEntities.begin();
-          it != m_tPhysicsEntities.end(); ++it) {
+      for(CDynamics2DModel::TMap::iterator it = m_tPhysicsModels.begin();
+          it != m_tPhysicsModels.end(); ++it) {
          it->second->UpdateEntityStatus();
       }
    }
@@ -277,12 +277,12 @@ namespace argos {
    /****************************************/
 
    void CDynamics2DEngine::Destroy() {
-      /* Empty the physics entity map */
-      for(CDynamics2DEntity::TMap::iterator it = m_tPhysicsEntities.begin();
-          it != m_tPhysicsEntities.end(); ++it) {
+      /* Empty the physics model map */
+      for(CDynamics2DModel::TMap::iterator it = m_tPhysicsModels.begin();
+          it != m_tPhysicsModels.end(); ++it) {
          delete it->second;
       }
-      m_tPhysicsEntities.clear();
+      m_tPhysicsModels.clear();
       /* Get rid of the physics space */
       cpSpaceFree(m_ptSpace);
       cpBodyFree(m_ptGroundBody);
@@ -320,7 +320,7 @@ namespace argos {
    /****************************************/
 
    UInt32 CDynamics2DEngine::GetNumPhysicsEngineEntities() {
-      return m_tPhysicsEntities.size();
+      return m_tPhysicsModels.size();
    }
 
    /****************************************/
@@ -398,22 +398,22 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CDynamics2DEngine::AddPhysicsEntity(const std::string& str_id,
-                                            CDynamics2DEntity& c_entity) {
-      m_tPhysicsEntities[str_id] = &c_entity;
+   void CDynamics2DEngine::AddPhysicsModel(const std::string& str_id,
+                                            CDynamics2DModel& c_model) {
+      m_tPhysicsModels[str_id] = &c_model;
    }
 
    /****************************************/
    /****************************************/
 
-   void CDynamics2DEngine::RemovePhysicsEntity(const std::string& str_id) {
-      CDynamics2DEntity::TMap::iterator it = m_tPhysicsEntities.find(str_id);
-      if(it != m_tPhysicsEntities.end()) {
+   void CDynamics2DEngine::RemovePhysicsModel(const std::string& str_id) {
+      CDynamics2DModel::TMap::iterator it = m_tPhysicsModels.find(str_id);
+      if(it != m_tPhysicsModels.end()) {
          delete it->second;
-         m_tPhysicsEntities.erase(it);
+         m_tPhysicsModels.erase(it);
       }
       else {
-         THROW_ARGOSEXCEPTION("Dynamics2D entity id \"" << str_id << "\" not found in dynamics 2D engine \"" << GetId() << "\"");
+         THROW_ARGOSEXCEPTION("Dynamics2D model id \"" << str_id << "\" not found in dynamics 2D engine \"" << GetId() << "\"");
       }
    }
 

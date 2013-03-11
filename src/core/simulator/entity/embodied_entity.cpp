@@ -53,7 +53,7 @@ namespace argos {
    /****************************************/
 
    const SBoundingBox& CEmbodiedEntity::GetBoundingBox() const {
-      if(GetPhysicsEngineEntitiesNum() == 0) {
+      if(GetPhysicsModelsNum() == 0) {
          /* No engine associated to this entity */
          THROW_ARGOSEXCEPTION("CEmbodiedEntity::GetBoundingBox() : entity \"" << GetId() << "\" is not associated to any engine");
       }
@@ -63,65 +63,65 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   UInt32 CEmbodiedEntity::GetPhysicsEngineEntitiesNum() const {
-      return m_tPhysicsEngineEntityVector.size();
+   UInt32 CEmbodiedEntity::GetPhysicsModelsNum() const {
+      return m_tPhysicsModelVector.size();
    }
 
    /****************************************/
    /****************************************/
 
-   void CEmbodiedEntity::AddPhysicsEngineEntity(const std::string& str_engine_id,
-                                                CPhysicsEngineEntity& c_physics_entity) {
-      if(m_bMovable && GetPhysicsEngineEntitiesNum() > 0) {
+   void CEmbodiedEntity::AddPhysicsModel(const std::string& str_engine_id,
+                                         CPhysicsModel& c_physics_model) {
+      if(m_bMovable && GetPhysicsModelsNum() > 0) {
          THROW_ARGOSEXCEPTION(GetId() << " is movable embodied entity and can't have more than 1 physics engine entity associated");
       }
-      m_tPhysicsEngineEntityMap[str_engine_id] = &c_physics_entity;
-      m_tPhysicsEngineEntityVector.push_back(&c_physics_entity);
+      m_tPhysicsModelMap[str_engine_id] = &c_physics_model;
+      m_tPhysicsModelVector.push_back(&c_physics_model);
       CalculateBoundingBox();
    }
 
    /****************************************/
    /****************************************/
 
-   void CEmbodiedEntity::RemovePhysicsEngineEntity(const std::string& str_engine_id) {
-      CPhysicsEngineEntity::TMap::iterator itMap = m_tPhysicsEngineEntityMap.find(str_engine_id);
-      if(itMap == m_tPhysicsEngineEntityMap.end()) {
+   void CEmbodiedEntity::RemovePhysicsModel(const std::string& str_engine_id) {
+      CPhysicsModel::TMap::iterator itMap = m_tPhysicsModelMap.find(str_engine_id);
+      if(itMap == m_tPhysicsModelMap.end()) {
          THROW_ARGOSEXCEPTION("Entity \"" << GetId() << "\" has no associated entity in physics engine " << str_engine_id);
       }
-      CPhysicsEngineEntity::TVector::iterator itVec = std::find(m_tPhysicsEngineEntityVector.begin(),
-                                                                m_tPhysicsEngineEntityVector.end(),
-                                                                itMap->second);
-      m_tPhysicsEngineEntityMap.erase(itMap);
-      m_tPhysicsEngineEntityVector.erase(itVec);
+      CPhysicsModel::TVector::iterator itVec = std::find(m_tPhysicsModelVector.begin(),
+                                                         m_tPhysicsModelVector.end(),
+                                                         itMap->second);
+      m_tPhysicsModelMap.erase(itMap);
+      m_tPhysicsModelVector.erase(itVec);
       CalculateBoundingBox();
    }
 
    /****************************************/
    /****************************************/
 
-   const CPhysicsEngineEntity& CEmbodiedEntity::GetPhysicsEngineEntity(size_t un_idx) const {
-      if(un_idx > m_tPhysicsEngineEntityVector.size()) {
-         THROW_ARGOSEXCEPTION("CEmbodiedEntity::GetPhysicsEngineEntity: entity \"" << GetId() << "\": the passed index " << un_idx << " is out of bounds, the max allowed is " << m_tPhysicsEngineEntityVector.size());
+   const CPhysicsModel& CEmbodiedEntity::GetPhysicsModel(size_t un_idx) const {
+      if(un_idx > m_tPhysicsModelVector.size()) {
+         THROW_ARGOSEXCEPTION("CEmbodiedEntity::GetPhysicsModel: entity \"" << GetId() << "\": the passed index " << un_idx << " is out of bounds, the max allowed is " << m_tPhysicsModelVector.size());
       }
-      return *m_tPhysicsEngineEntityVector[un_idx];
+      return *m_tPhysicsModelVector[un_idx];
    }
 
    /****************************************/
    /****************************************/
 
-   CPhysicsEngineEntity& CEmbodiedEntity::GetPhysicsEngineEntity(size_t un_idx) {
-      if(un_idx > m_tPhysicsEngineEntityVector.size()) {
-         THROW_ARGOSEXCEPTION("CEmbodiedEntity::GetPhysicsEngineEntity: entity \"" << GetId() << "\": the passed index " << un_idx << " is out of bounds, the max allowed is " << m_tPhysicsEngineEntityVector.size());
+   CPhysicsModel& CEmbodiedEntity::GetPhysicsModel(size_t un_idx) {
+      if(un_idx > m_tPhysicsModelVector.size()) {
+         THROW_ARGOSEXCEPTION("CEmbodiedEntity::GetPhysicsModel: entity \"" << GetId() << "\": the passed index " << un_idx << " is out of bounds, the max allowed is " << m_tPhysicsModelVector.size());
       }
-      return *m_tPhysicsEngineEntityVector[un_idx];
+      return *m_tPhysicsModelVector[un_idx];
    }
 
    /****************************************/
    /****************************************/
 
-   const CPhysicsEngineEntity& CEmbodiedEntity::GetPhysicsEngineEntity(const std::string& str_engine_id) const {
-      CPhysicsEngineEntity::TMap::const_iterator it = m_tPhysicsEngineEntityMap.find(str_engine_id);
-      if(it == m_tPhysicsEngineEntityMap.end()) {
+   const CPhysicsModel& CEmbodiedEntity::GetPhysicsModel(const std::string& str_engine_id) const {
+      CPhysicsModel::TMap::const_iterator it = m_tPhysicsModelMap.find(str_engine_id);
+      if(it == m_tPhysicsModelMap.end()) {
          THROW_ARGOSEXCEPTION("Entity \"" << GetId() << "\" has no associated entity in physics engine \"" << str_engine_id << "\"");
       }
       return *(it->second);
@@ -130,9 +130,9 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   CPhysicsEngineEntity& CEmbodiedEntity::GetPhysicsEngineEntity(const std::string& str_engine_id) {
-      CPhysicsEngineEntity::TMap::iterator it = m_tPhysicsEngineEntityMap.find(str_engine_id);
-      if(it == m_tPhysicsEngineEntityMap.end()) {
+   CPhysicsModel& CEmbodiedEntity::GetPhysicsModel(const std::string& str_engine_id) {
+      CPhysicsModel::TMap::iterator it = m_tPhysicsModelMap.find(str_engine_id);
+      if(it == m_tPhysicsModelMap.end()) {
          THROW_ARGOSEXCEPTION("Entity \"" << GetId() << "\" has no associated entity in physics engine \"" << str_engine_id << "\"");
       }
       return *(it->second);
@@ -144,20 +144,20 @@ namespace argos {
    bool CEmbodiedEntity::CheckIntersectionWithRay(Real& f_t_on_ray,
                                                   const CRay3& c_ray) const {
       /* If no model is associated, you can't call this function */
-      if(m_tPhysicsEngineEntityVector.empty()) {
+      if(m_tPhysicsModelVector.empty()) {
          THROW_ARGOSEXCEPTION("CEmbodiedEntity::CheckIntersectionWithRay() called on entity \"" << GetId() << "\", but this entity has not been added to any physics engine.");
       }
       /* Special case: if there is only one model, check that directly */
-      if(m_tPhysicsEngineEntityVector.size() == 1) {
-         return m_tPhysicsEngineEntityVector[0]->CheckIntersectionWithRay(f_t_on_ray, c_ray);
+      if(m_tPhysicsModelVector.size() == 1) {
+         return m_tPhysicsModelVector[0]->CheckIntersectionWithRay(f_t_on_ray, c_ray);
       }
       /* Multiple associations, go through them and find the closest intersection point */
       else {
          /* Search for the first match */
          UInt32 i = 0;
          bool bFoundFirst = false;
-         while(!bFoundFirst && i < m_tPhysicsEngineEntityVector.size()) {
-            if(m_tPhysicsEngineEntityVector[i]->CheckIntersectionWithRay(f_t_on_ray, c_ray)) {
+         while(!bFoundFirst && i < m_tPhysicsModelVector.size()) {
+            if(m_tPhysicsModelVector[i]->CheckIntersectionWithRay(f_t_on_ray, c_ray)) {
                bFoundFirst = true;
             }
             else {
@@ -175,8 +175,8 @@ namespace argos {
              * Now, go through the remaining models and check if there is a closer match
              */
             Real fTOnRay;
-            for(size_t j = i+1; j < m_tPhysicsEngineEntityVector.size(); ++j) {
-               if(m_tPhysicsEngineEntityVector[j]->CheckIntersectionWithRay(fTOnRay, c_ray) &&
+            for(size_t j = i+1; j < m_tPhysicsModelVector.size(); ++j) {
+               if(m_tPhysicsModelVector[j]->CheckIntersectionWithRay(fTOnRay, c_ray) &&
                   fTOnRay < f_t_on_ray) {
                   f_t_on_ray = fTOnRay;
                }
@@ -193,8 +193,8 @@ namespace argos {
                                 const CQuaternion& c_orientation,
                                 bool b_check_only) {
       bool bNoCollision = true;
-      for(CPhysicsEngineEntity::TVector::const_iterator it = m_tPhysicsEngineEntityVector.begin();
-          it != m_tPhysicsEngineEntityVector.end() && bNoCollision; ++it) {
+      for(CPhysicsModel::TVector::const_iterator it = m_tPhysicsModelVector.begin();
+          it != m_tPhysicsModelVector.end() && bNoCollision; ++it) {
          if(! (*it)->MoveTo(c_position, c_orientation, b_check_only)) {
             bNoCollision = false;
          }
@@ -213,8 +213,8 @@ namespace argos {
       }
       else {
          /* No Collision or check only, undo changes */
-         for(CPhysicsEngineEntity::TVector::const_iterator it = m_tPhysicsEngineEntityVector.begin();
-             it != m_tPhysicsEngineEntityVector.end(); ++it) {
+         for(CPhysicsModel::TVector::const_iterator it = m_tPhysicsModelVector.begin();
+             it != m_tPhysicsModelVector.end(); ++it) {
             (*it)->MoveTo(GetPosition(), GetOrientation());
          }
          if(!bNoCollision) {
@@ -231,28 +231,28 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-#define CHECK_CORNER(MINMAX, COORD, OP)                                    \
+#define CHECK_CORNER(MINMAX, COORD, OP)                                 \
    if(m_sBoundingBox->MINMAX ## Corner.Get ## COORD() OP sBBox.MINMAX ## Corner.Get ## COORD()) { \
-      m_sBoundingBox->MINMAX ## Corner.Set ## COORD(sBBox.MINMAX ## Corner.Get ## COORD());      \
+      m_sBoundingBox->MINMAX ## Corner.Set ## COORD(sBBox.MINMAX ## Corner.Get ## COORD()); \
    }
 
    void CEmbodiedEntity::CalculateBoundingBox() {
-      if(GetPhysicsEngineEntitiesNum() > 0) {
+      if(GetPhysicsModelsNum() > 0) {
          /*
           * There is at least one physics engine entity associated
           */
          if(m_bMovable) {
             /* The bounding box points directly to the associated model bounding box */
-            m_sBoundingBox = &m_tPhysicsEngineEntityVector[0]->GetBoundingBox();
+            m_sBoundingBox = &m_tPhysicsModelVector[0]->GetBoundingBox();
          }
          else {
             /* The bounding box is obtained taking the extrema of all the bboxes of all the engines */
             if(m_sBoundingBox == NULL) {
                m_sBoundingBox = new SBoundingBox();
             }
-            *m_sBoundingBox = m_tPhysicsEngineEntityVector[0]->GetBoundingBox();
-            for(size_t i = 1; i < GetPhysicsEngineEntitiesNum(); ++i) {
-               const SBoundingBox& sBBox = m_tPhysicsEngineEntityVector[0]->GetBoundingBox();
+            *m_sBoundingBox = m_tPhysicsModelVector[0]->GetBoundingBox();
+            for(size_t i = 1; i < GetPhysicsModelsNum(); ++i) {
+               const SBoundingBox& sBBox = m_tPhysicsModelVector[0]->GetBoundingBox();
                CHECK_CORNER(Min, X, >);
                CHECK_CORNER(Min, Y, >);
                CHECK_CORNER(Min, Z, >);
@@ -279,18 +279,18 @@ namespace argos {
 
    bool CEmbodiedEntity::IsCollidingWithSomething() const {
       /* If no model is associated, you can't call this function */
-      if(m_tPhysicsEngineEntityVector.empty()) {
+      if(m_tPhysicsModelVector.empty()) {
          THROW_ARGOSEXCEPTION("CEmbodiedEntity::IsCollidingWithSomething() called on entity \"" << GetId() << "\", but this entity has not been added to any physics engine.");
       }
       /* Special case: if there is only one model, check that directly */
-      if(m_tPhysicsEngineEntityVector.size() == 1) {
-         return m_tPhysicsEngineEntityVector[0]->IsCollidingWithSomething();
+      if(m_tPhysicsModelVector.size() == 1) {
+         return m_tPhysicsModelVector[0]->IsCollidingWithSomething();
       }
       /* Multiple associations, go through them */
       else {
          /* Return true at the first detected collision */
-         for(size_t i = 0; i < m_tPhysicsEngineEntityVector.size(); ++i) {
-            if(m_tPhysicsEngineEntityVector[i]->IsCollidingWithSomething()) {
+         for(size_t i = 0; i < m_tPhysicsModelVector.size(); ++i) {
+            if(m_tPhysicsModelVector[i]->IsCollidingWithSomething()) {
                return true;
             }
          }
@@ -347,8 +347,8 @@ namespace argos {
             pcRoot = &pcRoot->GetParent();
          }
          /* Remove entity from all physics engines */
-         while(c_entity.GetPhysicsEngineEntitiesNum() > 0) {
-            c_entity.GetPhysicsEngineEntity(0).GetEngine().RemoveEntity(*pcRoot);
+         while(c_entity.GetPhysicsModelsNum() > 0) {
+            c_entity.GetPhysicsModel(0).GetEngine().RemoveEntity(*pcRoot);
          }
          /* Remove entity from space */
          if(c_space.IsUsingSpaceHash()) {

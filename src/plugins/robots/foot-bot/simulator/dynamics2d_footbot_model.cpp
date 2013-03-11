@@ -1,10 +1,10 @@
 /**
- * @file <argos3/plugins/robots/foot-bot/simulator/dynamics2d_footbot_entity.cpp>
+ * @file <argos3/plugins/robots/foot-bot/simulator/dynamics2d_footbot_model.cpp>
  *
  * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */
 
-#include "dynamics2d_footbot_entity.h"
+#include "dynamics2d_footbot_model.h"
 #include <argos3/core/simulator/entity/embodied_entity.h>
 #include <argos3/plugins/simulator/entities/gripper_equipped_entity.h>
 #include <argos3/plugins/simulator/physics_engines/dynamics2d/dynamics2d_engine.h>
@@ -40,9 +40,9 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   CDynamics2DFootBotEntity::CDynamics2DFootBotEntity(CDynamics2DEngine& c_engine,
-                                                      CFootBotEntity& c_entity) :
-      CDynamics2DEntity(c_engine, c_entity.GetEmbodiedEntity()),
+   CDynamics2DFootBotModel::CDynamics2DFootBotModel(CDynamics2DEngine& c_engine,
+                                                    CFootBotEntity& c_entity) :
+      CDynamics2DModel(c_engine, c_entity.GetEmbodiedEntity()),
       m_cFootBotEntity(c_entity),
       m_cWheeledEntity(m_cFootBotEntity.GetWheeledEntity()),
       m_cGripperEntity(c_entity.GetGripperEquippedEntity()),
@@ -137,7 +137,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   CDynamics2DFootBotEntity::~CDynamics2DFootBotEntity() {
+   CDynamics2DFootBotModel::~CDynamics2DFootBotModel() {
       switch(m_unLastTurretMode) {
          case MODE_OFF:
          case MODE_PASSIVE:
@@ -175,7 +175,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   bool CDynamics2DFootBotEntity::CheckIntersectionWithRay(Real& f_t_on_ray,
+   bool CDynamics2DFootBotModel::CheckIntersectionWithRay(Real& f_t_on_ray,
                                                            const CRay3& c_ray) const {
       cpSegmentQueryInfo tInfo;
       if(cpShapeSegmentQuery(m_ptBaseShape,
@@ -201,7 +201,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   bool CDynamics2DFootBotEntity::MoveTo(const CVector3& c_position,
+   bool CDynamics2DFootBotModel::MoveTo(const CVector3& c_position,
                                          const CQuaternion& c_orientation,
                                          bool b_check_only) {
       /* Save body position and orientation */
@@ -249,7 +249,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CDynamics2DFootBotEntity::Reset() {
+   void CDynamics2DFootBotModel::Reset() {
       /* Reset body position */
       const CVector3& cPosition = GetEmbodiedEntity().GetInitPosition();
       m_ptActualBaseBody->p = cpv(cPosition.GetX(), cPosition.GetY());
@@ -285,7 +285,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CDynamics2DFootBotEntity::CalculateBoundingBox() {
+   void CDynamics2DFootBotModel::CalculateBoundingBox() {
       GetBoundingBox().MinCorner.SetX(m_ptBaseShape->bb.l);
       GetBoundingBox().MinCorner.SetY(m_ptBaseShape->bb.b);
       GetBoundingBox().MaxCorner.SetX(m_ptBaseShape->bb.r);
@@ -295,7 +295,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CDynamics2DFootBotEntity::UpdateEntityStatus() {
+   void CDynamics2DFootBotModel::UpdateEntityStatus() {
       /* Update bounding box */
       CalculateBoundingBox();
       /* Update foot-bot body position */
@@ -322,7 +322,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CDynamics2DFootBotEntity::UpdateFromEntityStatus() {
+   void CDynamics2DFootBotModel::UpdateFromEntityStatus() {
       /* Get wheel speeds from entity */
       m_cWheeledEntity.GetSpeed(m_fCurrentWheelVelocity);
       /* Do we want to move? */
@@ -408,7 +408,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CDynamics2DFootBotEntity::TurretPassiveToActive() {
+   void CDynamics2DFootBotModel::TurretPassiveToActive() {
       /* Delete constraints to actual base body */
       cpSpaceRemoveConstraint(m_cDyn2DEngine.GetPhysicsSpace(), m_ptBaseGripperAngularMotion);
       cpConstraintFree(m_ptBaseGripperAngularMotion);
@@ -427,7 +427,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CDynamics2DFootBotEntity::TurretActiveToPassive() {
+   void CDynamics2DFootBotModel::TurretActiveToPassive() {
       /* Delete constraint from actual gripper body to gripper control body */
       cpSpaceRemoveConstraint(m_cDyn2DEngine.GetPhysicsSpace(), m_ptGripperControlAngularMotion);
       cpConstraintFree(m_ptGripperControlAngularMotion);
@@ -446,14 +446,14 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   bool CDynamics2DFootBotEntity::IsCollidingWithSomething() const {
+   bool CDynamics2DFootBotModel::IsCollidingWithSomething() const {
       return cpSpaceShapeQuery(m_cDyn2DEngine.GetPhysicsSpace(), m_ptBaseShape, NULL, NULL) > 0;
    }
 
    /****************************************/
    /****************************************/
 
-   REGISTER_STANDARD_DYNAMICS2D_OPERATIONS_ON_ENTITY(CFootBotEntity, CDynamics2DFootBotEntity);
+   REGISTER_STANDARD_DYNAMICS2D_OPERATIONS_ON_ENTITY(CFootBotEntity, CDynamics2DFootBotModel);
 
    /****************************************/
    /****************************************/

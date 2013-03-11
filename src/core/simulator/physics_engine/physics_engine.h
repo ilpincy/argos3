@@ -9,7 +9,7 @@
 
 namespace argos {
    class CPhysicsEngine;
-   class CPhysicsEngineEntity;
+   class CPhysicsModel;
    class CEntity;
    class CVector3;
 }
@@ -49,14 +49,14 @@ namespace argos {
       /**
        * Adds an entity to the physics engine.
        * Important: when you implement this function, you must also take care of adding
-       * the physics engine entity to the associated embodied entity.
+       * the physics model to the associated embodied entity.
        */
       virtual void AddEntity(CEntity& c_entity) = 0;
 
       /**
        * Removes an entity from the physics engine.
        * Important: when you implement this function, you must also take care of removing
-       * the physics engine entity to the associated embodied entity.
+       * the physics model to the associated embodied entity.
        */
       virtual void RemoveEntity(CEntity& c_entity) = 0;
 
@@ -74,11 +74,12 @@ namespace argos {
       static Real GetInverseSimulationClockTick();
       static void SetSimulationClockTick(Real f_simulation_clock_tick);
 
-      inline void SetPhysicsEngineClock(Real f_physics_engine_clock) {
-         m_fPhysicsEngineClock = f_physics_engine_clock;
-      }
       inline Real GetPhysicsEngineClock() const {
          return m_fPhysicsEngineClock;
+      }
+
+      inline void SetPhysicsEngineClock(Real f_physics_engine_clock) {
+         m_fPhysicsEngineClock = f_physics_engine_clock;
       }
 
       inline const std::string& GetId() const {

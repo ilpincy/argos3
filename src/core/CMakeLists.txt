@@ -83,7 +83,7 @@ set(ARGOS3_HEADERS_SIMULATOR_ENTITY
 # argos3/core/simulator/physics_engine
 set(ARGOS3_HEADERS_SIMULATOR_PHYSICSENGINE
   simulator/physics_engine/physics_engine.h
-  simulator/physics_engine/physics_engine_entity.h)
+  simulator/physics_engine/physics_model.h)
 # argos3/core/simulator/visualization
 set(ARGOS3_HEADERS_SIMULATOR_VISUALIZATION
   simulator/visualization/visualization.h)

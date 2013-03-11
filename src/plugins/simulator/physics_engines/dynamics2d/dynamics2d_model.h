@@ -1,17 +1,17 @@
 /**
- * @file <argos3/plugins/simulator/physics_engines/dynamics2d/dynamics2d_entity.h>
+ * @file <argos3/plugins/simulator/physics_engines/dynamics2d/dynamics2d_model.h>
  *
  * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */
 
-#ifndef DYNAMICS2D_ENTITY_H
-#define DYNAMICS2D_ENTITY_H
+#ifndef DYNAMICS2D_MODEL_H
+#define DYNAMICS2D_MODEL_H
 
 namespace argos {
    class CDynamics2DEngine;
 }
 
-#include <argos3/core/simulator/physics_engine/physics_engine_entity.h>
+#include <argos3/core/simulator/physics_engine/physics_model.h>
 #include <argos3/plugins/simulator/physics_engines/dynamics2d/chipmunk-physics/include/chipmunk.h>
 #include <argos3/plugins/simulator/physics_engines/dynamics2d/dynamics2d_engine.h>
 #include <argos3/core/utility/math/vector3.h>
@@ -19,19 +19,20 @@ namespace argos {
 
 namespace argos {
 
-   class CDynamics2DEntity : public CPhysicsEngineEntity {
+   class CDynamics2DModel : public CPhysicsModel {
 
    public:
 
-      typedef std::map<std::string, CDynamics2DEntity*> TMap;
+      typedef std::map<std::string, CDynamics2DModel*> TMap;
 
    public:
 
-      CDynamics2DEntity(CDynamics2DEngine& c_engine,
-                        CEmbodiedEntity& c_entity) :
-         CPhysicsEngineEntity(c_engine, c_entity),
+      CDynamics2DModel(CDynamics2DEngine& c_engine,
+                       CEmbodiedEntity& c_entity) :
+         CPhysicsModel(c_engine, c_entity),
          m_cDyn2DEngine(c_engine) {}
-      virtual ~CDynamics2DEntity() {}
+
+      virtual ~CDynamics2DModel() {}
 
       virtual bool CheckIntersectionWithRay(Real& f_distance,
                                             const CRay3& c_ray) const = 0;

@@ -1,30 +1,30 @@
 /**
- * @file <argos3/plugins/robots/foot-bot/simulator/dynamics2d_footbot_entity.h>
+ * @file <argos3/plugins/robots/foot-bot/simulator/dynamics2d_footbot_model.h>
  *
  * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */
 
-#ifndef DYNAMICS2D_FOOTBOT_ENTITY_H
-#define DYNAMICS2D_FOOTBOT_ENTITY_H
+#ifndef DYNAMICS2D_FOOTBOT_MODEL_H
+#define DYNAMICS2D_FOOTBOT_MODEL_H
 
 namespace argos {
    class SDynamics2DEngineGripperData;
    class CDynamics2DDifferentialSteeringControl;
 }
 
-#include <argos3/plugins/simulator/physics_engines/dynamics2d/dynamics2d_entity.h>
+#include <argos3/plugins/simulator/physics_engines/dynamics2d/dynamics2d_model.h>
 #include <argos3/plugins/simulator/physics_engines/dynamics2d/dynamics2d_differentialsteering_control.h>
 #include <argos3/plugins/robots/foot-bot/simulator/footbot_entity.h>
 
 namespace argos {
 
-   class CDynamics2DFootBotEntity : public CDynamics2DEntity {
+   class CDynamics2DFootBotModel : public CDynamics2DModel {
 
    public:
 
-      CDynamics2DFootBotEntity(CDynamics2DEngine& c_engine,
-                               CFootBotEntity& c_entity);
-      virtual ~CDynamics2DFootBotEntity();
+      CDynamics2DFootBotModel(CDynamics2DEngine& c_engine,
+                              CFootBotEntity& c_entity);
+      virtual ~CDynamics2DFootBotModel();
       
       virtual bool CheckIntersectionWithRay(Real& f_t_on_ray,
                                             const CRay3& c_ray) const;

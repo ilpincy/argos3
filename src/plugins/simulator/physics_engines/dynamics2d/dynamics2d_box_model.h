@@ -1,24 +1,28 @@
 /**
- * @file <argos3/plugins/simulator/physics_engines/dynamics2d/dynamics2d_box_entity.h>
+ * @file <argos3/plugins/simulator/physics_engines/dynamics2d/dynamics2d_box_model.h>
  *
  * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */
 
-#ifndef DYNAMICS2D_BOX_ENTITY_H
-#define DYNAMICS2D_BOX_ENTITY_H
+#ifndef DYNAMICS2D_BOX_MODEL_H
+#define DYNAMICS2D_BOX_MODEL_H
 
-#include <argos3/plugins/simulator/physics_engines/dynamics2d/dynamics2d_entity.h>
+namespace argos {
+   class CDynamics2DBoxModel;
+}
+
+#include <argos3/plugins/simulator/physics_engines/dynamics2d/dynamics2d_model.h>
 #include <argos3/plugins/simulator/entities/box_entity.h>
 
 namespace argos {
 
-   class CDynamics2DBoxEntity : public CDynamics2DEntity {
+   class CDynamics2DBoxModel : public CDynamics2DModel {
 
    public:
 
-      CDynamics2DBoxEntity(CDynamics2DEngine& c_engine,
-                           CBoxEntity& c_entity);
-      virtual ~CDynamics2DBoxEntity();
+      CDynamics2DBoxModel(CDynamics2DEngine& c_engine,
+                          CBoxEntity& c_entity);
+      virtual ~CDynamics2DBoxModel();
 
       virtual bool CheckIntersectionWithRay(Real& f_t_on_ray,
                                             const CRay3& c_ray) const;
