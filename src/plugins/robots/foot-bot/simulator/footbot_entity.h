@@ -13,6 +13,7 @@ namespace argos {
    class CEmbodiedEntity;
    class CFootBotEntity;
    class CGripperEquippedEntity;
+   class CGroundSensorEquippedEntity;
    class CLEDEquippedEntity;
    class CLightSensorEquippedEntity;
    class CProximitySensorEquippedEntity;
@@ -41,32 +42,28 @@ namespace argos {
 
       virtual void UpdateComponents();
       
-      inline CEmbodiedEntity& GetEmbodiedEntity() {
-         return *m_pcEmbodiedEntity;
-      }
-
       inline CControllableEntity& GetControllableEntity() {
          return *m_pcControllableEntity;
-      }
-
-      inline CWheeledEntity& GetWheeledEntity() {
-         return *m_pcWheeledEntity;
-      }
-
-      inline CLEDEquippedEntity& GetLEDEquippedEntity() {
-         return *m_pcLEDEquippedEntity;
-      }
-
-      inline CGripperEquippedEntity& GetGripperEquippedEntity() {
-         return *m_pcGripperEquippedEntity;
       }
 
       inline CDistanceScannerEquippedEntity& GetDistanceScannerEquippedEntity() {
          return *m_pcDistanceScannerEquippedEntity;
       }
 
-      inline CRABEquippedEntity& GetRABEquippedEntity() {
-         return *m_pcRABEquippedEntity;
+      inline CEmbodiedEntity& GetEmbodiedEntity() {
+         return *m_pcEmbodiedEntity;
+      }
+
+      inline CGripperEquippedEntity& GetGripperEquippedEntity() {
+         return *m_pcGripperEquippedEntity;
+      }
+
+      inline CGroundSensorEquippedEntity& GetGroundSensorEquippedEntity() {
+         return *m_pcGroundSensorEquippedEntity;
+      }
+
+      inline CLEDEquippedEntity& GetLEDEquippedEntity() {
+         return *m_pcLEDEquippedEntity;
       }
 
       inline CLightSensorEquippedEntity& GetLightSensorEquippedEntity() {
@@ -75,6 +72,14 @@ namespace argos {
 
       inline CProximitySensorEquippedEntity& GetProximitySensorEquippedEntity() {
          return *m_pcProximitySensorEquippedEntity;
+      }
+
+      inline CRABEquippedEntity& GetRABEquippedEntity() {
+         return *m_pcRABEquippedEntity;
+      }
+
+      inline CWheeledEntity& GetWheeledEntity() {
+         return *m_pcWheeledEntity;
       }
 
       inline CWiFiEquippedEntity& GetWiFiEquippedEntity() {
@@ -119,6 +124,7 @@ namespace argos {
       CDistanceScannerEquippedEntity* m_pcDistanceScannerEquippedEntity;
       CEmbodiedEntity*                m_pcEmbodiedEntity;
       CGripperEquippedEntity*         m_pcGripperEquippedEntity;
+      CGroundSensorEquippedEntity*    m_pcGroundSensorEquippedEntity;
       CLEDEquippedEntity*             m_pcLEDEquippedEntity;
       CLightSensorEquippedEntity*     m_pcLightSensorEquippedEntity;
       CProximitySensorEquippedEntity* m_pcProximitySensorEquippedEntity;

@@ -12,6 +12,7 @@
 #include <argos3/core/simulator/entity/embodied_entity.h>
 #include <argos3/core/simulator/entity/rab_equipped_entity.h>
 #include <argos3/plugins/simulator/entities/gripper_equipped_entity.h>
+#include <argos3/plugins/simulator/entities/ground_sensor_equipped_entity.h>
 #include <argos3/plugins/simulator/entities/led_equipped_entity.h>
 #include <argos3/plugins/simulator/entities/light_sensor_equipped_entity.h>
 #include <argos3/plugins/simulator/entities/proximity_sensor_equipped_entity.h>
@@ -53,6 +54,7 @@ namespace argos {
       m_pcDistanceScannerEquippedEntity(NULL),
       m_pcEmbodiedEntity(NULL),
       m_pcGripperEquippedEntity(NULL),
+      m_pcGroundSensorEquippedEntity(NULL),
       m_pcLEDEquippedEntity(NULL),
       m_pcLightSensorEquippedEntity(NULL),
       m_pcProximitySensorEquippedEntity(NULL),
@@ -122,6 +124,35 @@ namespace argos {
                                        CVector3(BODY_RADIUS, 0.0f, GRIPPER_ELEVATION),
                                        CVector3::X);
          AddComponent(*m_pcGripperEquippedEntity);
+         /* Ground sensor equipped entity */
+         m_pcGroundSensorEquippedEntity =
+            new CGroundSensorEquippedEntity(this,
+                                            GetId() + ".ground");
+         AddComponent(*m_pcGroundSensorEquippedEntity);
+         m_pcGroundSensorEquippedEntity->AddSensor(CVector2(0.063, 0.0116),
+                                                   CGroundSensorEquippedEntity::TYPE_GRAYSCALE);
+         m_pcGroundSensorEquippedEntity->AddSensor(CVector2(-0.063, 0.0116),
+                                                   CGroundSensorEquippedEntity::TYPE_GRAYSCALE);
+         m_pcGroundSensorEquippedEntity->AddSensor(CVector2(-0.063, -0.0116),
+                                                   CGroundSensorEquippedEntity::TYPE_GRAYSCALE);
+         m_pcGroundSensorEquippedEntity->AddSensor(CVector2(0.063, -0.0116),
+                                                   CGroundSensorEquippedEntity::TYPE_GRAYSCALE);
+         m_pcGroundSensorEquippedEntity->AddSensor(CVector2(0.08, 0.0),
+                                                   CGroundSensorEquippedEntity::TYPE_BLACK_WHITE);
+         m_pcGroundSensorEquippedEntity->AddSensor(CVector2(0.042, 0.065),
+                                                   CGroundSensorEquippedEntity::TYPE_BLACK_WHITE);
+         m_pcGroundSensorEquippedEntity->AddSensor(CVector2(0.0, 0.08),
+                                                   CGroundSensorEquippedEntity::TYPE_BLACK_WHITE);
+         m_pcGroundSensorEquippedEntity->AddSensor(CVector2(-0.042, 0.065),
+                                                   CGroundSensorEquippedEntity::TYPE_BLACK_WHITE);
+         m_pcGroundSensorEquippedEntity->AddSensor(CVector2(-0.08, 0.0),
+                                                   CGroundSensorEquippedEntity::TYPE_BLACK_WHITE);
+         m_pcGroundSensorEquippedEntity->AddSensor(CVector2(-0.042, -0.065),
+                                                   CGroundSensorEquippedEntity::TYPE_BLACK_WHITE);
+         m_pcGroundSensorEquippedEntity->AddSensor(CVector2(0.0, -0.08),
+                                                   CGroundSensorEquippedEntity::TYPE_BLACK_WHITE);
+         m_pcGroundSensorEquippedEntity->AddSensor(CVector2(0.042, -0.065),
+                                                   CGroundSensorEquippedEntity::TYPE_BLACK_WHITE);
          /* Distance scanner */
          m_pcDistanceScannerEquippedEntity = new CDistanceScannerEquippedEntity(this);
          AddComponent(*m_pcDistanceScannerEquippedEntity);
