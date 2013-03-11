@@ -24,7 +24,6 @@ if(ARGOS_WITH_LUA)
     qtopengl_lua_find_dialog.h
     qtopengl_lua_main_window.h
     qtopengl_lua_syntax_highlighter.h
-    qtopengl_lua_statetree_item.h
     qtopengl_lua_statetree_model.h)
 endif(ARGOS_WITH_LUA)
 # all base headers
