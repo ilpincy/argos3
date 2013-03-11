@@ -400,9 +400,11 @@ namespace argos {
    void CSimulator::InitLoopFunctions(TConfigurationNode& t_tree) {
       try {
          std::string strLibrary, strLabel;
-         GetNodeAttribute(t_tree, "library", strLibrary);
+         GetNodeAttributeOrDefault(t_tree, "library", strLibrary, strLibrary);
          GetNodeAttribute(t_tree, "label", strLabel);
-         CDynamicLoading::LoadLibrary(strLibrary);
+         if(! strLibrary.empty()) {
+            CDynamicLoading::LoadLibrary(strLibrary);
+         }
          m_pcLoopFunctions = CFactory<CLoopFunctions>::New(strLabel);
       }
       catch(CARGoSException& ex) {

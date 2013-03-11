@@ -200,4 +200,19 @@ namespace argos {
    };
 }
 
+/**
+ * Registers a loop function class inside ARGoS.
+ * You must register your loop function class for ARGoS to be able to recognize it.
+ * This statement must be included in a .cpp file. It can't be in a header.
+ */
+#define REGISTER_LOOP_FUNCTIONS(CLASSNAME, LABEL) \
+   REGISTER_SYMBOL(CLoopFunctions,                \
+                   CLASSNAME,                     \
+                   LABEL,                         \
+                   "undefined",                   \
+                   "undefined",                   \
+                   "undefined",                   \
+                   "undefined",                   \
+                   "undefined")
+
 #endif
