@@ -5,8 +5,13 @@
   <!-- * General configuration * -->
   <!-- ************************* -->
   <framework>
-    <experiment length="11" ticks_per_second="10" />
+    <experiment length="0" ticks_per_second="10" />
   </framework>
+
+  <!-- ****************** -->
+  <!-- * Loop functions * -->
+  <!-- ****************** -->
+  <loop_functions label="test_lf" />
 
   <!-- *************** -->
   <!-- * Controllers * -->
@@ -25,7 +30,7 @@
       </actuators>
       <sensors>
         <footbot_proximity implementation="default" show_rays="true" />
-        <positioning implementation="default" />
+        <ground implementation="rot_z_only" />
         <!-- light implementation="default" show_rays="false" / -->
       </sensors>
       <!-- No required configuration -->
@@ -40,6 +45,8 @@
   <!-- * Arena configuration * -->
   <!-- *********************** -->
   <arena size="2, 2, 1">
+    <floor id="f" source="loop_functions" pixels_per_meter="100" />
+
     <box id="bn" position="1,0,0"  orientation="0,0,0" size="0.1, 2, 0.2" movable="false" />
     <box id="bs" position="-1,0,0" orientation="0,0,0" size="0.1, 2, 0.2" movable="false" />
     <box id="be" position="0,-1,0" orientation="0,0,0" size="2, 0.1, 0.2" movable="false" />

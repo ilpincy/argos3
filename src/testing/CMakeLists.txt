@@ -6,3 +6,9 @@ add_library(test_footbot_controller MODULE
   experiment/test_footbot_controller.cpp)
 target_link_libraries(test_footbot_controller
   argos3plugin_${ARGOS_BUILD_FOR}_footbot)
+
+add_library(test_loop_functions MODULE
+  experiment/test_loop_functions.h
+  experiment/test_loop_functions.cpp)
+target_link_libraries(test_footbot_controller
+  argos3core_${ARGOS_BUILD_FOR})
