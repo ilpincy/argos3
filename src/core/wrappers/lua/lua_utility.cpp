@@ -6,6 +6,11 @@
  */
 #include "lua_utility.h"
 #include <argos3/core/utility/configuration/argos_exception.h>
+#include <argos3/core/utility/math/angles.h>
+#include <argos3/core/utility/math/vector2.h>
+#include <argos3/core/utility/math/vector3.h>
+#include <argos3/core/utility/math/quaternion.h>
+#include <argos3/core/utility/datatypes/color.h>
 
 namespace argos {
 
@@ -115,6 +120,211 @@ namespace argos {
    void CLuaUtility::RegisterLoggerWrapper(lua_State* pt_state) {
       lua_register(pt_state, "log", LOGWrapper);
       lua_register(pt_state, "logerr", LOGERRWrapper);
+   }
+   
+   /****************************************/
+   /****************************************/
+
+   void CLuaUtility::StartTable(lua_State* pt_state,
+                                const std::string& str_key) {
+      lua_pushstring(pt_state, str_key.c_str());
+      lua_newtable (pt_state);
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CLuaUtility::StartTable(lua_State* pt_state,
+                                int n_key) {
+      lua_pushnumber(pt_state, n_key);
+      lua_newtable  (pt_state);
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CLuaUtility::EndTable(lua_State* pt_state) {
+      lua_settable(pt_state, -3);
+   }
+   
+   /****************************************/
+   /****************************************/
+
+   void CLuaUtility::AddToTable(lua_State* pt_state,
+                                const std::string& str_key,
+                                void* pt_data) {
+      lua_pushstring       (pt_state, str_key.c_str());
+      lua_pushlightuserdata(pt_state, pt_data        );
+      lua_settable         (pt_state, -3             );
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CLuaUtility::AddToTable(lua_State* pt_state,
+                                const std::string& str_key,
+                                lua_CFunction t_data) {
+      lua_pushstring   (pt_state, str_key.c_str());
+      lua_pushcfunction(pt_state, t_data         );
+      lua_settable     (pt_state, -3             );
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CLuaUtility::AddToTable(lua_State* pt_state,
+                                const std::string& str_key,
+                                Real f_data) {
+      lua_pushstring(pt_state, str_key.c_str());
+      lua_pushnumber(pt_state, f_data         );
+      lua_settable  (pt_state, -3             );
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CLuaUtility::AddToTable(lua_State* pt_state,
+                                int n_key,
+                                Real f_data) {
+      lua_pushnumber(pt_state, n_key );
+      lua_pushnumber(pt_state, f_data);
+      lua_settable  (pt_state, -3    );
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CLuaUtility::AddToTable(lua_State* pt_state,
+                                const std::string& str_key,
+                                const CRadians& c_data) {
+      lua_pushstring(pt_state, str_key.c_str()  );
+      lua_pushnumber(pt_state, c_data.GetValue());
+      lua_settable  (pt_state, -3               );
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CLuaUtility::AddToTable(lua_State* pt_state,
+                                int n_key,
+                                const CRadians& c_data) {
+      lua_pushnumber(pt_state, n_key            );
+      lua_pushnumber(pt_state, c_data.GetValue());
+      lua_settable  (pt_state, -3               );
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CLuaUtility::AddToTable(lua_State* pt_state,
+                                const std::string& str_key,
+                                const CVector2& c_data) {
+      StartTable(pt_state, str_key               );
+      AddToTable(pt_state, "_type", TYPE_VECTOR2 );
+      AddToTable(pt_state, "x",     c_data.GetX());
+      AddToTable(pt_state, "y",     c_data.GetY());
+      EndTable  (pt_state                        );
+   }
+   
+   /****************************************/
+   /****************************************/
+
+   void CLuaUtility::AddToTable(lua_State* pt_state,
+                                int n_key,
+                                const CVector2& c_data) {
+      StartTable(pt_state, n_key                 );
+      AddToTable(pt_state, "_type", TYPE_VECTOR2 );
+      AddToTable(pt_state, "x",     c_data.GetX());
+      AddToTable(pt_state, "y",     c_data.GetY());
+      EndTable  (pt_state                        );
+   }
+   
+   /****************************************/
+   /****************************************/
+
+   void CLuaUtility::AddToTable(lua_State* pt_state,
+                                const std::string& str_key,
+                                const CVector3& c_data) {
+      StartTable(pt_state, str_key               );
+      AddToTable(pt_state, "_type", TYPE_VECTOR3 );
+      AddToTable(pt_state, "x",     c_data.GetX());
+      AddToTable(pt_state, "y",     c_data.GetY());
+      AddToTable(pt_state, "z",     c_data.GetZ());
+      EndTable  (pt_state                        );
+   }
+   
+   /****************************************/
+   /****************************************/
+
+   void CLuaUtility::AddToTable(lua_State* pt_state,
+                                int n_key,
+                                const CVector3& c_data) {
+      StartTable(pt_state, n_key                 );
+      AddToTable(pt_state, "_type", TYPE_VECTOR3 );
+      AddToTable(pt_state, "x",     c_data.GetX());
+      AddToTable(pt_state, "y",     c_data.GetY());
+      AddToTable(pt_state, "z",     c_data.GetZ());
+      EndTable  (pt_state                        );
+   }
+   
+   /****************************************/
+   /****************************************/
+
+   void CLuaUtility::AddToTable(lua_State* pt_state,
+                                const std::string& str_key,
+                                const CQuaternion& c_data) {
+      CRadians cAngle;
+      CVector3 cAxis;
+      c_data.ToAngleAxis(cAngle, cAxis);
+      StartTable(pt_state, str_key                 );
+      AddToTable(pt_state, "_type", TYPE_QUATERNION);
+      AddToTable(pt_state, "angle", cAngle         );
+      AddToTable(pt_state, "axis",  cAxis          );
+      EndTable  (pt_state                          );
+   }
+   
+   /****************************************/
+   /****************************************/
+
+   void CLuaUtility::AddToTable(lua_State* pt_state,
+                                int n_key,
+                                const CQuaternion& c_data) {
+      CRadians cAngle;
+      CVector3 cAxis;
+      c_data.ToAngleAxis(cAngle, cAxis);
+      StartTable(pt_state, n_key                   );
+      AddToTable(pt_state, "_type", TYPE_QUATERNION);
+      AddToTable(pt_state, "angle", cAngle         );
+      AddToTable(pt_state, "axis",  cAxis          );
+      EndTable  (pt_state                          );
+   }
+   
+   /****************************************/
+   /****************************************/
+
+   void CLuaUtility::AddToTable(lua_State* pt_state,
+                                const std::string& str_key,
+                                const CColor& c_data) {
+      StartTable(pt_state, str_key                   );
+      AddToTable(pt_state, "_type", TYPE_COLOR       );
+      AddToTable(pt_state, "red",   c_data.GetRed()  );
+      AddToTable(pt_state, "green", c_data.GetGreen());
+      AddToTable(pt_state, "blue",  c_data.GetBlue() );
+      EndTable  (pt_state                            );
+   }
+   
+   /****************************************/
+   /****************************************/
+
+   void CLuaUtility::AddToTable(lua_State* pt_state,
+                                int n_key,
+                                const CColor& c_data) {
+      StartTable(pt_state, n_key                     );
+      AddToTable(pt_state, "_type", TYPE_COLOR       );
+      AddToTable(pt_state, "red",   c_data.GetRed()  );
+      AddToTable(pt_state, "green", c_data.GetGreen());
+      AddToTable(pt_state, "blue",  c_data.GetBlue() );
+      EndTable  (pt_state                            );
    }
    
    /****************************************/

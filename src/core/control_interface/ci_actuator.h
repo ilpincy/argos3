@@ -72,19 +72,12 @@ namespace argos {
 
 #ifdef ARGOS_WITH_LUA
       /**
-       * Creates the Lua variables for this actuator.
-       * The variables must be added to the <tt>robot</tt> table, as a nested table.
+       * Creates the Lua state for this actuator.
+       * The state must be added to the <tt>robot</tt> table, as a nested table.
        * @param pt_lua_state The current Lua state.
-       * @see LuaVariablesToSettings()
+       * @see LuaStateToSettings()
        */
-      virtual void CreateLuaVariables(lua_State* pt_lua_state) = 0;
-
-      /**
-       * Reads the value of the Lua variables and sets the actuator values accordingly.
-       * @param pt_lua_state The current Lua state.
-       * @see CreateLuaVariables()
-       */
-      virtual void LuaVariablesToSettings(lua_State* pt_lua_state) = 0;
+      virtual void CreateLuaState(lua_State* pt_lua_state) = 0;
 #endif
    };
 

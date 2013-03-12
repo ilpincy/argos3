@@ -4,6 +4,15 @@
  *
  * @author Carlo Pinciroli <ilpincy@gmail.com>
  */
+
+namespace argos {
+   class CRadians;
+   class CVector2;
+   class CVector3;
+   class CQuaternion;
+   class CColor;
+}
+
 #include <argos3/core/utility/logging/argos_log.h>
 
 extern "C" {
@@ -19,6 +28,16 @@ namespace argos {
    class CLuaUtility {
 
    public:
+
+      enum EARGoSTypes {
+         TYPE_NORMAL = 0,
+         TYPE_VECTOR2,
+         TYPE_VECTOR3,
+         TYPE_QUATERNION,
+         TYPE_COLOR
+      };
+      
+   public:
       
       static bool LoadScript(lua_State* pt_state,
                              const std::string& str_filename);
@@ -33,6 +52,242 @@ namespace argos {
                              lua_State* pt_state);
 
       static void RegisterLoggerWrapper(lua_State* pt_state);
+
+      /**
+       * Adds a table with the given string key to the table located at the top of the stack.
+       * This method pushes the table key and the table itself on the stack.
+       * To close a table call EndTable().
+       * @param pt_state The Lua state.
+       * @param str_key The string key for the parent table.
+       * @see EndTable()
+       */
+      static void StartTable(lua_State* pt_state,
+                             const std::string& str_key);
+
+      /**
+       * Adds a table with the given numeric key to the table located at the top of the stack.
+       * This method pushes the table key and the table itself on the stack.
+       * To close a table call EndTable().
+       * @param pt_state The Lua state.
+       * @param n_key The numeric key for the parent table.
+       * @see EndTable()
+       */
+      static void StartTable(lua_State* pt_state,
+                             int n_key);
+
+      /**
+       * Adds a table to the Lua stack.
+       * This method expects the table itself to be at the top of the stack (-1)
+       * and the table name to be a index -2.
+       * @param pt_state The Lua state.
+       * @see StartTable()
+       */
+      static void EndTable(lua_State* pt_state);
+
+      /**
+       * Adds a pointer to a chunk of data with the given string key to the table located at the top of the stack.
+       * At the end of the execution, the stack is in the same state as it was
+       * before this function was called.
+       * @param pt_state The Lua state.
+       * @param str_key The string key for the parent table.
+       * @param pt_data The data to add to the table.
+       */
+      static void AddToTable(lua_State* pt_state,
+                             const std::string& str_key,
+                             void* pt_data);
+
+      /**
+       * Adds a pointer to a C function with the given string key to the table located at the top of the stack.
+       * At the end of the execution, the stack is in the same state as it was
+       * before this function was called.
+       * @param pt_state The Lua state.
+       * @param str_key The string key for the parent table.
+       * @param pt_data The data to add to the table.
+       */
+      static void AddToTable(lua_State* pt_state,
+                             const std::string& str_key,
+                             lua_CFunction pt_data);
+
+      /**
+       * Adds a Real with the given string key to the table located at the top of the stack.
+       * At the end of the execution, the stack is in the same state as it was
+       * before this function was called.
+       * @param pt_state The Lua state.
+       * @param str_key The string key for the parent table.
+       * @param f_data The data to add to the table.
+       */
+      static void AddToTable(lua_State* pt_state,
+                             const std::string& str_key,
+                             Real f_data);
+
+      /**
+       * Adds a Real with the given numeric key to the table located at the top of the stack.
+       * At the end of the execution, the stack is in the same state as it was
+       * before this function was called.
+       * @param pt_state The Lua state.
+       * @param n_key The numeric key for the parent table.
+       * @param f_data The data to add to the table.
+       */
+      static void AddToTable(lua_State* pt_state,
+                             int n_key,
+                             Real f_data);
+
+      /**
+       * Adds a CRadians with the given string key to the table located at the top of the stack.
+       * At the end of the execution, the stack is in the same state as it was
+       * before this function was called.
+       * @param pt_state The Lua state.
+       * @param str_key The string key for the parent table.
+       * @param c_data The data to add to the table.
+       */
+      static void AddToTable(lua_State* pt_state,
+                             const std::string& str_key,
+                             const CRadians& c_data);
+
+      /**
+       * Adds a CRadians with the given numeric key to the table located at the top of the stack.
+       * At the end of the execution, the stack is in the same state as it was
+       * before this function was called.
+       * @param pt_state The Lua state.
+       * @param n_key The numeric key for the parent table.
+       * @param c_data The data to add to the table.
+       */
+      static void AddToTable(lua_State* pt_state,
+                             int n_key,
+                             const CRadians& c_data);
+
+      /**
+       * Adds a CVector2 the given string key to the table located at the top of the stack.
+       * At the end of the execution, the stack is in the same state as it was
+       * before this function was called.
+       * @param pt_state The Lua state.
+       * @param str_key The string key for the parent table.
+       * @param c_data The data to add to the table.
+       * @see StartTable()
+       * @see EndTable()
+       */
+      static void AddToTable(lua_State* pt_state,
+                             const std::string& str_key,
+                             const CVector2& c_data);
+      
+      /**
+       * Adds a CVector2 the given numeric key to the table located at the top of the stack.
+       * At the end of the execution, the stack is in the same state as it was
+       * before this function was called.
+       * @param pt_state The Lua state.
+       * @param n_key The numeric key for the parent table.
+       * @param c_data The data to add to the table.
+       * @see StartTable()
+       * @see EndTable()
+       */
+      static void AddToTable(lua_State* pt_state,
+                             int n_key,
+                             const CVector2& c_data);
+      
+      /**
+       * Adds a CVector3 the given string key to the table located at the top of the stack.
+       * At the end of the execution, the stack is in the same state as it was
+       * before this function was called.
+       * @param pt_state The Lua state.
+       * @param str_key The string key for the parent table.
+       * @param c_data The data to add to the table.
+       * @see StartTable()
+       * @see EndTable()
+       */
+      static void AddToTable(lua_State* pt_state,
+                             const std::string& str_key,
+                             const CVector3& c_data);
+      
+      /**
+       * Adds a CVector3 the given numeric key to the table located at the top of the stack.
+       * At the end of the execution, the stack is in the same state as it was
+       * before this function was called.
+       * @param pt_state The Lua state.
+       * @param n_key The numeric key for the parent table.
+       * @param c_data The data to add to the table.
+       * @see StartTable()
+       * @see EndTable()
+       */
+      static void AddToTable(lua_State* pt_state,
+                             int n_key,
+                             const CVector3& c_data);
+      
+      /**
+       * Adds a CQuaternion the given string key to the table located at the top of the stack.
+       * At the end of the execution, the stack is in the same state as it was
+       * before this function was called.
+       * @param pt_state The Lua state.
+       * @param str_key The string key for the parent table.
+       * @param c_data The data to add to the table.
+       * @see StartTable()
+       * @see EndTable()
+       */
+      static void AddToTable(lua_State* pt_state,
+                             const std::string& str_key,
+                             const CQuaternion& c_data);
+      
+      /**
+       * Adds a CQuaternion the given numeric key to the table located at the top of the stack.
+       * At the end of the execution, the stack is in the same state as it was
+       * before this function was called.
+       * @param pt_state The Lua state.
+       * @param n_key The numeric key for the parent table.
+       * @param c_data The data to add to the table.
+       * @see StartTable()
+       * @see EndTable()
+       */
+      static void AddToTable(lua_State* pt_state,
+                             int n_key,
+                             const CQuaternion& c_data);
+      
+      /**
+       * Adds a CColor the given string key to the table located at the top of the stack.
+       * At the end of the execution, the stack is in the same state as it was
+       * before this function was called.
+       * @param pt_state The Lua state.
+       * @param str_key The string key for the parent table.
+       * @param c_data The data to add to the table.
+       * @see StartTable()
+       * @see EndTable()
+       */
+      static void AddToTable(lua_State* pt_state,
+                             const std::string& str_key,
+                             const CColor& c_data);
+      
+      /**
+       * Adds a CColor the given numeric key to the table located at the top of the stack.
+       * At the end of the execution, the stack is in the same state as it was
+       * before this function was called.
+       * @param pt_state The Lua state.
+       * @param n_key The numeric key for the parent table.
+       * @param c_data The data to add to the table.
+       * @see StartTable()
+       * @see EndTable()
+       */
+      static void AddToTable(lua_State* pt_state,
+                             int n_key,
+                             const CColor& c_data);
+
+      /**
+       * Returns a pointer to the instance to the wanted device.
+       * The Lua state is stored in a table called <tt>robot</tt>. Each
+       * robot device is stored as a nested table. Each nested table
+       * has an <tt>_instance</tt> field which contains the pointer
+       * to the actual device. This function returns such pointer.
+       * @param pt_state The Lua state.
+       * @param str_key The string key for the device table.
+       * @return A pointer to the instance to the wanted device.
+       */
+      template<class T>
+      static T* GetDeviceInstance(lua_State* pt_state,
+                                  const std::string& str_key) {
+         lua_getglobal(pt_state, "robot");
+         lua_getfield(pt_state, -1, str_key.c_str());
+         lua_getfield(pt_state, -1, "_instance");
+         T* ptRetVal = reinterpret_cast<T*>(lua_touserdata(pt_state, -1));
+         lua_pop(pt_state, 3);
+         return ptRetVal;
+      }
       
    private:
       

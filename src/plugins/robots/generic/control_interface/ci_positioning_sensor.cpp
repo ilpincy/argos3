@@ -13,41 +13,11 @@ namespace argos {
    /****************************************/
 
 #ifdef ARGOS_WITH_LUA
-   void CCI_PositioningSensor::CreateLuaVariables(lua_State* pt_lua_state) {
-      lua_pushstring(pt_lua_state, "positioning");
-      lua_newtable  (pt_lua_state);
-      lua_pushstring(pt_lua_state, "position");
-      lua_newtable  (pt_lua_state);
-      lua_pushstring(pt_lua_state, "x");
-      lua_pushnumber(pt_lua_state, m_sReading.Position.GetX());
-      lua_settable  (pt_lua_state, -3);
-      lua_pushstring(pt_lua_state, "y");
-      lua_pushnumber(pt_lua_state, m_sReading.Position.GetY());
-      lua_settable  (pt_lua_state, -3);
-      lua_pushstring(pt_lua_state, "z");
-      lua_pushnumber(pt_lua_state, m_sReading.Position.GetZ());
-      lua_settable  (pt_lua_state, -3);
-      lua_settable(pt_lua_state, -3);
-      m_sReading.Orientation.ToAngleAxis(m_cAngle, m_cAxis);
-      lua_pushstring(pt_lua_state, "orientation");
-      lua_newtable  (pt_lua_state);
-      lua_pushstring(pt_lua_state, "angle");
-      lua_pushnumber(pt_lua_state, m_cAngle.GetValue());
-      lua_settable  (pt_lua_state, -3);
-      lua_pushstring(pt_lua_state, "axis");
-      lua_newtable  (pt_lua_state);
-      lua_pushstring(pt_lua_state, "x");
-      lua_pushnumber(pt_lua_state, m_cAxis.GetX());
-      lua_settable  (pt_lua_state, -3);
-      lua_pushstring(pt_lua_state, "y");
-      lua_pushnumber(pt_lua_state, m_cAxis.GetY());
-      lua_settable  (pt_lua_state, -3);
-      lua_pushstring(pt_lua_state, "z");
-      lua_pushnumber(pt_lua_state, m_cAxis.GetZ());
-      lua_settable  (pt_lua_state, -3);
-      lua_settable(pt_lua_state, -3);
-      lua_settable(pt_lua_state, -3);
-      lua_settable(pt_lua_state, -3);
+   void CCI_PositioningSensor::CreateLuaState(lua_State* pt_lua_state) {
+      CLuaUtility::StartTable(pt_lua_state, "positioning");
+      CLuaUtility::AddToTable(pt_lua_state, "position",    m_sReading.Position);
+      CLuaUtility::AddToTable(pt_lua_state, "orientation", m_sReading.Orientation);
+      CLuaUtility::EndTable(pt_lua_state);
    }
 #endif
 
@@ -55,7 +25,7 @@ namespace argos {
    /****************************************/
 
 #ifdef ARGOS_WITH_LUA
-   void CCI_PositioningSensor::ReadingsToLuaVariables(lua_State* pt_lua_state) {
+   void CCI_PositioningSensor::ReadingsToLuaState(lua_State* pt_lua_state) {
       lua_getfield(pt_lua_state, -1, "positioning");
       lua_getfield(pt_lua_state, -1, "position");
       lua_pushnumber(pt_lua_state, m_sReading.Position.GetX());

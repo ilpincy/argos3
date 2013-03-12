@@ -5,6 +5,7 @@
  */
 
 #include "ci_light_sensor.h"
+#include <argos3/core/wrappers/lua/lua_utility.h>
 
 namespace argos {
 
@@ -12,15 +13,12 @@ namespace argos {
    /****************************************/
 
 #ifdef ARGOS_WITH_LUA
-   void CCI_LightSensor::CreateLuaVariables(lua_State* pt_lua_state) {
-      lua_pushstring(pt_lua_state, "light");
-      lua_newtable  (pt_lua_state);
+   void CCI_LightSensor::CreateLuaState(lua_State* pt_lua_state) {
+      CLuaUtility::StartTable(pt_lua_state, "light");
       for(size_t i = 0; i < m_tReadings.size(); ++i) {
-         lua_pushnumber(pt_lua_state, i+1           );
-         lua_pushnumber(pt_lua_state, m_tReadings[i]);
-         lua_settable  (pt_lua_state, -3            );
+         CLuaUtility::AddToTable(pt_lua_state, i+1, m_tReadings[i]);
       }
-      lua_settable(pt_lua_state, -3);
+      CLuaUtility::EndTable(pt_lua_state);
    }
 #endif
 
@@ -28,7 +26,7 @@ namespace argos {
    /****************************************/
 
 #ifdef ARGOS_WITH_LUA
-   void CCI_LightSensor::ReadingsToLuaVariables(lua_State* pt_lua_state) {
+   void CCI_LightSensor::ReadingsToLuaState(lua_State* pt_lua_state) {
       lua_getfield(pt_lua_state, -1, "light");
       for(size_t i = 0; i < m_tReadings.size(); ++i) {
          lua_pushnumber(pt_lua_state, i+1           );

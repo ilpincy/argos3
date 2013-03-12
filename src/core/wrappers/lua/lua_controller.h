@@ -34,11 +34,9 @@ namespace argos {
 
       void SetLuaScript(const std::string& str_script);
 
-      void CreateLuaVariables();
+      void CreateLuaState();
 
-      void SensorReadingsToLuaVariables();
-
-      void LuaVariablesToActuatorSettings();
+      void SensorReadingsToLuaState();
 
       inline bool IsOK() const {
          return m_bIsOK;

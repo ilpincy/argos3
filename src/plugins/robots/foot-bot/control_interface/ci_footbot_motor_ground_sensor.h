@@ -32,7 +32,6 @@
 #ifndef CCI_FOOTBOT_MOTOR_GROUND_SENSOR_H
 #define CCI_FOOTBOT_MOTOR_GROUND_SENSOR_H
 
-/* To avoid dependency problems when including */
 namespace argos {
    class CCI_FootBotMotorGroundSensor;
 }
@@ -44,7 +43,7 @@ namespace argos {
 
 namespace argos {
 
-   class CCI_FootBotMotorGroundSensor : virtual public CCI_Sensor {
+   class CCI_FootBotMotorGroundSensor : public CCI_Sensor {
 
    public:
 
@@ -65,17 +64,19 @@ namespace argos {
 
    public:
 
-      static const UInt32 NUM_READINGS;
-      static const CRange<Real> READING_RANGE;
-
-   public:
-
       CCI_FootBotMotorGroundSensor();
+
       virtual ~CCI_FootBotMotorGroundSensor() {}
 
       inline const TReadings& GetReadings() const {
          return m_tReadings;
       }
+
+#ifdef ARGOS_WITH_LUA
+      virtual void CreateLuaState(lua_State* pt_lua_state);
+
+      virtual void ReadingsToLuaState(lua_State* pt_lua_state);
+#endif
 
    protected:
 
