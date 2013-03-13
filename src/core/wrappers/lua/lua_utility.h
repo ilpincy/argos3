@@ -54,6 +54,26 @@ namespace argos {
       static void RegisterLoggerWrapper(lua_State* pt_state);
 
       /**
+       * Opens a table in the robot state, creating it if it does not exist.
+       * This method expects the "robot" table to be at -1 in the stack, and
+       * pushes the table object on the stack.
+       * To close the table call CloseRobotStateTable().
+       * @param pt_state The Lua state.
+       * @param str_key The string key for the robot state table.
+       * @see CloseRobotStateTable()
+       */
+      static void OpenRobotStateTable(lua_State* pt_state,
+                                      const std::string& str_key);
+
+      /**
+       * Closes a table in the robot state.
+       * This method expects the table itself to be at the top of the stack (-1).
+       * @param pt_state The Lua state.
+       * @see OpenRobotStateTable()
+       */
+      static void CloseRobotStateTable(lua_State* pt_state);
+
+      /**
        * Adds a table with the given string key to the table located at the top of the stack.
        * This method pushes the table key and the table itself on the stack.
        * To close a table call EndTable().

@@ -125,6 +125,29 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   void CLuaUtility::OpenRobotStateTable(lua_State* pt_state,
+                                         const std::string& str_key) {
+      lua_pushstring(pt_state, str_key.c_str());
+      lua_rawget(pt_state, -2);
+      if(lua_isnil(pt_state, -1)) {
+         lua_pop(pt_state, 1);
+         StartTable(pt_state, str_key);
+         EndTable(pt_state);
+         lua_pushstring(pt_state, str_key.c_str());
+         lua_rawget(pt_state, -2);
+      }
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CLuaUtility::CloseRobotStateTable(lua_State* pt_state) {
+      lua_pop(pt_state, 1);
+   }
+
+   /****************************************/
+   /****************************************/
+
    void CLuaUtility::StartTable(lua_State* pt_state,
                                 const std::string& str_key) {
       lua_pushstring(pt_state, str_key.c_str());
