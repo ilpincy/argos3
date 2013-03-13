@@ -151,6 +151,12 @@ namespace argos {
          return m_tLongReadingsMap;
       }
 
+#ifdef ARGOS_WITH_LUA
+      virtual void CreateLuaState(lua_State* pt_lua_state);
+
+      virtual void ReadingsToLuaState(lua_State* pt_lua_state);
+#endif
+
    protected:
 
       /** A vector of sReadings */

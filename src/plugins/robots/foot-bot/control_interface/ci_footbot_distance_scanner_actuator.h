@@ -92,6 +92,10 @@ namespace argos {
        */
       virtual void Disable() = 0;
 
+#ifdef ARGOS_WITH_LUA
+      virtual void CreateLuaState(lua_State* pt_lua_state);
+#endif
+
    };
 
 };

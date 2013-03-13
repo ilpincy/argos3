@@ -41,6 +41,8 @@ endif(ARGOS_BUILD_FOR_SIMULATOR)
 set(ARGOS3_SOURCES_PLUGINS_ROBOTS_FOOTBOT
   ${ARGOS3_HEADERS_PLUGINS_ROBOTS_FOOTBOT_CONTROLINTERFACE}
   control_interface/ci_footbot_base_ground_sensor.cpp
+  control_interface/ci_footbot_distance_scanner_actuator.cpp
+  control_interface/ci_footbot_distance_scanner_sensor.cpp
   control_interface/ci_footbot_encoder_sensor.cpp
   control_interface/ci_footbot_gripper_actuator.cpp
   control_interface/ci_footbot_light_sensor.cpp
