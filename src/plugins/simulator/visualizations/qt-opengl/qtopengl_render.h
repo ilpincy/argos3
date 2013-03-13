@@ -15,7 +15,10 @@ class QApplication;
 
 #include <argos3/core/simulator/visualization/visualization.h>
 #include <argos3/plugins/simulator/visualizations/qt-opengl/qtopengl_main_window.h>
+
+#ifdef ARGOS_WITH_LUA
 #include <argos3/plugins/simulator/visualizations/qt-opengl/qtopengl_lua_main_window.h>
+#endif
 
 namespace argos {
 
@@ -27,8 +30,12 @@ namespace argos {
          m_pcApplication(NULL),
          m_pcMainWindow(NULL),
          m_ppcOptions(NULL),
-         m_nOptionNum(0),
-         m_bLuaEditor(NULL) {}
+         m_nOptionNum(0)
+#ifdef ARGOS_WITH_LUA
+         , m_pcQTOpenGLLuaMainWindow(NULL),
+         m_bLuaEditor(false)
+#endif
+      {}
 
       virtual ~CQTOpenGLRender() {}
 
@@ -40,17 +47,21 @@ namespace argos {
 
       CQTOpenGLMainWindow& GetMainWindow();
 
+#ifdef ARGOS_WITH_LUA
       CQTOpenGLLuaMainWindow& GetLuaMainWindow();
+#endif
 
    private:
 
       QApplication* m_pcApplication;
       CQTOpenGLMainWindow* m_pcMainWindow;
-      CQTOpenGLLuaMainWindow* m_pcQTOpenGLLuaMainWindow;
       char** m_ppcOptions;
       SInt32 m_nOptionNum;
       TConfigurationNode m_tConfTree;
+#ifdef ARGOS_WITH_LUA
+      CQTOpenGLLuaMainWindow* m_pcQTOpenGLLuaMainWindow;
       bool m_bLuaEditor;
+#endif
 
    };
 

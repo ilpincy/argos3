@@ -13,6 +13,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+#ifdef ARGOS_WITH_LUA
    /*
     * This function expects the stack to have either two or four arguments.
     * The first argument must always be the index of the LED to set.
@@ -89,6 +90,7 @@ namespace argos {
          SetAllColors(cColor);
       return 0;
    }
+#endif
 
    /****************************************/
    /****************************************/

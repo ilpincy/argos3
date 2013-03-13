@@ -22,6 +22,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+#ifdef ARGOS_WITH_LUA
    /*
     * The stack must have no values
     */
@@ -60,6 +61,7 @@ namespace argos {
       CLuaUtility::GetDeviceInstance<CCI_FootBotGripperActuator>(pt_lua_state, "gripper")->Unlock();
       return 0;
    }
+#endif
 
    /****************************************/
    /****************************************/

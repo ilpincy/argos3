@@ -13,6 +13,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+#ifdef ARGOS_WITH_LUA
    /*
     * The stack must have two values in this order:
     * 1. left wheel speed (a number)
@@ -31,6 +32,7 @@ namespace argos {
                            lua_tonumber(pt_lua_state, 2));
       return 0;
    }
+#endif
    
    /****************************************/
    /****************************************/

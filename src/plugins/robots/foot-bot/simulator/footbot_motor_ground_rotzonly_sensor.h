@@ -1,36 +1,36 @@
 /**
- * @file <argos3/plugins/simulator/sensors/ground_rotzonly_sensor.h>
+ * @file <argos3/plugins/robots/foot-bot/simulator/footbot_motor_ground_rotzonly_sensor.h>
  *
  * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */
 
-#ifndef GROUND_ROTZONLY_SENSOR_H
-#define GROUND_ROTZONLY_SENSOR_H
+#ifndef FOOTBOT_MOTOR_GROUND_ROTZONLY_SENSOR_H
+#define FOOTBOT_MOTOR_GROUND_ROTZONLY_SENSOR_H
 
 #include <string>
 #include <map>
 
 namespace argos {
-   class CGroundRotZOnlySensor;
+   class CFootBotMotorGroundRotZOnlySensor;
    class CGroundSensorEquippedEntity;
    class CFloorEntity;
 }
 
-#include <argos3/plugins/robots/generic/control_interface/ci_ground_sensor.h>
+#include <argos3/plugins/robots/foot-bot/control_interface/ci_footbot_motor_ground_sensor.h>
 #include <argos3/core/utility/math/range.h>
 #include <argos3/core/simulator/space/space.h>
 #include <argos3/core/utility/math/rng.h>
 
 namespace argos {
 
-   class CGroundRotZOnlySensor : public CSimulatedSensor,
-                                 public CCI_GroundSensor {
+   class CFootBotMotorGroundRotZOnlySensor : public CCI_FootBotMotorGroundSensor,
+                                             public CSimulatedSensor {
 
    public:
 
-      CGroundRotZOnlySensor();
+      CFootBotMotorGroundRotZOnlySensor();
 
-      virtual ~CGroundRotZOnlySensor() {}
+      virtual ~CFootBotMotorGroundRotZOnlySensor() {}
 
       virtual void SetRobot(CComposableEntity& c_entity);
 

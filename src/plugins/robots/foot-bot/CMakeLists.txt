@@ -27,9 +27,11 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
   set(ARGOS3_HEADERS_PLUGINS_ROBOTS_FOOTBOT_SIMULATOR
     simulator/distance_scanner_equipped_entity.h
     simulator/dynamics2d_footbot_model.h
+    simulator/footbot_base_ground_rotzonly_sensor.h
     simulator/footbot_entity.h
     simulator/footbot_gripper_default_actuator.h
     simulator/footbot_light_rotzonly_sensor.h
+    simulator/footbot_motor_ground_rotzonly_sensor.h
     simulator/footbot_proximity_default_sensor.h)
 endif(ARGOS_BUILD_FOR_SIMULATOR)
 
@@ -39,13 +41,15 @@ endif(ARGOS_BUILD_FOR_SIMULATOR)
 set(ARGOS3_SOURCES_PLUGINS_ROBOTS_FOOTBOT
   ${ARGOS3_HEADERS_PLUGINS_ROBOTS_FOOTBOT_CONTROLINTERFACE}
   control_interface/ci_footbot_base_ground_sensor.cpp
+  control_interface/ci_footbot_encoder_sensor.cpp
   control_interface/ci_footbot_gripper_actuator.cpp
   control_interface/ci_footbot_light_sensor.cpp
   control_interface/ci_footbot_motor_ground_sensor.cpp
   control_interface/ci_footbot_proximity_sensor.cpp
   control_interface/ci_footbot_turret_actuator.cpp
   control_interface/ci_footbot_turret_encoder_sensor.cpp
-  control_interface/ci_footbot_turret_torque_sensor.cpp)
+  control_interface/ci_footbot_turret_torque_sensor.cpp
+  control_interface/ci_footbot_wheel_speed_sensor.cpp)
 
 if(ARGOS_BUILD_FOR_SIMULATOR)
   set(ARGOS3_SOURCES_PLUGINS_ROBOTS_FOOTBOT
@@ -53,9 +57,11 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
     ${ARGOS3_HEADERS_PLUGINS_ROBOTS_FOOTBOT_SIMULATOR}
     simulator/distance_scanner_equipped_entity.cpp
     simulator/dynamics2d_footbot_model.cpp
+    simulator/footbot_base_ground_rotzonly_sensor.cpp
     simulator/footbot_entity.cpp
     simulator/footbot_gripper_default_actuator.cpp
     simulator/footbot_light_rotzonly_sensor.cpp
+    simulator/footbot_motor_ground_rotzonly_sensor.cpp
     simulator/footbot_proximity_default_sensor.cpp)
   # Compile the graphical visualization only if the necessary libraries have been found
   include(ARGoSCheckQTOpenGL)
