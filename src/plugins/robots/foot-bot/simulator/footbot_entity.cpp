@@ -31,6 +31,7 @@ namespace argos {
 
    static const Real INTERWHEEL_DISTANCE        = 0.14f;
    static const Real HALF_INTERWHEEL_DISTANCE   = INTERWHEEL_DISTANCE * 0.5f;
+   static const Real WHEEL_RADIUS               = 0.029112741f;
 
    static const Real PROXIMITY_SENSOR_RING_ELEVATION       = 0.06f;
    static const Real PROXIMITY_SENSOR_RING_RADIUS          = BODY_RADIUS;
@@ -77,15 +78,11 @@ namespace argos {
          /*
           * Create and init components
           */
-         /* Embodied entity */
-         m_pcEmbodiedEntity = new CEmbodiedEntity(this);
-         AddComponent(*m_pcEmbodiedEntity);
-         m_pcEmbodiedEntity->Init(t_tree);
          /* Wheeled entity and wheel positions (left, right) */
          m_pcWheeledEntity = new CWheeledEntity(this, 2);
          AddComponent(*m_pcWheeledEntity);
-         m_pcWheeledEntity->SetWheelPosition(0, CVector3(0.0f,  HALF_INTERWHEEL_DISTANCE, 0.0f));
-         m_pcWheeledEntity->SetWheelPosition(1, CVector3(0.0f, -HALF_INTERWHEEL_DISTANCE, 0.0f));
+         m_pcWheeledEntity->SetWheel(0, CVector3(0.0f,  HALF_INTERWHEEL_DISTANCE, 0.0f), WHEEL_RADIUS);
+         m_pcWheeledEntity->SetWheel(1, CVector3(0.0f, -HALF_INTERWHEEL_DISTANCE, 0.0f), WHEEL_RADIUS);
          m_pcWheeledEntity->Init(t_tree);
          /* LED equipped entity, with LEDs [0-11] and beacon [12] */
          m_pcLEDEquippedEntity = new CLEDEquippedEntity(this,
@@ -165,6 +162,10 @@ namespace argos {
          m_pcWiFiEquippedEntity = new CWiFiEquippedEntity(this);
          AddComponent(*m_pcWiFiEquippedEntity);
          m_pcWiFiEquippedEntity->Init(t_tree);
+         /* Embodied entity */
+         m_pcEmbodiedEntity = new CEmbodiedEntity(this);
+         AddComponent(*m_pcEmbodiedEntity);
+         m_pcEmbodiedEntity->Init(t_tree);
          /* Controllable entity
             It must be the last one, for actuators/sensors to link to composing entities correctly */
          m_pcControllableEntity = new CControllableEntity(this);

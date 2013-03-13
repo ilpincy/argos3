@@ -8,8 +8,9 @@
 #define DYNAMICS2D_FOOTBOT_MODEL_H
 
 namespace argos {
-   class SDynamics2DEngineGripperData;
    class CDynamics2DDifferentialSteeringControl;
+   class CDynamics2DGripper;
+   class CDynamics2DGrippable;
 }
 
 #include <argos3/plugins/simulator/physics_engines/dynamics2d/dynamics2d_model.h>
@@ -54,6 +55,8 @@ namespace argos {
       CGripperEquippedEntity& m_cGripperEntity;
 
       CDynamics2DDifferentialSteeringControl m_cDiffSteering;
+      CDynamics2DGripper*                    m_pcGripper;
+      CDynamics2DGrippable*                  m_pcGrippable;
 
       cpFloat  m_fMass;
       cpShape* m_ptBaseShape;
@@ -66,11 +69,9 @@ namespace argos {
       cpConstraint* m_ptBaseGripperLinearMotion;
       cpConstraint* m_ptBaseGripperAngularMotion;
 
-      SDynamics2DEngineGripperData* m_psGripperData;
+      const Real* m_fCurrentWheelVelocity;
 
-      Real m_fCurrentWheelVelocity[2];
       UInt8 m_unLastTurretMode;
-
       Real m_fPreviousTurretAngleError;
 
    };

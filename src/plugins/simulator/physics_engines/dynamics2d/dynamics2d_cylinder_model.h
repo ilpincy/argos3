@@ -9,6 +9,7 @@
 
 namespace argos {
    class CDynamics2DCylinderModel;
+   class CDynamics2DGrippable;
 }
 
 #include <argos3/plugins/simulator/physics_engines/dynamics2d/dynamics2d_model.h>
@@ -42,13 +43,14 @@ namespace argos {
 
    private:
 
-      CCylinderEntity& m_cCylinderEntity;
-      cpFloat  m_fMass;
-      cpShape* m_ptShape;
-      cpBody*  m_ptBody;
-      cpConstraint* m_ptLinearFriction;
-      cpConstraint* m_ptAngularFriction;
-      
+      CCylinderEntity&      m_cCylinderEntity;
+      CDynamics2DGrippable* m_pcGrippable;
+      cpFloat               m_fMass;
+      cpShape*              m_ptShape;
+      cpBody*               m_ptBody;
+      cpConstraint*         m_ptLinearFriction;
+      cpConstraint*         m_ptAngularFriction;
+
    };
 
 }

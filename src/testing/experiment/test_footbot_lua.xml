@@ -32,11 +32,12 @@
         <footbot_proximity implementation="default" show_rays="true" />
         <ground implementation="rot_z_only" />
         <light implementation="default" show_rays="false" />
+        <differential_steering implementation="default" />
       </sensors>
       <!-- No required configuration -->
       <params />
       <!-- Optionally, you can pass a script as a controller parameter: -->
-      <!-- params script="../../src/testing/experiment/test_leds.lua" / -->
+      <!-- params script="../../src/testing/experiment/test_gripper.lua" / -->
     </lua_controller>
 
   </controllers>
