@@ -39,10 +39,10 @@ namespace argos {
 
 #ifdef ARGOS_WITH_LUA
    void CCI_DifferentialSteeringActuator::CreateLuaState(lua_State* pt_lua_state) {
-      CLuaUtility::StartTable(pt_lua_state, "wheels");
+      CLuaUtility::OpenRobotStateTable(pt_lua_state, "wheels");
       CLuaUtility::AddToTable(pt_lua_state, "_instance", this);
       CLuaUtility::AddToTable(pt_lua_state, "set_velocity", &LuaSetLinearVelocity);
-      CLuaUtility::EndTable(pt_lua_state);
+      CLuaUtility::CloseRobotStateTable(pt_lua_state);
    }
 #endif
 
