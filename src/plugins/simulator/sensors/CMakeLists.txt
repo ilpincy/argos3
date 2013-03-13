@@ -3,6 +3,7 @@
 #
 # argos3/plugins/simulator/sensors
 set(ARGOS3_HEADERS_PLUGINS_SIMULATOR_SENSORS
+  differential_steering_default_sensor.h
   ground_rotzonly_sensor.h
   light_default_sensor.h
   positioning_default_sensor.h
@@ -13,6 +14,7 @@ set(ARGOS3_HEADERS_PLUGINS_SIMULATOR_SENSORS
 #
 set(ARGOS3_SOURCES_PLUGINS_SIMULATOR_SENSORS
   ${ARGOS3_HEADERS_PLUGINS_SIMULATOR_SENSORS}
+  differential_steering_default_sensor.cpp
   ground_rotzonly_sensor.cpp
   light_default_sensor.cpp
   positioning_default_sensor.cpp
