@@ -70,7 +70,7 @@ namespace argos {
    /****************************************/
    
    void CDifferentialSteeringDefaultActuator::Update() {
-      m_pcWheeledEntity->SetSpeed(m_fCurrentVelocity);
+      m_pcWheeledEntity->SetVelocities(m_fCurrentVelocity);
    }
 
    /****************************************/
