@@ -156,6 +156,34 @@ TIP: For production environments, it is recommended to compile ARGoS with
      recommended to set +CMAKE_BUILD_TYPE+ to +Debug+. The other standard
      settings (empty and +RelWithDebInfo+) are supported but should be avoided.
 
+Using the ARGoS simulator from the source tree
+----------------------------------------------
+
+Running the ARGoS simulator
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If you don't want to install ARGoS on your system, you can run it from the sources
+tree. In the directory +build_simulator/+ you'll find a bash script called
++setup_env.sh+. Executing this script, you configure the current environment to
+run ARGoS:
+
+ $ cd argos3
+ $ cd build_simulator
+ $ . setup_env.sh     # or 'source setup_env.sh'
+ $ cd core
+ $ ./argos -q all     # this shows all the plugins recognized by ARGoS
+
+Debugging the ARGoS simulator
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You can debug the ARGoS code using +gdb+. Since the code in scattered across multiple
+directories, you need a +.gdbinit+ file. Luckily for you, this file is created
+automatically when you compile ARGoS. To use it, you just need to remember to
+run the ARGoS simulator from the +build_simulator/core/+ directory:
+
+ $ cd argos3/build_simulator
+ $ gdb ./argos
+
 Installing ARGoS from the compiled binaries
 --------------------------------------------
 
