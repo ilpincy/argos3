@@ -224,42 +224,72 @@ namespace argos {
       sCancelData.ActConditionalMutex = &m_tActConditionalMutex;
       sCancelData.PhysicsConditionalMutex = &m_tPhysicsConditionalMutex;
       pthread_cleanup_push(CleanupUpdateThread, &sCancelData);
-      /* Calculate whether this thread is in charge of physics engines and how many */
-      size_t tPhysicsPortion = (m_ptPhysicsEngines->size() / CSimulator::GetInstance().GetNumThreads());
-      if((m_ptPhysicsEngines->size() % CSimulator::GetInstance().GetNumThreads()) != 0) {
-         ++tPhysicsPortion;
+      /*
+       * Calculate whether this thread is in charge of physics engines and how many
+       */
+      /* This is the minimum number of physics engines assigned to a thread */
+      size_t unMinPhysicsPortion = m_ptPhysicsEngines->size() / CSimulator::GetInstance().GetNumThreads();
+      /* If the division has a remainder, the extra engines must be assigned too */
+      size_t unExtraPhysicsPortion = m_ptPhysicsEngines->size() % CSimulator::GetInstance().GetNumThreads();
+      /* Id range for the physics engines assigned to this thread; initially empty */
+      CRange<size_t> cPhysicsRange;
+      if(unMinPhysicsPortion == 0) {
+         /* Not all threads get an engine */
+         if(unId < unExtraPhysicsPortion) {
+            /* This thread does */
+            cPhysicsRange.Set(unId, unId+1);
+         }
       }
-      CRange<size_t> cPhysicsRange(0, 1);
-      bool bUpdateEngines = false;
-      if(unId * tPhysicsPortion < m_ptPhysicsEngines->size()) {
-         bUpdateEngines = true;
-         cPhysicsRange.Set(unId * tPhysicsPortion,
-                           Min<size_t>(unId * tPhysicsPortion + tPhysicsPortion,
-                                       m_ptPhysicsEngines->size()));
+      else {
+         /* For sure this thread will get unMinPhysicsPortion engines, does it get an extra too? */
+         if(unId < unExtraPhysicsPortion) {
+            /* Yes, it gets an extra */
+            cPhysicsRange.Set( unId    * (unMinPhysicsPortion+1),
+                              (unId+1) * (unMinPhysicsPortion+1));
+         }
+         else {
+            /* No, it doesn't get an extra */
+            cPhysicsRange.Set(unExtraPhysicsPortion * (unMinPhysicsPortion+1) + (unId-unExtraPhysicsPortion)   * unMinPhysicsPortion,
+                              unExtraPhysicsPortion * (unMinPhysicsPortion+1) + (unId-unExtraPhysicsPortion+1) * unMinPhysicsPortion);
+         }
       }
       /* Variables storing the portion of entities to update */
-      size_t tEntityPortion;
-      CRange<size_t> cEntityRange(0,1);
-      bool bUpdateEntities = false;
+      size_t unMinEntityPortion;
+      size_t unExtraEntityPortion;
+      CRange<size_t> cEntityRange;
       while(1) {
          THREAD_WAIT_FOR_GO_SIGNAL(SenseControlStep);
-         /* Calculate the portion of entities to update, if needed */
+         /*
+          * Calculate the portion of entities to update, if needed
+          */
          if(m_bIsControllableEntityAssignmentRecalculationNeeded) {
-            tEntityPortion = (m_vecControllableEntities.size() / CSimulator::GetInstance().GetNumThreads());
-            if((m_vecControllableEntities.size() % CSimulator::GetInstance().GetNumThreads()) != 0) {
-               ++tEntityPortion;
+            /* This is the minimum number of entities assigned to a thread */
+            unMinEntityPortion = m_vecControllableEntities.size() / CSimulator::GetInstance().GetNumThreads();
+            /* If the division has a remainder, the extra entities must be assigned too */
+            unExtraEntityPortion = m_vecControllableEntities.size() % CSimulator::GetInstance().GetNumThreads();
+            if(unMinEntityPortion == 0) {
+               /* Not all threads get an entity */
+               if(unId < unExtraEntityPortion) {
+                  /* This thread does */
+                  cEntityRange.Set(unId, unId+1);
+               }
             }
-            /* Cope with the fact that there may be less entities than threads */
-            if(unId * tEntityPortion < m_vecControllableEntities.size()) {
-               /* This thread has entities */
-               bUpdateEntities = true;
-               cEntityRange.Set(unId * tEntityPortion,
-                                Min<size_t>(unId * tEntityPortion + tEntityPortion,
-                                            m_vecControllableEntities.size()));
+            else {
+               /* For sure this thread will get unMinEntityPortion entities, does it get an extra too? */
+               if(unId < unExtraEntityPortion) {
+                  /* Yes, it gets an extra */
+                  cEntityRange.Set( unId    * (unMinEntityPortion+1),
+                                   (unId+1) * (unMinEntityPortion+1));
+               }
+               else {
+                  /* No, it doesn't get an extra */
+                  cEntityRange.Set(unExtraEntityPortion * (unMinEntityPortion+1) + (unId-unExtraEntityPortion)   * unMinEntityPortion,
+                                   unExtraEntityPortion * (unMinEntityPortion+1) + (unId-unExtraEntityPortion+1) * unMinEntityPortion);
+               }
             }
          }
          /* Cope with the fact that there may be less entities than threads */
-         if(bUpdateEntities) {
+         if(cEntityRange.GetSpan() > 0) {
             /* This thread has entities */
             /* Update sensor readings and call controllers */
             for(size_t i = cEntityRange.GetMin(); i < cEntityRange.GetMax(); ++i) {
@@ -288,7 +318,7 @@ namespace argos {
          }
          /* Update physics engines, if this thread has been assigned to them */
          THREAD_WAIT_FOR_GO_SIGNAL(Physics);
-         if(bUpdateEngines) {
+         if(cPhysicsRange.GetSpan() > 0) {
             /* This thread has engines, update them */
             for(size_t i = cPhysicsRange.GetMin(); i < cPhysicsRange.GetMax(); ++i) {
                (*m_ptPhysicsEngines)[i]->Update();
