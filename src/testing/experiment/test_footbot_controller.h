@@ -1,13 +1,13 @@
-
 /**
  * @file <argos3/testing/experiment/test_footbot_controller.h>
  *
  * @author Carlo Pinciroli <ilpincy@gmail.com>
  */
+
 #include <argos3/core/control_interface/ci_controller.h>
 #include <argos3/plugins/robots/generic/control_interface/ci_differential_steering_actuator.h>
-#include <argos3/plugins/robots/generic/control_interface/ci_leds_actuator.h>
 #include <argos3/plugins/robots/foot-bot/control_interface/ci_footbot_proximity_sensor.h>
+#include <argos3/core/utility/math/vector2.h>
 
 using namespace argos;
 
@@ -25,7 +25,12 @@ public:
 private:
 
    CCI_DifferentialSteeringActuator* m_pcWheels;
-   CCI_LEDsActuator* m_pcLEDs;
    CCI_FootBotProximitySensor* m_pcProximity;
+
+   CVector2 m_cAccumulator;
+   CRadians m_cAngle;
+
+   CRange<CRadians> m_cGoStraightRange;
+   Real m_fDelta;
 
 };
