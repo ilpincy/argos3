@@ -63,18 +63,20 @@ namespace argos {
 
    public:
 
-      static const UInt32 NUM_READINGS;
-      static const CRange<Real> READING_RANGE;
-
-   public:
-
       CCI_FootBotBaseGroundSensor();
+
       virtual ~CCI_FootBotBaseGroundSensor() {}
       
       inline const TReadings& GetReadings() const {
          return m_tReadings;
       }
       
+#ifdef ARGOS_WITH_LUA
+      virtual void CreateLuaState(lua_State* pt_lua_state);
+
+      virtual void ReadingsToLuaState(lua_State* pt_lua_state);
+#endif
+
    protected:
 
       TReadings m_tReadings;

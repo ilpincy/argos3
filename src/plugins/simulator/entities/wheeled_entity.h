@@ -21,32 +21,43 @@ namespace argos {
    public:
 
       CWheeledEntity(CComposableEntity* pc_parent,
-                     UInt32 un_num_wheels);
+                     size_t un_num_wheels);
 
       CWheeledEntity(CComposableEntity* pc_parent,
                      const std::string& str_id,
-                     UInt32 un_num_wheels);
+                     size_t un_num_wheels);
 
       virtual ~CWheeledEntity();
 
       virtual void Reset();
 
-      inline UInt32 GetNumWheels() const {
+      inline size_t GetNumWheels() const {
          return m_unNumWheels;
       }
 
-      void GetSpeed(Real* pf_speeds);
+      void SetWheel(UInt32 un_index,
+                    const CVector3& c_position,
+                    Real f_radius);
 
-      void SetSpeed(Real* pf_speeds);
+      const CVector3& GetWheelPosition(size_t un_index) const;
 
-      const CVector3& GetWheelPosition(UInt32 un_index) const {
-         return m_pcWheelPositions[un_index];
+      inline const CVector3* GetWheelPositions() const {
+         return m_pcWheelPositions;
       }
 
-      void SetWheelPosition(UInt32 un_index,
-                            const CVector3& c_position) {
-         m_pcWheelPositions[un_index] = c_position;
+      Real GetWheelRadius(size_t un_index) const;
+
+      inline const Real* GetWheelRadia() const {
+         return m_pfWheelRadia;
       }
+
+      Real GetWheelVelocity(size_t un_index) const;
+
+      inline const Real* GetWheelVelocities() const {
+         return m_pfWheelVelocities;
+      }
+
+      void SetVelocities(Real* pf_velocities);
 
       virtual std::string GetTypeDescription() const {
          return "wheels";
@@ -54,9 +65,10 @@ namespace argos {
 
    private:
 
-      UInt32 m_unNumWheels;
+      size_t m_unNumWheels;
       CVector3* m_pcWheelPositions;
-      Real* m_pfWheelSpeeds;
+      Real* m_pfWheelRadia;
+      Real* m_pfWheelVelocities;
 
    };
 

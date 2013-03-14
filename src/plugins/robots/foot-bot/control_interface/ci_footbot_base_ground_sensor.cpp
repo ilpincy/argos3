@@ -31,20 +31,15 @@
  */
 
 #include "ci_footbot_base_ground_sensor.h"
+#include <argos3/core/wrappers/lua/lua_utility.h>
 
 namespace argos {
 
    /****************************************/
    /****************************************/
 
-   const UInt32 CCI_FootBotBaseGroundSensor::NUM_READINGS = 8;
-   const CRange<Real> CCI_FootBotBaseGroundSensor::READING_RANGE(0.0f, 4096.0f);
-
-   /****************************************/
-   /****************************************/
-
    CCI_FootBotBaseGroundSensor::CCI_FootBotBaseGroundSensor() :
-      m_tReadings(NUM_READINGS) {
+      m_tReadings(8) {
       // Set the values for the base ground sensor offset (taken from the CAD model, in cm)
       m_tReadings[0].Offset.Set( 8.0, 0.0);
       m_tReadings[1].Offset.Set( 4.2, 6.5);
@@ -80,6 +75,40 @@ namespace argos {
       }
       return c_os;
    }
+
+   /****************************************/
+   /****************************************/
+
+#ifdef ARGOS_WITH_LUA
+   void CCI_FootBotBaseGroundSensor::CreateLuaState(lua_State* pt_lua_state) {
+      CLuaUtility::StartTable(pt_lua_state, "base_ground");
+      for(size_t i = 0; i < m_tReadings.size(); ++i) {
+         CLuaUtility::StartTable(pt_lua_state, i+1                            );
+         CLuaUtility::AddToTable(pt_lua_state, "offset", m_tReadings[i].Offset);
+         CLuaUtility::AddToTable(pt_lua_state, "value",  m_tReadings[i].Value );
+         CLuaUtility::EndTable  (pt_lua_state                                 );
+      }
+      CLuaUtility::EndTable(pt_lua_state);
+   }
+#endif
+
+   /****************************************/
+   /****************************************/
+
+#ifdef ARGOS_WITH_LUA
+   void CCI_FootBotBaseGroundSensor::ReadingsToLuaState(lua_State* pt_lua_state) {
+      lua_getfield(pt_lua_state, -1, "base_ground");
+      for(size_t i = 0; i < m_tReadings.size(); ++i) {
+         lua_pushnumber(pt_lua_state, i+1                 );
+         lua_gettable  (pt_lua_state, -2                  );
+         lua_pushnumber(pt_lua_state, m_tReadings[i].Value);
+         lua_setfield  (pt_lua_state, -2, "value"         );
+         lua_pop       (pt_lua_state, 1                   );
+      }
+      lua_pop(pt_lua_state, 1);
+   }
+#endif
+
 
    /****************************************/
    /****************************************/

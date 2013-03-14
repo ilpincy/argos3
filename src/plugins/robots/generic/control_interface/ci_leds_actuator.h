@@ -87,9 +87,7 @@ namespace argos {
       virtual void SetAllIntensities(UInt8 un_intensity);
 
 #ifdef ARGOS_WITH_LUA
-      virtual void CreateLuaVariables(lua_State* pt_lua_state);
-
-      virtual void LuaVariablesToSettings(lua_State* pt_lua_state);
+      virtual void CreateLuaState(lua_State* pt_lua_state);
 #endif
 
    protected:

@@ -11,6 +11,7 @@ namespace argos {
    class CDynamics2DEngine;
    class CDynamics2DModel;
    class CGripperEquippedEntity;
+   class CEmbodiedEntity;
 }
 
 #include <argos3/core/utility/math/ray2.h>
@@ -24,12 +25,12 @@ namespace argos {
    /****************************************/
 
    struct SDynamics2DEngineGripperData {
-      cpSpace* Space;
+      CDynamics2DEngine& Engine;
       CGripperEquippedEntity& GripperEntity;
       cpVect GripperAnchor;
       cpConstraint* GripConstraint;
 
-      SDynamics2DEngineGripperData(cpSpace* pt_space,
+      SDynamics2DEngineGripperData(CDynamics2DEngine& c_engine,
                                    CGripperEquippedEntity& c_entity,
                                    cpVect t_anchor);
       ~SDynamics2DEngineGripperData();
@@ -46,9 +47,7 @@ namespace argos {
       enum EShapeType {
          SHAPE_NORMAL = 0,
          SHAPE_GRIPPABLE,
-         SHAPE_CLAW_GRIPPER,
-
-         SHAPE_MAGNETIC_GRIPPER
+         SHAPE_GRIPPER
       };
 
       enum ELayerType {

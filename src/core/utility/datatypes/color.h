@@ -132,6 +132,44 @@ namespace argos {
       }
 
       /**
+       * Sets the RGBA values of the color from a string.
+       * The input stringcan contain predefined color names, such as <tt>red</tt>.
+       * The color can be also input as a tuple <tt>&lt;r,g,b,a&gt;</tt>.
+       * @param str_color the input string.
+       * @throws CARGoSException in case of a parse error.
+       */
+      inline void Set(const std::string& str_color) {
+         try {
+            if      (str_color == "black")   *this = CColor::BLACK;
+            else if (str_color == "white")   *this = CColor::WHITE;
+            else if (str_color == "red")     *this = CColor::RED;
+            else if (str_color == "green")   *this = CColor::GREEN;
+            else if (str_color == "blue")    *this = CColor::BLUE;
+            else if (str_color == "magenta") *this = CColor::MAGENTA;
+            else if (str_color == "cyan")    *this = CColor::CYAN;
+            else if (str_color == "yellow")  *this = CColor::YELLOW;
+            else if (str_color == "orange")  *this = CColor::ORANGE;
+            else if (str_color == "gray10")  *this = CColor::GRAY10;
+            else if (str_color == "gray20")  *this = CColor::GRAY20;
+            else if (str_color == "gray30")  *this = CColor::GRAY30;
+            else if (str_color == "gray40")  *this = CColor::GRAY40;
+            else if (str_color == "gray50")  *this = CColor::GRAY50;
+            else if (str_color == "gray60")  *this = CColor::GRAY60;
+            else if (str_color == "gray70")  *this = CColor::GRAY70;
+            else if (str_color == "gray80")  *this = CColor::GRAY80;
+            else if (str_color == "gray90")  *this = CColor::GRAY90;
+            else {
+               UInt8 unValues[4];
+               ParseValues<UInt8>(str_color, 4, unValues, ',');
+               Set(unValues[0], unValues[1], unValues[2], unValues[3]);
+            }
+         }
+         catch(CARGoSException& ex) {
+            THROW_ARGOSEXCEPTION_NESTED("Error while parsing color input string", ex);
+         }
+      }
+
+      /**
        * Cast operator.
        * Casts the color into a 32-bit structure.
        */
@@ -208,36 +246,9 @@ namespace argos {
        */
       friend std::istream& operator>>(std::istream& is,
                                       CColor& c_color) {
-         try {
-            std::string strColor;
-            is >> strColor;
-            if      (strColor == "black")   c_color = CColor::BLACK;
-            else if (strColor == "white")   c_color = CColor::WHITE;
-            else if (strColor == "red")     c_color = CColor::RED;
-            else if (strColor == "green")   c_color = CColor::GREEN;
-            else if (strColor == "blue")    c_color = CColor::BLUE;
-            else if (strColor == "magenta") c_color = CColor::MAGENTA;
-            else if (strColor == "cyan")    c_color = CColor::CYAN;
-            else if (strColor == "yellow")  c_color = CColor::YELLOW;
-            else if (strColor == "orange")  c_color = CColor::ORANGE;
-            else if (strColor == "gray10")  c_color = CColor::GRAY10;
-            else if (strColor == "gray20")  c_color = CColor::GRAY20;
-            else if (strColor == "gray30")  c_color = CColor::GRAY30;
-            else if (strColor == "gray40")  c_color = CColor::GRAY40;
-            else if (strColor == "gray50")  c_color = CColor::GRAY50;
-            else if (strColor == "gray60")  c_color = CColor::GRAY60;
-            else if (strColor == "gray70")  c_color = CColor::GRAY70;
-            else if (strColor == "gray80")  c_color = CColor::GRAY80;
-            else if (strColor == "gray90")  c_color = CColor::GRAY90;
-            else {
-               UInt8 unValues[4];
-               ParseValues<UInt8>(strColor, 4, unValues, ',');
-               c_color.Set(unValues[0], unValues[1], unValues[2], unValues[3]);
-            }
-         }
-         catch(CARGoSException& ex) {
-            THROW_ARGOSEXCEPTION_NESTED("Error while parsing color input string", ex);
-         }
+         std::string strColor;
+         is >> strColor;
+         c_color.Set(strColor);
          return is;
       }
 

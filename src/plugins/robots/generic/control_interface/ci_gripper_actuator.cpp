@@ -6,6 +6,7 @@
 
 #include "ci_gripper_actuator.h"
 #include <argos3/core/utility/math/range.h>
+#include <argos3/core/wrappers/lua/lua_utility.h>
 
 namespace argos {
 
@@ -13,6 +14,37 @@ namespace argos {
    /****************************************/
 
    CRange<Real> UNIT(0.0f, 1.0f);
+
+   /****************************************/
+   /****************************************/
+
+#ifdef ARGOS_WITH_LUA
+   /*
+    * The stack must have no values
+    */
+   int LuaGripperLock(lua_State* pt_lua_state) {
+      /* Get wheel speed from stack */
+      if(lua_gettop(pt_lua_state) != 0) {
+         return luaL_error(pt_lua_state, "robot.gripper.lock() expects no arguments");
+      }
+      /* Perform action */
+      CLuaUtility::GetDeviceInstance<CCI_GripperActuator>(pt_lua_state, "gripper")->Lock();
+      return 0;
+   }
+
+   /*
+    * The stack must have no values
+    */
+   int LuaGripperUnlock(lua_State* pt_lua_state) {
+      /* Get wheel speed from stack */
+      if(lua_gettop(pt_lua_state) != 0) {
+         return luaL_error(pt_lua_state, "robot.gripper.unlock() expects no arguments");
+      }
+      /* Perform action */
+      CLuaUtility::GetDeviceInstance<CCI_GripperActuator>(pt_lua_state, "gripper")->Unlock();
+      return 0;
+   }
+#endif
 
    /****************************************/
    /****************************************/
@@ -32,25 +64,12 @@ namespace argos {
    /****************************************/
 
 #ifdef ARGOS_WITH_LUA
-   void CCI_GripperActuator::CreateLuaVariables(lua_State* pt_lua_state) {
-      lua_pushstring(pt_lua_state, "gripper");
-      lua_newtable  (pt_lua_state);
-      lua_pushstring(pt_lua_state, "lock_state");
-      lua_pushnumber(pt_lua_state, m_fLockState);
-      lua_settable  (pt_lua_state, -3);
-      lua_settable  (pt_lua_state, -3);
-   }
-#endif
-
-   /****************************************/
-   /****************************************/
-
-#ifdef ARGOS_WITH_LUA
-   void CCI_GripperActuator::LuaVariablesToSettings(lua_State* pt_lua_state) {
-      lua_getfield(pt_lua_state, -1, "gripper");
-      lua_getfield(pt_lua_state, -1, "lock_state");
-      SetLockState(lua_tonumber(pt_lua_state, -1));
-      lua_pop(pt_lua_state, 2);
+   void CCI_GripperActuator::CreateLuaState(lua_State* pt_lua_state) {
+      CLuaUtility::StartTable(pt_lua_state, "gripper");
+      CLuaUtility::AddToTable(pt_lua_state, "_instance", this);
+      CLuaUtility::AddToTable(pt_lua_state, "lock", &LuaGripperLock);
+      CLuaUtility::AddToTable(pt_lua_state, "unlock", &LuaGripperUnlock);
+      CLuaUtility::EndTable(pt_lua_state);
    }
 #endif
 

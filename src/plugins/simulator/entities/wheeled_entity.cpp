@@ -13,13 +13,15 @@ namespace argos {
    /****************************************/
 
    CWheeledEntity::CWheeledEntity(CComposableEntity* pc_parent,
-                                  UInt32 un_num_wheels) :
+                                  size_t un_num_wheels) :
       CEntity(pc_parent),
       m_unNumWheels(un_num_wheels) {
       m_pcWheelPositions = new CVector3[m_unNumWheels];
       ::memset(m_pcWheelPositions, 0, m_unNumWheels * sizeof(CVector3));
-      m_pfWheelSpeeds = new Real[m_unNumWheels];
-      ::memset(m_pfWheelSpeeds, 0, m_unNumWheels * sizeof(Real));
+      m_pfWheelRadia = new Real[m_unNumWheels];
+      ::memset(m_pfWheelRadia, 0, m_unNumWheels * sizeof(Real));
+      m_pfWheelVelocities = new Real[m_unNumWheels];
+      ::memset(m_pfWheelVelocities, 0, m_unNumWheels * sizeof(Real));
    }
 
    /****************************************/
@@ -27,42 +29,89 @@ namespace argos {
 
    CWheeledEntity::CWheeledEntity(CComposableEntity* pc_parent,
                                   const std::string& str_id,
-                                  UInt32 un_num_wheels) :
+                                  size_t un_num_wheels) :
       CEntity(pc_parent, str_id),
       m_unNumWheels(un_num_wheels) {
       m_pcWheelPositions = new CVector3[m_unNumWheels];
       ::memset(m_pcWheelPositions, 0, m_unNumWheels * sizeof(CVector3));
-      m_pfWheelSpeeds = new Real[m_unNumWheels];
-      ::memset(m_pfWheelSpeeds, 0, m_unNumWheels * sizeof(Real));
+      m_pfWheelRadia = new Real[m_unNumWheels];
+      ::memset(m_pfWheelRadia, 0, m_unNumWheels * sizeof(Real));
+      m_pfWheelVelocities = new Real[m_unNumWheels];
+      ::memset(m_pfWheelVelocities, 0, m_unNumWheels * sizeof(Real));
    }
-
+   
    /****************************************/
    /****************************************/
 
    CWheeledEntity::~CWheeledEntity() {
       delete[] m_pcWheelPositions;
-      delete[] m_pfWheelSpeeds;
+      delete[] m_pfWheelRadia;
+      delete[] m_pfWheelVelocities;
    }
-
+   
    /****************************************/
    /****************************************/
-
+   
    void CWheeledEntity::Reset() {
-      ::memset(m_pfWheelSpeeds, 0, m_unNumWheels * sizeof(Real));
+      ::memset(m_pfWheelVelocities, 0, m_unNumWheels * sizeof(Real));
+   }
+   
+   /****************************************/
+   /****************************************/
+   
+   void CWheeledEntity::SetWheel(UInt32 un_index,
+                                 const CVector3& c_position,
+                                 Real f_radius) {
+      if(un_index < m_unNumWheels) {
+         m_pcWheelPositions[un_index] = c_position;
+         m_pfWheelRadia[un_index] = f_radius;
+      }
+      else {
+         THROW_ARGOSEXCEPTION("CWheeledEntity::SetWheel() : index " << un_index << " out of bounds (allowed [0:" << m_unNumWheels << "])");
+      }
    }
 
    /****************************************/
    /****************************************/
 
-   void CWheeledEntity::GetSpeed(Real* pf_speeds) {
-      ::memcpy(pf_speeds, m_pfWheelSpeeds, m_unNumWheels * sizeof(Real));
+   const CVector3& CWheeledEntity::GetWheelPosition(size_t un_index) const {
+      if(un_index < m_unNumWheels) {
+         return m_pcWheelPositions[un_index];
+      }
+      else {
+         THROW_ARGOSEXCEPTION("CWheeledEntity::GetWheelPosition() : index " << un_index << " out of bounds (allowed [0:" << m_unNumWheels << "])");
+      }
    }
-
+   
    /****************************************/
    /****************************************/
-
-   void CWheeledEntity::SetSpeed(Real* pf_speeds) {
-      ::memcpy(m_pfWheelSpeeds, pf_speeds, m_unNumWheels * sizeof(Real));
+   
+   Real CWheeledEntity::GetWheelRadius(size_t un_index) const {
+      if(un_index < m_unNumWheels) {
+         return m_pfWheelRadia[un_index];
+      }
+      else {
+         THROW_ARGOSEXCEPTION("CWheeledEntity::GetWheelRadius() : index " << un_index << " out of bounds (allowed [0:" << m_unNumWheels << "])");
+      }
+   }
+   
+   /****************************************/
+   /****************************************/
+   
+   Real CWheeledEntity::GetWheelVelocity(size_t un_index) const {
+      if(un_index < m_unNumWheels) {
+         return m_pfWheelRadia[un_index];
+      }
+      else {
+         THROW_ARGOSEXCEPTION("CWheeledEntity::GetWheelVelocity() : index " << un_index << " out of bounds (allowed [0:" << m_unNumWheels << "])");
+      }
+   }
+   
+   /****************************************/
+   /****************************************/
+   
+   void CWheeledEntity::SetVelocities(Real* pf_velocities) {
+      ::memcpy(m_pfWheelVelocities, pf_velocities, m_unNumWheels * sizeof(Real));
    }
 
    /****************************************/

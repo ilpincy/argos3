@@ -38,7 +38,6 @@
  * the turret is IGNORED. The check operation lasts less than a second.
  *
  * @author Carlo Pinciroli - <ilpincy@gmail.com>
- * @author Giovanni Pini   - <gpini@iridia.ulb.ac.be>
  */
 
 #ifndef CCI_FOOTBOT_TURRET_ACTUATOR_H
@@ -85,9 +84,7 @@ namespace argos {
        * If the turret is not in position control mode, the only effect is that the target rotation is changed
        * but the turret will not turn: it will turn when position control mode is activated
        * (unless another target rotation is specified meantime).
-       * The method as no effect if called while the robot is checking if it successfully gripped an object.
-       *
-       * @param c_angle desired turret rotation - radians
+       * @param c_angle desired turret rotation
        */
       virtual void SetRotation(const CRadians& c_angle) = 0;
 
@@ -99,20 +96,14 @@ namespace argos {
        * If the turret is not in speed control mode, the only effect is that the target rotation speed is changed
        * but the turret will not turn: it will turn when speed control mode is activated
        * (unless another target rotation speed is specified meantime).
-       * The method as no effect if called while the robot is checking if it successfully gripped an object.
-       *
        * @param n_speed_pulses desired turret rotation speed - pid pulses
-       * @see CCI_FootBotTurretActuator
        */
       virtual void SetRotationSpeed(SInt32 n_speed_pulses) = 0;
 
       /**
        * @brief Sets the turret control mode
        * Modes are: angular position control, rotation speed control, passive mode, off
-       *
        * @param un_mode turret control mode, possible values are defined in CCI_FootBotTurretActuator
-       * @see CCI_FootBotTurretActuator
-       *
        */
       virtual void SetMode(ETurretModes e_mode) = 0;
 
@@ -131,7 +122,6 @@ namespace argos {
 
       /**
        * @brief Sets the turret control mode to speed control
-       *
        * @see SetMode
        */
       inline void SetSpeedControlMode() {
@@ -140,7 +130,6 @@ namespace argos {
 
       /**
        * @brief Sets the turret control mode to position control
-       *
        * @see SetMode
        */
       inline void SetPositionControlMode() {
@@ -149,31 +138,15 @@ namespace argos {
 
       /**
        * @brief Sets the turret control mode to passive
-       *
        * @see SetMode
        */
       inline void SetPassiveMode() {
          SetMode(MODE_PASSIVE);
       }
 
-      /**
-       * @brief returns true if the turret can be used (no check for object gripped in progress)
-       *
-       * The turret is used to check if an object has been gripped in a routine of the ASEBA backend.
-       * While the routine is in  progress, commands to the turret (such as setting modes, position or speed)
-       * are ignored. This method is used to check if the turret can be controlled or the routine is in progress.
-       *
-       * @return true if the turret can be used
-       */
-      inline bool IsTurretAvailableForCommands() {
-         return !m_bIsCheckingForGrippedObject;
-      }
-
-   protected:
-
-      /** When true the turret is being used for checking for a gripped object, and cannot be controlled by the user */
-      bool m_bIsCheckingForGrippedObject;
-
+#ifdef ARGOS_WITH_LUA
+      virtual void CreateLuaState(lua_State* pt_lua_state) = 0;
+#endif
    };
 
 }

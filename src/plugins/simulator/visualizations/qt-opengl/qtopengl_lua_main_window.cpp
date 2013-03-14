@@ -764,7 +764,15 @@ namespace argos {
       m_pcLuaMessageTable->setItem(
          n_row, 0,
          new QTableWidgetItem(str_robot_id));
-      if(listFields.size() == 4) {
+      if(listFields.size() == 3) {
+         m_pcLuaMessageTable->setItem(
+            n_row, 1,
+            new QTableWidgetItem(listFields[1]));
+         m_pcLuaMessageTable->setItem(
+            n_row, 2,
+            new QTableWidgetItem(listFields[2]));
+      }
+      else if(listFields.size() == 4) {
          m_pcLuaMessageTable->setItem(
             n_row, 1,
             new QTableWidgetItem(listFields[2]));

@@ -26,9 +26,7 @@ namespace argos {
                                      Real f_right_velocity) = 0;
 
 #ifdef ARGOS_WITH_LUA
-      virtual void CreateLuaVariables(lua_State* pt_lua_state);
-
-      virtual void LuaVariablesToSettings(lua_State* pt_lua_state);
+      virtual void CreateLuaState(lua_State* pt_lua_state);
 #endif
 
    protected:

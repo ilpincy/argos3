@@ -24,7 +24,7 @@ namespace argos {
 
 namespace argos {
 
-   class CCI_FootBotWheelSpeedSensor : virtual public CCI_Sensor {
+   class CCI_FootBotWheelSpeedSensor : public CCI_Sensor {
 
    public:
 
@@ -48,13 +48,20 @@ namespace argos {
 
       virtual ~CCI_FootBotWheelSpeedSensor() {}
 
-      inline const TReading& GetReading() const {
-         return m_tReading;
+      inline const SReading& GetReading() const {
+         return m_sReading;
       }
+
+
+#ifdef ARGOS_WITH_LUA
+      virtual void CreateLuaState(lua_State* pt_lua_state);
+
+      virtual void ReadingsToLuaState(lua_State* pt_lua_state);
+#endif
 
    protected:
 
-      TReading m_tReading;
+      SReading m_sReading;
    };
 }
 

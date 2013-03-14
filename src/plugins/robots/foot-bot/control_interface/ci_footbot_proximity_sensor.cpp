@@ -6,6 +6,7 @@
 
 #include "ci_footbot_proximity_sensor.h"
 #include <argos3/core/utility/math/angles.h>
+#include <argos3/core/wrappers/lua/lua_utility.h>
 
 namespace argos {
 
@@ -30,21 +31,15 @@ namespace argos {
    /****************************************/
 
 #ifdef ARGOS_WITH_LUA
-   void CCI_FootBotProximitySensor::CreateLuaVariables(lua_State* pt_lua_state) {
-      lua_pushstring(pt_lua_state, "proximity");
-      lua_newtable  (pt_lua_state);
+   void CCI_FootBotProximitySensor::CreateLuaState(lua_State* pt_lua_state) {
+      CLuaUtility::StartTable(pt_lua_state, "proximity");
       for(size_t i = 0; i < GetReadings().size(); ++i) {
-         lua_pushnumber(pt_lua_state, i+1                            );
-         lua_newtable  (pt_lua_state                                 );
-         lua_pushstring(pt_lua_state, "angle"                        );
-         lua_pushnumber(pt_lua_state, m_tReadings[i].Angle.GetValue());
-         lua_settable  (pt_lua_state, -3                             );
-         lua_pushstring(pt_lua_state, "value"                        );
-         lua_pushnumber(pt_lua_state, m_tReadings[i].Value           );
-         lua_settable  (pt_lua_state, -3                             );
-         lua_settable  (pt_lua_state, -3                             );
+         CLuaUtility::StartTable(pt_lua_state, i+1                           );
+         CLuaUtility::AddToTable(pt_lua_state, "angle",  m_tReadings[i].Angle);
+         CLuaUtility::AddToTable(pt_lua_state, "value",  m_tReadings[i].Value);
+         CLuaUtility::EndTable  (pt_lua_state                                );
       }
-      lua_settable(pt_lua_state, -3);
+      CLuaUtility::EndTable(pt_lua_state);
    }
 #endif
 
@@ -52,7 +47,7 @@ namespace argos {
    /****************************************/
 
 #ifdef ARGOS_WITH_LUA
-   void CCI_FootBotProximitySensor::ReadingsToLuaVariables(lua_State* pt_lua_state) {
+   void CCI_FootBotProximitySensor::ReadingsToLuaState(lua_State* pt_lua_state) {
       lua_getfield(pt_lua_state, -1, "proximity");
       for(size_t i = 0; i < GetReadings().size(); ++i) {
          lua_pushnumber(pt_lua_state, i+1                 );

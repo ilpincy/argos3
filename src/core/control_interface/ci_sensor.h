@@ -72,19 +72,19 @@ namespace argos {
 
 #ifdef ARGOS_WITH_LUA
       /**
-       * Creates the Lua variables for this sensor.
-       * The variables must be added to the <tt>robot</tt> table, as a nested table.
+       * Creates the Lua state for this sensor.
+       * The state must be added to the <tt>robot</tt> table, as a nested table.
        * @param pt_lua_state The current Lua state.
-       * @see ReadingsToLuaVariables()
+       * @see ReadingsToLuaState()
        */
-      virtual void CreateLuaVariables(lua_State* pt_lua_state) = 0;
+      virtual void CreateLuaState(lua_State* pt_lua_state) = 0;
 
       /**
        * Writes the current sensor readings into the Lua state.
        * @param pt_lua_state The current Lua state.
-       * @see CreateLuaVariables()
+       * @see CreateLuaState()
        */
-      virtual void ReadingsToLuaVariables(lua_State* pt_lua_state) = 0;
+      virtual void ReadingsToLuaState(lua_State* pt_lua_state) = 0;
 #endif
 
    };

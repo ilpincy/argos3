@@ -5,8 +5,7 @@
  */
 
 #include "dynamics2d_footbot_model.h"
-#include <argos3/core/simulator/entity/embodied_entity.h>
-#include <argos3/plugins/simulator/entities/gripper_equipped_entity.h>
+#include <argos3/plugins/simulator/physics_engines/dynamics2d/dynamics2d_gripping.h>
 #include <argos3/plugins/simulator/physics_engines/dynamics2d/dynamics2d_engine.h>
 
 namespace argos {
@@ -50,7 +49,10 @@ namespace argos {
                       FOOTBOT_MAX_FORCE,
                       FOOTBOT_MAX_TORQUE,
                       FOOTBOT_INTERWHEEL_DISTANCE),
+      m_pcGripper(NULL),
+      m_pcGrippable(NULL),
       m_fMass(1.6f),
+      m_fCurrentWheelVelocity(m_cWheeledEntity.GetWheelVelocities()),
       m_unLastTurretMode(m_cFootBotEntity.GetTurretMode()) {
       /* Create the actual body with initial position and orientation */
       m_ptActualBaseBody =
@@ -65,24 +67,19 @@ namespace argos {
       CRadians cXAngle, cYAngle, cZAngle;
       GetEmbodiedEntity().GetOrientation().ToEulerAngles(cZAngle, cYAngle, cXAngle);
       cpBodySetAngle(m_ptActualBaseBody, cZAngle.GetValue());
-      /* Create the actual body geometry */
+      /* Create the actual body shape */
       m_ptBaseShape =
          cpSpaceAddShape(m_cDyn2DEngine.GetPhysicsSpace(),
                          cpCircleShapeNew(m_ptActualBaseBody,
                                           FOOTBOT_RADIUS,
                                           cpvzero));
-      /* This object is grippable */
-      m_ptBaseShape->collision_type = CDynamics2DEngine::SHAPE_GRIPPABLE;
-      m_ptBaseShape->data = reinterpret_cast<void*>(&c_entity.GetEmbodiedEntity());
-      /* No elasticity */
-      m_ptBaseShape->e = 0.0;
-      /* Lots of friction */
-      m_ptBaseShape->u = 0.7;
+      m_ptBaseShape->e = 0.0; // No elasticity
+      m_ptBaseShape->u = 0.7; // Lots of friction
+      /* This shape is grippable */
+      m_pcGrippable = new CDynamics2DGrippable(GetEmbodiedEntity(),
+                                               m_ptBaseShape);
       /* Constrain the actual base body to follow the diff steering control */
       m_cDiffSteering.AttachTo(m_ptActualBaseBody);
-      /* Zero the wheel velocity */
-      m_fCurrentWheelVelocity[FOOTBOT_LEFT_WHEEL] = 0.0f;
-      m_fCurrentWheelVelocity[FOOTBOT_RIGHT_WHEEL] = 0.0f;
       /* Create the gripper body */      
       m_ptActualGripperBody =
          cpSpaceAddBody(m_cDyn2DEngine.GetPhysicsSpace(),
@@ -101,14 +98,9 @@ namespace argos {
                          cpCircleShapeNew(m_ptActualGripperBody,
                                           0.01f,
                                           cpv(FOOTBOT_RADIUS, 0.0f)));
-      m_ptGripperShape->sensor = 1;
-      /* This object is a gripper */
-      m_ptGripperShape->collision_type = CDynamics2DEngine::SHAPE_MAGNETIC_GRIPPER;
-      /* Set the data associated to this gripper */
-      m_psGripperData = new SDynamics2DEngineGripperData(m_cDyn2DEngine.GetPhysicsSpace(),
-                                                         m_cGripperEntity,
-                                                         cpv(FOOTBOT_RADIUS, 0.0f));
-      m_ptGripperShape->data = reinterpret_cast<void*>(m_psGripperData);
+      m_pcGripper = new CDynamics2DGripper(m_cDyn2DEngine,
+                                           m_cGripperEntity,
+                                           m_ptGripperShape);
       /* Constrain the actual gripper body to follow the actual base body */
       m_ptBaseGripperLinearMotion =
          cpSpaceAddConstraint(m_cDyn2DEngine.GetPhysicsSpace(),
@@ -138,10 +130,11 @@ namespace argos {
    /****************************************/
 
    CDynamics2DFootBotModel::~CDynamics2DFootBotModel() {
+      delete m_pcGripper;
+      delete m_pcGrippable;
       switch(m_unLastTurretMode) {
          case MODE_OFF:
          case MODE_PASSIVE:
-            delete m_psGripperData;
             cpSpaceRemoveConstraint(m_cDyn2DEngine.GetPhysicsSpace(), m_ptBaseGripperLinearMotion);
             cpSpaceRemoveConstraint(m_cDyn2DEngine.GetPhysicsSpace(), m_ptBaseGripperAngularMotion);
             cpSpaceRemoveBody(m_cDyn2DEngine.GetPhysicsSpace(), m_ptActualGripperBody);
@@ -153,7 +146,6 @@ namespace argos {
             break;
          case MODE_POSITION_CONTROL:
          case MODE_SPEED_CONTROL:
-            delete m_psGripperData;
             cpSpaceRemoveConstraint(m_cDyn2DEngine.GetPhysicsSpace(), m_ptBaseGripperLinearMotion);
             cpSpaceRemoveConstraint(m_cDyn2DEngine.GetPhysicsSpace(), m_ptGripperControlAngularMotion);
             cpSpaceRemoveBody(m_cDyn2DEngine.GetPhysicsSpace(), m_ptActualGripperBody);
@@ -237,6 +229,9 @@ namespace argos {
          m_ptActualGripperBody->p = cpv(c_position.GetX(), c_position.GetY());
          cpBodySetAngle(m_ptActualGripperBody,
                         cZAngle.GetValue() + m_cFootBotEntity.GetTurretRotation().GetValue());
+         /* Release grippers and gripees */
+         m_pcGripper->Release();
+         m_pcGrippable->ReleaseAll();
          /* Update the active space hash */
          cpSpaceReindexShape(m_cDyn2DEngine.GetPhysicsSpace(), m_ptBaseShape);
          /* Update bounding box */
@@ -265,8 +260,9 @@ namespace argos {
       cpBodyResetForces(m_ptActualBaseBody);
       /* Zero speed and applied forces of base control body */
       m_cDiffSteering.Reset();
-      /* Release gripped objects */
-      m_psGripperData->ClearConstraints();
+      /* Release grippers and gripees */
+      m_pcGripper->Release();
+      m_pcGrippable->ReleaseAll();
       /* Zero speed and applied forces of actual gripper body */
       m_ptActualGripperBody->v = cpvzero;
       m_ptActualGripperBody->w = 0.0f;
@@ -323,8 +319,6 @@ namespace argos {
    /****************************************/
 
    void CDynamics2DFootBotModel::UpdateFromEntityStatus() {
-      /* Get wheel speeds from entity */
-      m_cWheeledEntity.GetSpeed(m_fCurrentWheelVelocity);
       /* Do we want to move? */
       if((m_fCurrentWheelVelocity[FOOTBOT_LEFT_WHEEL] != 0.0f) ||
          (m_fCurrentWheelVelocity[FOOTBOT_RIGHT_WHEEL] != 0.0f)) {
@@ -334,14 +328,6 @@ namespace argos {
       else {
          /* No, we don't want to move - zero all speeds */
          m_cDiffSteering.Reset();
-      }
-      /* Is the gripper unlocked? */
-      if(!m_psGripperData->GripperEntity.IsLocked()) {
-         /* The gripper is locked. If it was gripping an object,
-          * release it. Then, process the collision normally */
-      	 if(m_psGripperData->GripperEntity.IsGripping()) {
-            m_psGripperData->ClearConstraints();
-      	 }
       }
       /* Update turret structures if the state changed state in the last step */
       if(m_cFootBotEntity.GetTurretMode() != m_unLastTurretMode) {

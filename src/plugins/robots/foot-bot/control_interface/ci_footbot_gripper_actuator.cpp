@@ -5,6 +5,7 @@
  */
 
 #include "ci_footbot_gripper_actuator.h"
+#include <argos3/core/wrappers/lua/lua_utility.h>
 
 namespace argos {
 
@@ -18,6 +19,50 @@ namespace argos {
    CRange<CRadians> APERTURE_RANGE(CCI_FootBotGripperActuator::LOCKED_NEGATIVE,
                                    CCI_FootBotGripperActuator::LOCKED_POSITIVE);
    
+   /****************************************/
+   /****************************************/
+
+#ifdef ARGOS_WITH_LUA
+   /*
+    * The stack must have no values
+    */
+   int LuaGripperLockPositive(lua_State* pt_lua_state) {
+      /* Get wheel speed from stack */
+      if(lua_gettop(pt_lua_state) != 0) {
+         return luaL_error(pt_lua_state, "robot.gripper.lock_positive() expects no arguments");
+      }
+      /* Perform action */
+      CLuaUtility::GetDeviceInstance<CCI_FootBotGripperActuator>(pt_lua_state, "gripper")->LockPositive();
+      return 0;
+   }
+
+   /*
+    * The stack must have no values
+    */
+   int LuaGripperLockNegative(lua_State* pt_lua_state) {
+      /* Get wheel speed from stack */
+      if(lua_gettop(pt_lua_state) != 0) {
+         return luaL_error(pt_lua_state, "robot.gripper.lock_negative() expects no arguments");
+      }
+      /* Perform action */
+      CLuaUtility::GetDeviceInstance<CCI_FootBotGripperActuator>(pt_lua_state, "gripper")->LockNegative();
+      return 0;
+   }
+
+   /*
+    * The stack must have no values
+    */
+   int LuaGripperUnlock(lua_State* pt_lua_state) {
+      /* Get wheel speed from stack */
+      if(lua_gettop(pt_lua_state) != 0) {
+         return luaL_error(pt_lua_state, "robot.gripper.unlock() expects no arguments");
+      }
+      /* Perform action */
+      CLuaUtility::GetDeviceInstance<CCI_FootBotGripperActuator>(pt_lua_state, "gripper")->Unlock();
+      return 0;
+   }
+#endif
+
    /****************************************/
    /****************************************/
 
@@ -37,25 +82,13 @@ namespace argos {
    /****************************************/
 
 #ifdef ARGOS_WITH_LUA
-   void CCI_FootBotGripperActuator::CreateLuaVariables(lua_State* pt_lua_state) {
-      lua_pushstring(pt_lua_state, "gripper");
-      lua_newtable  (pt_lua_state);
-      lua_pushstring(pt_lua_state, "aperture");
-      lua_pushnumber(pt_lua_state, m_cAperture.GetValue());
-      lua_settable  (pt_lua_state, -3);
-      lua_settable  (pt_lua_state, -3);
-   }
-#endif
-
-   /****************************************/
-   /****************************************/
-
-#ifdef ARGOS_WITH_LUA
-   void CCI_FootBotGripperActuator::LuaVariablesToSettings(lua_State* pt_lua_state) {
-      lua_getfield(pt_lua_state, -1, "gripper");
-      lua_getfield(pt_lua_state, -1, "aperture");
-      SetAperture(CRadians(lua_tonumber(pt_lua_state, -1)));
-      lua_pop(pt_lua_state, 2);
+   void CCI_FootBotGripperActuator::CreateLuaState(lua_State* pt_lua_state) {
+      CLuaUtility::StartTable(pt_lua_state, "gripper"               );
+      CLuaUtility::AddToTable(pt_lua_state, "_instance", this);
+      CLuaUtility::AddToTable(pt_lua_state, "lock_positive", &LuaGripperLockPositive);
+      CLuaUtility::AddToTable(pt_lua_state, "lock_negative", &LuaGripperLockNegative);
+      CLuaUtility::AddToTable(pt_lua_state, "unlock", &LuaGripperUnlock);
+      CLuaUtility::EndTable  (pt_lua_state                          );
    }
 #endif
 
