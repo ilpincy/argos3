@@ -181,7 +181,7 @@ directories, you need a +.gdbinit+ file. Luckily for you, this file is created
 automatically when you compile ARGoS. To use it, you just need to remember to
 run the ARGoS simulator from the +build_simulator/core/+ directory:
 
- $ cd argos3/build_simulator
+ $ cd argos3/build_simulator/core
  $ gdb ./argos
 
 Installing ARGoS from the compiled binaries
