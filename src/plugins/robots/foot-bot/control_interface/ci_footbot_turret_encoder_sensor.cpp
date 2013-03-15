@@ -5,7 +5,10 @@
  */
 
 #include "ci_footbot_turret_encoder_sensor.h"
+
+#ifdef ARGOS_WITH_LUA
 #include <argos3/core/wrappers/lua/lua_utility.h>
+#endif
 
 namespace argos {
    

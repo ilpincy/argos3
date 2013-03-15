@@ -6,7 +6,10 @@
 
 #include "ci_footbot_proximity_sensor.h"
 #include <argos3/core/utility/math/angles.h>
+
+#ifdef ARGOS_WITH_LUA
 #include <argos3/core/wrappers/lua/lua_utility.h>
+#endif
 
 namespace argos {
 
