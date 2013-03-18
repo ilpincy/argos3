@@ -83,12 +83,12 @@ namespace argos {
 
 #ifdef ARGOS_WITH_LUA
    void CCI_FootBotGripperActuator::CreateLuaState(lua_State* pt_lua_state) {
-      CLuaUtility::StartTable(pt_lua_state, "gripper"               );
-      CLuaUtility::AddToTable(pt_lua_state, "_instance", this);
-      CLuaUtility::AddToTable(pt_lua_state, "lock_positive", &LuaGripperLockPositive);
-      CLuaUtility::AddToTable(pt_lua_state, "lock_negative", &LuaGripperLockNegative);
-      CLuaUtility::AddToTable(pt_lua_state, "unlock", &LuaGripperUnlock);
-      CLuaUtility::EndTable  (pt_lua_state                          );
+      CLuaUtility::OpenRobotStateTable (pt_lua_state, "gripper"                               );
+      CLuaUtility::AddToTable          (pt_lua_state, "_instance",     this                   );
+      CLuaUtility::AddToTable          (pt_lua_state, "lock_positive", &LuaGripperLockPositive);
+      CLuaUtility::AddToTable          (pt_lua_state, "lock_negative", &LuaGripperLockNegative);
+      CLuaUtility::AddToTable          (pt_lua_state, "unlock",        &LuaGripperUnlock      );
+      CLuaUtility::CloseRobotStateTable(pt_lua_state                                          );
    }
 #endif
 

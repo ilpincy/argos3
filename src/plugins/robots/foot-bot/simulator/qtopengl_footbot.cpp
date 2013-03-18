@@ -6,7 +6,7 @@
 
 #include "qtopengl_footbot.h"
 #include "footbot_entity.h"
-#include "distance_scanner_equipped_entity.h"
+#include "footbot_distance_scanner_equipped_entity.h"
 #include <argos3/core/simulator/entity/embodied_entity.h>
 #include <argos3/core/utility/math/vector2.h>
 #include <argos3/core/utility/math/vector3.h>

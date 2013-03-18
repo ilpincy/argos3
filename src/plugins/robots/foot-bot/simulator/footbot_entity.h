@@ -9,7 +9,7 @@
 
 namespace argos {
    class CControllableEntity;
-   class CDistanceScannerEquippedEntity;
+   class CFootBotDistanceScannerEquippedEntity;
    class CEmbodiedEntity;
    class CFootBotEntity;
    class CGripperEquippedEntity;
@@ -46,7 +46,7 @@ namespace argos {
          return *m_pcControllableEntity;
       }
 
-      inline CDistanceScannerEquippedEntity& GetDistanceScannerEquippedEntity() {
+      inline CFootBotDistanceScannerEquippedEntity& GetDistanceScannerEquippedEntity() {
          return *m_pcDistanceScannerEquippedEntity;
       }
 
@@ -120,21 +120,21 @@ namespace argos {
 
    private:
 
-      CControllableEntity*            m_pcControllableEntity;
-      CDistanceScannerEquippedEntity* m_pcDistanceScannerEquippedEntity;
-      CEmbodiedEntity*                m_pcEmbodiedEntity;
-      CGripperEquippedEntity*         m_pcGripperEquippedEntity;
-      CGroundSensorEquippedEntity*    m_pcGroundSensorEquippedEntity;
-      CLEDEquippedEntity*             m_pcLEDEquippedEntity;
-      CLightSensorEquippedEntity*     m_pcLightSensorEquippedEntity;
-      CProximitySensorEquippedEntity* m_pcProximitySensorEquippedEntity;
-      CRABEquippedEntity*             m_pcRABEquippedEntity;
-      CWheeledEntity*                 m_pcWheeledEntity;
-      CWiFiEquippedEntity*            m_pcWiFiEquippedEntity;
+      CControllableEntity*                   m_pcControllableEntity;
+      CFootBotDistanceScannerEquippedEntity* m_pcDistanceScannerEquippedEntity;
+      CEmbodiedEntity*                       m_pcEmbodiedEntity;
+      CGripperEquippedEntity*                m_pcGripperEquippedEntity;
+      CGroundSensorEquippedEntity*           m_pcGroundSensorEquippedEntity;
+      CLEDEquippedEntity*                    m_pcLEDEquippedEntity;
+      CLightSensorEquippedEntity*            m_pcLightSensorEquippedEntity;
+      CProximitySensorEquippedEntity*        m_pcProximitySensorEquippedEntity;
+      CRABEquippedEntity*                    m_pcRABEquippedEntity;
+      CWheeledEntity*                        m_pcWheeledEntity;
+      CWiFiEquippedEntity*                   m_pcWiFiEquippedEntity;
 
-      CRadians                        m_cTurretRotation;
-      Real                            m_fTurretRotationSpeed;
-      UInt8                           m_unTurretMode;
+      CRadians m_cTurretRotation;
+      Real     m_fTurretRotationSpeed;
+      UInt8    m_unTurretMode;
 
    };
 

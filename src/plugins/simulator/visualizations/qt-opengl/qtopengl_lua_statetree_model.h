@@ -28,6 +28,7 @@ namespace argos {
    public:
 
       CQTOpenGLLuaStateTreeModel(lua_State* pt_state,
+                                 bool b_remove_empty_tables,
                                  QObject* pc_parent = 0);
 
       virtual ~CQTOpenGLLuaStateTreeModel();
@@ -63,6 +64,7 @@ namespace argos {
 
       lua_State* m_ptState;
       CQTOpenGLLuaStateTreeItem* m_pcDataRoot;
+      bool m_bRemoveEmptyTables;
 
    };
 
@@ -76,6 +78,7 @@ namespace argos {
    public:
 
       CQTOpenGLLuaStateTreeVariableModel(lua_State* pt_state,
+                                         bool b_remove_empty_tables,
                                          QObject* pc_parent = 0);
 
       virtual ~CQTOpenGLLuaStateTreeVariableModel() {}
@@ -102,6 +105,7 @@ namespace argos {
    public:
 
       CQTOpenGLLuaStateTreeFunctionModel(lua_State* pt_state,
+                                         bool b_remove_empty_tables,
                                          QObject* pc_parent = 0);
 
       virtual ~CQTOpenGLLuaStateTreeFunctionModel() {}

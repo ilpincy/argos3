@@ -17,7 +17,7 @@
 #include <argos3/plugins/simulator/entities/light_sensor_equipped_entity.h>
 #include <argos3/plugins/simulator/entities/proximity_sensor_equipped_entity.h>
 #include <argos3/plugins/simulator/entities/wifi_equipped_entity.h>
-#include "distance_scanner_equipped_entity.h"
+#include "footbot_distance_scanner_equipped_entity.h"
 
 namespace argos {
 
@@ -151,9 +151,9 @@ namespace argos {
          m_pcGroundSensorEquippedEntity->AddSensor(CVector2(0.042, -0.065),
                                                    CGroundSensorEquippedEntity::TYPE_BLACK_WHITE);
          /* Distance scanner */
-         m_pcDistanceScannerEquippedEntity = new CDistanceScannerEquippedEntity(this);
+         m_pcDistanceScannerEquippedEntity = new CFootBotDistanceScannerEquippedEntity(this,
+                                                                                       GetId() + ".distance_scanner");
          AddComponent(*m_pcDistanceScannerEquippedEntity);
-         m_pcDistanceScannerEquippedEntity->Init(t_tree);
          /* RAB equipped entity */
          m_pcRABEquippedEntity = new CRABEquippedEntity(this, 10);
          AddComponent(*m_pcRABEquippedEntity);

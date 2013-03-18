@@ -25,9 +25,11 @@ set(ARGOS3_HEADERS_PLUGINS_ROBOTS_FOOTBOT_CONTROLINTERFACE
 # argos3/plugins/robots/foot-bot/simulator
 if(ARGOS_BUILD_FOR_SIMULATOR)
   set(ARGOS3_HEADERS_PLUGINS_ROBOTS_FOOTBOT_SIMULATOR
-    simulator/distance_scanner_equipped_entity.h
     simulator/dynamics2d_footbot_model.h
     simulator/footbot_base_ground_rotzonly_sensor.h
+    simulator/footbot_distance_scanner_default_actuator.h
+    simulator/footbot_distance_scanner_equipped_entity.h
+    simulator/footbot_distance_scanner_rotzonly_sensor.h
     simulator/footbot_entity.h
     simulator/footbot_gripper_default_actuator.h
     simulator/footbot_light_rotzonly_sensor.h
@@ -57,9 +59,11 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
   set(ARGOS3_SOURCES_PLUGINS_ROBOTS_FOOTBOT
     ${ARGOS3_SOURCES_PLUGINS_ROBOTS_FOOTBOT}
     ${ARGOS3_HEADERS_PLUGINS_ROBOTS_FOOTBOT_SIMULATOR}
-    simulator/distance_scanner_equipped_entity.cpp
     simulator/dynamics2d_footbot_model.cpp
     simulator/footbot_base_ground_rotzonly_sensor.cpp
+    simulator/footbot_distance_scanner_default_actuator.cpp
+    simulator/footbot_distance_scanner_equipped_entity.cpp
+    simulator/footbot_distance_scanner_rotzonly_sensor.cpp
     simulator/footbot_entity.cpp
     simulator/footbot_gripper_default_actuator.cpp
     simulator/footbot_light_rotzonly_sensor.cpp

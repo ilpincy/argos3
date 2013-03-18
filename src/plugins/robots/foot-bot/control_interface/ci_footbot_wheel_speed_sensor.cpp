@@ -14,10 +14,10 @@ namespace argos {
    
 #ifdef ARGOS_WITH_LUA
    void CCI_FootBotWheelSpeedSensor::CreateLuaState(lua_State* pt_lua_state) {
-      CLuaUtility::StartTable(pt_lua_state, "wheels");
-      CLuaUtility::AddToTable(pt_lua_state, "velocity_left",  m_sReading.LinearVelocityLeft);
-      CLuaUtility::AddToTable(pt_lua_state, "velocity_right",  m_sReading.LinearVelocityRight);
-      CLuaUtility::EndTable(pt_lua_state);
+      CLuaUtility::OpenRobotStateTable (pt_lua_state, "wheels"                                        );
+      CLuaUtility::AddToTable          (pt_lua_state, "velocity_left",  m_sReading.LinearVelocityLeft );
+      CLuaUtility::AddToTable          (pt_lua_state, "velocity_right", m_sReading.LinearVelocityRight);
+      CLuaUtility::CloseRobotStateTable(pt_lua_state                                                  );
    }
 #endif
 

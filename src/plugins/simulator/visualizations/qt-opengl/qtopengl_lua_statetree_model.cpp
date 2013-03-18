@@ -10,9 +10,11 @@ namespace argos {
    /****************************************/
 
    CQTOpenGLLuaStateTreeModel::CQTOpenGLLuaStateTreeModel(lua_State* pt_state,
+                                                          bool b_remove_empty_tables,
                                                           QObject* pc_parent) :
       QAbstractItemModel(pc_parent),
-      m_ptState(pt_state) {
+      m_ptState(pt_state),
+      m_bRemoveEmptyTables(b_remove_empty_tables) {
       m_pcDataRoot = new CQTOpenGLLuaStateTreeItem();
    }
 
@@ -167,8 +169,10 @@ namespace argos {
             }
             lua_pop(pt_state, 1);
          }
-         if(pcChild->GetNumChildren() == 0) {
-            pc_item->RemoveChild(pcChild);
+         if(m_bRemoveEmptyTables) {
+            if(pcChild->GetNumChildren() == 0) {
+               pc_item->RemoveChild(pcChild);
+            }
          }
       }
       else {
@@ -199,8 +203,9 @@ namespace argos {
    /****************************************/
    
    CQTOpenGLLuaStateTreeVariableModel::CQTOpenGLLuaStateTreeVariableModel(lua_State* pt_state,
+                                                                          bool b_remove_empty_tables,
                                                                           QObject* pc_parent) :
-      CQTOpenGLLuaStateTreeModel(pt_state, pc_parent) {}
+      CQTOpenGLLuaStateTreeModel(pt_state, b_remove_empty_tables, pc_parent) {}
 
    /****************************************/
    /****************************************/
@@ -245,11 +250,14 @@ namespace argos {
          }
          else if(nKeyType == LUA_TSTRING) {
             return 
-               std::string(lua_tostring(pt_state, -2)) != "_G" &&
-               std::string(lua_tostring(pt_state, -2)) != "package" &&
-               std::string(lua_tostring(pt_state, -2)) != "os" &&
-               std::string(lua_tostring(pt_state, -2)) != "debug" &&
-               std::string(lua_tostring(pt_state, -2)) != "coroutine";
+               std::string(lua_tostring(pt_state, -2)) != "_G"        &&
+               std::string(lua_tostring(pt_state, -2)) != "coroutine" &&
+               std::string(lua_tostring(pt_state, -2)) != "debug"     &&
+               std::string(lua_tostring(pt_state, -2)) != "io"        &&
+               std::string(lua_tostring(pt_state, -2)) != "os"        &&
+               std::string(lua_tostring(pt_state, -2)) != "package"   &&
+               std::string(lua_tostring(pt_state, -2)) != "string"    &&
+               std::string(lua_tostring(pt_state, -2)) != "table";
          }
       }
       return false;
@@ -259,8 +267,9 @@ namespace argos {
    /****************************************/
    
    CQTOpenGLLuaStateTreeFunctionModel::CQTOpenGLLuaStateTreeFunctionModel(lua_State* pt_state,
+                                                                          bool b_remove_empty_tables,
                                                                           QObject* pc_parent) :
-      CQTOpenGLLuaStateTreeModel(pt_state, pc_parent) {}
+      CQTOpenGLLuaStateTreeModel(pt_state, b_remove_empty_tables, pc_parent) {}
 
    /****************************************/
    /****************************************/
@@ -285,7 +294,31 @@ namespace argos {
       int nValueType = lua_type(pt_state, -1);
       int nKeyType = lua_type(pt_state, -2);
       if(nValueType == LUA_TFUNCTION) {
-         return true;
+            return 
+               std::string(lua_tostring(pt_state, -2)) != "assert" &&
+               std::string(lua_tostring(pt_state, -2)) != "collectgarbage" &&
+               std::string(lua_tostring(pt_state, -2)) != "dofile" &&
+               std::string(lua_tostring(pt_state, -2)) != "error" &&
+               std::string(lua_tostring(pt_state, -2)) != "gcinfo" &&
+               std::string(lua_tostring(pt_state, -2)) != "getfenv" &&
+               std::string(lua_tostring(pt_state, -2)) != "getmetatable" &&
+               std::string(lua_tostring(pt_state, -2)) != "ipairs" &&
+               std::string(lua_tostring(pt_state, -2)) != "load" &&
+               std::string(lua_tostring(pt_state, -2)) != "loadfile" &&
+               std::string(lua_tostring(pt_state, -2)) != "loadstring" &&
+               std::string(lua_tostring(pt_state, -2)) != "newproxy" &&
+               std::string(lua_tostring(pt_state, -2)) != "next" &&
+               std::string(lua_tostring(pt_state, -2)) != "pairs" &&
+               std::string(lua_tostring(pt_state, -2)) != "pcall" &&
+               std::string(lua_tostring(pt_state, -2)) != "rawequal" &&
+               std::string(lua_tostring(pt_state, -2)) != "rawget" &&
+               std::string(lua_tostring(pt_state, -2)) != "rawset" &&
+               std::string(lua_tostring(pt_state, -2)) != "require" &&
+               std::string(lua_tostring(pt_state, -2)) != "select" &&
+               std::string(lua_tostring(pt_state, -2)) != "setfenv" &&
+               std::string(lua_tostring(pt_state, -2)) != "setmetatable" &&
+               std::string(lua_tostring(pt_state, -2)) != "unpack" &&
+               std::string(lua_tostring(pt_state, -2)) != "xpcall";
       }
       else if(nValueType == LUA_TTABLE) {
          if(nKeyType == LUA_TNUMBER) {
@@ -293,11 +326,13 @@ namespace argos {
          }
          else if(nKeyType == LUA_TSTRING) {
             return 
-               std::string(lua_tostring(pt_state, -2)) != "_G" &&
-               std::string(lua_tostring(pt_state, -2)) != "package" &&
-               std::string(lua_tostring(pt_state, -2)) != "os" &&
-               std::string(lua_tostring(pt_state, -2)) != "debug" &&
-               std::string(lua_tostring(pt_state, -2)) != "coroutine";
+               std::string(lua_tostring(pt_state, -2)) != "_G"        &&
+               std::string(lua_tostring(pt_state, -2)) != "coroutine" &&
+               std::string(lua_tostring(pt_state, -2)) != "debug"     &&
+               std::string(lua_tostring(pt_state, -2)) != "io"        &&
+               std::string(lua_tostring(pt_state, -2)) != "module"    &&
+               std::string(lua_tostring(pt_state, -2)) != "os"        &&
+               std::string(lua_tostring(pt_state, -2)) != "package";
          }
       }
       return false;

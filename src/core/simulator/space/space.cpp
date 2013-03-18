@@ -124,17 +124,17 @@ namespace argos {
          /** @todo make space cell sizing automatic, using the average bb size */
          size_t unBuckets;
          CVector3 cCellSize;
-         GetNodeAttributeOrDefault<size_t>(t_tree, "embodied_entity_space_hash_buckets", unBuckets, 10000u);
+         GetNodeAttributeOrDefault<size_t>(t_tree, "embodied_entity_space_hash_buckets", unBuckets, 100000u);
          GetNodeAttributeOrDefault(t_tree, "embodied_entity_space_hash_cell_size", cCellSize, CVector3(0.2, 0.2, 0.3));
       	 m_pcEmbodiedEntitiesSpaceHash->SetSize(unBuckets);
          m_pcEmbodiedEntitiesSpaceHash->SetCellSize(cCellSize);
          LOG << "[INFO] Embodied entity space hash: " << unBuckets << " buckets, cell size = <" << cCellSize << ">." << std::endl;
-         GetNodeAttributeOrDefault<size_t>(t_tree, "led_entity_space_hash_buckets", unBuckets, 10000u);
+         GetNodeAttributeOrDefault<size_t>(t_tree, "led_entity_space_hash_buckets", unBuckets, 100000u);
          GetNodeAttributeOrDefault(t_tree, "led_entity_space_hash_cell_size", cCellSize, CVector3(0.2, 0.2, 0.3));
          m_pcLEDEntitiesSpaceHash->SetSize(unBuckets);
          m_pcLEDEntitiesSpaceHash->SetCellSize(cCellSize);
          LOG << "[INFO] LED entity space hash: " << unBuckets << " buckets, cell size = <" << cCellSize << ">." << std::endl;
-         GetNodeAttributeOrDefault<size_t>(t_tree, "rab_equipped_entity_space_hash_buckets", unBuckets, 10000u);
+         GetNodeAttributeOrDefault<size_t>(t_tree, "rab_equipped_entity_space_hash_buckets", unBuckets, 100000u);
          GetNodeAttributeOrDefault(t_tree, "rab_equipped_entity_space_hash_cell_size", cCellSize, CVector3(1, 1, 1));
          m_pcRABEquippedEntitiesSpaceHash->SetSize(unBuckets);
          m_pcRABEquippedEntitiesSpaceHash->SetCellSize(cCellSize);

@@ -1,14 +1,14 @@
 /**
- * @file <argos3/plugins/robots/foot-bot/simulator/distance_scanner_equipped_entity.h>
+ * @file <argos3/plugins/robots/foot-bot/simulator/footbot_distance_scanner_equipped_entity.h>
  *
  * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */
 
-#ifndef DISTANCE_SCANNER_EQUIPPED_ENTITY_H
-#define DISTANCE_SCANNER_EQUIPPED_ENTITY_H
+#ifndef FOOTBOT_DISTANCE_SCANNER_EQUIPPED_ENTITY_H
+#define FOOTBOT_DISTANCE_SCANNER_EQUIPPED_ENTITY_H
 
 namespace argos {
-   class CDistanceScannerEquippedEntity;
+   class CFootBotDistanceScannerEquippedEntity;
 }
 
 #include <argos3/core/simulator/entity/entity.h>
@@ -16,7 +16,7 @@ namespace argos {
 
 namespace argos {
 
-   class CDistanceScannerEquippedEntity : public CEntity {
+   class CFootBotDistanceScannerEquippedEntity : public CEntity {
 
    public:
 
@@ -30,10 +30,10 @@ namespace argos {
 
    public:
 
-      CDistanceScannerEquippedEntity(CComposableEntity* pc_parent);
+      CFootBotDistanceScannerEquippedEntity(CComposableEntity* pc_parent);
 
-      CDistanceScannerEquippedEntity(CComposableEntity* pc_parent,
-                                     const std::string& str_id);
+      CFootBotDistanceScannerEquippedEntity(CComposableEntity* pc_parent,
+                                            const std::string& str_id);
 
       virtual void Reset();
 
@@ -51,7 +51,7 @@ namespace argos {
          return m_cRotation;
       }
 
-      inline void SetRotation(const CRadians& c_rotation);
+      void SetRotation(const CRadians& c_rotation);
 
       inline Real GetRotationSpeed() const {
          return m_fRotationSpeed;

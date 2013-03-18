@@ -27,12 +27,14 @@
         <differential_steering implementation="default" />
         <leds implementation="default" />
         <footbot_gripper implementation="default" />
+        <footbot_distance_scanner implementation="default" />
       </actuators>
       <sensors>
-        <footbot_proximity implementation="default" show_rays="true" />
+        <footbot_proximity implementation="default" show_rays="false" />
         <ground implementation="rot_z_only" />
         <light implementation="default" show_rays="false" />
         <differential_steering implementation="default" />
+        <footbot_distance_scanner implementation="rot_z_only" show_rays="true" />
       </sensors>
       <!-- No required configuration -->
       <params />

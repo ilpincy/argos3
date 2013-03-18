@@ -55,14 +55,14 @@ namespace argos {
 
 #ifdef ARGOS_WITH_LUA
    void CCI_FootBotLightSensor::CreateLuaState(lua_State* pt_lua_state) {
-      CLuaUtility::StartTable(pt_lua_state, "light");
+      CLuaUtility::OpenRobotStateTable(pt_lua_state, "light");
       for(size_t i = 0; i < GetReadings().size(); ++i) {
          CLuaUtility::StartTable(pt_lua_state, i+1                           );
          CLuaUtility::AddToTable(pt_lua_state, "angle",  m_tReadings[i].Angle);
          CLuaUtility::AddToTable(pt_lua_state, "value",  m_tReadings[i].Value);
          CLuaUtility::EndTable  (pt_lua_state                                );
       }
-      CLuaUtility::EndTable(pt_lua_state);
+      CLuaUtility::CloseRobotStateTable(pt_lua_state);
    }
 #endif
 

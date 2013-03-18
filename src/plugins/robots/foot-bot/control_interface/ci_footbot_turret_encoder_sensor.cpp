@@ -19,9 +19,9 @@ namespace argos {
    
 #ifdef ARGOS_WITH_LUA
    void CCI_FootBotTurretEncoderSensor::CreateLuaState(lua_State* pt_lua_state) {
-      CLuaUtility::StartTable(pt_lua_state, "turret");
+      CLuaUtility::OpenRobotStateTable(pt_lua_state, "turret");
       CLuaUtility::AddToTable(pt_lua_state, "rotation",  m_cRotation);
-      CLuaUtility::EndTable(pt_lua_state);
+      CLuaUtility::CloseRobotStateTable(pt_lua_state);
    }
 #endif
 

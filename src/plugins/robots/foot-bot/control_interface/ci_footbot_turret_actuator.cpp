@@ -90,14 +90,14 @@ namespace argos {
 
 #ifdef ARGOS_WITH_LUA
    void CCI_FootBotTurretActuator::CreateLuaState(lua_State* pt_lua_state) {
-      CLuaUtility::StartTable(pt_lua_state, "turret");
+      CLuaUtility::OpenRobotStateTable(pt_lua_state, "turret");
       CLuaUtility::AddToTable(pt_lua_state, "_instance", this);
       CLuaUtility::AddToTable(pt_lua_state, "set_rotation", &LuaTurretSetRotation);
       CLuaUtility::AddToTable(pt_lua_state, "set_rotation_speed", &LuaTurretSetRotationSpeed);
       CLuaUtility::AddToTable(pt_lua_state, "set_position_control_mode", &LuaTurretSetPositionControlMode);
       CLuaUtility::AddToTable(pt_lua_state, "set_speed_control_mode", &LuaTurretSetSpeedControlMode);
       CLuaUtility::AddToTable(pt_lua_state, "set_passive_mode", &LuaTurretSetPassiveMode);
-      CLuaUtility::EndTable(pt_lua_state);
+      CLuaUtility::CloseRobotStateTable(pt_lua_state);
    }
 #endif
 

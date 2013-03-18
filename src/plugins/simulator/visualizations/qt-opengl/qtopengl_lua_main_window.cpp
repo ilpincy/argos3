@@ -666,7 +666,10 @@ namespace argos {
          }
          if(bFound &&
             m_vecControllers[m_unSelectedRobot]->GetLuaState() != NULL) {
-            CQTOpenGLLuaStateTreeVariableModel* pcVarModel = new CQTOpenGLLuaStateTreeVariableModel(m_vecControllers[m_unSelectedRobot]->GetLuaState(), m_pcLuaVariableTree);
+            CQTOpenGLLuaStateTreeVariableModel* pcVarModel =
+               new CQTOpenGLLuaStateTreeVariableModel(m_vecControllers[m_unSelectedRobot]->GetLuaState(),
+                                                      false,
+                                                      m_pcLuaVariableTree);
             pcVarModel->Refresh();
             connect(&(m_pcMainWindow->GetOpenGLWidget()), SIGNAL(StepDone(int)),
                     pcVarModel, SLOT(Refresh(int)));
@@ -679,7 +682,10 @@ namespace argos {
             m_pcLuaVariableTree->setRootIndex(pcVarModel->index(0, 0));
             m_pcLuaVariableTree->expandAll();
             m_pcLuaVariableDock->show();
-            CQTOpenGLLuaStateTreeFunctionModel* pcFunModel = new CQTOpenGLLuaStateTreeFunctionModel(m_vecControllers[m_unSelectedRobot]->GetLuaState(), m_pcLuaFunctionTree);
+            CQTOpenGLLuaStateTreeFunctionModel* pcFunModel =
+               new CQTOpenGLLuaStateTreeFunctionModel(m_vecControllers[m_unSelectedRobot]->GetLuaState(),
+                                                      true,
+                                                      m_pcLuaFunctionTree);
             pcFunModel->Refresh();
             connect(&(m_pcMainWindow->GetOpenGLWidget()), SIGNAL(StepDone(int)),
                     pcFunModel, SLOT(Refresh(int)));
