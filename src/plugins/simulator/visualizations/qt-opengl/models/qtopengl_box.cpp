@@ -94,7 +94,6 @@ namespace argos {
          glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, NONMOVABLE_COLOR);
       }
       glPushMatrix();
-      glTranslatef(0.0f, 0.0f, c_entity.GetSize().GetZ() * 0.5f);
       glScalef(c_entity.GetSize().GetX(), c_entity.GetSize().GetY(), c_entity.GetSize().GetZ());
       glCallList(m_unBodyList);
       glPopMatrix();
@@ -119,43 +118,43 @@ namespace argos {
 	      glBegin(GL_QUADS);
 	      /* Bottom face */
 	      glNormal3f(0.0f, 0.0f, -1.0f);
-	      glVertex3f( 0.5f,  0.5f, -0.5f);
-	      glVertex3f( 0.5f, -0.5f, -0.5f);
-	      glVertex3f(-0.5f, -0.5f, -0.5f);
-	      glVertex3f(-0.5f,  0.5f, -0.5f);
+	      glVertex3f( 0.5f,  0.5f, 0.0f);
+	      glVertex3f( 0.5f, -0.5f, 0.0f);
+	      glVertex3f(-0.5f, -0.5f, 0.0f);
+	      glVertex3f(-0.5f,  0.5f, 0.0f);
 	      /* Top face */
 	      glNormal3f(0.0f, 0.0f, 1.0f);
-	      glVertex3f(-0.5f, -0.5f, 0.5f);
-	      glVertex3f( 0.5f, -0.5f, 0.5f);
-	      glVertex3f( 0.5f,  0.5f, 0.5f);
-	      glVertex3f(-0.5f,  0.5f, 0.5f);
+	      glVertex3f(-0.5f, -0.5f, 1.0f);
+	      glVertex3f( 0.5f, -0.5f, 1.0f);
+	      glVertex3f( 0.5f,  0.5f, 1.0f);
+	      glVertex3f(-0.5f,  0.5f, 1.0f);
 	      glEnd();
 	      /* This part covers the faces (South, East, North, West) */
 	      glBegin(GL_QUADS);
 	      /* South face */
 	          glNormal3f(0.0f, -1.0f, 0.0f);
-	          glVertex3f(-0.5f, -0.5f,  0.5f);
-	          glVertex3f(-0.5f, -0.5f, -0.5f);
-	          glVertex3f( 0.5f, -0.5f, -0.5f);
-	          glVertex3f( 0.5f, -0.5f,  0.5f);
+	          glVertex3f(-0.5f, -0.5f, 1.0f);
+	          glVertex3f(-0.5f, -0.5f, 0.0f);
+	          glVertex3f( 0.5f, -0.5f, 0.0f);
+	          glVertex3f( 0.5f, -0.5f, 1.0f);
 	          /* East face */
 	          glNormal3f(1.0f, 0.0f, 0.0f);
-	          glVertex3f( 0.5f, -0.5f,  0.5f);
-	          glVertex3f( 0.5f, -0.5f, -0.5f);
-	          glVertex3f( 0.5f,  0.5f, -0.5f);
-	          glVertex3f( 0.5f,  0.5f,  0.5f);
+	          glVertex3f( 0.5f, -0.5f, 1.0f);
+	          glVertex3f( 0.5f, -0.5f, 0.0f);
+	          glVertex3f( 0.5f,  0.5f, 0.0f);
+	          glVertex3f( 0.5f,  0.5f, 1.0f);
 	          /* North face */
 	          glNormal3f(0.0f, 1.0f, 0.0f);
-	          glVertex3f( 0.5f,  0.5f,  0.5f);
-	          glVertex3f( 0.5f,  0.5f, -0.5f);
-	          glVertex3f(-0.5f,  0.5f, -0.5f);
-	          glVertex3f(-0.5f,  0.5f,  0.5f);
+	          glVertex3f( 0.5f,  0.5f, 1.0f);
+	          glVertex3f( 0.5f,  0.5f, 0.0f);
+	          glVertex3f(-0.5f,  0.5f, 0.0f);
+	          glVertex3f(-0.5f,  0.5f, 1.0f);
 	          /* West face */
 	          glNormal3f(-1.0f, 0.0f, 0.0f);
-	          glVertex3f(-0.5f,  0.5f,  0.5f);
-	          glVertex3f(-0.5f,  0.5f, -0.5f);
-	          glVertex3f(-0.5f, -0.5f, -0.5f);
-	          glVertex3f(-0.5f, -0.5f,  0.5f);
+	          glVertex3f(-0.5f,  0.5f, 1.0f);
+	          glVertex3f(-0.5f,  0.5f, 0.0f);
+	          glVertex3f(-0.5f, -0.5f, 0.0f);
+	          glVertex3f(-0.5f, -0.5f, 1.0f);
 	      glEnd();
 	      /* The shape definitions is finished */
 

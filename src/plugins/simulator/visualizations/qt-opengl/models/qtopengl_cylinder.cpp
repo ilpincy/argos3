@@ -93,7 +93,6 @@ namespace argos {
          glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, NONMOVABLE_COLOR);
       }
       glPushMatrix();
-      glTranslatef(0.0f, 0.0f, c_entity.GetHeight() * 0.5f);
       glScalef(c_entity.GetRadius(), c_entity.GetRadius(), c_entity.GetHeight());
       glCallList(m_unBodyList);
       glPopMatrix();
@@ -119,8 +118,8 @@ namespace argos {
       glBegin(GL_QUAD_STRIP);
       for(GLuint i = 0; i <= m_unVertices; i++) {
          glNormal3f(cVertex.GetX(), cVertex.GetY(), 0.0f);
-         glVertex3f(cVertex.GetX(), cVertex.GetY(),  0.5f);
-         glVertex3f(cVertex.GetX(), cVertex.GetY(), -0.5f);
+         glVertex3f(cVertex.GetX(), cVertex.GetY(), 1.0f);
+         glVertex3f(cVertex.GetX(), cVertex.GetY(), 0.0f);
          cVertex.Rotate(cAngle);
       }
       glEnd();
@@ -129,7 +128,7 @@ namespace argos {
       glBegin(GL_POLYGON);
       glNormal3f(0.0f, 0.0f, 1.0f);
       for(GLuint i = 0; i <= m_unVertices; i++) {
-         glVertex3f(cVertex.GetX(), cVertex.GetY(),  0.5f);
+         glVertex3f(cVertex.GetX(), cVertex.GetY(), 1.0f);
          cVertex.Rotate(cAngle);
       }
       glEnd();
@@ -139,7 +138,7 @@ namespace argos {
       glBegin(GL_POLYGON);
       glNormal3f(0.0f, 0.0f, -1.0f);
       for(GLuint i = 0; i <= m_unVertices; i++) {
-         glVertex3f(cVertex.GetX(), cVertex.GetY(),  -0.5f);
+         glVertex3f(cVertex.GetX(), cVertex.GetY(), 0.0f);
          cVertex.Rotate(cAngle);
       }
       glEnd();
