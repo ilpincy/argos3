@@ -5,12 +5,12 @@
  */
 
 #include "qtopengl_render.h"
+#include "qtopengl_application.h"
 
 #include <argos3/core/utility/logging/argos_log.h>
 #include <argos3/core/utility/string_utilities.h>
 #include <cstring>
 
-#include <QApplication>
 #include <QPixmap>
 #include <QSplashScreen>
 
@@ -24,27 +24,15 @@ namespace argos {
 #ifdef ARGOS_WITH_LUA
       GetNodeAttributeOrDefault(t_tree, "lua_editor", m_bLuaEditor, m_bLuaEditor);
 #endif
-      /* Intel fix */
-      bool bIntelFix;
-      GetNodeAttributeOrDefault(t_tree, "intel_fix", bIntelFix, false);
       /* Save the configuration for later */
       m_tConfTree = t_tree;
       /* Set up dummy arguments for QApplication */
       m_nOptionNum = 1;
-      if(bIntelFix) {
-         m_nOptionNum += 2;
-      }
       m_ppcOptions = new char*[m_nOptionNum];
       m_ppcOptions[0] = new char[7];
       ::strcpy(m_ppcOptions[0], "argos3");
-      if(bIntelFix) {
-         m_ppcOptions[1] = new char[16];
-         ::strcpy(m_ppcOptions[1], "-graphicssystem");
-         m_ppcOptions[2] = new char[7];
-         ::strcpy(m_ppcOptions[2], "raster");
-      }
       /* Create the QT application */
-      m_pcApplication = new QApplication(m_nOptionNum, m_ppcOptions);
+      m_pcApplication = new CQTOpenGLApplication(m_nOptionNum, m_ppcOptions);
    }
 
    /****************************************/

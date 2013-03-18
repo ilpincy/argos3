@@ -9,9 +9,8 @@
 
 namespace argos {
    class CQTOpenGLRender;
+   class CQTOpenGLApplication;
 }
-
-class QApplication;
 
 #include <argos3/core/simulator/visualization/visualization.h>
 #include <argos3/plugins/simulator/visualizations/qt-opengl/qtopengl_main_window.h>
@@ -53,7 +52,7 @@ namespace argos {
 
    private:
 
-      QApplication* m_pcApplication;
+      CQTOpenGLApplication* m_pcApplication;
       CQTOpenGLMainWindow* m_pcMainWindow;
       char** m_ppcOptions;
       SInt32 m_nOptionNum;
