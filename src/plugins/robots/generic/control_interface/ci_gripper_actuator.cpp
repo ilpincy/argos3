@@ -6,7 +6,10 @@
 
 #include "ci_gripper_actuator.h"
 #include <argos3/core/utility/math/range.h>
+
+#ifdef ARGOS_WITH_LUA
 #include <argos3/core/wrappers/lua/lua_utility.h>
+#endif
 
 namespace argos {
 

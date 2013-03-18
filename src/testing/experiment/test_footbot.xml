@@ -5,7 +5,7 @@
   <!-- * General configuration * -->
   <!-- ************************* -->
   <framework>
-    <experiment length="10" ticks_per_second="10" />
+    <experiment threads="2000" length="0" ticks_per_second="10" />
   </framework>
 
   <!-- *************** -->
@@ -15,7 +15,6 @@
     <test_footbot_controller id="x">
       <actuators>
         <differential_steering implementation="default" />
-        <leds                  implementation="default" />
       </actuators>
       <sensors>
         <footbot_proximity implementation="default" show_rays="true" />
@@ -27,13 +26,22 @@
   <!-- *********************** -->
   <!-- * Arena configuration * -->
   <!-- *********************** -->
-  <arena size="2, 2, 1">
-    <box id="b0" position="1,0,0" orientation="0,0,0" size="0.2, 0.5, 0.2" movable="false" />
-    <box id="b1" position="0,1,0" orientation="0,0,0" size="0.2, 0.5, 0.2" movable="true" mass="1" />
+  <arena size="20, 20, 1">
+    <box id="bn" position="10,0,0"  orientation="0,0,0" size="0.1, 20, 0.2" movable="false" />
+    <box id="bs" position="-10,0,0" orientation="0,0,0" size="0.1, 20, 0.2" movable="false" />
+    <box id="be" position="0,-10,0" orientation="0,0,0" size="20, 0.1, 0.2" movable="false" />
+    <box id="bw" position="0,10,0"  orientation="0,0,0" size="20, 0.1, 0.2" movable="false" />
+
+    <light id="l0"
+           position="1,1,1"
+           orientation="0,0,0"
+           color="yellow"
+           intensity="1" />
+
     <distribute>
-      <position method="uniform" min="-1,-1,0" max="1,1,0" />
+      <position method="uniform" min="-10,-10,0" max="10,10,0" />
       <orientation method="gaussian" mean="0,0,0" std_dev="360,0,0" />
-      <entity quantity="10" max_trials="100">
+      <entity quantity="2000" max_trials="100">
         <foot-bot id="fb"
                   controller="x" />
       </entity>
@@ -47,22 +55,11 @@
     <dynamics2d id="dyn2d" />
   </physics_engines>
 
-  <!-- ************************************ -->
-  <!-- * Arena -> Physics Engines mapping * -->
-  <!-- ************************************ -->
-  <arena_physics>
-    <engine id="dyn2d">
-      <entity id="fb[[:digit:]]*" />
-      <entity id="b[[:digit:]]*" />
-      <entity id="c[[:digit:]]*" />
-    </engine>
-  </arena_physics>
-
   <!-- ****************** -->
   <!-- * Visualization * -->
   <!-- ****************** -->
   <visualization>
-    <!-- qt-opengl / -->
+    <qt-opengl />
   </visualization>
 
 </argos-configuration>

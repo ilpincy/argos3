@@ -10,7 +10,7 @@ end
 
 -- vec2 constructor from length and angle
 function vec2:new_la(length, angle)
-   local obj = {x = length*math.cos(angle), y = length*math.cos(angle)}
+   local obj = {x = length*math.cos(angle), y = length*math.sin(angle)}
    setmetatable(obj, {__index = vec2})
    return obj
 end
@@ -38,8 +38,8 @@ function vec2:length()
 end
 
 -- Constants
-straight_range = { min = -7.5 * math.pi/180,
-                   max =  7.5 * math.pi/180 }
+straight_range = { min = -10 * math.pi/180,
+                   max =  10 * math.pi/180 }
 delta = 0.1
 
 -- Controller init
@@ -49,25 +49,23 @@ end
 -- Controller step
 function step()
    accum = vec2:new_xy(0, 0)
+   vec = {}
    for i = 1,24 do
-      vec = vec2:new_la(robot.proximity[i].value,
-                        robot.proximity[i].angle)
-      accum:add(vec)
+      vec[i] = vec2:new_la(robot.proximity[i].value,
+                           robot.proximity[i].angle)
+      accum:add(vec[i])
    end
    angle = accum:angle()
    length = accum:length() / 24
    if angle > straight_range.min and
       angle < straight_range.max and
       length < delta then
-      robot.wheels.left = 5
-      robot.wheels.right = 5
+      robot.wheels.set_velocity(5,5)
    else
       if angle > 0 then
-         robot.wheels.left = 5
-         robot.wheels.right = 0
+         robot.wheels.set_velocity(5,0)
       else
-         robot.wheels.left = 0
-         robot.wheels.right = 5
+         robot.wheels.set_velocity(0,5)
       end
    end
 end

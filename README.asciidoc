@@ -156,6 +156,49 @@ TIP: For production environments, it is recommended to compile ARGoS with
      recommended to set +CMAKE_BUILD_TYPE+ to +Debug+. The other standard
      settings (empty and +RelWithDebInfo+) are supported but should be avoided.
 
+Using the ARGoS simulator from the source tree
+----------------------------------------------
+
+Running the ARGoS simulator
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If you don't want to install ARGoS on your system, you can run it from the sources
+tree. In the directory +build_simulator/+ you'll find a bash script called
++setup_env.sh+. Executing this script, you configure the current environment to
+run ARGoS:
+
+ $ cd argos3
+ $ cd build_simulator
+ $ . setup_env.sh     # or 'source setup_env.sh'
+ $ cd core
+ $ ./argos3 -q all    # this shows all the plugins recognized by ARGoS
+
+If you execute ARGoS with the graphical visualization, you'll notice that
+icons and textures are missing. This is normal, as ARGoS by default looks
+for them in the default install location. To fix this, you need to edit
+the file +$HOME/.config/Iridia-ULB/ARGoS.conf+ as follows:
+
+ [MainWindow]
+ #
+ # other stuff
+ #
+ icon_dir=/path/to/argos3/src/plugins/simulator/visualizations/qt-opengl/icons/
+ texture_dir=/path/to/argos3/src/plugins/simulator/visualizations/qt-opengl/textures/
+ #
+ # more stuff
+ #
+
+Debugging the ARGoS simulator
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You can debug the ARGoS code using +gdb+. Since the code in scattered across multiple
+directories, you need a +.gdbinit+ file. Luckily for you, this file is created
+automatically when you compile ARGoS. To use it, you just need to remember to
+run the ARGoS simulator from the +build_simulator/core/+ directory:
+
+ $ cd argos3/build_simulator/core
+ $ gdb ./argos3
+
 Installing ARGoS from the compiled binaries
 --------------------------------------------
 
