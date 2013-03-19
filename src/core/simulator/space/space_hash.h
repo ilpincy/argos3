@@ -7,13 +7,7 @@
 #ifndef SPACE_HASH_H
 #define SPACE_HASH_H
 
-namespace argos {
-   class CSpace;
-   class CVector3;
-   class CRay3;
-}
-
-#include <argos3/core/utility/math/ray3.h>
+#include <argos3/core/simulator/space/positional_index.h>
 #include <tr1/unordered_set>
 
 namespace argos {
@@ -26,18 +20,18 @@ namespace argos {
     * This template class defines all the basic functionality of a space hash.
     * This class is used only internally. To define your own space hash, you have to
     * subclass CSpaceHash.
-    * @param ELEMENT The type of the element held by the space hash
+    * @param ENTITY The type of the entity held by the space hash
     * @see CSpaceHash
     */
-   template <class ELEMENT>
-   class CAbstractSpaceHash {
+   template <class ENTITY>
+   class CAbstractSpaceHash : public CPositionalIndex<ENTITY> {
 
    public:
 
       /**
-       * Type definition for the list of elements held by the space hash
+       * Type definition for the list of entities held by the space hash
        */
-      typedef std::tr1::unordered_set<ELEMENT*> TElementList;
+      typedef std::tr1::unordered_set<ENTITY*> TEntityList;
 
    public:
 
@@ -56,32 +50,32 @@ namespace argos {
       virtual ~CAbstractSpaceHash() {}
 
       /**
-       * Adds an element to the space hash.
-       * @param c_element The element to add.
+       * Adds an entity to the space hash.
+       * @param c_entity The entity to add.
        */
-      virtual void AddElement(ELEMENT& c_element) {
-         m_tElements.insert(&c_element);
+      virtual void AddEntity(ENTITY& c_entity) {
+         m_tEntities.insert(&c_entity);
       }
 
       /**
-       * Returns the list of elements held by this space hash.
-       * @return The list of elements held by this space hash.
+       * Returns the list of entities held by this space hash.
+       * @return The list of entities held by this space hash.
        */
-      inline TElementList& GetElements() {
-         return m_tElements;
+      inline TEntityList& GetEntities() {
+         return m_tEntities;
       }
 
       /**
-       * Remove an element from the space hash.
-       * @param c_element The element to remove.
+       * Remove an entity from the space hash.
+       * @param c_entity The entity to remove.
        */
-      inline void RemoveElement(ELEMENT& c_element) {
-         typename TElementList::iterator it = m_tElements.find(&c_element);
-         if(it != m_tElements.end()) {
-            m_tElements.erase(it);
+      virtual void RemoveEntity(ENTITY& c_entity) {
+         typename TEntityList::iterator it = m_tEntities.find(&c_entity);
+         if(it != m_tEntities.end()) {
+            m_tEntities.erase(it);
          }
          else {
-            THROW_ARGOSEXCEPTION("Element not found when removing it from space hash.");
+            THROW_ARGOSEXCEPTION("Entity not found when removing it from space hash.");
          }
       }
 
@@ -142,16 +136,16 @@ namespace argos {
       virtual void Update() = 0;
 
       /**
-       * Adds an element to a cell of the space hash.
+       * Adds an entity to a cell of the space hash.
        * @param n_x The x coordinate of the cell.
        * @param n_y The y coordinate of the cell.
        * @param n_z The z coordinate of the cell.
-       * @param c_element The element to add.
+       * @param c_entity The entity to add.
        */
       virtual void UpdateCell(SInt32 n_x,
                               SInt32 n_y,
                               SInt32 n_z,
-                              ELEMENT& c_element) = 0;
+                              ENTITY& c_entity) = 0;
 
       /**
        * Converts a single space coordinate into a space hash cell coordinate.
@@ -193,17 +187,17 @@ namespace argos {
       }
 
       /**
-       * Looks for elements to process in a cell.
+       * Looks for entities to process in a cell.
        * @param n_i The X coordinate of the space hash cell.
        * @param n_j The Y coordinate of the space hash cell.
        * @param n_k The Z coordinate of the space hash cell.
-       * @param t_elements The resulting list of elements to process.
-       * @return <tt>true</tt> if new elements were added to t_elements.
+       * @param t_entities The resulting list of entities to process.
+       * @return <tt>true</tt> if new entities were added to t_entities.
        */
       virtual bool CheckCell(SInt32 n_i,
                              SInt32 n_j,
                              SInt32 n_k,
-                             TElementList& t_elements) = 0;
+                             TEntityList& t_entities) = 0;
 
       virtual void Dump(CARGoSLog& c_os) = 0;
 
@@ -229,9 +223,9 @@ namespace argos {
    private:
 
       /**
-       * The list of elements held by this space hash
+       * The list of entities held by this space hash
        */
-      TElementList m_tElements;
+      TEntityList m_tEntities;
 
       /**
        * The size (number of buckets) of the space hash.
@@ -257,14 +251,14 @@ namespace argos {
 
    /**
     * Defines the basic cell updater of the space hash.
-    * If you want to store your elements in a space hash, you need to implement
+    * If you want to store your entities in a space hash, you need to implement
     * this interface. The aim of this class is to call
-    * CAbstractSpaceHash::UpdateCell() for each cell in which the element must be
+    * CAbstractSpaceHash::UpdateCell() for each cell in which the entity must be
     * contained.
-    * @param Element The type of element held by the corresponding space hash
+    * @param Entity The type of entity held by the corresponding space hash
     * @see CSpaceHash
     */
-   template <class ELEMENT>
+   template <class ENTITY>
    class CSpaceHashUpdater {
 
      public:
@@ -277,10 +271,10 @@ namespace argos {
       /**
        * Updates the necessary cells of a space hash.
        * @param c_space_hash The space hash to update
-       * @param c_element The element indexed by the space hash.
+       * @param c_entity The entity indexed by the space hash.
        */
-      virtual void operator()(CAbstractSpaceHash<ELEMENT>& c_space_hash,
-                              ELEMENT& c_element) = 0;
+      virtual void operator()(CAbstractSpaceHash<ENTITY>& c_space_hash,
+                              ENTITY& c_entity) = 0;
 
    };
 
@@ -291,24 +285,24 @@ namespace argos {
     * Defines the basic space hash.
     * If you want to create a new space hash implementation, you need to extend this
     * class.
-    * @param ELEMENT The type of element held by the corresponding space hash
-    * @param UPDATER The cell updater for type ELEMENT
+    * @param ENTITY The type of entity held by the corresponding space hash
+    * @param UPDATER The cell updater for type ENTITY
     * @see CSpaceHashNative
     */
-   template <class ELEMENT, class UPDATER>
-   class CSpaceHash : public CAbstractSpaceHash<ELEMENT> {
+   template <class ENTITY, class UPDATER>
+   class CSpaceHash : public CAbstractSpaceHash<ENTITY> {
 
    public:
 
       /**
        * Updates the entire space hash.
-       * It calls the updater for all the elements held by the space hash.
+       * It calls the updater for all the entities held by the space hash.
        * @see CSpaceHashUpdater
        */
       virtual void Update() {
          /* Go through all the entities */
-         for(typename CAbstractSpaceHash<ELEMENT>::TElementList::const_iterator el = CAbstractSpaceHash<ELEMENT>::GetElements().begin();
-             el != CAbstractSpaceHash<ELEMENT>::GetElements().end(); ++el) {
+         for(typename CAbstractSpaceHash<ENTITY>::TEntityList::const_iterator el = CAbstractSpaceHash<ENTITY>::GetEntities().begin();
+             el != CAbstractSpaceHash<ENTITY>::GetEntities().end(); ++el) {
             m_cUpdater(*this, **el);
          }
       }

@@ -16,6 +16,7 @@ namespace argos {
 }
 
 #include <argos3/core/utility/datatypes/any.h>
+#include <argos3/core/simulator/space/positional_index.h>
 #include <argos3/core/simulator/entity/embodied_entity.h>
 #include <argos3/core/simulator/entity/controllable_entity.h>
 #include <argos3/core/simulator/entity/medium_entity.h>
@@ -396,48 +397,6 @@ namespace argos {
          m_cArenaSize = c_size;
       }
 
-      /**
-       * Returns the space hash containing the embodied entities.
-       * @return The space hash containing the embodied entities.
-       * @throw CARGoSException if the space hash is not being used.
-       */
-      inline CSpaceHash<CEmbodiedEntity, CEmbodiedEntitySpaceHashUpdater>& GetEmbodiedEntitiesSpaceHash() {
-         if(IsUsingSpaceHash()) {
-            return *m_pcEmbodiedEntitiesSpaceHash;
-         }
-         else {
-            THROW_ARGOSEXCEPTION("Attempted to access the space hash of embodied entities, but in the XML the user chose not to use it. Maybe you use a sensor or an actuator that references it directly?");
-         }
-      }
-
-      /**
-       * Returns the space hash containing the LED entities.
-       * @return The space hash containing the LED entities.
-       * @throw CARGoSException if the space hash is not being used.
-       */
-      inline CSpaceHash<CLEDEntity, CLEDEntitySpaceHashUpdater>& GetLEDEntitiesSpaceHash() {
-         if(IsUsingSpaceHash()) {
-            return *m_pcLEDEntitiesSpaceHash;
-         }
-         else {
-            THROW_ARGOSEXCEPTION("Attempted to access the space hash of LED entities, but in the XML the user chose not to use it. Maybe you use a sensor or an actuator that references it directly?");
-         }
-      }
-
-      /**
-       * Returns the space hash containing the RAB equipped entities.
-       * @return The space hash containing the RAB equipped entities.
-       * @throw CARGoSException if the space hash is not being used.
-       */
-      inline CSpaceHash<CRABEquippedEntity, CRABEquippedEntitySpaceHashUpdater>& GetRABEquippedEntitiesSpaceHash() {
-         if(IsUsingSpaceHash()) {
-            return *m_pcRABEquippedEntitiesSpaceHash;
-         }
-         else {
-            THROW_ARGOSEXCEPTION("Attempted to access the space hash of RAB equipped entities, but in the XML the user chose not to use it. Maybe you use a sensor or an actuator that references it directly?");
-         }
-      }
-
    protected:
 
       virtual void AddControllableEntity(CControllableEntity& c_entity);
@@ -456,14 +415,6 @@ namespace argos {
       void Distribute(TConfigurationNode& t_tree);
 
       void AddBoxStrip(TConfigurationNode& t_tree);
-
-      bool GetClosestEmbodiedEntityIntersectedByRaySpaceHash(SEntityIntersectionItem<CEmbodiedEntity>& s_data,
-                                                             const CRay3& c_ray,
-                                                             const TEmbodiedEntitySet& set_ignored_entities);
-
-      bool GetClosestEmbodiedEntityIntersectedByRayEntitySweep(SEntityIntersectionItem<CEmbodiedEntity>& s_data,
-                                                               const CRay3& c_ray,
-                                                               const TEmbodiedEntitySet& set_ignored_entities);
 
    protected:
 
@@ -495,14 +446,8 @@ namespace argos {
           The second-level maps are indexed by entity id */
       TMapPerTypePerId m_mapEntitiesPerTypePerId;
 
-      /** The space hash of embodied entities */
-      CSpaceHash<CEmbodiedEntity, CEmbodiedEntitySpaceHashUpdater>* m_pcEmbodiedEntitiesSpaceHash;
-
-      /** The space hash of LED entities */
-      CSpaceHash<CLEDEntity, CLEDEntitySpaceHashUpdater>* m_pcLEDEntitiesSpaceHash;
-
-      /** The space hash of RAB equipped entities */
-      CSpaceHash<CRABEquippedEntity, CRABEquippedEntitySpaceHashUpdater>* m_pcRABEquippedEntitiesSpaceHash;
+      /** A map of all the positional indices, ordered by mapped type description */
+      std::map<std::string, CPositionalIndex*> m_mapPosIndices;
 
       /** A vector of controllable entities */
       CControllableEntity::TVector m_vecControllableEntities;
@@ -515,9 +460,6 @@ namespace argos {
 
       /** True if the space hash should be used */
       bool m_bUseSpaceHash;
-
-      /** Method to calculate the ray-embodied entity intersection */
-      CRayEmbodiedEntityIntersectionMethod* m_pcRayEmbodiedEntityIntersectionMethod;
 
       /** A reference to the list of physics engines */
       CPhysicsEngine::TVector* m_ptPhysicsEngines;

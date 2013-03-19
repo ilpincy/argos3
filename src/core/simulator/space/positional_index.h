@@ -1,0 +1,156 @@
+#ifndef POSITIONAL_INDEX_H
+#define POSITIONAL_INDEX_H
+
+namespace argos {
+   class CVector2;
+   class CVector3;
+   class CRay3;
+}
+
+#include <argos3/core/utility/configuration/base_configurable_resource.h>
+#include <argos3/core/utility/datatypes/datatypes.h>
+#include <argos3/core/utility/math/vector2.h>
+#include <argos3/core/utility/math/vector3.h>
+
+#include <string>
+
+namespace argos {
+
+   /**
+    * A data structure that contains positional entities.
+    * This interface defines the basic operations a data structure
+    * can do on positional entities. It is meant to provide methods
+    * to perform operations on entities within given ranges.
+    * @see CPositionalEntity
+    * @see CEmbodiedEntity
+    */
+   template<class ENTITY>
+   class CPositionalIndex : CBaseConfigurableResource {
+
+   public:
+
+      /**
+       * The operation to perform on each entity found in range.
+       * The operation gets as input a reference to an entity. The return
+       * value is either <tt>true</tt> or <tt>false</tt>. The former means
+       * that the processing should continue with the next entity. The
+       * latter means that processing is finished. For example, this code
+       * prints the id of all the embodied entities in a sphere centered
+       * in zero and with 1-meter radius:
+       * <code>
+       *    class CMyOperation {
+       *       virtual bool MyOperation(CEmbodiedEntity& e) {
+       *          LOG << e.GetId() << std::endl;
+       *          return true;
+       *       }
+       *    };
+       *    ...
+       *    CPositionalIndex<CEmbodiedEntity>& i = ...
+       *    i.ForEntitiesInSphereRange(CVector3(), 1, CMyOperation);
+       * </code>
+       * @see ForEntitiesInSphereRange()
+       * @see ForEntitiesInBoxRange()
+       * @see ForEntitiesInCircleRange()
+       * @see ForEntitiesInRectangleRange()
+       * @see ForEntitiesAlongRay()
+       */
+      class COperation {
+      public:
+         virtual bool operator()(ENTITY&) = 0;
+      };
+
+   public:
+
+      CPositionalIndex() {}
+      virtual ~CPositionalIndex() {}
+
+      virtual void Init(TConfigurationNode& t_tree) = 0;
+      virtual void Reset() = 0;
+      virtual void Destroy() = 0;
+
+      /**
+       * Returns the description of the type of this positional index.
+       * For instance, this could be "space_hash", "grid", "octree", etc.
+       * @return The description of the type of this positional index.
+       */
+      virtual std::string GetTypeDescription() const = 0;
+
+      /**
+       * Adds an entity to this index.
+       * @param c_entity The entity to add.
+       */
+      virtual void AddEntity(ENTITY& c_entity) = 0;
+
+      /**
+       * Removes an entity from this index.
+       * @param c_entity The entity to remove.
+       */
+      virtual void RemoveEntity(ENTITY& c_entity) = 0;
+
+      /**
+       * Updates this positional index.
+       */
+      virtual void Update() = 0;
+
+      /**
+       * Executes an operation on all entities within the specified sphere range.
+       * @param c_center The sphere center.
+       * @param f_radius The sphere radius.
+       * @param c_operation The operation to perform.
+       * @see COperation
+       */
+      virtual void ForEntitiesInSphereRange(const CVector3& c_center,
+                                            Real f_radius,
+                                            COperation& c_operation) = 0;
+      
+      /**
+       * Executes an operation on all entities within the specified box range.
+       * The box is axis-aligned.
+       * @param c_center The box center.
+       * @param c_half_size The box half-size.
+       * @param c_operation The operation to perform.
+       * @see COperation
+       */
+      virtual void ForEntitiesInBoxRange(const CVector3& c_center,
+                                         const CVector3& c_half_size,
+                                         COperation& c_operation) = 0;
+      
+      /**
+       * Executes an operation on all entities within the specified circle range.
+       * The circle is parallel to the XY plane.
+       * @param c_center The circle center.
+       * @param f_radius The circle radius.
+       * @param c_operation The operation to perform.
+       * @see COperation
+       */
+      virtual void ForEntitiesInCircleRange(const CVector3& c_center,
+                                            Real f_radius,
+                                            COperation& c_operation) = 0;
+      
+      /**
+       * Executes an operation on all entities within the specified rectangle range.
+       * The rectangle is axis-aligned and parallel to the XY plane.
+       * @param c_center The rectangle center.
+       * @param c_half_size The rectangle half-size.
+       * @param c_operation The operation to perform.
+       * @see COperation
+       */
+      virtual void ForEntitiesInRectangleRange(const CVector3& c_center,
+                                               const CVector2& c_half_size,
+                                               COperation& c_operation) = 0;
+
+      /**
+       * Executes an operation on all entities that intersect the given ray.
+       * @param c_ray The ray.
+       * @param c_operation The operation to perform.
+       * @see CRay
+       * @see COperation
+       */
+      virtual void ForEntitiesAlongRay(const CRay3& c_ray,
+                                       COperation& c_operation) = 0;
+
+   };
+
+}
+
+#endif
