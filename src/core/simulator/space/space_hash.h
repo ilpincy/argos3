@@ -26,10 +26,10 @@ namespace argos {
     * This template class defines all the basic functionality of a space hash.
     * This class is used only internally. To define your own space hash, you have to
     * subclass CSpaceHash.
-    * @param Element The type of the element held by the space hash
+    * @param ELEMENT The type of the element held by the space hash
     * @see CSpaceHash
     */
-   template <class Element>
+   template <class ELEMENT>
    class CAbstractSpaceHash {
 
    public:
@@ -37,7 +37,7 @@ namespace argos {
       /**
        * Type definition for the list of elements held by the space hash
        */
-      typedef std::tr1::unordered_set<Element*> TElementList;
+      typedef std::tr1::unordered_set<ELEMENT*> TElementList;
 
    public:
 
@@ -59,7 +59,7 @@ namespace argos {
        * Adds an element to the space hash.
        * @param c_element The element to add.
        */
-      virtual void AddElement(Element& c_element) {
+      virtual void AddElement(ELEMENT& c_element) {
          m_tElements.insert(&c_element);
       }
 
@@ -75,7 +75,7 @@ namespace argos {
        * Remove an element from the space hash.
        * @param c_element The element to remove.
        */
-      inline void RemoveElement(Element& c_element) {
+      inline void RemoveElement(ELEMENT& c_element) {
          typename TElementList::iterator it = m_tElements.find(&c_element);
          if(it != m_tElements.end()) {
             m_tElements.erase(it);
@@ -151,7 +151,7 @@ namespace argos {
       virtual void UpdateCell(SInt32 n_x,
                               SInt32 n_y,
                               SInt32 n_z,
-                              Element& c_element) = 0;
+                              ELEMENT& c_element) = 0;
 
       /**
        * Converts a single space coordinate into a space hash cell coordinate.
@@ -264,7 +264,7 @@ namespace argos {
     * @param Element The type of element held by the corresponding space hash
     * @see CSpaceHash
     */
-   template <class Element>
+   template <class ELEMENT>
    class CSpaceHashUpdater {
 
      public:
@@ -279,8 +279,8 @@ namespace argos {
        * @param c_space_hash The space hash to update
        * @param c_element The element indexed by the space hash.
        */
-      virtual void operator()(CAbstractSpaceHash<Element>& c_space_hash,
-                              Element& c_element) = 0;
+      virtual void operator()(CAbstractSpaceHash<ELEMENT>& c_space_hash,
+                              ELEMENT& c_element) = 0;
 
    };
 
@@ -291,12 +291,12 @@ namespace argos {
     * Defines the basic space hash.
     * If you want to create a new space hash implementation, you need to extend this
     * class.
-    * @param Element The type of element held by the corresponding space hash
-    * @param Updater The cell updater for type Element
+    * @param ELEMENT The type of element held by the corresponding space hash
+    * @param UPDATER The cell updater for type ELEMENT
     * @see CSpaceHashNative
     */
-   template <class Element, class Updater>
-   class CSpaceHash : public CAbstractSpaceHash<Element> {
+   template <class ELEMENT, class UPDATER>
+   class CSpaceHash : public CAbstractSpaceHash<ELEMENT> {
 
    public:
 
@@ -307,15 +307,15 @@ namespace argos {
        */
       virtual void Update() {
          /* Go through all the entities */
-         for(typename CAbstractSpaceHash<Element>::TElementList::const_iterator el = CAbstractSpaceHash<Element>::GetElements().begin();
-             el != CAbstractSpaceHash<Element>::GetElements().end(); ++el) {
+         for(typename CAbstractSpaceHash<ELEMENT>::TElementList::const_iterator el = CAbstractSpaceHash<ELEMENT>::GetElements().begin();
+             el != CAbstractSpaceHash<ELEMENT>::GetElements().end(); ++el) {
             m_cUpdater(*this, **el);
          }
       }
 
    private:
 
-      Updater m_cUpdater;
+      UPDATER m_cUpdater;
 
    };
 

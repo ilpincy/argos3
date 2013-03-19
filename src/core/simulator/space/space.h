@@ -31,8 +31,49 @@ namespace argos {
 
    public:
 
-      /** Maps for quick access to physical entities (robots, objects) */
+      /**
+       * A map of entities indexed by type description.
+       * <p>
+       * This map type is particularly useful when one wants to execute
+       * operations on a specific entity type. For instance, one could want to
+       * get the list of all robots of a specific type, and execute operations
+       * for that robot.
+       * </p>
+       * <p>
+       * The elements in this map are indexed by type description (the string
+       * returned by CEntity::GetTypeDescription()). The elements themselves
+       * are stored as objects of the CAny class. This is because any_cast()
+       * is faster than <tt>dynamic_cast</tt>, and equally type-safe.
+       * </p>
+       * @see CSpace::GetEntitiesByType()
+       * @see CEntity::GetTypeDescription()
+       * @see CAny
+       * @see any_cast()
+       * @see TMapPerTypePerId
+       */
       typedef std::map <std::string, CAny, std::less <std::string> > TMapPerType;
+
+      /**
+       * A map of entities indexed by type description and by id.
+       * <p>
+       * This map type is particularly useful when one wants to execute
+       * operations on a specific entity type with a specific id. For instance,
+       * one could want to operate on a list of robots with a specific type and id,
+       * and execute operations for each robot.
+       * </p>
+       * <p>
+       * The elements in this map are indexed by type description (the string
+       * returned by CEntity::GetTypeDescription()), and by id (the string returned by
+       * CEntity::GetId()). The elements themselves are stored as objects of the CAny
+       * class. This is because any_cast() is faster than <tt>dynamic_cast</tt>, and
+       * equally type-safe.
+       * </p>
+       * @see CSpace::GetEntitiesByType()
+       * @see CEntity::GetTypeDescription()
+       * @see CEntity::GetId()
+       * @see CAny
+       * @see any_cast()
+       */
       typedef std::map <std::string, TMapPerType, std::less <std::string> > TMapPerTypePerId;
 
       template <class E> struct SEntityIntersectionItem {
@@ -190,7 +231,7 @@ namespace argos {
        * </code>
        * @returns a nested map of entities, ordered by type and by id.
        * @see CEntity::GetTypeDescription()
-       * @see TMapPerType
+       * @see TMapPerTypePerId
        * @see GetEntitiesByType()
        */
       inline TMapPerTypePerId& GetEntityMapPerTypePerId() {
