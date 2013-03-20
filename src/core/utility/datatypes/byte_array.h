@@ -87,20 +87,34 @@ namespace argos {
       }
 
       /**
+       * Clears the byte array.
+       * After calling this method, the byte array is empty.
+       * @see Empty()
+       * @see Size()
+       */
+      inline void Clear() {
+         m_vecBuffer.clear();
+      }
+
+      /**
+       * Sets the contents of the byte array to all zeros.
+       * This method does not change the size of the byte array.
+       * @see Size()
+       */
+      void Zero();
+
+      /**
        * Assignment operator.
        * Deep-copies the given byte array into the current byte array.
+       * @throws CARGoSException if the size of the byte arrays don't match.
        */
-      inline CByteArray& operator=(const CByteArray& c_byte_array) {
-         if(this != &c_byte_array) {
-            m_vecBuffer = c_byte_array.m_vecBuffer;
-         }
-         return *this;
-      }
+      CByteArray& operator=(const CByteArray& c_byte_array);
 
       /**
        * Read/write index operator.
        * @param un_index the index of the wanted element.
        * @returns a reference to the wanted element.
+       * @throws CARGoSException if the passed index is out of bounds.
        */
       inline UInt8& operator[](size_t un_index) {
          if(un_index >= Size()) THROW_ARGOSEXCEPTION("CByteArray: index out of bounds [index = " << un_index << ", size=" << Size() << "]");
@@ -111,6 +125,7 @@ namespace argos {
        * Read-only index operator.
        * @param un_index the index of the wanted element.
        * @returns the value of the wanted element.
+       * @throws CARGoSException if the passed index is out of bounds.
        */
       inline UInt8 operator[](size_t un_index) const {
          if(un_index >= Size()) THROW_ARGOSEXCEPTION("CByteArray: index out of bounds [index = " << un_index << ", size=" << Size() << "]");

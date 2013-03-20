@@ -5,6 +5,7 @@
  */
 
 #include "byte_array.h"
+#include <cstring>
 
 namespace argos {
 
@@ -22,6 +23,28 @@ namespace argos {
    CByteArray::CByteArray(size_t un_size,
                           UInt8 un_value) {
       m_vecBuffer.assign(un_size, un_value);
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CByteArray::Zero() {
+      ::memset(&m_vecBuffer[0], 0, sizeof(UInt8) * Size());
+   }
+
+   /****************************************/
+   /****************************************/
+
+   CByteArray& CByteArray::operator=(const CByteArray& c_byte_array) {
+      if(this != &c_byte_array) {
+         if(Size() == c_byte_array.Size()) {
+            m_vecBuffer = c_byte_array.m_vecBuffer;
+         }
+         else {
+            THROW_ARGOSEXCEPTION("Can't apply the assignment operator to byte arrays with different sizes (" << Size() << " and " << c_byte_array.Size() << ")");
+         }
+      }
+      return *this;
    }
 
    /****************************************/
