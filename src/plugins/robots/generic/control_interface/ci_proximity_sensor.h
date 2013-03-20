@@ -3,6 +3,7 @@
  *
  * @author Carlo Pinciroli <ilpincy@gmail.com>
  */
+
 #ifndef CCI_PROXIMITY_SENSOR_H
 #define CCI_PROXIMITY_SENSOR_H
 

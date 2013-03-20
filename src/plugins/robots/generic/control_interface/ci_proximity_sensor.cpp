@@ -17,11 +17,11 @@ namespace argos {
 
 #ifdef ARGOS_WITH_LUA
    void CCI_ProximitySensor::CreateLuaState(lua_State* pt_lua_state) {
-      CLuaUtility::StartTable(pt_lua_state, "proximity");
+      CLuaUtility::OpenRobotStateTable(pt_lua_state, "proximity");
       for(size_t i = 0; i < m_tReadings.size(); ++i) {
          CLuaUtility::AddToTable(pt_lua_state, i+1, m_tReadings[i]);
       }
-      CLuaUtility::EndTable(pt_lua_state);
+      CLuaUtility::CloseRobotStateTable(pt_lua_state);
    }
 #endif
 

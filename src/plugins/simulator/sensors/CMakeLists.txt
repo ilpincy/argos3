@@ -17,8 +17,7 @@ set(ARGOS3_SOURCES_PLUGINS_SIMULATOR_SENSORS
   differential_steering_default_sensor.cpp
   ground_rotzonly_sensor.cpp
   light_default_sensor.cpp
-  positioning_default_sensor.cpp
-  proximity_default_sensor.cpp)
+  positioning_default_sensor.cpp)
 
 #
 # Create entity plugin library

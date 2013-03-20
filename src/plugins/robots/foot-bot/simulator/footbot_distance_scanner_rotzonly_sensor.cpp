@@ -65,7 +65,7 @@ namespace argos {
       m_pcControllableEntity = &(c_entity.GetComponent<CControllableEntity>("controller"));
       m_pcDistScanEntity = &(c_entity.GetComponent<CFootBotDistanceScannerEquippedEntity>("distance_scanner"));
       m_pcDistScanEntity->SetCanBeEnabledIfDisabled(true);
-      m_pcDistScanEntity->SetEnabled(true);
+      m_pcDistScanEntity->Enable();
       /* Ignore the sensing robot when checking for occlusions */
       m_tIgnoreMe.insert(m_pcEmbodiedEntity);
    }

@@ -67,7 +67,7 @@ namespace argos {
       m_pcControllableEntity = &(c_entity.GetComponent<CControllableEntity>("controller"));
       m_pcLightEntity = &(c_entity.GetComponent<CLightSensorEquippedEntity>("light_sensors"));
       m_pcLightEntity->SetCanBeEnabledIfDisabled(true);
-      m_pcLightEntity->SetEnabled(true);
+      m_pcLightEntity->Enable();
       /* Ignore the sensing robot when checking for occlusions */
       m_tIgnoreMe.insert(m_pcEmbodiedEntity);
    }
