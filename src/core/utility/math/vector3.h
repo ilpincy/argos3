@@ -106,14 +106,6 @@ namespace argos {
          c_azimuth = ATan2(m_fY, m_fX);
       }
 
-      inline void ToSphericalCoordsHorizontal(Real& f_radius,
-                                              CRadians& c_inclination,
-                                              CRadians& c_azimuth) const {
-         f_radius = Length();
-         c_inclination = ASin(m_fZ / f_radius);
-         c_azimuth = ATan2(m_fY, m_fX);
-      }
-
       inline Real SquareLength() const {
          return Square(m_fX) + Square(m_fY) + Square(m_fZ);
       }
