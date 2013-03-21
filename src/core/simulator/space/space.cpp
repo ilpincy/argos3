@@ -103,14 +103,6 @@ namespace argos {
             CallEntityOperation<CSpaceOperationAddEntity, CSpace, void>(*this, *pcEntity);
          }
       }
-      /* Place box strips */
-      for(itArenaItem = itArenaItem.begin(&t_tree);
-          itArenaItem != itArenaItem.end();
-          ++itArenaItem) {
-         if(itArenaItem->Value() == "box_strip") {
-            AddBoxStrip(*itArenaItem);
-         }
-      }
       /* Place the entities to distribute automatically */
       for(itArenaItem = itArenaItem.begin(&t_tree);
           itArenaItem != itArenaItem.end();
@@ -697,87 +689,6 @@ namespace argos {
       /* Delete the generators, now unneeded */
       delete pcPositionGenerator;
       delete pcOrientationGenerator;
-   }
-
-   /****************************************/
-   /****************************************/
-
-   void CSpace::AddBoxStrip(TConfigurationNode& t_tree){
-
-      // this function can convert a inkscape path into a box strip
-      // in inkscape: preference -> svg output -> deny relative coordinates
-
-	    // read parameters
-      std::string strBaseId;
-      GetNodeAttribute(t_tree, "id", strBaseId);
-      std::string strCoordinates;
-      GetNodeAttribute(t_tree, "coordinates", strCoordinates);
-      Real fScale;
-      GetNodeAttributeOrDefault<Real>(t_tree, "scale", fScale, 1.0f);
-      Real fBoxWidth;
-      GetNodeAttribute(t_tree, "boxwidth", fBoxWidth);
-      Real fBoxHeight;
-      GetNodeAttribute(t_tree, "boxheight", fBoxHeight);
-      CVector2 cTranslate;
-      GetNodeAttributeOrDefault(t_tree, "translate", cTranslate, CVector2(0,0));
-      bool bClose;
-      GetNodeAttributeOrDefault(t_tree, "close", bClose, false);
-      bool bRoundEdges;
-      GetNodeAttributeOrDefault(t_tree, "roundedge", bRoundEdges, true);
-
-      std::vector<std::string> vecCoordinates;
-      Tokenize(strCoordinates, vecCoordinates,", ");
-
-      CVector2 cA, cB, cC;
-
-      for (UInt32 i = 0; i < vecCoordinates.size() - (bClose ? 0 : 2); i += 2) {
-
-         // read the next three points in strip
-         cA.Set(FromString<Real>(vecCoordinates[i]), FromString<Real>(vecCoordinates[i+1]));
-         cA = cA * fScale + cTranslate;
-         cB.Set(FromString<Real>(vecCoordinates[(i+2) % vecCoordinates.size()]), FromString<Real>(vecCoordinates[(i+3) % vecCoordinates.size()]));
-         cB = cB * fScale + cTranslate;
-         cC.Set(FromString<Real>(vecCoordinates[(i+4) % vecCoordinates.size()]), FromString<Real>(vecCoordinates[(i+5) % vecCoordinates.size()]));
-         cC = cC * fScale + cTranslate;
-
-         CEntity* pcEntity = CFactory<CEntity>::New("box");
-
-         CVector3 cOrientationAngles(ToDegrees((cB-cA).Angle()).GetValue(), 0., 0.);
-         /* Build the XML tree */
-         TConfigurationNode tRootNode("box");
-         SetNodeAttribute(tRootNode, "id", strBaseId+ "_" + ToString(i));
-         SetNodeAttribute(tRootNode, "position", CVector3(((cA+cB)/2.).GetX(), ((cA+cB)/2.).GetY(), 0.));
-         SetNodeAttribute(tRootNode, "orientation", cOrientationAngles);
-         SetNodeAttribute(tRootNode, "size", CVector3((cA-cB).Length(), fBoxWidth, fBoxHeight));
-         SetNodeAttribute(tRootNode, "movable", false);
-         SetNodeAttribute(tRootNode, "mass", 1);
-         pcEntity->Init(tRootNode);
-         AddEntity(*pcEntity);
-
-         if (bRoundEdges && (bClose || i < vecCoordinates.size()-4)){
-
-            pcEntity = CFactory<CEntity>::New("box");
-
-            cOrientationAngles.SetX(ToDegrees((cB-cA).Angle()+(cB-cC).Angle()).GetValue() / 2.);
-            /* Build the XML tree */
-            SetNodeAttribute(tRootNode, "id", strBaseId+ "_" + ToString(i + vecCoordinates.size()));
-            SetNodeAttribute(tRootNode, "orientation", cOrientationAngles);
-
-            CVector2 cPerp;
-            cPerp.SetFromAngleAndLength((cB-cA).Angle() + CRadians::PI_OVER_TWO, fBoxWidth/2);
-            cPerp += cB;
-
-            CVector2 cPerp2;
-            cPerp2.SetFromAngleAndLength((cB-cC).Angle() - CRadians::PI_OVER_TWO, fBoxWidth/2);
-            cPerp2 += cB;
-
-            SetNodeAttribute(tRootNode, "position", CVector3(cB.GetX(), cB.GetY(), 0.));
-            SetNodeAttribute(tRootNode, "size", CVector3(sqrt(fBoxWidth*fBoxWidth - Distance(cPerp,cPerp2)*Distance(cPerp,cPerp2)),Distance(cPerp,cPerp2), fBoxHeight));
-
-            pcEntity->Init(tRootNode);
-            AddEntity(*pcEntity);
-         }
-      }
    }
 
    /****************************************/
