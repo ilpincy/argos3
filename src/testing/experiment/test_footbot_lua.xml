@@ -28,13 +28,15 @@
         <leds implementation="default" />
         <footbot_gripper implementation="default" />
         <footbot_distance_scanner implementation="default" />
+        <range_and_bearing implementation="default" />
       </actuators>
       <sensors>
         <footbot_proximity implementation="default" show_rays="false" />
-        <ground implementation="rot_z_only" />
+        <!-- ground implementation="rot_z_only" / -->
         <light implementation="default" show_rays="false" />
         <differential_steering implementation="default" />
         <footbot_distance_scanner implementation="rot_z_only" show_rays="true" />
+        <range_and_bearing implementation="default" />
       </sensors>
       <!-- No required configuration -->
       <params />
@@ -61,14 +63,14 @@
            color="yellow"
            intensity="1" />
 
-    <distribute>
-      <position method="uniform" min="-5,-5,0" max="5,5,0" />
-      <orientation method="gaussian" mean="0,0,0" std_dev="360,0,0" />
-      <entity quantity="1000" max_trials="100">
-        <foot-bot id="fb"
-                  controller="lua" />
-      </entity>
-    </distribute>
+    <!-- <distribute> -->
+    <!--   <position method="uniform" min="-5,-5,0" max="5,5,0" /> -->
+    <!--   <orientation method="gaussian" mean="0,0,0" std_dev="360,0,0" /> -->
+    <!--   <entity quantity="1000" max_trials="100"> -->
+    <!--     <foot-bot id="fb" -->
+    <!--               controller="lua" /> -->
+    <!--   </entity> -->
+    <!-- </distribute> -->
 
     <!-- <distribute> -->
     <!--   <position method="uniform" min="-1,-1,0" max="1,1,0" /> -->
@@ -82,7 +84,9 @@
     <!--   </entity> -->
     <!-- </distribute> -->
 
-    <!-- foot-bot id="fb0" position="0,0,0" orientation="90,0,0" controller="lua" / -->
+    <foot-bot id="fb0" position="0,0,0" orientation="0,0,0" controller="lua" />
+    <foot-bot id="fb1" position="0,1,0" orientation="0,0,0" controller="lua" />
+
     <!-- cylinder id="cyl0" position="0,0.2,0" orientation="0,0,0" radius="0.05" height="0.1" movable="true" mass="0.1" / -->
 
   </arena>
