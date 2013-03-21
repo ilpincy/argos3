@@ -154,18 +154,21 @@ namespace argos {
          m_pcDistanceScannerEquippedEntity = new CFootBotDistanceScannerEquippedEntity(this,
                                                                                        GetId() + ".distance_scanner");
          AddComponent(*m_pcDistanceScannerEquippedEntity);
-         /* RAB equipped entity */
-         m_pcRABEquippedEntity = new CRABEquippedEntity(this, 10);
-         AddComponent(*m_pcRABEquippedEntity);
-         m_pcRABEquippedEntity->Init(t_tree);
-         /* WiFi equipped entity */
-         m_pcWiFiEquippedEntity = new CWiFiEquippedEntity(this);
-         AddComponent(*m_pcWiFiEquippedEntity);
-         m_pcWiFiEquippedEntity->Init(t_tree);
          /* Embodied entity */
          m_pcEmbodiedEntity = new CEmbodiedEntity(this);
          AddComponent(*m_pcEmbodiedEntity);
          m_pcEmbodiedEntity->Init(t_tree);
+         /* RAB equipped entity */
+         m_pcRABEquippedEntity = new CRABEquippedEntity(this,
+                                                        GetId() + ".rab",
+                                                        10,
+                                                        6.0f,
+                                                        *m_pcEmbodiedEntity);
+         AddComponent(*m_pcRABEquippedEntity);
+         /* WiFi equipped entity */
+         m_pcWiFiEquippedEntity = new CWiFiEquippedEntity(this);
+         AddComponent(*m_pcWiFiEquippedEntity);
+         m_pcWiFiEquippedEntity->Init(t_tree);
          /* Controllable entity
             It must be the last one, for actuators/sensors to link to composing entities correctly */
          m_pcControllableEntity = new CControllableEntity(this);
@@ -205,11 +208,13 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+#define UPDATE(COMPONENT) if(COMPONENT->IsEnabled()) COMPONENT->Update();
+
    void CFootBotEntity::UpdateComponents() {
-      m_pcEmbodiedEntity->Update();
-      m_pcDistanceScannerEquippedEntity->Update();
-      m_pcRABEquippedEntity->SetPosition(m_pcEmbodiedEntity->GetPosition());
-      SetLEDPosition();
+      UPDATE(m_pcDistanceScannerEquippedEntity);
+      UPDATE(m_pcGripperEquippedEntity);
+      UPDATE(m_pcRABEquippedEntity);
+      if(m_pcLEDEquippedEntity->IsEnabled()) SetLEDPosition();
    }
 
    /****************************************/

@@ -5,6 +5,8 @@
  */
 
 #include "rab_equipped_entity.h"
+#include <argos3/core/utility/string_utilities.h>
+#include <argos3/core/simulator/simulator.h>
 #include <argos3/core/simulator/space/space.h>
 
 namespace argos {
@@ -12,67 +14,110 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   CRABEquippedEntity::CRABEquippedEntity(CComposableEntity* pc_parent,
-                                          size_t un_msg_size) :
+   CRABEquippedEntity::CRABEquippedEntity(CComposableEntity* pc_parent) :
       CPositionalEntity(pc_parent),
-      m_unMsgSize(un_msg_size),
-      m_punData(new UInt8[un_msg_size]),
-      m_fRange(0.0f) {
-      ::memset(m_punData, 0, m_unMsgSize);
-   }
+      m_pcReference(NULL),
+      m_fRange(0.0f) {}
 
    /****************************************/
    /****************************************/
 
    CRABEquippedEntity::CRABEquippedEntity(CComposableEntity* pc_parent,
                                           const std::string& str_id,
-                                          const CVector3& c_position,
-                                          const CQuaternion& c_orientation,
                                           size_t un_msg_size,
-                                          Real f_range) :
+                                          Real f_range,
+                                          const CPositionalEntity& c_reference,
+                                          const CVector3& c_pos_offset,
+                                          const CQuaternion& c_rot_offset) :
       CPositionalEntity(pc_parent,
                         str_id,
-                        c_position,
-                        c_orientation),
-      m_unMsgSize(un_msg_size),
-      m_punData(new UInt8[un_msg_size]),
-      m_fRange(f_range) {
-      ::memset(m_punData, 0, m_unMsgSize);
+                        c_reference.GetInitPosition() + c_pos_offset,
+                        c_reference.GetInitOrientation() * c_rot_offset),
+      m_pcReference(&c_reference),
+      m_cPosOffset(c_pos_offset),
+      m_cRotOffset(c_rot_offset),
+      m_cData(un_msg_size),
+      m_fRange(f_range) {}
+
+   /****************************************/
+   /****************************************/
+
+   void CRABEquippedEntity::Init(TConfigurationNode& t_tree) {
+      try {
+         /*
+          * Init entity.
+          * Here we explicitly avoid to call CPositionalEntity::Init() because that
+          * would also initialize position and orientation, which, instead, must
+          * be calculated from reference entity and offsets.
+          */
+         CEntity::Init(t_tree);
+         /* Get reference entity */
+         std::string strReference;
+         GetNodeAttribute(t_tree, "reference", strReference);
+         m_pcReference = dynamic_cast<CPositionalEntity*>(&CSimulator::GetInstance().GetSpace().GetEntity(strReference));
+         if(m_pcReference == NULL) {
+            THROW_ARGOSEXCEPTION("Entity \"" << strReference << "\" can't be used as a reference for range and bearing entity \"" << GetId() << "\"");
+         }
+         /* Get offsets */
+         GetNodeAttributeOrDefault(t_tree, "pos_offset", m_cPosOffset, m_cPosOffset);
+         std::string strRotOffset;
+         GetNodeAttributeOrDefault(t_tree, "rot_offset", strRotOffset, strRotOffset);
+         if(strRotOffset != "") {
+            CDegrees cRotOffsetEuler[3];
+            ParseValues(strRotOffset, 3, cRotOffsetEuler, ',');
+            m_cRotOffset.FromEulerAngles(ToRadians(cRotOffsetEuler[0]),
+                                         ToRadians(cRotOffsetEuler[1]),
+                                         ToRadians(cRotOffsetEuler[2]));
+         }
+         /* Set init position and orientation */
+         SetInitPosition(m_pcReference->GetInitPosition() + m_cPosOffset);
+         SetInitOrientation(m_pcReference->GetInitOrientation() * m_cRotOffset);
+         SetPosition(GetInitPosition());
+         SetOrientation(GetInitOrientation());
+         /* Get message size */
+         size_t unMsgSize;
+         GetNodeAttribute(t_tree, "msg_size", unMsgSize);
+         m_cData.Resize(unMsgSize);
+         /* Get transmission range */
+         GetNodeAttribute(t_tree, "range", m_fRange);
+      }
+      catch(CARGoSException& ex) {
+         THROW_ARGOSEXCEPTION_NESTED("Error initializing a range and bearing entity \"" << GetId() << "\"", ex);
+      }
    }
 
    /****************************************/
    /****************************************/
 
-   CRABEquippedEntity::~CRABEquippedEntity() {
-      delete[] m_punData;
+   void CRABEquippedEntity::Update() {
+      SetPosition(m_pcReference->GetPosition() + m_cPosOffset);
+      SetOrientation(m_pcReference->GetOrientation() * m_cRotOffset);
    }
 
    /****************************************/
    /****************************************/
 
    void CRABEquippedEntity::Reset() {
-      ::memset(m_punData, 0, m_unMsgSize);
+      m_cData.Zero();
    }
 
    /****************************************/
    /****************************************/
 
-   void CRABEquippedEntity::GetData(UInt8* pun_data) const {
-      ::memcpy(pun_data, m_punData, m_unMsgSize);
-   }
-
-   /****************************************/
-   /****************************************/
-
-   void CRABEquippedEntity::SetData(const UInt8* pun_data) {
-      ::memcpy(m_punData, pun_data, m_unMsgSize);
+   void CRABEquippedEntity::SetData(const CByteArray& c_data) {
+      if(m_cData.Size() == c_data.Size()) {
+         m_cData = c_data;
+      }
+      else {
+         THROW_ARGOSEXCEPTION("CRABEquippedEntity::SetData() : data size does not match, expected " << m_cData.Size() << ", got " << c_data.Size());
+      }
    }
 
    /****************************************/
    /****************************************/
 
    void CRABEquippedEntity::ClearData() {
-      ::memset(m_punData, 0, m_unMsgSize);
+      m_cData.Zero();
    }
 
    /****************************************/
@@ -231,7 +276,27 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   REGISTER_STANDARD_SPACE_OPERATIONS_ON_ENTITY(CRABEquippedEntity);
+   class CSpaceOperationAddRABEquippedEntity : public CSpaceOperationAddEntity {
+   public:
+      void ApplyTo(CSpace& c_space, CRABEquippedEntity& c_entity) {
+         c_space.AddEntity(c_entity);
+         if(c_space.IsUsingSpaceHash()) {
+            c_space.GetRABEquippedEntitiesSpaceHash().AddElement(c_entity);
+         }
+      }
+   };
+   REGISTER_SPACE_OPERATION(CSpaceOperationAddEntity, CSpaceOperationAddRABEquippedEntity, CRABEquippedEntity);
+   
+   class CSpaceOperationRemoveRABEquippedEntity : public CSpaceOperationRemoveEntity {
+   public:
+      void ApplyTo(CSpace& c_space, CRABEquippedEntity& c_entity) {
+         if(c_space.IsUsingSpaceHash()) {
+            c_space.GetRABEquippedEntitiesSpaceHash().RemoveElement(c_entity);
+         }
+         c_space.RemoveEntity(c_entity);
+      }
+   };
+   REGISTER_SPACE_OPERATION(CSpaceOperationRemoveEntity, CSpaceOperationRemoveRABEquippedEntity, CRABEquippedEntity);
 
    /****************************************/
    /****************************************/
