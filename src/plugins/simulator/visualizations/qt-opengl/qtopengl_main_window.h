@@ -89,6 +89,8 @@ namespace argos {
 
    public slots:
 
+      void StopSimulation();
+      void SimulationCanProceed(bool);
       void SimulationDone();
       void ResetSimulation();
       void CameraXMLPopUp();

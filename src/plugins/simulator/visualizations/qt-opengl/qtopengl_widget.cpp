@@ -511,6 +511,15 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   void CQTOpenGLWidget::StopSimulation() {
+      m_bFastForwarding = false;
+      killTimer(nTimerId);
+      nTimerId = -1;
+   }
+
+   /****************************************/
+   /****************************************/
+
    void CQTOpenGLWidget::ResetSimulation() {
       m_cSimulator.Reset();
       InitializeArena();

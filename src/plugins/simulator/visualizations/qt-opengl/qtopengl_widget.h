@@ -144,6 +144,7 @@ namespace argos {
       void PlayPauseSimulation(bool b_play);
       void FastForwardPauseSimulation(bool b_play);
       void StepSimulation();
+      void StopSimulation();
       void ResetSimulation();
       void SetAntiAliasing(bool b_antialias_on);
       void SetDrawFrameEvery(int n_every);

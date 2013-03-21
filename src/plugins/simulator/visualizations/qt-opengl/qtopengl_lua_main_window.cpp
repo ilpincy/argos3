@@ -167,56 +167,63 @@ namespace argos {
    /****************************************/
 
    void CQTOpenGLLuaMainWindow::Execute() {
-      if(MaybeSave()) {
-         QApplication::setOverrideCursor(Qt::WaitCursor);
-         /* Clear the message table */
-         m_pcLuaMessageTable->clearContents();
-         m_pcLuaMessageTable->setRowCount(1);
-         /* Create temporary file to contain the bytecode */
-         QTemporaryFile cByteCode;
-         if(! cByteCode.open()) {
-            SetMessage(0, "ALL", "Can't create bytecode file.");
+      /* Save script */
+      Save();
+      /* Change cursor */
+      QApplication::setOverrideCursor(Qt::WaitCursor);
+      /* Stop simulation */
+      m_pcMainWindow->StopSimulation();
+      m_pcMainWindow->SimulationCanProceed(true);
+      /* Clear the message table */
+      m_pcLuaMessageTable->clearContents();
+      m_pcLuaMessageTable->setRowCount(1);
+      /* Create temporary file to contain the bytecode */
+      QTemporaryFile cByteCode;
+      if(! cByteCode.open()) {
+         SetMessage(0, "ALL", "Can't create bytecode file.");
+         m_pcMainWindow->SimulationCanProceed(false);
+         QApplication::restoreOverrideCursor();
+         return;
+      }
+      /* Compile script */
+      QProcess cLuaCompiler;
+      cLuaCompiler.start("luac", QStringList() << "-o" << cByteCode.fileName() << m_strFileName);
+      if(! cLuaCompiler.waitForStarted()) {
+         /* Fall back to sending script directly to robots */
+         for(size_t i = 0; i < m_vecControllers.size(); ++i) {
+            m_vecControllers[i]->SetLuaScript(m_strFileName.toStdString());
+         }
+      }
+      else {
+         if(! cLuaCompiler.waitForFinished()) {
+            SetMessage(0, "ALL", QString(cLuaCompiler.readAllStandardError()));
+            m_pcMainWindow->SimulationCanProceed(false);
             QApplication::restoreOverrideCursor();
             return;
          }
-         /* Compile script */
-         QProcess cLuaCompiler;
-         cLuaCompiler.start("luac", QStringList() << "-o" << cByteCode.fileName() << m_strFileName);
-         if(! cLuaCompiler.waitForStarted()) {
-            /* Fall back to sending script directly to robots */
-            for(size_t i = 0; i < m_vecControllers.size(); ++i) {
-               m_vecControllers[i]->SetLuaScript(m_strFileName.toStdString());
-            }
+         if(cLuaCompiler.exitCode() != 0) {
+            SetMessage(0, "ALL", QString(cLuaCompiler.readAllStandardError()));
+            m_pcMainWindow->SimulationCanProceed(false);
+            QApplication::restoreOverrideCursor();
+            return;
          }
-         else {
-            if(! cLuaCompiler.waitForFinished()) {
-               SetMessage(0, "ALL", QString(cLuaCompiler.readAllStandardError()));
-               QApplication::restoreOverrideCursor();
-               return;
-            }
-            if(cLuaCompiler.exitCode() != 0) {
-               SetMessage(0, "ALL", QString(cLuaCompiler.readAllStandardError()));
-               QApplication::restoreOverrideCursor();
-               return;
-            }
-            SetMessage(0, "ALL", "Compilation successful.");
-            /* Set the script for all the robots */
-            for(size_t i = 0; i < m_vecControllers.size(); ++i) {
-               m_vecControllers[i]->SetLuaScript(cByteCode.fileName().toStdString());
-            }
+         SetMessage(0, "ALL", "Compilation successful.");
+         /* Set the script for all the robots */
+         for(size_t i = 0; i < m_vecControllers.size(); ++i) {
+            m_vecControllers[i]->SetLuaScript(cByteCode.fileName().toStdString());
          }
-         /* Update Lua state if visible */
-         if(m_pcLuaVariableDock->isVisible()) {
-            static_cast<CQTOpenGLLuaStateTreeModel*>(m_pcLuaVariableTree->model())->SetLuaState(
-               m_vecControllers[m_unSelectedRobot]->GetLuaState());
-         }
-         if(m_pcLuaFunctionDock->isVisible()) {
-            static_cast<CQTOpenGLLuaStateTreeModel*>(m_pcLuaFunctionTree->model())->SetLuaState(
-               m_vecControllers[m_unSelectedRobot]->GetLuaState());
-         }
-         QApplication::restoreOverrideCursor();
-         statusBar()->showMessage(tr("Execution started"), 2000);
       }
+      /* Update Lua state if visible */
+      if(m_pcLuaVariableDock->isVisible()) {
+         static_cast<CQTOpenGLLuaStateTreeModel*>(m_pcLuaVariableTree->model())->SetLuaState(
+            m_vecControllers[m_unSelectedRobot]->GetLuaState());
+      }
+      if(m_pcLuaFunctionDock->isVisible()) {
+         static_cast<CQTOpenGLLuaStateTreeModel*>(m_pcLuaFunctionTree->model())->SetLuaState(
+            m_vecControllers[m_unSelectedRobot]->GetLuaState());
+      }
+      QApplication::restoreOverrideCursor();
+      statusBar()->showMessage(tr("Execution started"), 2000);
    }
 
    /****************************************/
@@ -323,10 +330,10 @@ namespace argos {
    /****************************************/
 
    void CQTOpenGLLuaMainWindow::CreateLuaMessageTable() {
-      QDockWidget* pcLuaMsgDock = new QDockWidget(tr("Messages"), this);
-      pcLuaMsgDock->setObjectName("LuaMessageDock");
-      pcLuaMsgDock->setFeatures(QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable);
-      pcLuaMsgDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea | Qt::BottomDockWidgetArea);
+      m_pcLuaMsgDock = new QDockWidget(tr("Messages"), this);
+      m_pcLuaMsgDock->setObjectName("LuaMessageDock");
+      m_pcLuaMsgDock->setFeatures(QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable);
+      m_pcLuaMsgDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea | Qt::BottomDockWidgetArea);
       m_pcLuaMessageTable = new QTableWidget();
       m_pcLuaMessageTable->setColumnCount(3);
       QStringList listHeaders;
@@ -337,10 +344,11 @@ namespace argos {
       m_pcLuaMessageTable->horizontalHeader()->setStretchLastSection(true);
       m_pcLuaMessageTable->setSelectionBehavior(QAbstractItemView::SelectRows);
       m_pcLuaMessageTable->setSelectionMode(QAbstractItemView::SingleSelection);
-      pcLuaMsgDock->setWidget(m_pcLuaMessageTable);
-      addDockWidget(Qt::BottomDockWidgetArea, pcLuaMsgDock);
+      m_pcLuaMsgDock->setWidget(m_pcLuaMessageTable);
+      addDockWidget(Qt::BottomDockWidgetArea, m_pcLuaMsgDock);
       connect(m_pcLuaMessageTable, SIGNAL(itemSelectionChanged()),
               this, SLOT(HandleMsgTableSelection()));
+      m_pcLuaMsgDock->hide();
    }
 
    /****************************************/
@@ -614,6 +622,13 @@ namespace argos {
          }
       }
       m_pcLuaMessageTable->setRowCount(nRow);
+      if(nRow > 0) {
+         m_pcMainWindow->StopSimulation();
+         m_pcMainWindow->SimulationCanProceed(false);
+      }
+      else {
+         m_pcLuaMsgDock->hide();
+      }
    }
 
    /****************************************/
@@ -784,6 +799,7 @@ namespace argos {
             n_row, 2,
             new QTableWidgetItem(str_message));
       }
+      m_pcLuaMsgDock->show();
    }
 
    /****************************************/

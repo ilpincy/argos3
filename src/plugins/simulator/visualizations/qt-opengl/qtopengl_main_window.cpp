@@ -599,6 +599,34 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   void CQTOpenGLMainWindow::StopSimulation() {
+      m_pcOpenGLWidget->StopSimulation();
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CQTOpenGLMainWindow::SimulationCanProceed(bool b_allowed) {
+      if(b_allowed) {
+         m_pcPlayAction->setEnabled(true);
+         m_pcStepAction->setEnabled(true);
+         m_pcFastForwardAction->setEnabled(true);
+         m_pcCaptureAction->setEnabled(true);
+      }
+      else {
+         StopSimulation();
+         m_pcPlayAction->setChecked(false);
+         m_pcPlayAction->setEnabled(false);
+         m_pcStepAction->setEnabled(false);
+         m_pcFastForwardAction->setChecked(false);
+         m_pcFastForwardAction->setEnabled(false);
+         m_pcCaptureAction->setEnabled(false);
+      }
+   }
+
+   /****************************************/
+   /****************************************/
+
    void CQTOpenGLMainWindow::SimulationDone() {
       m_pcPlayAction->setChecked(false);
       m_pcPlayAction->setEnabled(false);
