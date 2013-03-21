@@ -3,6 +3,14 @@
 CWD=$(pwd)
 
 #
+# Open all editable files
+#
+function open() {
+    EDITOR=${EDITOR:-emacs}
+    ${EDITOR} $(find src -type f \( -name '*.h' -o -name '*.cpp' -o -name CMakeLists.txt -o -name '*.xml' \) ) $(find src/scripts/ -type f) README.asciidoc doc/Doxyfile.in doc/argos3.1 src/source_task
+}
+
+#
 # Build code
 #
 function build {
@@ -132,7 +140,7 @@ function fix_email {
 #
 if [ $# -ne 1 ]; then
     echo "Usage:"
-    echo "   $0 { check_headers | check_license | fix_file_doxy | fix_argos2 | fix_includes | fix_email }"
+    echo "   $0 { open | check_headers | check_license | fix_file_doxy | fix_argos2 | fix_includes | fix_email }"
     exit 1
 fi
 
@@ -140,6 +148,9 @@ fi
 # Execute wanted operation
 #
 case $1 in
+    "open")
+        open
+        ;;
     "check_headers")
         check_headers
         ;;
