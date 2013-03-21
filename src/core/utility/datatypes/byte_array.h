@@ -67,6 +67,24 @@ namespace argos {
       }
 
       /**
+       * Resizes the byte array to the wanted size.
+       * If the new size is smaller than the old one, the first
+       * un_size elements are kept, and the extra ones are erased.
+       * If the new size is greater than the old one, new elements
+       * are added to the byte array and initialized with un_value.
+       * This operation could entail a reallocation of the internal
+       * storage structure, which would invalide the pointer
+       * returned by ToCArray().
+       * @param un_size The new size.
+       * @param un_value The init value for the padding elements.
+       * @see ToCArray()
+       */
+      inline void Resize(size_t un_size,
+                         UInt8 un_value = 0) {
+         m_vecBuffer.resize(un_size, un_value);
+      }
+
+      /**
        * Returns <tt>true</tt> if the byte array is empty.
        * @return <tt>true</tt> if the byte array is empty.
        */
@@ -106,7 +124,6 @@ namespace argos {
       /**
        * Assignment operator.
        * Deep-copies the given byte array into the current byte array.
-       * @throws CARGoSException if the size of the byte arrays don't match.
        */
       CByteArray& operator=(const CByteArray& c_byte_array);
 
@@ -134,6 +151,7 @@ namespace argos {
 
       /**
        * Appends bytes to the byte array.
+       * The contents of the buffer can be erased, since this method copies them.
        * @param pun_buffer the byte buffer to copy from.
        * @param un_size the size of the byte buffer.
        * @return a reference to this byte array.

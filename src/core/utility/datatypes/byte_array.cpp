@@ -37,12 +37,7 @@ namespace argos {
 
    CByteArray& CByteArray::operator=(const CByteArray& c_byte_array) {
       if(this != &c_byte_array) {
-         if(Size() == c_byte_array.Size()) {
-            m_vecBuffer = c_byte_array.m_vecBuffer;
-         }
-         else {
-            THROW_ARGOSEXCEPTION("Can't apply the assignment operator to byte arrays with different sizes (" << Size() << " and " << c_byte_array.Size() << ")");
-         }
+         m_vecBuffer = c_byte_array.m_vecBuffer;
       }
       return *this;
    }
