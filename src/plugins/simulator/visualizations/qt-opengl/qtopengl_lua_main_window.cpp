@@ -6,7 +6,6 @@
 #include "qtopengl_lua_main_window.h"
 #include "qtopengl_lua_editor.h"
 #include "qtopengl_lua_find_dialog.h"
-#include "qtopengl_lua_syntax_highlighter.h"
 #include "qtopengl_lua_statetree_model.h"
 #include "qtopengl_main_window.h"
 #include "qtopengl_widget.h"
@@ -309,14 +308,8 @@ namespace argos {
    /****************************************/
 
    void CQTOpenGLLuaMainWindow::CreateCodeEditor() {
-      /* Set font */
-      QFont cFont;
-      cFont.setFamily("Luxi Mono");
-      cFont.setFixedPitch(true);
       /* Create code editor */
       m_pcCodeEditor = new CQTOpenGLLuaEditor(this);
-      m_pcCodeEditor->setFont(cFont);
-      new CQTOpenGLLuaSyntaxHighlighter(m_pcCodeEditor->document());
       setCentralWidget(m_pcCodeEditor);
       m_pcCodeEditor->setPlainText(SCRIPT_TEMPLATE);
       /* Connect stuff */

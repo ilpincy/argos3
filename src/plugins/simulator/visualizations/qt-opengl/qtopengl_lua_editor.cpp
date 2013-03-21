@@ -5,6 +5,7 @@
  * @author Carlo Pinciroli <ilpincy@gmail.com>
  */
 #include "qtopengl_lua_editor.h"
+#include "qtopengl_lua_syntax_highlighter.h"
 
 #include <QPainter>
 #include <QTextBlock>
@@ -16,15 +17,27 @@ namespace argos {
 
    CQTOpenGLLuaEditor::CQTOpenGLLuaEditor(QWidget* pc_parent) :
       QPlainTextEdit(pc_parent) {
+      /* Set font */
+      QFont cFont;
+      cFont.setFamily("Monospace");
+      cFont.setStyleHint(QFont::Monospace);
+      cFont.setFixedPitch(true);
+      setFont(cFont);
+      /* Set tab width to 3 */
+      QFontMetrics cFontMetrics(cFont);
+      setTabStopWidth(3 * cFontMetrics.width(' '));
+      /* Set syntax highlighting */
+      new CQTOpenGLLuaSyntaxHighlighter(document());
+      /* Set line numbering */
       m_pcLineNumberArea = new CLineNumberArea(this);
-
+      /* Connect signals */
       connect(this, SIGNAL(blockCountChanged(int)),
               this, SLOT(UpdateLineNumberAreaWidth(int)));
       connect(this, SIGNAL(updateRequest(const QRect&, int)),
               this, SLOT(UpdateLineNumberArea(const QRect&, int)));
       connect(this, SIGNAL(cursorPositionChanged()),
               this, SLOT(HighlightCurrentLine()));
-
+      /* Final touches */
       UpdateLineNumberAreaWidth(0);
       HighlightCurrentLine();
    }
