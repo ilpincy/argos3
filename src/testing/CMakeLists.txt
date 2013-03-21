@@ -15,3 +15,19 @@ add_library(test_loop_functions MODULE
   experiment/test_loop_functions.cpp)
 target_link_libraries(test_footbot_controller
   argos3core_${ARGOS_BUILD_FOR})
+
+if(GOOGLEPERFTOOLS_FOUND)
+  add_executable(argos3_prof
+    ${CMAKE_SOURCE_DIR}/core/simulator/query_plugins.cpp
+    ${CMAKE_SOURCE_DIR}/core/simulator/main.cpp)
+  target_link_libraries(argos3_prof
+    tcmalloc profiler
+    argos3core_simulator
+    argos3plugin_simulator_footbot
+    argos3plugin_simulator_genericrobot
+    argos3plugin_simulator_qtopengl
+    argos3plugin_simulator_sensors
+    argos3plugin_simulator_entities
+    argos3plugin_simulator_dynamics2d
+    argos3plugin_simulator_actuators)
+endif(GOOGLEPERFTOOLS_FOUND)

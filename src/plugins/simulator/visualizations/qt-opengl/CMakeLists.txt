@@ -91,7 +91,6 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR})
 add_library(argos3plugin_${ARGOS_BUILD_FOR}_qtopengl SHARED
   ${ARGOS3_SOURCES_PLUGINS_SIMULATOR_VISUALIZATIONS_QTOPENGL})
 target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_qtopengl argos3plugin_${ARGOS_BUILD_FOR}_entities argos3plugin_${ARGOS_BUILD_FOR}_qtopengl ${QT_LIBRARIES} ${GLUT_LIBRARY} ${OPENGL_LIBRARY})
-link_googleperftools_to(argos3plugin_${ARGOS_BUILD_FOR}_qtopengl)
 # Link SDL if necessary
 if(SDL_FOUND)
  target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_qtopengl ${SDL_LIBRARY})
