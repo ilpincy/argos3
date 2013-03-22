@@ -67,6 +67,24 @@ namespace argos {
       }
 
       /**
+       * Resizes the byte array to the wanted size.
+       * If the new size is smaller than the old one, the first
+       * un_size elements are kept, and the extra ones are erased.
+       * If the new size is greater than the old one, new elements
+       * are added to the byte array and initialized with un_value.
+       * This operation could entail a reallocation of the internal
+       * storage structure, which would invalide the pointer
+       * returned by ToCArray().
+       * @param un_size The new size.
+       * @param un_value The init value for the padding elements.
+       * @see ToCArray()
+       */
+      inline void Resize(size_t un_size,
+                         UInt8 un_value = 0) {
+         m_vecBuffer.resize(un_size, un_value);
+      }
+
+      /**
        * Returns <tt>true</tt> if the byte array is empty.
        * @return <tt>true</tt> if the byte array is empty.
        */
@@ -87,20 +105,33 @@ namespace argos {
       }
 
       /**
+       * Clears the byte array.
+       * After calling this method, the byte array is empty.
+       * @see Empty()
+       * @see Size()
+       */
+      inline void Clear() {
+         m_vecBuffer.clear();
+      }
+
+      /**
+       * Sets the contents of the byte array to all zeros.
+       * This method does not change the size of the byte array.
+       * @see Size()
+       */
+      void Zero();
+
+      /**
        * Assignment operator.
        * Deep-copies the given byte array into the current byte array.
        */
-      inline CByteArray& operator=(const CByteArray& c_byte_array) {
-         if(this != &c_byte_array) {
-            m_vecBuffer = c_byte_array.m_vecBuffer;
-         }
-         return *this;
-      }
+      CByteArray& operator=(const CByteArray& c_byte_array);
 
       /**
        * Read/write index operator.
        * @param un_index the index of the wanted element.
        * @returns a reference to the wanted element.
+       * @throws CARGoSException if the passed index is out of bounds.
        */
       inline UInt8& operator[](size_t un_index) {
          if(un_index >= Size()) THROW_ARGOSEXCEPTION("CByteArray: index out of bounds [index = " << un_index << ", size=" << Size() << "]");
@@ -111,6 +142,7 @@ namespace argos {
        * Read-only index operator.
        * @param un_index the index of the wanted element.
        * @returns the value of the wanted element.
+       * @throws CARGoSException if the passed index is out of bounds.
        */
       inline UInt8 operator[](size_t un_index) const {
          if(un_index >= Size()) THROW_ARGOSEXCEPTION("CByteArray: index out of bounds [index = " << un_index << ", size=" << Size() << "]");
@@ -119,6 +151,7 @@ namespace argos {
 
       /**
        * Appends bytes to the byte array.
+       * The contents of the buffer can be erased, since this method copies them.
        * @param pun_buffer the byte buffer to copy from.
        * @param un_size the size of the byte buffer.
        * @return a reference to this byte array.
@@ -142,6 +175,7 @@ namespace argos {
        * @return a reference to this byte array.
        */
       CByteArray& operator<<(UInt8 un_value);
+
       /**
        * Moves an 8-bit unsigned integer from the byte array to the target variable.
        * The element whose value was written into the target buffer are removed from the byte array.
@@ -149,12 +183,14 @@ namespace argos {
        * @return a reference to this byte array.
        */
       CByteArray& operator>>(UInt8& un_value);
+
       /**
        * Appends a 8-bit signed integer to the byte array.
        * @param n_value the value of the 8-bit signed integer.
        * @return a reference to this byte array.
        */
       CByteArray& operator<<(SInt8 n_value);
+
       /**
        * Moves an 8-bit signed integer from the byte array to the target variable.
        * The element whose value was written into the target buffer are removed from the byte array.
@@ -162,12 +198,14 @@ namespace argos {
        * @return a reference to this byte array.
        */
       CByteArray& operator>>(SInt8& n_value);
+
       /**
        * Appends a 16-bit unsigned integer to the byte array.
        * @param un_value the value of the 16-bit unsigned integer.
        * @return a reference to this byte array.
        */
       CByteArray& operator<<(UInt16 un_value);
+
       /**
        * Moves a 16-bit unsigned integer from the byte array to the target variable.
        * The element whose value was written into the target buffer are removed from the byte array.
@@ -175,12 +213,14 @@ namespace argos {
        * @return a reference to this byte array.
        */
       CByteArray& operator>>(UInt16& un_value);
+
       /**
        * Appends a 16-bit signed integer to the byte array.
        * @param n_value the value of the 16-bit signed integer.
        * @return a reference to this byte array.
        */
       CByteArray& operator<<(SInt16 n_value);
+
       /**
        * Moves a 16-bit signed integer from the byte array to the target variable.
        * The element whose value was written into the target buffer are removed from the byte array.
@@ -188,12 +228,14 @@ namespace argos {
        * @return a reference to this byte array.
        */
       CByteArray& operator>>(SInt16& n_value);
+
       /**
        * Appends a 32-bit unsigned integer to the byte array.
        * @param un_value the value of the 32-bit unsigned integer.
        * @return a reference to this byte array.
        */
       CByteArray& operator<<(UInt32 un_value);
+
       /**
        * Moves a 32-bit unsigned integer from the byte array to the target variable.
        * The element whose value was written into the target buffer are removed from the byte array.
@@ -201,12 +243,14 @@ namespace argos {
        * @return a reference to this byte array.
        */
       CByteArray& operator>>(UInt32& un_value);
+
       /**
        * Appends a 32-bit signed integer to the byte array.
        * @param n_value the value of the 32-bit signed integer.
        * @return a reference to this byte array.
        */
       CByteArray& operator<<(SInt32 n_value);
+
       /**
        * Moves a 32-bit signed integer from the byte array to the target variable.
        * The element whose value was written into the target buffer are removed from the byte array.
@@ -214,12 +258,14 @@ namespace argos {
        * @return a reference to this byte array.
        */
       CByteArray& operator>>(SInt32& n_value);
+
       /**
        * Appends a 64-bit unsigned integer to the byte array.
        * @param un_value the value of the 64-bit unsigned integer.
        * @return a reference to this byte array.
        */
       CByteArray& operator<<(UInt64 un_value);
+
       /**
        * Moves a 64-bit unsigned integer from the byte array to the target variable.
        * The element whose value was written into the target buffer are removed from the byte array.
@@ -227,12 +273,14 @@ namespace argos {
        * @return a reference to this byte array.
        */
       CByteArray& operator>>(UInt64& un_value);
+
       /**
        * Appends a 64-bit signed integer to the byte array.
        * @param n_value the value of the 64-bit signed integer.
        * @return a reference to this byte array.
        */
       CByteArray& operator<<(SInt64 n_value);
+
       /**
        * Moves a 64-bit signed integer from the byte array to the target variable.
        * The element whose value was written into the target buffer are removed from the byte array.
@@ -240,6 +288,7 @@ namespace argos {
        * @return a reference to this byte array.
        */
       CByteArray& operator>>(SInt64& n_value);
+
       /**
        * Appends an unsigned long integer to the byte array.
        * This function should be avoided as much as possible because
@@ -249,6 +298,7 @@ namespace argos {
        * @return a reference to this byte array.
        */
       CByteArray& operator<<(unsigned long int un_value);
+
       /**
        * Moves an unsigned long integer from the byte array to the target variable.
        * The element whose value was written into the target buffer are removed from the byte array.
@@ -259,6 +309,7 @@ namespace argos {
        * @return a reference to this byte array.
        */
       CByteArray& operator>>(unsigned long int& un_value);
+
       /**
        * Appends a signed long integer to the byte array.
        * This function should be avoided as much as possible because
@@ -268,6 +319,7 @@ namespace argos {
        * @return a reference to this byte array.
        */
       CByteArray& operator<<(signed long int n_value);
+
       /**
        * Moves a signed long integer from the byte array to the target variable.
        * The element whose value was written into the target buffer are removed from the byte array.
@@ -278,12 +330,14 @@ namespace argos {
        * @return a reference to this byte array.
        */
       CByteArray& operator>>(signed long int& n_value);
+
       /**
        * Appends an argos::Real to the byte array.
        * @param f_value the value of the argos::Real.
        * @return a reference to this byte array.
        */
       CByteArray& operator<<(Real f_value);
+
       /**
        * Moves an argos::Real from the byte array to the target variable.
        * The element whose value was written into the target buffer are removed from the byte array.
@@ -291,12 +345,14 @@ namespace argos {
        * @return a reference to this byte array.
        */
       CByteArray& operator>>(Real& f_value);
+
       /**
        * Appends a <tt>std::string</tt> to the byte array.
        * @param str_value the value of the <tt>std::string</tt>.
        * @return a reference to this byte array.
        */
       CByteArray& operator<<(const std::string& str_value);
+
       /**
        * Moves a <tt>std::string</tt> from the byte array to the target variable.
        * The element whose value was written into the target buffer are removed from the byte array.

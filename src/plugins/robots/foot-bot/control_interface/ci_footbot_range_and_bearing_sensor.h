@@ -145,7 +145,7 @@ namespace argos {
       }
    };
 
-   class CCI_FootBotRangeAndBearingSensor : virtual public CCI_Sensor {
+   class CCI_FootBotRangeAndBearingSensor : public CCI_Sensor {
 
    public:
 

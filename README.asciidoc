@@ -127,7 +127,6 @@ The compilation of ARGoS can be configured through a set of CMake options:
 | +ARGOS_DYNAMIC_LOADING+     | _BOOLEAN_ | Compile (and use) dynamic loading facilities [+ON+]
 | +ARGOS_USE_DOUBLE+          | _BOOLEAN_ | Use +double+ (+ON+) or +float+ (+OFF+) [+ON+]
 | +ARGOS_DOCUMENTATION+       | _BOOLEAN_ | Create documentation (API, manpage, etc.) [+ON+]
-| +ARGOS_USE_GOOGLEPERFTOOLS+ | _BOOLEAN_ | Use Google PerfTools in +Debug+ builds, if present [+ON+]
 |==========================================================================================================
 
 You can pass the wanted values from the command line. For instance, if you
@@ -141,15 +140,10 @@ wanted to set explictly all the default values, you would write:
          -DARGOS_DYNAMIC_LOADING=ON \
          -DARGOS_USE_DOUBLE=ON \
          -DARGOS_DOCUMENTATION=ON \
-         -DARGOS_USE_GOOGLEPERFTOOLS=ON \
          ../src
 
 IMPORTANT: When +ARGOS_BUILD_FOR+ is set to +simulator+, +ARGOS_THREADSAFE_LOG+
            and +ARGOS_DYNAMIC_LOADING+ must be ON.
-
-NOTE: If +CMAKE_BUILD_TYPE+ is set to +Debug+ and +ARGOS_USE_GOOGLEPERFTOOLS+ is ON,
-      the CMake scripts search for Google Perftools (+libtmalloc.so+ and
-      +libprofiler.so+), and use them if present.
 
 TIP: For production environments, it is recommended to compile ARGoS with
      +CMAKE_BUILD_TYPE+ set to +Release+. If you want to debug ARGoS, it is
@@ -206,15 +200,21 @@ To install ARGoS after having compiled the sources, it is enough to write:
 
  $ cd argos3
  $ cd build_simulator # or 'cd build_myrobot'
- $ make doc           # the documentation is required!
+ $ make doc           # documentation is required!
  $ sudo make install
 
 Alternatively, one can create a package. To build all the packages supported by
 your system, run these commands:
 
  $ cd argos3
- $ cd build_simulator # or 'cd build_myrobot'
- $ make doc           # the documentation is required!
+ $ cd build_simulator       # or 'cd build_myrobot'
+ $ make doc                 # documentation is required!
+ $ git tag -a X.Y.Z-release # give the package a unique version
+                            # the format must be as shown
+                            # X       = version major
+                            # Y       = version minor
+                            # Z       = version patch
+                            # release = a textual label
  $ sudo make package
 
 This typically creates a self-extracting .tar.gz archive, a .tar.bz2 archive,

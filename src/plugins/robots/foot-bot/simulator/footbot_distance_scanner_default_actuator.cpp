@@ -23,7 +23,7 @@ namespace argos {
    void CFootBotDistanceScannerDefaultActuator::SetRobot(CComposableEntity& c_entity) {
       m_pcDistanceScannerEquippedEntity = &(c_entity.GetComponent<CFootBotDistanceScannerEquippedEntity>("distance_scanner"));
       m_pcDistanceScannerEquippedEntity->SetCanBeEnabledIfDisabled(true);
-      m_pcDistanceScannerEquippedEntity->SetEnabled(true);
+      m_pcDistanceScannerEquippedEntity->Enable();
    }
 
    /****************************************/

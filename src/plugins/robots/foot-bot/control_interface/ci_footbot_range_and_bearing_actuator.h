@@ -51,7 +51,7 @@ namespace argos {
 
 namespace argos {
 
-   class CCI_FootBotRangeAndBearingActuator : virtual public CCI_Actuator {
+   class CCI_FootBotRangeAndBearingActuator : public CCI_Actuator {
 
    public:
 

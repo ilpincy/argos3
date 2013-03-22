@@ -37,7 +37,7 @@ namespace argos {
       m_pcControllableEntity = &(c_entity.GetComponent<CControllableEntity>("controller"));
       m_pcProximityEntity = &(c_entity.GetComponent<CProximitySensorEquippedEntity>("proximity_sensors"));
       m_pcProximityEntity->SetCanBeEnabledIfDisabled(true);
-      m_pcProximityEntity->SetEnabled(true);
+      m_pcProximityEntity->Enable();
       /* Ignore the sensing robot when checking for occlusions */
       m_tIgnoreMe.insert(m_pcEmbodiedEntity);
    }

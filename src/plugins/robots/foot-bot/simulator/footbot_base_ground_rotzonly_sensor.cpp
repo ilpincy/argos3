@@ -37,7 +37,7 @@ namespace argos {
       m_pcEmbodiedEntity = &(c_entity.GetComponent<CEmbodiedEntity>("body"));
       m_pcGroundSensorEntity = &(c_entity.GetComponent<CGroundSensorEquippedEntity>("ground_sensors"));
       m_pcGroundSensorEntity->SetCanBeEnabledIfDisabled(true);
-      m_pcGroundSensorEntity->SetEnabled(true);
+      m_pcGroundSensorEntity->Enable();
       m_pcFloorEntity = &m_cSpace.GetFloorEntity();
    }
 

@@ -186,8 +186,8 @@ namespace argos {
       virtual void Update() {}
 
       /**
-       * Returns <tt>true</tt> if the entity is enabled
-       * @return <tt>true</tt> if the entity is enabled
+       * Returns <tt>true</tt> if the entity is enabled.
+       * @return <tt>true</tt> if the entity is enabled.
        * @see m_bEnabled
        * @see m_bCanBeEnabledIfDisabled
        */
@@ -196,7 +196,27 @@ namespace argos {
       }
 
       /**
-       * Enables or disables an entity
+       * Enables the entity.
+       * @see m_bEnabled
+       * @see m_bCanBeEnabledIfDisabled
+       * @see SetEnabled()
+       */
+      inline void Enable() {
+         SetEnabled(true);
+      }
+
+      /**
+       * Disables the entity.
+       * @see m_bEnabled
+       * @see m_bCanBeEnabledIfDisabled
+       * @see SetEnabled()
+       */
+      inline void Disable() {
+         SetEnabled(false);
+      }
+
+      /**
+       * Enables or disables an entity.
        * @param b_enabled <tt>true</tt> if the entity is enabled, <tt>false</tt> otherwise
        * @see m_bEnabled
        * @see m_bCanBeEnabledIfDisabled
@@ -204,8 +224,8 @@ namespace argos {
       virtual void SetEnabled(bool b_enabled);
 
       /**
-       * Returns <tt>true</tt> if this entity, once disabled, can be re-enabled
-       * @return <tt>true</tt> if this entity, once disabled, can be re-enabled
+       * Returns <tt>true</tt> if this entity, once disabled, can be re-enabled.
+       * @return <tt>true</tt> if this entity, once disabled, can be re-enabled.
        * @see m_bEnabled
        * @see m_bCanBeEnabledIfDisabled
        */

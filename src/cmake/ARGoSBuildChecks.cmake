@@ -61,17 +61,8 @@ endif(ARGOS_BUILD_FOR_SIMULATOR)
 
 #
 # Check for Google Perftools
-# They are optional, and checked for only when compiling in Debug
 #
-if(ARGOS_USE_GOOGLEPERFTOOLS AND CMAKE_BUILD_TYPE STREQUAL "Debug")
-  find_package(GooglePerfTools)
-endif(ARGOS_USE_GOOGLEPERFTOOLS AND CMAKE_BUILD_TYPE STREQUAL "Debug")
-# Create a macro to ease linking GooglePerfTools
-function(link_googleperftools_to TARGET)
-  if(ARGOS_USE_GOOGLEPERFTOOLS AND GOOGLEPERFTOOLS_FOUND)
-    target_link_libraries(${TARGET} tcmalloc profiler)
-  endif(ARGOS_USE_GOOGLEPERFTOOLS AND GOOGLEPERFTOOLS_FOUND)
-endfunction(link_googleperftools_to)
+find_package(GooglePerfTools)
 
 #
 # Check for Doxygen

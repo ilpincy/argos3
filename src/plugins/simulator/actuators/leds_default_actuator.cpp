@@ -22,7 +22,7 @@ namespace argos {
       m_pcLEDEquippedEntity = &(c_entity.GetComponent<CLEDEquippedEntity>("leds"));
       m_tSettings.resize(m_pcLEDEquippedEntity->GetAllLEDs().size());
       m_pcLEDEquippedEntity->SetCanBeEnabledIfDisabled(true);
-      m_pcLEDEquippedEntity->SetEnabled(true);
+      m_pcLEDEquippedEntity->Enable();
    }
 
    /****************************************/

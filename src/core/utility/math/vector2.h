@@ -1,8 +1,7 @@
 /**
  * @file <argos3/core/utility/math/vector2.h>
- * @author Carlo Pinciroli <ilpincy@gmail.com>
  *
- * @brief Contains the definition of the CVector2 class.
+ * @author Carlo Pinciroli <ilpincy@gmail.com>
  */
 
 #ifndef VECTOR2_H
@@ -21,7 +20,7 @@ namespace argos {
 namespace argos {
 
    /**
-    * It defines a basic bidimensional vector.
+    * A 2D vector class.
     */
    class CVector2 {
    
@@ -30,13 +29,16 @@ namespace argos {
 
    public:
 
-      static const CVector2 X;  /**< The X axis <1,0> */
-      static const CVector2 Y;  /**< The Y axis <0,1> */
+      /** The <em>x</em> axis */
+      static const CVector2 X;
+
+      /** The <em>y</em> axis */
+      static const CVector2 Y;
 
       /**
-       * @brief Class constructor
-       *
-       * It initializes the vector coordinates to zero.
+       * Class constructor.
+       * It initializes the vector to (0,0).
+       * @see ZERO
        */
       CVector2() :
          m_fX(0.0),
@@ -44,12 +46,11 @@ namespace argos {
       }
 
       /**
-       * @brief Class constructor
-       *
-       * It initializes the vector coordinates to the passed values.
-       *
-       * @param f_x the wanted value for the x coordinate
-       * @param f_y the wanted value for the y coordinate
+       * Class constructor.
+       * It initializes the vector from Cartesian coordinates.
+       * @param f_x The <em>x</em> coordinate.
+       * @param f_y The <em>y</em> coordinate.
+       * @see Set()
        */
       CVector2(Real f_x,
                Real f_y) :
@@ -58,12 +59,11 @@ namespace argos {
       }
 
       /**
-       * @brief Class constructor
-       *
-       * It initializes the vector coordinates from the passed length and angle.
-       *
-       * @param f_length the wanted length
-       * @param f_angle the wanted angle in radians
+       * Class constructor.
+       * It initializes the vector coordinates from polar coordinates.
+       * @param f_length the vector length.
+       * @param f_angle the vector angle.
+       * @see FromPolarCoordinates()
        */
       CVector2(Real f_length,
                const CRadians& f_angle) :
@@ -72,46 +72,41 @@ namespace argos {
       }
 
       /**
-       * @brief It returns the X coordinate
-       *
-       * @return the vector's X coordinate
+       * Returns the <em>x</em> coordinate of this vector.
+       * @return The <em>x</em> coordinate of this vector.
        */
       inline Real GetX() const {
          return m_fX;
       }
 
       /**
-       * @brief It sets the value of the X coordinate
-       *
-       * @param f_x the wanted value
+       * Sets the <em>x</em> coordinate of this vector.
+       * @param f_x The new <em>x</em> coordinate of this vector.
        */
       inline void SetX(Real f_x) {
          m_fX = f_x;
       }
 
       /**
-       * @brief It returns the Y coordinate
-       *
-       * @return the vector's Y coordinate
+       * Returns the <em>y</em> coordinate of this vector.
+       * @return The <em>y</em> coordinate of this vector.
        */
       inline Real GetY() const {
          return m_fY;
       }
 
       /**
-       * @brief It sets the value of the Y coordinate
-       *
-       * @param f_y the wanted value
+       * Sets the <em>y</em> coordinate of this vector.
+       * @param f_y The new <em>y</em> coordinate of this vector.
        */
       inline void SetY(Real f_y) {
          m_fY = f_y;
       }
 
       /**
-       * @brief It sets the value of the X and Y coordinates
-       *
-       * @param f_x the wanted X value
-       * @param f_y the wanted Y value
+       * Sets the vector contents from Cartesian coordinates.
+       * @param f_x The new <em>x</em> coordinate of this vector.
+       * @param f_y The new <em>y</em> coordinate of this vector.
        */
       inline void Set(Real f_x, Real f_y) {
          m_fX = f_x;
@@ -119,63 +114,57 @@ namespace argos {
       }
 
       /**
-       * @brief Sets the vector coordinates from angle and length
-       *
-       * It sets the vector coordinates from the passed angle and length.
-       *
-       * @param f_angle the wanted angle in radians
-       * @param f_length the wanted length
+       * Sets the vector contents from polar coordinates.
+       * @param f_length The length of the vector.
+       * @param c_angle The angle of the vector (range [<em>0</em>,<em>2pi</em>])
+       * @see Length()
+       * @see Angle()
        */
-      inline void SetFromAngleAndLength(const CRadians& f_angle,
-                                        Real f_length)
-      {
+      inline void FromPolarCoordinates(Real f_length,
+                                       const CRadians& f_angle) {
          m_fX = Cos(f_angle) * f_length;
          m_fY = Sin(f_angle) * f_length;
       }
 
       /**
-       * @brief It returns the square length of the vector
-       *
-       * @return the square length of the vector
+       * Returns the square length of this vector.
+       * @return The square length of this vector.
        */
       inline Real SquareLength() const {
          return Square(m_fX) + Square(m_fY);
       }
 
       /**
-       * @brief It returns the length of the vector
-       *
-       * @return the length of the vector
+       * Returns the length of this vector.
+       * @return The length of this vector.
        */
       inline Real Length() const {
-         return ::sqrt(SquareLength());
+         return Sqrt(SquareLength());
       }
 
       /**
-       * @brief It normalizes the vector
-       *
-       * It normalizes the vector, i.e., it resets the vector coordinates in such a way that the angle is the same, but the length is 1.
-       *
-       * @return a reference to the current object after normalization
+       * Normalizes this vector.
+       * After this method is called, the vector has length 1. If the vector
+       * is (0,0), this call results in a division by zero error.
+       * @return A reference to this vector.
        */
       inline CVector2& Normalize() {
-         (*this) /= Length();
-         return (*this);
+         *this /= Length();
+         return *this;
       }
 
       /**
-       * @brief It returns the angle of the vector
-       *
-       * @return the angle of the vector in radians
+       * Returns the angle of this vector.
+       * @return the angle of this vector.
        */
       inline CRadians Angle() const {
          return ATan2(m_fY, m_fX);
       }
 
       /**
-       * @brief It rotates the vector by the wanted angle
-       *
-       * @return a reference to the current object after the rotation
+       * Rotates this vector by the wanted angle.
+       * @param c_angle The rotation angle.
+       * @return A reference to this vector.
        */
       inline CVector2& Rotate(const CRadians& c_angle) {
          Real cosa = Cos(c_angle);
@@ -188,26 +177,22 @@ namespace argos {
       }
 
       /**
-       * @brief It computes the dot product of the current vector with the passed one
-       *
-       * It computes the dot product of the current vector with the passed one. In other words, it calculates
-       * m_fX * c_vector2.m_fX + m_fY * c_vector2.m_fY.
-       *
-       * @return the dot product of the current vector with the passed one
+       * Returns the dot product between this vector and the passed one.
+       * @param c_vector3 The other vector.
+       * @return The dot product between this vector and the passed one.
        */
       inline Real DotProduct(const CVector2& c_vector2) const {
          return m_fX * c_vector2.m_fX + m_fY * c_vector2.m_fY;
       }
 
       /**
-       * @brief It scales the vector by the wanted values
-       *
-       * It scales the vector by the wanted values. In practice, this means that it multiplies the X coordinate by f_scale_x and the Y coordinate by f_scale_y.
-       *
-       * @param f_scale_x the scale factor for the X coordinate
-       * @param f_scale_y the scale factor for the Y coordinate
-       *
-       * @return a reference to the current object after scaling
+       * Scales the vector by the wanted values.
+       * This method scales the vector by the wanted values. In practice, this
+       * means that it multiplies the <em>x</em> coordinate by f_scale_x and the
+       * <em>y</em> coordinate by f_scale_y.
+       * @param f_scale_x the scale factor for the <em>x</em> coordinate.
+       * @param f_scale_y the scale factor for the <em>y</em> coordinate.
+       * @return A reference to this vector.
        */
       inline CVector2& Scale(Real f_scale_x,
                              Real f_scale_y) {
@@ -217,11 +202,8 @@ namespace argos {
       }
 
       /**
-       * @brief It transforms a vector into its ortogonal
-       *
-       * It transofroms the vector into its ortogonal, simply by swapping y and x coordinates.
-       *
-       * @return a reference to the current object after scaling
+       * Transforms this vector into its ortogonal.
+       * @return A reference to this vector.
        */
       inline CVector2& Perpendicularize() {
          Real fNewX = -m_fY;
@@ -231,74 +213,129 @@ namespace argos {
       }
 
       /**
-       * @brief It transforms a vector into positive coordinates
-       *
-       * It transofroms the vector into a vector with positive cooridnates.
-       *
-       * @return a reference to the current object after scaling
+       * Applies Abs() to the coordinates of this vector.
+       * @return A reference to this vector.
        */
       inline CVector2& Absolute() {
-	 m_fX = Abs(m_fX);
+         m_fX = Abs(m_fX);
          m_fY = Abs(m_fY);
          return *this;
       }
 
+      /**
+       * Returns <tt>true</tt> if this vector and the passed one are equal.
+       * This method checks all the coordinates for equality.
+       * @param c_vector2 The other vector.
+       * @return <tt>true</tt> if this vector and the passed one are equal.
+       */
       inline bool operator==(const CVector2& c_vector2) {
          return (m_fX == c_vector2.m_fX && m_fY == c_vector2.m_fY);
       }
 
+      /**
+       * Returns <tt>true</tt> if this vector and the passed one are not equal.
+       * This method checks all the coordinates for equality.
+       * @param c_vector2 The other vector.
+       * @return <tt>true</tt> if this vector and the passed one are not equal.
+       */
       inline bool operator!=(const CVector2& c_vector2) {
          return (m_fX != c_vector2.m_fX || m_fY != c_vector2.m_fY);
       }
 
+      /**
+       * Sums the passed vector to this vector.
+       * @param c_vector2 The other vector.
+       * @returns A reference to this vector.
+       */
       inline CVector2& operator+=(const CVector2& c_vector2) {
          m_fX += c_vector2.m_fX;
          m_fY += c_vector2.m_fY;
          return *this;
       }
 
+      /**
+       * Subtracts the passed vector from this vector.
+       * @param c_vector3 The other vector.
+       * @returns A reference to this vector.
+       */
       inline CVector2& operator-=(const CVector2& c_vector2) {
          m_fX -= c_vector2.m_fX;
          m_fY -= c_vector2.m_fY;
          return *this;
       }
 
+      /**
+       * Multiplies this vector by the given value.
+       * @param f_value The wanted value.
+       * @return A reference to this vector.
+       */
       inline CVector2& operator*=(Real f_value) {
          m_fX *= f_value;
          m_fY *= f_value;
          return *this;
       }
 
+      /**
+       * Divides this vector by the given value.
+       * @param f_value The wanted value.
+       * @return A reference to this vector.
+       */
       inline CVector2& operator/=(Real f_value) {
          m_fX /= f_value;
          m_fY /= f_value;
          return *this;
       }
 
+      /**
+       * Returns a new vector containing the sum between this vector and the passed one.
+       * @param c_vector2 The other vector.
+       * @return A new vector containing the sum between this vector and the passed one.
+       */
       inline CVector2 operator+(const CVector2& c_vector2) const {
          CVector2 cResult(*this);
          cResult += c_vector2;
          return cResult;
       }
 
+      /**
+       * Returns a new vector containing the subtraction between this vector and the passed one.
+       * @param c_vector2 The other vector.
+       * @return A new vector containing the subtraction between this vector and the passed one.
+       */
       inline CVector2 operator-(const CVector2& c_vector2) const {
          CVector2 cResult(*this);
          cResult -= c_vector2;
          return cResult;
       }
 
+      /**
+       * Returns a new vector containing the multiplication between this vector and the passed value.
+       * @param f_value The wanted value.
+       * @return A new vector containing the multiplication between this vector and the passed value.
+       */
       inline CVector2 operator*(Real f_value) const {
          CVector2 cResult(*this);
          cResult *= f_value;
          return cResult;
       }
 
+      /**
+       * Returns a new vector containing the division between this vector and the passed value.
+       * @param f_value The wanted value.
+       * @return A new vector containing the division between this vector and the passed value.
+       */
       inline CVector2 operator/(Real f_value) const {
          CVector2 cResult(*this);
          cResult /= f_value;
          return cResult;
       }
 
+      /**
+       * Returns a new vector containing the multiplication between the passed value and the passed vector.
+       * @param f_value The value.
+       * @param c_vector3 The vector.
+       * @return A new vector containing the multiplication between the passed value and the passed vector.
+       */
       inline friend CVector2 operator*(Real f_value,
                                        const CVector2& c_vector2) {
          return c_vector2 * f_value;
@@ -308,25 +345,40 @@ namespace argos {
          return CVector2(-m_fX, -m_fY);
       }
 
-      inline friend std::ostream& operator<<(std::ostream& os,
+      /**
+       * Serializes the contents of the passed vector onto a stream.
+       * @param c_os The stream.
+       * @param c_vector2 The vector.
+       * @return The new state of the stream.
+       */
+      inline friend std::ostream& operator<<(std::ostream& c_os,
                                              const CVector2& c_vector2) {
-         os << c_vector2.m_fX << ","
-            << c_vector2.m_fY;
-         return os;
+         c_os << c_vector2.m_fX << ","
+              << c_vector2.m_fY;
+         return c_os;
       }
 
-      inline friend std::istream& operator>>(std::istream& is,
+      /**
+       * Deserializes the contents of a stream and stores them into the passed vector.
+       * @param c_is The stream.
+       * @param c_vector2 The vector.
+       * @return The new state of the stream.
+       */
+      inline friend std::istream& operator>>(std::istream& c_is,
                                              CVector2& c_vector2) {
          Real fValues[2];
-         ParseValues<Real> (is, 2, fValues, ',');
+         ParseValues<Real> (c_is, 2, fValues, ',');
          c_vector2.Set(fValues[0], fValues[1]);
-         return is;
+         return c_is;
       }
 
    private:
 
-      Real m_fX;                /**< The vector X coordinate */
-      Real m_fY;                /**< The vector Y coordinate */
+      /** The Cartesian <em>x</em> coordinate */
+      Real m_fX;
+
+      /** The Cartesian <em>y</em> coordinate */
+      Real m_fY;
 
    };
 
@@ -334,24 +386,20 @@ namespace argos {
    /****************************************/
 
    /** 
-    * It computes the square distance between the passed vectors.
-    * 
+    * Computes the square distance between the passed vectors.
     * @param c_v1 The first vector
     * @param c_v2 The second vector
-    * 
-    * @return the square distance between the passed vectors
+    * @return The square distance between the passed vectors
     */
    inline Real SquareDistance(const CVector2& c_v1, const CVector2& c_v2) {
       return (c_v1 - c_v2).SquareLength();
    }
 
    /** 
-    * It computes the distance between the passed vectors.
-    * 
+    * Computes the distance between the passed vectors.
     * @param c_v1 The first vector
     * @param c_v2 The second vector
-    * 
-    * @return the distance between the passed vectors
+    * @return The distance between the passed vectors
     */
    inline Real Distance(const CVector2& c_v1, const CVector2& c_v2) {
       return (c_v1 - c_v2).Length();

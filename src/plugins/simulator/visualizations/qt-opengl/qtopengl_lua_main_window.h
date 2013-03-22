@@ -83,6 +83,7 @@ namespace argos {
       QStatusBar* m_pcStatusbar;
       CQTOpenGLLuaEditor* m_pcCodeEditor;
       CQTOpenGLLuaFindDialog* m_pcFindDialog;
+      QDockWidget* m_pcLuaMsgDock;
       QTableWidget* m_pcLuaMessageTable;
       QDockWidget* m_pcLuaVariableDock;
       QDockWidget* m_pcLuaFunctionDock;

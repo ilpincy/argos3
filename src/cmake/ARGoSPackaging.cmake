@@ -7,10 +7,31 @@ project(argos3_${ARGOS_BUILD_FOR})
 # General CPack configuration
 #
 # Version information
-set(CPACK_PACKAGE_VERSION_MAJOR "3")
-set(CPACK_PACKAGE_VERSION_MINOR "0")
-set(CPACK_PACKAGE_VERSION_PATCH "0")
-set(CPACK_PACKAGE_RELEASE "1cp")
+execute_process(
+  COMMAND git tag
+  COMMAND tail -n1
+  COMMAND cut -d. -f1
+  COMMAND tr -d '\n'
+  OUTPUT_VARIABLE CPACK_PACKAGE_VERSION_MAJOR)
+execute_process(
+  COMMAND git tag
+  COMMAND tail -n1
+  COMMAND cut -d. -f2
+  COMMAND tr -d '\n'
+  OUTPUT_VARIABLE CPACK_PACKAGE_VERSION_MINOR)
+execute_process(
+  COMMAND git tag
+  COMMAND tail -n1
+  COMMAND cut -d. -f3
+  COMMAND cut -d- -f1
+  COMMAND tr -d '\n'
+  OUTPUT_VARIABLE CPACK_PACKAGE_VERSION_PATCH)
+execute_process(
+  COMMAND git tag
+  COMMAND tail -n1
+  COMMAND cut -d- -f2
+  COMMAND tr -d '\n'
+  OUTPUT_VARIABLE CPACK_PACKAGE_RELEASE)
 # Other stuff
 set(CPACK_PACKAGE_DESCRIPTION "ARGoS (multi-physics multi-robot simulator)
  ARGoS is a highly scalable multi-robot simulator. Among its distinctive
@@ -32,7 +53,7 @@ set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${AR
 #
 # Configuration for the Debian generator
 #
-set(CPACK_DEBIAN_PACKAGE_DEPENDS "gcc (>= 4.2), g++ (>= 4.2), cmake (>= 2.6), libgsl0-dev (>= 1.15), freeglut3-dev (>= 2.6.0), libqt4-opengl-dev (>= 4.5), libxi-dev, libxmu-dev, libfreeimage-dev (>= 3.15) liblua5.1-0-dev, lua5.1")
+set(CPACK_DEBIAN_PACKAGE_DEPENDS "gcc (>= 4.2), g++ (>= 4.2), cmake (>= 2.6), libgsl0-dev (>= 1.15), freeglut3-dev (>= 2.6.0), libqt4-opengl-dev (>= 4.5), libxi-dev, libxmu-dev, libfreeimage-dev (>= 3.15), liblua5.1-0-dev, lua5.1")
 set(CPACK_DEBIAN_PACKAGE_DESCRIPTION ${CPACK_PACKAGE_DESCRIPTION})
 set(CPACK_DEBIAN_PACKAGE_HOMEPAGE ${CPACK_PACKAGE_HOMEPAGE})
 set(CPACK_DEBIAN_PACKAGE_MAINTAINER ${CPACK_PACKAGE_MAINTAINER})
@@ -46,7 +67,7 @@ set(CPACK_RPM_PACKAGE_DESCRIPTION ${CPACK_PACKAGE_DESCRIPTION})
 set(CPACK_RPM_PACKAGE_URL ${CPACK_PACKAGE_HOMEPAGE})
 set(CPACK_RPM_PACKAGE_GROUP "Development/Tools")
 set(CPACK_RPM_PACKAGE_LICENSE "GPL")
-set(CPACK_RPM_PACKAGE_REQUIRES "gcc >= 4.2, gcc-c++ >= 4.2, cmake >= 2.6, gsl >= 1.15, gsl-devel >= 1.15, freeglut-devel >= 2.8.0, libqt4-devel >= 4.5, libfreeimage3 >= 3.15, libfreeimageplus3 >= 3.15, freeimage-devel >= 3.15 lua-devel >= 5.1")
+set(CPACK_RPM_PACKAGE_REQUIRES "gcc >= 4.2, gcc-c++ >= 4.2, cmake >= 2.6, gsl >= 1.15, gsl-devel >= 1.15, freeglut-devel >= 2.8.0, libqt4-devel >= 4.5, libfreeimage3 >= 3.15, libfreeimageplus3 >= 3.15, freeimage-devel >= 3.15, lua-devel >= 5.1")
 set(CPACK_RPM_PACKAGE_URL ${CPACK_PACKAGE_HOMEPAGE})
 set(CPACK_RPM_POST_INSTALL_SCRIPT_FILE "${CMAKE_SOURCE_DIR}/scripts/argos_post_install.sh")
 
