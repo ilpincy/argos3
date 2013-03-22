@@ -7,10 +7,31 @@ project(argos3_${ARGOS_BUILD_FOR})
 # General CPack configuration
 #
 # Version information
-set(CPACK_PACKAGE_VERSION_MAJOR "3")
-set(CPACK_PACKAGE_VERSION_MINOR "0")
-set(CPACK_PACKAGE_VERSION_PATCH "0")
-set(CPACK_PACKAGE_RELEASE "1cp")
+execute_process(
+  COMMAND git tag
+  COMMAND tail -n1
+  COMMAND cut -d. -f1
+  COMMAND tr -d '\n'
+  OUTPUT_VARIABLE CPACK_PACKAGE_VERSION_MAJOR)
+execute_process(
+  COMMAND git tag
+  COMMAND tail -n1
+  COMMAND cut -d. -f2
+  COMMAND tr -d '\n'
+  OUTPUT_VARIABLE CPACK_PACKAGE_VERSION_MINOR)
+execute_process(
+  COMMAND git tag
+  COMMAND tail -n1
+  COMMAND cut -d. -f3
+  COMMAND cut -d- -f1
+  COMMAND tr -d '\n'
+  OUTPUT_VARIABLE CPACK_PACKAGE_VERSION_PATCH)
+execute_process(
+  COMMAND git tag
+  COMMAND tail -n1
+  COMMAND cut -d- -f2
+  COMMAND tr -d '\n'
+  OUTPUT_VARIABLE CPACK_PACKAGE_RELEASE)
 # Other stuff
 set(CPACK_PACKAGE_DESCRIPTION "ARGoS (multi-physics multi-robot simulator)
  ARGoS is a highly scalable multi-robot simulator. Among its distinctive

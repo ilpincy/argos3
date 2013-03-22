@@ -10,8 +10,7 @@ fi
 
 PRGNAM=@CPACK_PACKAGE_NAME@
 VERSION=${VERSION:-@CPACK_PACKAGE_VERSION@}
-BUILD=${BUILD:-1}
-TAG=${TAG:-_cp}
+TAG=${TAG:-_@CPACK_PACKAGE_RELEASE@}
 
 # Automatically determine the architecture we're building on:
 if [ -z "$ARCH" ]; then
@@ -48,7 +47,7 @@ cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
 # Make the package; be sure to leave it in $OUTPUT
 cd $PKG
-/sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}
+/sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$VERSION-$ARCH-$TAG.${PKGTYPE:-txz}
 
 # Remove now useless package dir
 rm -rf $PKG
