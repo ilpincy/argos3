@@ -159,10 +159,12 @@ namespace argos {
          AddComponent(*m_pcEmbodiedEntity);
          m_pcEmbodiedEntity->Init(t_tree);
          /* RAB equipped entity */
+         Real fRange = 3.0f;
+         GetNodeAttributeOrDefault(t_tree, "rab_range", fRange, fRange);
          m_pcRABEquippedEntity = new CRABEquippedEntity(this,
                                                         GetId() + ".rab",
                                                         10,
-                                                        6.0f,
+                                                        fRange,
                                                         *m_pcEmbodiedEntity);
          AddComponent(*m_pcRABEquippedEntity);
          /* WiFi equipped entity */

@@ -127,7 +127,7 @@ namespace argos {
          m_pcLEDEntitiesSpaceHash->SetCellSize(cCellSize);
          LOG << "[INFO] LED entity space hash: " << unBuckets << " buckets, cell size = <" << cCellSize << ">." << std::endl;
          GetNodeAttributeOrDefault<size_t>(t_tree, "rab_equipped_entity_space_hash_buckets", unBuckets, 100000u);
-         GetNodeAttributeOrDefault(t_tree, "rab_equipped_entity_space_hash_cell_size", cCellSize, CVector3(1, 1, 1));
+         GetNodeAttributeOrDefault(t_tree, "rab_equipped_entity_space_hash_cell_size", cCellSize, CVector3(6, 6, 6));
          m_pcRABEquippedEntitiesSpaceHash->SetSize(unBuckets);
          m_pcRABEquippedEntitiesSpaceHash->SetCellSize(cCellSize);
          LOG << "[INFO] RAB equipped entity space hash: " << unBuckets << " buckets, cell size = <" << cCellSize << ">." << std::endl;
