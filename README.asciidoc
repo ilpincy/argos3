@@ -200,15 +200,21 @@ To install ARGoS after having compiled the sources, it is enough to write:
 
  $ cd argos3
  $ cd build_simulator # or 'cd build_myrobot'
- $ make doc           # the documentation is required!
+ $ make doc           # documentation is required!
  $ sudo make install
 
 Alternatively, one can create a package. To build all the packages supported by
 your system, run these commands:
 
  $ cd argos3
- $ cd build_simulator # or 'cd build_myrobot'
- $ make doc           # the documentation is required!
+ $ cd build_simulator       # or 'cd build_myrobot'
+ $ make doc                 # documentation is required!
+ $ git tag -a X.Y.Z-release # give the package a unique version
+                            # the format must be as shown
+                            # X       = version major
+                            # Y       = version minor
+                            # Z       = version patch
+                            # release = a textual label
  $ sudo make package
 
 This typically creates a self-extracting .tar.gz archive, a .tar.bz2 archive,
