@@ -58,7 +58,7 @@ namespace argos {
             m_cNoiseRange.Set(-fNoiseLevel, fNoiseLevel);
             m_pcRNG = CRandom::CreateRNG("argos");
          }
-         m_tReadings.resize(m_pcGroundSensorEntity->GetNumSensors());
+         m_tReadings.resize(8);
       }
       catch(CARGoSException& ex) {
          THROW_ARGOSEXCEPTION_NESTED("Initialization error in foot-bot rotzonly ground sensor", ex);
@@ -114,7 +114,7 @@ namespace argos {
    /****************************************/
 
    REGISTER_SENSOR(CFootBotBaseGroundRotZOnlySensor,
-                   "footbot_base_ground", "default",
+                   "footbot_base_ground", "rot_z_only",
                    "Carlo Pinciroli [ilpincy@gmail.com]",
                    "1.0",
                    "The foot-bot base ground sensor",
