@@ -14,6 +14,7 @@ namespace argos {
 }
 
 #include <argos3/core/utility/logging/argos_log.h>
+#include <argos3/core/utility/math/rng.h>
 
 extern "C" {
 #include <lua.h>
@@ -38,20 +39,69 @@ namespace argos {
       };
       
    public:
-      
+
+      /**
+       * Loads the given Lua script.
+       * @param pt_state The Lua state.
+       * @param str_filename The script file name.
+       * @return <tt>false</tt> in case of errors, <tt>true</tt> otherwise.
+       */
       static bool LoadScript(lua_State* pt_state,
                              const std::string& str_filename);
       
+      /**
+       * Calls a parameter-less function in the Lua script.
+       * @param pt_state The Lua state.
+       * @param str_function The function name.
+       * @return <tt>false</tt> in case of errors, <tt>true</tt> otherwise.
+       */
       static bool CallLuaFunction(lua_State* pt_state,
                                   const std::string& str_function);
 
+      /**
+       * Prints the global Lua symbols on the specified log.
+       * @param c_log The output log.
+       * @param pt_state The Lua state.
+       * @see LOG
+       * @see LOGERR
+       * @see CARGoSLogger
+       */
       static void PrintGlobals(CARGoSLog& c_log,
                                lua_State* pt_state);
       
+      /**
+       * Prints the Lua stack on the specified log.
+       * @param c_log The output log.
+       * @param pt_state The Lua state.
+       * @see LOG
+       * @see LOGERR
+       * @see CARGoSLogger
+       */
       static void PrintStack(CARGoSLog& c_log,
                              lua_State* pt_state);
 
+      /**
+       * Registers LOG and LOGERR in the Lua state.
+       * After this call, in a Lua script one can use <tt>log()</tt> and
+       * <tt>logerr()</tt> to print to the ARGoS logs.
+       * @param pt_state The Lua state.
+       * @see LOG
+       * @see LOGERR
+       * @see CARGoSLogger
+       */
       static void RegisterLoggerWrapper(lua_State* pt_state);
+
+      /**
+       * Registers the given random number generator in the Lua state.
+       * Internally, it resets the passed RNG.
+       * @param pt_state The Lua state.
+       * @param pc_rng The random number generator.
+       * @see CRandom
+       * @see CRandom::CRNG
+       * @see CRandom::CRNG::Reset()
+       */
+      static void RegisterRNG(lua_State* pt_state,
+                              CRandom::CRNG* pc_rng);
 
       /**
        * Opens a table in the robot state, creating it if it does not exist.
