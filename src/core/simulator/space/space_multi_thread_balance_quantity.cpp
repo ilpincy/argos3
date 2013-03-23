@@ -253,6 +253,7 @@ namespace argos {
                               unExtraPhysicsPortion * (unMinPhysicsPortion+1) + (unId-unExtraPhysicsPortion+1) * unMinPhysicsPortion);
          }
       }
+      fprintf(stderr, "[DEBUG] T%d cPhysicsRange = [%d,%d]\n", unId, cPhysicsRange.GetMin(), cPhysicsRange.GetMax());
       /* Variables storing the portion of entities to update */
       size_t unMinEntityPortion;
       size_t unExtraEntityPortion;
@@ -287,6 +288,7 @@ namespace argos {
                                    unExtraEntityPortion * (unMinEntityPortion+1) + (unId-unExtraEntityPortion+1) * unMinEntityPortion);
                }
             }
+            fprintf(stderr, "[DEBUG] T%d cEntityRange = [%d,%d]\n", unId, cEntityRange.GetMin(), cEntityRange.GetMax());
          }
          /* Cope with the fact that there may be less entities than threads */
          if(cEntityRange.GetSpan() > 0) {

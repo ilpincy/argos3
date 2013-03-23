@@ -16,6 +16,7 @@ namespace argos {
                                           CPositionalEntity* pc_reference) :
       CComposableEntity(pc_parent),
       m_pcReferenceEntity(pc_reference) {
+      Disable();
       SetCanBeEnabledIfDisabled(false);
    }
 
@@ -27,6 +28,7 @@ namespace argos {
                                           CPositionalEntity* pc_reference) :
       CComposableEntity(pc_parent, str_id),
       m_pcReferenceEntity(pc_reference) {
+      Disable();
       SetCanBeEnabledIfDisabled(false);
    }
 

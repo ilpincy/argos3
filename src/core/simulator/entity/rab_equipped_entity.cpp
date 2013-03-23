@@ -17,7 +17,10 @@ namespace argos {
    CRABEquippedEntity::CRABEquippedEntity(CComposableEntity* pc_parent) :
       CPositionalEntity(pc_parent),
       m_pcReference(NULL),
-      m_fRange(0.0f) {}
+      m_fRange(0.0f) {
+      Disable();
+      SetCanBeEnabledIfDisabled(false);
+   }
 
    /****************************************/
    /****************************************/
@@ -37,7 +40,10 @@ namespace argos {
       m_cPosOffset(c_pos_offset),
       m_cRotOffset(c_rot_offset),
       m_cData(un_msg_size),
-      m_fRange(f_range) {}
+      m_fRange(f_range) {
+      Disable();
+      SetCanBeEnabledIfDisabled(false);
+   }
 
    /****************************************/
    /****************************************/

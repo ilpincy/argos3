@@ -16,7 +16,10 @@ namespace argos {
    CFootBotDistanceScannerEquippedEntity::CFootBotDistanceScannerEquippedEntity(CComposableEntity* pc_parent) :
       CEntity(pc_parent),
       m_unMode(MODE_OFF),
-      m_fRotationSpeed(0.0f) {}
+      m_fRotationSpeed(0.0f) {
+      Disable();
+      SetCanBeEnabledIfDisabled(false);
+   }
    
    /****************************************/
    /****************************************/
@@ -25,7 +28,10 @@ namespace argos {
                                                                   const std::string& str_id) :
       CEntity(pc_parent, str_id),
       m_unMode(MODE_OFF),
-      m_fRotationSpeed(0.0f) {}
+      m_fRotationSpeed(0.0f) {
+      Disable();
+      SetCanBeEnabledIfDisabled(false);
+   }
    
    /****************************************/
    /****************************************/

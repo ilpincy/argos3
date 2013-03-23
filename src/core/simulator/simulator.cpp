@@ -463,6 +463,7 @@ namespace argos {
    void CSimulator::InitSpace(TConfigurationNode& t_tree) {
       try {
          m_pcSpace->Init(t_tree);
+         m_pcSpace->SetPhysicsEngines(m_vecPhysicsEngines);
       }
       catch(CARGoSException& ex) {
          THROW_ARGOSEXCEPTION_NESTED("Failed to initialize the space.", ex);
