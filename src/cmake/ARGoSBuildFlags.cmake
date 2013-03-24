@@ -1,4 +1,12 @@
 #
+# Get information about the current processor
+#
+execute_process(
+  COMMAND uname -m
+  COMMAND tr -d '\n'
+  OUTPUT_VARIABLE ARGOS_PROCESSOR_ARCH)
+
+#
 # General compilation flags
 #
 set(CMAKE_C_FLAGS                "-Wall")
