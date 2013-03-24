@@ -1,22 +1,14 @@
 #
-# Get information about the current processor
-#
-execute_process(
-  COMMAND uname -m
-  COMMAND tr -d '\n'
-  OUTPUT_VARIABLE ARGOS_PROCESSOR_ARCH)
-
-#
 # General compilation flags
 #
 set(CMAKE_C_FLAGS                "-Wall")
-set(CMAKE_C_FLAGS_RELEASE        "-Os -DNDEBUG -mtune=${ARGOS_PROCESSOR_ARCH}")
-set(CMAKE_C_FLAGS_RELWITHDEBINFO "-Os -ggdb3 -DNDEBUG -mtune=${ARGOS_PROCESSOR_ARCH}")
+set(CMAKE_C_FLAGS_RELEASE        "-Os -DNDEBUG")
+set(CMAKE_C_FLAGS_RELWITHDEBINFO "-Os -ggdb3 -DNDEBUG")
 set(CMAKE_C_FLAGS_DEBUG          "-ggdb3")
 
 set(CMAKE_CXX_FLAGS                "-Wall")
-set(CMAKE_CXX_FLAGS_RELEASE        "-Os -DNDEBUG -mtune=${ARGOS_PROCESSOR_ARCH}")
-set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-Os -ggdb3 -DNDEBUG -mtune=${ARGOS_PROCESSOR_ARCH}")
+set(CMAKE_CXX_FLAGS_RELEASE        "-Os -DNDEBUG")
+set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-Os -ggdb3 -DNDEBUG")
 set(CMAKE_CXX_FLAGS_DEBUG          "-ggdb3")
 
 if(APPLE)
