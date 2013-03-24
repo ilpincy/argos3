@@ -1,3 +1,9 @@
+
+/**
+ * @file <argos3/testing/experiment/test_loop_functions.cpp>
+ *
+ * @author Carlo Pinciroli <ilpincy@gmail.com>
+ */
 #include "test_loop_functions.h"
 
 /****************************************/

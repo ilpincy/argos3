@@ -1,3 +1,9 @@
+
+/**
+ * @file <argos3/plugins/simulator/visualizations/qt-opengl/qtopengl_application.h>
+ *
+ * @author Carlo Pinciroli <ilpincy@gmail.com>
+ */
 #ifndef QTOPENGL_APPLICATION_H
 #define QTOPENGL_APPLICATION_H
 

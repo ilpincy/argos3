@@ -1,5 +1,5 @@
 /**
- * @file <argos3/plugins/simulator/sensors/footbot_base_ground_rotzonly_sensor.cpp>
+ * @file <argos3/plugins/robots/foot-bot/simulator/footbot_base_ground_rotzonly_sensor.cpp>
  *
  * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */

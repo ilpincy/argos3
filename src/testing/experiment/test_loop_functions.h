@@ -1,3 +1,9 @@
+
+/**
+ * @file <argos3/testing/experiment/test_loop_functions.h>
+ *
+ * @author Carlo Pinciroli <ilpincy@gmail.com>
+ */
 #ifndef TEST_LOOP_FUNCTIONS_H
 #define TEST_LOOP_FUNCTIONS_H
 

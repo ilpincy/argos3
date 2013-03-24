@@ -1,5 +1,5 @@
 /**
- * @file <argos3/plugins/robots/generic/control_interface/ci_differential_steering_sensor.h>
+ * @file <argos3/plugins/robots/generic/control_interface/ci_differential_steering_sensor.cpp>
  *
  * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */

@@ -1,3 +1,9 @@
+
+/**
+ * @file <argos3/plugins/simulator/entities/proximity_sensor_equipped_entity.cpp>
+ *
+ * @author Carlo Pinciroli <ilpincy@gmail.com>
+ */
 #include "proximity_sensor_equipped_entity.h"
 #include <argos3/core/simulator/space/space.h>
 

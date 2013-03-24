@@ -1,3 +1,9 @@
+
+/**
+ * @file <argos3/testing/unit/test-list.cpp>
+ *
+ * @author Carlo Pinciroli <ilpincy@gmail.com>
+ */
 #include <argos3/core/utility/datatypes/set.h>
 #include <cstdio>
 

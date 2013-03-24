@@ -1,5 +1,5 @@
 /**
- * @file <argos3/plugins/simulator/physics_engines/dynamics2d/dynamics2d_gripper.h>
+ * @file <argos3/plugins/simulator/physics_engines/dynamics2d/dynamics2d_gripping.cpp>
  *
  * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */

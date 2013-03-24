@@ -1,3 +1,9 @@
+
+/**
+ * @file <argos3/core/utility/datatypes/set.h>
+ *
+ * @author Carlo Pinciroli <ilpincy@gmail.com>
+ */
 #ifndef SET_H
 #define SET_H
 

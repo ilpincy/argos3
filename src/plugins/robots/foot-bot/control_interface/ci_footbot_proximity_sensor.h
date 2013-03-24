@@ -1,5 +1,5 @@
 /**
- * @file <argos3/plugins/robots/generic/control_interface/ci_footbot_proximity_sensor.h>
+ * @file <argos3/plugins/robots/foot-bot/control_interface/ci_footbot_proximity_sensor.h>
  *
  * @brief This file provides the definition of the footbot proximity sensor.
  *
