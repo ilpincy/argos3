@@ -322,12 +322,22 @@ namespace argos {
             }
             punByte += unNames+2;
          }
+         /* Now *punName contains the closest hit */
          if(bWasSelected &&
             (m_sSelectionInfo.Index == *punName)) {
+            /* The user clicked on the selected entity, deselect it */
             emit EntityDeselected(m_sSelectionInfo.Index);
             m_sSelectionInfo.IsSelected = false;
          }
+         if(bWasSelected &&
+            (m_sSelectionInfo.Index != *punName)) {
+            /* The user clicked on a different entity from the selected one */
+            emit EntityDeselected(m_sSelectionInfo.Index);
+            m_sSelectionInfo.Index = *punName;
+            emit EntitySelected(m_sSelectionInfo.Index);
+         }
          else {
+            /* There was nothing selected, and the user clicked on an entity */
             m_sSelectionInfo.IsSelected = true;
             m_sSelectionInfo.Index = *punName;
             emit EntitySelected(m_sSelectionInfo.Index);
