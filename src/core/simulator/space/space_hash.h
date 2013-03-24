@@ -14,7 +14,7 @@ namespace argos {
 }
 
 #include <argos3/core/utility/math/ray3.h>
-#include <tr1/unordered_set>
+#include <argos3/core/utility/datatypes/set.h>
 
 namespace argos {
 
@@ -37,7 +37,7 @@ namespace argos {
       /**
        * Type definition for the list of elements held by the space hash
        */
-      typedef std::tr1::unordered_set<ELEMENT*> TElementList;
+      typedef CSet<ELEMENT*> TElementList;
 
    public:
 

@@ -14,6 +14,7 @@ namespace argos {
 
 #include <argos3/core/simulator/entity/positional_entity.h>
 #include <argos3/core/simulator/space/space_hash.h>
+#include <argos3/core/utility/datatypes/set.h>
 #include <argos3/core/utility/math/ray3.h>
 #include <argos3/core/utility/math/quaternion.h>
 #include <argos3/core/simulator/physics_engine/physics_engine.h>
@@ -239,7 +240,7 @@ namespace argos {
 
    typedef std::vector<CEmbodiedEntity*> TEmbodiedEntityVector;
    typedef std::map<std::string, CEmbodiedEntity*> TEmbodiedEntityMap;
-   typedef std::tr1::unordered_set<CEmbodiedEntity*> TEmbodiedEntitySet;
+   typedef CSet<CEmbodiedEntity*> TEmbodiedEntitySet;
 
    /****************************************/
    /****************************************/
