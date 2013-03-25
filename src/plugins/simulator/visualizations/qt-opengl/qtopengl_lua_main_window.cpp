@@ -688,7 +688,6 @@ namespace argos {
                     Qt::QueuedConnection);
             m_pcLuaVariableTree->setModel(pcVarModel);
             m_pcLuaVariableTree->setRootIndex(pcVarModel->index(0, 0));
-            m_pcLuaVariableTree->expandAll();
             m_pcLuaVariableDock->show();
             CQTOpenGLLuaStateTreeFunctionModel* pcFunModel =
                new CQTOpenGLLuaStateTreeFunctionModel(m_vecControllers[m_unSelectedRobot]->GetLuaState(),
@@ -704,7 +703,6 @@ namespace argos {
                     Qt::QueuedConnection);
             m_pcLuaFunctionTree->setModel(pcFunModel);
             m_pcLuaFunctionTree->setRootIndex(pcFunModel->index(0, 0));
-            m_pcLuaFunctionTree->expandAll();
             m_pcLuaFunctionDock->show();
          }
       }
@@ -739,7 +737,6 @@ namespace argos {
 
    void CQTOpenGLLuaMainWindow::VariableTreeChanged() {
       m_pcLuaVariableTree->setRootIndex(m_pcLuaVariableTree->model()->index(0, 0));
-      m_pcLuaVariableTree->expandAll();
    }
 
    /****************************************/
@@ -747,7 +744,6 @@ namespace argos {
 
    void CQTOpenGLLuaMainWindow::FunctionTreeChanged() {
       m_pcLuaFunctionTree->setRootIndex(m_pcLuaFunctionTree->model()->index(0, 0));
-      m_pcLuaFunctionTree->expandAll();
    }
 
    /****************************************/
