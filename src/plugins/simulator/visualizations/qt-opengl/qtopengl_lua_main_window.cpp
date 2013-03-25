@@ -615,7 +615,7 @@ namespace argos {
       m_pcLuaMessageTable->setRowCount(m_vecControllers.size());
       for(size_t i = 0; i < m_vecControllers.size(); ++i) {
          if(! m_vecControllers[i]->IsOK()) {
-            SetMessage(i,
+            SetMessage(nRow,
                        QString::fromStdString(m_vecControllers[i]->GetId()),
                        QString::fromStdString(m_vecControllers[i]->GetErrorMessage()));
             ++nRow;
