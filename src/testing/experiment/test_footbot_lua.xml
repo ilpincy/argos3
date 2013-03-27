@@ -11,7 +11,7 @@
   <!-- ****************** -->
   <!-- * Loop functions * -->
   <!-- ****************** -->
-  <loop_functions label="test_lf" />
+  <!-- loop_functions label="test_lf" /-->
 
   <!-- *************** -->
   <!-- * Controllers * -->

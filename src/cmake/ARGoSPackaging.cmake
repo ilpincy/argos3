@@ -42,7 +42,7 @@ set(CPACK_PACKAGE_VENDOR "IRIDIA-ULB")
 set(CPACK_PACKAGE_VERSION "${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}")
 set(CPACK_PACKAGING_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX})
 set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/../doc/ARGoS_LICENSE.txt")
-set(CPACK_RESOURCE_FILE_README "${CMAKE_SOURCE_DIR}/../README.asciidoc")
+set(CPACK_RESOURCE_FILE_README "${CMAKE_BINARY_DIR}/README.html")
 set(CPACK_STRIP_FILES ON)
 set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${ARGOS_PROCESSOR_ARCH}-${CPACK_PACKAGE_RELEASE}")
 
@@ -66,6 +66,26 @@ set(CPACK_RPM_PACKAGE_LICENSE "GPL")
 set(CPACK_RPM_PACKAGE_REQUIRES "gcc >= 4.2, gcc-c++ >= 4.2, cmake >= 2.6, gsl >= 1.15, gsl-devel >= 1.15, freeglut-devel >= 2.8.0, libqt4-devel >= 4.5, libfreeimage3 >= 3.15, libfreeimageplus3 >= 3.15, freeimage-devel >= 3.15, lua-devel >= 5.1")
 set(CPACK_RPM_PACKAGE_URL ${CPACK_PACKAGE_HOMEPAGE})
 set(CPACK_RPM_POST_INSTALL_SCRIPT_FILE "${CMAKE_SOURCE_DIR}/scripts/argos_post_install.sh")
+
+#
+# Configuration for OSX Package Manager
+#
+if(APPLE)
+  configure_file(${CMAKE_SOURCE_DIR}/scripts/argos3_macos_wrapper.sh.in
+    ${CMAKE_BINARY_DIR}/core/argos3_macos_wrapper.sh
+    @ONLY)
+  configure_file(${CMAKE_SOURCE_DIR}/scripts/macos_uninstall_argos3.sh.in
+    ${CMAKE_BINARY_DIR}/macos_uninstall_argos3.sh
+    @ONLY)
+  install(FILES ${CMAKE_BINARY_DIR}/core/argos3_macos_wrapper.sh
+    DESTINATION bin/
+    PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
+    RENAME argos3)
+  install(FILES ${CMAKE_BINARY_DIR}/macos_uninstall_argos3.sh
+    DESTINATION share/argos3/
+    PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
+    RENAME uninstall_argos3.sh)
+endif(APPLE)
 
 #
 # Creation of SlackBuild script

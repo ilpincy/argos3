@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# Add path to ARGoS3 libraries to the DYLD_LIBRARY_PATH env variable.
+if [ -n "${DYLD_LIBRARY_PATH}" ]; then
+    DYLD_LIBRARY_PATH=${DYLD_LIBRARY_PATH}:@CMAKE_INSTALL_PREFIX@/lib/argos3
+else
+    DYLD_LIBRARY_PATH=@CMAKE_INSTALL_PREFIX@/lib/argos3
+fi
+export DYLD_LIBRARY_PATH
+
+# Execute argos3 with bash-internal command 'exec', which
+# replaces the script with the argos3 executable. In this
+# way, there is only one PID and the return value is handled
+# correctly.
+exec @CMAKE_INSTALL_PREFIX@/libexec/argos3 "$@"
