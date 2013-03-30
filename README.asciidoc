@@ -2,7 +2,7 @@ ARGoS README
 =============
 :Author: Carlo Pinciroli
 :Email:  ilpincy@gmail.com
-:Date:   March 10th, 2013
+:Date:   April 1st, 2013
 
 What is ARGoS?
 ---------------
@@ -181,6 +181,10 @@ the file +$HOME/.config/Iridia-ULB/ARGoS.conf+ as follows:
  #
  # more stuff
  #
+
+IMPORTANT: You can't install ARGoS system-wide and run the source version at the same time.
+           If you intend to run ARGoS from the sources, you must uninstall it from the
+           system.
 
 Debugging the ARGoS simulator
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
