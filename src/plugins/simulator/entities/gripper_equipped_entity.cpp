@@ -22,6 +22,7 @@ namespace argos {
       m_fLockState(0.0f),
       m_fLockThreshold(0.5f),
       m_pcGrippedEntity(NULL) {
+      Disable();
       SetCanBeEnabledIfDisabled(false);
    }
          
@@ -42,6 +43,7 @@ namespace argos {
       m_fLockState(0.0f),
       m_fLockThreshold(f_lock_threshold),
       m_pcGrippedEntity(NULL) {
+      Disable();
       SetCanBeEnabledIfDisabled(false);
    }
          

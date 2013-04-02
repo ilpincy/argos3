@@ -485,14 +485,14 @@ namespace argos {
       m_pcEditPasteAction->setShortcut(QKeySequence::Paste);
       connect(m_pcEditPasteAction, SIGNAL(triggered()),
               m_pcCodeEditor, SLOT(paste()));
-      QIcon cEditFindIcon;
-      cEditFindIcon.addPixmap(QPixmap(m_pcMainWindow->GetIconDir() + "/find.png"));
-      m_pcEditFindAction = new QAction(cEditFindIcon, tr("&Find/Replace"), this);
-      m_pcEditFindAction->setToolTip(tr("Find/replace text"));
-      m_pcEditFindAction->setStatusTip(tr("Find/replace text"));
-      m_pcEditFindAction->setShortcut(QKeySequence::Find);
-      connect(m_pcEditFindAction, SIGNAL(triggered()),
-              this, SLOT(Find()));
+      // QIcon cEditFindIcon;
+      // cEditFindIcon.addPixmap(QPixmap(m_pcMainWindow->GetIconDir() + "/find.png"));
+      // m_pcEditFindAction = new QAction(cEditFindIcon, tr("&Find/Replace"), this);
+      // m_pcEditFindAction->setToolTip(tr("Find/replace text"));
+      // m_pcEditFindAction->setStatusTip(tr("Find/replace text"));
+      // m_pcEditFindAction->setShortcut(QKeySequence::Find);
+      // connect(m_pcEditFindAction, SIGNAL(triggered()),
+      //         this, SLOT(Find()));
       QMenu* pcMenu = menuBar()->addMenu(tr("&Edit"));
       pcMenu->addAction(m_pcEditUndoAction);
       pcMenu->addAction(m_pcEditRedoAction);
@@ -500,8 +500,8 @@ namespace argos {
       pcMenu->addAction(m_pcEditCopyAction);
       pcMenu->addAction(m_pcEditCutAction);
       pcMenu->addAction(m_pcEditPasteAction);
-      pcMenu->addSeparator();
-      pcMenu->addAction(m_pcEditFindAction);
+      // pcMenu->addSeparator();
+      // pcMenu->addAction(m_pcEditFindAction);
       QToolBar* pcToolBar = addToolBar(tr("Edit"));
       pcToolBar->setObjectName("EditToolBar");
       pcToolBar->addAction(m_pcEditUndoAction);
@@ -510,7 +510,7 @@ namespace argos {
       pcToolBar->addAction(m_pcEditCopyAction);
       pcToolBar->addAction(m_pcEditCutAction);
       pcToolBar->addAction(m_pcEditPasteAction);
-      pcToolBar->addAction(m_pcEditFindAction);
+      // pcToolBar->addAction(m_pcEditFindAction);
    }
 
    /****************************************/
@@ -615,7 +615,7 @@ namespace argos {
       m_pcLuaMessageTable->setRowCount(m_vecControllers.size());
       for(size_t i = 0; i < m_vecControllers.size(); ++i) {
          if(! m_vecControllers[i]->IsOK()) {
-            SetMessage(i,
+            SetMessage(nRow,
                        QString::fromStdString(m_vecControllers[i]->GetId()),
                        QString::fromStdString(m_vecControllers[i]->GetErrorMessage()));
             ++nRow;
@@ -721,6 +721,8 @@ namespace argos {
       disconnect(m_pcLuaVariableTree->model(), SIGNAL(modelReset()),
                  this, SLOT(VariableTreeChanged()));
       m_pcLuaVariableDock->hide();
+      delete m_pcLuaVariableTree->model();
+      m_pcLuaVariableTree->setModel(NULL);
       disconnect(&(m_pcMainWindow->GetOpenGLWidget()), SIGNAL(StepDone(int)),
                  m_pcLuaFunctionTree->model(), SLOT(Refresh(int)));
       disconnect(m_pcMainWindow, SIGNAL(SimulationReset()),
@@ -728,6 +730,8 @@ namespace argos {
       disconnect(m_pcLuaFunctionTree->model(), SIGNAL(modelReset()),
                  this, SLOT(FunctionTreeChanged()));
       m_pcLuaFunctionDock->hide();
+      delete m_pcLuaFunctionTree->model();
+      m_pcLuaFunctionTree->setModel(NULL);
    }
 
    /****************************************/

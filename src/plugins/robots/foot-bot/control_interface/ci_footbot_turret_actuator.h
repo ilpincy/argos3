@@ -61,7 +61,7 @@ namespace argos {
          MODE_OFF,
          MODE_PASSIVE,
          MODE_SPEED_CONTROL,
-         MODE_POSITION_CONTROL,
+         MODE_POSITION_CONTROL
       };
 
    public:
@@ -145,7 +145,7 @@ namespace argos {
       }
 
 #ifdef ARGOS_WITH_LUA
-      virtual void CreateLuaState(lua_State* pt_lua_state) = 0;
+      virtual void CreateLuaState(lua_State* pt_lua_state);
 #endif
    };
 

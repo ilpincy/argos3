@@ -1,3 +1,9 @@
+
+/**
+ * @file <argos3/testing/unit/test-reset.cpp>
+ *
+ * @author Carlo Pinciroli <ilpincy@gmail.com>
+ */
 #include <argos3/core/simulator/simulator.h>
 #include <argos3/core/utility/plugins/dynamic_loading.h>
 #include <argos3/core/utility/string_utilities.h>

@@ -1,3 +1,9 @@
+
+/**
+ * @file <argos3/plugins/simulator/entities/ground_sensor_equipped_entity.cpp>
+ *
+ * @author Carlo Pinciroli <ilpincy@gmail.com>
+ */
 #include "ground_sensor_equipped_entity.h"
 #include <argos3/core/simulator/space/space.h>
 

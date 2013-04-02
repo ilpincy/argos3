@@ -1,10 +1,11 @@
-
 /**
  * @file <argos3/core/wrappers/lua/lua_controller.h>
  *
  * @author Carlo Pinciroli <ilpincy@gmail.com>
  */
+
 #include <argos3/core/control_interface/ci_controller.h>
+#include <argos3/core/utility/math/rng.h>
 
 extern "C" {
 #include <lua.h>
@@ -50,6 +51,7 @@ namespace argos {
       std::string m_strScriptFileName;
       bool m_bScriptActive;
       bool m_bIsOK;
+      CRandom::CRNG* m_pcRNG;
 
    };
 

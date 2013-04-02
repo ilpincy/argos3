@@ -5,6 +5,7 @@
  */
 
 #include "dynamics2d_footbot_model.h"
+#include "footbot_turret_entity.h"
 #include <argos3/plugins/simulator/physics_engines/dynamics2d/dynamics2d_gripping.h>
 #include <argos3/plugins/simulator/physics_engines/dynamics2d/dynamics2d_engine.h>
 
@@ -53,7 +54,7 @@ namespace argos {
       m_pcGrippable(NULL),
       m_fMass(1.6f),
       m_fCurrentWheelVelocity(m_cWheeledEntity.GetWheelVelocities()),
-      m_unLastTurretMode(m_cFootBotEntity.GetTurretMode()) {
+      m_unLastTurretMode(m_cFootBotEntity.GetTurretEntity().GetMode()) {
       /* Create the actual body with initial position and orientation */
       m_ptActualBaseBody =
          cpSpaceAddBody(m_cDyn2DEngine.GetPhysicsSpace(),
@@ -91,7 +92,7 @@ namespace argos {
       m_ptActualGripperBody->p = cpv(cPosition.GetX(), cPosition.GetY());
       cpBodySetAngle(m_ptActualGripperBody,
                      cZAngle.GetValue() +
-                     m_cFootBotEntity.GetTurretRotation().GetValue());
+                     m_cFootBotEntity.GetTurretEntity().GetRotation().GetValue());
       /* Create the gripper shape */
       m_ptGripperShape = 
          cpSpaceAddShape(m_cDyn2DEngine.GetPhysicsSpace(),
@@ -228,7 +229,7 @@ namespace argos {
           */
          m_ptActualGripperBody->p = cpv(c_position.GetX(), c_position.GetY());
          cpBodySetAngle(m_ptActualGripperBody,
-                        cZAngle.GetValue() + m_cFootBotEntity.GetTurretRotation().GetValue());
+                        cZAngle.GetValue() + m_cFootBotEntity.GetTurretEntity().GetRotation().GetValue());
          /* Release grippers and gripees */
          m_pcGripper->Release();
          m_pcGrippable->ReleaseAll();
@@ -301,7 +302,7 @@ namespace argos {
       m_cDyn2DEngine.OrientationPhysicsToSpace(m_cSpaceOrientation, m_ptActualBaseBody);
       GetEmbodiedEntity().SetOrientation(m_cSpaceOrientation);
       /* Update foot-bot turret rotation */
-      m_cFootBotEntity.SetTurretRotation(CRadians(m_ptActualGripperBody->a - m_ptActualBaseBody->a));
+      m_cFootBotEntity.GetTurretEntity().SetRotation(CRadians(m_ptActualGripperBody->a - m_ptActualBaseBody->a));
       /* Update foot-bot components */
       m_cFootBotEntity.UpdateComponents();
       /* Check whether a transfer is necessary */
@@ -330,12 +331,12 @@ namespace argos {
          m_cDiffSteering.Reset();
       }
       /* Update turret structures if the state changed state in the last step */
-      if(m_cFootBotEntity.GetTurretMode() != m_unLastTurretMode) {
+      if(m_cFootBotEntity.GetTurretEntity().GetMode() != m_unLastTurretMode) {
          /* Manage the thing like a state machine */
          switch(m_unLastTurretMode) {
             case MODE_OFF:
             case MODE_PASSIVE:
-               switch(m_cFootBotEntity.GetTurretMode()) {
+               switch(m_cFootBotEntity.GetTurretEntity().GetMode()) {
                   case MODE_POSITION_CONTROL:
                   case MODE_SPEED_CONTROL:
                      TurretPassiveToActive();
@@ -347,7 +348,7 @@ namespace argos {
                break;
             case MODE_SPEED_CONTROL:
             case MODE_POSITION_CONTROL:
-               switch(m_cFootBotEntity.GetTurretMode()) {
+               switch(m_cFootBotEntity.GetTurretEntity().GetMode()) {
                   case MODE_OFF:
                   case MODE_PASSIVE:
                      TurretActiveToPassive();
@@ -359,7 +360,7 @@ namespace argos {
                break;
          }
          /* Save the current mode for the next time step */
-         m_unLastTurretMode = m_cFootBotEntity.GetTurretMode();
+         m_unLastTurretMode = m_cFootBotEntity.GetTurretEntity().GetMode();
       }
       /* Update the turret data */
       switch(m_unLastTurretMode) {
@@ -368,15 +369,15 @@ namespace argos {
          case MODE_POSITION_CONTROL:
             m_ptControlGripperBody->w =
                m_cDiffSteering.GetAngularVelocity() +
-               (PD_P_CONSTANT * (m_cFootBotEntity.GetTurretRotation().GetValue() - (m_ptActualGripperBody->a - m_ptActualBaseBody->a))
-                + PD_D_CONSTANT * (m_cFootBotEntity.GetTurretRotation().GetValue() - (m_ptActualGripperBody->a - m_ptActualBaseBody->a) - m_fPreviousTurretAngleError) )*
+               (PD_P_CONSTANT * (m_cFootBotEntity.GetTurretEntity().GetRotation().GetValue() - (m_ptActualGripperBody->a - m_ptActualBaseBody->a))
+                + PD_D_CONSTANT * (m_cFootBotEntity.GetTurretEntity().GetRotation().GetValue() - (m_ptActualGripperBody->a - m_ptActualBaseBody->a) - m_fPreviousTurretAngleError) )*
                m_cDyn2DEngine.GetInverseSimulationClockTick();
-            m_fPreviousTurretAngleError = m_cFootBotEntity.GetTurretRotation().GetValue() - (m_ptActualGripperBody->a - m_ptActualBaseBody->a);
+            m_fPreviousTurretAngleError = m_cFootBotEntity.GetTurretEntity().GetRotation().GetValue() - (m_ptActualGripperBody->a - m_ptActualBaseBody->a);
             break;
          case MODE_SPEED_CONTROL:
             m_ptControlGripperBody->w =
                m_cDiffSteering.GetAngularVelocity() +
-               m_cFootBotEntity.GetTurretRotationSpeed();
+               m_cFootBotEntity.GetTurretEntity().GetRotationSpeed();
             break;
          case MODE_OFF:
          case MODE_PASSIVE:

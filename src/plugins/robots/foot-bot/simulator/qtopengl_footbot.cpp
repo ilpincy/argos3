@@ -7,6 +7,7 @@
 #include "qtopengl_footbot.h"
 #include "footbot_entity.h"
 #include "footbot_distance_scanner_equipped_entity.h"
+#include "footbot_turret_entity.h"
 #include <argos3/core/simulator/entity/embodied_entity.h>
 #include <argos3/core/utility/math/vector2.h>
 #include <argos3/core/utility/math/vector3.h>
@@ -211,7 +212,7 @@ namespace argos {
       /* Place the gripper module */
       glPushMatrix();
       /* Read gripper orientation from footbot entity */
-      GLfloat fGripperOrientation = ToDegrees(c_entity.GetTurretRotation()).GetValue();
+      GLfloat fGripperOrientation = ToDegrees(c_entity.GetTurretEntity().GetRotation()).GetValue();
       glRotatef(fGripperOrientation, 0.0f, 0.0f, 1.0f);
       /* Place the grippable part of the gripper module (LEDs) */
       glPushMatrix();

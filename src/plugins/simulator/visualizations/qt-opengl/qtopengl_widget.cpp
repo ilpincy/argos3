@@ -27,9 +27,12 @@
 
 namespace argos {
 
-   static const Real ASPECT_RATIO = 4.0f / 3.0f;
+   static const Real ASPECT_RATIO         = 4.0f / 3.0f;
    static const UInt32 SELECT_BUFFER_SIZE = 128;
-
+   static const Real FLOOR_SIDE           = 1000.0f;
+   static const Real HALF_FLOOR_SIDE      = FLOOR_SIDE * 0.5f;
+   static const Real FLOOR_ELEVATION      = -0.001f;
+   
    /****************************************/
    /****************************************/
 
@@ -136,6 +139,7 @@ namespace argos {
       glEnable(GL_LIGHTING);
       glEnable(GL_CULL_FACE);
       glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+      glHint(GL_TEXTURE_COMPRESSION_HINT, GL_NICEST);
       glEnable(GL_DEPTH_TEST);
 
       qglClearColor(Qt::darkCyan);
@@ -179,28 +183,12 @@ namespace argos {
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
       /* Place the camera */
       m_cCamera.Look();
-      /* Draw the arena */
+      /* Switch anti-aliasing on */
       if(m_bAntiAliasing) {
          glEnable(GL_MULTISAMPLE);
       }
-      glPushMatrix();
-      glCallList(m_unArenaList);
-      if(m_bUsingFloorTexture) {
-         if(m_cSpace.GetFloorEntity().HasChanged()) {
-            deleteTexture(m_unFloorTexture);
-            /* Create an image to use as texture */
-            m_cSpace.GetFloorEntity().SaveAsImage("/tmp/argos_floor.png");
-            /* Use the image as texture */
-            m_unFloorTexture = bindTexture(QImage("/tmp/argos_floor.png"));
-            /* Clear the 'changed' flag on the floor entity */
-            m_cSpace.GetFloorEntity().ClearChanged();
-         }
-         else {
-            glBindTexture(GL_TEXTURE_2D, m_unFloorTexture);
-         }
-         glCallList(m_unFloorList);
-      }
-      glPopMatrix();
+      /* Draw the arena */
+      DrawArena();
       /* Draw the objects */
       CEntity::TVector& vecEntities = m_cSpace.GetRootEntityVector();
       for(CEntity::TVector::iterator itEntities = vecEntities.begin();
@@ -217,9 +205,11 @@ namespace argos {
          CallEntityOperation<CQTOpenGLOperationDrawSelected, CQTOpenGLWidget, void>(*this, *vecEntities[m_sSelectionInfo.Index]);
          glPopMatrix();
       }
+      /* Switch anti-aliasing off */
       if(m_bAntiAliasing) {
          glDisable(GL_MULTISAMPLE);
       }
+      /* Draw in world */
       glPushMatrix();
       m_cUserFunctions.DrawInWorld();
       glPopMatrix();
@@ -322,12 +312,22 @@ namespace argos {
             }
             punByte += unNames+2;
          }
+         /* Now *punName contains the closest hit */
          if(bWasSelected &&
             (m_sSelectionInfo.Index == *punName)) {
+            /* The user clicked on the selected entity, deselect it */
             emit EntityDeselected(m_sSelectionInfo.Index);
             m_sSelectionInfo.IsSelected = false;
          }
+         if(bWasSelected &&
+            (m_sSelectionInfo.Index != *punName)) {
+            /* The user clicked on a different entity from the selected one */
+            emit EntityDeselected(m_sSelectionInfo.Index);
+            m_sSelectionInfo.Index = *punName;
+            emit EntitySelected(m_sSelectionInfo.Index);
+         }
          else {
+            /* There was nothing selected, and the user clicked on an entity */
             m_sSelectionInfo.IsSelected = true;
             m_sSelectionInfo.Index = *punName;
             emit EntitySelected(m_sSelectionInfo.Index);
@@ -575,76 +575,82 @@ namespace argos {
    /****************************************/
 
    void CQTOpenGLWidget::InitializeArena() {
-      const Real fFloorSide      = 1000.0f;
-      const Real fFloorElevation = -0.001f;
-
-      /* Create a display list for faster drawing */
-      m_unArenaList = glGenLists(1);
-      glNewList(m_unArenaList, GL_COMPILE);
-      /* Disable lighting - no funny color effects */
-      glDisable(GL_LIGHTING);
-      /* Set up the texture parameters for the floor
+      /* Set up the texture parameters for the floor plane
          (here we refer to the standard floor, not the floor entity) */
-      QImage cGroundTexture(pcMainWindow->GetTextureDir() + "/ground.png");
-      m_unGroundTexture = bindTexture(cGroundTexture);
-      /* The texture covers the object like a decal */
-      glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
-      /* Bilinear filtering for zooming in and out */
-      gluBuild2DMipmaps(GL_TEXTURE_2D, 3, cGroundTexture.width(), cGroundTexture.height(),
-                        GL_LUMINANCE, GL_UNSIGNED_BYTE, cGroundTexture.bits());
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-      /* Wrap the texture at the edges, which in this case means that it is repeated */
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-      /* Draw the floor along with its texture */
       glEnable(GL_TEXTURE_2D);
-      glBegin(GL_QUADS);
-      glTexCoord2d(                0.5f,                 0.5f); glVertex3f(-fFloorSide, -fFloorSide, fFloorElevation);
-      glTexCoord2d(2.0f*fFloorSide+0.5f,                 0.5f); glVertex3f( fFloorSide, -fFloorSide, fFloorElevation);
-      glTexCoord2d(2.0f*fFloorSide+0.5f, 2.0f*fFloorSide+0.5f); glVertex3f( fFloorSide,  fFloorSide, fFloorElevation);
-      glTexCoord2d(                0.5f, 2.0f*fFloorSide+0.5f); glVertex3f(-fFloorSide,  fFloorSide, fFloorElevation);
-      glEnd();
-      glDisable(GL_TEXTURE_2D);
-      /* Restore lighting */
-      glEnable(GL_LIGHTING);
-      /* The list is done */
-      glEndList();
-
+      QImage cGroundTexture(pcMainWindow->GetTextureDir() + "/ground.png");
+      m_unGroundTexture = bindTexture(cGroundTexture,
+                                      GL_TEXTURE_2D,
+                                      GL_RGB,
+                                      QGLContext::MipmapBindOption | QGLContext::LinearFilteringBindOption);
       /* Now take care of the floor entity */
       try {
          /* Create an image to use as texture */
          m_cSpace.GetFloorEntity().SaveAsImage("/tmp/argos_floor.png");
          m_bUsingFloorTexture = true;
          /* Use the image as texture */
-         m_unFloorTexture = bindTexture(QImage("/tmp/argos_floor.png"));
+         m_unFloorTexture = bindTexture(QImage("/tmp/argos_floor.png"),
+                                        GL_TEXTURE_2D,
+                                        GL_RGB,
+                                        QGLContext::MipmapBindOption | QGLContext::LinearFilteringBindOption);
+         m_cSpace.GetFloorEntity().ClearChanged();
+      }
+      catch(CARGoSException& ex) {}
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CQTOpenGLWidget::DrawArena() {
+      /* Disable lighting - no funny color effects */
+      glDisable(GL_LIGHTING);
+      glEnable(GL_TEXTURE_2D);
+      /* The texture covers the object like a decal */
+      glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
+      /* Wrap the texture at the edges, which in this case means that it is repeated */
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+      glBindTexture(GL_TEXTURE_2D, m_unGroundTexture);
+      /* Draw the floor along with its texture */
+      glBegin(GL_QUADS);
+      glTexCoord2f(0.0f,       FLOOR_SIDE); glVertex3f(-HALF_FLOOR_SIDE, -HALF_FLOOR_SIDE, FLOOR_ELEVATION);
+      glTexCoord2f(FLOOR_SIDE, FLOOR_SIDE); glVertex3f( HALF_FLOOR_SIDE, -HALF_FLOOR_SIDE, FLOOR_ELEVATION);
+      glTexCoord2f(FLOOR_SIDE, 0.0f);       glVertex3f( HALF_FLOOR_SIDE,  HALF_FLOOR_SIDE, FLOOR_ELEVATION);
+      glTexCoord2f(0.0f,       0.0f);       glVertex3f(-HALF_FLOOR_SIDE,  HALF_FLOOR_SIDE, FLOOR_ELEVATION);
+      glEnd();
+      /* Now take care of the floor entity */
+      if(m_bUsingFloorTexture) {
+         /* Use the image as texture */
+         if(m_cSpace.GetFloorEntity().HasChanged()) {
+            deleteTexture(m_unFloorTexture);
+            /* Create an image to use as texture */
+            m_cSpace.GetFloorEntity().SaveAsImage("/tmp/argos_floor.png");
+            m_unFloorTexture = bindTexture(QImage("/tmp/argos_floor.png"),
+                                           GL_TEXTURE_2D,
+                                           GL_RGB,
+                                           QGLContext::MipmapBindOption | QGLContext::LinearFilteringBindOption);
+            /* Clear the 'changed' flag on the floor entity */
+            m_cSpace.GetFloorEntity().ClearChanged();
+         }
+         glBindTexture(GL_TEXTURE_2D, m_unFloorTexture);
          /* Draw the floor entity along with its texture */
          CVector3 cHalfArenaSize = m_cSpace.GetArenaSize() * 0.5f;
-         /* Create a display list for faster drawing */
-         m_unFloorList = glGenLists(1);
-         glNewList(m_unFloorList, GL_COMPILE);
-         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
          /* Disabling the depth test solves an annoying glitch:
             since the floor and the floor entity are very close, the
             textures flicker */
          glDisable(GL_DEPTH_TEST);
-         glEnable(GL_TEXTURE_2D);
          glBegin(GL_QUADS);
-         glTexCoord2d(0.0f, 0.0f); glVertex3f(-cHalfArenaSize.GetX(), -cHalfArenaSize.GetY(), 0.0f);
-         glTexCoord2d(1.0f, 0.0f); glVertex3f( cHalfArenaSize.GetX(), -cHalfArenaSize.GetY(), 0.0f);
-         glTexCoord2d(1.0f, 1.0f); glVertex3f( cHalfArenaSize.GetX(),  cHalfArenaSize.GetY(), 0.0f);
-         glTexCoord2d(0.0f, 1.0f); glVertex3f(-cHalfArenaSize.GetX(),  cHalfArenaSize.GetY(), 0.0f);
+         glTexCoord2d(0.0f, 1.0f); glVertex3f(-cHalfArenaSize.GetX(), -cHalfArenaSize.GetY(), 0.0f);
+         glTexCoord2d(1.0f, 1.0f); glVertex3f( cHalfArenaSize.GetX(), -cHalfArenaSize.GetY(), 0.0f);
+         glTexCoord2d(1.0f, 0.0f); glVertex3f( cHalfArenaSize.GetX(),  cHalfArenaSize.GetY(), 0.0f);
+         glTexCoord2d(0.0f, 0.0f); glVertex3f(-cHalfArenaSize.GetX(),  cHalfArenaSize.GetY(), 0.0f);
          glEnd();
-         glDisable(GL_TEXTURE_2D);
          /* Restore depth test */
          glEnable(GL_DEPTH_TEST);
-         /* Restore lighting */
-         glEnable(GL_LIGHTING);
-         /* The list is done */
-         glEndList();
       }
-      catch(CARGoSException& ex) {}
+      glDisable(GL_TEXTURE_2D);
+      /* Restore lighting */
+      glEnable(GL_LIGHTING);
    }
 
    /****************************************/

@@ -17,6 +17,116 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   static const CRange<Real> UNIT(0.0f, 1.0f);
+
+   int LuaRNGBernoulli(lua_State* pt_state) {
+      /* Check number of parameters */
+      if(lua_gettop(pt_state) > 1) {
+         return luaL_error(pt_state, "robot.random.bernoulli() expects 0 or 1 arguments");
+      }
+      /* Get RNG instance */
+      CRandom::CRNG* pcRNG = CLuaUtility::GetDeviceInstance<CRandom::CRNG>(pt_state, "random");
+      /* Perform wanted action */
+      if(lua_gettop(pt_state) == 0) {
+         /* Return random number */
+         lua_pushnumber(pt_state, pcRNG->Bernoulli());
+         return 1;
+      }
+      else {
+         /* Check parameter */
+         luaL_checktype(pt_state, 1, LUA_TNUMBER);
+         /* Return random number */
+         lua_pushnumber(pt_state,
+                        pcRNG->Bernoulli(lua_tonumber(pt_state, 1)));
+         return 1;
+      }
+      /* Can't reach this point */
+      return 0;
+   }
+
+   int LuaRNGUniform(lua_State* pt_state) {
+      /* Check number of parameters */
+      if(lua_gettop(pt_state) > 2) {
+         return luaL_error(pt_state, "robot.random.uniform() expects 0, 1, or 2 arguments");
+      }
+      /* Get RNG instance */
+      CRandom::CRNG* pcRNG = CLuaUtility::GetDeviceInstance<CRandom::CRNG>(pt_state, "random");
+      /* Perform wanted action */
+      if(lua_gettop(pt_state) == 0) {
+         /* Return a number between 0 and 1 */
+         lua_pushnumber(pt_state, pcRNG->Uniform(UNIT));
+         return 1;
+      }
+      else if(lua_gettop(pt_state) == 1) {
+         /* Check parameter */
+         luaL_checktype(pt_state, 1, LUA_TNUMBER);
+         /* Return a number between 0 and the max */
+         lua_pushnumber(pt_state,
+                        pcRNG->Uniform(CRange<UInt32>(0,
+                                                      Floor(lua_tonumber(pt_state, 1)))));
+         return 1;
+      }
+      else {
+         /* Check parameters */
+         luaL_checktype(pt_state, 1, LUA_TNUMBER);
+         luaL_checktype(pt_state, 2, LUA_TNUMBER);
+         /* Return a number between min and max */
+         lua_pushnumber(pt_state,
+                        pcRNG->Uniform(CRange<SInt32>(Floor(lua_tonumber(pt_state, 1)),
+                                                      Floor(lua_tonumber(pt_state, 2)))));
+         return 1;
+      }
+      /* Can't reach this point */
+      return 0;
+   }
+
+   int LuaRNGExponential(lua_State* pt_state) {
+      /* Check number of parameters */
+      if(lua_gettop(pt_state) != 1) {
+         return luaL_error(pt_state, "robot.random.exponential() expects 1 argument");
+      }
+      /* Get RNG instance */
+      CRandom::CRNG* pcRNG = CLuaUtility::GetDeviceInstance<CRandom::CRNG>(pt_state, "random");
+      /* Check parameter */
+      luaL_checktype(pt_state, 1, LUA_TNUMBER);
+      /* Return random number */
+      lua_pushnumber(pt_state,
+                     pcRNG->Exponential(lua_tonumber(pt_state, 1)));
+      return 1;
+   }
+
+   int LuaRNGGaussian(lua_State* pt_state) {
+      /* Check number of parameters */
+      if(lua_gettop(pt_state) != 1 || lua_gettop(pt_state) != 2) {
+         return luaL_error(pt_state, "robot.random.gaussian() expects 1 or 2 arguments");
+      }
+      /* Get RNG instance */
+      CRandom::CRNG* pcRNG = CLuaUtility::GetDeviceInstance<CRandom::CRNG>(pt_state, "random");
+      /* Perform wanted action */
+      if(lua_gettop(pt_state) == 1) {
+         /* Check parameter */
+         luaL_checktype(pt_state, 1, LUA_TNUMBER);
+         /* Return random number */
+         lua_pushnumber(pt_state, pcRNG->Gaussian(lua_tonumber(pt_state, 1)));
+         return 1;
+      }
+      else {
+         /* Check parameters */
+         luaL_checktype(pt_state, 1, LUA_TNUMBER);
+         luaL_checktype(pt_state, 2, LUA_TNUMBER);
+         /* Return random number */
+         lua_pushnumber(pt_state,
+                        pcRNG->Gaussian(lua_tonumber(pt_state, 1),
+                                        lua_tonumber(pt_state, 2)));
+         return 1;
+      }
+      /* Can't reach this point */
+      return 0;
+   }
+
+   /****************************************/
+   /****************************************/
+
    bool CLuaUtility::LoadScript(lua_State* pt_state,
                                 const std::string& str_filename) {
       if(luaL_loadfile(pt_state, str_filename.c_str())) {
@@ -122,6 +232,21 @@ namespace argos {
       lua_register(pt_state, "logerr", LOGERRWrapper);
    }
    
+   /****************************************/
+   /****************************************/
+
+   void CLuaUtility::RegisterRNG(lua_State* pt_state,
+                                 CRandom::CRNG* pc_rng) {
+      pc_rng->Reset();
+      OpenRobotStateTable(pt_state, "random");
+      AddToTable(pt_state, "_instance", pc_rng);
+      AddToTable(pt_state, "bernoulli", &LuaRNGBernoulli);
+      AddToTable(pt_state, "uniform", &LuaRNGUniform);
+      AddToTable(pt_state, "exponential", &LuaRNGExponential);
+      AddToTable(pt_state, "gaussian", &LuaRNGGaussian);
+      CloseRobotStateTable(pt_state);
+   }
+
    /****************************************/
    /****************************************/
 

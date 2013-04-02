@@ -1,3 +1,9 @@
+
+/**
+ * @file <argos3/plugins/simulator/visualizations/qt-opengl/qtopengl_lua_statetree_model.cpp>
+ *
+ * @author Carlo Pinciroli <ilpincy@gmail.com>
+ */
 #include "qtopengl_lua_statetree_model.h"
 #include "qtopengl_lua_statetree_item.h"
 

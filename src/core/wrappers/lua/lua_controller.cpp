@@ -17,7 +17,8 @@ namespace argos {
    CLuaController::CLuaController() :
       m_ptLuaState(NULL),
       m_bScriptActive(false),
-      m_bIsOK(true) {
+      m_bIsOK(true),
+      m_pcRNG(NULL) {
    }
 
    /****************************************/
@@ -31,6 +32,8 @@ namespace argos {
 
    void CLuaController::Init(TConfigurationNode& t_tree) {
       try {
+         /* Create RNG */
+         m_pcRNG = CRandom::CreateRNG("argos");
          /* Load script */
          std::string strScriptFileName;
          GetNodeAttributeOrDefault(t_tree, "script", strScriptFileName, strScriptFileName);
@@ -45,8 +48,6 @@ namespace argos {
             m_ptLuaState = luaL_newstate();
             /* Load the Lua libraries */
             luaL_openlibs(m_ptLuaState);
-            /* Register functions */
-            CLuaUtility::RegisterLoggerWrapper(m_ptLuaState);
             /* Create and set Lua state */
             CreateLuaState();
             SensorReadingsToLuaState();
@@ -117,8 +118,6 @@ namespace argos {
          return;
       }
       m_strScriptFileName = str_script;
-      /* Register functions */
-      CLuaUtility::RegisterLoggerWrapper(m_ptLuaState);
       /* Create and set variables */
       CreateLuaState();
       SensorReadingsToLuaState();
@@ -135,12 +134,16 @@ namespace argos {
    /****************************************/
 
    void CLuaController::CreateLuaState() {
+      /* Register functions */
+      CLuaUtility::RegisterLoggerWrapper(m_ptLuaState);
       /* Create a table that will contain the state of the robot */
       lua_newtable(m_ptLuaState);
       /* Set the id of the robot */
       lua_pushstring(m_ptLuaState, "id");
       lua_pushstring(m_ptLuaState, GetId().c_str());
       lua_settable(m_ptLuaState, -3);
+      /* Register RNG */
+      CLuaUtility::RegisterRNG(m_ptLuaState, m_pcRNG);
       /* Go through devices and add the necessary items to the table */
       for(CCI_Actuator::TMap::iterator it = m_mapActuators.begin();
           it != m_mapActuators.end();

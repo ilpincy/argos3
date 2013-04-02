@@ -12,6 +12,7 @@ namespace argos {
 }
 
 #include <argos3/core/simulator/entity/positional_entity.h>
+#include <argos3/core/utility/datatypes/set.h>
 #include <argos3/core/utility/datatypes/color.h>
 #include <argos3/core/utility/math/vector3.h>
 #include <argos3/core/simulator/space/space_hash.h>
@@ -25,7 +26,7 @@ namespace argos {
       ENABLE_VTABLE();
 
       typedef std::vector<CLEDEntity*> TList;
-      typedef std::tr1::unordered_set<CLEDEntity*> TSet;
+      typedef CSet<CLEDEntity*> TSet;
 
    public:
 

@@ -1,5 +1,5 @@
 /**
- * @file <argos3/plugins/robots/generic/control_interface/ci_footbot_proximity_sensor.cpp>
+ * @file <argos3/plugins/robots/foot-bot/control_interface/ci_footbot_proximity_sensor.cpp>
  *
  * @author Carlo Pinciroli <ilpincy@gmail.com>
  */

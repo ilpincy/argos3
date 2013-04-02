@@ -7,8 +7,15 @@
 #ifndef SPACE_HASH_H
 #define SPACE_HASH_H
 
+namespace argos {
+   class CSpace;
+   class CVector3;
+   class CRay3;
+}
+
+#include <argos3/core/utility/math/ray3.h>
+#include <argos3/core/utility/datatypes/set.h>
 #include <argos3/core/simulator/space/positional_index.h>
-#include <tr1/unordered_set>
 
 namespace argos {
 
@@ -31,7 +38,7 @@ namespace argos {
       /**
        * Type definition for the list of entities held by the space hash
        */
-      typedef std::tr1::unordered_set<ENTITY*> TEntityList;
+      typedef CSet<ENTITY*> TEntityList;
 
    public:
 

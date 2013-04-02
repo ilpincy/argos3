@@ -1,5 +1,5 @@
 /**
- * @file <argos3/plugins/robots/foot-bot/simulator/footbot_distance_scanner_rotzonly_sensor.h>
+ * @file <argos3/plugins/robots/foot-bot/simulator/footbot_distance_scanner_rotzonly_sensor.cpp>
  *
  * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */

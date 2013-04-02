@@ -8,27 +8,23 @@ project(argos3_${ARGOS_BUILD_FOR})
 #
 # Version information
 execute_process(
-  COMMAND git tag
-  COMMAND tail -n1
+  COMMAND git describe --abbrev=0
   COMMAND cut -d. -f1
   COMMAND tr -d '\n'
   OUTPUT_VARIABLE CPACK_PACKAGE_VERSION_MAJOR)
 execute_process(
-  COMMAND git tag
-  COMMAND tail -n1
+  COMMAND git describe --abbrev=0
   COMMAND cut -d. -f2
   COMMAND tr -d '\n'
   OUTPUT_VARIABLE CPACK_PACKAGE_VERSION_MINOR)
 execute_process(
-  COMMAND git tag
-  COMMAND tail -n1
+  COMMAND git describe --abbrev=0
   COMMAND cut -d. -f3
   COMMAND cut -d- -f1
   COMMAND tr -d '\n'
   OUTPUT_VARIABLE CPACK_PACKAGE_VERSION_PATCH)
 execute_process(
-  COMMAND git tag
-  COMMAND tail -n1
+  COMMAND git describe --abbrev=0
   COMMAND cut -d- -f2
   COMMAND tr -d '\n'
   OUTPUT_VARIABLE CPACK_PACKAGE_RELEASE)

@@ -1,3 +1,9 @@
+
+/**
+ * @file <argos3/plugins/simulator/visualizations/qt-opengl/qtopengl_lua_statetree_model.h>
+ *
+ * @author Carlo Pinciroli <ilpincy@gmail.com>
+ */
 #ifndef QTOPENGL_LUA_STATETREE_MODEL_H
 #define QTOPENGL_LUA_STATETREE_MODEL_H
 

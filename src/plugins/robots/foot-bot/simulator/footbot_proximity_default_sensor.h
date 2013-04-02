@@ -1,5 +1,5 @@
 /**
- * @file <argos3/plugins/simulator/sensors/footbot_proximity_default_sensor.h>
+ * @file <argos3/plugins/robots/foot-bot/simulator/footbot_proximity_default_sensor.h>
  *
  * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */

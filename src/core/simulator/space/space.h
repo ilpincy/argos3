@@ -446,9 +446,6 @@ namespace argos {
           The second-level maps are indexed by entity id */
       TMapPerTypePerId m_mapEntitiesPerTypePerId;
 
-      /** A map of all the positional indices, ordered by mapped type description */
-      std::map<std::string, CPositionalIndex*> m_mapPosIndices;
-
       /** A vector of controllable entities */
       CControllableEntity::TVector m_vecControllableEntities;
 

@@ -5,7 +5,8 @@
   <!-- * General configuration * -->
   <!-- ************************* -->
   <framework>
-    <experiment threads="2000" length="0" ticks_per_second="10" />
+    <experiment length="0" ticks_per_second="10" />
+    <system threads="10" />>
   </framework>
 
   <!-- *************** -->
@@ -15,9 +16,11 @@
     <test_footbot_controller id="x">
       <actuators>
         <differential_steering implementation="default" />
+        <range_and_bearing implementation="default" />
       </actuators>
       <sensors>
         <footbot_proximity implementation="default" show_rays="true" />
+        <range_and_bearing implementation="default" />
       </sensors>
       <params />
     </test_footbot_controller>
@@ -41,7 +44,7 @@
     <distribute>
       <position method="uniform" min="-10,-10,0" max="10,10,0" />
       <orientation method="gaussian" mean="0,0,0" std_dev="360,0,0" />
-      <entity quantity="2000" max_trials="100">
+      <entity quantity="100" max_trials="100">
         <foot-bot id="fb"
                   controller="x" />
       </entity>

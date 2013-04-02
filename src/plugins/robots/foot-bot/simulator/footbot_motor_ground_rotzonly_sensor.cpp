@@ -1,5 +1,5 @@
 /**
- * @file <argos3/plugins/simulator/sensors/footbot_motor_ground_rotzonly_sensor.cpp>
+ * @file <argos3/plugins/robots/foot-bot/simulator/footbot_motor_ground_rotzonly_sensor.cpp>
  *
  * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */
@@ -58,7 +58,7 @@ namespace argos {
             m_cNoiseRange.Set(-fNoiseLevel, fNoiseLevel);
             m_pcRNG = CRandom::CreateRNG("argos");
          }
-         m_tReadings.resize(m_pcGroundSensorEntity->GetNumSensors());
+         m_tReadings.resize(4);
       }
       catch(CARGoSException& ex) {
          THROW_ARGOSEXCEPTION_NESTED("Initialization error in foot-bot rotzonly ground sensor", ex);
@@ -114,7 +114,7 @@ namespace argos {
    /****************************************/
 
    REGISTER_SENSOR(CFootBotMotorGroundRotZOnlySensor,
-                   "footbot_motor_ground", "default",
+                   "footbot_motor_ground", "rot_z_only",
                    "Carlo Pinciroli [ilpincy@gmail.com]",
                    "1.0",
                    "The foot-bot motor ground sensor",

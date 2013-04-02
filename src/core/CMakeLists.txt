@@ -22,7 +22,8 @@ set(ARGOS3_HEADERS_UTILITY_DATATYPES
   utility/datatypes/any.h
   utility/datatypes/byte_array.h
   utility/datatypes/color.h
-  utility/datatypes/datatypes.h)
+  utility/datatypes/datatypes.h
+  utility/datatypes/set.h)
 # argos3/core/utility/logging
 set(ARGOS3_HEADERS_UTILITY_LOGGING
   utility/logging/argos_colored_text.h
