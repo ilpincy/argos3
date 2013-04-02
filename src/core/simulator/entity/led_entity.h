@@ -15,7 +15,8 @@ namespace argos {
 #include <argos3/core/utility/datatypes/set.h>
 #include <argos3/core/utility/datatypes/color.h>
 #include <argos3/core/utility/math/vector3.h>
-#include <argos3/core/simulator/space/space_hash.h>
+#include <argos3/core/simulator/space/positional_indices/space_hash.h>
+#include <argos3/core/simulator/space/positional_indices/grid.h>
 
 namespace argos {
 
@@ -83,6 +84,23 @@ namespace argos {
    private:
 
       SInt32 m_nI, m_nJ, m_nK;
+
+   };
+
+   /****************************************/
+   /****************************************/
+
+   class CLEDEntityGridUpdater : public CGrid<CLEDEntity>::COperation {
+
+   public:
+
+      CLEDEntityGridUpdater(CGrid<CLEDEntity>& c_grid);
+      virtual bool operator()(CLEDEntity& c_entity);
+
+   private:
+
+      CGrid<CLEDEntity>& m_cGrid;
+      size_t m_unI, m_unJ, m_unK;
 
    };
 

@@ -63,7 +63,7 @@ endif(NOT EXISTS ${CMAKE_BINARY_DIR}/argos3)
 # Compile stuff
 #
 add_subdirectory(core)
-add_subdirectory(plugins)
+#add_subdirectory(plugins)
 add_subdirectory(testing)
 
 #

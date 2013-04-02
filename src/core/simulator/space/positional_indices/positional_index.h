@@ -9,6 +9,7 @@ namespace argos {
 
 #include <argos3/core/utility/configuration/base_configurable_resource.h>
 #include <argos3/core/utility/datatypes/datatypes.h>
+#include <argos3/core/utility/datatypes/set.h>
 #include <argos3/core/utility/math/vector2.h>
 #include <argos3/core/utility/math/vector3.h>
 
@@ -69,13 +70,6 @@ namespace argos {
       virtual void Destroy() = 0;
 
       /**
-       * Returns the description of the type of this positional index.
-       * For instance, this could be "space_hash", "grid", "octree", etc.
-       * @return The description of the type of this positional index.
-       */
-      virtual std::string GetTypeDescription() const = 0;
-
-      /**
        * Adds an entity to this index.
        * @param c_entity The entity to add.
        */
@@ -92,6 +86,21 @@ namespace argos {
        */
       virtual void Update() = 0;
 
+      /**
+       * Puts the entities located at the given point in the passed buffer.
+       * @param c_entities The entity set to use as buffer.
+       * @param c_position The wanted point in the space.
+       */
+      virtual void GetEntitiesAt(CSet<ENTITY*>& c_entities,
+                                 const CVector3& c_position) const = 0;
+
+      /**
+       * Executes an operation on all the indexed entities.
+       * @param c_operation The operation to perform.
+       * @see COperation
+       */
+      virtual void ForAllEntities(COperation& c_operation) = 0;
+      
       /**
        * Executes an operation on all entities within the specified sphere range.
        * @param c_center The sphere center.

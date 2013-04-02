@@ -15,7 +15,7 @@ namespace argos {
 
 #include <argos3/core/utility/math/ray3.h>
 #include <argos3/core/utility/datatypes/set.h>
-#include <argos3/core/simulator/space/positional_index.h>
+#include <argos3/core/simulator/space/positional_indices/positional_index.h>
 
 namespace argos {
 

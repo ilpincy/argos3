@@ -90,9 +90,12 @@ set(ARGOS3_HEADERS_SIMULATOR_VISUALIZATION
   simulator/visualization/visualization.h)
 # argos3/core/simulator/space
 set(ARGOS3_HEADERS_SIMULATOR_SPACE
+  simulator/space/positional_indices/grid.h
+  simulator/space/positional_indices/grid_impl.h
+  simulator/space/positional_indices/positional_index.h
+  simulator/space/positional_indices/space_hash.h
+  simulator/space/positional_indices/space_hash_native.h
   simulator/space/space.h
-  simulator/space/space_hash.h
-  simulator/space/space_hash_native.h
   simulator/space/space_multi_thread_balance_length.h
   simulator/space/space_multi_thread_balance_quantity.h
   simulator/space/space_no_threads.h)

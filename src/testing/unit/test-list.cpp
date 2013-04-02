@@ -1,9 +1,9 @@
-
 /**
  * @file <argos3/testing/unit/test-list.cpp>
  *
  * @author Carlo Pinciroli <ilpincy@gmail.com>
  */
+
 #include <argos3/core/utility/datatypes/set.h>
 #include <cstdio>
 
@@ -55,6 +55,13 @@ int main() {
    else {
       fprintf(stderr, "v5 not found!\n");      
    }
+
+   CSet<T*> M(L);
+   fprintf(stderr, "%d elements\n", M.size());
+   for(CSet<T*>::iterator it = M.begin(); it != M.end(); ++it) {
+      fprintf(stderr, "x = %d\n", (*it)->x);
+   }
+   fprintf(stderr, "\n");
 
    L.erase(&v4);
    fprintf(stderr, "%d elements\n", L.size());

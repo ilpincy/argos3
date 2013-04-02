@@ -1,9 +1,9 @@
-
 /**
  * @file <argos3/core/utility/datatypes/set.h>
  *
  * @author Carlo Pinciroli <ilpincy@gmail.com>
  */
+
 #ifndef SET_H
 #define SET_H
 
@@ -116,13 +116,83 @@ namespace argos {
 
    public:
 
+      /**
+       * Class constructor.
+       * Creates an empty set.
+       */
       CSet() :
          m_psFirst(NULL),
          m_psLast(NULL),
          m_unSize(0) {}
 
+      /**
+       * Class copy constructor.
+       * Creates a new set copying from the given set.
+       * @param c_set The set to copy from.
+       */
+      CSet(const CSet& c_set) :
+         m_psFirst(NULL),
+         m_psLast(NULL),
+         m_unSize(0) {
+         *this = c_set;
+      }
+
+      /**
+       * Class destructor.
+       */
       ~CSet() {
          clear();
+      }
+
+      /**
+       * Assignment operator.
+       * Substitutes the contents of this set with those of the passed one.
+       * @param c_set The set to copy from.
+       */
+      CSet& operator=(const CSet& c_set) {
+         /* Is the passed set a different set? */
+         if(this != &c_set) {
+            /* Yes, copy from it */
+            /* First, erase this set's contents */
+            clear();
+            /* Is the other set empty? */
+            if(! c_set.empty()) {
+               /* Not empty, there's at least one element to copy */
+               /* Start by copying the size of the other set into this one */
+               m_unSize = c_set.m_unSize;
+               /* Create the first element */
+               m_psFirst = new SSetElement<T>(c_set.m_psFirst->Data);
+               /* Is the size of the other set 1? */
+               if(m_unSize == 1) {
+                  /* Yes, the first element is also the last one */
+                  m_psLast = m_psFirst;
+               }
+               else {
+                  /* There's more than just one element */
+                  /* Copy all the elements starting from the second */
+                  /* Current element on other set to be copied */
+                  SSetElement<T>* psCurElemOnOther = c_set.m_psFirst->Next;
+                  /* Last copied element on this set */
+                  SSetElement<T>* psLastElemOnThis = m_psFirst;
+                  /* Current element on this set being created */
+                  SSetElement<T>* psCurElemOnThis;
+                  /* Go on until we hit the end of the list on the other set */
+                  while(psCurElemOnOther != NULL) {
+                     /* Create a new element for this set, setting as previous psLastElemOnThis */
+                     psCurElemOnThis = new SSetElement<T>(psCurElemOnOther->Data, psLastElemOnThis);
+                     /* Set the next of psLastElemOnThis to the element just created */
+                     psLastElemOnThis->Next = psCurElemOnThis;
+                     /* Advance with the last element on this */
+                     psLastElemOnThis = psCurElemOnThis;
+                     /* Advance with the element to copy on the other set */
+                     psCurElemOnOther = psCurElemOnOther->Next;
+                  }
+                  /* At this point, psCurElemOnThis corresponds to the last element of the list */
+                  m_psLast = psCurElemOnThis;
+               }
+            }
+         }
+         return *this;
       }
 
       /**

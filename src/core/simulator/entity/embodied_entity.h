@@ -13,7 +13,7 @@ namespace argos {
 }
 
 #include <argos3/core/simulator/entity/positional_entity.h>
-#include <argos3/core/simulator/space/space_hash.h>
+#include <argos3/core/simulator/space/positional_indices/space_hash.h>
 #include <argos3/core/utility/datatypes/set.h>
 #include <argos3/core/utility/math/ray3.h>
 #include <argos3/core/utility/math/quaternion.h>

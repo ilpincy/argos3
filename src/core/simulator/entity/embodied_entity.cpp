@@ -329,9 +329,6 @@ namespace argos {
       void ApplyTo(CSpace& c_space, CEmbodiedEntity& c_entity) {
          /* Add entity to space */
          c_space.AddEntity(c_entity);
-         if(c_space.IsUsingSpaceHash()) {
-            c_space.GetEmbodiedEntitiesSpaceHash().AddElement(c_entity);
-         }
          /* Try to add entity to physics engine(s) */
          c_space.AddEntityToPhysicsEngine(c_entity);
       }
@@ -351,9 +348,6 @@ namespace argos {
             c_entity.GetPhysicsModel(0).GetEngine().RemoveEntity(*pcRoot);
          }
          /* Remove entity from space */
-         if(c_space.IsUsingSpaceHash()) {
-            c_space.GetEmbodiedEntitiesSpaceHash().RemoveElement(c_entity);
-         }
          c_space.RemoveEntity(c_entity);
       }
    };

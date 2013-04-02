@@ -1,0 +1,80 @@
+<?xml version="1.0" ?>
+<argos-configuration>
+
+  <!-- ************************* -->
+  <!-- * General configuration * -->
+  <!-- ************************* -->
+  <framework>
+    <experiment ticks_per_second="10" />
+  </framework>
+
+  <!-- *************** -->
+  <!-- * Controllers * -->
+  <!-- *************** -->
+  <controllers />
+
+  <!-- *********************** -->
+  <!-- * Arena configuration * -->
+  <!-- *********************** -->
+  <!-- Note: rotations are specified and performed in ZYX order (opposite of ARGoS1) -->
+  <arena size="2, 2, 1">
+
+    <!-- *************** -->
+    <!-- * Definitions * -->
+    <!-- *************** -->
+    <definitions>
+
+      <!--
+          A custom object
+          The base tag (here "myobject") is used to identify the object type in ARGoS
+          Every custom object is implicitly considered as an instance of
+          CComposableEntity, so you can add components in the tag
+          Here, an embodied component is added.
+      -->
+      <myobject>
+        <!--
+            To add an embodied component, you need to define the bounding volume of
+            the object.
+            The bounding volume is a volume that completely wraps the object.
+            The volume is used internally to perform fast, coarse ray-object
+            intersections. It is then the task of the physics engines to perform the
+            actual calculations. Available volumes are currently "box" and
+            "cylinder". Both volumes have three attributes size, orientation and
+            anchor.
+            The "size" attribute defines the size of the volume. For the box, it is a
+            tuple "Lx, Ly, Lz", corresponding to the lengths in meters on the x-, y-,
+            and z-axes for a non-rotated box. For the cylinder, it is a tuple
+            "Radius, Height", with the height oriented along the z-axis.
+            The "orientation" corresponds to the base orientation of the bounding
+            volume. It is expressed as a tuple "Rz,Ry,Rx", that is the rotation in
+            degrees along the z-, y-, and x-axes in this order.
+            The "anchor" corresponds to the point that is used as a reference to
+            place the object in the world.
+        -->
+        <embodied>
+          <bounded_by>
+            <box size="0.2,0.3,0.1" orientation="" anchor="" />
+          </bounded_by>
+        </embodied>
+      </myobject>
+
+    </definitions>
+
+  </arena>
+
+  <!-- ******************* -->
+  <!-- * Physics engines * -->
+  <!-- ******************* -->
+  <physics_engines />
+
+  <!-- ************************************ -->
+  <!-- * Arena -> Physics Engines mapping * -->
+  <!-- ************************************ -->
+  <arena_physics />
+
+  <!-- ****************** -->
+  <!-- * Visualization * -->
+  <!-- ****************** -->
+  <visualization />
+
+</argos-configuration>

@@ -286,9 +286,6 @@ namespace argos {
    public:
       void ApplyTo(CSpace& c_space, CRABEquippedEntity& c_entity) {
          c_space.AddEntity(c_entity);
-         if(c_space.IsUsingSpaceHash()) {
-            c_space.GetRABEquippedEntitiesSpaceHash().AddElement(c_entity);
-         }
       }
    };
    REGISTER_SPACE_OPERATION(CSpaceOperationAddEntity, CSpaceOperationAddRABEquippedEntity, CRABEquippedEntity);
@@ -296,9 +293,6 @@ namespace argos {
    class CSpaceOperationRemoveRABEquippedEntity : public CSpaceOperationRemoveEntity {
    public:
       void ApplyTo(CSpace& c_space, CRABEquippedEntity& c_entity) {
-         if(c_space.IsUsingSpaceHash()) {
-            c_space.GetRABEquippedEntitiesSpaceHash().RemoveElement(c_entity);
-         }
          c_space.RemoveEntity(c_entity);
       }
    };

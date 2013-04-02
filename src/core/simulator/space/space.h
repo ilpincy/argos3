@@ -16,7 +16,7 @@ namespace argos {
 }
 
 #include <argos3/core/utility/datatypes/any.h>
-#include <argos3/core/simulator/space/positional_index.h>
+#include <argos3/core/simulator/space/positional_indices/positional_index.h>
 #include <argos3/core/simulator/entity/embodied_entity.h>
 #include <argos3/core/simulator/entity/controllable_entity.h>
 #include <argos3/core/simulator/entity/medium_entity.h>
@@ -105,12 +105,6 @@ namespace argos {
             Intersection(c_entities.size() > 0),
             IntersectedEntities(c_entities) {}
       };
-
-   protected:
-
-      class CRayEmbodiedEntityIntersectionMethod;
-      class CRayEmbodiedEntityIntersectionSpaceHash;
-      class CRayEmbodiedEntityIntersectionEntitySweep;
 
       /****************************************/
       /****************************************/
@@ -201,16 +195,6 @@ namespace argos {
                                const std::string& str_pattern);
 
       /**
-       * Calculates the closest intersection point along the given ray.
-       * @param s_data Buffer containing the calculated intersection point, or lack thereof.
-       * @param c_ray The test ray.
-       * @param set_ignored_entities A list of entities that must be ignored if an intersection with them is detected.
-       */
-      bool GetClosestEmbodiedEntityIntersectedByRay(SEntityIntersectionItem<CEmbodiedEntity>& s_data,
-                                                    const CRay3& c_ray,
-                                                    const TEmbodiedEntitySet& set_ignored_entities = TEmbodiedEntitySet());
-
-      /**
        * Returns a map of all entities ordered by id.
        * @return a map of all entities ordered by id.
        */
@@ -273,14 +257,6 @@ namespace argos {
        */
       inline void SetFloorEntity(CFloorEntity& c_floor_entity) {
          m_pcFloorEntity = &c_floor_entity;
-      }
-
-      /**
-       * Returns <tt>true</tt> if positional entities are indexed using the space hash.
-       * @return <tt>true</tt> if positional entities are indexed using the space hash.
-       */
-      inline bool IsUsingSpaceHash() const {
-         return m_bUseSpaceHash;
       }
 
       /**
@@ -454,9 +430,6 @@ namespace argos {
 
       /** The floor entity */
       CFloorEntity* m_pcFloorEntity;
-
-      /** True if the space hash should be used */
-      bool m_bUseSpaceHash;
 
       /** A reference to the list of physics engines */
       CPhysicsEngine::TVector* m_ptPhysicsEngines;
