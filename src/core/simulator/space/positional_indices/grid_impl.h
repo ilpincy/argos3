@@ -3,29 +3,45 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+#define CHECK_CELL(nI,nJ,nK)                                            \
+   {                                                                    \
+      SCell& sCell = GetCellAt((nI), (nJ), (nK));                       \
+      if((sCell.Timestamp == m_unCurTimestamp) &&                       \
+         (! sCell.Entities.empty())) {                                  \
+         for(typename CSet<ENTITY*>::iterator it = sCell.Entities.begin(); \
+             it != sCell.Entities.end();                                \
+             ++it) {                                                    \
+            if(!c_operation(**it)) return;                              \
+         }                                                              \
+      }                                                                 \
+   }
+
+   /****************************************/
+   /****************************************/
+
    template<class ENTITY>
    CGrid<ENTITY>::CGrid(const CVector3& c_area_min_corner,
                         const CVector3& c_area_max_corner,
-                        size_t un_size_i,
-                        size_t un_size_j,
-                        size_t un_size_k) :
+                        SInt32 n_size_i,
+                        SInt32 n_size_j,
+                        SInt32 n_size_k) :
       m_cAreaMinCorner(c_area_min_corner),
       m_cAreaMaxCorner(c_area_max_corner),
-      m_unSizeI(un_size_i),
-      m_unSizeJ(un_size_j),
-      m_unSizeK(un_size_k),
+      m_nSizeI(n_size_i),
+      m_nSizeJ(n_size_j),
+      m_nSizeK(n_size_k),
       m_cRangeX(m_cAreaMinCorner.GetX(), m_cAreaMaxCorner.GetX()),
       m_cRangeY(m_cAreaMinCorner.GetY(), m_cAreaMaxCorner.GetY()),
       m_cRangeZ(m_cAreaMinCorner.GetZ(), m_cAreaMaxCorner.GetZ()),
       m_unCurTimestamp(0),
       m_pcUpdateEntityOperation(NULL) {
-      m_cCellSize.Set(m_cRangeX.GetSpan() / m_unSizeI,
-                      m_cRangeY.GetSpan() / m_unSizeJ,
-                      m_cRangeZ.GetSpan() / m_unSizeK);
+      m_cCellSize.Set(m_cRangeX.GetSpan() / m_nSizeI,
+                      m_cRangeY.GetSpan() / m_nSizeJ,
+                      m_cRangeZ.GetSpan() / m_nSizeK);
       m_cInvCellSize.Set(1.0f / m_cCellSize.GetX(),
                          1.0f / m_cCellSize.GetY(),
                          1.0f / m_cCellSize.GetZ());
-      m_psCells = new SCell[m_unSizeI * m_unSizeJ * m_unSizeK];
+      m_psCells = new SCell[m_nSizeI * m_nSizeJ * m_nSizeK];
    }
 
    /****************************************/
@@ -49,9 +65,9 @@ namespace argos {
    template<class ENTITY>
    void CGrid<ENTITY>::Reset() {
       m_unCurTimestamp = 0;
-      for(size_t i = 0; i < m_unSizeI; ++i) {
-         for(size_t j = 0; j < m_unSizeJ; ++j) {
-            for(size_t k = 0; k < m_unSizeK; ++k) {
+      for(SInt32 i = 0; i < m_nSizeI; ++i) {
+         for(SInt32 j = 0; j < m_nSizeJ; ++j) {
+            for(SInt32 k = 0; k < m_nSizeK; ++k) {
                GetCellAt(i,j,k).Reset();
             }
          }
@@ -93,14 +109,14 @@ namespace argos {
 
    /****************************************/
    /****************************************/
-      
+
    template<class ENTITY>
    void CGrid<ENTITY>::GetEntitiesAt(CSet<ENTITY*>& c_entities,
                                      const CVector3& c_position) const {
       if(m_cRangeX.WithinMinBoundIncludedMaxBoundIncluded(c_position.GetX()) &&
          m_cRangeY.WithinMinBoundIncludedMaxBoundIncluded(c_position.GetY()) &&
          m_cRangeZ.WithinMinBoundIncludedMaxBoundIncluded(c_position.GetZ())) {
-         size_t i, j, k;
+         SInt32 i, j, k;
          PositionToCell(i, j, k, c_position);
          const SCell& sCell = GetCellAt(i, j, k);
          if(sCell.Timestamp < m_unCurTimestamp) {
@@ -132,6 +148,86 @@ namespace argos {
    void CGrid<ENTITY>::ForEntitiesInSphereRange(const CVector3& c_center,
                                                 Real f_radius,
                                                 COperation& c_operation) {
+      /* Calculate cells for center */
+      SInt32 nIC, nJC, nKC, nIR, nJR, nKR;
+      PositionToCell(nIC, nJC, nKC, c_center);
+      if(nKC >= 0 && nKC < m_nSizeK) {
+         /* Check circle center */
+         if((nIC >= 0 && nIC < m_nSizeI) && (nJC >= 0 && nJC < m_nSizeJ)) CHECK_CELL(nIC, nJC, nKC);
+         /* Calculate radia of circle */
+         nIR = Floor(f_radius * m_cInvCellSize.GetX() + 0.5f);
+         nJR = Floor(f_radius * m_cInvCellSize.GetY() + 0.5f);
+         /* Go through diameter on j at i = 0 */
+         if(nIC >= 0 && nIC < m_nSizeI) {
+            for(SInt32 j = nJR; j > 0; --j) {
+               if(nJC + j >= 0 && nJC + j < m_nSizeJ) CHECK_CELL(nIC, nJC + j, nKC);
+               if(nJC - j >= 0 && nJC - j < m_nSizeJ) CHECK_CELL(nIC, nJC - j, nKC);
+            }
+         }
+         /* Go through diameter on i at j = 0 */
+         if(nJC >= 0 && nJC < m_nSizeJ) {
+            for(SInt32 i = nIR; i > 0; --i) {
+               if(nIC + i >= 0 && nIC + i < m_nSizeI) CHECK_CELL(nIC + i, nJC, nKC);
+               if(nIC - i >= 0 && nIC - i < m_nSizeI) CHECK_CELL(nIC - i, nJC, nKC);
+            }
+         }
+         /* Go through cells with k = nKC */
+         for(SInt32 j = nJR; j > 0; --j) {
+            nIR = Floor(Sqrt(Max<Real>(0.0f, f_radius * f_radius - j * m_cCellSize.GetY() * j * m_cCellSize.GetY())) * m_cInvCellSize.GetX() + 0.5f);
+            for(SInt32 i = nIR; i > 0; --i) {
+               if(nIC + i >= 0 && nIC + i < m_nSizeI && nJC + j >= 0 && nJC + j < m_nSizeJ) CHECK_CELL(nIC + i, nJC + j, nKC);
+               if(nIC + i >= 0 && nIC + i < m_nSizeI && nJC - j >= 0 && nJC - j < m_nSizeJ) CHECK_CELL(nIC + i, nJC - j, nKC);
+               if(nIC - i >= 0 && nIC - i < m_nSizeI && nJC + j >= 0 && nJC + j < m_nSizeJ) CHECK_CELL(nIC - i, nJC + j, nKC);
+               if(nIC - i >= 0 && nIC - i < m_nSizeI && nJC - j >= 0 && nJC - j < m_nSizeJ) CHECK_CELL(nIC - i, nJC - j, nKC);
+            }
+         }
+      }
+      /* Go through other cells */
+      nKR = Floor(f_radius * m_cInvCellSize.GetZ() + 0.5f);
+      Real fCircleRadius2;
+      for(SInt32 k = nKR; k > 0; --k) {
+         /* Check center of circle at k and -k */
+         if((nIC >= 0 && nIC < m_nSizeI) && (nJC >= 0 && nJC < m_nSizeJ)) {
+            if(nKC + k >= 0 && nKC + k < m_nSizeK) CHECK_CELL(nIC, nJC, nKC + k);
+            if(nKC - k >= 0 && nKC - k < m_nSizeK) CHECK_CELL(nIC, nJC, nKC - k);
+         }
+         /* Calculate radius of circle at k and -k */
+         fCircleRadius2 = Max<Real>(0.0f, f_radius * f_radius - k * m_cCellSize.GetZ() * k * m_cCellSize.GetZ());
+         /* Calculate radius of circle at j,k */
+         nIR = Floor(Sqrt(fCircleRadius2) * m_cInvCellSize.GetX() + 0.5f);
+         /* Go through diameter on i at j = 0 */
+         if(nJC >= 0 && nJC < m_nSizeJ) {
+            for(SInt32 i = nIR; i > 0; --i) {
+               if(nIC + i >= 0 && nIC + i < m_nSizeI && nKC + k >= 0 && nKC + k < m_nSizeK) CHECK_CELL(nIC + i, nJC, nKC + k);
+               if(nIC + i >= 0 && nIC + i < m_nSizeI && nKC - k >= 0 && nKC - k < m_nSizeK) CHECK_CELL(nIC + i, nJC, nKC - k);
+               if(nIC - i >= 0 && nIC - i < m_nSizeI && nKC + k >= 0 && nKC + k < m_nSizeK) CHECK_CELL(nIC - i, nJC, nKC + k);
+               if(nIC - i >= 0 && nIC - i < m_nSizeI && nKC - k >= 0 && nKC - k < m_nSizeK) CHECK_CELL(nIC - i, nJC, nKC - k);
+            }
+         }
+         /* Calculate circle radius in cells on j */
+         nJR = Floor(Sqrt(fCircleRadius2) * m_cInvCellSize.GetY() + 0.5f);
+         for(SInt32 j = nJR; j > 0; --j) {
+            /* Go through diameter on j at i = 0 */
+            if(nIC >= 0 && nIC < m_nSizeI) {
+               if(nJC + j >= 0 && nJC + j < m_nSizeJ && nKC + k >= 0 && nKC + k < m_nSizeK) CHECK_CELL(nIC, nJC + j, nKC + k);
+               if(nJC + j >= 0 && nJC + j < m_nSizeJ && nKC - k >= 0 && nKC - k < m_nSizeK) CHECK_CELL(nIC, nJC + j, nKC - k);
+               if(nJC - j >= 0 && nJC - j < m_nSizeJ && nKC + k >= 0 && nKC + k < m_nSizeK) CHECK_CELL(nIC, nJC - j, nKC + k);
+               if(nJC - j >= 0 && nJC - j < m_nSizeJ && nKC - k >= 0 && nKC - k < m_nSizeK) CHECK_CELL(nIC, nJC - j, nKC - k);
+            }
+            /* Calculate radius of circle at j,k */
+            nIR = Floor(Sqrt(Max<Real>(0.0f, fCircleRadius2 - j * m_cCellSize.GetY() * j * m_cCellSize.GetY())) * m_cInvCellSize.GetX() + 0.5f);
+            for(SInt32 i = nIR; i > 0; --i) {
+               if(nIC + i >= 0 && nIC + i < m_nSizeI && nJC + j >= 0 && nJC + j < m_nSizeJ && nKC + k >= 0 && nKC + k < m_nSizeK) CHECK_CELL(nIC + i, nJC + j, nKC + k);
+               if(nIC + i >= 0 && nIC + i < m_nSizeI && nJC + j >= 0 && nJC + j < m_nSizeJ && nKC - k >= 0 && nKC - k < m_nSizeK) CHECK_CELL(nIC + i, nJC + j, nKC - k);
+               if(nIC + i >= 0 && nIC + i < m_nSizeI && nJC - j >= 0 && nJC - j < m_nSizeJ && nKC + k >= 0 && nKC + k < m_nSizeK) CHECK_CELL(nIC + i, nJC - j, nKC + k);
+               if(nIC + i >= 0 && nIC + i < m_nSizeI && nJC - j >= 0 && nJC - j < m_nSizeJ && nKC - k >= 0 && nKC - k < m_nSizeK) CHECK_CELL(nIC + i, nJC - j, nKC - k);
+               if(nIC - i >= 0 && nIC - i < m_nSizeI && nJC + j >= 0 && nJC + j < m_nSizeJ && nKC + k >= 0 && nKC + k < m_nSizeK) CHECK_CELL(nIC - i, nJC + j, nKC + k);
+               if(nIC - i >= 0 && nIC - i < m_nSizeI && nJC + j >= 0 && nJC + j < m_nSizeJ && nKC - k >= 0 && nKC - k < m_nSizeK) CHECK_CELL(nIC - i, nJC + j, nKC - k);
+               if(nIC - i >= 0 && nIC - i < m_nSizeI && nJC - j >= 0 && nJC - j < m_nSizeJ && nKC + k >= 0 && nKC + k < m_nSizeK) CHECK_CELL(nIC - i, nJC - j, nKC + k);
+               if(nIC - i >= 0 && nIC - i < m_nSizeI && nJC - j >= 0 && nJC - j < m_nSizeJ && nKC - k >= 0 && nKC - k < m_nSizeK) CHECK_CELL(nIC - i, nJC - j, nKC - k);
+            }
+         }
+      }
    }
 
    /****************************************/
@@ -141,6 +237,24 @@ namespace argos {
    void CGrid<ENTITY>::ForEntitiesInBoxRange(const CVector3& c_center,
                                              const CVector3& c_half_size,
                                              COperation& c_operation) {
+      /* Calculate cell range */
+      SInt32 nI1, nJ1, nK1, nI2, nJ2, nK2;
+      PositionToCell(nI1, nJ1, nK1, c_center - c_half_size);
+      PositionToCell(nI2, nJ2, nK2, c_center + c_half_size);
+      nI1 = Min<SInt32>(m_nSizeI-1, Max<SInt32>(0, nI1));
+      nJ1 = Min<SInt32>(m_nSizeJ-1, Max<SInt32>(0, nJ1));
+      nK1 = Min<SInt32>(m_nSizeK-1, Max<SInt32>(0, nK1));
+      nI2 = Min<SInt32>(m_nSizeI-1, Max<SInt32>(0, nI2));
+      nJ2 = Min<SInt32>(m_nSizeJ-1, Max<SInt32>(0, nJ2));
+      nK2 = Min<SInt32>(m_nSizeK-1, Max<SInt32>(0, nK2));
+      /* Go through cells */
+      for(SInt32 k = nK1; k <= nK2; ++k) {
+         for(SInt32 j = nJ1; j <= nJ2; ++j) {
+            for(SInt32 i = nI1; i <= nI2; ++i) {
+               CHECK_CELL(i, j, k);
+            }
+         }
+      }
    }
 
    /****************************************/
@@ -150,8 +264,37 @@ namespace argos {
    void CGrid<ENTITY>::ForEntitiesInCircleRange(const CVector3& c_center,
                                                 Real f_radius,
                                                 COperation& c_operation) {
+      /* Make sure the Z coordinate is inside the range */
+      if(! m_cRangeZ.WithinMinBoundIncludedMaxBoundIncluded(c_center.GetZ())) return;
+      /* Calculate cells for center */
+      SInt32 nI, nJ, nK;
+      PositionToCell(nI, nJ, nK, c_center);
+      /* Check circle center */
+      if((nI >= 0 && nI < m_nSizeI) && (nJ >= 0 && nJ < m_nSizeJ)) CHECK_CELL(nI, nJ, nK);
+      /* Check circle diameter on I */
+      SInt32 nID = Floor(f_radius * m_cInvCellSize.GetX() + 0.5f);
+      for(SInt32 h = nID; h > 0; --h) {
+         if((nI + h >= 0 && nI + h < m_nSizeI) && (nJ >= 0 && nJ < m_nSizeJ)) CHECK_CELL(nI + h, nJ, nK);
+         if((nI - h >= 0 && nI - h < m_nSizeI) && (nJ >= 0 && nJ < m_nSizeJ)) CHECK_CELL(nI - h, nJ, nK);
+      }
+      /* Check circle diameter on J */
+      SInt32 nJD = Floor(f_radius * m_cInvCellSize.GetY() + 0.5f);
+      for(SInt32 h = nJD; h > 0; --h) {
+         if((nI >= 0 && nI < m_nSizeI) && (nJ + h >= 0 && nJ + h < m_nSizeJ)) CHECK_CELL(nI, nJ + h, nK);
+         if((nI >= 0 && nI < m_nSizeI) && (nJ - h >= 0 && nJ - h < m_nSizeJ)) CHECK_CELL(nI, nJ - h, nK);
+      }
+      /* Check rest of the circle */
+      for(SInt32 i = nID; i > 0; --i) {
+         nJD = Floor(Sqrt(f_radius * f_radius - i * m_cCellSize.GetX() * i * m_cCellSize.GetX()) * m_cInvCellSize.GetY() + 0.5f);
+         for(SInt32 j = nJD; j > 0; --j) {
+            if((nI + i >= 0 && nI + i < m_nSizeI) && (nJ + j >= 0 && nJ + j < m_nSizeJ)) CHECK_CELL(nI + i, nJ + j, nK);
+            if((nI + i >= 0 && nI + i < m_nSizeI) && (nJ - j >= 0 && nJ - j < m_nSizeJ)) CHECK_CELL(nI + i, nJ - j, nK);
+            if((nI - i >= 0 && nI - i < m_nSizeI) && (nJ + j >= 0 && nJ + j < m_nSizeJ)) CHECK_CELL(nI - i, nJ + j, nK);
+            if((nI - i >= 0 && nI - i < m_nSizeI) && (nJ - j >= 0 && nJ - j < m_nSizeJ)) CHECK_CELL(nI - i, nJ - j, nK);
+         }
+      }
    }
-   
+
    /****************************************/
    /****************************************/
 
@@ -159,28 +302,229 @@ namespace argos {
    void CGrid<ENTITY>::ForEntitiesInRectangleRange(const CVector3& c_center,
                                                    const CVector2& c_half_size,
                                                    COperation& c_operation) {
+      /* Calculate cell range */
+      SInt32 nI1 = Min<SInt32>(m_nSizeI-1, Max<SInt32>(0, Floor((c_center.GetX() - c_half_size.GetX() - m_cAreaMinCorner.GetX()) * m_cInvCellSize.GetX())));
+      SInt32 nJ1 = Min<SInt32>(m_nSizeJ-1, Max<SInt32>(0, Floor((c_center.GetY() - c_half_size.GetY() - m_cAreaMinCorner.GetY()) * m_cInvCellSize.GetY())));
+      SInt32 nI2 = Min<SInt32>(m_nSizeI-1, Max<SInt32>(0, Floor((c_center.GetX() + c_half_size.GetX() - m_cAreaMinCorner.GetX()) * m_cInvCellSize.GetX())));
+      SInt32 nJ2 = Min<SInt32>(m_nSizeJ-1, Max<SInt32>(0, Floor((c_center.GetY() + c_half_size.GetY() - m_cAreaMinCorner.GetY()) * m_cInvCellSize.GetY())));
+      SInt32 nK  = Min<SInt32>(m_nSizeK-1, Max<SInt32>(0, Floor((c_center.GetZ()                      - m_cAreaMinCorner.GetZ()) * m_cInvCellSize.GetZ())));
+      /* Go through cells */
+      for(SInt32 j = nJ1; j <= nJ2; ++j) {
+         for(SInt32 i = nI1; i <= nI2; ++i) {
+            CHECK_CELL(i, j, nK);
+         }
+      }
    }
 
    /****************************************/
    /****************************************/
+
+#define CHECK_CELL_ALONG_RAY(nI,nJ,nK)                                  \
+   {                                                                    \
+      SCell& sCell = GetCellAt(nI, nJ, nK);                             \
+      if((sCell.Timestamp == m_unCurTimestamp) &&                       \
+         (! sCell.Entities.empty())) {                                  \
+         for(typename CSet<ENTITY*>::iterator it = sCell.Entities.begin(); \
+             it != sCell.Entities.end();                                \
+             ++it) {                                                    \
+            if(!c_operation(**it)) return;                              \
+         }                                                              \
+         if(b_stop_at_closest_match) return;                            \
+      }                                                                 \
+   }
 
    template<class ENTITY>
    void CGrid<ENTITY>::ForEntitiesAlongRay(const CRay3& c_ray,
-                                           COperation& c_operation) {
+                                           COperation& c_operation,
+                                           bool b_stop_at_closest_match) {
+      /* Transform ray start and end position into cell coordinates */
+      SInt32 nI1, nJ1, nK1, nI2, nJ2, nK2;
+      PositionToCell(nI1, nJ1, nK1, c_ray.GetStart());
+      PositionToCell(nI2, nJ2, nK2, c_ray.GetEnd());
+      nI1 = Min<SInt32>(m_nSizeI-1, Max<SInt32>(0, nI1));
+      nJ1 = Min<SInt32>(m_nSizeJ-1, Max<SInt32>(0, nJ1));
+      nK1 = Min<SInt32>(m_nSizeK-1, Max<SInt32>(0, nK1));
+      nI2 = Min<SInt32>(m_nSizeI-1, Max<SInt32>(0, nI2));
+      nJ2 = Min<SInt32>(m_nSizeJ-1, Max<SInt32>(0, nJ2));
+      nK2 = Min<SInt32>(m_nSizeK-1, Max<SInt32>(0, nK2));
+      /* Go through cells one by one, from start to end.
+         Stop as soon as an entity is found.
+         If the loop is completed, it means no entities were found -> no intersection.
+      */
+      /* Calculate deltas for later use */
+      SInt32 nDI(Abs(nI2 - nI1));
+      SInt32 nDJ(Abs(nJ2 - nJ1));
+      SInt32 nDK(Abs(nK2 - nK1));
+      /* Calculate the increment for each direction */
+      SInt32 nSI(nI2 >= nI1 ? 1 : -1);
+      SInt32 nSJ(nJ2 >= nJ1 ? 1 : -1);
+      SInt32 nSK(nK2 >= nK1 ? 1 : -1);
+      /* Set the starting cell */
+      SInt32 nI(nI1), nJ(nJ1), nK(nK1);
+      if(nDI >= nDJ && nDI >= nDK) {
+         /* I is the driving axis */
+         /* Calculate error used to know when to move on other axes */
+         SInt32 nEJ(3 * nDJ - nDI);
+         SInt32 nEK(3 * nDK - nDI);
+         CHECK_CELL_ALONG_RAY(nI, nJ, nK);
+         /* Cycle through cells */
+         for(SInt32 nCell = nDI; nCell > 0; --nCell) {
+            /* Advance on driving axis */
+            nI += nSI;
+            CHECK_CELL_ALONG_RAY(nI, nJ, nK);
+            /* Advance on other axes, if necessary */
+            if(nEJ > 0 && nEK > 0) {
+               /* Advance on both the other axes */
+               if(nEJ * nDK > nEK * nDJ) {
+                  nJ += nSJ;
+                  CHECK_CELL_ALONG_RAY(nI, nJ, nK);
+                  nK += nSK;
+                  CHECK_CELL_ALONG_RAY(nI, nJ, nK);
+               }
+               else {
+                  nK += nSK;
+                  CHECK_CELL_ALONG_RAY(nI, nJ, nK);
+                  nJ += nSJ;
+                  CHECK_CELL_ALONG_RAY(nI, nJ, nK);
+               }
+               nEJ += 2 * (nDJ - nDI);
+               nEK += 2 * (nDK - nDI);
+            }
+            else if(nEJ > 0) {
+               /* Advance only on J */
+               nJ += nSJ;
+               CHECK_CELL_ALONG_RAY(nI, nJ, nK);
+               nEJ += 2 * (nDJ - nDI);
+               nEK += 2 * nDK;
+            }
+            else {
+               nEJ += 2 * nDJ;
+               if(nEK > 0) {
+                  /* Advance only on K */
+                  nK += nSK;
+                  CHECK_CELL_ALONG_RAY(nI, nJ, nK);
+                  nEK += 2 * (nDK - nDI);
+               }
+               else {
+                  nEK += 2 * nDK;
+               }
+            }
+         }
+      }
+      else if(nDJ >= nDI && nDJ >= nDK) {
+         /* J is the driving axis */
+         /* Calculate error used to know when to move on other axes */
+         SInt32 nEI(3 * nDI - nDJ);
+         SInt32 nEK(3 * nDK - nDJ);
+         CHECK_CELL_ALONG_RAY(nI, nJ, nK);
+         /* Cycle through cells */
+         for(SInt32 nCell = nDJ; nCell > 0; --nCell) {
+            /* Advance on driving axis */
+            nJ += nSJ;
+            CHECK_CELL_ALONG_RAY(nI, nJ, nK);
+            /* Advance on other axes, if necessary */
+            if(nEI > 0 && nEK > 0) {
+               /* Advance on both the other axes */
+               if(nEI * nDK > nEK * nDI) {
+                  nI += nSI;
+                  CHECK_CELL_ALONG_RAY(nI, nJ, nK);
+                  nK += nSK;
+                  CHECK_CELL_ALONG_RAY(nI, nJ, nK);
+               }
+               else {
+                  nK += nSK;
+                  CHECK_CELL_ALONG_RAY(nI, nJ, nK);
+                  nI += nSI;
+                  CHECK_CELL_ALONG_RAY(nI, nJ, nK);
+               }
+               nEI += 2 * (nDI - nDJ);
+               nEK += 2 * (nDK - nDJ);
+            }
+            else if(nEI > 0) {
+               /* Advance only on I */
+               nI += nSI;
+               CHECK_CELL_ALONG_RAY(nI, nJ, nK);
+               nEI += 2 * (nDI - nDJ);
+               nEK += 2 * nDK;
+            }
+            else {
+               nEI += 2 * nDI;
+               if(nEK > 0) {
+                  /* Advance only on K */
+                  nK += nSK;
+                  CHECK_CELL_ALONG_RAY(nI, nJ, nK);
+                  nEK += 2 * (nDK - nDJ);
+               }
+               else {
+                  nEK += 2 * nDK;
+               }
+            }
+         }
+      }
+      else {
+         /* K is the driving axis */
+         /* Calculate error used to know when to move on other axes */
+         SInt32 nEI(3 * nDI - nDK);
+         SInt32 nEJ(3 * nDJ - nDK);
+         CHECK_CELL_ALONG_RAY(nI, nJ, nK);
+         /* Cycle through cells */
+         for(SInt32 nCell = nDK; nCell > 0; --nCell) {
+            /* Advance on driving axis */
+            nK += nSK;
+            CHECK_CELL_ALONG_RAY(nI, nJ, nK);
+            /* Advance on other axes, if necessary */
+            if(nEI > 0 && nEJ > 0) {
+               /* Advance on both the other axes */
+               if(nEI * nDJ > nEJ * nDI) {
+                  nI += nSI;
+                  CHECK_CELL_ALONG_RAY(nI, nJ, nK);
+                  nJ += nSJ;
+                  CHECK_CELL_ALONG_RAY(nI, nJ, nK);
+               }
+               else {
+                  nJ += nSJ;
+                  CHECK_CELL_ALONG_RAY(nI, nJ, nK);
+                  nI += nSI;
+                  CHECK_CELL_ALONG_RAY(nI, nJ, nK);
+               }
+               nEI += 2 * (nDI - nDK);
+               nEJ += 2 * (nDJ - nDK);
+            }
+            else if(nEI > 0) {
+               /* Advance only on I */
+               nI += nSI;
+               CHECK_CELL_ALONG_RAY(nI, nJ, nK);
+               nEI += 2 * (nDI - nDK);
+               nEJ += 2 * nDJ;
+            }
+            else {
+               nEI += 2 * nDI;
+               if(nEJ > 0) {
+                  /* Advance only on J */
+                  nJ += nSJ;
+                  CHECK_CELL_ALONG_RAY(nI, nJ, nK);
+                  nEJ += 2 * (nDJ - nDK);
+               }
+               else {
+                  nEJ += 2 * nDJ;
+               }
+            }
+         }
+      }
    }
 
    /****************************************/
    /****************************************/
 
    template<class ENTITY>
-   void CGrid<ENTITY>::UpdateCell(size_t un_i,
-                                  size_t un_j,
-                                  size_t un_k,
+   void CGrid<ENTITY>::UpdateCell(SInt32 n_i,
+                                  SInt32 n_j,
+                                  SInt32 n_k,
                                   ENTITY& c_entity) {
-      if((un_i < m_unSizeI) &&
-         (un_j < m_unSizeJ) &&
-         (un_k < m_unSizeK)) {
-         SCell& sCell = GetCellAt(un_i, un_j, un_k);
+      if((n_i < m_nSizeI) &&
+         (n_j < m_nSizeJ) &&
+         (n_k < m_nSizeK)) {
+         SCell& sCell = GetCellAt(n_i, n_j, n_k);
          if(sCell.Timestamp < m_unCurTimestamp) {
             sCell.Entities.clear();
             sCell.Timestamp = m_unCurTimestamp;
@@ -188,10 +532,10 @@ namespace argos {
          sCell.Entities.insert(&c_entity);
       }
       else {
-         THROW_ARGOSEXCEPTION("CGrid<ENTITY>::UpdateCell() : index (" << un_i << "," << un_j << "," << un_k << ") out of bounds (" << m_unSizeI-1 << "," << m_unSizeJ-1 << "," << m_unSizeK-1 << ")");
+         THROW_ARGOSEXCEPTION("CGrid<ENTITY>::UpdateCell() : index (" << n_i << "," << n_j << "," << n_k << ") out of bounds (" << m_nSizeI-1 << "," << m_nSizeJ-1 << "," << m_nSizeK-1 << ")");
       }
    }
-   
+
    /****************************************/
    /****************************************/
 
@@ -204,37 +548,37 @@ namespace argos {
    /****************************************/
 
    template<class ENTITY>
-   void CGrid<ENTITY>::PositionToCell(size_t& un_i,
-                                      size_t& un_j,
-                                      size_t& un_k,
+   void CGrid<ENTITY>::PositionToCell(SInt32& n_i,
+                                      SInt32& n_j,
+                                      SInt32& n_k,
                                       const CVector3& c_position) const {
-      un_i = Floor((c_position.GetX() - m_cAreaMinCorner.GetX()) * m_cInvCellSize.GetX());
-      un_j = Floor((c_position.GetY() - m_cAreaMinCorner.GetY()) * m_cInvCellSize.GetY());
-      un_k = Floor((c_position.GetZ() - m_cAreaMinCorner.GetZ()) * m_cInvCellSize.GetZ());
+      n_i = Floor((c_position.GetX() - m_cAreaMinCorner.GetX()) * m_cInvCellSize.GetX());
+      n_j = Floor((c_position.GetY() - m_cAreaMinCorner.GetY()) * m_cInvCellSize.GetY());
+      n_k = Floor((c_position.GetZ() - m_cAreaMinCorner.GetZ()) * m_cInvCellSize.GetZ());
    }
 
    /****************************************/
    /****************************************/
 
    template<class ENTITY>
-   typename CGrid<ENTITY>::SCell& CGrid<ENTITY>::GetCellAt(size_t un_i,
-                                                           size_t un_j,
-                                                           size_t un_k) {
-      return m_psCells[m_unSizeI * m_unSizeJ * un_k +
-                       m_unSizeI * un_j +
-                       un_i];
+   typename CGrid<ENTITY>::SCell& CGrid<ENTITY>::GetCellAt(SInt32 n_i,
+                                                           SInt32 n_j,
+                                                           SInt32 n_k) {
+      return m_psCells[m_nSizeI * m_nSizeJ * n_k +
+                       m_nSizeI * n_j +
+                       n_i];
    }
 
    /****************************************/
    /****************************************/
 
    template<class ENTITY>
-   const typename CGrid<ENTITY>::SCell& CGrid<ENTITY>::GetCellAt(size_t un_i,
-                                                                 size_t un_j,
-                                                                 size_t un_k) const {
-      return m_psCells[m_unSizeI * m_unSizeJ * un_k +
-                       m_unSizeI * un_j +
-                       un_i];
+   const typename CGrid<ENTITY>::SCell& CGrid<ENTITY>::GetCellAt(SInt32 n_i,
+                                                                 SInt32 n_j,
+                                                                 SInt32 n_k) const {
+      return m_psCells[m_nSizeI * m_nSizeJ * n_k +
+                       m_nSizeI * n_j +
+                       n_i];
    }
 
    /****************************************/

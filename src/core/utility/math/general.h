@@ -153,6 +153,16 @@ namespace argos {
     }
 
     /**
+     * Rounds the passed floating-point value to the closest integer.
+     * If the passed value is >0, Floor() is called. Otherwise, Ceil() is called.
+     * @return the closest integer.
+     */
+    inline SInt32 Round(Real f_value) {
+        if (f_value > 0.0f) return Floor(f_value + 0.5f);
+        return Ceil(f_value - 0.5f);
+    }
+
+    /**
      * Rounds the passed floating-point value to the integer closest to zero.
      * If the passed value is >0, Floor() is called. Otherwise, Ceil() is called.
      * @return the integer closest to zero.

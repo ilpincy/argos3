@@ -150,13 +150,18 @@ namespace argos {
 
       /**
        * Executes an operation on all entities that intersect the given ray.
+       * When the parameter <tt>b_stop_at_closest_matches</tt> is set to <tt>true</tt>, this
+       * method stops at the closest match. Depending on the actual index implementation, there
+       * may be multiple closest matches. In this case, the operation is executed on all of them.
        * @param c_ray The ray.
        * @param c_operation The operation to perform.
+       * @param b_stop_at_closest_matches Stop the computation as soon as the first match is found.
        * @see CRay
        * @see COperation
        */
       virtual void ForEntitiesAlongRay(const CRay3& c_ray,
-                                       COperation& c_operation) = 0;
+                                       COperation& c_operation,
+                                       bool b_stop_at_closest_match = false) = 0;
 
    };
 

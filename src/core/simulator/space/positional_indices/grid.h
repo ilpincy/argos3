@@ -3,6 +3,7 @@
 
 #include <argos3/core/utility/datatypes/set.h>
 #include <argos3/core/utility/math/range.h>
+#include <argos3/core/utility/math/ray3.h>
 #include <argos3/core/simulator/space/positional_indices/positional_index.h>
 
 namespace argos {
@@ -29,9 +30,9 @@ namespace argos {
 
       CGrid(const CVector3& c_area_min_corner,
             const CVector3& c_area_max_corner,
-            size_t un_size_i,
-            size_t un_size_j,
-            size_t un_size_k);
+            SInt32 n_size_i,
+            SInt32 n_size_j,
+            SInt32 n_size_k);
 
       virtual ~CGrid();
 
@@ -67,47 +68,48 @@ namespace argos {
                                                COperation& c_operation);
 
       virtual void ForEntitiesAlongRay(const CRay3& c_ray,
-                                       COperation& c_operation);
+                                       COperation& c_operation,
+                                       bool b_stop_at_closest_match = false);
 
-      inline size_t GetSizeI() const {
-         return m_unSizeI;
+      inline SInt32 GetSizeI() const {
+         return m_nSizeI;
       }
 
-      inline size_t GetSizeJ() const {
-         return m_unSizeJ;
+      inline SInt32 GetSizeJ() const {
+         return m_nSizeJ;
       }
 
-      inline size_t GetSizeK() const {
-         return m_unSizeK;
+      inline SInt32 GetSizeK() const {
+         return m_nSizeK;
       }
 
       inline void SetUpdateEntityOperation(COperation* pc_operation);
 
-      void UpdateCell(size_t un_i,
-                      size_t un_j,
-                      size_t un_k,
+      void UpdateCell(SInt32 n_i,
+                      SInt32 n_j,
+                      SInt32 n_k,
                       ENTITY& c_entity);
 
-      inline void PositionToCell(size_t& un_i,
-                                 size_t& un_j,
-                                 size_t& un_k,
+      inline void PositionToCell(SInt32& n_i,
+                                 SInt32& n_j,
+                                 SInt32& n_k,
                                  const CVector3& c_position) const;
 
-      inline SCell& GetCellAt(size_t un_i,
-                              size_t un_j,
-                              size_t un_k);
+      inline SCell& GetCellAt(SInt32 n_i,
+                              SInt32 n_j,
+                              SInt32 n_k);
 
-      inline const SCell& GetCellAt(size_t un_i,
-                                    size_t un_j,
-                                    size_t un_k) const;
+      inline const SCell& GetCellAt(SInt32 n_i,
+                                    SInt32 n_j,
+                                    SInt32 n_k) const;
 
    protected:
 
       CVector3 m_cAreaMinCorner;
       CVector3 m_cAreaMaxCorner;
-      size_t m_unSizeI;
-      size_t m_unSizeJ;
-      size_t m_unSizeK;
+      SInt32 m_nSizeI;
+      SInt32 m_nSizeJ;
+      SInt32 m_nSizeK;
       CRange<Real> m_cRangeX;
       CRange<Real> m_cRangeY;
       CRange<Real> m_cRangeZ;

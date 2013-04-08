@@ -76,9 +76,9 @@ namespace argos {
       /* Discard LEDs switched off */
       if(c_entity.GetColor() != CColor::BLACK) {
          /* Calculate the position of the LED in the space hash */
-         m_cGrid.PositionToCell(m_unI, m_unJ, m_unK, c_entity.GetPosition());
+         m_cGrid.PositionToCell(m_nI, m_nJ, m_nK, c_entity.GetPosition());
          /* Update the corresponding cell */
-         m_cGrid.UpdateCell(m_unI, m_unJ, m_unK, c_entity);
+         m_cGrid.UpdateCell(m_nI, m_nJ, m_nK, c_entity);
       }
       /* Continue with the other entities */
       return true;

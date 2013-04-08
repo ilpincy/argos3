@@ -100,7 +100,7 @@ namespace argos {
    private:
 
       CGrid<CLEDEntity>& m_cGrid;
-      size_t m_unI, m_unJ, m_unK;
+      SInt32 m_nI, m_nJ, m_nK;
 
    };
 
