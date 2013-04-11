@@ -155,6 +155,7 @@ namespace argos {
    protected:
 
       void InitializeArena();
+      void DrawArena();
 
       virtual void timerEvent(QTimerEvent* pc_event);
       virtual void mouseMoveEvent(QMouseEvent* pc_event);
