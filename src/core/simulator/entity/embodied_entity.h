@@ -13,6 +13,7 @@ namespace argos {
 }
 
 #include <argos3/core/simulator/entity/positional_entity.h>
+#include <argos3/core/simulator/space/positional_indices/grid.h>
 #include <argos3/core/simulator/space/positional_indices/space_hash.h>
 #include <argos3/core/utility/datatypes/set.h>
 #include <argos3/core/utility/math/ray3.h>
@@ -265,6 +266,56 @@ namespace argos {
     * @endcond
     */
    
+   /****************************************/
+   /****************************************/
+
+   class CEmbodiedEntityGridUpdater : public CGrid<CEmbodiedEntity>::COperation {
+
+   public:
+
+      CEmbodiedEntityGridUpdater(CGrid<CEmbodiedEntity>& c_grid);
+      virtual bool operator()(CEmbodiedEntity& c_entity);
+
+   private:
+
+      CGrid<CEmbodiedEntity>& m_cGrid;
+      SInt32 m_nMinI, m_nMinJ, m_nMinK;
+      SInt32 m_nMaxI, m_nMaxJ, m_nMaxK;
+      SInt32 m_nI, m_nJ, m_nK;
+   };
+
+   /****************************************/
+   /****************************************/
+
+   template <class E> struct SEntityIntersectionItem {
+      E* IntersectedEntity;
+      Real TOnRay;
+
+      SEntityIntersectionItem() :
+         IntersectedEntity(NULL),
+         TOnRay(0.0f) {}
+
+      SEntityIntersectionItem(E* pc_entity, Real f_t_on_ray) :
+         IntersectedEntity(pc_entity),
+         TOnRay(f_t_on_ray) {}
+
+      inline bool operator<(const SEntityIntersectionItem& s_item) {
+         return TOnRay < s_item.TOnRay;
+      }
+   };
+
+   template <class E> struct SEntityIntersectionData {
+      bool Intersection;
+      std::vector<SEntityIntersectionItem<E>*> IntersectedEntities;
+
+      SEntityIntersectionData() :
+         Intersection(false) {}
+
+      SEntityIntersectionData(std::vector<SEntityIntersectionItem<E>*>& c_entities) :
+         Intersection(c_entities.size() > 0),
+         IntersectedEntities(c_entities) {}
+   };
+
    /****************************************/
    /****************************************/
 

@@ -24,6 +24,7 @@ namespace argos {
 
    CSpace::CSpace() :
       m_unSimulationClock(0),
+      m_pcEmbodiedEntityIndex(NULL),
       m_pcFloorEntity(NULL),
       m_ptPhysicsEngines(NULL) {
    }
@@ -32,10 +33,13 @@ namespace argos {
    /****************************************/
 
    void CSpace::Init(TConfigurationNode& t_tree) {
-      /* Get the arena size */
+      /* Get the arena center and size */
+      GetNodeAttributeOrDefault(t_tree, "center", m_cArenaCenter, m_cArenaCenter);
       GetNodeAttribute(t_tree, "size", m_cArenaSize);
       /* Get the list of physics engines */
       m_ptPhysicsEngines = &(CSimulator::GetInstance().GetPhysicsEngines());
+      /* Create the positional index for embodied entities */
+      m_pcEmbodiedEntityIndex = new CGrid<CEmbodiedEntity>();
       /*
        * Add and initialize all entities in XML
        */

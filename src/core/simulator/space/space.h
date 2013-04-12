@@ -77,35 +77,6 @@ namespace argos {
        */
       typedef std::map <std::string, TMapPerType, std::less <std::string> > TMapPerTypePerId;
 
-      template <class E> struct SEntityIntersectionItem {
-         E* IntersectedEntity;
-         Real TOnRay;
-
-         SEntityIntersectionItem() :
-            IntersectedEntity(NULL),
-            TOnRay(0.0f) {}
-
-         SEntityIntersectionItem(E* pc_entity, Real f_t_on_ray) :
-            IntersectedEntity(pc_entity),
-            TOnRay(f_t_on_ray) {}
-
-         inline bool operator<(const SEntityIntersectionItem& s_item) {
-            return TOnRay < s_item.TOnRay;
-         }
-      };
-
-      template <class E> struct SEntityIntersectionData {
-         bool Intersection;
-         std::vector<SEntityIntersectionItem<E>*> IntersectedEntities;
-
-         SEntityIntersectionData() :
-            Intersection(false) {}
-
-         SEntityIntersectionData(std::vector<SEntityIntersectionItem<E>*>& c_entities) :
-            Intersection(c_entities.size() > 0),
-            IntersectedEntities(c_entities) {}
-      };
-
       /****************************************/
       /****************************************/
 
@@ -373,6 +344,14 @@ namespace argos {
          m_cArenaSize = c_size;
       }
 
+      /**
+       * Returns the positional index for embodied entities.
+       * @return The positional index for embodied entities.
+       */
+      inline CPositionalIndex<CEmbodiedEntity>& GetEmbodiedEntityIndex() {
+         return *m_pcEmbodiedEntityIndex;
+      }
+
    protected:
 
       virtual void AddControllableEntity(CControllableEntity& c_entity);
@@ -405,6 +384,9 @@ namespace argos {
       /** The current simulation clock */
       UInt32 m_unSimulationClock;
 
+      /** Arena center */
+      CVector3 m_cArenaCenter;
+
       /** Arena size */
       CVector3 m_cArenaSize;
 
@@ -427,6 +409,9 @@ namespace argos {
 
       /** A vector of medium entities */
       CMediumEntity::TVector m_vecMediumEntities;
+
+      /** A positional index for embodied entities */
+      CPositionalIndex<CEmbodiedEntity>* m_pcEmbodiedEntityIndex;
 
       /** The floor entity */
       CFloorEntity* m_pcFloorEntity;

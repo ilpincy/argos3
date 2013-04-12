@@ -240,13 +240,9 @@ namespace argos {
       /* Calculate cell range */
       SInt32 nI1, nJ1, nK1, nI2, nJ2, nK2;
       PositionToCell(nI1, nJ1, nK1, c_center - c_half_size);
+      ClampCoordinates(nI1, nJ1, nK1);
       PositionToCell(nI2, nJ2, nK2, c_center + c_half_size);
-      nI1 = Min<SInt32>(m_nSizeI-1, Max<SInt32>(0, nI1));
-      nJ1 = Min<SInt32>(m_nSizeJ-1, Max<SInt32>(0, nJ1));
-      nK1 = Min<SInt32>(m_nSizeK-1, Max<SInt32>(0, nK1));
-      nI2 = Min<SInt32>(m_nSizeI-1, Max<SInt32>(0, nI2));
-      nJ2 = Min<SInt32>(m_nSizeJ-1, Max<SInt32>(0, nJ2));
-      nK2 = Min<SInt32>(m_nSizeK-1, Max<SInt32>(0, nK2));
+      ClampCoordinates(nI2, nJ2, nK2);
       /* Go through cells */
       for(SInt32 k = nK1; k <= nK2; ++k) {
          for(SInt32 j = nJ1; j <= nJ2; ++j) {
@@ -340,13 +336,9 @@ namespace argos {
       /* Transform ray start and end position into cell coordinates */
       SInt32 nI1, nJ1, nK1, nI2, nJ2, nK2;
       PositionToCell(nI1, nJ1, nK1, c_ray.GetStart());
+      ClampCoordinates(nI1, nJ1, nK1);
       PositionToCell(nI2, nJ2, nK2, c_ray.GetEnd());
-      nI1 = Min<SInt32>(m_nSizeI-1, Max<SInt32>(0, nI1));
-      nJ1 = Min<SInt32>(m_nSizeJ-1, Max<SInt32>(0, nJ1));
-      nK1 = Min<SInt32>(m_nSizeK-1, Max<SInt32>(0, nK1));
-      nI2 = Min<SInt32>(m_nSizeI-1, Max<SInt32>(0, nI2));
-      nJ2 = Min<SInt32>(m_nSizeJ-1, Max<SInt32>(0, nJ2));
-      nK2 = Min<SInt32>(m_nSizeK-1, Max<SInt32>(0, nK2));
+      ClampCoordinates(nI2, nJ2, nK2);
       /* Go through cells one by one, from start to end.
          Stop as soon as an entity is found.
          If the loop is completed, it means no entities were found -> no intersection.
@@ -561,6 +553,21 @@ namespace argos {
    /****************************************/
 
    template<class ENTITY>
+   void CGrid<ENTITY>::ClampCoordinates(SInt32& n_i,
+                                        SInt32& n_j,
+                                        SInt32& n_k) const {
+      if(n_i < 0) n_i = 0;
+      else if(n_i >= m_nSizeI) n_i = m_nSizeI - 1;
+      if(n_j < 0) n_j = 0;
+      else if(n_j >= m_nSizeJ) n_j = m_nSizeJ - 1;
+      if(n_k < 0) n_k = 0;
+      else if(n_k >= m_nSizeK) n_k = m_nSizeK - 1;
+   }
+
+   /****************************************/
+   /****************************************/
+   
+   template<class ENTITY>
    typename CGrid<ENTITY>::SCell& CGrid<ENTITY>::GetCellAt(SInt32 n_i,
                                                            SInt32 n_j,
                                                            SInt32 n_k) {
@@ -583,5 +590,5 @@ namespace argos {
 
    /****************************************/
    /****************************************/
-
+   
 }
