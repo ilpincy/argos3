@@ -41,6 +41,9 @@ namespace argos {
 #ifdef ARGOS_WITH_LUA
    void CCI_RangeAndBearingSensor::ReadingsToLuaState(lua_State* pt_lua_state) {
       lua_getfield(pt_lua_state, -1, "range_and_bearing");
+      /* Save the number of elements in the RAB table */
+      size_t unLastMsgNum = lua_objlen(pt_lua_state, -1);
+      /* Overwrite the table with the new messages */
       for(size_t i = 0; i < m_tReadings.size(); ++i) {
          CLuaUtility::StartTable(pt_lua_state, i+1);
          CLuaUtility::AddToTable(pt_lua_state, "range", m_tReadings[i].Range);
@@ -53,6 +56,15 @@ namespace argos {
          }
          CLuaUtility::EndTable(pt_lua_state);
          CLuaUtility::EndTable(pt_lua_state);
+      }
+      /* Are the new messages less than the old ones? */
+      if(m_tReadings.size() < unLastMsgNum) {
+         /* Yes, set to nil all the extra entries */
+         for(size_t i = m_tReadings.size()+1; i <= unLastMsgNum; ++i) {
+            lua_pushnumber(pt_lua_state,  i);
+            lua_pushnil   (pt_lua_state    );
+            lua_settable  (pt_lua_state, -3);
+         }
       }
       lua_pop(pt_lua_state, 1);
    }
