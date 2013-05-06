@@ -5,6 +5,5 @@
   - Call UpdateEntityStatus from CEmbodiedEntity::MoveTo()
 
 [MAC]
-- Compiling as MODULE creates .so files.
 - The configuration file is stored in $HOME/Library/Preferences/be.ac.ulb.Iridia.ARGoS3.plist.
 

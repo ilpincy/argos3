@@ -3,11 +3,12 @@
  */
 #cmakedefine ARGOS_DYNAMIC_LIBRARY_LOADING
 
+/*
+ * System-dependent extension for dynamic libraries
+ */
 #ifdef ARGOS_DYNAMIC_LIBRARY_LOADING
-   /*
-    * System-dependent extension for dynamic libraries
-    */
-#  define ARGOS_DYNAMIC_LIBRARY_EXTENSION "@ARGOS_DYNAMIC_LIBRARY_EXTENSION@"
+#  define ARGOS_SHARED_LIBRARY_EXTENSION "@ARGOS_SHARED_LIBRARY_EXTENSION@"
+#  define ARGOS_MODULE_LIBRARY_EXTENSION "@ARGOS_MODULE_LIBRARY_EXTENSION@"
 #endif
 
 /*
