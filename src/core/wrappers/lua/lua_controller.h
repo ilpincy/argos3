@@ -33,11 +33,11 @@ namespace argos {
          return m_ptLuaState;
       }
 
-      void SetLuaScript(const std::string& str_script);
+      virtual void SetLuaScript(const std::string& str_script);
 
-      void CreateLuaState();
+      virtual void CreateLuaState();
 
-      void SensorReadingsToLuaState();
+      virtual void SensorReadingsToLuaState();
 
       inline bool IsOK() const {
          return m_bIsOK;
