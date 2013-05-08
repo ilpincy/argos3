@@ -20,11 +20,11 @@ namespace argos {
    public:
 
       virtual Real CalculateReading(Real f_distance) {
-         if(f_distance < 0.00880828) {
+         if(f_distance < 0.009889556) {
             return 1.0;
          }
          else {
-            return 0.0100527 / (f_distance + 0.000163144) - 0.120523;
+            return 0.0100527 / (f_distance + 0.000163144);
          }
       }
 
