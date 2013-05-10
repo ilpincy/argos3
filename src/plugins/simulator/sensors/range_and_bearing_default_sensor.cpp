@@ -27,7 +27,7 @@ namespace argos {
       m_pcRNG(NULL),
       m_bShowRays(false),
       m_cSpace(CSimulator::GetInstance().GetSpace()),
-      m_cEmbodiedSpaceHash(m_cSpace.GetEmbodiedEntitiesSpaceHash()),
+      m_cEmbodiedEntityIndex(m_cSpace.GetEmbodiedEntityIndex()),
       m_cRABEquippedSpaceHash(m_cSpace.GetRABEquippedEntitiesSpaceHash()) {}
 
    /****************************************/

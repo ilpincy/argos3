@@ -27,7 +27,7 @@ namespace argos {
       m_pcRNG(NULL),
       m_bAddNoise(false),
       m_cSpace(CSimulator::GetInstance().GetSpace()),
-      m_cEmbodiedSpaceHash(m_cSpace.GetEmbodiedEntitiesSpaceHash()) {}
+      m_cEmbodiedEntityIndex(m_cSpace.GetEmbodiedEntityIndex()) {}
 
    /****************************************/
    /****************************************/
@@ -76,7 +76,7 @@ namespace argos {
       CRay3 cScanningRay;
       CVector3 cRayStart, cRayEnd;
       /* Buffers to contain data about the intersection */
-      CSpace::SEntityIntersectionItem<CEmbodiedEntity> sIntersection;
+      SEmbodiedEntityIntersectionItem sIntersection;
       /* Go through the sensors */
       for(UInt32 i = 0; i < m_tReadings.size(); ++i) {
          /* Compute ray for sensor i */
@@ -90,9 +90,10 @@ namespace argos {
          cScanningRay.Set(cRayStart,cRayEnd);
          /* Compute reading */
          /* Get the closest intersection */
-         if(m_cSpace.GetClosestEmbodiedEntityIntersectedByRay(sIntersection,
-                                                              cScanningRay,
-                                                              m_tIgnoreMe)) {
+         if(GetClosestEmbodiedEntityIntersectedByRay(sIntersection,
+                                                     m_cEmbodiedEntityIndex,
+                                                     cScanningRay,
+                                                     m_tIgnoreMe)) {
             /* There is an intersection */
             if(m_bShowRays) {
                m_pcControllableEntity->AddIntersectionPoint(cScanningRay,

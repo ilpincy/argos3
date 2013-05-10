@@ -28,7 +28,7 @@ namespace argos {
       m_pcRNG(NULL),
       m_bAddNoise(false),
       m_cSpace(CSimulator::GetInstance().GetSpace()),
-      m_cEmbodiedSpaceHash(m_cSpace.GetEmbodiedEntitiesSpaceHash()) {}
+      m_cEmbodiedEntityIndex(m_cSpace.GetEmbodiedEntityIndex()) {}
 
    /****************************************/
    /****************************************/
@@ -72,15 +72,13 @@ namespace argos {
    
    void CLightDefaultSensor::Update() {
       /* Erase readings */
-      for(size_t i = 0; i < m_tReadings.size(); ++i) {
-         m_tReadings[i] = 0.0f;
-      }
+      for(size_t i = 0; i < m_tReadings.size(); ++i)  m_tReadings[i] = 0.0f;
       /* Ray used for scanning the environment for obstacles */
       CRay3 cScanningRay;
       CVector3 cRayStart;
       CVector3 cSensorToLight;
       /* Buffers to contain data about the intersection */
-      CSpace::SEntityIntersectionItem<CEmbodiedEntity> sIntersection;
+      SEmbodiedEntityIntersectionItem sIntersection;
       /* List of light entities */
       CSpace::TMapPerType& mapLights = m_cSpace.GetEntitiesByType("light");
       /* Go through the sensors */
@@ -100,8 +98,9 @@ namespace argos {
                /* Set ray end to light position */
                cScanningRay.Set(cRayStart, cLight.GetPosition());
                /* Check occlusions */
-               if(! m_cSpace.GetClosestEmbodiedEntityIntersectedByRay(sIntersection,
-                                                                      cScanningRay)) {
+               if(! GetClosestEmbodiedEntityIntersectedByRay(sIntersection,
+                                                             m_cEmbodiedEntityIndex,
+                                                             cScanningRay)) {
                   /* No occlusion, the light is visibile */
                   if(m_bShowRays) {
                      m_pcControllableEntity->AddCheckedRay(false, cScanningRay);

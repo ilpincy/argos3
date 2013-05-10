@@ -33,13 +33,27 @@ namespace argos {
    /****************************************/
 
    void CSpace::Init(TConfigurationNode& t_tree) {
+      /* Get the list of physics engines */
+      m_ptPhysicsEngines = &(CSimulator::GetInstance().GetPhysicsEngines());
       /* Get the arena center and size */
       GetNodeAttributeOrDefault(t_tree, "center", m_cArenaCenter, m_cArenaCenter);
       GetNodeAttribute(t_tree, "size", m_cArenaSize);
-      /* Get the list of physics engines */
-      m_ptPhysicsEngines = &(CSimulator::GetInstance().GetPhysicsEngines());
+      /* Get the positional index method */
+      std::string strPosIndexMethod("grid");
+      GetNodeAttributeOrDefault(t_tree, "positional_index", strPosIndexMethod, strPosIndexMethod);
       /* Create the positional index for embodied entities */
-      m_pcEmbodiedEntityIndex = new CGrid<CEmbodiedEntity>();
+      if(strPosIndexMethod == "grid") {
+         std::string strPosGridSize;
+         GetNodeAttribute(t_tree, "positional_grid_size", strPosGridSize);
+         size_t punGridSize[3];
+         ParseValues<size_t>(strPosGridSize, 3, punGridSize, ',');
+         m_pcEmbodiedEntityIndex = new CGrid<CEmbodiedEntity>(
+            m_cArenaCenter - m_cArenaSize * 0.5f, m_cArenaCenter + m_cArenaSize * 0.5f,
+            punGridSize[0], punGridSize[1], punGridSize[2]);
+      }
+      else {
+         THROW_ARGOSEXCEPTION("Unknown method \"" << strPosIndexMethod << "\" for positional index.");
+      }
       /*
        * Add and initialize all entities in XML
        */

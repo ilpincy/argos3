@@ -49,8 +49,8 @@ namespace argos {
       bool                 m_bShowRays;
       TEmbodiedEntitySet   m_tIgnoreMe;
 
-      CSpace&                                                             m_cSpace;
-      CSpaceHash<CEmbodiedEntity, CEmbodiedEntitySpaceHashUpdater>&       m_cEmbodiedSpaceHash;
+      CSpace&                            m_cSpace;
+      CPositionalIndex<CEmbodiedEntity>& m_cEmbodiedEntityIndex;
       CSpaceHash<CRABEquippedEntity, CRABEquippedEntitySpaceHashUpdater>& m_cRABEquippedSpaceHash;
 
       SInt32 m_nBBoxMinI, m_nBBoxMinJ, m_nBBoxMinK;

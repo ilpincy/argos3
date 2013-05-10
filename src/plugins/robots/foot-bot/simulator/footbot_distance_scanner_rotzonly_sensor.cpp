@@ -34,8 +34,8 @@ namespace argos {
       m_pcRNG(NULL),
       m_bAddNoise(false),
       m_cSpace(CSimulator::GetInstance().GetSpace()),
-      m_bShowRays(false) {
-   }
+      m_bShowRays(false),
+      m_cEmbodiedEntityIndex(m_cSpace.GetEmbodiedEntityIndex()) {}
 
    /****************************************/
    /****************************************/
@@ -200,8 +200,10 @@ namespace argos {
    Real CFootBotDistanceScannerRotZOnlySensor::CalculateReadingForRay(const CRay3& c_ray,
                                                                       Real f_min_distance) {
       /* Get the closest intersection */
-      CSpace::SEntityIntersectionItem<CEmbodiedEntity> sIntersection;
-      if(m_cSpace.GetClosestEmbodiedEntityIntersectedByRay(sIntersection, c_ray)) {
+      SEmbodiedEntityIntersectionItem sIntersection;
+      if(GetClosestEmbodiedEntityIntersectedByRay(sIntersection,
+                                                  m_cEmbodiedEntityIndex,
+                                                  c_ray)) {
          if(m_bShowRays) m_pcControllableEntity->AddIntersectionPoint(c_ray, sIntersection.TOnRay);
          /* There is an intersection! */
          Real fDistance = c_ray.GetDistance(sIntersection.TOnRay);

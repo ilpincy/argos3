@@ -287,34 +287,44 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   template <class E> struct SEntityIntersectionItem {
-      E* IntersectedEntity;
+   struct SEmbodiedEntityIntersectionItem {
+      CEmbodiedEntity* IntersectedEntity;
       Real TOnRay;
 
-      SEntityIntersectionItem() :
+      SEmbodiedEntityIntersectionItem() :
          IntersectedEntity(NULL),
          TOnRay(0.0f) {}
 
-      SEntityIntersectionItem(E* pc_entity, Real f_t_on_ray) :
+      SEmbodiedEntityIntersectionItem(CEmbodiedEntity* pc_entity,
+                                      Real f_t_on_ray) :
          IntersectedEntity(pc_entity),
          TOnRay(f_t_on_ray) {}
 
-      inline bool operator<(const SEntityIntersectionItem& s_item) {
+      inline bool operator<(const SEmbodiedEntityIntersectionItem& s_item) {
          return TOnRay < s_item.TOnRay;
       }
    };
 
-   template <class E> struct SEntityIntersectionData {
+   struct SEmbodiedEntityIntersectionData {
       bool Intersection;
-      std::vector<SEntityIntersectionItem<E>*> IntersectedEntities;
+      std::vector<SEmbodiedEntityIntersectionItem*> IntersectedEntities;
 
-      SEntityIntersectionData() :
+      SEmbodiedEntityIntersectionData() :
          Intersection(false) {}
 
-      SEntityIntersectionData(std::vector<SEntityIntersectionItem<E>*>& c_entities) :
+      SEmbodiedEntityIntersectionData(std::vector<SEmbodiedEntityIntersectionItem*>& c_entities) :
          Intersection(c_entities.size() > 0),
          IntersectedEntities(c_entities) {}
    };
+
+   extern bool GetClosestEmbodiedEntityIntersectedByRay(SEmbodiedEntityIntersectionItem& s_item,
+                                                        const CPositionalIndex<CEmbodiedEntity>& c_pos_index,
+                                                        const CRay3& c_ray);
+
+   extern bool GetClosestEmbodiedEntityIntersectedByRay(SEmbodiedEntityIntersectionItem& s_item,
+                                                        const CPositionalIndex<CEmbodiedEntity>& c_pos_index,
+                                                        const CRay3& c_ray,
+                                                        TEmbodiedEntitySet& t_ignored_entities);
 
    /****************************************/
    /****************************************/
