@@ -391,12 +391,13 @@ namespace argos {
    public:
 
       CCheckEmbodiedEntitiesForIntersection(const CRay3& c_ray) :
-         m_fTOnRay(0.0f),
+         m_fCurTOnRay(2.0f),
+         m_fMinTOnRay(2.0f),
          m_cRay(c_ray),
          m_pcClosestEmbodiedEntity(NULL) {}
 
       Real GetTOnRay() const {
-         return m_fTOnRay;
+         return m_fMinTOnRay;
       }
 
       CEmbodiedEntity* GetClosestEmbodiedEntity() {
@@ -404,19 +405,22 @@ namespace argos {
       }
 
       virtual bool operator()(CEmbodiedEntity& c_entity) {
-         if(c_entity.CheckIntersectionWithRay(m_fTOnRay, m_cRay)) {
+         if(c_entity.CheckIntersectionWithRay(m_fCurTOnRay, m_cRay) &&
+            (m_fCurTOnRay < m_fMinTOnRay)) {
+            m_fMinTOnRay = m_fCurTOnRay;
             m_pcClosestEmbodiedEntity = &c_entity;
-            return false;
          }
+         /* Continue with the other matches */
          return true;
       }
 
    private:
 
-      Real m_fTOnRay;
+      Real m_fCurTOnRay;
+      Real m_fMinTOnRay;
       CRay3 m_cRay;
       CEmbodiedEntity* m_pcClosestEmbodiedEntity;
-      };
+   };
 
    /****************************************/
    /****************************************/
@@ -427,13 +431,14 @@ namespace argos {
 
       CCheckEmbodiedEntitiesForIntersectionWIgnore(const CRay3& c_ray,
                                                    CEmbodiedEntity& c_entity) :
-         m_fTOnRay(0.0f),
+         m_fCurTOnRay(2.0f),
+         m_fMinTOnRay(2.0f),
          m_cRay(c_ray),
          m_pcClosestEmbodiedEntity(NULL),
          m_pcIgnoredEmbodiedEntity(&c_entity) {}
 
       Real GetTOnRay() const {
-         return m_fTOnRay;
+         return m_fMinTOnRay;
       }
 
       CEmbodiedEntity* GetClosestEmbodiedEntity() {
@@ -441,17 +446,20 @@ namespace argos {
       }
 
       virtual bool operator()(CEmbodiedEntity& c_entity) {
-         if(m_pcIgnoredEmbodiedEntity != &c_entity &&
-            c_entity.CheckIntersectionWithRay(m_fTOnRay, m_cRay)) {
+         if((&c_entity != m_pcIgnoredEmbodiedEntity) &&
+            c_entity.CheckIntersectionWithRay(m_fCurTOnRay, m_cRay) &&
+            (m_fCurTOnRay < m_fMinTOnRay)) {
+            m_fMinTOnRay = m_fCurTOnRay;
             m_pcClosestEmbodiedEntity = &c_entity;
-            return false;
          }
+         /* Continue with the other matches */
          return true;
       }
 
    private:
 
-      Real m_fTOnRay;
+      Real m_fCurTOnRay;
+      Real m_fMinTOnRay;
       CRay3 m_cRay;
       CEmbodiedEntity* m_pcClosestEmbodiedEntity;
       CEmbodiedEntity* m_pcIgnoredEmbodiedEntity;
@@ -463,21 +471,11 @@ namespace argos {
    bool GetClosestEmbodiedEntityIntersectedByRay(SEmbodiedEntityIntersectionItem& s_item,
                                                  CPositionalIndex<CEmbodiedEntity>& c_pos_index,
                                                  const CRay3& c_ray) {
-      /**
-       * @todo Here I would need a better function rather than ForEntitiesAlongRay(), because this
-       * implementation would stop at the first match, which could not be the closest because multiple
-       * objects could occupy a grid cell
-       */
       CCheckEmbodiedEntitiesForIntersection cOp(c_ray);
       c_pos_index.ForEntitiesAlongRay(c_ray, cOp, true);
       s_item.IntersectedEntity = cOp.GetClosestEmbodiedEntity();
-      if(s_item.IntersectedEntity != NULL) {
-         s_item.TOnRay = cOp.GetTOnRay();
-         return true;
-      }
-      else {
-         return false;
-      }
+      s_item.TOnRay = cOp.GetTOnRay();
+      return (s_item.IntersectedEntity != NULL);
    }
 
    /****************************************/
@@ -487,21 +485,11 @@ namespace argos {
                                                  CPositionalIndex<CEmbodiedEntity>& c_pos_index,
                                                  const CRay3& c_ray,
                                                  CEmbodiedEntity& c_entity) {
-      /**
-       * @todo Here I would need a better function rather than ForEntitiesAlongRay(), because this
-       * implementation would stop at the first match, which could not be the closest because multiple
-       * objects could occupy a grid cell
-       */
       CCheckEmbodiedEntitiesForIntersectionWIgnore cOp(c_ray, c_entity);
       c_pos_index.ForEntitiesAlongRay(c_ray, cOp, true);
       s_item.IntersectedEntity = cOp.GetClosestEmbodiedEntity();
-      if(s_item.IntersectedEntity != NULL) {
-         s_item.TOnRay = cOp.GetTOnRay();
-         return true;
-      }
-      else {
-         return false;
-      }
+      s_item.TOnRay = cOp.GetTOnRay();
+      return (s_item.IntersectedEntity != NULL);
    }
 
    /****************************************/
