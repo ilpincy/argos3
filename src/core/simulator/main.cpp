@@ -57,6 +57,7 @@ int main(int n_argc, char** ppch_argv) {
       LOG.Flush();
       LOGERR.Flush();
       cSimulator.Destroy();
+      LOGERR << std::endl;
       LOG.Flush();
       LOGERR.Flush();
       return 1;
