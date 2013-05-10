@@ -324,7 +324,7 @@ namespace argos {
    extern bool GetClosestEmbodiedEntityIntersectedByRay(SEmbodiedEntityIntersectionItem& s_item,
                                                         const CPositionalIndex<CEmbodiedEntity>& c_pos_index,
                                                         const CRay3& c_ray,
-                                                        TEmbodiedEntitySet& t_ignored_entities);
+                                                        CEmbodiedEntity& c_entity);
 
    /****************************************/
    /****************************************/

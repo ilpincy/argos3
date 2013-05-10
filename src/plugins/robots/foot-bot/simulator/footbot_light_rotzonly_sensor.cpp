@@ -68,8 +68,6 @@ namespace argos {
       m_pcLightEntity = &(c_entity.GetComponent<CLightSensorEquippedEntity>("light_sensors"));
       m_pcLightEntity->SetCanBeEnabledIfDisabled(true);
       m_pcLightEntity->Enable();
-      /* Ignore the sensing robot when checking for occlusions */
-      m_tIgnoreMe.insert(m_pcEmbodiedEntity);
    }
 
    /****************************************/
@@ -138,7 +136,7 @@ namespace argos {
             if(! GetClosestEmbodiedEntityIntersectedByRay(sIntersection,
                                                           m_cEmbodiedEntityIndex,
                                                           cOcclusionCheckRay,
-                                                          m_tIgnoreMe)) {
+                                                          *m_pcEmbodiedEntity)) {
                /* The light is not occluded */
                if(m_bShowRays) {
                   m_pcControllableEntity->AddCheckedRay(false, cOcclusionCheckRay);

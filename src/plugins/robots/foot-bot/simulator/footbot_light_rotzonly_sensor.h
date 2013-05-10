@@ -67,9 +67,6 @@ namespace argos {
 
       /** Reference to the embodied entity index */
       CPositionalIndex<CEmbodiedEntity>& m_cEmbodiedEntityIndex;
-
-      /** Used to calculate the ray intersection */
-      TEmbodiedEntitySet m_tIgnoreMe;
    };
 
 }
