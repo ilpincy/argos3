@@ -3,56 +3,6 @@
  *
  * @brief This file provides the definition of the random number generator of ARGoS.
  *
- * It is meant to be used not only inside ARGoS, but also from controllers, loop functions
- * as well as external applications.
- *
- * In general, RNGs have the greatest impact on the reproducibility of experiments.
- * However, once the random seed has been set, the series of random numbers generated
- * by an RNG is fixed. In this way, experiments are reproducible.
- * To further complicate things, ARGoS is a multi-threaded program. Multi-threading and
- * RNGs create issues to reproducibility. In fact, if the RNGs were shared among the
- * threads, it would be impossible to predict the order in which the RNGs are accessed,
- * because thread scheduling is not controllable nor predictable.
- * For this reason, a common solution is to assign a separated RNG to each thread. For
- * ARGoS, this is not a viable method because we want the number of threads to be
- * set by the user and we want the outcome of an experiment to be reproducible no matter
- * how many threads are used.
- *
- * All these considerations brought us to the design of a RNG with a different approach.
- * The class argos::CRandom is a static factory that creates argos::CRandom::CRNG
- * objects. If a component (sensor, actuator, controller, etc.) needs to get random
- * numbers, it has to first create a local RNG class (typically, at init time). Internally,
- * the factory assigns a seed to it.
- *
- * To allow for usage from different components (such as ARGoS main code, an evolutionary
- * algorithm, controllers, etc.) RNGs are divided up in categories. The ARGoS core uses
- * the <tt>argos</tt> category. When ARGoS is reset, all the RNGs in this category are reset
- * as well, but not the RNGs in other categories. Categories give the user complete power on the
- * RNGs, while ensuring compartmentalization.
- *
- * If all you want is drawing random numbers inside a controller, you can safely create new
- * argos::CRandom::CRNG objects in the <tt>argos</tt> category. If, instead, you intend to
- * wrap ARGoS around an optimization algorithm and want to maintain control of the way random
- * number generators are managed, it is necessary for you to create your own category.
- *
- * To create a new RNG inside the <tt>argos</tt> category, this is enough:
- * <pre>
- * argos::CRandom::CRNG* m_pcRNG = argos::CRandom::CreateRNG("argos");
- * </pre>
- *
- * When you want to use random numbers with a custom category, you need to
- * first call the function providing a label for the category and a base seed:
- *
- * <pre>
- * argos::CRandom::CreateCategory("my_category", my_seed);
- * </pre>
- *
- * Once the category is created, you can get a new RNG with a call to the function
- *
- * <pre>
- * argos::CRandom::CRNG* m_pcRNG = argos::CRandom::CreateRNG("my_category");
- * </pre>
- *
  * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */
 
@@ -76,11 +26,65 @@ namespace argos {
 
 namespace argos {
 
-   /**
-    * The RNG factory.
-    * This class allows one to create new categories of RNGs and manage them. In addition,
-    * this class allows one to create new RNGs and assign them to categories.
-    */
+/**
+ * The ARGoS random number generator.
+ * <p>
+ * It is meant to be used not only inside ARGoS, but also from controllers, loop functions
+ * as well as external applications.
+ * </p>
+ * <p>
+ * In general, RNGs have the greatest impact on the reproducibility of experiments.
+ * However, once the random seed has been set, the series of random numbers generated
+ * by an RNG is fixed. In this way, experiments are reproducible.
+ * To further complicate things, ARGoS is a multi-threaded program. Multi-threading and
+ * RNGs create issues to reproducibility. In fact, if the RNGs were shared among the
+ * threads, it would be impossible to predict the order in which the RNGs are accessed,
+ * because thread scheduling is not controllable nor predictable.
+ * For this reason, a common solution is to assign a separated RNG to each thread. For
+ * ARGoS, this is not a viable method because we want the number of threads to be
+ * set by the user and we want the outcome of an experiment to be reproducible no matter
+ * how many threads are used.
+ * </p>
+ * <p>
+ * All these considerations brought us to the design of a RNG with a different approach.
+ * The class argos::CRandom is a static factory that creates argos::CRandom::CRNG
+ * objects. If a component (sensor, actuator, controller, etc.) needs to get random
+ * numbers, it has to first create a local RNG class (typically, at init time). Internally,
+ * the factory assigns a seed to it.
+ * </p>
+ * <p>
+ * To allow for usage from different components (such as ARGoS main code, an evolutionary
+ * algorithm, controllers, etc.) RNGs are divided up in categories. The ARGoS core uses
+ * the <tt>argos</tt> category. When ARGoS is reset, all the RNGs in this category are reset
+ * as well, but not the RNGs in other categories. Categories give the user complete power on the
+ * RNGs, while ensuring compartmentalization.
+ * </p>
+ * <p>
+ * If all you want is drawing random numbers inside a controller, you can safely create new
+ * argos::CRandom::CRNG objects in the <tt>argos</tt> category. If, instead, you intend to
+ * wrap ARGoS around an optimization algorithm and want to maintain control of the way random
+ * number generators are managed, it is necessary for you to create your own category.
+ * </p>
+ * <p>
+ * To create a new RNG inside the <tt>argos</tt> category, this is enough:
+ * </p>
+ * <pre>
+ * argos::CRandom::CRNG* m_pcRNG = argos::CRandom::CreateRNG("argos");
+ * </pre>
+ * <p>
+ * When you want to use random numbers with a custom category, you need to
+ * first call the function providing a label for the category and a base seed:
+ * </p>
+ * <pre>
+ * argos::CRandom::CreateCategory("my_category", my_seed);
+ * </pre>
+ * <p>
+ * Once the category is created, you can get a new RNG with a call to the function
+ * </p>
+ * <pre>
+ * argos::CRandom::CRNG* m_pcRNG = argos::CRandom::CreateRNG("my_category");
+ * </pre>
+*/
    class CRandom {
 
    public:
@@ -124,7 +128,9 @@ namespace argos {
 
          /**
           * Sets the seed of this RNG.
+          * This method does not reset the RNG. You must call Reset() explicitly.
           * @param un_seed the new seed for this RNG.
+          * @see Reset()
           */
          inline void SetSeed(UInt32 un_seed) throw() {
             m_unSeed = un_seed;
@@ -274,7 +280,9 @@ namespace argos {
          }
          /**
           * Sets the new seed of the category.
+          * This method does not reset the RNGs. You must call Reset() explicitly.
           * @param un_seed the new seed of the category.
+          * @see Reset()
           */
          void SetSeed(UInt32 un_seed);
 
@@ -292,6 +300,8 @@ namespace argos {
 
          /**
           * Sets new seed for the RNGs in this category.
+          * This method does not reset the RNGs. You must call Reset() explicitly.
+          * @see Reset()
           */
          void ReseedRNGs();
 
@@ -352,8 +362,10 @@ namespace argos {
 
       /**
        * Sets the new seed of the wanted category.
+       * This method does not reset the RNGs. You must call Reset() explicitly.
        * @param str_category the id of the category.
        * @param un_seed the new seed of the wanted category.
+       * @see Reset()
        */
       static void SetSeedOf(const std::string& str_category,
                             UInt32 un_seed);

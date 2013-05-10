@@ -10,7 +10,7 @@ fi
 
 PRGNAM=@CPACK_PACKAGE_NAME@
 VERSION=${VERSION:-@CPACK_PACKAGE_VERSION@}
-TAG=${TAG:-_@CPACK_PACKAGE_RELEASE@}
+TAG=${TAG:-@CPACK_PACKAGE_RELEASE@}
 
 # Automatically determine the architecture we're building on:
 if [ -z "$ARCH" ]; then

@@ -158,9 +158,15 @@ namespace argos {
             /* Directory open, now go through the files in the directory */
             while((ptDirData = ::readdir(ptDir)) != NULL) {
                /* We have a file, check that it is a library file */
-               if(std::string(ptDirData->d_name).rfind("." ARGOS_DYNAMIC_LIBRARY_EXTENSION) != std::string::npos) {
+               if(std::string(ptDirData->d_name).rfind("." ARGOS_SHARED_LIBRARY_EXTENSION) != std::string::npos) {
                   /* It's a library file, load it */
                   LoadLibrary(strDir + ptDirData->d_name);
+               }
+               if(std::string(ARGOS_SHARED_LIBRARY_EXTENSION) != std::string(ARGOS_MODULE_LIBRARY_EXTENSION)) {
+                  if(std::string(ptDirData->d_name).rfind("." ARGOS_MODULE_LIBRARY_EXTENSION) != std::string::npos) {
+                     /* It's a library file, load it */
+                     LoadLibrary(strDir + ptDirData->d_name);
+                  }
                }
             }
             /* Close directory */

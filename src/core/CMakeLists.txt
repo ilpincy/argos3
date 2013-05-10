@@ -247,8 +247,15 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
   #
   # Core ARGoS3 installation
   #
+if(APPLE)
+  install(TARGETS argos3
+    RUNTIME DESTINATION libexec
+    LIBRARY DESTINATION lib/argos3
+    ARCHIVE DESTINATION lib/argos3)
+else(APPLE)
   install(TARGETS argos3
     RUNTIME DESTINATION bin
     LIBRARY DESTINATION lib/argos3
     ARCHIVE DESTINATION lib/argos3)
+endif(APPLE)
 endif(ARGOS_BUILD_FOR_SIMULATOR)
