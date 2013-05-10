@@ -39,8 +39,9 @@ namespace argos {
        * prints the id of all the embodied entities in a sphere centered
        * in zero and with 1-meter radius:
        * <code>
-       *    class CMyOperation {
-       *       virtual bool MyOperation(CEmbodiedEntity& e) {
+       *    class CMyOperation : public CPositionalIndex<CEmbodiedEntity>::COperation {
+       *    public:
+       *       virtual bool operator()(CEmbodiedEntity& e) {
        *          LOG << e.GetId() << std::endl;
        *          return true;
        *       }

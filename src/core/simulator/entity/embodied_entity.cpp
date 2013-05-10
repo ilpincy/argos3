@@ -386,4 +386,125 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   class CCheckEmbodiedEntitiesForIntersection : public CPositionalIndex<CEmbodiedEntity>::COperation {
+
+   public:
+
+      CCheckEmbodiedEntitiesForIntersection(const CRay3& c_ray) :
+         m_fTOnRay(0.0f),
+         m_cRay(c_ray),
+         m_pcClosestEmbodiedEntity(NULL) {}
+
+      Real GetTOnRay() const {
+         return m_fTOnRay;
+      }
+
+      CEmbodiedEntity* GetClosestEmbodiedEntity() {
+         return m_pcClosestEmbodiedEntity;
+      }
+
+      virtual bool operator()(CEmbodiedEntity& c_entity) {
+         if(c_entity.CheckIntersectionWithRay(m_fTOnRay, m_cRay)) {
+            m_pcClosestEmbodiedEntity = &c_entity;
+            return false;
+         }
+         return true;
+      }
+
+   private:
+
+      Real m_fTOnRay;
+      CRay3 m_cRay;
+      CEmbodiedEntity* m_pcClosestEmbodiedEntity;
+      };
+
+   /****************************************/
+   /****************************************/
+
+   class CCheckEmbodiedEntitiesForIntersectionWIgnore : public CPositionalIndex<CEmbodiedEntity>::COperation {
+
+   public:
+
+      CCheckEmbodiedEntitiesForIntersectionWIgnore(const CRay3& c_ray,
+                                                   CEmbodiedEntity& c_entity) :
+         m_fTOnRay(0.0f),
+         m_cRay(c_ray),
+         m_pcClosestEmbodiedEntity(NULL),
+         m_pcIgnoredEmbodiedEntity(&c_entity) {}
+
+      Real GetTOnRay() const {
+         return m_fTOnRay;
+      }
+
+      CEmbodiedEntity* GetClosestEmbodiedEntity() {
+         return m_pcClosestEmbodiedEntity;
+      }
+
+      virtual bool operator()(CEmbodiedEntity& c_entity) {
+         if(m_pcIgnoredEmbodiedEntity != &c_entity &&
+            c_entity.CheckIntersectionWithRay(m_fTOnRay, m_cRay)) {
+            m_pcClosestEmbodiedEntity = &c_entity;
+            return false;
+         }
+         return true;
+      }
+
+   private:
+
+      Real m_fTOnRay;
+      CRay3 m_cRay;
+      CEmbodiedEntity* m_pcClosestEmbodiedEntity;
+      CEmbodiedEntity* m_pcIgnoredEmbodiedEntity;
+   };
+
+   /****************************************/
+   /****************************************/
+
+   bool GetClosestEmbodiedEntityIntersectedByRay(SEmbodiedEntityIntersectionItem& s_item,
+                                                 CPositionalIndex<CEmbodiedEntity>& c_pos_index,
+                                                 const CRay3& c_ray) {
+      /**
+       * @todo Here I would need a better function rather than ForEntitiesAlongRay(), because this
+       * implementation would stop at the first match, which could not be the closest because multiple
+       * objects could occupy a grid cell
+       */
+      CCheckEmbodiedEntitiesForIntersection cOp(c_ray);
+      c_pos_index.ForEntitiesAlongRay(c_ray, cOp, true);
+      s_item.IntersectedEntity = cOp.GetClosestEmbodiedEntity();
+      if(s_item.IntersectedEntity != NULL) {
+         s_item.TOnRay = cOp.GetTOnRay();
+         return true;
+      }
+      else {
+         return false;
+      }
+   }
+
+   /****************************************/
+   /****************************************/
+
+   bool GetClosestEmbodiedEntityIntersectedByRay(SEmbodiedEntityIntersectionItem& s_item,
+                                                 CPositionalIndex<CEmbodiedEntity>& c_pos_index,
+                                                 const CRay3& c_ray,
+                                                 CEmbodiedEntity& c_entity) {
+      /**
+       * @todo Here I would need a better function rather than ForEntitiesAlongRay(), because this
+       * implementation would stop at the first match, which could not be the closest because multiple
+       * objects could occupy a grid cell
+       */
+      CCheckEmbodiedEntitiesForIntersectionWIgnore cOp(c_ray, c_entity);
+      c_pos_index.ForEntitiesAlongRay(c_ray, cOp, true);
+      s_item.IntersectedEntity = cOp.GetClosestEmbodiedEntity();
+      if(s_item.IntersectedEntity != NULL) {
+         s_item.TOnRay = cOp.GetTOnRay();
+         return true;
+      }
+      else {
+         return false;
+      }
+   }
+
+   /****************************************/
+   /****************************************/
+
 }

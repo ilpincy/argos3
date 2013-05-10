@@ -189,7 +189,7 @@ namespace argos {
        * @throws CARGoSException if this entity is not associated to any model.
        * @see CPhysicsModel::CheckIntersectionWithRay()
        */
-      virtual bool CheckIntersectionWithRay(Real& f_distance,
+      virtual bool CheckIntersectionWithRay(Real& f_t_on_ray,
                                             const CRay3& c_ray) const;
 
       /**
@@ -318,11 +318,11 @@ namespace argos {
    };
 
    extern bool GetClosestEmbodiedEntityIntersectedByRay(SEmbodiedEntityIntersectionItem& s_item,
-                                                        const CPositionalIndex<CEmbodiedEntity>& c_pos_index,
+                                                        CPositionalIndex<CEmbodiedEntity>& c_pos_index,
                                                         const CRay3& c_ray);
 
    extern bool GetClosestEmbodiedEntityIntersectedByRay(SEmbodiedEntityIntersectionItem& s_item,
-                                                        const CPositionalIndex<CEmbodiedEntity>& c_pos_index,
+                                                        CPositionalIndex<CEmbodiedEntity>& c_pos_index,
                                                         const CRay3& c_ray,
                                                         CEmbodiedEntity& c_entity);
 
