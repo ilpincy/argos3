@@ -414,7 +414,7 @@ namespace argos {
          return true;
       }
 
-   private:
+   protected:
 
       Real m_fCurTOnRay;
       Real m_fMinTOnRay;
@@ -425,25 +425,14 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   class CCheckEmbodiedEntitiesForIntersectionWIgnore : public CPositionalIndex<CEmbodiedEntity>::COperation {
+   class CCheckEmbodiedEntitiesForIntersectionWIgnore : public CCheckEmbodiedEntitiesForIntersection {
 
    public:
 
       CCheckEmbodiedEntitiesForIntersectionWIgnore(const CRay3& c_ray,
                                                    CEmbodiedEntity& c_entity) :
-         m_fCurTOnRay(2.0f),
-         m_fMinTOnRay(2.0f),
-         m_cRay(c_ray),
-         m_pcClosestEmbodiedEntity(NULL),
+         CCheckEmbodiedEntitiesForIntersection(c_ray),
          m_pcIgnoredEmbodiedEntity(&c_entity) {}
-
-      Real GetTOnRay() const {
-         return m_fMinTOnRay;
-      }
-
-      CEmbodiedEntity* GetClosestEmbodiedEntity() {
-         return m_pcClosestEmbodiedEntity;
-      }
 
       virtual bool operator()(CEmbodiedEntity& c_entity) {
          if((&c_entity != m_pcIgnoredEmbodiedEntity) &&
@@ -456,12 +445,8 @@ namespace argos {
          return true;
       }
 
-   private:
+   protected:
 
-      Real m_fCurTOnRay;
-      Real m_fMinTOnRay;
-      CRay3 m_cRay;
-      CEmbodiedEntity* m_pcClosestEmbodiedEntity;
       CEmbodiedEntity* m_pcIgnoredEmbodiedEntity;
    };
 

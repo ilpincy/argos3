@@ -47,9 +47,11 @@ namespace argos {
          GetNodeAttribute(t_tree, "positional_grid_size", strPosGridSize);
          size_t punGridSize[3];
          ParseValues<size_t>(strPosGridSize, 3, punGridSize, ',');
-         m_pcEmbodiedEntityIndex = new CGrid<CEmbodiedEntity>(
+         CGrid<CEmbodiedEntity>* pcGrid = new CGrid<CEmbodiedEntity>(
             m_cArenaCenter - m_cArenaSize * 0.5f, m_cArenaCenter + m_cArenaSize * 0.5f,
             punGridSize[0], punGridSize[1], punGridSize[2]);
+         pcGrid->SetUpdateEntityOperation(new CEmbodiedEntityGridUpdater(*pcGrid));
+         m_pcEmbodiedEntityIndex = pcGrid;
       }
       else {
          THROW_ARGOSEXCEPTION("Unknown method \"" << strPosIndexMethod << "\" for positional index.");
@@ -62,8 +64,7 @@ namespace argos {
       for(itArenaItem = itArenaItem.begin(&t_tree);
           itArenaItem != itArenaItem.end();
           ++itArenaItem) {
-         if(itArenaItem->Value() != "distribute" &&
-            itArenaItem->Value() != "box_strip") {
+         if(itArenaItem->Value() != "distribute") {
             CEntity* pcEntity = CFactory<CEntity>::New(itArenaItem->Value());
             pcEntity->Init(*itArenaItem);
             CallEntityOperation<CSpaceOperationAddEntity, CSpace, void>(*this, *pcEntity);
@@ -248,6 +249,7 @@ namespace argos {
    /****************************************/
 
    void CSpace::UpdateSpaceData() {
+      m_pcEmbodiedEntityIndex->Update();
    }
 
    /****************************************/
