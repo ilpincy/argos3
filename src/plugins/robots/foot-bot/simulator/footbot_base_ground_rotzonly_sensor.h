@@ -18,8 +18,9 @@ namespace argos {
 
 #include <argos3/plugins/robots/foot-bot/control_interface/ci_footbot_base_ground_sensor.h>
 #include <argos3/core/utility/math/range.h>
-#include <argos3/core/simulator/space/space.h>
 #include <argos3/core/utility/math/rng.h>
+#include <argos3/core/simulator/space/space.h>
+#include <argos3/core/simulator/sensor.h>
 
 namespace argos {
 

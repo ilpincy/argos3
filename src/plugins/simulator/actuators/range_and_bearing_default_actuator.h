@@ -15,7 +15,8 @@ namespace argos {
 }
 
 #include <argos3/plugins/robots/generic/control_interface/ci_range_and_bearing_actuator.h>
-#include <argos3/core/simulator/entity/rab_equipped_entity.h>
+#include <argos3/plugins/simulator/entities/rab_equipped_entity.h>
+#include <argos3/plugins/simulator/media/rab_medium.h>
 #include <argos3/core/simulator/actuator.h>
 
 namespace argos {
@@ -37,6 +38,7 @@ namespace argos {
    private:
 
       CRABEquippedEntity* m_pcRangeAndBearingEquippedEntity;
+      CRABMedium*         m_pcRangeAndBearingMedium;
 
    };
 

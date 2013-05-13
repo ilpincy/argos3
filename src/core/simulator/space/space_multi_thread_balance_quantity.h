@@ -74,6 +74,7 @@ namespace argos {
 
       virtual void UpdateControllableEntities();
       virtual void UpdatePhysics();
+      virtual void UpdateMedia() {}
 
    protected:
 

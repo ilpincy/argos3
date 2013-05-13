@@ -58,6 +58,7 @@ namespace argos {
        */
       class COperation {
       public:
+         virtual ~COperation() {}
          virtual bool operator()(ENTITY&) = 0;
       };
 

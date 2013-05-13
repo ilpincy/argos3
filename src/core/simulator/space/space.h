@@ -16,12 +16,10 @@ namespace argos {
 }
 
 #include <argos3/core/utility/datatypes/any.h>
+#include <argos3/core/simulator/medium/medium.h>
 #include <argos3/core/simulator/space/positional_indices/positional_index.h>
 #include <argos3/core/simulator/entity/embodied_entity.h>
 #include <argos3/core/simulator/entity/controllable_entity.h>
-#include <argos3/core/simulator/entity/medium_entity.h>
-#include <argos3/core/simulator/entity/led_entity.h>
-#include <argos3/core/simulator/entity/rab_equipped_entity.h>
 
 namespace argos {
 
@@ -234,8 +232,16 @@ namespace argos {
        * Sets the list of physics engines.
        * This method is used internally.
        */
-      inline virtual void SetPhysicsEngines(CPhysicsEngine::TVector& t_engines) {
+      virtual void SetPhysicsEngines(CPhysicsEngine::TVector& t_engines) {
          m_ptPhysicsEngines = &t_engines;
+      }
+
+      /**
+       * Sets the list of media.
+       * This method is used internally.
+       */
+      virtual void SetMedia(CMedium::TVector& t_media) {
+         m_ptMedia = &t_media;
       }
 
       /**
@@ -352,20 +358,16 @@ namespace argos {
          return *m_pcEmbodiedEntityIndex;
       }
 
-   protected:
-
       virtual void AddControllableEntity(CControllableEntity& c_entity);
       virtual void RemoveControllableEntity(CControllableEntity& c_entity);
-      virtual void AddMediumEntity(CMediumEntity& c_entity);
-      virtual void RemoveMediumEntity(CMediumEntity& c_entity);
       virtual void AddEntityToPhysicsEngine(CEmbodiedEntity& c_entity);
       
-      void UpdateSpaceData();
-      
+   protected:
+
+      virtual void UpdateIndices();
       virtual void UpdateControllableEntities() = 0;
       virtual void UpdatePhysics() = 0;
-      
-      void UpdateMediumEntities();
+      virtual void UpdateMedia() = 0;
 
       void Distribute(TConfigurationNode& t_tree);
 
@@ -375,8 +377,6 @@ namespace argos {
 
       friend class CSpaceOperationAddControllableEntity;
       friend class CSpaceOperationRemoveControllableEntity;
-      friend class CSpaceOperationAddMediumEntity;
-      friend class CSpaceOperationRemoveMediumEntity;
       friend class CSpaceOperationAddEmbodiedEntity;
 
    protected:
@@ -407,9 +407,6 @@ namespace argos {
       /** A vector of controllable entities */
       CControllableEntity::TVector m_vecControllableEntities;
 
-      /** A vector of medium entities */
-      CMediumEntity::TVector m_vecMediumEntities;
-
       /** A positional index for embodied entities */
       CPositionalIndex<CEmbodiedEntity>* m_pcEmbodiedEntityIndex;
       CPositionalIndex<CEmbodiedEntity>::COperation* m_pcEmbodiedEntityGridUpdateOperation;
@@ -419,6 +416,9 @@ namespace argos {
 
       /** A reference to the list of physics engines */
       CPhysicsEngine::TVector* m_ptPhysicsEngines;
+
+      /** A reference to the list of media */
+      CMedium::TVector* m_ptMedia;
    };
 
    /****************************************/
@@ -478,21 +478,5 @@ namespace argos {
 #define REGISTER_STANDARD_SPACE_OPERATIONS_ON_ENTITY(ENTITY) \
    REGISTER_STANDARD_SPACE_OPERATION_ADD_ENTITY(ENTITY)      \
    REGISTER_STANDARD_SPACE_OPERATION_REMOVE_ENTITY(ENTITY)
-
-#define REGISTER_STANDARD_SPACE_OPERATION_ADD_COMPOSABLE(ENTITY)        \
-   SPACE_OPERATION_ADD_COMPOSABLE_ENTITY(ENTITY)                        \
-   REGISTER_SPACE_OPERATION(CSpaceOperationAddEntity,                   \
-                            CSpaceOperationAdd ## ENTITY,               \
-                            ENTITY);
-
-#define REGISTER_STANDARD_SPACE_OPERATION_REMOVE_COMPOSABLE(ENTITY)        \
-   SPACE_OPERATION_REMOVE_COMPOSABLE_ENTITY(ENTITY)                        \
-   REGISTER_SPACE_OPERATION(CSpaceOperationRemoveEntity,                   \
-                            CSpaceOperationRemove ## ENTITY,               \
-                            ENTITY);
-
-#define REGISTER_STANDARD_SPACE_OPERATIONS_ON_COMPOSABLE(ENTITY)  \
-   REGISTER_STANDARD_SPACE_OPERATION_ADD_COMPOSABLE(ENTITY)       \
-   REGISTER_STANDARD_SPACE_OPERATION_REMOVE_COMPOSABLE(ENTITY)
 
 #endif

@@ -22,10 +22,11 @@ namespace argos {
       TQueryResult tResult;
       /* Search among the plugins */
       QuerySearchPlugins<CSimulatedActuator>(str_query, tResult);
-      QuerySearchPlugins<CSimulatedSensor>(str_query, tResult);
-      QuerySearchPlugins<CPhysicsEngine>(str_query, tResult);
-      QuerySearchPlugins<CVisualization>(str_query, tResult);
-      QuerySearchPlugins<CEntity>(str_query, tResult);
+      QuerySearchPlugins<CSimulatedSensor>  (str_query, tResult);
+      QuerySearchPlugins<CPhysicsEngine>    (str_query, tResult);
+      QuerySearchPlugins<CMedium>           (str_query, tResult);
+      QuerySearchPlugins<CVisualization>    (str_query, tResult);
+      QuerySearchPlugins<CEntity>           (str_query, tResult);
       /* Print the result */
       if(tResult.empty()) {
          LOG << "   None found." << std::endl << std::endl;
@@ -58,16 +59,19 @@ namespace argos {
          QueryShowList<CSimulatedSensor>("AVAILABLE SENSORS");
       } else if(str_query == "physics_engines") {
          QueryShowList<CPhysicsEngine>("AVAILABLE PHYSICS ENGINES");
+      } else if(str_query == "media") {
+         QueryShowList<CPhysicsEngine>("AVAILABLE MEDIA");
       } else if(str_query == "visualizations") {
          QueryShowList<CVisualization>("AVAILABLE VISUALIZATIONS");
       } else if(str_query == "entities") {
          QueryShowList<CEntity>("AVAILABLE ENTITIES");
       } else if(str_query == "all") {
          QueryShowList<CSimulatedActuator>("AVAILABLE ACTUATORS");
-         QueryShowList<CSimulatedSensor>("AVAILABLE SENSORS");
-         QueryShowList<CPhysicsEngine>("AVAILABLE PHYSICS ENGINES");
-         QueryShowList<CVisualization>("AVAILABLE VISUALIZATIONS");
-         QueryShowList<CEntity>("AVAILABLE ENTITIES");
+         QueryShowList<CSimulatedSensor>  ("AVAILABLE SENSORS");
+         QueryShowList<CPhysicsEngine>    ("AVAILABLE PHYSICS ENGINES");
+         QueryShowList<CMedium>           ("AVAILABLE MEDIA");
+         QueryShowList<CVisualization>    ("AVAILABLE VISUALIZATIONS");
+         QueryShowList<CEntity>           ("AVAILABLE ENTITIES");
       } else {
          QueryShowPluginDescription(str_query);
       }

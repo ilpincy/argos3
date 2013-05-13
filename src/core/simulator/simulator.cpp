@@ -47,10 +47,18 @@ namespace argos {
       }
       /* Delete the visualization */
       if(m_pcVisualization != NULL) delete m_pcVisualization;
-      /* Delete all the physics engines */
-      for(CPhysicsEngine::TMap::iterator it = m_mapPhysicsEngines.begin(); it
-             != m_mapPhysicsEngines.end(); ++it)
+      /* Delete all the media */
+      for(CMedium::TMap::iterator it = m_mapMedia.begin();
+          it != m_mapMedia.end(); ++it) {
          delete it->second;
+      }
+      m_mapMedia.clear();
+      m_vecMedia.clear();
+      /* Delete all the physics engines */
+      for(CPhysicsEngine::TMap::iterator it = m_mapPhysicsEngines.begin();
+          it != m_mapPhysicsEngines.end(); ++it) {
+         delete it->second;
+      }
       m_mapPhysicsEngines.clear();
       m_vecPhysicsEngines.clear();
       /* Delete the space and the dynamic linking manager */
@@ -74,6 +82,19 @@ namespace argos {
       CPhysicsEngine::TMap::const_iterator it = m_mapPhysicsEngines.find(str_id);
       ARGOS_ASSERT(it != m_mapPhysicsEngines.end(), "Physics engine \"" << str_id << "\" not found.")
          return *(it->second);
+   }
+
+   /****************************************/
+   /****************************************/
+
+   CMedium& CSimulator::GetMedium(const std::string& str_id) const {
+      CMedium::TMap::const_iterator it = m_mapMedia.find(str_id);
+      if(it != m_mapMedia.end()) {
+         return *(it->second);
+      }
+      else {
+         THROW_ARGOSEXCEPTION("Physics engine \"" << str_id << "\" not found.");
+      }
    }
 
    /****************************************/
@@ -122,6 +143,8 @@ namespace argos {
       }
       /* Physics engines */
       InitPhysics(GetNode(m_tConfigurationRoot, "physics_engines"));
+      /* Physics engines */
+      InitMedia(GetNode(m_tConfigurationRoot, "media"));
       /* Space */
       InitSpace(GetNode(m_tConfigurationRoot, "arena"));
       /* Call user init function */
@@ -166,6 +189,12 @@ namespace argos {
       /* Reset the space */
       m_pcSpace->Reset();
 
+      /* Reset the media */
+      for(CMedium::TMap::iterator it = m_mapMedia.begin();
+          it != m_mapMedia.end(); ++it) {
+         it->second->Reset();
+      }
+
       /* Reset the physics engines */
       for(CPhysicsEngine::TMap::iterator it = m_mapPhysicsEngines.begin();
           it != m_mapPhysicsEngines.end(); ++it) {
@@ -200,7 +229,16 @@ namespace argos {
          m_pcSpace->Destroy();
       }
 
-      /* Close physics engines */
+      /* Destroy media */
+      for(CMedium::TMap::iterator it = m_mapMedia.begin();
+          it != m_mapMedia.end(); ++it) {
+         it->second->Destroy();
+         delete it->second;
+      }
+      m_mapMedia.clear();
+      m_vecMedia.clear();
+
+      /* Destroy physics engines */
       for(CPhysicsEngine::TMap::iterator it = m_mapPhysicsEngines.begin();
           it != m_mapPhysicsEngines.end(); ++it) {
          it->second->Destroy();
@@ -215,6 +253,7 @@ namespace argos {
       }
 
       /* Free up factory data */
+      CFactory<CMedium>::Destroy();
       CFactory<CPhysicsEngine>::Destroy();
       CFactory<CVisualization>::Destroy();
       CFactory<CSimulatedActuator>::Destroy();
@@ -464,6 +503,7 @@ namespace argos {
       try {
          m_pcSpace->Init(t_tree);
          m_pcSpace->SetPhysicsEngines(m_vecPhysicsEngines);
+         m_pcSpace->SetMedia(m_vecMedia);
       }
       catch(CARGoSException& ex) {
          THROW_ARGOSEXCEPTION_NESTED("Failed to initialize the space.", ex);
@@ -506,6 +546,45 @@ namespace argos {
       }
       catch(CARGoSException& ex) {
          THROW_ARGOSEXCEPTION_NESTED("Failed to initialize the physics engines. Parse error in the <physics_engines> subtree.", ex);
+      }
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CSimulator::InitMedia(TConfigurationNode& t_tree) {
+      try {
+         /* Cycle through the media */
+         TConfigurationNodeIterator itMedia;
+         for(itMedia = itMedia.begin(&t_tree);
+             itMedia != itMedia.end();
+             ++itMedia) {
+            /* Create the  medium */
+            CMedium* pcMedium = CFactory<CMedium>::New(itMedia->Value());
+            try {
+               /* Initialize the medium */
+               pcMedium->Init(*itMedia);
+               /* Check that an medium with that ID does not exist yet */
+               if(m_mapMedia.find(pcMedium->GetId()) == m_mapMedia.end()) {
+                  /* Add it to the lists */
+                  m_mapMedia[pcMedium->GetId()] = pcMedium;
+                  m_vecMedia.push_back(pcMedium);
+               }
+               else {
+                  /* Duplicate id -> error */
+                  THROW_ARGOSEXCEPTION("A medium with id \"" << pcMedium->GetId() << "\" exists already. The ids must be unique!");
+               }
+            }
+            catch(CARGoSException& ex) {
+               /* Error while executing medium init, destroy what done to prevent memory leaks */
+               pcMedium->Destroy();
+               delete pcMedium;
+               THROW_ARGOSEXCEPTION_NESTED("Error initializing medium type \"" << itMedia->Value() << "\"", ex);
+            }
+         }
+      }
+      catch(CARGoSException& ex) {
+         THROW_ARGOSEXCEPTION_NESTED("Failed to initialize the media. Parse error in the <media> subtree.", ex);
       }
    }
 

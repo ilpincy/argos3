@@ -92,6 +92,13 @@
     <dynamics2d id="dyn2d" />
   </physics_engines>
 
+  <!-- ********* -->
+  <!-- * Media * -->
+  <!-- ********* -->
+  <media>
+    <range_and_bearing id="rab" />
+  </media>
+
   <!-- ****************** -->
   <!-- * Visualization * -->
   <!-- ****************** -->

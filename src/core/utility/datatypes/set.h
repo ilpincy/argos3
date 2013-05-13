@@ -175,7 +175,7 @@ namespace argos {
                   /* Last copied element on this set */
                   SSetElement<T>* psLastElemOnThis = m_psFirst;
                   /* Current element on this set being created */
-                  SSetElement<T>* psCurElemOnThis;
+                  SSetElement<T>* psCurElemOnThis = NULL;
                   /* Go on until we hit the end of the list on the other set */
                   while(psCurElemOnOther != NULL) {
                      /* Create a new element for this set, setting as previous psLastElemOnThis */

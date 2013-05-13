@@ -17,8 +17,9 @@ namespace argos {
 
 #include <argos3/plugins/robots/generic/control_interface/ci_light_sensor.h>
 #include <argos3/core/utility/math/range.h>
-#include <argos3/core/simulator/space/space.h>
 #include <argos3/core/utility/math/rng.h>
+#include <argos3/core/simulator/space/space.h>
+#include <argos3/core/simulator/sensor.h>
 
 namespace argos {
 

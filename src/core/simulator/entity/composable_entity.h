@@ -161,9 +161,9 @@ namespace argos {
 
    };
 
-   /**
-    * @cond HIDDEN_SYMBOLS
-    */
+/**
+ * @cond HIDDEN_SYMBOLS
+ */
 #define SPACE_OPERATION_ADD_COMPOSABLE_ENTITY(ENTITY)                   \
    class CSpaceOperationAdd ## ENTITY : public CSpaceOperationAddEntity { \
    public:                                                              \
@@ -189,9 +189,26 @@ namespace argos {
       c_space.RemoveEntity(c_entity);                                   \
    }                                                                    \
    };
-   /**
-    * @endcond
-    */
+
+#define REGISTER_STANDARD_SPACE_OPERATION_ADD_COMPOSABLE(ENTITY)        \
+   SPACE_OPERATION_ADD_COMPOSABLE_ENTITY(ENTITY)                        \
+   REGISTER_SPACE_OPERATION(CSpaceOperationAddEntity,                   \
+                            CSpaceOperationAdd ## ENTITY,               \
+                            ENTITY);
+
+#define REGISTER_STANDARD_SPACE_OPERATION_REMOVE_COMPOSABLE(ENTITY)        \
+   SPACE_OPERATION_REMOVE_COMPOSABLE_ENTITY(ENTITY)                        \
+   REGISTER_SPACE_OPERATION(CSpaceOperationRemoveEntity,                   \
+                            CSpaceOperationRemove ## ENTITY,               \
+                            ENTITY);
+
+#define REGISTER_STANDARD_SPACE_OPERATIONS_ON_COMPOSABLE(ENTITY)  \
+   REGISTER_STANDARD_SPACE_OPERATION_ADD_COMPOSABLE(ENTITY)       \
+   REGISTER_STANDARD_SPACE_OPERATION_REMOVE_COMPOSABLE(ENTITY)
+
+/**
+ * @endcond
+ */
 
 }
 

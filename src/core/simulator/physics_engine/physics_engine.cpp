@@ -20,8 +20,13 @@ namespace argos {
    /****************************************/
 
    void CPhysicsEngine::Init(TConfigurationNode& t_tree) {
-      /* Get physics engine id from the XML */
-      GetNodeAttribute(t_tree, "id", m_strId);
+      try {
+         /* Get id from the XML */
+         GetNodeAttribute(t_tree, "id", m_strId);
+      }
+      catch(CARGoSException& ex) {
+         THROW_ARGOSEXCEPTION("Error initializing a physics engine");
+      }
    }
 
    /****************************************/

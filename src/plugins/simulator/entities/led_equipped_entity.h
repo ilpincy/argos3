@@ -12,8 +12,8 @@ namespace argos {
    class CLEDEntity;
 }
 
-#include <argos3/core/simulator/entity/led_entity.h>
 #include <argos3/core/simulator/entity/composable_entity.h>
+#include <argos3/plugins/simulator/entities/led_entity.h>
 #include <map>
 
 namespace argos {

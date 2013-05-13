@@ -27,15 +27,13 @@ namespace argos {
       m_pcEmbodiedEntityIndex(NULL),
       m_pcEmbodiedEntityGridUpdateOperation(NULL),
       m_pcFloorEntity(NULL),
-      m_ptPhysicsEngines(NULL) {
-   }
+      m_ptPhysicsEngines(NULL),
+      m_ptMedia(NULL) {}
    
    /****************************************/
    /****************************************/
 
    void CSpace::Init(TConfigurationNode& t_tree) {
-      /* Get the list of physics engines */
-      m_ptPhysicsEngines = &(CSimulator::GetInstance().GetPhysicsEngines());
       /* Get the arena center and size */
       GetNodeAttributeOrDefault(t_tree, "center", m_cArenaCenter, m_cArenaCenter);
       GetNodeAttribute(t_tree, "size", m_cArenaSize);
@@ -93,7 +91,7 @@ namespace argos {
          m_vecEntities[i]->Reset();
       }
       /* Reset the space hash */
-      UpdateSpaceData();
+      UpdateIndices();
    }
 
    /****************************************/
@@ -142,32 +140,13 @@ namespace argos {
 
    void CSpace::Update() {
       /* Update space-related data */
-      UpdateSpaceData();
+      UpdateIndices();
       /* Update the controllable entities */
       UpdateControllableEntities();
       /* Update the physics engines */
       UpdatePhysics();
-      /* Update medium entities */
-      UpdateMediumEntities();
-      /* @todo remove this, it's only for debugging */
-      // LOGERR << "[t=" << m_unSimulationClock << "]" << std::endl;
-      // LOGERR << "ALL ENTITIES" << std::endl;
-      // for(CEntity::TVector::iterator it = m_vecEntities.begin();
-      //     it != m_vecEntities.end();
-      //     ++it) {
-      //    LOGERR << "   "
-      //           << (*it)->GetId()
-      //           << std::endl;
-      // }
-      // LOGERR << "ROOT ENTITIES" << std::endl;
-      // for(CEntity::TVector::iterator it = m_vecRootEntities.begin();
-      //     it != m_vecRootEntities.end();
-      //     ++it) {
-      //    LOGERR << "   "
-      //           << (*it)->GetId()
-      //           << std::endl;
-      // }
-      // LOGERR << std::endl;
+      /* Update media */
+      UpdateMedia();
    }
 
    /****************************************/
@@ -189,25 +168,6 @@ namespace argos {
       }
    }
       
-   /****************************************/
-   /****************************************/
-
-   void CSpace::AddMediumEntity(CMediumEntity& c_entity) {
-      m_vecMediumEntities.push_back(&c_entity);
-   }
-
-   /****************************************/
-   /****************************************/
-
-   void CSpace::RemoveMediumEntity(CMediumEntity& c_entity) {
-      CMediumEntity::TVector::iterator it = find(m_vecMediumEntities.begin(),
-                                                 m_vecMediumEntities.end(),
-                                                 &c_entity);
-      if(it != m_vecMediumEntities.end()) {
-         m_vecMediumEntities.erase(it);
-      }
-   }
-
    /****************************************/
    /****************************************/
 
@@ -255,17 +215,8 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CSpace::UpdateSpaceData() {
+   void CSpace::UpdateIndices() {
       m_pcEmbodiedEntityIndex->Update();
-   }
-
-   /****************************************/
-   /****************************************/
-
-   void CSpace::UpdateMediumEntities() {
-      for(size_t i = 0; i < m_vecMediumEntities.size(); ++i) {
-         m_vecMediumEntities[i]->Update();
-      }
    }
 
    /****************************************/
@@ -563,312 +514,6 @@ namespace argos {
       delete pcPositionGenerator;
       delete pcOrientationGenerator;
    }
-
-   /****************************************/
-   /****************************************/
-
-   // static void CleanupFoundEntities(TEmbodiedEntitySet& set_found_entities,
-   //                                  const TEmbodiedEntitySet& set_ignored_entities) {
-   //    if(set_ignored_entities.size() == 1) {
-   //       set_found_entities.erase(*set_ignored_entities.begin());
-   //    }
-   //    else {
-   //       for(TEmbodiedEntitySet::const_iterator it = set_ignored_entities.begin();
-   //           it != set_ignored_entities.end(); ++it) {
-   //          set_found_entities.erase(*it);
-   //       }   
-   //    }
-   // }
-
-   /****************************************/
-   /****************************************/
-
-   // static bool CalculateClosestCollision(CSpace::SEntityIntersectionItem<CEmbodiedEntity>& s_data,
-   //                                       const CRay3& c_ray,
-   //                                       const TEmbodiedEntitySet& set_found_entities) {
-   //    /* Look for the first entity that actually intersects the ray */
-   //    Real fLowestTSoFar = 0.0f;
-   //    TEmbodiedEntitySet::const_iterator itStart = set_found_entities.begin();
-   //    while(itStart != set_found_entities.end() &&
-   //          ! (*itStart)->CheckIntersectionWithRay(fLowestTSoFar, c_ray)) {
-   //       ++itStart;
-   //    }
-   //    if(itStart != set_found_entities.end()) {
-   //       /* The first entity that intersects the ray has been found */
-   //       CEmbodiedEntity* pcClosestEntitySoFar = *itStart;
-   //       /* Go through the remaining entities */
-   //       Real fTmpT;
-   //       for(TEmbodiedEntitySet::const_iterator it = itStart;
-   //           it != set_found_entities.end(); ++it) {
-   //          if((*it)->CheckIntersectionWithRay(fTmpT, c_ray)) {
-   //             /* Intersection detected, check if it's the closest */
-   //             if(fTmpT < fLowestTSoFar) {
-   //                fLowestTSoFar = fTmpT;
-   //                pcClosestEntitySoFar = *it;
-   //             }
-   //          }
-   //       }
-   //       /* Copy the data about the closest intersection */
-   //       s_data.IntersectedEntity = pcClosestEntitySoFar;
-   //       s_data.TOnRay = fLowestTSoFar;
-   //       /* Return true to mean an intersection occurred */
-   //       return true;
-   //    }
-   //    /* No intersection found */
-   //    return false;
-   // }
-
-   /****************************************/
-   /****************************************/
-
-   // bool CSpace::GetClosestEmbodiedEntityIntersectedByRaySpaceHash(SEntityIntersectionItem<CEmbodiedEntity>& s_data,
-   //                                                                const CRay3& c_ray,
-   //                                                                const TEmbodiedEntitySet& set_ignored_entities) {
-   //    /* Buffer for embodied entities found along the ray */
-   //    TEmbodiedEntitySet tFoundEntities;
-   //    /* Transform ray start and end position into cell coordinates */
-   //    SInt32 nI1, nJ1, nK1, nI2, nJ2, nK2;
-   //    m_pcEmbodiedEntitiesSpaceHash->SpaceToHashTable(nI1, nJ1, nK1, c_ray.GetStart());
-   //    m_pcEmbodiedEntitiesSpaceHash->SpaceToHashTable(nI2, nJ2, nK2, c_ray.GetEnd());
-   //    /* Go through cells one by one, from start to end.
-   //       Stop as soon as an entity is found.
-   //       If the loop is completed, it means no entities were found -> no intersection.
-   //    */
-   //    /* Calculate deltas for later use */
-   //    SInt32 nDI(Abs(nI2 - nI1));
-   //    SInt32 nDJ(Abs(nJ2 - nJ1));
-   //    SInt32 nDK(Abs(nK2 - nK1));
-   //    /* Calculate the increment for each direction */
-   //    SInt32 nSI(nI2 >= nI1 ? 1 : -1);
-   //    SInt32 nSJ(nJ2 >= nJ1 ? 1 : -1);
-   //    SInt32 nSK(nK2 >= nK1 ? 1 : -1);
-   //    /* Set the starting cell */
-   //    SInt32 nI(nI1), nJ(nJ1), nK(nK1);
-   //    if(nDI >= nDJ && nDI >= nDK) {
-   //       /* I is the driving axis */
-   //       /* Calculate error used to know when to move on other axes */
-   //       SInt32 nEJ(3 * nDJ - nDI);
-   //       SInt32 nEK(3 * nDK - nDI);
-   //       m_pcEmbodiedEntitiesSpaceHash->CheckCell(nI, nJ, nK, tFoundEntities);
-   //       /* Check if the found entities have an intersection.
-   //          If so, we can stop. Otherwise, we continue. */
-   //       if(! set_ignored_entities.empty()) {
-   //          CleanupFoundEntities(tFoundEntities, set_ignored_entities);
-   //       }
-   //       if(! tFoundEntities.empty() &&
-   //          CalculateClosestCollision(s_data,
-   //                                    c_ray,
-   //                                    tFoundEntities)) {
-   //          return true;
-   //       }
-   //       /* Cycle through cells */
-   //       for(SInt32 nCell = nDI; nCell > 0; --nCell) {
-   //          /* Clean up the found entities */
-   //          tFoundEntities.clear();
-   //          /* Advance on driving axis */
-   //          nI += nSI;
-   //          m_pcEmbodiedEntitiesSpaceHash->CheckCell(nI, nJ, nK, tFoundEntities);
-   //          /* Advance on other axes, if necessary */
-   //          if(nEJ > 0 && nEK > 0) {
-   //             /* Advance on both the other axes */
-   //             if(nEJ * nDK > nEK * nDJ) {
-   //                nJ += nSJ;
-   //                m_pcEmbodiedEntitiesSpaceHash->CheckCell(nI, nJ, nK, tFoundEntities);
-   //                nK += nSK;
-   //                m_pcEmbodiedEntitiesSpaceHash->CheckCell(nI, nJ, nK, tFoundEntities);
-   //             }
-   //             else {
-   //                nK += nSK;
-   //                m_pcEmbodiedEntitiesSpaceHash->CheckCell(nI, nJ, nK, tFoundEntities);
-   //                nJ += nSJ;
-   //                m_pcEmbodiedEntitiesSpaceHash->CheckCell(nI, nJ, nK, tFoundEntities);
-   //             }
-   //             nEJ += 2 * (nDJ - nDI);
-   //             nEK += 2 * (nDK - nDI);
-   //          }
-   //          else if(nEJ > 0) {
-   //             /* Advance only on J */
-   //             nJ += nSJ;
-   //             m_pcEmbodiedEntitiesSpaceHash->CheckCell(nI, nJ, nK, tFoundEntities);
-   //             nEJ += 2 * (nDJ - nDI);
-   //             nEK += 2 * nDK;
-   //          }
-   //          else {
-   //             nEJ += 2 * nDJ;
-   //             if(nEK > 0) {
-   //                /* Advance only on K */
-   //                nK += nSK;
-   //                m_pcEmbodiedEntitiesSpaceHash->CheckCell(nI, nJ, nK, tFoundEntities);
-   //                nEK += 2 * (nDK - nDI);
-   //             }
-   //             else {
-   //                nEK += 2 * nDK;
-   //             }
-   //          }
-   //          /* Check if the found entities have an intersection.
-   //             If so, we can stop. Otherwise, we continue. */
-   //          if(! set_ignored_entities.empty()) {
-   //             CleanupFoundEntities(tFoundEntities, set_ignored_entities);
-   //          }
-   //          if(! tFoundEntities.empty() &&
-   //             CalculateClosestCollision(s_data,
-   //                                       c_ray,
-   //                                       tFoundEntities)) {
-   //             return true;
-   //          }
-   //       }
-   //    }
-   //    else if(nDJ >= nDI && nDJ >= nDK) {
-   //       /* J is the driving axis */
-   //       /* Calculate error used to know when to move on other axes */
-   //       SInt32 nEI(3 * nDI - nDJ);
-   //       SInt32 nEK(3 * nDK - nDJ);
-   //       m_pcEmbodiedEntitiesSpaceHash->CheckCell(nI, nJ, nK, tFoundEntities);
-   //       /* Check if the found entities have an intersection.
-   //          If so, we can stop. Otherwise, we continue. */
-   //       if(! set_ignored_entities.empty()) {
-   //          CleanupFoundEntities(tFoundEntities, set_ignored_entities);
-   //       }
-   //       if(! tFoundEntities.empty() &&
-   //          CalculateClosestCollision(s_data,
-   //                                    c_ray,
-   //                                    tFoundEntities)) {
-   //          return true;
-   //       }
-   //       /* Cycle through cells */
-   //       for(SInt32 nCell = nDJ; nCell > 0; --nCell) {
-   //          /* Clean up the found entities */
-   //          tFoundEntities.clear();
-   //          /* Advance on driving axis */
-   //          nJ += nSJ;
-   //          m_pcEmbodiedEntitiesSpaceHash->CheckCell(nI, nJ, nK, tFoundEntities);
-   //          /* Advance on other axes, if necessary */
-   //          if(nEI > 0 && nEK > 0) {
-   //             /* Advance on both the other axes */
-   //             if(nEI * nDK > nEK * nDI) {
-   //                nI += nSI;
-   //                m_pcEmbodiedEntitiesSpaceHash->CheckCell(nI, nJ, nK, tFoundEntities);
-   //                nK += nSK;
-   //                m_pcEmbodiedEntitiesSpaceHash->CheckCell(nI, nJ, nK, tFoundEntities);
-   //             }
-   //             else {
-   //                nK += nSK;
-   //                m_pcEmbodiedEntitiesSpaceHash->CheckCell(nI, nJ, nK, tFoundEntities);
-   //                nI += nSI;
-   //                m_pcEmbodiedEntitiesSpaceHash->CheckCell(nI, nJ, nK, tFoundEntities);
-   //             }
-   //             nEI += 2 * (nDI - nDJ);
-   //             nEK += 2 * (nDK - nDJ);
-   //          }
-   //          else if(nEI > 0) {
-   //             /* Advance only on I */
-   //             nI += nSI;
-   //             m_pcEmbodiedEntitiesSpaceHash->CheckCell(nI, nJ, nK, tFoundEntities);
-   //             nEI += 2 * (nDI - nDJ);
-   //             nEK += 2 * nDK;
-   //          }
-   //          else {
-   //             nEI += 2 * nDI;
-   //             if(nEK > 0) {
-   //                /* Advance only on K */
-   //                nK += nSK;
-   //                m_pcEmbodiedEntitiesSpaceHash->CheckCell(nI, nJ, nK, tFoundEntities);
-   //                nEK += 2 * (nDK - nDJ);
-   //             }
-   //             else {
-   //                nEK += 2 * nDK;
-   //             }
-   //          }
-   //          /* Check if the found entities have an intersection.
-   //             If so, we can stop. Otherwise, we continue. */
-   //          if(! set_ignored_entities.empty()) {
-   //             CleanupFoundEntities(tFoundEntities, set_ignored_entities);
-   //          }
-   //          if(! tFoundEntities.empty() &&
-   //             CalculateClosestCollision(s_data,
-   //                                       c_ray,
-   //                                       tFoundEntities)) {
-   //             return true;
-   //          }
-   //       }
-   //    }
-   //    else {
-   //       /* K is the driving axis */
-   //       /* Calculate error used to know when to move on other axes */
-   //       SInt32 nEI(3 * nDI - nDK);
-   //       SInt32 nEJ(3 * nDJ - nDK);
-   //       m_pcEmbodiedEntitiesSpaceHash->CheckCell(nI, nJ, nK, tFoundEntities);
-   //       /* Check if the found entities have an intersection.
-   //          If so, we can stop. Otherwise, we continue. */
-   //       if(! set_ignored_entities.empty()) {
-   //          CleanupFoundEntities(tFoundEntities, set_ignored_entities);
-   //       }
-   //       if(! tFoundEntities.empty() &&
-   //          CalculateClosestCollision(s_data,
-   //                                    c_ray,
-   //                                    tFoundEntities)) {
-   //          return true;
-   //       }
-   //       /* Cycle through cells */
-   //       for(SInt32 nCell = nDK; nCell > 0; --nCell) {
-   //          /* Clean up the found entities */
-   //          tFoundEntities.clear();
-   //          /* Advance on driving axis */
-   //          nK += nSK;
-   //          m_pcEmbodiedEntitiesSpaceHash->CheckCell(nI, nJ, nK, tFoundEntities);
-   //          /* Advance on other axes, if necessary */
-   //          if(nEI > 0 && nEJ > 0) {
-   //             /* Advance on both the other axes */
-   //             if(nEI * nDJ > nEJ * nDI) {
-   //                nI += nSI;
-   //                m_pcEmbodiedEntitiesSpaceHash->CheckCell(nI, nJ, nK, tFoundEntities);
-   //                nJ += nSJ;
-   //                m_pcEmbodiedEntitiesSpaceHash->CheckCell(nI, nJ, nK, tFoundEntities);
-   //             }
-   //             else {
-   //                nJ += nSJ;
-   //                m_pcEmbodiedEntitiesSpaceHash->CheckCell(nI, nJ, nK, tFoundEntities);
-   //                nI += nSI;
-   //                m_pcEmbodiedEntitiesSpaceHash->CheckCell(nI, nJ, nK, tFoundEntities);
-   //             }
-   //             nEI += 2 * (nDI - nDK);
-   //             nEJ += 2 * (nDJ - nDK);
-   //          }
-   //          else if(nEI > 0) {
-   //             /* Advance only on I */
-   //             nI += nSI;
-   //             m_pcEmbodiedEntitiesSpaceHash->CheckCell(nI, nJ, nK, tFoundEntities);
-   //             nEI += 2 * (nDI - nDK);
-   //             nEJ += 2 * nDJ;
-   //          }
-   //          else {
-   //             nEI += 2 * nDI;
-   //             if(nEJ > 0) {
-   //                /* Advance only on J */
-   //                nJ += nSJ;
-   //                m_pcEmbodiedEntitiesSpaceHash->CheckCell(nI, nJ, nK, tFoundEntities);
-   //                nEJ += 2 * (nDJ - nDK);
-   //             }
-   //             else {
-   //                nEJ += 2 * nDJ;
-   //             }
-   //          }
-   //          /* Check if the found entities have an intersection.
-   //             If so, we can stop. Otherwise, we continue. */
-   //          if(! set_ignored_entities.empty()) {
-   //             CleanupFoundEntities(tFoundEntities, set_ignored_entities);
-   //          }
-   //          if(! tFoundEntities.empty() &&
-   //             CalculateClosestCollision(s_data,
-   //                                       c_ray,
-   //                                       tFoundEntities)) {
-   //             return true;
-   //          }
-   //       }
-   //    }
-   //    /* End of the loop reached and no entities found. */
-   //    return false;
-   // }
 
    /****************************************/
    /****************************************/

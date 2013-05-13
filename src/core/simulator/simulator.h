@@ -27,23 +27,18 @@ namespace argos {
    class CSimulator;
    class CLoopFunctions;
    class CVisualization;
+   class CPhysicsEngine;
+   class CMedium;
    class CSpace;
    class CProfiler;
-   class CCI_Controller;
-   class CControllableEntity;
 }
 
 #include <argos3/core/config.h>
 #include <argos3/core/utility/math/rng.h>
 #include <argos3/core/utility/configuration/argos_configuration.h>
 #include <argos3/core/utility/datatypes/datatypes.h>
-#include <argos3/core/control_interface/ci_actuator.h>
-#include <argos3/core/control_interface/ci_sensor.h>
-#include <argos3/core/control_interface/ci_controller.h>
 #include <argos3/core/simulator/physics_engine/physics_engine.h>
-#include <argos3/core/simulator/entity/controllable_entity.h>
-#include <argos3/core/simulator/actuator.h>
-#include <argos3/core/simulator/sensor.h>
+#include <argos3/core/simulator/medium/medium.h>
 #include <string>
 #include <map>
 
@@ -123,6 +118,21 @@ namespace argos {
        */
       inline CPhysicsEngine::TVector& GetPhysicsEngines() {
          return m_vecPhysicsEngines;
+      }
+
+      /**
+       * Returns a reference to a medium.
+       * @param str_id The id of the wanted medium.
+       * @return A reference to the wanted medium.
+       */
+      CMedium& GetMedium(const std::string& str_id) const;
+
+      /**
+       * Returns the list of currently existing media.
+       * @return The list of currently existing media.
+       */
+      inline CMedium::TVector& GetMedia() {
+         return m_vecMedia;
       }
 
       /**
@@ -316,6 +326,7 @@ namespace argos {
       void InitControllers(TConfigurationNode& t_tree);
       void InitSpace(TConfigurationNode& t_tree);
       void InitPhysics(TConfigurationNode& t_tree);
+      void InitMedia(TConfigurationNode& t_tree);
       void InitVisualization(TConfigurationNode& t_tree);
 
    private:
@@ -343,6 +354,16 @@ namespace argos {
        * The vector of active physics engines.
        */
       CPhysicsEngine::TVector m_vecPhysicsEngines;
+
+      /**
+       * The map <id, reference> of active media.
+       */
+      CMedium::TMap m_mapMedia;
+
+      /**
+       * The vector of active media.
+       */
+      CMedium::TVector m_vecMedia;
 
       /**
        * A reference to the simulated space.
