@@ -19,6 +19,7 @@ namespace argos {
       pthread_mutex_t* SenseControlStepConditionalMutex;
       pthread_mutex_t* ActConditionalMutex;
       pthread_mutex_t* PhysicsConditionalMutex;
+      pthread_mutex_t* MediaConditionalMutex;
    };
 
    static void CleanupUpdateThread(void* p_data) {
@@ -31,6 +32,7 @@ namespace argos {
       pthread_mutex_unlock(sData.SenseControlStepConditionalMutex);
       pthread_mutex_unlock(sData.ActConditionalMutex);
       pthread_mutex_unlock(sData.PhysicsConditionalMutex);
+      pthread_mutex_unlock(sData.MediaConditionalMutex);
    }
 
    void* LaunchUpdateThreadBalanceQuantity(void* p_data) {
@@ -44,29 +46,32 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CSpaceMultiThreadBalanceQuantity::Init(TConfigurationNode& t_tree)
-   {
+   void CSpaceMultiThreadBalanceQuantity::Init(TConfigurationNode& t_tree) {
       /* Initialize the space */
       CSpace::Init(t_tree);
-
       /* Initialize thread related structures */
       int nErrors;
       /* First the counters */
       m_unSenseControlStepPhaseDoneCounter = CSimulator::GetInstance().GetNumThreads();
       m_unActPhaseDoneCounter = CSimulator::GetInstance().GetNumThreads();
       m_unPhysicsPhaseDoneCounter = CSimulator::GetInstance().GetNumThreads();
+      m_unMediaPhaseDoneCounter = CSimulator::GetInstance().GetNumThreads();
       /* Then the mutexes */
       if((nErrors = pthread_mutex_init(&m_tSenseControlStepConditionalMutex, NULL)) ||
+         (nErrors = pthread_mutex_init(&m_tActConditionalMutex, NULL)) ||
          (nErrors = pthread_mutex_init(&m_tPhysicsConditionalMutex, NULL)) ||
-         (nErrors = pthread_mutex_init(&m_tActConditionalMutex, NULL))) {
+         (nErrors = pthread_mutex_init(&m_tMediaConditionalMutex, NULL))) {
          THROW_ARGOSEXCEPTION("Error creating thread mutexes " << ::strerror(nErrors));
       }
       /* Finally the conditionals */
       if((nErrors = pthread_cond_init(&m_tSenseControlStepConditional, NULL)) ||
+         (nErrors = pthread_cond_init(&m_tActConditional, NULL)) ||
          (nErrors = pthread_cond_init(&m_tPhysicsConditional, NULL)) ||
-         (nErrors = pthread_cond_init(&m_tActConditional, NULL))) {
+         (nErrors = pthread_cond_init(&m_tMediaConditional, NULL))) {
          THROW_ARGOSEXCEPTION("Error creating thread conditionals " << ::strerror(nErrors));
       }
+      /* Start threads */
+      StartThreads();
    }
 
    /****************************************/
@@ -126,7 +131,8 @@ namespace argos {
       pthread_mutex_destroy(&m_tActConditionalMutex);
       pthread_cond_destroy(&m_tSenseControlStepConditional);
       pthread_cond_destroy(&m_tActConditional);
-
+      pthread_cond_destroy(&m_tPhysicsConditional);
+      pthread_cond_destroy(&m_tMediaConditional);
       /* Destroy the base space */
       CSpace::Destroy();
    }
@@ -145,14 +151,6 @@ namespace argos {
    void CSpaceMultiThreadBalanceQuantity::RemoveControllableEntity(CControllableEntity& c_entity) {
       m_bIsControllableEntityAssignmentRecalculationNeeded = true;
       CSpace::RemoveControllableEntity(c_entity);
-   }
-
-   /****************************************/
-   /****************************************/
-   
-   void CSpaceMultiThreadBalanceQuantity::SetPhysicsEngines(CPhysicsEngine::TVector& t_engines) {
-      CSpace::SetPhysicsEngines(t_engines);
-      StartThreads();
    }
 
    /****************************************/
@@ -200,6 +198,15 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   void CSpaceMultiThreadBalanceQuantity::UpdateMedia() {
+      /* Update the media */
+      MAIN_SEND_GO_FOR_PHASE(Media);
+      MAIN_WAIT_FOR_PHASE_END(Media);
+   }
+
+   /****************************************/
+   /****************************************/
+
 #define THREAD_WAIT_FOR_GO_SIGNAL(PHASE)                                                   \
    pthread_mutex_lock(&m_t ## PHASE ## ConditionalMutex);                                  \
    while(m_un ## PHASE ## PhaseDoneCounter == CSimulator::GetInstance().GetNumThreads()) { \
@@ -215,6 +222,39 @@ namespace argos {
    pthread_mutex_unlock(&m_t ## PHASE ## ConditionalMutex); \
    pthread_testcancel();
 
+   CRange<size_t> CalculatePluginRangeForThread(size_t un_id,
+                                                size_t un_tot_plugins) {
+      /* This is the minimum number of plugins assigned to a thread */
+      size_t unMinPortion = un_tot_plugins / CSimulator::GetInstance().GetNumThreads();
+      /* If the division has a remainder, the extra plugins must be assigned too */
+      size_t unExtraPortion = un_tot_plugins % CSimulator::GetInstance().GetNumThreads();
+      /* Calculate the range */
+      if(unMinPortion == 0) {
+         /* Not all threads get a plugin */
+         if(un_id < unExtraPortion) {
+            /* This thread does */
+            return CRange<size_t>(un_id, un_id+1);
+         }
+         else {
+            /* This thread does not */
+            return CRange<size_t>();
+         }
+      }
+      else {
+         /* For sure this thread will get unMinPortion plugins, does it get an extra too? */
+         if(un_id < unExtraPortion) {
+            /* Yes, it gets an extra */
+            return CRange<size_t>( un_id    * (unMinPortion+1),
+                                  (un_id+1) * (unMinPortion+1));
+         }
+         else {
+            /* No, it doesn't get an extra */
+            return CRange<size_t>(unExtraPortion * (unMinPortion+1) + (un_id-unExtraPortion)   * unMinPortion,
+                                  unExtraPortion * (unMinPortion+1) + (un_id-unExtraPortion+1) * unMinPortion);
+         }
+      }
+   }
+
    void CSpaceMultiThreadBalanceQuantity::UpdateThread(UInt32 un_id) {
       /* Copy the id */
       UInt32 unId = un_id;
@@ -223,70 +263,19 @@ namespace argos {
       sCancelData.SenseControlStepConditionalMutex = &m_tSenseControlStepConditionalMutex;
       sCancelData.ActConditionalMutex = &m_tActConditionalMutex;
       sCancelData.PhysicsConditionalMutex = &m_tPhysicsConditionalMutex;
+      sCancelData.MediaConditionalMutex = &m_tMediaConditionalMutex;
       pthread_cleanup_push(CleanupUpdateThread, &sCancelData);
-      /*
-       * Calculate whether this thread is in charge of physics engines and how many
-       */
-      /* This is the minimum number of physics engines assigned to a thread */
-      size_t unMinPhysicsPortion = m_ptPhysicsEngines->size() / CSimulator::GetInstance().GetNumThreads();
-      /* If the division has a remainder, the extra engines must be assigned too */
-      size_t unExtraPhysicsPortion = m_ptPhysicsEngines->size() % CSimulator::GetInstance().GetNumThreads();
-      /* Id range for the physics engines assigned to this thread; initially empty */
-      CRange<size_t> cPhysicsRange;
-      if(unMinPhysicsPortion == 0) {
-         /* Not all threads get an engine */
-         if(unId < unExtraPhysicsPortion) {
-            /* This thread does */
-            cPhysicsRange.Set(unId, unId+1);
-         }
-      }
-      else {
-         /* For sure this thread will get unMinPhysicsPortion engines, does it get an extra too? */
-         if(unId < unExtraPhysicsPortion) {
-            /* Yes, it gets an extra */
-            cPhysicsRange.Set( unId    * (unMinPhysicsPortion+1),
-                              (unId+1) * (unMinPhysicsPortion+1));
-         }
-         else {
-            /* No, it doesn't get an extra */
-            cPhysicsRange.Set(unExtraPhysicsPortion * (unMinPhysicsPortion+1) + (unId-unExtraPhysicsPortion)   * unMinPhysicsPortion,
-                              unExtraPhysicsPortion * (unMinPhysicsPortion+1) + (unId-unExtraPhysicsPortion+1) * unMinPhysicsPortion);
-         }
-      }
+      /* Id range for the physics engines assigned to this thread */
+      CRange<size_t> cPhysicsRange = CalculatePluginRangeForThread(unId, m_ptPhysicsEngines->size());
+      /* Id range for the physics engines assigned to this thread */
+      CRange<size_t> cMediaRange = CalculatePluginRangeForThread(unId, m_ptMedia->size());
       /* Variables storing the portion of entities to update */
-      size_t unMinEntityPortion;
-      size_t unExtraEntityPortion;
       CRange<size_t> cEntityRange;
       while(1) {
          THREAD_WAIT_FOR_GO_SIGNAL(SenseControlStep);
-         /*
-          * Calculate the portion of entities to update, if needed
-          */
+         /* Calculate the portion of entities to update, if needed */
          if(m_bIsControllableEntityAssignmentRecalculationNeeded) {
-            /* This is the minimum number of entities assigned to a thread */
-            unMinEntityPortion = m_vecControllableEntities.size() / CSimulator::GetInstance().GetNumThreads();
-            /* If the division has a remainder, the extra entities must be assigned too */
-            unExtraEntityPortion = m_vecControllableEntities.size() % CSimulator::GetInstance().GetNumThreads();
-            if(unMinEntityPortion == 0) {
-               /* Not all threads get an entity */
-               if(unId < unExtraEntityPortion) {
-                  /* This thread does */
-                  cEntityRange.Set(unId, unId+1);
-               }
-            }
-            else {
-               /* For sure this thread will get unMinEntityPortion entities, does it get an extra too? */
-               if(unId < unExtraEntityPortion) {
-                  /* Yes, it gets an extra */
-                  cEntityRange.Set( unId    * (unMinEntityPortion+1),
-                                   (unId+1) * (unMinEntityPortion+1));
-               }
-               else {
-                  /* No, it doesn't get an extra */
-                  cEntityRange.Set(unExtraEntityPortion * (unMinEntityPortion+1) + (unId-unExtraEntityPortion)   * unMinEntityPortion,
-                                   unExtraEntityPortion * (unMinEntityPortion+1) + (unId-unExtraEntityPortion+1) * unMinEntityPortion);
-               }
-            }
+            cEntityRange = CalculatePluginRangeForThread(unId, m_vecControllableEntities.size());
          }
          /* Cope with the fact that there may be less entities than threads */
          if(cEntityRange.GetSpan() > 0) {
@@ -329,6 +318,20 @@ namespace argos {
          else {
             /* This thread has no engines -> dummy computation */
             THREAD_SIGNAL_PHASE_DONE(Physics);
+         }
+         /* Update media, if this thread has been assigned to them */
+         THREAD_WAIT_FOR_GO_SIGNAL(Media);
+         if(cMediaRange.GetSpan() > 0) {
+            /* This thread has media, update them */
+            for(size_t i = cMediaRange.GetMin(); i < cMediaRange.GetMax(); ++i) {
+               (*m_ptMedia)[i]->Update();
+            }
+            pthread_testcancel();
+            THREAD_SIGNAL_PHASE_DONE(Media);
+         }
+         else {
+            /* This thread has no media -> dummy computation */
+            THREAD_SIGNAL_PHASE_DONE(Media);
          }
       }
       pthread_cleanup_pop(1);

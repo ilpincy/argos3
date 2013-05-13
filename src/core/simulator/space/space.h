@@ -229,22 +229,6 @@ namespace argos {
       }
 
       /**
-       * Sets the list of physics engines.
-       * This method is used internally.
-       */
-      virtual void SetPhysicsEngines(CPhysicsEngine::TVector& t_engines) {
-         m_ptPhysicsEngines = &t_engines;
-      }
-
-      /**
-       * Sets the list of media.
-       * This method is used internally.
-       */
-      virtual void SetMedia(CMedium::TVector& t_media) {
-         m_ptMedia = &t_media;
-      }
-
-      /**
        * Updates the space.
        */
       virtual void Update();

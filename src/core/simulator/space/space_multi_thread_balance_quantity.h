@@ -44,16 +44,19 @@ namespace argos {
       UInt32 m_unSenseControlStepPhaseDoneCounter;
       UInt32 m_unActPhaseDoneCounter;
       UInt32 m_unPhysicsPhaseDoneCounter;
+      UInt32 m_unMediaPhaseDoneCounter;
 
       /** Update thread conditional mutexes */
       pthread_mutex_t m_tSenseControlStepConditionalMutex;
       pthread_mutex_t m_tActConditionalMutex;
       pthread_mutex_t m_tPhysicsConditionalMutex;
+      pthread_mutex_t m_tMediaConditionalMutex;
 
       /** Update thread conditionals */
       pthread_cond_t m_tSenseControlStepConditional;
       pthread_cond_t m_tActConditional;
       pthread_cond_t m_tPhysicsConditional;
+      pthread_cond_t m_tMediaConditional;
 
       /** Flag to know whether the assignment of controllable
           entities to threads must be recalculated */
@@ -70,11 +73,9 @@ namespace argos {
       virtual void Init(TConfigurationNode& t_tree);
       virtual void Destroy();
 
-      virtual void SetPhysicsEngines(CPhysicsEngine::TVector& t_engines);
-
       virtual void UpdateControllableEntities();
       virtual void UpdatePhysics();
-      virtual void UpdateMedia() {}
+      virtual void UpdateMedia();
 
    protected:
 

@@ -79,7 +79,6 @@ namespace argos {
    void CSpaceMultiThreadBalanceLength::Init(TConfigurationNode& t_tree) {
       /* Initialize the space */
       CSpace::Init(t_tree);
-
       /* Initialize thread related structures */
       int nErrors;
       /* Init mutexes */
@@ -96,11 +95,12 @@ namespace argos {
          (nErrors = pthread_cond_init(&m_tFetchTaskCond, NULL))) {
          THROW_ARGOSEXCEPTION("Error creating thread conditionals " << ::strerror(nErrors));
       }
-
       /* Reset the idle thread count */
       m_unSenseControlPhaseIdleCounter = CSimulator::GetInstance().GetNumThreads();
       m_unActPhaseIdleCounter = CSimulator::GetInstance().GetNumThreads();
       m_unPhysicsPhaseIdleCounter = CSimulator::GetInstance().GetNumThreads();
+      /* Start threads */
+      StartThreads();
    }
 
    /****************************************/
@@ -145,14 +145,6 @@ namespace argos {
 
       /* Destroy the base space */
       CSpace::Destroy();
-   }
-
-   /****************************************/
-   /****************************************/
-
-   void CSpaceMultiThreadBalanceLength::SetPhysicsEngines(CPhysicsEngine::TVector& t_engines) {
-      CSpace::SetPhysicsEngines(t_engines);
-      StartThreads();
    }
 
    /****************************************/

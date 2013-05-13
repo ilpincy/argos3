@@ -29,8 +29,6 @@ namespace argos {
       virtual void Init(TConfigurationNode& t_tree);
       virtual void Destroy();
 
-      virtual void SetPhysicsEngines(CPhysicsEngine::TVector& t_engines);
-
       virtual void UpdateControllableEntities();
       virtual void UpdatePhysics();
       virtual void UpdateMedia() {}

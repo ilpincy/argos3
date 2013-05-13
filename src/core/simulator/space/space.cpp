@@ -34,6 +34,9 @@ namespace argos {
    /****************************************/
 
    void CSpace::Init(TConfigurationNode& t_tree) {
+      /* Get reference to physics engine and media vectors */
+      m_ptPhysicsEngines = &(CSimulator::GetInstance().GetPhysicsEngines());
+      m_ptMedia = &(CSimulator::GetInstance().GetMedia());
       /* Get the arena center and size */
       GetNodeAttributeOrDefault(t_tree, "center", m_cArenaCenter, m_cArenaCenter);
       GetNodeAttribute(t_tree, "size", m_cArenaSize);

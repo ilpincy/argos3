@@ -1,5 +1,6 @@
 #include "rab_medium.h"
 #include <argos3/core/utility/configuration/argos_exception.h>
+#include <argos3/core/utility/logging/argos_log.h>
 
 namespace argos {
 
@@ -43,6 +44,7 @@ namespace argos {
    /****************************************/
 
    void CRABMedium::Update() {
+      LOGERR << "[DEBUG] CRABMedium::Update()" << std::endl;
    }
 
    /****************************************/
