@@ -412,6 +412,7 @@ namespace argos {
 
       /** A positional index for embodied entities */
       CPositionalIndex<CEmbodiedEntity>* m_pcEmbodiedEntityIndex;
+      CPositionalIndex<CEmbodiedEntity>::COperation* m_pcEmbodiedEntityGridUpdateOperation;
 
       /** The floor entity */
       CFloorEntity* m_pcFloorEntity;

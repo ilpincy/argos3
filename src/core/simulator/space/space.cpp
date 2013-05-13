@@ -25,6 +25,7 @@ namespace argos {
    CSpace::CSpace() :
       m_unSimulationClock(0),
       m_pcEmbodiedEntityIndex(NULL),
+      m_pcEmbodiedEntityGridUpdateOperation(NULL),
       m_pcFloorEntity(NULL),
       m_ptPhysicsEngines(NULL) {
    }
@@ -50,7 +51,8 @@ namespace argos {
          CGrid<CEmbodiedEntity>* pcGrid = new CGrid<CEmbodiedEntity>(
             m_cArenaCenter - m_cArenaSize * 0.5f, m_cArenaCenter + m_cArenaSize * 0.5f,
             punGridSize[0], punGridSize[1], punGridSize[2]);
-         pcGrid->SetUpdateEntityOperation(new CEmbodiedEntityGridUpdater(*pcGrid));
+         m_pcEmbodiedEntityGridUpdateOperation = new CEmbodiedEntityGridUpdater(*pcGrid);
+         pcGrid->SetUpdateEntityOperation(m_pcEmbodiedEntityGridUpdateOperation);
          m_pcEmbodiedEntityIndex = pcGrid;
       }
       else {
@@ -102,6 +104,11 @@ namespace argos {
       while(!m_vecRootEntities.empty()) {
          CallEntityOperation<CSpaceOperationRemoveEntity, CSpace, void>(*this, *m_vecRootEntities.back());
       }
+      /* Get rid of positional index */
+      if(m_pcEmbodiedEntityGridUpdateOperation != NULL) {
+         delete m_pcEmbodiedEntityGridUpdateOperation;
+      }
+      delete m_pcEmbodiedEntityIndex;
    }
 
    /****************************************/
