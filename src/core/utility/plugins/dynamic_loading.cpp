@@ -34,7 +34,7 @@ namespace argos {
             return m_tOpenLibs[str_lib];
          }
          /* Not already loaded, load the library and bomb out in case of failure */
-         tHandle = ::dlopen(str_lib.c_str(), RTLD_NOW);
+         tHandle = ::dlopen(str_lib.c_str(), RTLD_LAZY);
          if(tHandle == NULL) {
             THROW_ARGOSEXCEPTION("Can't load library \""
                                  << str_lib
@@ -81,7 +81,7 @@ namespace argos {
                return m_tOpenLibs[strLibPath];
             }
             /* Not already loaded, try and load the library */
-            tHandle = ::dlopen(strLibPath.c_str(), RTLD_NOW);
+            tHandle = ::dlopen(strLibPath.c_str(), RTLD_LAZY);
             if(tHandle != NULL) {
                /* Store the handle to the loaded library */
                m_tOpenLibs[strLibPath] = tHandle;
