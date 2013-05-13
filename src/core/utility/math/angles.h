@@ -1,7 +1,7 @@
 /**
  * @file <argos3/core/utility/math/angles.h>
  * 
- * @brief Contains definitions for angle management, such as the CRadians and CDegrees classes.
+ * Contains definitions for angle management, such as the CRadians and CDegrees classes.
  * 
  * Use ARGOS_PI when initializing static CRadians or CDegrees variables.
  * If instead you use the CRadians::PI constants (or similar) you may
@@ -27,7 +27,7 @@ namespace argos {
 #include <cmath>
 
 /**
- * @brief To be used when initializing static variables
+ * To be used when initializing static variables
  */
 #define ARGOS_PI 3.14159265358979323846264338327950288
 
@@ -44,43 +44,42 @@ namespace argos {
    public:
 
       /**
-       * @brief The PI constant
+       * The PI constant
        */
       static const CRadians PI;
 
       /**
-       * @brief Set to PI * 2
+       * Set to PI * 2
        */
       static const CRadians TWO_PI;
 
       /**
-       * @brief Set to PI / 2
+       * Set to PI / 2
        */
       static const CRadians PI_OVER_TWO;
 
       /**
-       * @brief Set to PI / 3
+       * Set to PI / 3
        */
       static const CRadians PI_OVER_THREE;
 
       /**
-       * @brief Set to PI / 4
+       * Set to PI / 4
        */
       static const CRadians PI_OVER_FOUR;
 
       /**
-       * @brief Set to PI / 6
+       * Set to PI / 6
        */
       static const CRadians PI_OVER_SIX;
 
       /**
-       * @brief Set to zero radians
+       * Set to zero radians
        */
       static const CRadians ZERO;
 
       /**
-       * @brief Class constructor
-       *
+       * Class constructor
        * It initializes m_fValue to 0 radians.
        */
       CRadians() :
@@ -88,10 +87,8 @@ namespace argos {
       }
 
       /**
-       * @brief Class constructor
-       *
+       * Class constructor
        * It initializes m_fValue to the passed value.
-       *
        * @param f_value the wanted value in radians
        */
       explicit CRadians(Real f_value) :
@@ -99,10 +96,8 @@ namespace argos {
       }
 
       /**
-       * @brief Sets the value from a value in degrees
-       *
+       * Sets the value from a value in degrees
        * It sets m_fValue (which is in radians) converting from the passed value in degrees.
-       *
        * @param f_value a value in degrees
        */
       inline void FromValueInDegrees(Real f_value) {
@@ -110,10 +105,8 @@ namespace argos {
       }
 
       /**
-       * @brief Sets the value from a value in Aseba format
-       *
+       * Sets the value from a value in Aseba format
        * It sets m_fValue (which is in radians) converting from the passed value in Aseba format.
-       *
        * @param n_value a value in Aseba format
        */
       inline void FromValueInAseba(SInt16 n_value) {
@@ -121,8 +114,7 @@ namespace argos {
       }
 
       /**
-       * @brief Returns the value in radians
-       *
+       * Returns the value in radians
        * @return the value in radians
        */
       inline Real GetValue() const {
@@ -130,8 +122,7 @@ namespace argos {
       }
 
       /**
-       * @brief Returns the absolute value in radians
-       *
+       * Returns the absolute value in radians
        * @return the absolute value in radians
        */
       inline Real GetAbsoluteValue() const {
@@ -139,8 +130,7 @@ namespace argos {
       }
 
       /**
-       * @brief Sets the value in radians
-       *
+       * Sets the value in radians
        * @param f_value the wanted value in radians
        */
       inline void SetValue(Real f_value) {
@@ -148,8 +138,7 @@ namespace argos {
       }
 
       /**
-       * @brief Normalizes the value in the range [-PI:PI]
-       *
+       * Normalizes the value in the range [-PI:PI]
        * @return A reference to the current object
        * @see CRadians::PI
        * @see CRange
@@ -160,8 +149,7 @@ namespace argos {
       }
 
       /**
-       * @brief Normalizes the value in the range [0:TWO_PI]
-       *
+       * Normalizes the value in the range [0:TWO_PI]
        * @return A reference to the current object
        * @see CRadians::TWO_PI
        * @see CRange
@@ -264,8 +252,7 @@ namespace argos {
       }
 
       /**
-       * @brief Converts this object to CDegrees
-       *
+       * Converts this object to CDegrees
        * @return the conversion of m_fValue into CDegrees
        */
       friend CDegrees ToDegrees(const CRadians& c_radians);
@@ -310,8 +297,7 @@ namespace argos {
    public:
 
       /**
-       * @brief Class constructor
-       *
+       * Class constructor
        * It initializes m_fValue to 0 degrees.
        */
       CDegrees() :
@@ -319,10 +305,8 @@ namespace argos {
       }
 
       /**
-       * @brief Class constructor
-       *
+       * Class constructor
        * It initializes m_fValue to the passed value.
-       *
        * @param f_value the wanted value in degrees
        */
       explicit CDegrees(Real f_value) :
@@ -330,10 +314,8 @@ namespace argos {
       }
 
       /**
-       * @brief Sets the value from a value in radians
-       *
+       * Sets the value from a value in radians
        * It sets m_fValue (which is in degrees) converting from the passed value in radians.
-       *
        * @param f_value a value in radians
        */
       inline void FromValueInRadians(Real f_value) {
@@ -341,10 +323,8 @@ namespace argos {
       }
 
       /**
-       * @brief Sets the value from a value in Aseba format
-       *
+       * Sets the value from a value in Aseba format
        * It sets m_fValue (which is in degrees) converting from the passed value in Aseba format.
-       *
        * @param n_value a value in Aseba format
        */
       inline void FromValueInAseba(SInt16 n_value) {
@@ -352,8 +332,7 @@ namespace argos {
       }
 
       /**
-       * @brief Returns the value in degrees
-       *
+       * Returns the value in degrees
        * @return the value in degrees
        */
       inline Real GetValue() const {
@@ -361,8 +340,7 @@ namespace argos {
       }
 
       /**
-       * @brief Sets the value in degrees
-       *
+       * Sets the value in degrees
        * @param f_value the wanted value in degrees
        */
       inline void SetValue(Real f_value) {
@@ -370,8 +348,7 @@ namespace argos {
       }
 
       /**
-       * @brief Normalizes the value in the range [-180:180]
-       *
+       * Normalizes the value in the range [-180:180]
        * @return A reference to the current object
        * @see CRange
        */
@@ -381,8 +358,7 @@ namespace argos {
       }
 
       /**
-       * @brief Normalizes the value in the range [0:360]
-       *
+       * Normalizes the value in the range [0:360]
        * @return A reference to the current object
        * @see CRange
        */
@@ -479,8 +455,7 @@ namespace argos {
       }
 
       /**
-       * @brief Converts this object to CRadians
-       *
+       * Converts this object to CRadians
        * @return the conversion of m_fValue into CRadians
        */
       friend CRadians ToRadians(const CDegrees& c_degrees);
@@ -513,8 +488,7 @@ namespace argos {
    /****************************************/
 
    /**
-    * @brief Converts CRadians to CDegrees
-    *
+    * Converts CRadians to CDegrees
     * @param c_radians the object to convert
     * @return the converted CDegrees object
     */
@@ -523,8 +497,7 @@ namespace argos {
    }
 
    /**
-    * @brief Converts CDegrees to CRadians
-    *
+    * Converts CDegrees to CRadians
     * @param c_degrees the object to convert
     * @return the converted CRadians object
     */
@@ -535,27 +508,39 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-#ifdef ARGOS_DOUBLE_PRECISION
-#  define ARGOS_SIN   ::sin
-#  define ARGOS_ASIN  ::asin
-#  define ARGOS_COS   ::cos
-#  define ARGOS_TAN   ::tan
-#  define ARGOS_ACOS  ::acos
-#  define ARGOS_ATAN2 ::atan2
+#ifdef ARGOS_USE_DOUBLE
+#  define ARGOS_SINCOS ::sincos
+#  define ARGOS_SIN    ::sin
+#  define ARGOS_ASIN   ::asin
+#  define ARGOS_COS    ::cos
+#  define ARGOS_ACOS   ::acos
+#  define ARGOS_TAN    ::tan
+#  define ARGOS_ATAN2  ::atan2
 #else
-#  define ARGOS_SIN   ::sinf
-#  define ARGOS_ASIN  ::asinf
-#  define ARGOS_COS   ::cosf
-#  define ARGOS_TAN   ::tanf
-#  define ARGOS_ACOS  ::acosf
-#  define ARGOS_ATAN2 ::atan2f
+#  define ARGOS_SINCOS ::sincosf
+#  define ARGOS_SIN    ::sinf
+#  define ARGOS_ASIN   ::asinf
+#  define ARGOS_COS    ::cosf
+#  define ARGOS_ACOS   ::acosf
+#  define ARGOS_TAN    ::tanf
+#  define ARGOS_ATAN2  ::atan2f
 #endif
 
    /** 
-    * @brief Computes the sine of the passed value in radians
-    * 
+    * Computes the sine and cosine of the passed value in radians
     * @param c_radians the angle in CRadians
-    * 
+    * @param f_sin the buffer in which the sin must be stored
+    * @param f_cos the buffer in which the cos must be stored
+    */
+   inline void SinCos(const CRadians& c_radians,
+                      Real& f_sin,
+                      Real& f_cos) {
+      ARGOS_SINCOS(c_radians.GetValue(), &f_sin, &f_cos);
+   }
+
+   /** 
+    * Computes the sine of the passed value in radians
+    * @param c_radians the angle in CRadians
     * @return the sine of the passed value
     */
    inline Real Sin(const CRadians& c_radians) {
@@ -563,10 +548,8 @@ namespace argos {
    }
 
    /** 
-    * @brief Computes the cosine of the passed value in radians
-    * 
+    * Computes the cosine of the passed value in radians
     * @param c_radians the angle in CRadians
-    * 
     * @return the cosine of the passed value
     */
    inline Real Cos(const CRadians& c_radians) {
@@ -574,10 +557,8 @@ namespace argos {
    }
 
    /** 
-    * @brief Computes the tangent of the passed value in radians
-    * 
+    * Computes the tangent of the passed value in radians
     * @param c_radians the angle in CRadians
-    * 
     * @return the tangent of the passed value
     */
    inline Real Tan(const CRadians& c_radians) {
@@ -585,10 +566,8 @@ namespace argos {
    }
 
    /** 
-    * @brief Computes the arcsine of the passed value
-    * 
+    * Computes the arcsine of the passed value
     * @param f_value a value in the range [-1:1]
-    * 
     * @return the arcsine in CRadians
     */
    inline CRadians ASin(Real f_value) {
@@ -596,10 +575,8 @@ namespace argos {
    }
 
    /** 
-    * @brief Computes the arccosine of the passed value
-    * 
+    * Computes the arccosine of the passed value
     * @param f_value a value in the range [-1:1]
-    * 
     * @return the arccosine in CRadians
     */
    inline CRadians ACos(Real f_value) {
@@ -607,13 +584,10 @@ namespace argos {
    }
 
    /** 
-    * @brief Computes the arctangent of the passed values.
-    *
+    * Computes the arctangent of the passed values.
     * It internally uses the standard function <tt>atan2(y,x)</tt>.
-    * 
     * @param f_y the extent on the y axis
     * @param f_x the extent on the x axis
-    * 
     * @return the arctangent in CRadians
     */
    inline CRadians ATan2(const Real f_y, const Real f_x) {

@@ -167,10 +167,10 @@ namespace argos {
        * @return A reference to this vector.
        */
       inline CVector2& Rotate(const CRadians& c_angle) {
-         Real cosa = Cos(c_angle);
-         Real sina = Sin(c_angle);
-         Real fX = m_fX * cosa - m_fY * sina;
-         Real fY = m_fX * sina + m_fY * cosa;
+         Real fSin, fCos;
+         SinCos(c_angle, fSin, fCos);
+         Real fX = m_fX * fCos - m_fY * fSin;
+         Real fY = m_fX * fSin + m_fY * fCos;
          m_fX = fX;
          m_fY = fY;
          return *this;

@@ -98,9 +98,10 @@ namespace argos {
 
       inline CQuaternion& FromAngleAxis(const CRadians& c_angle,
                                         const CVector3& c_vector) {
-         CRadians fHalfAngle = c_angle * 0.5;
-         Real fSin = Sin(fHalfAngle);
-         m_fValues[0] = Cos(fHalfAngle);
+         CRadians cHalfAngle = c_angle * 0.5;
+         Real fSin, fCos;
+         SinCos(cHalfAngle, fSin, fCos);
+         m_fValues[0] = fCos;
          m_fValues[1] = c_vector.GetX() * fSin;
          m_fValues[2] = c_vector.GetY() * fSin;
          m_fValues[3] = c_vector.GetZ() * fSin;
@@ -113,7 +114,6 @@ namespace argos {
             Square(m_fValues[1]) +
             Square(m_fValues[2]) +
             Square(m_fValues[3]);
-         
          if(fSquareLength > 0.0f) {
             c_angle = 2.0f * ACos(m_fValues[0]);
             Real fInvLength = 1.0f / ::sqrt(fSquareLength);
