@@ -87,19 +87,6 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   CMedium& CSimulator::GetMedium(const std::string& str_id) const {
-      CMedium::TMap::const_iterator it = m_mapMedia.find(str_id);
-      if(it != m_mapMedia.end()) {
-         return *(it->second);
-      }
-      else {
-         THROW_ARGOSEXCEPTION("Physics engine \"" << str_id << "\" not found.");
-      }
-   }
-
-   /****************************************/
-   /****************************************/
-
    TConfigurationNode& CSimulator::GetConfigForController(const std::string& str_id) {
       TControllerConfigurationMap::iterator it = m_mapControllerConfig.find(str_id);
       if(it == m_mapControllerConfig.end()) {
@@ -130,27 +117,22 @@ namespace argos {
       /* Initialize controllers */
       InitControllers(GetNode(m_tConfigurationRoot, "controllers"));
       /* Create loop functions */
-      bool bUserDefLoopFunctions;
       if(NodeExists(m_tConfigurationRoot, "loop_functions")) {
          /* User specified a loop_functions section in the XML */
          InitLoopFunctions(GetNode(m_tConfigurationRoot, "loop_functions"));
-         bUserDefLoopFunctions = true;
       }
       else {
          /* No loop_functions in the XML */
          m_pcLoopFunctions = new CLoopFunctions;
-         bUserDefLoopFunctions = false;
       }
       /* Physics engines */
       InitPhysics(GetNode(m_tConfigurationRoot, "physics_engines"));
-      /* Physics engines */
+      /* Media */
       InitMedia(GetNode(m_tConfigurationRoot, "media"));
       /* Space */
       InitSpace(GetNode(m_tConfigurationRoot, "arena"));
       /* Call user init function */
-      if(bUserDefLoopFunctions) {
-         m_pcLoopFunctions->Init(GetNode(m_tConfigurationRoot, "loop_functions"));
-      }
+      m_pcLoopFunctions->Init(GetNode(m_tConfigurationRoot, "loop_functions"));
       /* Initialise visualization */
       TConfigurationNodeIterator itVisualization;
       if(NodeExists(m_tConfigurationRoot, "visualization") &&
@@ -158,7 +140,7 @@ namespace argos {
          InitVisualization(GetNode(m_tConfigurationRoot, "visualization"));
       }
       else {
-         LOGERR << "[WARNING] No visualization selected." << std::endl;
+         LOG << "[INFO] No visualization selected." << std::endl;
          m_pcVisualization = new CVisualization();
       }
       /* Start profiling, if needed */
@@ -185,25 +167,20 @@ namespace argos {
          LOG << "[INFO] Using random seed = " << m_unRandomSeed << std::endl;
       }
       CRandom::GetCategory("argos").ResetRNGs();
-
       /* Reset the space */
       m_pcSpace->Reset();
-
       /* Reset the media */
       for(CMedium::TMap::iterator it = m_mapMedia.begin();
           it != m_mapMedia.end(); ++it) {
          it->second->Reset();
       }
-
       /* Reset the physics engines */
       for(CPhysicsEngine::TMap::iterator it = m_mapPhysicsEngines.begin();
           it != m_mapPhysicsEngines.end(); ++it) {
          it->second->Reset();
       }
-
       /* Reset the loop functions */
       m_pcLoopFunctions->Reset();
-
       LOG.Flush();
       LOGERR.Flush();
    }
@@ -218,17 +195,14 @@ namespace argos {
          delete m_pcLoopFunctions;
          m_pcLoopFunctions = NULL;
       }
-
       /* Destroy the visualization */
       if(m_pcVisualization != NULL) {
          m_pcVisualization->Destroy();
       }
-
       /* Destroy simulated space */
       if(m_pcSpace != NULL) {
          m_pcSpace->Destroy();
       }
-
       /* Destroy media */
       for(CMedium::TMap::iterator it = m_mapMedia.begin();
           it != m_mapMedia.end(); ++it) {
@@ -237,7 +211,6 @@ namespace argos {
       }
       m_mapMedia.clear();
       m_vecMedia.clear();
-
       /* Destroy physics engines */
       for(CPhysicsEngine::TMap::iterator it = m_mapPhysicsEngines.begin();
           it != m_mapPhysicsEngines.end(); ++it) {
@@ -246,12 +219,10 @@ namespace argos {
       }
       m_mapPhysicsEngines.clear();
       m_vecPhysicsEngines.clear();
-
       /* Get rid of ARGoS category */
       if(CRandom::ExistsCategory("argos")) {
          CRandom::RemoveCategory("argos");
       }
-
       /* Free up factory data */
       CFactory<CMedium>::Destroy();
       CFactory<CPhysicsEngine>::Destroy();
@@ -260,13 +231,11 @@ namespace argos {
       CFactory<CSimulatedSensor>::Destroy();
       CFactory<CCI_Controller>::Destroy();
       CFactory<CEntity>::Destroy();
-
       /* Stop profiling and flush the data */
       if(IsProfiling()) {
          m_pcProfiler->Stop();
          m_pcProfiler->Flush(m_bHumanReadableProfile);
       }
-
       LOG.Flush();
       LOGERR.Flush();
    }
@@ -307,13 +276,11 @@ namespace argos {
         the maximum value set in the XML, or when one of the visualisations asks
         to terminate.
       */
-
       /* Check simulation clock */
       if (m_unMaxSimulationClock > 0 &&
           m_pcSpace->GetSimulationClock() >= m_unMaxSimulationClock) {
          return true;
       }
-
       /* Call loop function */
       return m_pcLoopFunctions->IsExperimentFinished();
    }
@@ -359,18 +326,15 @@ namespace argos {
             LOG << "[INFO] Not using threads" << std::endl;
             m_pcSpace = new CSpaceNoThreads;
          }
-
          /* Get 'experiment' node */
          TConfigurationNode tExperiment;
          tExperiment = GetNode(t_tree, "experiment");
-
          /* Parse random seed */
          /* Buffer to hold the random seed */
          GetNodeAttributeOrDefault(tExperiment,
                                    "random_seed",
                                    m_unRandomSeed,
                                    static_cast<UInt32>(0));
-
          /* if random seed is 0 or is not specified, init with the current timeval */
          if(m_unRandomSeed != 0) {
             CRandom::CreateCategory("argos", m_unRandomSeed);
@@ -388,14 +352,12 @@ namespace argos {
             LOG << "[INFO] Using random seed = " << unSeed << std::endl;
          }
          m_pcRNG = CRandom::CreateRNG("argos");
-
          /* Set the simulation clock tick length */
          UInt32 unTicksPerSec;
          GetNodeAttribute(tExperiment,
                           "ticks_per_second",
                           unTicksPerSec);
          CPhysicsEngine::SetSimulationClockTick(1.0 / static_cast<Real>(unTicksPerSec));
-
          /* Set the maximum simulation duration (in seconds) */
          Real fExpLength;
          GetNodeAttributeOrDefault<Real>(tExperiment,
@@ -406,7 +368,6 @@ namespace argos {
          LOG << "[INFO] Total experiment length in clock ticks = "
              << (m_unMaxSimulationClock ? ToString(m_unMaxSimulationClock) : "unlimited")
              << std::endl;
-
          /* Get the profiling tag, if present */
          if(NodeExists(t_tree, "profiling")) {
             TConfigurationNode& tProfiling = GetNode(t_tree, "profiling");

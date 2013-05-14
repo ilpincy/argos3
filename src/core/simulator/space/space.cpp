@@ -57,7 +57,7 @@ namespace argos {
          m_pcEmbodiedEntityIndex = pcGrid;
       }
       else {
-         THROW_ARGOSEXCEPTION("Unknown method \"" << strPosIndexMethod << "\" for positional index.");
+         THROW_ARGOSEXCEPTION("Unknown method \"" << strPosIndexMethod << "\" for the positional index.");
       }
       /*
        * Add and initialize all entities in XML

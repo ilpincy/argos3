@@ -33,12 +33,24 @@ namespace argos {
       virtual void Init(TConfigurationNode& t_tree);
       virtual void Reset() {}
       virtual void Destroy() {}
+
+      /**
+       * Updates the state of this medium.
+       */
       virtual void Update() = 0;
 
+      /**
+       * Returns the id of this medium.
+       * @return The id of this medium.
+       */
       inline const std::string& GetId() const {
          return m_strId;
       }
 
+      /**
+       * Sets the id of this medium.
+       * @param str_id The id of this medium.
+       */
       void SetId(const std::string& str_id) {
          m_strId = str_id;
       }

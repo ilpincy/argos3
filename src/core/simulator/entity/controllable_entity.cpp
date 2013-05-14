@@ -183,8 +183,8 @@ namespace argos {
                THROW_ARGOSEXCEPTION("BUG: actuator \"" << itAct->Value() << "\" does not inherit from CCI_Actuator");
             }
             pcAct->SetRobot(GetParent());
-            m_mapActuators[itAct->Value()] = pcAct;
             pcCIAct->Init(*itAct);
+            m_mapActuators[itAct->Value()] = pcAct;
             m_pcController->AddActuator(itAct->Value(), pcCIAct);
          }
          /* Go through sensors */
@@ -201,8 +201,8 @@ namespace argos {
                THROW_ARGOSEXCEPTION("BUG: sensor \"" << itSens->Value() << "\" does not inherit from CCI_Sensor");
             }
             pcSens->SetRobot(GetParent());
-            m_mapSensors[itSens->Value()] = pcSens;
             pcCISens->Init(*itSens);
+            m_mapSensors[itSens->Value()] = pcSens;
             m_pcController->AddSensor(itSens->Value(), pcCISens);
          }
          /* Configure the controller */

@@ -30,8 +30,13 @@ namespace argos {
 
       /**
        * Sets the entity associated to this actuator.
+       * When a controller is created, all the sensors and actuators are created, too.
+       * This function is called right before the <tt>Init()</tt> method of the actuator
+       * is called.
        * @param c_entity The entity to associate to this actuator.
        * @see CComposableEntity
+       * @see CControllableEntity::SetController()
+       * @see CCI_Actuator::Init()
        */
       virtual void SetRobot(CComposableEntity& c_entity) = 0;
 

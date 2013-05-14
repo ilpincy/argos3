@@ -125,7 +125,22 @@ namespace argos {
        * @param str_id The id of the wanted medium.
        * @return A reference to the wanted medium.
        */
-      CMedium& GetMedium(const std::string& str_id) const;
+      template <typename T>
+      T& GetMedium(const std::string& str_id) const {
+         CMedium::TMap::const_iterator it = m_mapMedia.find(str_id);
+         if(it != m_mapMedia.end()) {
+            T* pcMedium = dynamic_cast<T*>(it->second);
+            if(pcMedium != NULL) {
+               return *pcMedium;
+            }
+            else {
+               THROW_ARGOSEXCEPTION("Medium \"" << str_id << "\" can't be converted to the wanted type");
+            }
+         }
+         else {
+            THROW_ARGOSEXCEPTION("Medium \"" << str_id << "\" not found.");
+         }
+      }
 
       /**
        * Returns the list of currently existing media.

@@ -335,6 +335,22 @@ namespace argos {
       }
 
       /**
+       * Returns the arena center.
+       * @return the arena center.
+       */
+      inline const CVector3& GetArenaCenter() const {
+         return m_cArenaCenter;
+      }
+
+      /**
+       * Sets the arena center.
+       * @return the arena center.
+       */
+      inline void SetArenaCenter(const CVector3& c_center) {
+         m_cArenaCenter = c_center;
+      }
+
+      /**
        * Returns the positional index for embodied entities.
        * @return The positional index for embodied entities.
        */

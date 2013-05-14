@@ -7,11 +7,16 @@
 #ifndef RAB_EQUIPPED_ENTITY_H
 #define RAB_EQUIPPED_ENTITY_H
 
+namespace argos {
+   class CRABEquippedEntity;
+}
+
 #include <argos3/core/utility/datatypes/byte_array.h>
 #include <argos3/core/utility/datatypes/set.h>
-#include <argos3/core/simulator/entity/positional_entity.h>
+#include <argos3/core/simulator/entity/embodied_entity.h>
 #include <argos3/core/utility/math/vector3.h>
 #include <argos3/core/simulator/space/positional_indices/space_hash.h>
+#include <argos3/core/simulator/space/positional_indices/grid.h>
 
 namespace argos {
 
@@ -32,7 +37,7 @@ namespace argos {
                          const std::string& str_id,
                          size_t un_msg_size,
                          Real f_range,
-                         const CPositionalEntity& c_reference,
+                         CEmbodiedEntity& c_reference,
                          const CVector3& c_position = CVector3(),
                          const CQuaternion& c_orientation = CQuaternion());
 
@@ -60,13 +65,17 @@ namespace argos {
          return m_fRange;
       }
 
+      inline CEmbodiedEntity& GetReference() {
+         return *m_pcReference;
+      }
+
       virtual std::string GetTypeDescription() const {
          return "rab";
       }
 
    protected:
 
-      const CPositionalEntity* m_pcReference;
+      CEmbodiedEntity* m_pcReference;
       CVector3 m_cPosOffset;
       CQuaternion m_cRotOffset;
       CByteArray m_cData;
@@ -88,6 +97,41 @@ namespace argos {
 
       SInt32 m_nCenterI, m_nCenterJ, m_nCenterK;
 
+   };
+
+   /****************************************/
+   /****************************************/
+
+   class CRABEquippedEntityGridCellUpdater : public CGrid<CRABEquippedEntity>::CCellOperation {
+
+   public:
+
+      CRABEquippedEntityGridCellUpdater(CGrid<CRABEquippedEntity>& c_grid);
+
+      virtual bool operator()(SInt32 n_i,
+                              SInt32 n_j,
+                              SInt32 n_k,
+                              CGrid<CRABEquippedEntity>::SCell& s_cell);
+
+      void SetEntity(CRABEquippedEntity& c_entity);
+
+   private:
+
+      CGrid<CRABEquippedEntity>& m_cGrid;
+      CRABEquippedEntity* m_pcEntity;
+   };
+
+   class CRABEquippedEntityGridEntityUpdater : public CGrid<CRABEquippedEntity>::COperation {
+
+   public:
+
+      CRABEquippedEntityGridEntityUpdater(CGrid<CRABEquippedEntity>& c_grid);
+      virtual bool operator()(CRABEquippedEntity& c_entity);
+
+   private:
+
+      CGrid<CRABEquippedEntity>& m_cGrid;
+      CRABEquippedEntityGridCellUpdater m_cCellUpdater;
    };
 
    /****************************************/

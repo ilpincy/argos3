@@ -13,7 +13,7 @@ namespace argos {
 
    public:
 
-      typedef typename CPositionalIndex<ENTITY>::COperation COperation;
+      typedef typename CPositionalIndex<ENTITY>::COperation CEntityOperation;
 
       struct SCell {
          CSet<ENTITY*> Entities;
@@ -24,6 +24,15 @@ namespace argos {
             Entities.clear();
             Timestamp = 0;
          }
+      };
+
+      class CCellOperation {
+      public:
+         virtual ~CCellOperation() {}
+         virtual bool operator()(SInt32 n_i,
+                                 SInt32 n_j,
+                                 SInt32 n_k,
+                                 SCell& s_cell) = 0;
       };
 
    public:
@@ -49,27 +58,48 @@ namespace argos {
       virtual void GetEntitiesAt(CSet<ENTITY*>& c_entities,
                                  const CVector3& c_position) const;
 
-      virtual void ForAllEntities(COperation& c_operation);
+      virtual void ForAllEntities(CEntityOperation& c_operation);
 
       virtual void ForEntitiesInSphereRange(const CVector3& c_center,
                                             Real f_radius,
-                                            COperation& c_operation);
+                                            CEntityOperation& c_operation);
 
       virtual void ForEntitiesInBoxRange(const CVector3& c_center,
                                          const CVector3& c_half_size,
-                                         COperation& c_operation);
+                                         CEntityOperation& c_operation);
 
       virtual void ForEntitiesInCircleRange(const CVector3& c_center,
                                             Real f_radius,
-                                            COperation& c_operation);
+                                            CEntityOperation& c_operation);
 
       virtual void ForEntitiesInRectangleRange(const CVector3& c_center,
                                                const CVector2& c_half_size,
-                                               COperation& c_operation);
+                                               CEntityOperation& c_operation);
 
       virtual void ForEntitiesAlongRay(const CRay3& c_ray,
-                                       COperation& c_operation,
+                                       CEntityOperation& c_operation,
                                        bool b_stop_at_closest_match = false);
+
+      virtual void ForAllCells(CCellOperation& c_operation);
+
+      virtual void ForCellsInSphereRange(const CVector3& c_center,
+                                         Real f_radius,
+                                         CCellOperation& c_operation);
+
+      virtual void ForCellsInBoxRange(const CVector3& c_center,
+                                      const CVector3& c_half_size,
+                                      CCellOperation& c_operation);
+
+      virtual void ForCellsInCircleRange(const CVector3& c_center,
+                                         Real f_radius,
+                                         CCellOperation& c_operation);
+
+      virtual void ForCellsInRectangleRange(const CVector3& c_center,
+                                            const CVector2& c_half_size,
+                                            CCellOperation& c_operation);
+
+      virtual void ForCellsAlongRay(const CRay3& c_ray,
+                                    CCellOperation& c_operation);
 
       inline SInt32 GetSizeI() const {
          return m_nSizeI;
@@ -83,7 +113,7 @@ namespace argos {
          return m_nSizeK;
       }
 
-      inline void SetUpdateEntityOperation(COperation* pc_operation);
+      inline void SetUpdateEntityOperation(CEntityOperation* pc_operation);
 
       void UpdateCell(SInt32 n_i,
                       SInt32 n_j,
@@ -122,7 +152,7 @@ namespace argos {
       SCell* m_psCells;
       size_t m_unCurTimestamp;
       CSet<ENTITY*> m_cEntities;
-      COperation* m_pcUpdateEntityOperation;
+      CEntityOperation* m_pcUpdateEntityOperation;
 
    };
 

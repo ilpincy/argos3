@@ -134,25 +134,35 @@ namespace argos {
       /**
        * Creates and assigns a controller with the given id.
        * As part of the creation of the controller, all the sensors and actuators are
-       * also created and initialized.
+       * also created and initialized. For each sensor and actuator, this method
+       * calls <tt>SetRobot()</tt> and <tt>Init()</tt>, in this order.
        * This method passes to CCI_Controller::Init() the <tt>&lt;params&gt;</tt>
        * section found in the controller section.
        * @param str_controller_id The id of the controller as specified in the XML configuration file
        * @throws CARGoSException if an error occurs in the creation of the controller
        * @see CCI_Controller::Init()
+       * @see CSimulatedSensor::SetRobot()
+       * @see CSimulatedActuator::SetRobot()
+       * @see CCI_Sensor::Init()
+       * @see CCI_Actuator::Init()
        */
       void SetController(const std::string& str_controller_id);
 
       /**
        * Creates and assigns a controller with the given id and the given XML parameters.
        * As part of the creation of the controller, all the sensors and actuators are
-       * also created and initialized.
+       * also created and initialized. For each sensor and actuator, this method
+       * calls <tt>SetRobot()</tt> and <tt>Init()</tt>, in this order.
        * This method passes the given XML tree to CCI_Controller::Init()
        * instead of that found in the controller XML section.
        * @param str_controller_id The id of the controller as specified in the XML configuration file
        * @param t_controller_config An XML tree to pass to CCI_Controller::Init()
        * @throws CARGoSException if an error occurs in the creation of the controller
        * @see CCI_Controller::Init()
+       * @see CSimulatedSensor::SetRobot()
+       * @see CSimulatedActuator::SetRobot()
+       * @see CCI_Sensor::Init()
+       * @see CCI_Actuator::Init()
        */
       void SetController(const std::string& str_controller_id,
                          TConfigurationNode& t_controller_config);
