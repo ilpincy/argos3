@@ -60,7 +60,7 @@ namespace argos {
       } else if(str_query == "physics_engines") {
          QueryShowList<CPhysicsEngine>("AVAILABLE PHYSICS ENGINES");
       } else if(str_query == "media") {
-         QueryShowList<CPhysicsEngine>("AVAILABLE MEDIA");
+         QueryShowList<CMedium>("AVAILABLE MEDIA");
       } else if(str_query == "visualizations") {
          QueryShowList<CVisualization>("AVAILABLE VISUALIZATIONS");
       } else if(str_query == "entities") {

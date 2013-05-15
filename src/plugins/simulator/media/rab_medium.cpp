@@ -30,16 +30,20 @@ namespace argos {
          /* Get the positional index method */
          std::string strPosIndexMethod("grid");
          GetNodeAttributeOrDefault(t_tree, "index", strPosIndexMethod, strPosIndexMethod);
+         /* Get the arena center and size */
+         CVector3 cArenaCenter;
+         CVector3 cArenaSize;
+         TConfigurationNode& tArena = GetNode(CSimulator::GetInstance().GetConfigurationRoot(), "arena");
+         GetNodeAttribute(tArena, "size", cArenaSize);
+         GetNodeAttributeOrDefault(tArena, "center", cArenaCenter, cArenaCenter);
          /* Create the positional index for embodied entities */
          if(strPosIndexMethod == "grid") {
             std::string strPosGridSize;
             GetNodeAttribute(t_tree, "grid_size", strPosGridSize);
             size_t punGridSize[3];
             ParseValues<size_t>(strPosGridSize, 3, punGridSize, ',');
-            CVector3 cArenaCenter = CSimulator::GetInstance().GetSpace().GetArenaCenter();
-            CVector3 cArenaHalfSize = CSimulator::GetInstance().GetSpace().GetArenaSize() * 0.5f;
             CGrid<CRABEquippedEntity>* pcGrid = new CGrid<CRABEquippedEntity>(
-               cArenaCenter - cArenaHalfSize, cArenaCenter + cArenaHalfSize,
+               cArenaCenter - cArenaSize * 0.5f, cArenaCenter + cArenaSize * 0.5f,
                punGridSize[0], punGridSize[1], punGridSize[2]);
             m_pcRABEquippedEntityGridUpdateOperation = new CRABEquippedEntityGridEntityUpdater(*pcGrid);
             pcGrid->SetUpdateEntityOperation(m_pcRABEquippedEntityGridUpdateOperation);
@@ -58,14 +62,20 @@ namespace argos {
    /****************************************/
 
    void CRABMedium::Reset() {
-      LOGERR << "[DEBUG] CRABMedium::Reset()" << std::endl;
+      /* Reset positional index of RAB entities */
+      m_pcRABEquippedEntityIndex->Reset();
+      /* Delete routing table */
+      for(TRoutingTable::iterator it = m_tRoutingTable.begin();
+          it != m_tRoutingTable.end();
+          ++it) {
+         it->second.clear();
+      }
    }
 
    /****************************************/
    /****************************************/
 
    void CRABMedium::Destroy() {
-      LOGERR << "[DEBUG] CRABMedium::Destroy()" << std::endl;
       delete m_pcRABEquippedEntityIndex;
       if(m_pcRABEquippedEntityGridUpdateOperation != NULL) {
          delete m_pcRABEquippedEntityGridUpdateOperation;
@@ -76,7 +86,6 @@ namespace argos {
    /****************************************/
 
    void CRABMedium::Update() {
-      LOGERR << "[DEBUG] CRABMedium::Update()" << std::endl;
       /* Update positional index of RAB entities */
       m_pcRABEquippedEntityIndex->Update();
       /* Delete routing table */
@@ -119,18 +128,18 @@ namespace argos {
                if(&cRAB < &cOtherRAB) cTestKey = std::make_pair(&cRAB, &cOtherRAB);
                else cTestKey = std::make_pair(&cOtherRAB, &cRAB);
                if(setPairsAlreadyChecked.find(cTestKey) == setPairsAlreadyChecked.end()) {
+                  /* Mark this pair as already checked */
+                  setPairsAlreadyChecked.insert(cTestKey);
                   /* Proceed if the message size is compatible */
                   if(cRAB.GetMsgSize() == cOtherRAB.GetMsgSize()) {
                      /* Proceed if the two entities are not obstructed by another object */
                      cOcclusionCheckRay.SetEnd(cOtherRAB.GetPosition());
-                     if(GetClosestEmbodiedEntityIntersectedByRay(sIntersectionItem,
-                                                                 CSimulator::GetInstance().GetSpace().GetEmbodiedEntityIndex(),
-                                                                 cOcclusionCheckRay,
-                                                                 cRAB.GetReference())  ||
+                     if((!GetClosestEmbodiedEntityIntersectedByRay(sIntersectionItem,
+                                                                   CSimulator::GetInstance().GetSpace().GetEmbodiedEntityIndex(),
+                                                                   cOcclusionCheckRay,
+                                                                   cRAB.GetReference()))  ||
                         (&cOtherRAB.GetParent() == &sIntersectionItem.IntersectedEntity->GetParent())) {
                         /* If we get here, the two RAB entities are in direct line of sight */
-                        /* Mark this pair as already checked */
-                        setPairsAlreadyChecked.insert(cTestKey);
                         /* cRAB can receive cOtherRAB's message if it is in range, and viceversa */
                         /* Calculate square distance */
                         fDistance = cOcclusionCheckRay.GetLength();
@@ -154,13 +163,24 @@ namespace argos {
    /****************************************/
 
    void CRABMedium::AddEntity(CRABEquippedEntity& c_entity) {
-      LOGERR << "[DEBUG] Added entity \""
-             << c_entity.GetId()
-             << "\""
-             << std::endl;
       m_tRoutingTable.insert(
          std::make_pair<CRABEquippedEntity*, std::vector<CRABEquippedEntity*> >(
             &c_entity, std::vector<CRABEquippedEntity*>()));
+      m_pcRABEquippedEntityIndex->AddEntity(c_entity);
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CRABMedium::RemoveEntity(CRABEquippedEntity& c_entity) {
+      TRoutingTable::iterator it = m_tRoutingTable.find(&c_entity);
+      if(it != m_tRoutingTable.end()) {
+         m_pcRABEquippedEntityIndex->RemoveEntity(c_entity);
+         m_tRoutingTable.erase(it);
+      }
+      else {
+         THROW_ARGOSEXCEPTION("Can't erase entity \"" << c_entity.GetId() << "\" from RAB medium \"" << GetId() << "\"");
+      }
    }
 
    /****************************************/

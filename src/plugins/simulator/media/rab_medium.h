@@ -38,6 +38,12 @@ namespace argos {
       */
       void AddEntity(CRABEquippedEntity& c_entity);
 
+     /**
+      * Removes the specified entity from the list of managed entities.
+      * @param c_entity The entity to remove.
+      */
+      void RemoveEntity(CRABEquippedEntity& c_entity);
+
       /**
        * Returns an immutable vector of RAB entities that can communicated with the given entity.
        * @param c_entity The wanted entity.

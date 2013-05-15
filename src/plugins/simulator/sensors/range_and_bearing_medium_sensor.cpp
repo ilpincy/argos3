@@ -129,6 +129,13 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   void CRangeAndBearingMediumSensor::Destroy() {
+      m_pcRangeAndBearingMedium->RemoveEntity(*m_pcRangeAndBearingEquippedEntity);
+   }
+
+   /****************************************/
+   /****************************************/
+
    REGISTER_SENSOR(CRangeAndBearingMediumSensor,
                    "range_and_bearing", "medium",
                    "Carlo Pinciroli [ilpincy@gmail.com]",

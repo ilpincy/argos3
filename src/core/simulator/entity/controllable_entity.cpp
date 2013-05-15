@@ -108,15 +108,15 @@ namespace argos {
       m_vecCheckedRays.clear();
       m_vecIntersectionPoints.clear();
       if(m_pcController) {
-      /* Reset actuators */
-         for(CCI_Actuator::TMap::iterator it = m_pcController->GetAllActuators().begin();
-             it != m_pcController->GetAllActuators().end(); ++it) {
-            it->second->Reset();
+         /* Destroy sensors */
+         for(CCI_Sensor::TMap::iterator it = m_pcController->GetAllSensors().begin();
+             it != m_pcController->GetAllSensors().end(); ++it) {
+            it->second->Destroy();
          }
-         /* Reset actuators */
+         /* Destroy actuators */
          for(CCI_Actuator::TMap::iterator it = m_pcController->GetAllActuators().begin();
              it != m_pcController->GetAllActuators().end(); ++it) {
-            it->second->Reset();
+            it->second->Destroy();
          }
          /* Destroy user-defined controller */
          m_pcController->Destroy();

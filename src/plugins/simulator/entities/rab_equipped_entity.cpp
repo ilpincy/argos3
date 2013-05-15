@@ -323,6 +323,7 @@ namespace argos {
       m_cCellUpdater(c_grid) {}
 
    bool CRABEquippedEntityGridEntityUpdater::operator()(CRABEquippedEntity& c_entity) {
+      m_cCellUpdater.SetEntity(c_entity);
       m_cGrid.ForCellsInSphereRange(c_entity.GetPosition(),
                                     c_entity.GetRange(),
                                     m_cCellUpdater);

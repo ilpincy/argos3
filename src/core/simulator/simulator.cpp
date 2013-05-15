@@ -132,7 +132,9 @@ namespace argos {
       /* Space */
       InitSpace(GetNode(m_tConfigurationRoot, "arena"));
       /* Call user init function */
-      m_pcLoopFunctions->Init(GetNode(m_tConfigurationRoot, "loop_functions"));
+      if(NodeExists(m_tConfigurationRoot, "loop_functions")) {
+         m_pcLoopFunctions->Init(GetNode(m_tConfigurationRoot, "loop_functions"));
+      }
       /* Initialise visualization */
       TConfigurationNodeIterator itVisualization;
       if(NodeExists(m_tConfigurationRoot, "visualization") &&
