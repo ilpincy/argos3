@@ -5,8 +5,8 @@
   <!-- * General configuration * -->
   <!-- ************************* -->
   <framework>
-    <system threads="4" />
-    <experiment length="100" ticks_per_second="10" random_seed="12345" />
+    <system threads="0" />
+    <experiment length="600" ticks_per_second="10" random_seed="12345" />
   </framework>
 
   <!-- ****************** -->
@@ -20,21 +20,21 @@
   <controllers>
     <test_footbot_controller id="x">
       <actuators>
-        <differential_steering implementation="default" />
+        <!-- differential_steering implementation="default" / -->
+        <range_and_bearing implementation="default" />
         <!-- leds implementation="default" / -->
         <!-- footbot_gripper implementation="default" / -->
         <!-- footbot_distance_scanner implementation="default" / -->
-        <!-- range_and_bearing implementation="default" / -->
         <!-- footbot_turret implementation="default" / -->
       </actuators>
       <sensors>
-        <footbot_proximity implementation="default" show_rays="false" />
+        <!-- footbot_proximity implementation="default" show_rays="false" / -->
+        <range_and_bearing implementation="medium" medium="rab" />
         <!-- differential_steering implementation="default" / -->
         <!-- footbot_base_ground implementation="rot_z_only" / -->
         <!-- footbot_distance_scanner implementation="rot_z_only" / -->
         <!-- footbot_light implementation="rot_z_only" / -->
         <!-- footbot_motor_ground implementation="rot_z_only" / -->
-        <!-- range_and_bearing implementation="default" / -->
         <!-- footbot_turret_encoder implementation="default" / -->
       </sensors>
       <params />
@@ -61,7 +61,7 @@
     <distribute>
       <position method="uniform" min="-5,-5,0" max="5,5,0" />
       <orientation method="gaussian" mean="0,0,0" std_dev="360,0,0" />
-      <entity quantity="100" max_trials="100">
+      <entity quantity="300" max_trials="100">
         <foot-bot id="fb"
                   controller="x" />
       </entity>
@@ -96,19 +96,19 @@
   <!-- * Media * -->
   <!-- ********* -->
   <media>
-    <range_and_bearing id="rab" />
+    <range_and_bearing id="rab" index="grid" grid_size="1,1,1" />
   </media>
 
   <!-- ****************** -->
   <!-- * Visualization * -->
   <!-- ****************** -->
   <visualization>
-    <qt-opengl>
-      <camera>
-        <placement idx="0" position="-2,0,2" look_at="0,0,0" lens_focal_length="20" />
-        <placement idx="1" position="0.884183,0.359128,0.490269" look_at="0.924486,-0.486744,-0.0415919" lens_focal_length="20" />
-      </camera>
-    </qt-opengl>
+    <!-- <qt-opengl> -->
+    <!--   <camera> -->
+    <!--     <placement idx="0" position="-2,0,2" look_at="0,0,0" lens_focal_length="20" /> -->
+    <!--     <placement idx="1" position="0.884183,0.359128,0.490269" look_at="0.924486,-0.486744,-0.0415919" lens_focal_length="20" /> -->
+    <!--   </camera> -->
+    <!-- </qt-opengl> -->
   </visualization>
 
 </argos-configuration>
