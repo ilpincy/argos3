@@ -52,7 +52,7 @@ namespace argos {
          /* String to store the full path to a library */
          std::string strLibPath;
          /* String to store the list of paths to search */
-         std::string strPluginPath = DEFAULT_PLUGIN_PATH;
+         std::string strPluginPath = ".:" + DEFAULT_PLUGIN_PATH;
          /* Get variable ARGOS_PLUGIN_PATH from the environment */
          if(::getenv("ARGOS_PLUGIN_PATH") != NULL) {
             /* Add value of the variable to list of paths to check */
