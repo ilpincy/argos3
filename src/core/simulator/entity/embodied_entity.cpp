@@ -471,7 +471,7 @@ namespace argos {
                                                  const CRay3& c_ray,
                                                  CEmbodiedEntity& c_entity) {
       CCheckEmbodiedEntitiesForIntersectionWIgnore cOp(c_ray, c_entity);
-      c_pos_index.ForEntitiesAlongRay(c_ray, cOp, true);
+      c_pos_index.ForEntitiesAlongRay(c_ray, cOp, false);
       s_item.IntersectedEntity = cOp.GetClosestEmbodiedEntity();
       s_item.TOnRay = cOp.GetTOnRay();
       return (s_item.IntersectedEntity != NULL);

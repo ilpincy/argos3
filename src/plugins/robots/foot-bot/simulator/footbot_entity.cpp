@@ -40,6 +40,7 @@ namespace argos {
    static const Real PROXIMITY_SENSOR_RING_RANGE           = 0.1f;
 
    static const Real LED_RING_ELEVATION         = 0.085f;
+   static const Real RAB_ELEVATION              = 0.1f;
    static const Real BEACON_ELEVATION           = 0.174249733f;
 
    static const Real GRIPPER_ELEVATION          = LED_RING_ELEVATION;
@@ -165,7 +166,8 @@ namespace argos {
                                                         GetId() + ".rab",
                                                         10,
                                                         fRange,
-                                                        *m_pcEmbodiedEntity);
+                                                        *m_pcEmbodiedEntity,
+                                                        CVector3(0.0f, 0.0f, RAB_ELEVATION));
          AddComponent(*m_pcRABEquippedEntity);
          /* Turret equipped entity */
          m_pcTurretEntity = new CFootBotTurretEntity(this, GetId() + ".turret");

@@ -12,13 +12,15 @@
 
 namespace argos {
    class CRangeAndBearingMediumSensor;
+   class CRABEquippedEntity;
+   class CControllableEntity;
+   class CRABMedium;
 }
 
 #include <argos3/core/simulator/sensor.h>
 #include <argos3/core/utility/math/rng.h>
+#include <argos3/core/simulator/space/space.h>
 #include <argos3/plugins/robots/generic/control_interface/ci_range_and_bearing_sensor.h>
-#include <argos3/plugins/simulator/entities/rab_equipped_entity.h>
-#include <argos3/plugins/simulator/media/rab_medium.h>
 
 namespace argos {
 
@@ -37,11 +39,13 @@ namespace argos {
 
    private:
 
-      CRABEquippedEntity* m_pcRangeAndBearingEquippedEntity;
-      CRABMedium*         m_pcRangeAndBearingMedium;
-      Real                m_fDistanceNoiseStdDev;
-      CRandom::CRNG*      m_pcRNG;
-      CSpace&             m_cSpace;
+      CRABEquippedEntity*  m_pcRangeAndBearingEquippedEntity;
+      CControllableEntity* m_pcControllableEntity;
+      CRABMedium*          m_pcRangeAndBearingMedium;
+      Real                 m_fDistanceNoiseStdDev;
+      CRandom::CRNG*       m_pcRNG;
+      CSpace&              m_cSpace;
+      bool                 m_bShowRays;
    };
 }
 

@@ -7,6 +7,9 @@
 #include "range_and_bearing_medium_sensor.h"
 #include <argos3/core/simulator/simulator.h>
 #include <argos3/core/simulator/entity/composable_entity.h>
+#include <argos3/core/simulator/entity/controllable_entity.h>
+#include <argos3/plugins/simulator/entities/rab_equipped_entity.h>
+#include <argos3/plugins/simulator/media/rab_medium.h>
 
 namespace argos {
 
@@ -22,7 +25,8 @@ namespace argos {
       m_pcRangeAndBearingEquippedEntity(NULL),
       m_fDistanceNoiseStdDev(0.0f),
       m_pcRNG(NULL),
-      m_cSpace(CSimulator::GetInstance().GetSpace()) {}
+      m_cSpace(CSimulator::GetInstance().GetSpace()),
+      m_bShowRays(false) {}
 
    /****************************************/
    /****************************************/
@@ -33,6 +37,8 @@ namespace argos {
       /* Enable the RAB equipped entity */
       m_pcRangeAndBearingEquippedEntity->SetCanBeEnabledIfDisabled(true);
       m_pcRangeAndBearingEquippedEntity->Enable();
+      /* Get reference to controllable entity */
+      m_pcControllableEntity = &c_entity.GetComponent<CControllableEntity>("controller");
    }
 
    /****************************************/
@@ -42,6 +48,8 @@ namespace argos {
       try {
          /* Parent class init */
          CCI_RangeAndBearingSensor::Init(t_tree);
+         /* Show rays? */
+         GetNodeAttributeOrDefault(t_tree, "show_rays", m_bShowRays, m_bShowRays);
          /* Parse noise */
          GetNodeAttributeOrDefault(t_tree, "noise_std_dev", m_fDistanceNoiseStdDev, m_fDistanceNoiseStdDev);
          if(m_fDistanceNoiseStdDev > 0.0f) {
@@ -67,15 +75,22 @@ namespace argos {
       /* Delete old readings */
       m_tReadings.clear();
       /* Get list of communicating RABs */
-      const std::vector<CRABEquippedEntity*>& vecRABs = m_pcRangeAndBearingMedium->GetRABsCommunicatingWith(*m_pcRangeAndBearingEquippedEntity);
+      const CSet<CRABEquippedEntity*>& setRABs = m_pcRangeAndBearingMedium->GetRABsCommunicatingWith(*m_pcRangeAndBearingEquippedEntity);
       /* Buffer for calculating the message--robot distance */
       CVector3 cVectorRobotToMessage;
       /* Buffer for the received packet */
       CCI_RangeAndBearingSensor::SPacket sPacket;
       /* Go through communicating RABs and create packets */
-      for(size_t i = 0; i < vecRABs.size(); ++i) {
+      for(CSet<CRABEquippedEntity*>::iterator it = setRABs.begin();
+          it != setRABs.end(); ++it) {
          /* Create a reference to the RAB entity to process */
-         CRABEquippedEntity& cRABEntity = *(vecRABs[i]);
+         CRABEquippedEntity& cRABEntity = **it;
+         /* Add ray if requested */
+         if(m_bShowRays) {
+            m_pcControllableEntity->AddCheckedRay(false,
+                                                  CRay3(cRABEntity.GetPosition(),
+                                                        m_pcRangeAndBearingEquippedEntity->GetPosition()));
+         }
          /* Calculate vector to entity */
          cVectorRobotToMessage = cRABEntity.GetPosition();
          cVectorRobotToMessage -= m_pcRangeAndBearingEquippedEntity->GetPosition();

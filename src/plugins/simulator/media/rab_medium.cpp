@@ -85,6 +85,12 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   static UInt64 HashRABPair(const std::pair<CRABEquippedEntity*, CRABEquippedEntity*>& c_pair) {
+      UInt64 unA = reinterpret_cast<const UInt32>(c_pair.first);
+      UInt64 unB = reinterpret_cast<const UInt32>(c_pair.second);
+      return (unA << 32) | (unB & 0xFFFFFFFF);
+   }
+
    void CRABMedium::Update() {
       /* Update positional index of RAB entities */
       m_pcRABEquippedEntityIndex->Update();
@@ -95,9 +101,14 @@ namespace argos {
          it->second.clear();
       }
       /* This map contains the pairs that have already been checked */
-      std::set<std::pair<CRABEquippedEntity*, CRABEquippedEntity*> > setPairsAlreadyChecked;
+      std::map<UInt64, std::pair<CRABEquippedEntity*, CRABEquippedEntity*> > mapPairsAlreadyChecked;
+      /* Iterator for the above structure */
+      std::map<UInt64, std::pair<CRABEquippedEntity*, CRABEquippedEntity*> >::iterator itPair;
       /* Used as test key */
       std::pair<CRABEquippedEntity*, CRABEquippedEntity*> cTestKey;
+      /* Used as hash for the test key */
+      UInt64 unTestHash;
+      /* The ray to use for occlusion checking */
       CRay3 cOcclusionCheckRay;
       /* Buffer for the communicating entities */
       CSet<CRABEquippedEntity*> cOtherRABs;
@@ -125,11 +136,20 @@ namespace argos {
             /* First, make sure the entities are not the same */
             if(&cRAB != &cOtherRAB) {
                /* Proceed if the pair has not been checked already */
-               if(&cRAB < &cOtherRAB) cTestKey = std::make_pair(&cRAB, &cOtherRAB);
-               else cTestKey = std::make_pair(&cOtherRAB, &cRAB);
-               if(setPairsAlreadyChecked.find(cTestKey) == setPairsAlreadyChecked.end()) {
+               if(&cRAB < &cOtherRAB) {
+                  cTestKey.first = &cRAB;
+                  cTestKey.second = &cOtherRAB;
+               }
+               else {
+                  cTestKey.first = &cOtherRAB;
+                  cTestKey.second = &cRAB;
+               }
+               unTestHash = HashRABPair(cTestKey);
+               itPair = mapPairsAlreadyChecked.find(unTestHash);
+               if(itPair == mapPairsAlreadyChecked.end() || /* Pair does not exist */
+                  itPair->second != cTestKey) {             /* Pair exists, but RABs involved are different */
                   /* Mark this pair as already checked */
-                  setPairsAlreadyChecked.insert(cTestKey);
+                  mapPairsAlreadyChecked[unTestHash] = cTestKey;
                   /* Proceed if the message size is compatible */
                   if(cRAB.GetMsgSize() == cOtherRAB.GetMsgSize()) {
                      /* Proceed if the two entities are not obstructed by another object */
@@ -137,7 +157,7 @@ namespace argos {
                      if((!GetClosestEmbodiedEntityIntersectedByRay(sIntersectionItem,
                                                                    CSimulator::GetInstance().GetSpace().GetEmbodiedEntityIndex(),
                                                                    cOcclusionCheckRay,
-                                                                   cRAB.GetReference()))  ||
+                                                                   cRAB.GetReference())) ||
                         (&cOtherRAB.GetParent() == &sIntersectionItem.IntersectedEntity->GetParent())) {
                         /* If we get here, the two RAB entities are in direct line of sight */
                         /* cRAB can receive cOtherRAB's message if it is in range, and viceversa */
@@ -145,11 +165,11 @@ namespace argos {
                         fDistance = cOcclusionCheckRay.GetLength();
                         if(fDistance < cOtherRAB.GetRange()) {
                            /* cRAB receives cOtherRAB's message */
-                           it->second.push_back(&cOtherRAB);
+                           it->second.insert(&cOtherRAB);
                         }
                         if(fDistance < cRAB.GetRange()) {
                            /* cOtherRAB receives cRAB's message */
-                           m_tRoutingTable[&cOtherRAB].push_back(&cRAB);
+                           m_tRoutingTable[&cOtherRAB].insert(&cRAB);
                         }
                      }
                   }
@@ -164,8 +184,8 @@ namespace argos {
 
    void CRABMedium::AddEntity(CRABEquippedEntity& c_entity) {
       m_tRoutingTable.insert(
-         std::make_pair<CRABEquippedEntity*, std::vector<CRABEquippedEntity*> >(
-            &c_entity, std::vector<CRABEquippedEntity*>()));
+         std::make_pair<CRABEquippedEntity*, CSet<CRABEquippedEntity*> >(
+            &c_entity, CSet<CRABEquippedEntity*>()));
       m_pcRABEquippedEntityIndex->AddEntity(c_entity);
    }
 
@@ -186,7 +206,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   const std::vector<CRABEquippedEntity*>& CRABMedium::GetRABsCommunicatingWith(CRABEquippedEntity& c_entity) const {
+   const CSet<CRABEquippedEntity*>& CRABMedium::GetRABsCommunicatingWith(CRABEquippedEntity& c_entity) const {
       TRoutingTable::const_iterator it = m_tRoutingTable.find(&c_entity);
       if(it != m_tRoutingTable.end()) {
          return it->second;
