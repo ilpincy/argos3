@@ -29,9 +29,6 @@ namespace argos {
 
    static const Real ASPECT_RATIO         = 4.0f / 3.0f;
    static const UInt32 SELECT_BUFFER_SIZE = 128;
-   static const Real FLOOR_SIDE           = 1000.0f;
-   static const Real HALF_FLOOR_SIDE      = FLOOR_SIDE * 0.5f;
-   static const Real FLOOR_ELEVATION      = -0.001f;
    
    /****************************************/
    /****************************************/
@@ -136,12 +133,12 @@ namespace argos {
 
    void CQTOpenGLWidget::initializeGL() {
       glShadeModel(GL_SMOOTH);
+      glEnable(GL_LINE_SMOOTH);
       glEnable(GL_LIGHTING);
       glEnable(GL_CULL_FACE);
       glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
       glHint(GL_TEXTURE_COMPRESSION_HINT, GL_NICEST);
       glEnable(GL_DEPTH_TEST);
-
       qglClearColor(Qt::darkCyan);
       glClearAccum(0.0, 0.0, 0.0, 0.0);
       /* Place the lights */
@@ -161,6 +158,13 @@ namespace argos {
    void CQTOpenGLWidget::paintEvent(QPaintEvent*) {
       if(!isValid()) return;
       DrawScene();
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CQTOpenGLWidget::DrawAxes() {
+      // @TODO
    }
 
    /****************************************/
@@ -205,14 +209,16 @@ namespace argos {
          CallEntityOperation<CQTOpenGLOperationDrawSelected, CQTOpenGLWidget, void>(*this, *vecEntities[m_sSelectionInfo.Index]);
          glPopMatrix();
       }
-      /* Switch anti-aliasing off */
-      if(m_bAntiAliasing) {
-         glDisable(GL_MULTISAMPLE);
-      }
       /* Draw in world */
       glPushMatrix();
       m_cUserFunctions.DrawInWorld();
       glPopMatrix();
+      /* Switch anti-aliasing off */
+      if(m_bAntiAliasing) {
+         glDisable(GL_MULTISAMPLE);
+      }
+      /* Draw axes */
+      DrawAxes();
       /* Execute overlay drawing */
       glShadeModel(GL_FLAT);
       glDisable(GL_LIGHTING);
@@ -602,23 +608,14 @@ namespace argos {
    /****************************************/
 
    void CQTOpenGLWidget::DrawArena() {
+      CVector3 cArenaSize(m_cSpace.GetArenaSize());
+      CVector3 cArenaMinCorner(m_cSpace.GetArenaCenter() - cArenaSize * 0.5f);
+      CVector3 cArenaMaxCorner(m_cSpace.GetArenaCenter() + cArenaSize * 0.5f);
       /* Disable lighting - no funny color effects */
       glDisable(GL_LIGHTING);
+      /* Enable textures */
       glEnable(GL_TEXTURE_2D);
-      /* The texture covers the object like a decal */
-      glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
-      /* Wrap the texture at the edges, which in this case means that it is repeated */
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-      glBindTexture(GL_TEXTURE_2D, m_unGroundTexture);
-      /* Draw the floor along with its texture */
-      glBegin(GL_QUADS);
-      glTexCoord2f(0.0f,       FLOOR_SIDE); glVertex3f(-HALF_FLOOR_SIDE, -HALF_FLOOR_SIDE, FLOOR_ELEVATION);
-      glTexCoord2f(FLOOR_SIDE, FLOOR_SIDE); glVertex3f( HALF_FLOOR_SIDE, -HALF_FLOOR_SIDE, FLOOR_ELEVATION);
-      glTexCoord2f(FLOOR_SIDE, 0.0f);       glVertex3f( HALF_FLOOR_SIDE,  HALF_FLOOR_SIDE, FLOOR_ELEVATION);
-      glTexCoord2f(0.0f,       0.0f);       glVertex3f(-HALF_FLOOR_SIDE,  HALF_FLOOR_SIDE, FLOOR_ELEVATION);
-      glEnd();
-      /* Now take care of the floor entity */
+      /* Take care of the floor entity if necessary */
       if(m_bUsingFloorTexture) {
          /* Use the image as texture */
          if(m_cSpace.GetFloorEntity().HasChanged()) {
@@ -634,21 +631,69 @@ namespace argos {
          }
          glBindTexture(GL_TEXTURE_2D, m_unFloorTexture);
          /* Draw the floor entity along with its texture */
-         CVector3 cHalfArenaSize = m_cSpace.GetArenaSize() * 0.5f;
-         /* Disabling the depth test solves an annoying glitch:
-            since the floor and the floor entity are very close, the
-            textures flicker */
-         glDisable(GL_DEPTH_TEST);
          glBegin(GL_QUADS);
-         glTexCoord2d(0.0f, 1.0f); glVertex3f(-cHalfArenaSize.GetX(), -cHalfArenaSize.GetY(), 0.0f);
-         glTexCoord2d(1.0f, 1.0f); glVertex3f( cHalfArenaSize.GetX(), -cHalfArenaSize.GetY(), 0.0f);
-         glTexCoord2d(1.0f, 0.0f); glVertex3f( cHalfArenaSize.GetX(),  cHalfArenaSize.GetY(), 0.0f);
-         glTexCoord2d(0.0f, 0.0f); glVertex3f(-cHalfArenaSize.GetX(),  cHalfArenaSize.GetY(), 0.0f);
+         glTexCoord2d(0.0f, 1.0f); glVertex3f(cArenaMinCorner.GetX(), cArenaMinCorner.GetY(), 0.0f);
+         glTexCoord2d(1.0f, 1.0f); glVertex3f(cArenaMaxCorner.GetX(), cArenaMinCorner.GetY(), 0.0f);
+         glTexCoord2d(1.0f, 0.0f); glVertex3f(cArenaMaxCorner.GetX(), cArenaMaxCorner.GetY(), 0.0f);
+         glTexCoord2d(0.0f, 0.0f); glVertex3f(cArenaMinCorner.GetX(), cArenaMaxCorner.GetY(), 0.0f);
          glEnd();
-         /* Restore depth test */
-         glEnable(GL_DEPTH_TEST);
       }
+      else {
+         /* The texture covers the object like a decal */
+         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
+         /* Wrap the texture at the edges, which in this case means that it is repeated */
+         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+         glBindTexture(GL_TEXTURE_2D, m_unGroundTexture);
+         /* Draw the floor along with its texture */
+         glBegin(GL_QUADS);
+         glTexCoord2f(0.0f, cArenaSize.GetY());              glVertex3f(cArenaMinCorner.GetX(), cArenaMinCorner.GetY(), 0.0f);
+         glTexCoord2f(cArenaSize.GetX(), cArenaSize.GetY()); glVertex3f(cArenaMaxCorner.GetX(), cArenaMinCorner.GetY(), 0.0f);
+         glTexCoord2f(cArenaSize.GetX(), 0.0f);              glVertex3f(cArenaMaxCorner.GetX(), cArenaMaxCorner.GetY(), 0.0f);
+         glTexCoord2f(0.0f, 0.0f);                           glVertex3f(cArenaMinCorner.GetX(), cArenaMaxCorner.GetY(), 0.0f);
+         glEnd();
+      }
+      /* Disable the textures */
       glDisable(GL_TEXTURE_2D);
+      /* Draw walls */
+      glDisable(GL_CULL_FACE);
+      glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+      glLineWidth(3.0f);
+      glColor3f(0.0f, 0.0f, 0.0f);
+      /* This part covers the top and bottom faces (parallel to XY) */
+      glBegin(GL_QUADS);
+      /* Top face */
+      glVertex3f(cArenaMinCorner.GetX(), cArenaMinCorner.GetY(), cArenaMaxCorner.GetZ());
+      glVertex3f(cArenaMaxCorner.GetX(), cArenaMinCorner.GetY(), cArenaMaxCorner.GetZ());
+      glVertex3f(cArenaMaxCorner.GetX(), cArenaMaxCorner.GetY(), cArenaMaxCorner.GetZ());
+      glVertex3f(cArenaMinCorner.GetX(), cArenaMaxCorner.GetY(), cArenaMaxCorner.GetZ());
+      glEnd();
+      /* This part covers the faces (South, East, North, West) */
+      glBegin(GL_QUADS);
+      /* South face */
+      glVertex3f(cArenaMinCorner.GetX(), cArenaMinCorner.GetY(), cArenaMinCorner.GetZ());
+      glVertex3f(cArenaMinCorner.GetX(), cArenaMinCorner.GetY(), cArenaMaxCorner.GetZ());
+      glVertex3f(cArenaMinCorner.GetX(), cArenaMaxCorner.GetY(), cArenaMaxCorner.GetZ());
+      glVertex3f(cArenaMinCorner.GetX(), cArenaMaxCorner.GetY(), cArenaMinCorner.GetZ());
+      /* East face */
+      glVertex3f(cArenaMinCorner.GetX(), cArenaMinCorner.GetY(), cArenaMinCorner.GetZ());
+      glVertex3f(cArenaMaxCorner.GetX(), cArenaMinCorner.GetY(), cArenaMinCorner.GetZ());
+      glVertex3f(cArenaMaxCorner.GetX(), cArenaMinCorner.GetY(), cArenaMaxCorner.GetZ());
+      glVertex3f(cArenaMinCorner.GetX(), cArenaMinCorner.GetY(), cArenaMaxCorner.GetZ());
+      /* North face */
+      glVertex3f(cArenaMaxCorner.GetX(), cArenaMinCorner.GetY(), cArenaMinCorner.GetZ());
+      glVertex3f(cArenaMaxCorner.GetX(), cArenaMaxCorner.GetY(), cArenaMinCorner.GetZ());
+      glVertex3f(cArenaMaxCorner.GetX(), cArenaMaxCorner.GetY(), cArenaMaxCorner.GetZ());
+      glVertex3f(cArenaMaxCorner.GetX(), cArenaMinCorner.GetY(), cArenaMaxCorner.GetZ());
+      /* West face */
+      glVertex3f(cArenaMinCorner.GetX(), cArenaMaxCorner.GetY(), cArenaMinCorner.GetZ());
+      glVertex3f(cArenaMinCorner.GetX(), cArenaMaxCorner.GetY(), cArenaMaxCorner.GetZ());
+      glVertex3f(cArenaMaxCorner.GetX(), cArenaMaxCorner.GetY(), cArenaMaxCorner.GetZ());
+      glVertex3f(cArenaMaxCorner.GetX(), cArenaMaxCorner.GetY(), cArenaMinCorner.GetZ());
+      glEnd();
+      glLineWidth(1.0f);
+      glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+      glEnable(GL_CULL_FACE);
       /* Restore lighting */
       glEnable(GL_LIGHTING);
    }
