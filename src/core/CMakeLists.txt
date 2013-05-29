@@ -89,12 +89,13 @@ set(ARGOS3_HEADERS_SIMULATOR_PHYSICSENGINE
 set(ARGOS3_HEADERS_SIMULATOR_VISUALIZATION
   simulator/visualization/visualization.h)
 # argos3/core/simulator/space
-set(ARGOS3_HEADERS_SIMULATOR_SPACE
+set(ARGOS3_HEADERS_SIMULATOR_SPACE_POSITIONAL_INDICES
   simulator/space/positional_indices/grid.h
   simulator/space/positional_indices/grid_impl.h
   simulator/space/positional_indices/positional_index.h
   simulator/space/positional_indices/space_hash.h
-  simulator/space/positional_indices/space_hash_native.h
+  simulator/space/positional_indices/space_hash_native.h)
+set(ARGOS3_HEADERS_SIMULATOR_SPACE
   simulator/space/space.h
   simulator/space/space_multi_thread_balance_length.h
   simulator/space/space_multi_thread_balance_quantity.h
@@ -223,8 +224,10 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
   install(FILES ${ARGOS3_HEADERS_SIMULATOR}                   DESTINATION include/argos3/core/simulator)
   install(FILES ${ARGOS3_HEADERS_SIMULATOR_ACTUATORS}         DESTINATION include/argos3/core/simulator/actuators)
   install(FILES ${ARGOS3_HEADERS_SIMULATOR_ENTITY}            DESTINATION include/argos3/core/simulator/entity)
+  install(FILES ${ARGOS3_HEADERS_SIMULATOR_MEDIUM}            DESTINATION include/argos3/core/simulator/medium)
   install(FILES ${ARGOS3_HEADERS_SIMULATOR_PHYSICSENGINE}     DESTINATION include/argos3/core/simulator/physics_engine)
   install(FILES ${ARGOS3_HEADERS_SIMULATOR_VISUALIZATION}     DESTINATION include/argos3/core/simulator/visualization)
+  install(FILES ${ARGOS3_HEADERS_SIMULATOR_SPACE_POSITIONAL_INDICES} DESTINATION include/argos3/core/simulator/space/positional_indices)
   install(FILES ${ARGOS3_HEADERS_SIMULATOR_SPACE}             DESTINATION include/argos3/core/simulator/space)
 endif(ARGOS_BUILD_FOR_SIMULATOR)
 if(LUA51_FOUND)
