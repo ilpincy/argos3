@@ -115,12 +115,10 @@ namespace argos {
 #endif
       deleteTexture(m_unGroundTexture);
       glDeleteLists(1, m_unArenaList);
-
       if(m_bUsingFloorTexture) {
          deleteTexture(m_unFloorTexture);
          glDeleteLists(1, m_unFloorList);
       }
-
       delete[] m_punSelectionBuffer;
       delete[] m_pfLightAmbient;
       delete[] m_pfLightDiffuse;
@@ -616,6 +614,8 @@ namespace argos {
       /* Enable textures */
       glEnable(GL_TEXTURE_2D);
       /* Take care of the floor entity if necessary */
+      /* The texture covers the object like a decal */
+      glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
       if(m_bUsingFloorTexture) {
          /* Use the image as texture */
          if(m_cSpace.GetFloorEntity().HasChanged()) {
@@ -639,8 +639,6 @@ namespace argos {
          glEnd();
       }
       else {
-         /* The texture covers the object like a decal */
-         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
          /* Wrap the texture at the edges, which in this case means that it is repeated */
          glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
          glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
