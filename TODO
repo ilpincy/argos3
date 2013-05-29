@@ -7,3 +7,6 @@
 [MAC]
 - The configuration file is stored in $HOME/Library/Preferences/be.ac.ulb.Iridia.ARGoS3.plist.
 
+[LUA]
+- Multifile editing is broken; when an error occurs, the line that is displayed in the editor is correct, but not the file
+- When the Lua script has an error, and the editor is not displayed, there's no error displayed
