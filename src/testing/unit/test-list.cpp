@@ -40,6 +40,13 @@ int main() {
    }
    fprintf(stderr, "\n");
 
+   L.clear();
+   fprintf(stderr, "%d elements\n", L.size());
+   for(CSet<T*>::const_iterator it = L.begin(); it != L.end(); ++it) {
+      fprintf(stderr, "x = %d\n", (*it)->x);
+   }
+   fprintf(stderr, "\n");
+
    CSet<T*>::iterator itF = L.find(&v3);
    if(itF != L.end()) {
       fprintf(stderr, "v3 found: x = %d\n", (*itF)->x);
