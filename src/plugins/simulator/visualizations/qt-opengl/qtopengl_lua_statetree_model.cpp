@@ -242,8 +242,8 @@ namespace argos {
    bool CQTOpenGLLuaStateTreeVariableModel::IsTypeVisitable(lua_State* pt_state) {
       int nValueType = lua_type(pt_state, -1);
       int nKeyType = lua_type(pt_state, -2);
-      if(nValueType == LUA_TSTRING || nValueType == LUA_TNUMBER) {
-         if(nKeyType == LUA_TNUMBER) {
+      if(nValueType == LUA_TSTRING || nValueType == LUA_TNUMBER || nValueType == LUA_TBOOLEAN) {
+         if(nKeyType != LUA_TSTRING) {
             return true;
          }
          else if(nKeyType == LUA_TSTRING) {
