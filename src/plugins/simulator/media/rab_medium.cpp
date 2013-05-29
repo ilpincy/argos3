@@ -86,9 +86,9 @@ namespace argos {
    /****************************************/
 
    static UInt64 HashRABPair(const std::pair<CRABEquippedEntity*, CRABEquippedEntity*>& c_pair) {
-      UInt64 unA = reinterpret_cast<const UInt32>(c_pair.first);
-      UInt64 unB = reinterpret_cast<const UInt32>(c_pair.second);
-      return (unA << 32) | (unB & 0xFFFFFFFF);
+      UInt64 unA = *reinterpret_cast<unsigned long long*>(c_pair.first) & 0xFFFFFFFF;
+      UInt64 unB = *reinterpret_cast<unsigned long long*>(c_pair.second) & 0xFFFFFFFF;
+      return (unA << 32) | unB;
    }
 
    void CRABMedium::Update() {
@@ -158,7 +158,7 @@ namespace argos {
                                                                    CSimulator::GetInstance().GetSpace().GetEmbodiedEntityIndex(),
                                                                    cOcclusionCheckRay,
                                                                    cRAB.GetReference())) ||
-                        (&cOtherRAB.GetParent() == &sIntersectionItem.IntersectedEntity->GetParent())) {
+                        (&cOtherRAB.GetReference() == sIntersectionItem.IntersectedEntity)) {
                         /* If we get here, the two RAB entities are in direct line of sight */
                         /* cRAB can receive cOtherRAB's message if it is in range, and viceversa */
                         /* Calculate square distance */
