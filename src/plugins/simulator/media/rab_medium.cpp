@@ -146,8 +146,9 @@ namespace argos {
                }
                unTestHash = HashRABPair(cTestKey);
                itPair = mapPairsAlreadyChecked.find(unTestHash);
-               if(itPair == mapPairsAlreadyChecked.end() || /* Pair does not exist */
-                  itPair->second != cTestKey) {             /* Pair exists, but RABs involved are different */
+               if(itPair == mapPairsAlreadyChecked.end() ||   /* Pair does not exist */
+                  itPair->second.first != cTestKey.first ||   /* Pair exists, but first RAB involved is different */
+                  itPair->second.second != cTestKey.second) { /* Pair exists, but second RAB involved is different */
                   /* Mark this pair as already checked */
                   mapPairsAlreadyChecked[unTestHash] = cTestKey;
                   /* Proceed if the message size is compatible */
