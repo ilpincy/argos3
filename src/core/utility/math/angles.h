@@ -508,8 +508,11 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+#undef ARGOS_SINCOS
 #ifdef ARGOS_USE_DOUBLE
-#  define ARGOS_SINCOS ::sincos
+#  ifdef _GNU_SOURCE
+#    define ARGOS_SINCOS ::sincos
+#  endif
 #  define ARGOS_SIN    ::sin
 #  define ARGOS_ASIN   ::asin
 #  define ARGOS_COS    ::cos
@@ -517,7 +520,9 @@ namespace argos {
 #  define ARGOS_TAN    ::tan
 #  define ARGOS_ATAN2  ::atan2
 #else
-#  define ARGOS_SINCOS ::sincosf
+#  ifdef _GNU_SOURCE
+#    define ARGOS_SINCOS ::sincosf
+#  endif
 #  define ARGOS_SIN    ::sinf
 #  define ARGOS_ASIN   ::asinf
 #  define ARGOS_COS    ::cosf
@@ -526,6 +531,7 @@ namespace argos {
 #  define ARGOS_ATAN2  ::atan2f
 #endif
 
+#ifdef ARGOS_SINCOS
    /** 
     * Computes the sine and cosine of the passed value in radians
     * @param c_radians the angle in CRadians
@@ -537,6 +543,7 @@ namespace argos {
                       Real& f_cos) {
       ARGOS_SINCOS(c_radians.GetValue(), &f_sin, &f_cos);
    }
+#endif
 
    /** 
     * Computes the sine of the passed value in radians

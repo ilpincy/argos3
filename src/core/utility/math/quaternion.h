@@ -100,7 +100,12 @@ namespace argos {
                                         const CVector3& c_vector) {
          CRadians cHalfAngle = c_angle * 0.5;
          Real fSin, fCos;
+#ifdef ARGOS_SINCOS
          SinCos(cHalfAngle, fSin, fCos);
+#else
+         fSin = Sin(cHalfAngle);
+         fCos = Cos(cHalfAngle);
+#endif
          m_fValues[0] = fCos;
          m_fValues[1] = c_vector.GetX() * fSin;
          m_fValues[2] = c_vector.GetY() * fSin;

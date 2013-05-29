@@ -168,7 +168,12 @@ namespace argos {
        */
       inline CVector2& Rotate(const CRadians& c_angle) {
          Real fSin, fCos;
+#ifdef ARGOS_SINCOS
          SinCos(c_angle, fSin, fCos);
+#else
+         fSin = Sin(c_angle);
+         fCos = Cos(c_angle);
+#endif
          Real fX = m_fX * fCos - m_fY * fSin;
          Real fY = m_fX * fSin + m_fY * fCos;
          m_fX = fX;
