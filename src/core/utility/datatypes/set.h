@@ -353,6 +353,8 @@ namespace argos {
          }
          if(m_unSize == 1) {
             delete m_psFirst;
+            m_psFirst = NULL;
+            m_psLast = NULL;
             m_unSize = 0;
             return;
          }
@@ -365,6 +367,8 @@ namespace argos {
                psNextElem = psNextElem->Next;
             }
          }
+         m_psFirst = NULL;
+         m_psLast = NULL;
          m_unSize = 0;
       }
 
