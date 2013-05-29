@@ -1,38 +1,14 @@
--- Put your global variables here
+Account = {}
+Account.__index = Account
 
-Vector = { __index = Vector }
-
-
-
---[[ This function is executed every time you press the 'execute'
-     button ]]
-function init()
-   -- put your code here
+function Account.create(balance)
+  local acnt = {}             -- our new object
+  setmetatable(acnt,Account)  -- make Account handle lookup
+  acnt.balance = balance      -- initialize our object
+  return acnt
 end
 
-
-
---[[ This function is executed at each time step
-     It must contain the logic of your controller ]]
-function step()
-   -- put your code here
-end
-
-
-
---[[ This function is executed every time you press the 'reset'
-     button in the GUI. It is supposed to restore the state
-     of the controller to whatever it was right after init() was
-     called. The state of sensors and actuators is reset
-     automatically by ARGoS. ]]
-function reset()
-   -- put your code here
-end
-
-
-
---[[ This function is executed only once, when the robot is removed
-     from the simulation ]]
-function destroy()
-   -- put your code here
-end
+function init() end
+function step() end
+function reset() end
+function destroy() end

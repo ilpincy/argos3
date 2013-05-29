@@ -79,7 +79,7 @@
   <!-- *********************** -->
   <!-- * Arena configuration * -->
   <!-- *********************** -->
-  <arena size="10, 10, 1" center="0,0,0.5" positional_index="grid" positional_grid_size="25,25,1">
+  <arena size="10, 10, 1" center="0,0,0" positional_index="grid" positional_grid_size="25,25,1">
     <!-- <floor id="f" source="loop_functions" pixels_per_meter="100" /> -->
 
     <box id="bn" position="5,0,0"  orientation="0,0,0" size="0.1, 10, 0.2" movable="false" />
@@ -114,8 +114,8 @@
     <!--   </entity> -->
     <!-- </distribute> -->
 
-    <foot-bot id="fb100" position="0,0,0" orientation="0,0,0" controller="lua2" />
-    <!-- <foot-bot id="fb1" position="0,1,0" orientation="0,0,0" controller="lua2" /> -->
+    <foot-bot id="fb100" position="0,-1,0" orientation="0,0,0" controller="lua2" />
+    <foot-bot id="fb1" position="0,1,0" orientation="0,0,0" controller="lua" />
     <!-- <foot-bot id="fb2" position="0,2,0" orientation="0,0,0" controller="lua" /> -->
 
     <cylinder id="cyl0" position="0,0.5,0" orientation="0,0,0" radius="0.05" height="0.2" movable="true" mass="0.1" />
@@ -133,12 +133,12 @@
   <!-- * Media * -->
   <!-- ********* -->
   <media>
-    <range_and_bearing id="rab" index="grid" grid_size="1,1,1" />
+    <range_and_bearing id="rab" index="grid" grid_size="2,2,1" />
   </media>
 
-  <!-- ****************** -->
+  <!-- ***************** -->
   <!-- * Visualization * -->
-  <!-- ****************** -->
+  <!-- ***************** -->
   <visualization>
 
     <!-- ************************************************************************ -->
