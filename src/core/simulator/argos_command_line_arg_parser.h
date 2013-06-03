@@ -33,6 +33,7 @@ namespace argos {
       enum EAction {
          ACTION_UNKNOWN = 0,
          ACTION_SHOW_HELP,
+         ACTION_SHOW_VERSION,
          ACTION_RUN_EXPERIMENT,
          ACTION_QUERY
       };
@@ -58,6 +59,11 @@ namespace argos {
        * @see LOGERR
        */
       virtual void PrintUsage(CARGoSLog& c_log);
+
+      /**
+       * Prints the current ARGoS version and release.
+       */
+      virtual void PrintVersion();
 
       /**
        * Parses the command line.
@@ -139,6 +145,7 @@ namespace argos {
       std::streambuf* m_pcInitLogErrStream;
       bool m_bNonColoredLog;
       bool m_bHelpWanted;
+      bool m_bVersionWanted;
 
    };
 

@@ -10,6 +10,7 @@
 #include "qtopengl_main_window.h"
 #include "qtopengl_widget.h"
 
+#include <argos3/core/config.h>
 #include <argos3/core/wrappers/lua/lua_controller.h>
 #include <argos3/core/simulator/simulator.h>
 #include <argos3/core/simulator/space/space.h>
@@ -278,7 +279,7 @@ namespace argos {
    bool CQTOpenGLLuaMainWindow::MaybeSave() {
       if(m_pcCodeEditor->document()->isModified()) {
          QMessageBox::StandardButton tReply;
-         tReply = QMessageBox::warning(this, tr("ARGoS v3.0 - Lua Editor"),
+         tReply = QMessageBox::warning(this, tr("ARGoS v" ARGOS_VERSION "-" ARGOS_RELEASE " - Lua Editor"),
                                        tr("The document has been modified.\n"
                                           "Do you want to save your changes?"),
                                        QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
@@ -567,7 +568,7 @@ namespace argos {
    void CQTOpenGLLuaMainWindow::OpenFile(const QString& str_path) {
       QFile cFile(str_path);
       if(! cFile.open(QFile::ReadOnly | QFile::Text)) {
-         QMessageBox::warning(this, tr("ARGoS v3.0 - Lua Editor"),
+         QMessageBox::warning(this, tr("ARGoS v" ARGOS_VERSION "-" ARGOS_RELEASE " - Lua Editor"),
                               tr("Cannot read file %1:\n%2.")
                               .arg(str_path)
                               .arg(cFile.errorString()));
@@ -586,7 +587,7 @@ namespace argos {
    bool CQTOpenGLLuaMainWindow::SaveFile(const QString& str_path) {
       QFile cFile(str_path);
       if(! cFile.open(QFile::WriteOnly | QFile::Text)) {
-         QMessageBox::warning(this, tr("ARGoS v3.0 - Lua Editor"),
+         QMessageBox::warning(this, tr("ARGoS v" ARGOS_VERSION "-" ARGOS_RELEASE " - Lua Editor"),
                               tr("Cannot write file %1:\n%2.")
                               .arg(str_path)
                               .arg(cFile.errorString()));
@@ -613,7 +614,7 @@ namespace argos {
       else {
          strShownName = StrippedFileName(m_strFileName);
       }
-      setWindowTitle(tr("%1[*] - ARGoS v3.0 - Lua Editor").arg(strShownName));
+      setWindowTitle(tr("%1[*] - ARGoS v" ARGOS_VERSION "-" ARGOS_RELEASE " - Lua Editor").arg(strShownName));
       if(!m_strFileName.isEmpty()) {
          m_pcCodeEditor->document()->setModified(false);
          setWindowModified(false);
