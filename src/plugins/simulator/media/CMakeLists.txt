@@ -3,6 +3,7 @@
 #
 # argos3/plugins/simulator/media/
 set(ARGOS3_HEADERS_PLUGINS_SIMULATOR_MEDIA
+  led_medium.h
   rab_medium.h)
 
 #
@@ -10,6 +11,7 @@ set(ARGOS3_HEADERS_PLUGINS_SIMULATOR_MEDIA
 #
 set(ARGOS3_SOURCES_PLUGINS_SIMULATOR_MEDIA
   ${ARGOS3_HEADERS_PLUGINS_SIMULATOR_MEDIA}
+  led_medium.cpp
   rab_medium.cpp)
 
 #
