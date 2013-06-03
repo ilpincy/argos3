@@ -44,6 +44,9 @@ int main(int n_argc, char** ppch_argv) {
          case CARGoSCommandLineArgParser::ACTION_SHOW_HELP:
             cACLAP.PrintUsage(LOG);
             break;
+         case CARGoSCommandLineArgParser::ACTION_SHOW_VERSION:
+            cACLAP.PrintVersion();
+            break;
          case CARGoSCommandLineArgParser::ACTION_UNKNOWN:
             /* Should never get here */
             break;

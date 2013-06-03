@@ -5,7 +5,7 @@
  */
 
 #include "argos_command_line_arg_parser.h"
-//#include <argos3/core/simulator/simulator.h>
+#include <argos3/core/config.h>
 
 namespace argos {
 
@@ -22,6 +22,12 @@ namespace argos {
          "help",
          "display this usage information",
          m_bHelpWanted
+         );
+      AddFlag(
+         'v',
+         "version",
+         "display the current version and release",
+         m_bVersionWanted
          );
       AddFlag(
          'n',
@@ -101,16 +107,17 @@ namespace argos {
          LOGERR.GetStream().rdbuf(m_cLogErrFile.rdbuf());
       }
 
-      /* Check that either -h, -c or -q was passed (strictly one of them) */
-      if(m_strExperimentConfigFile == "" &&
-         m_strQuery == ""                &&
-         ! m_bHelpWanted) {
-         THROW_ARGOSEXCEPTION("No --help, --config-file or --query options specified.");
+      /* Check that either -h, -v, -c or -q was passed (strictly one of them) */
+      UInt32 nOptionsOn = 0;
+      if(m_strExperimentConfigFile != "") ++nOptionsOn;
+      if(m_strQuery != "") ++nOptionsOn;
+      if(m_bHelpWanted) ++nOptionsOn;
+      if(m_bVersionWanted) ++nOptionsOn;
+      if(nOptionsOn == 0) {
+         THROW_ARGOSEXCEPTION("No --help, --version, --config-file or --query options specified.");
       }
-      if((m_strExperimentConfigFile != "" && m_strQuery != "") ||
-         (m_strExperimentConfigFile != "" && m_bHelpWanted) ||
-         (m_strQuery != "" && m_bHelpWanted)) {
-         THROW_ARGOSEXCEPTION("Options --help, --config-file and --query are mutually exclusive.");
+      if(nOptionsOn > 2) {
+         THROW_ARGOSEXCEPTION("Options --help, --version, --config-file and --query are mutually exclusive.");
       }
 
       if(m_strExperimentConfigFile != "") {
@@ -125,6 +132,10 @@ namespace argos {
          m_eAction = ACTION_SHOW_HELP;
       }
 
+      if(m_bVersionWanted) {
+         m_eAction = ACTION_SHOW_VERSION;
+      }
+
    }
 
    /****************************************/
@@ -133,9 +144,10 @@ namespace argos {
    void CARGoSCommandLineArgParser::PrintUsage(CARGoSLog& c_log) {
       c_log << "Usage: argos [OPTIONS]" << std::endl;
       c_log << "The ARGOS simulator, the official simulator of the Swarmanoid Project." << std::endl;
-      c_log << "Current version: 3.0" << std::endl;
+      c_log << "Current version: " << ARGOS_VERSION << "-" << ARGOS_RELEASE << std::endl;
       c_log << std::endl;
       c_log << "   -h        | --help                  display this usage information" << std::endl;
+      c_log << "   -v        | --version               display the current ARGoS version and release" << std::endl;
       c_log << "   -c FILE   | --config-file FILE      the experiment XML configuration file" << std::endl;
       c_log << "   -q QUERY  | --query QUERY           query the available plugins." << std::endl;
       c_log << "   -n        | --no-color              do not use colored output [OPTIONAL]" << std::endl;
@@ -159,6 +171,13 @@ namespace argos {
       c_log << "Alternatively, QUERY can be the name of a specific plugin as returned by the" << std::endl;
       c_log << "above commands. In this case, you get a complete description of the matching" << std::endl;
       c_log << "plugins." << std::endl << std::endl;
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CARGoSCommandLineArgParser::PrintVersion() {
+      LOG << ARGOS_VERSION << "-" << ARGOS_RELEASE << std::endl;
    }
 
    /****************************************/

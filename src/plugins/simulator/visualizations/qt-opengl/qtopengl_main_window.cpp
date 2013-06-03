@@ -9,6 +9,7 @@
 #include "qtopengl_user_functions.h"
 #include "qtopengl_main_window.h"
 
+#include <argos3/core/config.h>
 #include <argos3/core/utility/plugins/dynamic_loading.h>
 #include <argos3/core/utility/logging/argos_log.h>
 #include <argos3/core/simulator/simulator.h>
@@ -128,7 +129,7 @@ namespace argos {
       m_pcUserFunctions(NULL) {
       /* Main window settings */
       std::string strTitle;
-      GetNodeAttributeOrDefault<std::string>(t_tree, "title", strTitle, "ARGoS v3.0");
+      GetNodeAttributeOrDefault<std::string>(t_tree, "title", strTitle, "ARGoS v" ARGOS_VERSION "-" ARGOS_RELEASE);
       setWindowTitle(tr(strTitle.c_str()));
       /* Restore settings, if any */
       ReadSettingsPreCreation();
