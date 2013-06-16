@@ -66,11 +66,11 @@ namespace argos {
          /* Create embodied entity using parsed data */
          m_pcEmbodiedEntity = new CEmbodiedEntity(this);
          AddComponent(*m_pcEmbodiedEntity);
-         m_pcEmbodiedEntity->Init(t_tree);
+         m_pcEmbodiedEntity->Init(GetNode(t_tree, "body"));
          m_pcEmbodiedEntity->SetMovable(bMovable);
          /* Init LED equipped entity component */
          m_pcLEDEquippedEntity = new CLEDEquippedEntity(this,
-                                                        GetId() + ".leds",
+                                                        "leds",
                                                         m_pcEmbodiedEntity);
          AddComponent(*m_pcLEDEquippedEntity);
          if(NodeExists(t_tree, "leds")) {

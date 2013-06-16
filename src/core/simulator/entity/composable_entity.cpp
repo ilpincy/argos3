@@ -94,9 +94,36 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   CEntity& CComposableEntity::GetComponent(const std::string& str_component) {
+   CEntity& CComposableEntity::GetComponent(const std::string& str_path) {
       try {
-         return *(FindComponent(str_component)->second);
+         /* Search for the path separator character and take the first path segment */
+         size_t unFirstSeparatorIdx = str_path.find(".");
+         std::string strFrontIdentifier = str_path.substr(0, unFirstSeparatorIdx);
+         /* Try to find the relevant component in this context */
+         CEntity::TMultiMap::iterator itComponent = FindComponent(strFrontIdentifier);
+         if(itComponent != m_mapComponents.end()) {
+            if(unFirstSeparatorIdx == std::string::npos) {
+               /* Path separator not found, found component in the current context is the one we want */
+               return *(itComponent->second);
+            }
+            /* Path separator found, try to cast the found component to a composable entity */
+            else {
+               CComposableEntity* pcComposableEntity = dynamic_cast<CComposableEntity*>(itComponent->second);
+               if(pcComposableEntity != NULL) {
+                  /* Dynamic cast of component to composable entity was successful, re-execute this function in the new context */
+                  return pcComposableEntity->GetComponent(str_path.substr(unFirstSeparatorIdx + 1, std::string::npos));
+               }
+               else {
+                  /* Dynamic cast failed, user is requesting an entity from an entity which is not composable -> error */
+                  THROW_ARGOSEXCEPTION("Component \"" << strFrontIdentifier << "\" of \"" << GetContext() +  GetId()
+                                       << "\" is not a composable entity");
+               }
+            }
+         }
+         else {
+            THROW_ARGOSEXCEPTION("Component \"" << strFrontIdentifier << "\" does not exist in \""
+                                 << GetContext() +  GetId() << "\"");
+         }
       }
       catch(CARGoSException& ex) {
          THROW_ARGOSEXCEPTION_NESTED("While getting a component from a composable entity", ex);
@@ -106,56 +133,74 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   bool CComposableEntity::HasComponent(const std::string& str_component) {
-      return m_mapComponents.count(str_component) > 0;
+   bool CComposableEntity::HasComponent(const std::string& str_path) {
+      /* Search for the path separator character and take the first path segement */
+      size_t unFirstSeparatorIdx = str_path.find(".");
+      std::string strFrontIdentifier = str_path.substr(0, unFirstSeparatorIdx);
+      /* Try to find the relevant component in this context */
+      CEntity::TMultiMap::iterator itComponent = FindComponent(strFrontIdentifier);
+      if(itComponent != m_mapComponents.end()) {
+         if(unFirstSeparatorIdx == std::string::npos) {
+            /* Path separator not found, found component in the current context is the one we want */
+            return true;
+         }
+         else {
+            /* Path separator found, try to cast the found component to a composable entity */
+            CComposableEntity* pcComposableEntity = dynamic_cast<CComposableEntity*>(itComponent->second);
+            if(pcComposableEntity != NULL) {
+               /* Dynamic cast of component to composable entity was sucessful, re-execute this function in the new context */
+               return pcComposableEntity->HasComponent(str_path.substr(unFirstSeparatorIdx + 1, std::string::npos));
+            }
+            else {
+               /* Could not cast to a composable entity, the queried component cannot exist in the specified context */
+               return false;
+            }
+         }
+      }
+      else {
+         /* Could not find the queried component in this context */
+         return false;
+      }
    }
 
    /****************************************/
    /****************************************/
 
-   CEntity::TMultiMap::iterator CComposableEntity::FindComponent(const std::string& str_component) {      
+   CEntity::TMultiMap::iterator CComposableEntity::FindComponent(const std::string& str_component) {            
       /* Check for the presence of [ */
-      std::string::size_type unIndexStart = str_component.find('[');
-      if(unIndexStart != std::string::npos) {
+      std::string::size_type unIdentifierStart = str_component.find('[');
+      if(unIdentifierStart != std::string::npos) {
          /* Found, now check for the presence of ] after [ */
-         std::string::size_type unIndexEnd = str_component.rfind(']');
-         if(unIndexEnd != std::string::npos &&
-            unIndexEnd < unIndexStart) {
+         std::string::size_type unIdentifierEnd = str_component.rfind(']');
+         if(unIdentifierEnd != std::string::npos &&
+            unIdentifierEnd > unIdentifierStart) {
             /* Use the string between [ and ] as an index and whatever comes before as base id */
             /* Count how many components there are for the base type */
-            std::string strBaseType = str_component.substr(0,unIndexStart);
-            size_t unCount = m_mapComponents.count(strBaseType);
-            if(unCount == 0) {
-               /* No components -> error */
-               THROW_ARGOSEXCEPTION("No component of type \"" << strBaseType << "\" found for entity \"" << GetId() << "\"");
+            std::string strBaseType = str_component.substr(0, unIdentifierStart);
+            if(m_mapComponents.count(strBaseType) == 0) {
+               /* No components of this base type, return an iterator to the end of the collection */
+               return m_mapComponents.end();
             }
             else {
-               /* Components found */
-               size_t unIndex = FromString<size_t>(str_component.substr(unIndexStart, unIndexEnd - unIndexStart));
-               /* Is index valid? */
-               if(unIndex < unCount) {
-                  /* All OK, return the wanted component */
-                  /* Get the range of matching components */
-                  std::pair<CEntity::TMultiMap::iterator,
-                            CEntity::TMultiMap::iterator> cRange = m_mapComponents.equal_range(strBaseType);
-                  /* Start from the first */
-                  CEntity::TMultiMap::iterator it = cRange.first;
-                  size_t i = 0;
-                  /* Go through elements until we hit the element */
-                  while(1) {
-                     ++i;
-                     if(i < unIndex) {
-                        ++it;
-                     }
-                     else {
-                        break;
-                     }
-                  }
-                  return it;
+               /* Components of base type found - extract the uid and search for it */
+               std::string strComponentId = str_component.substr(unIdentifierStart + 1, unIdentifierEnd - unIdentifierStart - 1);
+               /* Create a pair of iterators which mark the beginning and the end of the components that match the base type */
+               std::pair<CEntity::TMultiMap::iterator,
+                         CEntity::TMultiMap::iterator> cRange = m_mapComponents.equal_range(strBaseType);
+               /* Create an iterator to hold the component we are trying to locate */
+               CEntity::TMultiMap::iterator itComponent;
+               /* Search through components of base type and try find a match for the specified Id */
+               for(itComponent = cRange.first;
+                   (itComponent != cRange.second) && (itComponent->second->GetId() == strComponentId);
+                   ++itComponent);
+               /* If the iterator itComponent is not equal to cRange.second, then we have found our component */
+               if(itComponent != cRange.second) {
+                  return itComponent;
                }
                else {
-                  /* Index out of bounds -> error */
-                  THROW_ARGOSEXCEPTION("Index out of bound for component of type \"" << str_component.substr(0,unIndexStart) << "\" in entity \"" << GetId() << "\"; max = " << unCount << ", index = " << unIndex);
+                  /* Identifer not found in the collection of components with the specified base type,
+                   * return an iterator to the end of the collect to show this */
+                  return m_mapComponents.end();
                }
             }
          }
@@ -164,21 +209,9 @@ namespace argos {
          }
       }
       else {
-         /* No [ found in the string, consider the entire string as a type id */
-         /* Count how many elements match the given type id */
-         size_t unCount = m_mapComponents.count(str_component);
-         if(unCount == 0) {
-            /* No components -> error */
-            THROW_ARGOSEXCEPTION("No component of type \"" << str_component << "\" found for entity \"" << GetId() << "\"");
-         }
-         else if(unCount > 1) {
-            /* Not used array syntax, but needed to -> error */
-            THROW_ARGOSEXCEPTION("You need to provide an index for component of type \"" << str_component.substr(0,unIndexStart) << "\" in entity \"" << GetId() << "\": " << unCount << " matching elements are present");
-         }
-         else {
-            /* All OK, return the element */
-            return m_mapComponents.find(str_component);
-         }
+         /* Identifier syntax not used, return an iterator to the first element or the end of collection if
+          * no elements are found */
+         return m_mapComponents.find(str_component);
       }
    }
 

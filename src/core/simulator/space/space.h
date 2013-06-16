@@ -240,17 +240,22 @@ namespace argos {
        */
       template <typename ENTITY>
       void AddEntity(ENTITY& c_entity) {
+         std::string strEntityQualifiedName = c_entity.GetContext() + c_entity.GetId();
          /* Check that the id of the entity is not already present */
-         if(m_mapEntitiesPerId.find(c_entity.GetId()) != m_mapEntitiesPerId.end()) {
-            THROW_ARGOSEXCEPTION("Error inserting a " << c_entity.GetTypeDescription() << " entity with id \"" << c_entity.GetId() << "\". An entity with that id exists already.");
+         if(m_mapEntitiesPerId.find(strEntityQualifiedName) != m_mapEntitiesPerId.end()) {
+            THROW_ARGOSEXCEPTION("Error inserting a " <<
+                                 c_entity.GetTypeDescription() <<
+                                 " entity with id \"" <<
+                                 strEntityQualifiedName <<
+                                 "\". An entity with that id already exists.");
          }
          /* Add the entity to the indexes */
          if(!c_entity.HasParent()) {
             m_vecRootEntities.push_back(&c_entity);
          }
          m_vecEntities.push_back(&c_entity);
-         m_mapEntitiesPerId[c_entity.GetId()] = &c_entity;
-         m_mapEntitiesPerTypePerId[c_entity.GetTypeDescription()][c_entity.GetId()] = &c_entity;
+         m_mapEntitiesPerId[strEntityQualifiedName] = &c_entity;
+         m_mapEntitiesPerTypePerId[c_entity.GetTypeDescription()][strEntityQualifiedName] = &c_entity;
       }
 
       /**
@@ -260,18 +265,19 @@ namespace argos {
        */
       template <typename ENTITY>
       void RemoveEntity(ENTITY& c_entity) {
+         std::string strEntityQualifiedName = c_entity.GetContext() + c_entity.GetId();
          /* Search for entity in the index per type */
          TMapPerTypePerId::iterator itMapPerType = m_mapEntitiesPerTypePerId.find(c_entity.GetTypeDescription());
          if(itMapPerType != m_mapEntitiesPerTypePerId.end()) {
             /* Search for entity in the index per type per id */
-            TMapPerType::iterator itMapPerTypePerId = itMapPerType->second.find(c_entity.GetId());
+            TMapPerType::iterator itMapPerTypePerId = itMapPerType->second.find(strEntityQualifiedName);
             if(itMapPerTypePerId != itMapPerType->second.end()) {
                /* Remove the entity from the indexes */
                CEntity::TVector::iterator itVec = find(m_vecEntities.begin(),
                                                        m_vecEntities.end(),
                                                        &c_entity);
                m_vecEntities.erase(itVec);
-               CEntity::TMap::iterator itMap = m_mapEntitiesPerId.find(c_entity.GetId());
+               CEntity::TMap::iterator itMap = m_mapEntitiesPerId.find(strEntityQualifiedName);
                itMapPerType->second.erase(itMapPerTypePerId);
                m_mapEntitiesPerId.erase(itMap);
                if(!c_entity.HasParent()) {
@@ -287,7 +293,7 @@ namespace argos {
             }
          }
          THROW_ARGOSEXCEPTION("CSpace::RemoveEntity() : Entity \"" <<
-                              c_entity.GetId() <<
+                              strEntityQualifiedName <<
                               "\" has not been found in the indexes.");
       }
 

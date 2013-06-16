@@ -15,8 +15,10 @@ class CTestLoopFunctions : public CLoopFunctions {
 
 public:
 
-   virtual ~CTestLoopFunctions() {}
+   void Init(TConfigurationNode& t_tree);
 
+   virtual ~CTestLoopFunctions() {}
+   
    virtual CColor GetFloorColor(const CVector2& c_pos_on_floor);
 
 };
