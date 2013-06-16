@@ -11,6 +11,7 @@ set(ARGOS3_HEADERS_PLUGINS_SIMULATOR_ENTITIES
   led_equipped_entity.h
   light_entity.h
   light_sensor_equipped_entity.h
+  omnidirectional_camera_equipped_entity.h
   proximity_sensor_equipped_entity.h
   rab_equipped_entity.h
   wheeled_entity.h
@@ -29,6 +30,7 @@ set(ARGOS3_SOURCES_PLUGINS_SIMULATOR_ENTITIES
   led_equipped_entity.cpp
   light_entity.cpp
   light_sensor_equipped_entity.cpp
+  omnidirectional_camera_equipped_entity.cpp
   proximity_sensor_equipped_entity.cpp
   rab_equipped_entity.cpp
   wheeled_entity.cpp

@@ -3,6 +3,7 @@
 #
 # argos3/plugins/simulator/sensors
 set(ARGOS3_HEADERS_PLUGINS_SIMULATOR_SENSORS
+  colored_blob_omnidirectional_camera_rotzonly_sensor.h
   differential_steering_default_sensor.h
   ground_rotzonly_sensor.h
   light_default_sensor.h
@@ -15,6 +16,7 @@ set(ARGOS3_HEADERS_PLUGINS_SIMULATOR_SENSORS
 #
 set(ARGOS3_SOURCES_PLUGINS_SIMULATOR_SENSORS
   ${ARGOS3_HEADERS_PLUGINS_SIMULATOR_SENSORS}
+  colored_blob_omnidirectional_camera_rotzonly_sensor.cpp
   differential_steering_default_sensor.cpp
   ground_rotzonly_sensor.cpp
   light_default_sensor.cpp

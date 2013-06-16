@@ -1,18 +1,22 @@
 #ifndef COLORED_BLOB_OMNIDIRECTIONAL_CAMERA_ROTZONLY_SENSOR_H
 #define COLORED_BLOB_OMNIDIRECTIONAL_CAMERA_ROTZONLY_SENSOR_H
 
-namespace {
+namespace argos {
    class CColoredBlobOmnidirectionalCameraRotZOnlySensor;
+   class COmnidirectionalCameraEquippedEntity;
+   class CLEDEntity;
+   class CControllableEntity;
 }
 
-#include <argos3/plugins/generic/control_interface/ci_colored_blob_omnidirectional_camera_sensor.h>
 #include <argos3/core/utility/math/rng.h>
 #include <argos3/core/simulator/space/space.h>
 #include <argos3/core/simulator/sensor.h>
+#include <argos3/plugins/robots/generic/control_interface/ci_colored_blob_omnidirectional_camera_sensor.h>
 
-namespace {
-   class CColoredBlobOmnidirectionalCameraSensor : public CSimulatedSensor,
-                                                   public CCI_ColoredBlobOmnidirectionalCameraSensor {
+namespace argos {
+
+   class CColoredBlobOmnidirectionalCameraRotZOnlySensor : public CSimulatedSensor,
+                                                           public CCI_ColoredBlobOmnidirectionalCameraSensor {
 
    public:
 
@@ -27,6 +31,17 @@ namespace {
       virtual void Update();
 
       virtual void Reset();
+
+   protected:
+
+      COmnidirectionalCameraEquippedEntity* m_pcOmnicamEntity;
+      CControllableEntity*                  m_pcControllableEntity;
+      CEmbodiedEntity*                      m_pcEmbodiedEntity;
+      CPositionalIndex<CLEDEntity>*         m_pcLEDIndex;
+      CPositionalIndex<CEmbodiedEntity>*    m_pcEmbodiedIndex;
+      Real                                  m_fDistanceNoiseStdDev;
+      CRandom::CRNG*                        m_pcRNG;
+      bool                                  m_bShowRays;
 
    };
 }
