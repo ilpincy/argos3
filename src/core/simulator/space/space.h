@@ -230,6 +230,17 @@ namespace argos {
 
       /**
        * Updates the space.
+       * The operations are performed in the following order:
+       * <ol>
+       * <li>UpdateIndices()
+       * <li>UpdateControllableEntities()
+       * <li>UpdatePhysics()
+       * <li>UpdateMedia()
+       * </ol>
+       * @see UpdateIndices()
+       * @see UpdateControllableEntities()
+       * @see UpdatePhysics()
+       * @see UpdateMedia()
        */
       virtual void Update();
 

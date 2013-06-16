@@ -109,6 +109,16 @@
       <controller config="lua" />
     </foot-bot>
 
+    <distribute>
+      <position method="uniform" min="-5,-5,0" max="5,5,0" />
+      <orientation method="uniform" min="0,0,0" max="360,0,0" />
+      <entity quantity="100" max_trials="100" base_num="100">
+        <foot-bot id="fb">
+          <controller config="lua" />
+        </foot-bot>
+      </entity>
+    </distribute>
+
     <cylinder id="cyl0" radius="0.05" height="0.2" movable="true" mass="0.1" >
       <body position="0,0.5,0" orientation="0,0,0" />
     </cylinder>
