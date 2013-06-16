@@ -32,16 +32,16 @@ namespace argos {
       virtual void Destroy();
       virtual void Update();
 
-     /**
-      * Adds the specified entity to the list of managed entities.
-      * @param c_entity The entity to add.
-      */
+      /**
+       * Adds the specified entity to the list of managed entities.
+       * @param c_entity The entity to add.
+       */
       void AddEntity(CRABEquippedEntity& c_entity);
-
-     /**
-      * Removes the specified entity from the list of managed entities.
-      * @param c_entity The entity to remove.
-      */
+      
+      /**
+       * Removes the specified entity from the list of managed entities.
+       * @param c_entity The entity to remove.
+       */
       void RemoveEntity(CRABEquippedEntity& c_entity);
 
       /**
