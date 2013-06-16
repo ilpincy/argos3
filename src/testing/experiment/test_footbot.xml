@@ -79,7 +79,7 @@
 
     <foot-bot id="fb">
       <body position="0,0,0" orientation="0,0,0"/>
-      <controller associate_to="x"/>
+      <controller config="x"/>
     </foot-bot>
 
     <!-- cylinder id="cyl0" position="0,0.2,0" orientation="0,0,0" radius="0.05" height="0.1" movable="true" mass="0.1" / -->

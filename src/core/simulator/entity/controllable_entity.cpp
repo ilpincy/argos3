@@ -61,7 +61,7 @@ namespace argos {
          CEntity::Init(t_tree);
          /* Get the controller id */
          std::string strControllerId;
-         GetNodeAttribute(t_tree, "associate_to", strControllerId);
+         GetNodeAttribute(t_tree, "config", strControllerId);
          /* Check if the tree has parameters to pass to the controller */
          if(NodeExists(t_tree, "params")) {
             /* Set the controller */

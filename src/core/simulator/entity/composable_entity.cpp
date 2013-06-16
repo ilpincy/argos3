@@ -191,7 +191,7 @@ namespace argos {
                CEntity::TMultiMap::iterator itComponent;
                /* Search through components of base type and try find a match for the specified Id */
                for(itComponent = cRange.first;
-                   (itComponent != cRange.second) && (itComponent->second->GetId() == strComponentId);
+                   (itComponent != cRange.second) && (itComponent->second->GetId() != strComponentId);
                    ++itComponent);
                /* If the iterator itComponent is not equal to cRange.second, then we have found our component */
                if(itComponent != cRange.second) {
