@@ -38,6 +38,7 @@ div#doxygen ul.tablist li {
 }
 
 div#doxygen ul.tablist li a {
+    font-weight: 400;
     text-decoration: none;
     padding: 0 .4em;
     border-radius: 4px;
@@ -89,11 +90,11 @@ div#doxygen table.memberdecls .memItemLeft, div#doxygen table.memberdecls .memIt
     font-size: 11pt;
 }
 
-div#doxygen table.memberdecls .mdescRight, div#doxygen div.contents div.memitem div.memdoc p, div#doxygen div.contents div.memitem div.memproto, div#doxygen div.contents div.memitem div.memdoc {
+div#doxygen table.memberdecls .mdescRight, div#doxygen div.contents div.memitem div.memdoc, div#doxygen div.contents div.memitem div.memproto {
     font-size: 10pt;    
 }
 
-div#doxygen div.memitem div.memdoc td.paramname {
+div#doxygen div.memitem div.memdoc td.paramname, div#doxygen div.memitem div.memdoc dl.section.see dd {
     font-family: 'Ubuntu Mono', monospace;
     font-size: 11pt;
     font-weight: 700;
