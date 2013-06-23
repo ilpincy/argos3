@@ -7,7 +7,7 @@ CWD=$(pwd)
 #
 function open() {
     EDITOR=${EDITOR:-emacs}
-    ${EDITOR} $(find src -type f \( -name '*.h' -o -name '*.cpp' -o -name CMakeLists.txt -o -name '*.xml' \) ) $(find src/scripts/ -type f) src/core/config.h.in src/cmake/* src/source_task doc/Doxyfile.in doc/argos3.1 README.asciidoc TODO
+    ${EDITOR} $(find src -type f \( -name '*.h' -o -name '*.cpp' -o -name CMakeLists.txt -o -name '*.xml' \) ) $(find src/scripts/ -type f) src/core/config.h.in src/cmake/* src/source_task doc/Doxyfile_*.in doc/argos3.1 README.asciidoc TODO
 }
 
 #
