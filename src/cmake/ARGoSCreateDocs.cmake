@@ -20,7 +20,7 @@ if(ARGOS_DOCUMENTATION)
     add_custom_target(api_standalone
       COMMAND
       ${DOXYGEN_EXECUTABLE} ${CMAKE_BINARY_DIR}/Doxyfile_standalone)
-    install(DIRECTORY ${CMAKE_SOURCE_DIR}/../doc/api/standalone DESTINATION doc/argos3)
+    install(DIRECTORY ${CMAKE_SOURCE_DIR}/../doc/api/standalone/ DESTINATION doc/argos3/api)
     set(ARGOS_DOCUMENTATION_DEPENDS ${ARGOS_DOCUMENTATION_DEPENDS} api_standalone)
     configure_file(${CMAKE_SOURCE_DIR}/../doc/Doxyfile_embedded.in
       ${CMAKE_BINARY_DIR}/Doxyfile_embedded
