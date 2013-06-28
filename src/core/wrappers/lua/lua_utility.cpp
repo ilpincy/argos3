@@ -204,7 +204,9 @@ namespace argos {
       RecursivePrintGlobals(c_log, pt_state, 0);
       lua_pop(pt_state, 1);
       c_log << "*** LUA GLOBALS END ***" << std::endl;
+#ifdef ARGOS_THREADSAFE_LOG
       c_log.Flush();
+#endif
    }
 
    /****************************************/
@@ -221,7 +223,9 @@ namespace argos {
          c_log << std::endl;
       }
       c_log << "*** LUA STACK END ***" << std::endl;
+#ifdef ARGOS_THREADSAFE_LOG
       c_log.Flush();
+#endif
    }
 
    /****************************************/
