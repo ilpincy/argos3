@@ -43,7 +43,7 @@ namespace argos {
                lua_pop(pt_lua_state, 1);
             }
             else {
-               return luaL_error(pt_lua_state, "element #%d of the array is not a number", i);
+               return luaL_error(pt_lua_state, "element #%d of the array is not a number", i+1);
             }
          }
          /* Perform action */
