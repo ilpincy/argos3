@@ -1,6 +1,6 @@
-build
+build*
 install
-doc/api/html
+doc/api
 .emacs.desktop*
 .cproject
 .project
