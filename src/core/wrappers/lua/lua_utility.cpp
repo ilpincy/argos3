@@ -97,7 +97,7 @@ namespace argos {
 
    int LuaRNGGaussian(lua_State* pt_state) {
       /* Check number of parameters */
-      if(lua_gettop(pt_state) != 1 || lua_gettop(pt_state) != 2) {
+      if(lua_gettop(pt_state) != 1 && lua_gettop(pt_state) != 2) {
          return luaL_error(pt_state, "robot.random.gaussian() expects 1 or 2 arguments");
       }
       /* Get RNG instance */
