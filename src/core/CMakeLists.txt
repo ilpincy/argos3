@@ -249,15 +249,26 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
   #
   # Core ARGoS3 installation
   #
-if(APPLE)
-  install(TARGETS argos3
-    RUNTIME DESTINATION libexec
-    LIBRARY DESTINATION lib/argos3
-    ARCHIVE DESTINATION lib/argos3)
-else(APPLE)
-  install(TARGETS argos3
-    RUNTIME DESTINATION bin
-    LIBRARY DESTINATION lib/argos3
-    ARCHIVE DESTINATION lib/argos3)
-endif(APPLE)
+  if(APPLE)
+    install(TARGETS argos3
+      RUNTIME DESTINATION libexec
+      LIBRARY DESTINATION lib/argos3
+      ARCHIVE DESTINATION lib/argos3)
+  else(APPLE)
+    install(TARGETS argos3
+      RUNTIME DESTINATION bin
+      LIBRARY DESTINATION lib/argos3
+      ARCHIVE DESTINATION lib/argos3)
+  endif(APPLE)
+  #
+  # Creation and installation of desktop file and MIME entry
+  #
+  if(NOT APPLE)
+    configure_file(
+      ${CMAKE_SOURCE_DIR}/scripts/argos3.desktop.in
+      ${CMAKE_BINARY_DIR}/argos3.desktop
+      @ONLY)
+    install(FILES ${CMAKE_BINARY_DIR}/argos3.desktop DESTINATION share/applications)
+    install(FILES ${CMAKE_SOURCE_DIR}/scripts/x-argos-mime-info.xml DESTINATION share/mime/packages RENAME argos.xml)
+  endif(NOT APPLE)
 endif(ARGOS_BUILD_FOR_SIMULATOR)
