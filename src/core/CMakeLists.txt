@@ -261,6 +261,15 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
       ARCHIVE DESTINATION lib/argos3)
   endif(APPLE)
   #
+  # Installation of CMake scripts useful for the simulator
+  #
+  install(
+    FILES
+    ${CMAKE_SOURCE_DIR}/cmake/ARGoSCheckQTOpenGL.cmake
+    ${CMAKE_SOURCE_DIR}/cmake/FindGSL.cmake
+    DESTINATION
+    share/argos3/cmake)
+  #
   # Creation and installation of desktop file and MIME entry
   #
   if(NOT APPLE)
