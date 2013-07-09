@@ -99,8 +99,8 @@ namespace argos {
 
    REGISTER_ENTITY(CBoxEntity,
                    "box",
-                   "1.0",
                    "Carlo Pinciroli [ilpincy@gmail.com]",
+                   "1.0",
                    "A stretchable 3D box.",
                    "The box entity can be used to model walls, obstacles or box-shaped grippable\n"
                    "objects. It can be movable or not. A movable object can be pushed and gripped.\n"

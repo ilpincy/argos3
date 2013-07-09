@@ -103,8 +103,8 @@ namespace argos {
 
    REGISTER_ENTITY(CCylinderEntity,
                    "cylinder",
-                   "1.0",
                    "Carlo Pinciroli [ilpincy@gmail.com]",
+                   "1.0",
                    "A stretchable cylinder.",
                    "The cylinder entity can be used to model obstacles or cylinder-shaped\n"
                    "grippable objects. The cylinder has a red LED on the center of one\n"

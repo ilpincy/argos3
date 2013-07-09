@@ -283,7 +283,7 @@ namespace argos {
                    "  </arena>\n\n"
                    "OPTIONAL XML CONFIGURATION\n\n"
                    "None for the time being.\n",
-                   "Ready for use"
+                   "Usable"
       );
 
    /****************************************/

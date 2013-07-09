@@ -260,8 +260,8 @@ namespace argos {
 
    REGISTER_ENTITY(CFootBotEntity,
                    "foot-bot",
-                   "1.0",
                    "Carlo Pinciroli [ilpincy@gmail.com]",
+                   "1.0",
                    "The foot-bot robot, developed in the Swarmanoid project.",
                    "The foot-bot is a wheeled robot developed in the Swarmanoid Project. It is a\n"
                    "modular robot with a rich set of sensors and actuators. For more information,\n"
