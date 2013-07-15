@@ -142,9 +142,9 @@ namespace argos {
    /****************************************/
 
    void CARGoSCommandLineArgParser::PrintUsage(CARGoSLog& c_log) {
+      c_log << "Autonomous Robots Go Swarming (ARGoS) v" << ARGOS_VERSION << "-" << ARGOS_RELEASE << std::endl;
+      c_log << std::endl;
       c_log << "Usage: argos [OPTIONS]" << std::endl;
-      c_log << "The ARGOS simulator, the official simulator of the Swarmanoid Project." << std::endl;
-      c_log << "Current version: " << ARGOS_VERSION << "-" << ARGOS_RELEASE << std::endl;
       c_log << std::endl;
       c_log << "   -h        | --help                  display this usage information" << std::endl;
       c_log << "   -v        | --version               display the current ARGoS version and release" << std::endl;
