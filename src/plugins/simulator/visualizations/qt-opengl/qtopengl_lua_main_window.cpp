@@ -172,23 +172,23 @@ namespace argos {
       cLuaCompiler.start("luac", QStringList() << "-v");
       /* First, try to execute luac */
       if(!cLuaCompiler.waitForStarted()) {
-	/* luac is not installed */
-	return "";
+         /* luac is not installed */
+         return "";
       }
       /* luac is installed, but is it the right version? */
       cLuaCompiler.waitForFinished();
       if(QString(cLuaCompiler.readAllStandardOutput()).mid(4,3) == "5.1") {
-	return "luac";
+         return "luac";
       }
       cLuaCompiler.start("luac5.1", QStringList() << "-v");
       if(!cLuaCompiler.waitForStarted()) {
-	/* luac51 is not installed */
-	return "";
+         /* luac51 is not installed */
+         return "";
       }
       else {
-	/* luac51 is installed */
-        cLuaCompiler.waitForFinished();
-	return "luac5.1";
+         /* luac51 is installed */
+         cLuaCompiler.waitForFinished();
+         return "luac5.1";
       }
    }
 
@@ -217,14 +217,14 @@ namespace argos {
       /* Check for luac 5.1 */
       QString cLuaC = DetectLuaC();
       if(cLuaC == "") {
-	 /* luac 5.1 not found, fall back to sending the script directly to robots */
+         /* luac 5.1 not found, fall back to sending the script directly to robots */
          for(size_t i = 0; i < m_vecControllers.size(); ++i) {
             m_vecControllers[i]->SetLuaScript(m_strFileName.toStdString());
          }
       }
       else {
          QProcess cLuaCompiler;
-	 cLuaCompiler.start(cLuaC, QStringList() << "-o" << cByteCode.fileName() << m_strFileName);
+         cLuaCompiler.start(cLuaC, QStringList() << "-o" << cByteCode.fileName() << m_strFileName);
          if(! cLuaCompiler.waitForFinished()) {
             SetMessage(0, "ALL", QString(cLuaCompiler.readAllStandardError()));
             m_pcMainWindow->SimulationCanProceed(false);
