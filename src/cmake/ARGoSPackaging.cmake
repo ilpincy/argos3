@@ -54,7 +54,7 @@ set(CPACK_DEBIAN_PACKAGE_DESCRIPTION ${CPACK_PACKAGE_DESCRIPTION})
 set(CPACK_DEBIAN_PACKAGE_HOMEPAGE ${CPACK_PACKAGE_HOMEPAGE})
 set(CPACK_DEBIAN_PACKAGE_MAINTAINER ${CPACK_PACKAGE_MAINTAINER})
 set(CPACK_DEBIAN_PACKAGE_SECTION "contrib/science")
-set(CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA "${CMAKE_SOURCE_DIR}/scripts/postinst;")
+set(CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA "${CMAKE_BINARY_DIR}/postinst;")
 
 #
 # Configuration for the RPM generator
@@ -66,7 +66,7 @@ set(CPACK_RPM_PACKAGE_LICENSE "MIT")
 set(CPACK_RPM_PACKAGE_REQUIRES "gcc >= 4.2, gcc-c++ >= 4.2, cmake >= 2.6, gsl >= 1.15, gsl-devel >= 1.15, freeglut-devel >= 2.8.0, libqt4-devel >= 4.5, libfreeimage3 >= 3.15, libfreeimageplus3 >= 3.15, freeimage-devel >= 3.15, lua51 >= 5.1.4, lua51-devel >= 5.1.4, liblua5_1 >= 5.1.4")
 set(CPACK_RPM_PACKAGE_URL ${CPACK_PACKAGE_HOMEPAGE})
 set(CPACK_RPM_PACKAGE_RELEASE ${CPACK_PACKAGE_RELEASE})
-set(CPACK_RPM_POST_INSTALL_SCRIPT_FILE "${CMAKE_SOURCE_DIR}/scripts/argos_post_install.sh")
+set(CPACK_RPM_POST_INSTALL_SCRIPT_FILE "${CMAKE_BINARY_DIR}/argos_post_install.sh")
 
 #
 # Configuration for OSX Package Manager
@@ -102,6 +102,14 @@ configure_file(
 configure_file(
   ${CMAKE_SOURCE_DIR}/scripts/slackware/doinst.sh.in
   ${CMAKE_BINARY_DIR}/doinst.sh
+  @ONLY)
+configure_file(
+  ${CMAKE_SOURCE_DIR}/scripts/argos_post_install.sh.in
+  ${CMAKE_BINARY_DIR}/argos_post_install.sh
+  @ONLY)
+configure_file(
+  ${CMAKE_SOURCE_DIR}/scripts/argos_post_install.sh.in
+  ${CMAKE_BINARY_DIR}/postinst
   @ONLY)
 
 #

@@ -66,11 +66,11 @@ namespace argos {
          /* Create embodied entity using parsed data */
          m_pcEmbodiedEntity = new CEmbodiedEntity(this);
          AddComponent(*m_pcEmbodiedEntity);
-         m_pcEmbodiedEntity->Init(t_tree);
+         m_pcEmbodiedEntity->Init(GetNode(t_tree, "body"));
          m_pcEmbodiedEntity->SetMovable(bMovable);
          /* Init LED equipped entity component */
          m_pcLEDEquippedEntity = new CLEDEquippedEntity(this,
-                                                        GetId() + ".leds",
+                                                        "leds",
                                                         m_pcEmbodiedEntity);
          AddComponent(*m_pcLEDEquippedEntity);
          if(NodeExists(t_tree, "leds")) {
@@ -99,8 +99,8 @@ namespace argos {
 
    REGISTER_ENTITY(CBoxEntity,
                    "box",
-                   "1.0",
                    "Carlo Pinciroli [ilpincy@gmail.com]",
+                   "1.0",
                    "A stretchable 3D box.",
                    "The box entity can be used to model walls, obstacles or box-shaped grippable\n"
                    "objects. It can be movable or not. A movable object can be pushed and gripped.\n"
@@ -109,34 +109,21 @@ namespace argos {
                    "To declare an unmovable object (i.e., a wall) you need the following:\n\n"
                    "  <arena ...>\n"
                    "    ...\n"
-                   "    <box id=\"box1\"\n"
-                   "         position=\"0.4,2.3,0\"\n"
-                   "         orientation=\"45,90,0\"\n"
-                   "         size=\"0.75,0.1,0.5\"\n"
-                   "         movable=\"false\" />\n"
+                   "    <box id=\"box1\" size=\"0.75,0.1,0.5\" movable=\"false\">\n"
+                   "      <body position=\"0.4,2.3,0\" orientation=\"45,0,0\" />\n"
+                   "    </box>\n"
                    "    ...\n"
                    "  </arena>\n\n"
                    "To declare a movable object you need the following:\n\n"
                    "  <arena ...>\n"
                    "    ...\n"
-                   "    <box id=\"box1\"\n"
-                   "         position=\"0.4,2.3,0\"\n"
-                   "         orientation=\"45,90,0\"\n"
-                   "         size=\"0.75,0.1,0.5\"\n"
-                   "         movable=\"true\"\n"
-                   "         mass=\"2.5\" />\n"
+                   "    <box id=\"box1\" size=\"0.75,0.1,0.5\" movable=\"true\" mass=\"2.5\">\n"
+                   "      <body position=\"0.4,2.3,0\" orientation=\"45,0,0\" />\n"
+                   "    </box>\n"
                    "    ...\n"
                    "  </arena>\n\n"
                    "The 'id' attribute is necessary and must be unique among the entities. If two\n"
                    "entities share the same id, initialization aborts.\n"
-                   "The 'position' attribute specifies the position of the base of the box in the\n"
-                   "arena. The three values are in the X,Y,Z order.\n"
-                   "The 'orientation' attribute specifies the orientation of the 3D box. All\n"
-                   "rotations are performed with respect to the center of mass. The order of the\n"
-                   "angles is Z,Y,X, which means that the first number corresponds to the rotation\n"
-                   "around the Z axis, the second around Y and the last around X. This reflects\n"
-                   "the internal convention used in ARGoS, in which rotations are performed in\n"
-                   "that order. Angles are expressed in degrees.\n"
                    "The 'size' attribute specifies the size of the box along the three axes, in\n"
                    "the X,Y,Z order. When you add a box, imagine it initially unrotated and\n"
                    "centered in the origin. The size, then, corresponds to the extent along the X,\n"
@@ -146,24 +133,28 @@ namespace argos {
                    "the box won't move. When the attribute is set to 'true', the box is movable\n"
                    "upon pushing or gripping. When an object is movable, the 'mass' attribute is\n"
                    "required.\n"
-                   "The 'mass' attribute quantifies the mass of the box in kg.\n\n"
+                   "The 'mass' attribute quantifies the mass of the box in kg.\n"
+                   "The 'body/position' attribute specifies the position of the base of the box in\n"
+                   "the arena. The three values are in the X,Y,Z order.\n"
+                   "The 'body/orientation' attribute specifies the orientation of the 3D box. All\n"
+                   "rotations are performed with respect to the center of mass. The order of the\n"
+                   "angles is Z,Y,X, which means that the first number corresponds to the rotation\n"
+                   "around the Z axis, the second around Y and the last around X. This reflects\n"
+                   "the internal convention used in ARGoS, in which rotations are performed in\n"
+                   "that order. Angles are expressed in degrees.\n\n"
                    "OPTIONAL XML CONFIGURATION\n\n"
                    "It is possible to add any number of colored LEDs to the box. In this way,\n"
                    "the box is visible with a robot camera. The position and color of the\n"
                    "LEDs is specified with the following syntax:\n\n"
                    "  <arena ...>\n"
                    "    ...\n"
-                   "    <box id=\"box1\"\n"
-                   "         position=\"0.4,0.2,0\"\n"
-                   "         orientation=\"45,90,0\"\n"
-                   "         size=\"0.3,0.3,0.3\"\n"
-                   "         movable=\"true\"\n"
-                   "         mass=\"2.5\" \n"
+                   "    <box id=\"box1\" size=\"0.75,0.1,0.5\" movable=\"true\" mass=\"2.5\">\n"
+                   "      <body position=\"0.4,2.3,0\" orientation=\"45,0,0\" />\n"
                    "      <leds>\n"
-                   "        <led position=\"0.15,0.15,0.15\" color=\"white\" />\n"
-                   "        <led position=\"-0.15,0.15,0\" color=\"red\" />\n"
-                   "        <led position=\"0.15,0.15,0\" color=\"blue\" />\n"
-                   "        <led position=\"0.15,-0.15,0\" color=\"green\" />\n"
+                   "        <led position=\" 0.15, 0.15,0.15\" color=\"white\" />\n"
+                   "        <led position=\"-0.15, 0.15,0\"    color=\"red\"   />\n"
+                   "        <led position=\" 0.15, 0.15,0\"    color=\"blue\"  />\n"
+                   "        <led position=\" 0.15,-0.15,0\"    color=\"green\" />\n"
                    "      </leds>\n"
                    "    </box>\n"
                    "    ...\n"

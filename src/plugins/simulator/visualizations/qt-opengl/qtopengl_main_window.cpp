@@ -648,6 +648,8 @@ namespace argos {
       m_pcFastForwardAction->setEnabled(true);
       m_pcCaptureAction->setEnabled(true);
       m_pcCurrentStepLCD->display(0);
+      m_pcDockLogBuffer->setHtml("<b>[t=0]</b> Log restarted.");
+      m_pcDockLogErrBuffer->setHtml("<b>[t=0]</b> LogErr restarted.");
       emit SimulationReset();
    }
 

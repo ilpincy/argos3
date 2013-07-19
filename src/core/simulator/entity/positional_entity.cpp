@@ -39,17 +39,10 @@ namespace argos {
          /* Initialize base entity */
          CEntity::Init(t_tree);
          /* Get the position of the entity */
-         GetNodeAttribute(t_tree, "position", m_cPosition);
+         GetNodeAttributeOrDefault(t_tree, "position", m_cPosition, CVector3());
          /* Get the orientation of the entity */
-         std::string strOrientationEuler;
-         GetNodeAttribute(t_tree, "orientation", strOrientationEuler);
-         CDegrees pcOrientationEuler[3];
-         ParseValues(strOrientationEuler, 3, pcOrientationEuler, ',');
-         /* Set initial position and orientation */
+         GetNodeAttributeOrDefault(t_tree, "orientation", m_cOrientation, CQuaternion());
          m_cInitPosition = m_cPosition;
-         m_cOrientation.FromEulerAngles(ToRadians(pcOrientationEuler[0]),
-                                        ToRadians(pcOrientationEuler[1]),
-                                        ToRadians(pcOrientationEuler[2]));
          m_cInitOrientation = m_cOrientation;
       }
       catch(CARGoSException& ex) {

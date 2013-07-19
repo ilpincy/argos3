@@ -18,7 +18,7 @@ namespace argos {
          GetNodeAttribute(t_tree, "id", m_strId);
       }
       catch(CARGoSException& ex) {
-         THROW_ARGOSEXCEPTION("Error initializing a medium entity");
+         THROW_ARGOSEXCEPTION_NESTED("Error initializing a medium entity", ex);
       }
    }
    

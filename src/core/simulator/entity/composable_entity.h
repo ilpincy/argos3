@@ -98,7 +98,9 @@ namespace argos {
 
       /**
        * Removes a component from this composable entity.
-       * @param str_component The string label of the component to remove. The format of the label can be either <tt>label</tt> or <tt>label[N]</tt> to get the <tt>N+1</tt>-th component with the wanted string label.
+       * The format of the label can be either <tt>label</tt> or <tt>label[label_N]</tt> to get the
+       * <tt>N+1</tt>-th component with the wanted string label.
+       * @param str_component The string label of the component to remove.
        * @see GetTypeDescription()
        * @throws CARGoSException if the component was not found.
        */
@@ -106,7 +108,11 @@ namespace argos {
 
       /**
        * Returns the component with the passed string label.
-       * @param str_component The string label of the component to return. The format of the label can be either <tt>label</tt> or <tt>label[N]</tt> to get the <tt>N+1</tt>-th component with the wanted string label.
+       * The format of the label can be either <tt>label</tt>, <tt>label1.label2</tt> or
+       * <tt>label1.label2[label2_N]</tt> to get the <tt>N+1</tt>-th component with the wanted string
+       * label. The dot syntax <tt>label1.label2</tt> can be nested further, to create combinations
+       * such as <tt>label1.label2.label3[label3_N]</tt>.
+       * @param str_component The string label of the component to return.
        * @see GetTypeDescription()
        * @throws CARGoSException if the component was not found.
        */
@@ -116,7 +122,11 @@ namespace argos {
        * Returns the component with the passed string label.
        * This method internally performs a <tt>dynamic_cast</tt> and returns
        * directly the desired type instead of CEntity.
-       * @param str_component The string label of the component to return. The format of the label can be either <tt>label</tt> or <tt>label[N]</tt> to get the <tt>N+1</tt>-th component with the wanted string label.
+       * The format of the label can be either <tt>label</tt>, <tt>label1.label2</tt> or
+       * <tt>label1.label2[label2_N]</tt> to get the <tt>N+1</tt>-th component with the wanted string
+       * label. The dot syntax <tt>label1.label2</tt> can be nested further, to create combinations
+       * such as <tt>label1.label2.label3[label3_N]</tt>.
+       * @param str_component The string label of the component to return.
        * @see GetTypeDescription()
        * @throws CARGoSException if the component was not found or can't be cast to the target type.
        */
@@ -133,7 +143,11 @@ namespace argos {
 
       /**
        * Returns <tt>true</tt> if this composable entity has a component with the given string label.
-       * @param str_component The string label of the component to check. The format of the label can be either <tt>label</tt> or <tt>label[N]</tt> to get the <tt>N+1</tt>-th component with the wanted string label.
+       * The format of the label can be either <tt>label</tt>, <tt>label1.label2</tt> or
+       * <tt>label1.label2[label2_N]</tt> to get the <tt>N+1</tt>-th component with the wanted string
+       * label. The dot syntax <tt>label1.label2</tt> can be nested further, to create combinations
+       * such as <tt>label1.label2.label3[label3_N]</tt>.
+       * @param str_component The string label of the component to check.
        * @return <tt>true</tt> if this composable entity has a component with the given string label.
        * @see GetTypeDescription()
        */
@@ -141,7 +155,9 @@ namespace argos {
 
       /**
        * Searches for a component with the given string label.
-       * @param str_component The string label of the component to find. The format of the label can be either <tt>label</tt> or <tt>label[N]</tt> to get the <tt>N+1</tt>-th component with the wanted string label.
+       * The format of the label can be either <tt>label</tt> or <tt>label[label_N]</tt> to get the
+       * <tt>N+1</tt>-th component with the wanted string label.
+       * @param str_component The string label of the component to find.
        * @return An iterator to the component found.
        * @throws CARGoSException if the component was not found.
        */

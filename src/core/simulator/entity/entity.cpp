@@ -36,29 +36,46 @@ namespace argos {
    /****************************************/
 
    void CEntity::Init(TConfigurationNode& t_tree) {
-      /*
-       * Set an ID if it has not been set yet
-       * In this way, entities that are part of a composable can have an ID set by the parent
-       */
-      if(m_strId == "") {
-         if(! HasParent()) {
-            /*
-             * Root-level entity
-             */
-            try {
-               /* Get the id of the entity */
-               GetNodeAttribute(t_tree, "id", m_strId);
-            }
-            catch(CARGoSException& ex) {
-               THROW_ARGOSEXCEPTION_NESTED("Failed to initialize an entity.", ex);
-            }
+      try {
+         /*
+          * Set the id of the entity from XML or type description
+          */
+         /* Was an id specified explicitly? */
+         if(NodeAttributeExists(t_tree, "id")) {
+            /* Yes, use that */
+            GetNodeAttribute(t_tree, "id", m_strId);
          }
          else {
-            /*
-             * Part of a component
-             */
-            m_strId = GetParent().GetId() + "." + GetTypeDescription();
+            /* No, derive it from the parent */
+            if(m_pcParent != NULL) {
+               UInt32 unIdCount = 0;
+               while(GetParent().HasComponent(GetTypeDescription() +
+                                              "[" + GetTypeDescription() +
+                                              "_" + ToString(unIdCount) +
+                                              "]")) {
+                  ++unIdCount;
+               }
+               m_strId = GetTypeDescription() + "_" + ToString(unIdCount);
+            }
+            else {
+               THROW_ARGOSEXCEPTION("Root entities must provide the identifier tag");
+            }
          }
+      }
+      catch(CARGoSException& ex) {
+         THROW_ARGOSEXCEPTION_NESTED("Failed to initialize an entity.", ex);
+      }
+   }
+
+   /****************************************/
+   /****************************************/
+
+   std::string CEntity::GetContext() const {
+      if(m_pcParent != NULL) {
+         return GetParent().GetContext() + GetParent().GetId() + ".";
+      }
+      else {
+         return "";
       }
    }
 
@@ -83,6 +100,30 @@ namespace argos {
       }
       else {
          THROW_ARGOSEXCEPTION("Entity \"" << GetId() << "\" has no parent");
+      }
+   }
+
+   /****************************************/
+   /****************************************/
+
+   CEntity& CEntity::GetRootEntity() {
+      if(m_pcParent != NULL) {
+         return m_pcParent->GetRootEntity();
+      }
+      else {
+         return *this;
+      }
+   }
+
+   /****************************************/
+   /****************************************/
+   
+   const CEntity& CEntity::GetRootEntity() const {
+      if(m_pcParent != NULL) {
+         return m_pcParent->GetRootEntity();
+      }
+      else {
+         return *this;
       }
    }
 

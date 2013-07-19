@@ -97,7 +97,7 @@ namespace argos {
 
    int LuaRNGGaussian(lua_State* pt_state) {
       /* Check number of parameters */
-      if(lua_gettop(pt_state) != 1 || lua_gettop(pt_state) != 2) {
+      if(lua_gettop(pt_state) != 1 && lua_gettop(pt_state) != 2) {
          return luaL_error(pt_state, "robot.random.gaussian() expects 1 or 2 arguments");
       }
       /* Get RNG instance */
@@ -204,7 +204,9 @@ namespace argos {
       RecursivePrintGlobals(c_log, pt_state, 0);
       lua_pop(pt_state, 1);
       c_log << "*** LUA GLOBALS END ***" << std::endl;
+#ifdef ARGOS_THREADSAFE_LOG
       c_log.Flush();
+#endif
    }
 
    /****************************************/
@@ -221,7 +223,9 @@ namespace argos {
          c_log << std::endl;
       }
       c_log << "*** LUA STACK END ***" << std::endl;
+#ifdef ARGOS_THREADSAFE_LOG
       c_log.Flush();
+#endif
    }
 
    /****************************************/

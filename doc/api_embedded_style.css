@@ -1,0 +1,101 @@
+div#doxygen {
+    overflow-x: auto;
+}
+
+div#doxygen div#top {
+    margin: 10px 0;
+}
+
+div#doxygen pre {
+    padding-bottom: 0;
+}
+
+div#doxygen pre, div#doxygen code, div#doxygen tt, div#doxygen div.fragment {
+    font-family: 'Ubuntu Mono', monospace;
+    font-size: 11pt;
+    font-weight: 700;
+}
+
+div#doxygen div.fragment {
+    background-color: #DDDDDD;
+    border: 0;
+    border-radius: 10px;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    -o-border-radius: 10px;
+    -khtml-border-radius: 10px;
+    padding: 10px;
+    margin: 0;
+}
+
+div#doxygen ul.tablist {
+    list-style-type: none;
+    padding: 10px 0 0 0;
+}
+
+div#doxygen ul.tablist li {
+    display: inline;
+}
+
+div#doxygen ul.tablist li a {
+    font-weight: 400;
+    text-decoration: none;
+    padding: 0 .4em;
+    border-radius: 4px;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    -o-border-radius: 4px;
+    -khtml-border-radius: 4px;
+    box-shadow: 0px 0px 10px #777777;
+    -moz-box-shadow: 0px 0px 10px #777777;
+    -webkit-box-shadow: 0px 0px 10px #777777;
+}
+
+div#doxygen div#navrow1.tabs ul.tablist li a {
+    color: white;
+    background-color: #444444;
+}
+
+div#doxygen div#navrow2.tabs2 ul.tablist li a {
+    color: white;
+    background-color: #888888;
+}
+
+div#doxygen ul.tablist li a:hover {
+    text-decoration: underline;
+}
+
+div#doxygen ul.tablist li.current a:link, div#doxygen ul.tablist li.current a:visited, div#doxygen ul.tablist li.current a:active, div#doxygen ul.tablist li.current a:hover {
+    font-weight: 700;
+    text-decoration: none;
+}
+
+div#doxygen div.header {
+    margin: 20px 0;
+}
+
+div#doxygen div.header div.headertitle div.title {
+    font-size: 12pt;
+    font-weight: 700;
+}
+
+div#doxygen div.contents div.directory div.levels span {
+    padding: 0 5px;
+    color: #4848ff;
+    font-weight: 700;
+}
+
+div#doxygen table.memberdecls .memItemLeft, div#doxygen table.memberdecls .memItemRight, div#doxygen table.memberdecls .memTemplParams, div#doxygen table.memberdecls .memTemplItemLeft, div#doxygen table.memberdecls .memTemplItemRight, div#doxygen div.memitem div.memproto table.memname {
+    font-family: 'Ubuntu Mono', monospace;
+    font-size: 11pt;
+}
+
+div#doxygen table.memberdecls .mdescRight, div#doxygen div.contents div.memitem div.memdoc, div#doxygen div.contents div.memitem div.memproto {
+    font-size: 10pt;    
+}
+
+div#doxygen div.memitem div.memdoc td.paramname, div#doxygen div.memitem div.memdoc dl.section.see dd {
+    font-family: 'Ubuntu Mono', monospace;
+    font-size: 11pt;
+    font-weight: 700;
+}

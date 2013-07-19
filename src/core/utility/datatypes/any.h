@@ -11,6 +11,9 @@
  * @author Carlo Pinciroli <ilpincy@gmail.com>
  */
 
+#ifndef ANY_H
+#define ANY_H
+
 #include <argos3/core/utility/configuration/argos_exception.h>
 
 #include <cxxabi.h>
@@ -216,3 +219,5 @@ namespace argos {
    }
 
 }
+
+#endif

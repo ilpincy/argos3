@@ -30,7 +30,8 @@ OUTPUT=${OUTPUT:-$CWD}
 
 rm -rf $PKG
 mkdir -p $PKG $OUTPUT
-make 
+make
+make doc
 make DESTDIR=$PKG install
 cd ..
 

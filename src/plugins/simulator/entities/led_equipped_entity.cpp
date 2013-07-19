@@ -46,10 +46,13 @@ namespace argos {
          for(itLED = itLED.begin(&t_tree);
              itLED != itLED.end();
              ++itLED) {
-            GetNodeAttribute(*itLED, "position", cPosition);
-            GetNodeAttribute(*itLED, "color", cColor);
-            m_vecLEDOffsetPositions.push_back(cPosition);
-            AddLED(cPosition, cColor);
+            /* Initialise the LED using the XML */
+            CLEDEntity* pcLED = new CLEDEntity(this);
+            pcLED->Init(*itLED);
+            /* Add the LED to this container */
+            m_vecLEDOffsetPositions.push_back(pcLED->GetPosition());
+            m_tLEDs.push_back(pcLED);
+            AddComponent(*pcLED);
          }
       }
       catch(CARGoSException& ex) {
@@ -76,7 +79,7 @@ namespace argos {
       CLEDEntity* pcLED =
          new CLEDEntity(
             this,
-            GetId() + ".led[" + ToString(m_tLEDs.size()) + "]",
+            std::string("led_") + ToString(m_tLEDs.size()),
             c_position,
             c_color);
       m_tLEDs.push_back(pcLED);
@@ -161,16 +164,20 @@ namespace argos {
    /****************************************/
 
    void CLEDEquippedEntity::SetAllLEDsColors(const std::vector<CColor>& vec_colors) {
-      ARGOS_ASSERT(vec_colors.size() <= m_tLEDs.size(),
-                   "CLEDEquippedEntity::SetAllLEDsColors(), id=\"" <<
-                   GetId() <<
-                   "\": number of LEDs (" <<
-                   m_tLEDs.size() <<
-                   ") is lower than the passed color vector size (" <<
-                   vec_colors.size() <<
-                   ")");
-      for(UInt32 i = 0; i < vec_colors.size(); ++i) {
-         m_tLEDs[i]->SetColor(vec_colors[i]);
+      if(vec_colors.size() == m_tLEDs.size()) {
+         for(UInt32 i = 0; i < vec_colors.size(); ++i) {
+            m_tLEDs[i]->SetColor(vec_colors[i]);
+         }
+      }
+      else {
+         THROW_ARGOSEXCEPTION(
+            "CLEDEquippedEntity::SetAllLEDsColors(), id=\"" <<
+            GetId() <<
+            "\": number of LEDs (" <<
+            m_tLEDs.size() <<
+            ") is lower than the passed color vector size (" <<
+            vec_colors.size() <<
+            ")");
       }
    }
 

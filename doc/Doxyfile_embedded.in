@@ -194,7 +194,7 @@ SEPARATE_MEMBER_PAGES  = NO
 # The TAB_SIZE tag can be used to set the number of spaces in a tab.
 # Doxygen uses this value to replace tabs by spaces in code fragments.
 
-TAB_SIZE               = 8
+TAB_SIZE               = 2
 
 # This tag can be used to specify a number of aliases that acts
 # as commands in the documentation. An alias has the form "name=value".
@@ -266,7 +266,7 @@ MARKDOWN_SUPPORT       = YES
 # func(std::string) {}). This also makes the inheritance and collaboration
 # diagrams that involve STL classes more complete and accurate.
 
-BUILTIN_STL_SUPPORT    = NO
+BUILTIN_STL_SUPPORT    = YES
 
 # If you use Microsoft's C++/CLI language, you should set this option to YES to
 # enable parsing support.
@@ -327,7 +327,7 @@ INLINE_SIMPLE_STRUCTS  = NO
 # be useful for C code in case the coding convention dictates that all compound
 # types are typedef'ed and only the typedef is referenced, never the tag name.
 
-TYPEDEF_HIDES_STRUCT   = NO
+TYPEDEF_HIDES_STRUCT   = YES
 
 # The SYMBOL_CACHE_SIZE determines the size of the internal cache use to
 # determine which symbols to keep in memory and which to flush to disk.
@@ -422,7 +422,7 @@ HIDE_UNDOC_CLASSES     = NO
 # If set to NO (the default) these declarations will be included in the
 # documentation.
 
-HIDE_FRIEND_COMPOUNDS  = NO
+HIDE_FRIEND_COMPOUNDS  = YES
 
 # If the HIDE_IN_BODY_DOCS tag is set to YES, Doxygen will hide any
 # documentation blocks found inside the body of a function.
@@ -522,25 +522,25 @@ STRICT_PROTO_MATCHING  = NO
 # disable (NO) the todo list. This list is created by putting \todo
 # commands in the documentation.
 
-GENERATE_TODOLIST      = YES
+GENERATE_TODOLIST      = NO
 
 # The GENERATE_TESTLIST tag can be used to enable (YES) or
 # disable (NO) the test list. This list is created by putting \test
 # commands in the documentation.
 
-GENERATE_TESTLIST      = YES
+GENERATE_TESTLIST      = NO
 
 # The GENERATE_BUGLIST tag can be used to enable (YES) or
 # disable (NO) the bug list. This list is created by putting \bug
 # commands in the documentation.
 
-GENERATE_BUGLIST       = YES
+GENERATE_BUGLIST       = NO
 
 # The GENERATE_DEPRECATEDLIST tag can be used to enable (YES) or
 # disable (NO) the deprecated list. This list is created by putting
 # \deprecated commands in the documentation.
 
-GENERATE_DEPRECATEDLIST= YES
+GENERATE_DEPRECATEDLIST= NO
 
 # The ENABLED_SECTIONS tag can be used to enable conditional
 # documentation sections, marked by \if sectionname ... \endif.
@@ -561,7 +561,7 @@ MAX_INITIALIZER_LINES  = 30
 # at the bottom of the documentation of classes and structs. If set to YES the
 # list will mention the files that were used to generate the documentation.
 
-SHOW_USED_FILES        = YES
+SHOW_USED_FILES        = NO
 
 # Set the SHOW_FILES tag to NO to disable the generation of the Files page.
 # This will remove the Files entry from the Quick Index and from the
@@ -574,7 +574,7 @@ SHOW_FILES             = YES
 # This will remove the Namespaces entry from the Quick Index
 # and from the Folder Tree View (if specified). The default is YES.
 
-SHOW_NAMESPACES        = YES
+SHOW_NAMESPACES        = NO
 
 # The FILE_VERSION_FILTER tag can be used to specify a program or script that
 # doxygen should invoke to get the current version for each file (typically from
@@ -855,14 +855,14 @@ ALPHABETICAL_INDEX     = YES
 # the COLS_IN_ALPHA_INDEX tag can be used to specify the number of columns
 # in which this list will be split (can be a number in the range [1..20])
 
-COLS_IN_ALPHA_INDEX    = 5
+COLS_IN_ALPHA_INDEX    = 1
 
 # In case all classes in a project start with a common prefix, all
 # classes will be put under the same header in the alphabetical index.
 # The IGNORE_PREFIX tag can be used to specify one or more prefixes that
 # should be ignored while generating the index headers.
 
-IGNORE_PREFIX          =
+IGNORE_PREFIX          = c
 
 #---------------------------------------------------------------------------
 # configuration options related to the HTML output
@@ -877,13 +877,13 @@ GENERATE_HTML          = YES
 # If a relative path is entered the value of OUTPUT_DIRECTORY will be
 # put in front of it. If left blank `html' will be used as the default path.
 
-HTML_OUTPUT            = html
+HTML_OUTPUT            = embedded
 
 # The HTML_FILE_EXTENSION tag can be used to specify the file extension for
 # each generated HTML page (for example: .htm,.php,.asp). If it is left blank
 # doxygen will generate files with .html extension.
 
-HTML_FILE_EXTENSION    = .html
+HTML_FILE_EXTENSION    = .php
 
 # The HTML_HEADER tag can be used to specify a personal HTML header for
 # each generated HTML page. If it is left blank doxygen will generate a
@@ -896,13 +896,13 @@ HTML_FILE_EXTENSION    = .html
 # have to redo this when upgrading to a newer version of doxygen or when
 # changing the value of configuration settings such as GENERATE_TREEVIEW!
 
-HTML_HEADER            =
+HTML_HEADER            = ../doc/api_embedded_header.php
 
 # The HTML_FOOTER tag can be used to specify a personal HTML footer for
 # each generated HTML page. If it is left blank doxygen will generate a
 # standard footer.
 
-HTML_FOOTER            =
+HTML_FOOTER            = ../doc/api_embedded_footer.php
 
 # The HTML_STYLESHEET tag can be used to specify a user-defined cascading
 # style sheet that is used by each HTML page. It can be used to
@@ -911,7 +911,7 @@ HTML_FOOTER            =
 # the style sheet file to the HTML output directory, so don't put your own
 # style sheet in the HTML output directory as well, or it will be erased!
 
-HTML_STYLESHEET        =
+HTML_STYLESHEET        = ../doc/api_embedded_style.css
 
 # The HTML_EXTRA_FILES tag can be used to specify one or more extra images or
 # other source files which should be copied to the HTML output directory. Note
@@ -930,13 +930,13 @@ HTML_EXTRA_FILES       =
 # 180 is cyan, 240 is blue, 300 purple, and 360 is red again.
 # The allowed range is 0 to 359.
 
-HTML_COLORSTYLE_HUE    = 220
+HTML_COLORSTYLE_HUE    = 26
 
 # The HTML_COLORSTYLE_SAT tag controls the purity (or saturation) of
 # the colors in the HTML output. For a value of 0 the output will use
 # grayscales only. A value of 255 will produce the most vivid colors.
 
-HTML_COLORSTYLE_SAT    = 100
+HTML_COLORSTYLE_SAT    = 255
 
 # The HTML_COLORSTYLE_GAMMA tag controls the gamma correction applied to
 # the luminance component of the colors in the HTML output. Values below
@@ -945,7 +945,7 @@ HTML_COLORSTYLE_SAT    = 100
 # so 80 represents a gamma of 0.8, The value 220 represents a gamma of 2.2,
 # and 100 does not change the gamma.
 
-HTML_COLORSTYLE_GAMMA  = 80
+HTML_COLORSTYLE_GAMMA  = 100
 
 # If the HTML_TIMESTAMP tag is set to YES then the footer of each generated HTML
 # page will contain the date and time when the page was generated. Setting
@@ -1139,7 +1139,7 @@ DISABLE_INDEX          = NO
 # Since the tree basically has the same information as the tab index you
 # could consider to set DISABLE_INDEX to NO when enabling this option.
 
-GENERATE_TREEVIEW      = YES
+GENERATE_TREEVIEW      = NO
 
 # The ENUM_VALUES_PER_LINE tag can be used to set the number of enum values
 # (range [0,1..20]) that doxygen will group on one line in the generated HTML
@@ -1653,7 +1653,7 @@ CLASS_GRAPH            = YES
 # indirect implementation dependencies (inheritance, containment, and
 # class references variables) of the class with other documented classes.
 
-COLLABORATION_GRAPH    = NO
+COLLABORATION_GRAPH    = YES
 
 # If the GROUP_GRAPHS and HAVE_DOT tags are set to YES then doxygen
 # will generate a graph for groups, showing the direct groups dependencies
