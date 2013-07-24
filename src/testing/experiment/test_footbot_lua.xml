@@ -34,6 +34,7 @@
       </actuators>
       <sensors>
         <range_and_bearing implementation="medium" medium="rab" show_rays="false" />
+        <colored_blob_omnidirectional_camera implementation="rot_z_only" />
         <!-- <footbot_proximity implementation="default" show_rays="false" /> -->
         <!-- differential_steering implementation="default" / -->
         <!-- footbot_base_ground implementation="rot_z_only" / -->
