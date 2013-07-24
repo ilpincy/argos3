@@ -198,9 +198,7 @@ namespace argos {
                    "      ...\n"
                    "    </my_controller>\n"
                    "    ...\n"
-                   "  </controllers>\n\n"
-                   "OPTIONAL XML CONFIGURATION\n\n"
-                   "None.\n",
+                   "  </controllers>\n\n",
                    "Usable"
 		  );
 
