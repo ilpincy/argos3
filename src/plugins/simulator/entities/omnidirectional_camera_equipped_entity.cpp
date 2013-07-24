@@ -31,7 +31,7 @@ namespace argos {
          GetNodeAttribute(t_tree, "offset", m_cOffset);
       }
       catch(CARGoSException& ex) {
-         THROW_ARGOSEXCEPTION_NESTED("Error initializing the omnidirectional camera equipped entity " << GetId(), ex);
+         THROW_ARGOSEXCEPTION_NESTED("Error initializing the omnidirectional camera equipped entity \"" << GetId() << "\"", ex);
       }
    }
 
