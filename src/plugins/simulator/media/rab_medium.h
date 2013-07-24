@@ -28,6 +28,7 @@ namespace argos {
       virtual ~CRABMedium();
 
       virtual void Init(TConfigurationNode& t_tree);
+      virtual void PostSpaceInit();
       virtual void Reset();
       virtual void Destroy();
       virtual void Update();

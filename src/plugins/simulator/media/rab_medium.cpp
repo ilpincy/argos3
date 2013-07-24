@@ -60,6 +60,13 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   void CRABMedium::PostSpaceInit() {
+      Update();
+   }
+
+   /****************************************/
+   /****************************************/
+
    void CRABMedium::Reset() {
       /* Reset positional index of RAB entities */
       m_pcRABEquippedEntityIndex->Reset();
