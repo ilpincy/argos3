@@ -32,8 +32,13 @@ namespace argos {
 
       virtual void Reset();
 
+			virtual void Enable();
+
+			virtual void Disable();
+
    protected:
 
+      bool                                  m_bEnabled;
       COmnidirectionalCameraEquippedEntity* m_pcOmnicamEntity;
       CControllableEntity*                  m_pcControllableEntity;
       CEmbodiedEntity*                      m_pcEmbodiedEntity;
