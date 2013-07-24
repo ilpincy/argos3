@@ -59,6 +59,19 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   void CLEDMedium::PostSpaceInit() {
+      CSpace::TMapPerType& mapLEDs = CSimulator::GetInstance().GetSpace().GetEntitiesByType("led");
+      for(CSpace::TMapPerType::iterator it = mapLEDs.begin();
+          it != mapLEDs.end();
+          ++it) {
+         AddEntity(*any_cast<CLEDEntity*>(it->second));
+      }
+      Update();
+   }
+
+   /****************************************/
+   /****************************************/
+
    void CLEDMedium::Reset() {
       m_pcLEDEntityIndex->Reset();
    }
