@@ -42,10 +42,6 @@ namespace argos {
 					CRadians Angle;
 					/* Distance in cms */
 					Real Distance;
-					/* Distance in pixels */
-					Real RawDistance;
-					/* Area in pixels */
-					Real Area;
 					/**
 					 * Constructor
 					 */
@@ -63,20 +59,15 @@ namespace argos {
 					 */
 					SBlob(const CColor& c_color,
                 const CRadians& c_angle,
-                Real f_distance,
-                Real f_raw_distance,
-                Real f_area) :
+                Real f_distance) :
 						Color(c_color),
             Angle(c_angle),
-            Distance(f_distance),
-            RawDistance(f_raw_distance),
-            Area(f_area) {
+            Distance(f_distance) {
 					}
 
 					friend std::ostream& operator<<(std::ostream& c_os, const SBlob& s_blob) {
 						c_os << "(Color = " << s_blob.Color << "," << "Angle = " << ToDegrees(s_blob.Angle) << ","
-								<< "Distance = " << s_blob.Distance << "," << "Raw Distance = " << s_blob.RawDistance
-								<< "," << "Area = " << s_blob.Area << ")";
+								<< "Distance = " << s_blob.Distance << ")";
 						return c_os;
 					}
 			};

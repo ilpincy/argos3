@@ -342,6 +342,7 @@ namespace argos {
       void InitSpace(TConfigurationNode& t_tree);
       void InitPhysics(TConfigurationNode& t_tree);
       void InitMedia(TConfigurationNode& t_tree);
+      void InitMedia2();
       void InitVisualization(TConfigurationNode& t_tree);
 
    private:

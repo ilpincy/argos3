@@ -30,9 +30,38 @@ namespace argos {
       CMedium() {}
       virtual ~CMedium() {}
 
+      /**
+       * Initialized the medium.
+       * By default, this method parses the medium id.
+       * The order in which initialization takes place is:
+       * <ul>
+       * <li>CMedia::Init()
+       * <li>CSpace::Init()
+       * <li>CMedia::PostSpaceInitInit()
+       * </ul>
+       * @param t_tree the base of the XML configuration tree to parse
+       * @throw CARGoSException if an error occurs
+       * @see PostSpaceInitInit()
+       * @see CSpace::Init()
+       */
       virtual void Init(TConfigurationNode& t_tree);
       virtual void Reset() {}
       virtual void Destroy() {}
+
+      /**
+       * Executes extra initialization activities after the space has been initialized.
+       * By default, this method does nothing.
+       * The order in which initialization takes place is:
+       * <ul>
+       * <li>CMedia::Init()
+       * <li>CSpace::Init()
+       * <li>CMedia::PostSpaceInitInit()
+       * </ul>
+       * @throw CARGoSException if an error occurs
+       * @see Init()
+       * @see CSpace::Init()
+       */
+      virtual void PostSpaceInit() {}
 
       /**
        * Updates the state of this medium.

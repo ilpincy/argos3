@@ -131,6 +131,8 @@ namespace argos {
       InitMedia(GetNode(m_tConfigurationRoot, "media"));
       /* Space */
       InitSpace(GetNode(m_tConfigurationRoot, "arena"));
+      /* Media */
+      InitMedia2();
       /* Call user init function */
       if(NodeExists(m_tConfigurationRoot, "loop_functions")) {
          m_pcLoopFunctions->Init(GetNode(m_tConfigurationRoot, "loop_functions"));
@@ -541,6 +543,34 @@ namespace argos {
                pcMedium->Destroy();
                delete pcMedium;
                THROW_ARGOSEXCEPTION_NESTED("Error initializing medium type \"" << itMedia->Value() << "\"", ex);
+            }
+         }
+      }
+      catch(CARGoSException& ex) {
+         THROW_ARGOSEXCEPTION_NESTED("Failed to initialize the media. Parse error in the <media> subtree.", ex);
+      }
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CSimulator::InitMedia2() {
+      try {
+         /* Cycle through the media */
+         CMedium::TMap::iterator it;
+         for(it = m_mapMedia.begin(); it != m_mapMedia.end(); ++it) {
+            CMedium& cMedium = *(it->second);
+            try {
+               /* Initialize the medium */
+               cMedium.PostSpaceInit();
+            }
+            catch(CARGoSException& ex) {
+               /* Error while executing medium post space init, destroy what done to prevent memory leaks */
+               std::ostringstream ossMsg;
+               ossMsg << "Error executing post-space initialization of medium \"" << cMedium.GetId() << "\"";
+               cMedium.Destroy();
+               delete &cMedium;
+               THROW_ARGOSEXCEPTION_NESTED(ossMsg, ex);
             }
          }
       }
