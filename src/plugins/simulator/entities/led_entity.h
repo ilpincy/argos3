@@ -44,6 +44,8 @@ namespace argos {
 
       virtual void Reset();
 
+      virtual void SetEnabled(bool b_enabled);
+
       inline const CColor& GetColor() const {
          return m_cColor;
       }
