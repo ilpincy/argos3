@@ -1,3 +1,4 @@
+#include <argos3/core/utility/logging/argos_log.h>
 #include <argos3/core/simulator/space/positional_indices/grid.h>
 #include <argos3/plugins/simulator/entities/led_entity.h>
 
