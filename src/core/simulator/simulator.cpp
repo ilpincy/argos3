@@ -570,7 +570,7 @@ namespace argos {
                ossMsg << "Error executing post-space initialization of medium \"" << cMedium.GetId() << "\"";
                cMedium.Destroy();
                delete &cMedium;
-               THROW_ARGOSEXCEPTION_NESTED(ossMsg, ex);
+               THROW_ARGOSEXCEPTION_NESTED(ossMsg.str(), ex);
             }
          }
       }
