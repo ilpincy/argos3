@@ -17,28 +17,57 @@ namespace argos {
    public:
 
       CLEDCheckOperation(CCI_ColoredBlobOmnidirectionalCameraSensor::TBlobList& t_blobs,
-                         CEmbodiedEntity& c_embodied_entity) :
+                         COmnidirectionalCameraEquippedEntity& c_omnicam_entity,
+                         CEmbodiedEntity& c_embodied_entity,
+                         CControllableEntity& c_controllable_entity,
+                         bool b_show_rays) :
          m_tBlobs(t_blobs),
-         m_cEmbodiedEntity(c_embodied_entity) {}
+         m_cOmnicamEntity(c_omnicam_entity),
+         m_cEmbodiedEntity(c_embodied_entity),
+         m_cControllableEntity(c_controllable_entity),
+         m_bShowRays(b_show_rays) {
+         m_cCameraPos = m_cEmbodiedEntity.GetPosition();
+         m_cCameraPos += m_cOmnicamEntity.GetOffset();
+         m_pcRootSensingEntity = &m_cEmbodiedEntity.GetParent();
+      }
       virtual ~CLEDCheckOperation() {}
 
       virtual bool operator()(CLEDEntity& c_led) {
+         /* Process this LED only if it's lit */
          if(c_led.GetColor() != CColor::BLACK) {
+            if(c_led.HasParent()) {
+               /* Filter out the LEDs belonging to the sensing entity by checking if they share the same parent entity */
+               m_pcRootOfLEDEntity = &c_led.GetParent();
+               while(m_pcRootOfLEDEntity->HasParent()) m_pcRootOfLEDEntity = &m_pcRootOfLEDEntity->GetParent();
+               if(m_pcRootSensingEntity == m_pcRootOfLEDEntity) {
+                  return true;
+               }
+            }
+            /* If we are here, it's because the LED must be processed */
             m_cLEDRelativePos = c_led.GetPosition();
-            m_cLEDRelativePos -= m_cEmbodiedEntity.GetPosition();
+            m_cLEDRelativePos -= m_cCameraPos;
             m_cLEDRelativePosXY.Set(m_cLEDRelativePos.GetX(),
                                     m_cLEDRelativePos.GetY());
             m_tBlobs.push_back(new CCI_ColoredBlobOmnidirectionalCameraSensor::SBlob(c_led.GetColor(),
                                                                                      m_cLEDRelativePosXY.Angle(),
                                                                                      m_cLEDRelativePosXY.Length()));
+            if(m_bShowRays) {
+               m_cControllableEntity.AddCheckedRay(false, CRay3(m_cCameraPos, c_led.GetPosition()));
+            }
          }
          return true;
       }
-
+      
    private:
-
+      
       CCI_ColoredBlobOmnidirectionalCameraSensor::TBlobList& m_tBlobs;
+      COmnidirectionalCameraEquippedEntity& m_cOmnicamEntity;
       CEmbodiedEntity& m_cEmbodiedEntity;
+      CControllableEntity& m_cControllableEntity;
+      bool m_bShowRays;
+      CEntity* m_pcRootSensingEntity;
+      CEntity* m_pcRootOfLEDEntity;
+      CVector3 m_cCameraPos;
       CVector3 m_cLEDRelativePos;
       CVector2 m_cLEDRelativePosXY;
       CRadians m_cLEDRelativeAngle;
@@ -119,7 +148,10 @@ namespace argos {
          Real fGroundHalfRange = fHeightRange * Tan(m_pcOmnicamEntity->GetAperture());
          /* Create check operation */
          CLEDCheckOperation cOperation(m_sReadings.BlobList,
-                                       *m_pcEmbodiedEntity);
+                                       *m_pcOmnicamEntity,
+                                       *m_pcEmbodiedEntity,
+                                       *m_pcControllableEntity,
+                                       m_bShowRays);
          /* Go through LED entities in box range */
          m_pcLEDIndex->ForEntitiesInBoxRange(
             CVector3(m_pcOmnicamEntity->GetOffset().GetX(),
