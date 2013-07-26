@@ -609,10 +609,10 @@ namespace argos {
       CVector3 cArenaSize(m_cSpace.GetArenaSize());
       CVector3 cArenaMinCorner(m_cSpace.GetArenaCenter().GetX() - cArenaSize.GetX() * 0.5f,
                                m_cSpace.GetArenaCenter().GetY() - cArenaSize.GetY() * 0.5f,
-                               m_cSpace.GetArenaCenter().GetZ());
+                               m_cSpace.GetArenaCenter().GetZ() - cArenaSize.GetZ() * 0.5f);
       CVector3 cArenaMaxCorner(m_cSpace.GetArenaCenter().GetX() + cArenaSize.GetX() * 0.5f,
                                m_cSpace.GetArenaCenter().GetY() + cArenaSize.GetY() * 0.5f,
-                               m_cSpace.GetArenaCenter().GetZ() + cArenaSize.GetZ());
+                               m_cSpace.GetArenaCenter().GetZ() + cArenaSize.GetZ() * 0.5f);
       /* Disable lighting - no funny color effects */
       glDisable(GL_LIGHTING);
       /* Enable textures */
