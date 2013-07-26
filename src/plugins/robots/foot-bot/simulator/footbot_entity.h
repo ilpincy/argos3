@@ -17,6 +17,7 @@ namespace argos {
    class CGroundSensorEquippedEntity;
    class CLEDEquippedEntity;
    class CLightSensorEquippedEntity;
+   class COmnidirectionalCameraEquippedEntity;
    class CProximitySensorEquippedEntity;
    class CRABEquippedEntity;
    class CWiFiEquippedEntity;
@@ -75,6 +76,10 @@ namespace argos {
          return *m_pcLightSensorEquippedEntity;
       }
 
+      inline COmnidirectionalCameraEquippedEntity& GetOmnidirectionalCameraEquippedEntity() {
+         return *m_pcOmnidirectionalCameraEquippedEntity;
+      }
+
       inline CProximitySensorEquippedEntity& GetProximitySensorEquippedEntity() {
          return *m_pcProximitySensorEquippedEntity;
       }
@@ -109,6 +114,7 @@ namespace argos {
       CGroundSensorEquippedEntity*           m_pcGroundSensorEquippedEntity;
       CLEDEquippedEntity*                    m_pcLEDEquippedEntity;
       CLightSensorEquippedEntity*            m_pcLightSensorEquippedEntity;
+      COmnidirectionalCameraEquippedEntity*  m_pcOmnidirectionalCameraEquippedEntity;
       CProximitySensorEquippedEntity*        m_pcProximitySensorEquippedEntity;
       CRABEquippedEntity*                    m_pcRABEquippedEntity;
       CWheeledEntity*                        m_pcWheeledEntity;

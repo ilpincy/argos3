@@ -15,6 +15,7 @@
 #include <argos3/plugins/simulator/entities/ground_sensor_equipped_entity.h>
 #include <argos3/plugins/simulator/entities/led_equipped_entity.h>
 #include <argos3/plugins/simulator/entities/light_sensor_equipped_entity.h>
+#include <argos3/plugins/simulator/entities/omnidirectional_camera_equipped_entity.h>
 #include <argos3/plugins/simulator/entities/proximity_sensor_equipped_entity.h>
 #include <argos3/plugins/simulator/entities/wifi_equipped_entity.h>
 #include "footbot_distance_scanner_equipped_entity.h"
@@ -47,6 +48,8 @@ namespace argos {
 
    static const CRadians LED_ANGLE_SLICE        = CRadians(ARGOS_PI / 6.0);
    static const CRadians HALF_LED_ANGLE_SLICE   = LED_ANGLE_SLICE * 0.5f;
+
+   static const Real OMNIDIRECTIONAL_CAMERA_ELEVATION = 0.288699733f;
 
    /****************************************/
    /****************************************/
@@ -169,6 +172,14 @@ namespace argos {
                                                         *m_pcEmbodiedEntity,
                                                         CVector3(0.0f, 0.0f, RAB_ELEVATION));
          AddComponent(*m_pcRABEquippedEntity);
+         /* Omnidirectional camera equipped entity */
+         CDegrees cAperture(70.0f);
+         GetNodeAttributeOrDefault(t_tree, "omnidirectional_camera_aperture", cAperture, cAperture);
+         m_pcOmnidirectionalCameraEquippedEntity = new COmnidirectionalCameraEquippedEntity(this,
+                                                                                            "omnidirectional_camera",
+                                                                                            ToRadians(cAperture),
+                                                                                            CVector3(0.0f, 0.0f, OMNIDIRECTIONAL_CAMERA_ELEVATION));
+         AddComponent(*m_pcOmnidirectionalCameraEquippedEntity);         
          /* Turret equipped entity */
          m_pcTurretEntity = new CFootBotTurretEntity(this, "turret");
          AddComponent(*m_pcTurretEntity);
