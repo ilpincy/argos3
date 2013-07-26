@@ -10,8 +10,33 @@ namespace argos {
    /****************************************/
 
 #ifdef ARGOS_WITH_LUA
+   int LuaEnableCamera(lua_State* pt_lua_state) {
+      /* Perform action */
+      CLuaUtility::GetDeviceInstance<CCI_ColoredBlobOmnidirectionalCameraSensor>(pt_lua_state, "colored_blob_omnidirectional_camera")->Enable();
+         return 0;
+   }
+#endif
+
+   /****************************************/
+   /****************************************/
+
+#ifdef ARGOS_WITH_LUA
+   int LuaDisableCamera(lua_State* pt_lua_state) {
+      /* Perform action */
+      CLuaUtility::GetDeviceInstance<CCI_ColoredBlobOmnidirectionalCameraSensor>(pt_lua_state, "colored_blob_omnidirectional_camera")->Disable();
+         return 0;
+   }
+#endif
+
+   /****************************************/
+   /****************************************/
+
+#ifdef ARGOS_WITH_LUA
    void CCI_ColoredBlobOmnidirectionalCameraSensor::CreateLuaState(lua_State* pt_lua_state) {
       CLuaUtility::OpenRobotStateTable(pt_lua_state, "colored_blob_omnidirectional_camera");
+      CLuaUtility::AddToTable(pt_lua_state, "_instance", this);
+      CLuaUtility::AddToTable(pt_lua_state, "enable", &LuaEnableCamera);
+      CLuaUtility::AddToTable(pt_lua_state, "disable", &LuaDisableCamera);
       for(size_t i = 0; i < m_sReadings.BlobList.size(); ++i) {
          SBlob& sBlob = *(m_sReadings.BlobList[i]);
          CLuaUtility::StartTable(pt_lua_state, i+1);
