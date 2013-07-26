@@ -5,7 +5,9 @@
  */
 
 #include "led_equipped_entity.h"
+#include <argos3/core/simulator/simulator.h>
 #include <argos3/core/simulator/space/space.h>
+#include <argos3/plugins/simulator/media/led_medium.h>
 
 namespace argos {
 
@@ -194,6 +196,24 @@ namespace argos {
             cLEDPosition += m_pcReferenceEntity->GetPosition();
             SetLEDPosition(i, cLEDPosition);
          }
+      }
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CLEDEquippedEntity::AddToMedium(CLEDMedium& c_medium) {
+      for(UInt32 i = 0; i < m_tLEDs.size(); ++i) {
+         m_tLEDs[i]->AddToMedium(c_medium);
+      }
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CLEDEquippedEntity::RemoveFromMedium(CLEDMedium& c_medium) {
+      for(UInt32 i = 0; i < m_tLEDs.size(); ++i) {
+         m_tLEDs[i]->RemoveFromMedium(c_medium);
       }
    }
 

@@ -5,7 +5,9 @@
  */
 
 #include "light_entity.h"
+#include <argos3/core/simulator/simulator.h>
 #include <argos3/core/simulator/space/space.h>
+#include <argos3/plugins/simulator/media/led_medium.h>
 
 namespace argos {
 
@@ -38,6 +40,10 @@ namespace argos {
          CLEDEntity::Init(t_tree);
          /* Parse XML */
          GetNodeAttribute(t_tree, "intensity", m_fIntensity);
+         std::string strMedium;
+         GetNodeAttribute(t_tree, "medium", strMedium);
+         CLEDMedium& cLEDMedium = CSimulator::GetInstance().GetMedium<CLEDMedium>(strMedium);
+         cLEDMedium.AddEntity(*this);
       }
       catch(CARGoSException& ex) {
          THROW_ARGOSEXCEPTION_NESTED("Error while initializing light entity", ex);

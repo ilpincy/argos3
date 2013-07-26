@@ -5,7 +5,9 @@
  */
 
 #include "leds_default_actuator.h"
+#include <argos3/core/simulator/simulator.h>
 #include <argos3/core/utility/logging/argos_log.h>
+#include <argos3/plugins/simulator/media/led_medium.h>
 
 namespace argos {
 
@@ -28,6 +30,22 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   void CLEDsDefaultActuator::Init(TConfigurationNode& t_tree) {
+      try {
+         CCI_LEDsActuator::Init(t_tree);
+         std::string strMedium;
+         GetNodeAttribute(t_tree, "medium", strMedium);
+         m_pcLEDMedium = &CSimulator::GetInstance().GetMedium<CLEDMedium>(strMedium);
+         m_pcLEDEquippedEntity->AddToMedium(*m_pcLEDMedium);
+      }
+      catch(CARGoSException& ex) {
+         THROW_ARGOSEXCEPTION_NESTED("Error initializing the LEDs default actuator", ex);
+      }
+   }
+
+   /****************************************/
+   /****************************************/
+
    void CLEDsDefaultActuator::Update() {
       m_pcLEDEquippedEntity->SetAllLEDsColors(m_tSettings);
    }
@@ -37,6 +55,13 @@ namespace argos {
 
    void CLEDsDefaultActuator::Reset() {
       SetAllColors(CColor::BLACK);
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CLEDsDefaultActuator::Destroy() {
+      m_pcLEDEquippedEntity->RemoveFromMedium(*m_pcLEDMedium);
    }
 
    /****************************************/
@@ -58,13 +83,16 @@ REGISTER_ACTUATOR(CLEDsDefaultActuator,
                   "      ...\n"
                   "      <actuators>\n"
                   "        ...\n"
-                  "        <leds implementation=\"default\" />\n"
+                  "        <leds implementation=\"default\"\n"
+                  "              medium=\"leds\" />\n"
                   "        ...\n"
                   "      </actuators>\n"
                   "      ...\n"
                   "    </my_controller>\n"
                   "    ...\n"
                   "  </controllers>\n\n"
+                  "The 'medium' attribute sets the id of the LED medium declared in the <media>\n"
+                  "XML section.\n\n"
                   "OPTIONAL XML CONFIGURATION\n\n"
                   "None.\n",
                   "Usable"

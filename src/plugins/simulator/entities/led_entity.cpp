@@ -6,6 +6,7 @@
 
 #include "led_entity.h"
 #include <argos3/core/simulator/space/space.h>
+#include <argos3/plugins/simulator/media/led_medium.h>
 
 namespace argos {
 
@@ -49,11 +50,28 @@ namespace argos {
       m_cColor = m_cInitColor;
    }
 
+   /****************************************/
+   /****************************************/
+
    void CLEDEntity::SetEnabled(bool b_enabled) {
       CEntity::SetEnabled(b_enabled);
       if(IsEnabled()) {
          m_cColor = CColor::BLACK;
       }
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CLEDEntity::AddToMedium(CLEDMedium& c_medium) {
+      c_medium.AddEntity(*this);
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CLEDEntity::RemoveFromMedium(CLEDMedium& c_medium) {
+      c_medium.RemoveEntity(*this);
    }
 
    /****************************************/

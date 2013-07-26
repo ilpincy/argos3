@@ -157,6 +157,20 @@ namespace argos {
          return *m_pcReferenceEntity;
       }
 
+      /**
+       * Adds the LEDs to the wanted LED medium.
+       * @param c_medium The LED medium.
+       * @see CLEDMedium
+       */
+      void AddToMedium(CLEDMedium& c_medium);
+
+      /**
+       * Removes the LEDs from the wanted LED medium.
+       * @param c_medium The LED medium.
+       * @see CLEDMedium
+       */
+      void RemoveFromMedium(CLEDMedium& c_medium);
+
       virtual std::string GetTypeDescription() const {
          return "leds";
       }

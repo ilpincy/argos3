@@ -12,6 +12,7 @@
 
 namespace argos {
    class CLEDsDefaultActuator;
+   class CLEDMedium;
 }
 
 #include <argos3/plugins/robots/generic/control_interface/ci_leds_actuator.h>
@@ -31,12 +32,15 @@ namespace argos {
 
       virtual void SetRobot(CComposableEntity& c_entity);
 
+      virtual void Init(TConfigurationNode& t_tree);
       virtual void Update();
       virtual void Reset();
+      virtual void Destroy();
 
    private:
 
       CLEDEquippedEntity* m_pcLEDEquippedEntity;
+      CLEDMedium*         m_pcLEDMedium;
 
    };
 

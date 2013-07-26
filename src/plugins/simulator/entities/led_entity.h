@@ -9,6 +9,7 @@
 
 namespace argos {
    class CLEDEntity;
+   class CLEDMedium;
 }
 
 #include <argos3/core/simulator/entity/positional_entity.h>
@@ -46,18 +47,43 @@ namespace argos {
 
       virtual void SetEnabled(bool b_enabled);
 
+      /**
+       * Returns the current color of the LED.
+       * @return the current color of the LED.
+       * @see GetInitColor()
+       * @see SetColor()
+       */
       inline const CColor& GetColor() const {
          return m_cColor;
       }
 
+      /**
+       * Returns the color with which the LED was initialized.
+       * When the simulation is reset, the LED color is set to this value.
+       * @return the color with which the LED was initialized.
+       * @see GetColor()
+       * @see SetInitColor()
+       */
       inline const CColor& GetInitColor() const {
          return m_cInitColor;
       }
 
+      /**
+       * Sets the current color of the LED.
+       * @param c_color the wanted color.
+       * @see GetColor()
+       */
       inline void SetColor(const CColor& c_color) {
          m_cColor = c_color;
       }
 
+      /**
+       * Sets the initialization color for this LED.
+       * When the simulation is reset, the LED color is set to this value.
+       * @param c_color the initialization color for this LED.
+       * @see GetInitColor()
+       * @see SetColor()
+       */
       inline void SetInitColor(const CColor& c_color) {
          m_cInitColor = c_color;
       }
@@ -65,6 +91,20 @@ namespace argos {
       virtual std::string GetTypeDescription() const {
          return "led";
       }
+
+      /**
+       * Adds the LEDs to the wanted LED medium.
+       * @param c_medium The LED medium.
+       * @see CLEDMedium
+       */
+      void AddToMedium(CLEDMedium& c_medium);
+
+      /**
+       * Removes the LEDs from the wanted LED medium.
+       * @param c_medium The LED medium.
+       * @see CLEDMedium
+       */
+      void RemoveFromMedium(CLEDMedium& c_medium);
 
    protected:
 
