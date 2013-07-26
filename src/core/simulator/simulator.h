@@ -126,7 +126,7 @@ namespace argos {
        * @return A reference to the wanted medium.
        */
       template <typename T>
-      T& GetMedium(const std::string& str_id) const {
+      T& GetMedium(const std::string& str_id) {
          CMedium::TMap::const_iterator it = m_mapMedia.find(str_id);
          if(it != m_mapMedia.end()) {
             T* pcMedium = dynamic_cast<T*>(it->second);
