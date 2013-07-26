@@ -46,7 +46,7 @@ namespace argos {
 
    void CComposableEntity::SetEnabled(bool b_enabled) {
       CEntity::SetEnabled(b_enabled);
-      for(CEntity::TMap::iterator it = m_mapComponents.begin();
+      for(CEntity::TMultiMap::iterator it = m_mapComponents.begin();
           it != m_mapComponents.end();
           ++it) {
          it->second->SetEnabled(b_enabled);
@@ -57,7 +57,7 @@ namespace argos {
    /****************************************/
 
    void CComposableEntity::UpdateComponents() {
-      for(CEntity::TMap::iterator it = m_mapComponents.begin();
+      for(CEntity::TMultiMap::iterator it = m_mapComponents.begin();
           it != m_mapComponents.end();
           ++it) {
          if(it->second->IsEnabled()) {

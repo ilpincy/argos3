@@ -193,17 +193,19 @@ namespace argos {
    }                                                                    \
    };
    
-#define SPACE_OPERATION_REMOVE_COMPOSABLE_ENTITY(ENTITY)                \
-   class CSpaceOperationRemove ## ENTITY : public CSpaceOperationRemoveEntity { \
-   public:                                                              \
-   void ApplyTo(CSpace& c_space, ENTITY& c_entity) {                    \
-      for(CEntity::TMultiMap::iterator it = c_entity.GetComponents().begin(); \
-          it != c_entity.GetComponents().end();                         \
-          ++it) {                                                       \
-         CallEntityOperation<CSpaceOperationRemoveEntity, CSpace, void>(c_space, *(it->second)); \
-      }                                                                 \
-      c_space.RemoveEntity(c_entity);                                   \
-   }                                                                    \
+#define SPACE_OPERATION_REMOVE_COMPOSABLE_ENTITY(ENTITY)                                            \
+   class CSpaceOperationRemove ## ENTITY : public CSpaceOperationRemoveEntity {                     \
+   public:                                                                                          \
+   void ApplyTo(CSpace& c_space, ENTITY& c_entity) {                                                \
+      if(!c_entity.GetComponents().empty()) {                                                       \
+         for(CEntity::TMultiMap::reverse_iterator it = c_entity.GetComponents().rbegin();           \
+             it != c_entity.GetComponents().rend();                                                 \
+             ++it) {                                                                                \
+            CallEntityOperation<CSpaceOperationRemoveEntity, CSpace, void>(c_space, *(it->second)); \
+         }                                                                                          \
+      }                                                                                             \
+      c_space.RemoveEntity(c_entity);                                                               \
+   }                                                                                                \
    };
 
 #define REGISTER_STANDARD_SPACE_OPERATION_ADD_COMPOSABLE(ENTITY)        \
