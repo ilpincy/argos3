@@ -26,8 +26,6 @@ namespace argos {
          m_cEmbodiedEntity(c_embodied_entity),
          m_cControllableEntity(c_controllable_entity),
          m_bShowRays(b_show_rays) {
-         m_cCameraPos = m_cEmbodiedEntity.GetPosition();
-         m_cCameraPos += m_cOmnicamEntity.GetOffset();
          m_pcRootSensingEntity = &m_cEmbodiedEntity.GetParent();
       }
       virtual ~CLEDCheckOperation() {}
@@ -44,18 +42,35 @@ namespace argos {
                }
             }
             /* If we are here, it's because the LED must be processed */
+            m_cOcclusionCheckRay.SetEnd(c_led.GetPosition());
             m_cLEDRelativePos = c_led.GetPosition();
             m_cLEDRelativePos -= m_cCameraPos;
             m_cLEDRelativePosXY.Set(m_cLEDRelativePos.GetX(),
                                     m_cLEDRelativePos.GetY());
-            m_tBlobs.push_back(new CCI_ColoredBlobOmnidirectionalCameraSensor::SBlob(c_led.GetColor(),
-                                                                                     m_cLEDRelativePosXY.Angle(),
-                                                                                     m_cLEDRelativePosXY.Length()));
-            if(m_bShowRays) {
-               m_cControllableEntity.AddCheckedRay(false, CRay3(m_cCameraPos, c_led.GetPosition()));
+            if(Abs(m_cLEDRelativePos.GetX()) < m_fGroundHalfRange &&
+               Abs(m_cLEDRelativePos.GetY()) < m_fGroundHalfRange &&
+               m_cLEDRelativePos.GetZ() < m_cCameraPos.GetZ() &&
+               !GetClosestEmbodiedEntityIntersectedByRay(m_sIntersectionItem,
+                                                         CSimulator::GetInstance().GetSpace().GetEmbodiedEntityIndex(),
+                                                         m_cOcclusionCheckRay,
+                                                         m_cEmbodiedEntity)) {
+               m_tBlobs.push_back(new CCI_ColoredBlobOmnidirectionalCameraSensor::SBlob(c_led.GetColor(),
+                                                                                        m_cLEDRelativePosXY.Angle(),
+                                                                                        m_cLEDRelativePosXY.Length()));
+               if(m_bShowRays) {
+                  m_cControllableEntity.AddCheckedRay(false, CRay3(m_cCameraPos, c_led.GetPosition()));
+               }
             }
          }
          return true;
+      }
+
+      void Setup(Real f_ground_half_range) {
+         m_tBlobs.clear();
+         m_fGroundHalfRange = f_ground_half_range;
+         m_cCameraPos = m_cEmbodiedEntity.GetPosition();
+         m_cCameraPos += m_cOmnicamEntity.GetOffset();
+         m_cOcclusionCheckRay.SetStart(m_cCameraPos);
       }
       
    private:
@@ -64,14 +79,15 @@ namespace argos {
       COmnidirectionalCameraEquippedEntity& m_cOmnicamEntity;
       CEmbodiedEntity& m_cEmbodiedEntity;
       CControllableEntity& m_cControllableEntity;
+      Real m_fGroundHalfRange;
       bool m_bShowRays;
       CEntity* m_pcRootSensingEntity;
       CEntity* m_pcRootOfLEDEntity;
       CVector3 m_cCameraPos;
       CVector3 m_cLEDRelativePos;
       CVector2 m_cLEDRelativePosXY;
-      CRadians m_cLEDRelativeAngle;
-
+      SEmbodiedEntityIntersectionItem m_sIntersectionItem;
+      CRay3 m_cOcclusionCheckRay;
    };
 
    /****************************************/
@@ -127,6 +143,12 @@ namespace argos {
          std::string strMedium;
          GetNodeAttribute(t_tree, "medium", strMedium);
          m_pcLEDIndex = &(CSimulator::GetInstance().GetMedium<CLEDMedium>(strMedium).GetIndex());
+         /* Create check operation */
+         m_pcOperation = new CLEDCheckOperation(m_sReadings.BlobList,
+                                                *m_pcOmnicamEntity,
+                                                *m_pcEmbodiedEntity,
+                                                *m_pcControllableEntity,
+                                                m_bShowRays);
       }
       catch(CARGoSException& ex) {
          THROW_ARGOSEXCEPTION_NESTED("Error initializing the colored blob omnidirectional camera rotzonly sensor", ex);
@@ -140,25 +162,19 @@ namespace argos {
       if(m_bEnabled) {
          /* Increase data counter */
          ++m_sReadings.Counter;
-         /* Erase old readings */
-         m_sReadings.BlobList.clear();
          /* Calculate range on the ground */
-         Real fHeightRange = m_pcOmnicamEntity->GetOffset().GetZ() + m_pcEmbodiedEntity->GetPosition().GetZ();
-         Real fHalfHeightRange = fHeightRange * 0.5f;
-         Real fGroundHalfRange = fHeightRange * Tan(m_pcOmnicamEntity->GetAperture());
-         /* Create check operation */
-         CLEDCheckOperation cOperation(m_sReadings.BlobList,
-                                       *m_pcOmnicamEntity,
-                                       *m_pcEmbodiedEntity,
-                                       *m_pcControllableEntity,
-                                       m_bShowRays);
+         CVector3 cCameraPos = m_pcOmnicamEntity->GetOffset();
+         cCameraPos += m_pcEmbodiedEntity->GetPosition();
+         Real fGroundHalfRange = cCameraPos.GetZ() * Tan(m_pcOmnicamEntity->GetAperture());
+         /* Prepare the operation */
+         m_pcOperation->Setup(fGroundHalfRange);
          /* Go through LED entities in box range */
          m_pcLEDIndex->ForEntitiesInBoxRange(
-            CVector3(m_pcOmnicamEntity->GetOffset().GetX(),
-                     m_pcOmnicamEntity->GetOffset().GetY(),
-                     fHalfHeightRange),
-            CVector3(fGroundHalfRange, fGroundHalfRange, fHalfHeightRange),
-            cOperation);
+            CVector3(cCameraPos.GetX(),
+                     cCameraPos.GetY(),
+                     cCameraPos.GetZ() * 0.5f),
+            CVector3(fGroundHalfRange, fGroundHalfRange, cCameraPos.GetZ() * 0.5f),
+            *m_pcOperation);
       }
    }
 
@@ -168,6 +184,13 @@ namespace argos {
    void CColoredBlobOmnidirectionalCameraRotZOnlySensor::Reset() {
       m_sReadings.Counter = 0;
       m_sReadings.BlobList.clear();
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CColoredBlobOmnidirectionalCameraRotZOnlySensor::Destroy() {
+      delete m_pcOperation;
    }
 
    /****************************************/

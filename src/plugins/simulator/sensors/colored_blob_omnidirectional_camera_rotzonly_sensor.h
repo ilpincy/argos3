@@ -6,6 +6,7 @@ namespace argos {
    class COmnidirectionalCameraEquippedEntity;
    class CLEDEntity;
    class CControllableEntity;
+   class CLEDCheckOperation;
 }
 
 #include <argos3/core/utility/math/rng.h>
@@ -32,6 +33,8 @@ namespace argos {
 
       virtual void Reset();
 
+      virtual void Destroy();
+
 			virtual void Enable();
 
 			virtual void Disable();
@@ -44,6 +47,7 @@ namespace argos {
       CEmbodiedEntity*                      m_pcEmbodiedEntity;
       CPositionalIndex<CLEDEntity>*         m_pcLEDIndex;
       CPositionalIndex<CEmbodiedEntity>*    m_pcEmbodiedIndex;
+      CLEDCheckOperation*                   m_pcOperation;
       Real                                  m_fDistanceNoiseStdDev;
       CRandom::CRNG*                        m_pcRNG;
       bool                                  m_bShowRays;
