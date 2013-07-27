@@ -197,7 +197,7 @@ namespace argos {
        * The 'type' here refers to the string returned by CEntity::GetTypeDescription().
        * Take this example:
        * <code>
-       *    CSpace::TMapPerType& theMap = space.GetEntityMapByType("box");
+       *    CSpace::TMapPerType& theMap = space.GetEntitiesByType("box");
        *    CBoxEntity* box = any_cast<CBoxEntity*>(theMap["my_box"]);
        *    // do stuff with the box ...
        * </code>
