@@ -572,10 +572,12 @@ namespace argos {
          TConfigurationNode tNode = GetNode(t_tree, "user_functions");
          std::string strLabel, strLibrary;
          GetNodeAttribute(tNode, "label", strLabel);
-         GetNodeAttribute(tNode, "library", strLibrary);
+         GetNodeAttributeOrDefault(tNode, "library", strLibrary, strLibrary);
          try {
-            /* Load the library taking care of the $ARGOSINSTALLDIR variable */
-            CDynamicLoading::LoadLibrary(strLibrary);
+            /* Load the library */
+            if(strLibrary != "") {
+               CDynamicLoading::LoadLibrary(strLibrary);
+            }
             /* Create the user functions */
             return CFactory<CQTOpenGLUserFunctions>::New(strLabel);
          }
