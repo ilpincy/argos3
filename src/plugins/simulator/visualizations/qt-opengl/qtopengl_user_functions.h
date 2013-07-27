@@ -68,12 +68,12 @@ namespace argos {
        * @param f_base base of the the triangle
        * @param f_height height of the triangle
        */
-      virtual void DrawTriangle(const CVector3& c_center_offset = CVector3::ZERO,
-                                const CColor& c_color = CColor::RED,
-                                const bool b_fill = true,
-                                const CQuaternion& c_orientation = CQuaternion(),
-                                Real f_base = 0.2f,
-                                Real f_height = 0.1732050808f);
+      void DrawTriangle(const CVector3& c_center_offset = CVector3::ZERO,
+                        const CColor& c_color = CColor::RED,
+                        const bool b_fill = true,
+                        const CQuaternion& c_orientation = CQuaternion(),
+                        Real f_base = 0.2f,
+                        Real f_height = 0.1732050808f);
 
       /**
        * @brief Draws a circle, parallel to the XY plane.
@@ -86,12 +86,12 @@ namespace argos {
        * @param c_orientation defines the 3D rotation of the circle
        * @param un_vertices number of vertices to be used for approximating the circle.
        */
-      virtual void DrawCircle(Real f_radius = 0.1,
-                              const CVector3& c_center_offset = CVector3::ZERO,
-                              const CColor& c_color = CColor::RED,
-                              const bool b_fill = true,
-                              const CQuaternion& c_orientation = CQuaternion(),
-                              GLuint un_vertices = 20);
+      void DrawCircle(Real f_radius = 0.1,
+                      const CVector3& c_center_offset = CVector3::ZERO,
+                      const CColor& c_color = CColor::RED,
+                      const bool b_fill = true,
+                      const CQuaternion& c_orientation = CQuaternion(),
+                      GLuint un_vertices = 20);
 
 
       /**
@@ -105,12 +105,12 @@ namespace argos {
        * @param c_orientation defines the 3D rotation of the cylinder
        * @param un_vertices number of vertices to be used for approximating the circle.
        */
-      virtual void DrawCylinder(Real f_radius=0.1,
-                                Real f_height=0.1,
-                                const CVector3& c_center_offset = CVector3::ZERO,
-                                const CColor& c_color = CColor::RED,
-                                const CQuaternion& c_orientation = CQuaternion(),
-                                GLuint un_vertices = 20);
+      void DrawCylinder(Real f_radius=0.1,
+                        Real f_height=0.1,
+                        const CVector3& c_center_offset = CVector3::ZERO,
+                        const CColor& c_color = CColor::RED,
+                        const CQuaternion& c_orientation = CQuaternion(),
+                        GLuint un_vertices = 20);
 
 
       /**
@@ -124,23 +124,23 @@ namespace argos {
        * @param c_end_point_color color of the end point if drawn.
        * @param c_start_point_color color of the end point if drawn.
        */
-      virtual void DrawSegment(const CVector3& c_end_point = CVector3(1.0,0.0,1.0),
-                               const CVector3& c_start_point = CVector3::ZERO,
-                               const CColor& c_segment_color = CColor::RED,
-                               const Real& f_line_width = 1.0,
-                               bool b_draw_end_point = false,
-                               bool b_draw_start_point = false,
-                               const CColor& c_end_point_color = CColor::RED,
-                               const CColor& c_start_point_color = CColor::RED);
+      void DrawSegment(const CVector3& c_end_point = CVector3(1.0,0.0,1.0),
+                       const CVector3& c_start_point = CVector3::ZERO,
+                       const CColor& c_segment_color = CColor::RED,
+                       const Real& f_line_width = 1.0,
+                       bool b_draw_end_point = false,
+                       bool b_draw_start_point = false,
+                       const CColor& c_end_point_color = CColor::RED,
+                       const CColor& c_start_point_color = CColor::RED);
 
       /**
-       * @brief Draws a poligon.
-       * By default the poligon's color is red.
-       * @param vec_points vector of vectors defining the vertices of the poligon
-       * @param c_color color of the poligon.
+       * @brief Draws a polygon.
+       * By default the polygon's color is red.
+       * @param vec_points vector of vectors defining the vertices of the polygon
+       * @param c_color color of the polygon.
        */
-      virtual void DrawPoligon(const std::vector<CVector3>& vec_points,
-                               const CColor& c_color = CColor::RED);
+      void DrawPolygon(const std::vector<CVector3>& vec_points,
+                       const CColor& c_color = CColor::RED);
 
 
       /**
@@ -150,9 +150,9 @@ namespace argos {
        * @param c_color color of the point.
        * @param f_point_diameter diameter of the point.
        */
-      virtual void DrawPoint(const CVector3& c_position = CVector3(1.0,0.0,1.0),
-                             const CColor& c_color = CColor::RED,
-                             const Real f_point_diameter  = 5.0);
+      void DrawPoint(const CVector3& c_position = CVector3(1.0,0.0,1.0),
+                     const CColor& c_color = CColor::RED,
+                     const Real f_point_diameter  = 5.0);
 
    private:
 
@@ -164,14 +164,14 @@ namespace argos {
 
 /* Definitions useful for dynamic linking of user functions */
 
-#define REGISTER_QTOPENGL_USER_FUNCTIONS(CLASSNAME, LABEL) \
-   REGISTER_SYMBOL(CQTOpenGLUserFunctions,                 \
-                   CLASSNAME,                              \
-                   LABEL,                                  \
-                   "undefined",                            \
-                   "undefined",                            \
-                   "undefined",                            \
-                   "undefined",                            \
+#define REGISTER_QTOPENGL_USER_FUNCTIONS(CLASSNAME, LABEL)  \
+   REGISTER_SYMBOL(CQTOpenGLUserFunctions,                  \
+                   CLASSNAME,                               \
+                   LABEL,                                   \
+                   "undefined",                             \
+                   "undefined",                             \
+                   "undefined",                             \
+                   "undefined",                             \
                    "undefined")
 
 #endif

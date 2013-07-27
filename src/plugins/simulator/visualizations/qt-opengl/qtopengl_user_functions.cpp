@@ -26,12 +26,12 @@ namespace argos {
                  c_color.GetGreen(),
                  c_color.GetBlue());
 
-	  if(b_fill) {
-          glBegin(GL_POLYGON);
-	  }
-	  else {
-		  glBegin(GL_LINE_LOOP);
-	  }
+      if(b_fill) {
+         glBegin(GL_POLYGON);
+      }
+      else {
+         glBegin(GL_LINE_LOOP);
+      }
       CVector3 cNormalDirection(0.0f, 0.0f, 1.0f);
       cNormalDirection.Rotate(c_orientation);
       glNormal3f(cNormalDirection.GetX(),
@@ -82,12 +82,12 @@ namespace argos {
 	    CVector3 cVertex(f_radius, 0.0f, 0.0f);
 	    CRadians cAngle(CRadians::TWO_PI / un_vertices);
 
-	  if(b_fill) {
-          glBegin(GL_POLYGON);
-	  }
-	  else {
-		  glBegin(GL_LINE_LOOP);
-	  }
+      if(b_fill) {
+         glBegin(GL_POLYGON);
+      }
+      else {
+         glBegin(GL_LINE_LOOP);
+      }
       CVector3 cNormalDirection(0.0f, 0.0f, 1.0f);
       cNormalDirection.Rotate(c_orientation);
       glNormal3f(cNormalDirection.GetX(),
@@ -229,11 +229,11 @@ namespace argos {
       /* Draw the end and start points if necessary */
 
       if(b_draw_end_point) {
-    	 DrawPoint(c_end_point, c_end_point_color, 5.0);
+         DrawPoint(c_end_point, c_end_point_color, 5.0);
       }
 
       if(b_draw_start_point) {
-    	 DrawPoint(c_start_point, c_start_point_color, 5.0);
+         DrawPoint(c_start_point, c_start_point_color, 5.0);
       }
 
       glPointSize(1.0);
@@ -246,23 +246,23 @@ namespace argos {
    void CQTOpenGLUserFunctions::DrawPoint(const CVector3& c_position,
                                           const CColor& c_color,
                                           const Real f_point_diameter) {
-       glDisable(GL_LIGHTING);
-       glColor3ub(c_color.GetRed(),
-    		      c_color.GetGreen(),
-                  c_color.GetBlue());
-       glPointSize(f_point_diameter);
-       glBegin(GL_POINTS);
-  	   glVertex3f(c_position.GetX(), c_position.GetY(), c_position.GetZ());
-  	   glEnd();
-       glPointSize(1.0);
-       glEnable(GL_LIGHTING);
+      glDisable(GL_LIGHTING);
+      glColor3ub(c_color.GetRed(),
+                 c_color.GetGreen(),
+                 c_color.GetBlue());
+      glPointSize(f_point_diameter);
+      glBegin(GL_POINTS);
+      glVertex3f(c_position.GetX(), c_position.GetY(), c_position.GetZ());
+      glEnd();
+      glPointSize(1.0);
+      glEnable(GL_LIGHTING);
 
    }
 
    /****************************************/
    /****************************************/
 
-   void CQTOpenGLUserFunctions::DrawPoligon(const std::vector<CVector3>& vec_points,
+   void CQTOpenGLUserFunctions::DrawPolygon(const std::vector<CVector3>& vec_points,
                                             const CColor& c_color) {
       if (vec_points.size() > 2)
       {
