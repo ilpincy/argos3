@@ -12,6 +12,7 @@ function reset()
    counter = 0
    robot.leds.set_all_colors("red")
 	robot.colored_blob_omnidirectional_camera.enable()
+	robot.wheels.set_velocity(5,5)
 end
 
 function destroy()
