@@ -56,7 +56,7 @@ namespace argos {
                                                          m_cEmbodiedEntity)) {
                m_tBlobs.push_back(new CCI_ColoredBlobOmnidirectionalCameraSensor::SBlob(c_led.GetColor(),
                                                                                         m_cLEDRelativePosXY.Angle() - m_cCameraOrient,
-                                                                                        m_cLEDRelativePosXY.Length()));
+                                                                                        m_cLEDRelativePosXY.Length() * 100.0f));
                if(m_bShowRays) {
                   m_cControllableEntity.AddCheckedRay(false, CRay3(m_cCameraPos, c_led.GetPosition()));
                }
