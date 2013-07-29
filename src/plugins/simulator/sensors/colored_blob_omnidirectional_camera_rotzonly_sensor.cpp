@@ -55,7 +55,7 @@ namespace argos {
                                                          m_cOcclusionCheckRay,
                                                          m_cEmbodiedEntity)) {
                m_tBlobs.push_back(new CCI_ColoredBlobOmnidirectionalCameraSensor::SBlob(c_led.GetColor(),
-                                                                                        m_cLEDRelativePosXY.Angle(),
+                                                                                        m_cLEDRelativePosXY.Angle() - m_cCameraOrient,
                                                                                         m_cLEDRelativePosXY.Length()));
                if(m_bShowRays) {
                   m_cControllableEntity.AddCheckedRay(false, CRay3(m_cCameraPos, c_led.GetPosition()));
@@ -68,6 +68,7 @@ namespace argos {
       void Setup(Real f_ground_half_range) {
          m_tBlobs.clear();
          m_fGroundHalfRange = f_ground_half_range;
+         m_cEmbodiedEntity.GetOrientation().ToEulerAngles(m_cCameraOrient, m_cTmp1, m_cTmp2);
          m_cCameraPos = m_cEmbodiedEntity.GetPosition();
          m_cCameraPos += m_cOmnicamEntity.GetOffset();
          m_cOcclusionCheckRay.SetStart(m_cCameraPos);
@@ -84,6 +85,8 @@ namespace argos {
       CEntity* m_pcRootSensingEntity;
       CEntity* m_pcRootOfLEDEntity;
       CVector3 m_cCameraPos;
+      CRadians m_cCameraOrient;
+      CRadians m_cTmp1, m_cTmp2;
       CVector3 m_cLEDRelativePos;
       CVector2 m_cLEDRelativePosXY;
       SEmbodiedEntityIntersectionItem m_sIntersectionItem;
