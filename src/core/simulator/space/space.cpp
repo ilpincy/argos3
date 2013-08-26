@@ -95,7 +95,7 @@ namespace argos {
       for(UInt32 i = 0; i < m_vecEntities.size(); ++i) {
          m_vecEntities[i]->Reset();
       }
-      /* Reset the space hash */
+      /* Update space-related data */
       UpdateIndices();
    }
 
