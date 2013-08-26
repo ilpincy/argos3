@@ -81,6 +81,8 @@ namespace argos {
             Distribute(*itArenaItem);
          }
       }
+      /* Update space-related data */
+      UpdateIndices();
    }
 
    /****************************************/

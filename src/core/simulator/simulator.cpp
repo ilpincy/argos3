@@ -131,12 +131,12 @@ namespace argos {
       InitMedia(GetNode(m_tConfigurationRoot, "media"));
       /* Space */
       InitSpace(GetNode(m_tConfigurationRoot, "arena"));
-      /* Media */
-      InitMedia2();
       /* Call user init function */
       if(NodeExists(m_tConfigurationRoot, "loop_functions")) {
          m_pcLoopFunctions->Init(GetNode(m_tConfigurationRoot, "loop_functions"));
       }
+      /* Media */
+      InitMedia2();
       /* Initialise visualization */
       TConfigurationNodeIterator itVisualization;
       if(NodeExists(m_tConfigurationRoot, "visualization") &&
