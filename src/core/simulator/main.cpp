@@ -61,12 +61,6 @@ int main(int n_argc, char** ppch_argv) {
       LOG.Flush();
       LOGERR.Flush();
 #endif
-      cSimulator.Destroy();
-      LOGERR << std::endl;
-#ifdef ARGOS_THREADSAFE_LOG
-      LOG.Flush();
-      LOGERR.Flush();
-#endif
       return 1;
    }
    /* Everything's ok, exit */
