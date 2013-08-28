@@ -28,20 +28,20 @@
         <differential_steering implementation="default" />
         <range_and_bearing implementation="default" />
         <leds implementation="default" medium="leds" />
-        <!-- footbot_gripper implementation="default" / -->
-        <!-- footbot_distance_scanner implementation="default" / -->
-        <!-- footbot_turret implementation="default" / -->
+        <footbot_gripper implementation="default" />
+        <footbot_distance_scanner implementation="default" />
+        <footbot_turret implementation="default" />
       </actuators>
       <sensors>
         <range_and_bearing implementation="medium" medium="rab" show_rays="false" />
         <colored_blob_omnidirectional_camera implementation="rot_z_only" medium="leds" show_rays="true" />
-        <!-- <footbot_proximity implementation="default" show_rays="false" /> -->
-        <!-- differential_steering implementation="default" / -->
-        <!-- footbot_base_ground implementation="rot_z_only" / -->
-        <!-- footbot_distance_scanner implementation="rot_z_only" / -->
-        <!-- footbot_light implementation="rot_z_only" / -->
-        <!-- footbot_motor_ground implementation="rot_z_only" / -->
-        <!-- footbot_turret_encoder implementation="default" / -->
+        <footbot_proximity implementation="default" show_rays="false" />
+        <differential_steering implementation="default" />
+        <footbot_base_ground implementation="rot_z_only" />
+        <footbot_distance_scanner implementation="rot_z_only" />
+        <footbot_light implementation="rot_z_only" />
+        <footbot_motor_ground implementation="rot_z_only" />
+        <footbot_turret_encoder implementation="default" />
       </sensors>
       <!-- No required configuration -->
       <!-- params / -->
@@ -55,7 +55,7 @@
   <!-- * Arena configuration * -->
   <!-- *********************** -->
   <arena size="10, 10, 2" center="0,0,1" positional_index="grid" positional_grid_size="25,25,1">
-    <!-- <floor id="f" source="loop_functions" pixels_per_meter="100" /> -->
+    <floor id="f" source="loop_functions" pixels_per_meter="100" />
 
     <box id="bn" size="0.1, 10, 0.2" movable="false">
       <body position="5,0,0"  orientation="0,0,0" />
@@ -119,12 +119,12 @@
     <!-- ************************************************************************ -->
     <!-- * To activate the Lua editor, just use the 'lua_editor' flag attribute * -->
     <!-- ************************************************************************ -->
-    <!-- <qt-opengl lua_editor="true"> -->
-    <!--   <camera> -->
-    <!--     <placement idx="0" position="-2,0,2" look_at="0,0,0" lens_focal_length="20" /> -->
-    <!--     <placement idx="1" position="0.884183,0.359128,0.490269" look_at="0.924486,-0.486744,-0.0415919" lens_focal_length="20" /> -->
-    <!--   </camera> -->
-    <!-- </qt-opengl> -->
+    <qt-opengl lua_editor="true">
+      <camera>
+        <placement idx="0" position="-2,0,2" look_at="0,0,0" lens_focal_length="20" />
+        <placement idx="1" position="0.884183,0.359128,0.490269" look_at="0.924486,-0.486744,-0.0415919" lens_focal_length="20" />
+      </camera>
+    </qt-opengl>
 
   </visualization>
 
