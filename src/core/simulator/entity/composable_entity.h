@@ -25,6 +25,8 @@ namespace argos {
    /**
     * Basic class for an entity that contains other entities.
     * Robots, as well as other complex objects, must extend this class.
+    * When you add robots, make sure to add the robot body (CEmbodiedEntity class) <em>first</em>,
+    * and its controllable component (CControllableEntity class) <em>last</em>.
     * @see CEntity
     */
    class CComposableEntity : public CEntity {
@@ -164,48 +166,55 @@ namespace argos {
       CEntity::TMultiMap::iterator FindComponent(const std::string& str_component);
 
       /**
-       * Returns the multimap of all the components.
-       * @return The multimap of all the components.
+       * Returns the map of all the components.
+       * @return The map of all the components.
        */
-      inline CEntity::TMultiMap& GetComponents() {
+      inline CEntity::TMultiMap& GetComponentMap() {
          return m_mapComponents;
+      }
+
+      /**
+       * Returns the vector of all the components.
+       * The elements in this vector are stored in the same order as they were inserted.
+       * @return The vector of all the components.
+       */
+      inline CEntity::TVector& GetComponentVector() {
+         return m_vecComponents;
       }
 
    private:
 
       CEntity::TMultiMap m_mapComponents;
+      CEntity::TVector m_vecComponents;
 
    };
 
 /**
  * @cond HIDDEN_SYMBOLS
  */
-#define SPACE_OPERATION_ADD_COMPOSABLE_ENTITY(ENTITY)                   \
-   class CSpaceOperationAdd ## ENTITY : public CSpaceOperationAddEntity { \
+#define SPACE_OPERATION_ADD_COMPOSABLE_ENTITY(ENTITY)                                                               \
+   class CSpaceOperationAdd ## ENTITY : public CSpaceOperationAddEntity {                                           \
+   public:                                                                                                          \
+   void ApplyTo(CSpace& c_space, ENTITY& c_entity) {                                                                \
+      c_space.AddEntity(c_entity);                                                                                  \
+      for(size_t i = 0; i < c_entity.GetComponentVector().size(); ++i) {                                         \
+         CallEntityOperation<CSpaceOperationAddEntity, CSpace, void>(c_space, *(c_entity.GetComponentVector()[i])); \
+      }                                                                                                             \
+   }                                                                                                                \
+   };
+
+#define SPACE_OPERATION_REMOVE_COMPOSABLE_ENTITY(ENTITY)                \
+   class CSpaceOperationRemove ## ENTITY : public CSpaceOperationRemoveEntity { \
    public:                                                              \
    void ApplyTo(CSpace& c_space, ENTITY& c_entity) {                    \
-      c_space.AddEntity(c_entity);                                      \
-      for(CEntity::TMultiMap::iterator it = c_entity.GetComponents().begin(); \
-          it != c_entity.GetComponents().end();                         \
-          ++it) {                                                       \
-         CallEntityOperation<CSpaceOperationAddEntity, CSpace, void>(c_space, *(it->second)); \
+      CEntity* pcToRemove;                                              \
+      while(!c_entity.GetComponentVector().empty()) {                   \
+         pcToRemove = c_entity.GetComponentVector().back();             \
+         c_entity.RemoveComponent(pcToRemove->GetTypeDescription() + "[" + pcToRemove->GetId() + "]"); \
+         CallEntityOperation<CSpaceOperationRemoveEntity, CSpace, void>(c_space, *pcToRemove); \
       }                                                                 \
+      c_space.RemoveEntity(c_entity);                                   \
    }                                                                    \
-   };
-   
-#define SPACE_OPERATION_REMOVE_COMPOSABLE_ENTITY(ENTITY)                                            \
-   class CSpaceOperationRemove ## ENTITY : public CSpaceOperationRemoveEntity {                     \
-   public:                                                                                          \
-   void ApplyTo(CSpace& c_space, ENTITY& c_entity) {                                                \
-      if(!c_entity.GetComponents().empty()) {                                                       \
-         for(CEntity::TMultiMap::reverse_iterator it = c_entity.GetComponents().rbegin();           \
-             it != c_entity.GetComponents().rend();                                                 \
-             ++it) {                                                                                \
-            CallEntityOperation<CSpaceOperationRemoveEntity, CSpace, void>(c_space, *(it->second)); \
-         }                                                                                          \
-      }                                                                                             \
-      c_space.RemoveEntity(c_entity);                                                               \
-   }                                                                                                \
    };
 
 #define REGISTER_STANDARD_SPACE_OPERATION_ADD_COMPOSABLE(ENTITY)        \

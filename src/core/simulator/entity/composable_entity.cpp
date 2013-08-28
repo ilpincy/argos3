@@ -18,7 +18,7 @@ namespace argos {
 
    /****************************************/
    /****************************************/
-   
+
    CComposableEntity::CComposableEntity(CComposableEntity* pc_parent,
                                         const std::string& str_id) :
       CEntity(pc_parent, str_id) {}
@@ -74,6 +74,7 @@ namespace argos {
          std::pair<std::string, CEntity*>(
             c_component.GetTypeDescription(),
             &c_component));
+      m_vecComponents.push_back(&c_component);
    }
 
    /****************************************/
@@ -82,12 +83,23 @@ namespace argos {
    CEntity& CComposableEntity::RemoveComponent(const std::string& str_component) {
       try {
          CEntity::TMultiMap::iterator it = FindComponent(str_component);
+         if(it == m_mapComponents.end()) {
+            THROW_ARGOSEXCEPTION("Element \"" << str_component << "\" not found in the component map.");
+         }
          CEntity& cRetVal = *(it->second);
          m_mapComponents.erase(it);
+         size_t i;
+         for(i = 0; i < m_vecComponents.size() && m_vecComponents[i] != &cRetVal; ++i);
+         if(i < m_vecComponents.size()) {
+            m_vecComponents.erase(m_vecComponents.begin() + i);
+         }
+         else {
+            THROW_ARGOSEXCEPTION("Element \"" << str_component << "\" not found in the component vector, but present in the map. BUG!");
+         }
          return cRetVal;
       }
       catch(CARGoSException& ex) {
-         THROW_ARGOSEXCEPTION_NESTED("While removing a component from a composable entity", ex);
+         THROW_ARGOSEXCEPTION_NESTED("While removing component \"" << str_component << "\" from the composable entity \"" << GetContext() << GetId() << "\"", ex);
       }
    }
 
@@ -115,7 +127,7 @@ namespace argos {
                }
                else {
                   /* Dynamic cast failed, user is requesting an entity from an entity which is not composable -> error */
-                  THROW_ARGOSEXCEPTION("Component \"" << strFrontIdentifier << "\" of \"" << GetContext() +  GetId()
+                  THROW_ARGOSEXCEPTION("Component \"" << strFrontIdentifier << "\" of \"" << GetContext() + GetId()
                                        << "\" is not a composable entity");
                }
             }
@@ -166,7 +178,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   CEntity::TMultiMap::iterator CComposableEntity::FindComponent(const std::string& str_component) {            
+   CEntity::TMultiMap::iterator CComposableEntity::FindComponent(const std::string& str_component) {
       /* Check for the presence of [ */
       std::string::size_type unIdentifierStart = str_component.find('[');
       if(unIdentifierStart != std::string::npos) {

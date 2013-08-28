@@ -39,6 +39,15 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   CEmbodiedEntity::~CEmbodiedEntity() {
+      if(!m_bMovable && m_sBoundingBox != NULL) {
+         delete m_sBoundingBox;
+      }
+   }
+
+   /****************************************/
+   /****************************************/
+
    void CEmbodiedEntity::Init(TConfigurationNode& t_tree) {
       try {
          CPositionalEntity::Init(t_tree);
@@ -306,7 +315,7 @@ namespace argos {
                                                     CEmbodiedEntity& c_element) {
       /* Translate the min corner of the bounding box into the map's coordinate */
       c_space_hash.SpaceToHashTable(m_nMinX, m_nMinY, m_nMinZ, c_element.GetBoundingBox().MinCorner);
-      /* Translate the max corner of the bounding box into the map's coordinate */                                     
+      /* Translate the max corner of the bounding box into the map's coordinate */
       c_space_hash.SpaceToHashTable(m_nMaxX, m_nMaxY, m_nMaxZ, c_element.GetBoundingBox().MaxCorner);
       /* Finally, go through the affected cells and update them */
       for(SInt32 nK = m_nMinZ; nK <= m_nMaxZ; ++nK) {
@@ -360,7 +369,7 @@ namespace argos {
       }
    };
    REGISTER_SPACE_OPERATION(CSpaceOperationAddEntity, CSpaceOperationAddEmbodiedEntity, CEmbodiedEntity);
-   
+
    class CSpaceOperationRemoveEmbodiedEntity : public CSpaceOperationRemoveEntity {
    public:
       void ApplyTo(CSpace& c_space, CEmbodiedEntity& c_entity) {
@@ -370,8 +379,23 @@ namespace argos {
             pcRoot = &pcRoot->GetParent();
          }
          /* Remove entity from all physics engines */
-         while(c_entity.GetPhysicsModelsNum() > 0) {
-            c_entity.GetPhysicsModel(0).GetEngine().RemoveEntity(*pcRoot);
+         try {
+            while(c_entity.GetPhysicsModelsNum() > 0) {
+               c_entity.GetPhysicsModel(0).GetEngine().RemoveEntity(*pcRoot);
+            }
+         }
+         catch(CARGoSException& ex) {
+            /*
+             * It is safe to ignore errors because they happen only when an entity
+             * is completely removed from the space. In this case, the body is
+             * first removed from the composable entity, and then the embodied entity
+             * is asked to clear up the physics models. In turn, this last operation
+             * searches for the body component, which is not there anymore.
+             *
+             * It is anyway useful to search for the body component because, when robots
+             * are transferred from an engine to another, only the physics model is to be
+             * removed.
+             */
          }
          /* Remove entity from space */
          c_space.GetEmbodiedEntityIndex().RemoveEntity(c_entity);

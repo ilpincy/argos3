@@ -65,15 +65,18 @@ namespace argos {
          /*
           * Create and init components
           */
+         /* Embodied entity */
+         m_pcEmbodiedEntity = new CEmbodiedEntity(this);
+         AddComponent(*m_pcEmbodiedEntity);
+         m_pcEmbodiedEntity->Init(GetNode(t_tree, "body"));
          /* Wheeled entity and wheel positions (left, right) */
-         m_pcWheeledEntity = new CWheeledEntity(this, 2);
+         m_pcWheeledEntity = new CWheeledEntity(this, "wheels_0", 2);
          AddComponent(*m_pcWheeledEntity);
          m_pcWheeledEntity->SetWheel(0, CVector3(0.0f,  HALF_INTERWHEEL_DISTANCE, 0.0f), WHEEL_RADIUS);
          m_pcWheeledEntity->SetWheel(1, CVector3(0.0f, -HALF_INTERWHEEL_DISTANCE, 0.0f), WHEEL_RADIUS);
-         m_pcWheeledEntity->Init(t_tree);
          /* LED equipped entity, with LEDs [0-11] and beacon [12] */
          m_pcLEDEquippedEntity = new CLEDEquippedEntity(this,
-                                                        "leds",
+                                                        "leds_0",
                                                         m_pcEmbodiedEntity);
          AddComponent(*m_pcLEDEquippedEntity);
          m_pcLEDEquippedEntity->AddLEDRing(
@@ -84,7 +87,7 @@ namespace argos {
          /* Proximity sensor equipped entity */
          m_pcProximitySensorEquippedEntity =
             new CProximitySensorEquippedEntity(this,
-                                               "proximity");
+                                               "proximity_0");
          AddComponent(*m_pcProximitySensorEquippedEntity);
          m_pcProximitySensorEquippedEntity->AddSensorRing(
             CVector3(0.0f, 0.0f, PROXIMITY_SENSOR_RING_ELEVATION),
@@ -95,7 +98,7 @@ namespace argos {
          /* Light sensor equipped entity */
          m_pcLightSensorEquippedEntity =
             new CLightSensorEquippedEntity(this,
-                                           "light");
+                                           "light_0");
          AddComponent(*m_pcLightSensorEquippedEntity);
          m_pcLightSensorEquippedEntity->AddSensorRing(
             CVector3(0.0f, 0.0f, PROXIMITY_SENSOR_RING_ELEVATION),
@@ -106,7 +109,7 @@ namespace argos {
          /* Ground sensor equipped entity */
          m_pcGroundSensorEquippedEntity =
             new CGroundSensorEquippedEntity(this,
-                                            "ground");
+                                            "ground_0");
          AddComponent(*m_pcGroundSensorEquippedEntity);
          m_pcGroundSensorEquippedEntity->AddSensor(CVector2(0.03f, -0.009f),
                                                    CGroundSensorEquippedEntity::TYPE_GRAYSCALE);
@@ -114,15 +117,11 @@ namespace argos {
                                                    CGroundSensorEquippedEntity::TYPE_GRAYSCALE);
          m_pcGroundSensorEquippedEntity->AddSensor(CVector2(0.03f,  0.009f),
                                                    CGroundSensorEquippedEntity::TYPE_GRAYSCALE);
-         /* Embodied entity */
-         m_pcEmbodiedEntity = new CEmbodiedEntity(this);
-         AddComponent(*m_pcEmbodiedEntity);
-         m_pcEmbodiedEntity->Init(GetNode(t_tree, "body"));
          /* RAB equipped entity */
          Real fRange = 0.8f;
          GetNodeAttributeOrDefault(t_tree, "rab_range", fRange, fRange);
          m_pcRABEquippedEntity = new CRABEquippedEntity(this,
-                                                        "rab",
+                                                        "rab_0",
                                                         2,
                                                         fRange,
                                                         *m_pcEmbodiedEntity,

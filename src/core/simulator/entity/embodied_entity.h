@@ -74,14 +74,14 @@ namespace argos {
        */
       CEmbodiedEntity(CComposableEntity* pc_parent,
                       const std::string& str_id,
-                      const CVector3& c_position,
-                      const CQuaternion& c_orientation,
-                      bool b_movable);
+                      const CVector3& c_position = CVector3(),
+                      const CQuaternion& c_orientation = CQuaternion(),
+                      bool b_movable = true);
 
       /**
        * Class destructor.
        */
-      virtual ~CEmbodiedEntity() {}
+      virtual ~CEmbodiedEntity();
 
       /**
        * Initializes the state of the entity from the XML configuration tree.
