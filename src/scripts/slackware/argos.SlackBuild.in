@@ -39,7 +39,7 @@ cd ..
 rm -rf $PKG/etc/ld.so.conf.d
 
 # Copy program documentation into the package
-cat $CWD/argos.SlackBuild > $PKG/usr/doc/argos3/$PRGNAM.SlackBuild
+cat $CWD/argos.SlackBuild > $PKG/usr/doc/argos3/argos.SlackBuild
 
 # Copy the slack-desc and doinst.sh into package install/
 mkdir -p $PKG/install
