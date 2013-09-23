@@ -1,7 +1,6 @@
 #include "test_user_functions.h"
 #include <argos3/core/simulator/simulator.h>
 #include <argos3/core/simulator/space/space.h>
-#include <argos3/plugins/robots/foot-bot/simulator/footbot_entity.h>
 #include <argos3/plugins/simulator/entities/led_equipped_entity.h>
 #include <argos3/plugins/simulator/entities/led_entity.h>
 
@@ -9,6 +8,7 @@
 /********************************************************************************/
 
 CTestUserFunctions::CTestUserFunctions() {
+   RegisterUserFunction<CTestUserFunctions,CFootBotEntity>(&CTestUserFunctions::Draw);
 }
 
 /********************************************************************************/
@@ -34,6 +34,13 @@ void CTestUserFunctions::DrawInWorld() {
          DrawPoint((*it)->GetPosition(), (*it)->GetColor(), 50.0f);
       }
    }
+}
+
+/********************************************************************************/
+/********************************************************************************/
+
+void CTestUserFunctions::Draw(CFootBotEntity& c_footbot) {
+   fprintf(stderr, "[DEBUG] FOOTBOT HERE\n");
 }
 
 /********************************************************************************/

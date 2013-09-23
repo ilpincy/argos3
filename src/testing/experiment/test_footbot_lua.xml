@@ -124,6 +124,7 @@
         <placement idx="0" position="-2,0,2" look_at="0,0,0" lens_focal_length="20" />
         <placement idx="1" position="0.884183,0.359128,0.490269" look_at="0.924486,-0.486744,-0.0415919" lens_focal_length="20" />
       </camera>
+      <user_functions label="test_user_functions" />
     </qt-opengl>
 
   </visualization>
