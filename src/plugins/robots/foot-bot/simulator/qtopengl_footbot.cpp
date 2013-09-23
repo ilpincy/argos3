@@ -986,9 +986,9 @@ namespace argos {
       }
    };
 
-   REGISTER_ENTITY_OPERATION(CQTOpenGLOperationDrawNormal, CQTOpenGLWidget, CQTOpenGLOperationDrawFootBotNormal, void, CFootBotEntity);
+   REGISTER_QTOPENGL_ENTITY_OPERATION(CQTOpenGLOperationDrawNormal, CQTOpenGLOperationDrawFootBotNormal, CFootBotEntity);
 
-   REGISTER_ENTITY_OPERATION(CQTOpenGLOperationDrawSelected, CQTOpenGLWidget, CQTOpenGLOperationDrawFootBotSelected, void, CFootBotEntity);
+   REGISTER_QTOPENGL_ENTITY_OPERATION(CQTOpenGLOperationDrawSelected, CQTOpenGLOperationDrawFootBotSelected, CFootBotEntity);
 
    /****************************************/
    /****************************************/

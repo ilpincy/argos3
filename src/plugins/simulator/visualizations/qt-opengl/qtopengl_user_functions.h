@@ -24,10 +24,9 @@ namespace argos {
 
    public:
 
-      CQTOpenGLUserFunctions() :
-         m_pcQTOpenGLWidget(NULL) {}
+      CQTOpenGLUserFunctions();
 
-      virtual ~CQTOpenGLUserFunctions() {}
+      virtual ~CQTOpenGLUserFunctions();
 
       /**
        * @brief Drawing hook executed after the floor is drawn.
@@ -49,10 +48,18 @@ namespace argos {
        */
       inline virtual void DrawOverlay(QPainter& c_painter) {}
 
+      /**
+       * Returns the QTOpenGL widget.
+       * @return The QTOpenGL widget.
+       */
       inline CQTOpenGLWidget& GetOpenGLWidget() {
          return *m_pcQTOpenGLWidget;
       }
 
+      /**
+       * Sets the QTOpenGL widget for these user functions.
+       * @param c_widget The QTOpenGL widget.
+       */
       inline void SetOpenGLWidget(CQTOpenGLWidget& c_widget) {
          m_pcQTOpenGLWidget = &c_widget;
       }
@@ -86,7 +93,7 @@ namespace argos {
        * @param c_orientation defines the 3D rotation of the circle
        * @param un_vertices number of vertices to be used for approximating the circle.
        */
-      void DrawCircle(Real f_radius = 0.1,
+      void DrawCircle(Real f_radius = 0.1f,
                       const CVector3& c_center_offset = CVector3::ZERO,
                       const CColor& c_color = CColor::RED,
                       const bool b_fill = true,
@@ -105,8 +112,8 @@ namespace argos {
        * @param c_orientation defines the 3D rotation of the cylinder
        * @param un_vertices number of vertices to be used for approximating the circle.
        */
-      void DrawCylinder(Real f_radius=0.1,
-                        Real f_height=0.1,
+      void DrawCylinder(Real f_radius=0.1f,
+                        Real f_height=0.1f,
                         const CVector3& c_center_offset = CVector3::ZERO,
                         const CColor& c_color = CColor::RED,
                         const CQuaternion& c_orientation = CQuaternion(),
@@ -124,10 +131,10 @@ namespace argos {
        * @param c_end_point_color color of the end point if drawn.
        * @param c_start_point_color color of the end point if drawn.
        */
-      void DrawSegment(const CVector3& c_end_point = CVector3(1.0,0.0,1.0),
+      void DrawSegment(const CVector3& c_end_point = CVector3(1.0f,0.0f,1.0f),
                        const CVector3& c_start_point = CVector3::ZERO,
                        const CColor& c_segment_color = CColor::RED,
-                       const Real& f_line_width = 1.0,
+                       const Real& f_line_width = 1.0f,
                        bool b_draw_end_point = false,
                        bool b_draw_start_point = false,
                        const CColor& c_end_point_color = CColor::RED,
@@ -150,20 +157,124 @@ namespace argos {
        * @param c_color color of the point.
        * @param f_point_diameter diameter of the point.
        */
-      void DrawPoint(const CVector3& c_position = CVector3(1.0,0.0,1.0),
+      void DrawPoint(const CVector3& c_position = CVector3(1.0f,0.0f,1.0f),
                      const CColor& c_color = CColor::RED,
                      const Real f_point_diameter  = 5.0);
 
    private:
 
+      /**
+       * Pointer-to-thunk type definition.
+       * @see Thunk
+       */
+      typedef void (CQTOpenGLUserFunctions::*TThunk)(CEntity&);
+
+      /**
+       * A templetized thunk.
+       * This is a trampoline function that internally performs the
+       * dispatch to a user-defined method.
+       * @param USER_IMPL A user-defined subclass of CQTOpenGLUserFunctions.
+       * @param ENTITY The entity type to pass as a parameter to the user-defined method.
+       * @param c_entity The entity to pass as parameter.
+       */
+      template <typename USER_IMPL, typename ENTITY>
+      void Thunk(CEntity& c_entity);
+
+      /**
+       * The base function holder.
+       */
+      class CFunctionHolder {};
+
+      /**
+       * The actual function holder.
+       * This template class holds a pointer to a user-defined method.
+       * @param USER_IMPL A user-defined subclass of CQTOpenGLUserFunctions.
+       * @param ENTITY The entity type to pass as a parameter to the user-defined method.
+       */
+      template <typename USER_IMPL, typename ENTITY> class CFunctionHolderImpl : public CFunctionHolder {
+      public:
+         typedef void (USER_IMPL::*TFunction)(ENTITY&);
+         TFunction Function;
+         CFunctionHolderImpl(TFunction t_function) : Function(t_function) {}
+      };
+
+      /**
+       * The vtable storing the thunks.
+       */
+      CVTable<CQTOpenGLUserFunctions, CEntity, TThunk> m_cThunks;
+
+      /**
+       * A vector of function holders.
+       */
+      std::vector<CFunctionHolder*> m_vecFunctionHolders;
+
+   public:
+
+      /**
+       * Registers a user method.
+       * @param USER_IMPL A user-defined subclass of CQTOpenGLUserFunctions.
+       * @param ENTITY The entity type to pass as a parameter to the user-defined method.
+       * @param pt_function The actual user-defined pointer-to-method.
+       */
+      template <typename USER_IMPL, typename ENTITY>
+      void RegisterUserFunction(void(USER_IMPL::*pt_function)(ENTITY&));
+
+      /**
+       * Calls a user method for the given entity.
+       * @param The method to pass as parameter.
+       */
+      void Call(CEntity& c_entity);
+
+   private:
+
+      /**
+       * A pointer to the CQTOpenGLWidget.
+       */
       CQTOpenGLWidget* m_pcQTOpenGLWidget;
 
    };
 
+   /****************************************/
+   /****************************************/
+
+   template <typename USER_IMPL, typename ENTITY>
+   void CQTOpenGLUserFunctions::Thunk(CEntity& c_entity) {
+      /*
+       * When this method is called, the static type of 'this'
+       * is CQTOpenGLUserFunctions. Since we want to call
+       * method in USER_IMPL (subclass of CQTOpenGLUserFunctions),
+       * we need a cast. The cast is static because we trust
+       * the user on not doing anything stupid.
+       * The variable cImpl can be static because the cast is necessary
+       * only the first time this function is called.
+       */
+      static USER_IMPL& cImpl = static_cast<USER_IMPL&>(*this);
+      /* Cast the argument to the right type */
+      ENTITY& cEntity = static_cast<ENTITY&>(c_entity);
+      /* Cast the function holder to its effective type */
+      CFunctionHolderImpl<USER_IMPL,ENTITY>& cFunctionHolder = static_cast<CFunctionHolderImpl<USER_IMPL,ENTITY>&>(*m_vecFunctionHolders[GetTag<ENTITY,CEntity>()]);
+      /* Call the user-defined method */
+      (cImpl.*(cFunctionHolder.Function))(cEntity);
+   }
+
+   template <typename USER_IMPL, typename ENTITY>
+   void CQTOpenGLUserFunctions::RegisterUserFunction(void(USER_IMPL::*pt_function)(ENTITY&)) {
+      /* Add the thunk to the VTable */
+      m_cThunks.Add<ENTITY>(&CQTOpenGLUserFunctions::Thunk<USER_IMPL,ENTITY>);
+      /* Add the function holder to the vector, padding gaps with NULL pointers */
+      size_t unIdx = GetTag<ENTITY,CEntity>();
+      if(m_vecFunctionHolders.size() <= unIdx) {
+         m_vecFunctionHolders.resize(unIdx+1, NULL);
+      }
+      m_vecFunctionHolders[unIdx] = new CFunctionHolderImpl<USER_IMPL,ENTITY>(pt_function);
+   }
+   
+   /****************************************/
+   /****************************************/
+
 }
 
 /* Definitions useful for dynamic linking of user functions */
-
 #define REGISTER_QTOPENGL_USER_FUNCTIONS(CLASSNAME, LABEL)  \
    REGISTER_SYMBOL(CQTOpenGLUserFunctions,                  \
                    CLASSNAME,                               \

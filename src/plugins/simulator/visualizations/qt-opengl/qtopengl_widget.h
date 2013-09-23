@@ -49,6 +49,9 @@ namespace argos {
       virtual ~CQTOpenGLOperationDrawSelected() {}
    };
 
+#define REGISTER_QTOPENGL_ENTITY_OPERATION(ACTION, OPERATION, ENTITY)   \
+   REGISTER_ENTITY_OPERATION(ACTION, CQTOpenGLWidget, OPERATION, void, ENTITY);
+
    /****************************************/
    /****************************************/
 
@@ -118,6 +121,10 @@ namespace argos {
 
       inline virtual QSize minimumSize() const {
          return QSize(320,240);
+      }
+
+      inline CQTOpenGLUserFunctions& GetUserFunctions() {
+         return m_cUserFunctions;
       }
 
       inline CQTOpenGLCamera& GetCamera() {

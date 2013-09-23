@@ -12,6 +12,25 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   CQTOpenGLUserFunctions::CQTOpenGLUserFunctions() :
+      m_vecFunctionHolders(1),
+      m_pcQTOpenGLWidget(NULL) {
+      m_cThunks.Add<CEntity>((TThunk)NULL);
+   }
+
+   /****************************************/
+   /****************************************/
+
+   CQTOpenGLUserFunctions::~CQTOpenGLUserFunctions() {
+      while(!m_vecFunctionHolders.empty()) {
+         delete m_vecFunctionHolders.back();
+         m_vecFunctionHolders.pop_back();
+      }
+   }
+
+   /****************************************/
+   /****************************************/
+
    void CQTOpenGLUserFunctions::DrawTriangle(const CVector3& c_center_offset,
                                              const CColor& c_color,
                                              const bool b_fill,
@@ -290,6 +309,13 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   void CQTOpenGLUserFunctions::Call(CEntity& c_entity) {
+      TThunk t_thunk = m_cThunks[c_entity.GetTag()];
+      if(t_thunk) (this->*t_thunk)(c_entity);
+   }
+
+   /****************************************/
+   /****************************************/
 
 }
 
