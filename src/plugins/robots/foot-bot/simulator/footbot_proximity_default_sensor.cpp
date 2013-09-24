@@ -47,7 +47,12 @@ namespace argos {
    /****************************************/
 
    void CFootBotProximityDefaultSensor::SetRobot(CComposableEntity& c_entity) {
-      m_pcProximityImpl->SetRobot(c_entity);
+      try {
+         m_pcProximityImpl->SetRobot(c_entity);
+      }
+      catch(CARGoSException& ex) {
+         THROW_ARGOSEXCEPTION_NESTED("Can't set robot for the foot-bot proximity default sensor", ex);
+      }
    }
 
    /****************************************/

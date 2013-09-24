@@ -34,11 +34,16 @@ namespace argos {
    /****************************************/
 
    void CLightDefaultSensor::SetRobot(CComposableEntity& c_entity) {
-      m_pcEmbodiedEntity = &(c_entity.GetComponent<CEmbodiedEntity>("body"));
-      m_pcControllableEntity = &(c_entity.GetComponent<CControllableEntity>("controller"));
-      m_pcLightEntity = &(c_entity.GetComponent<CLightSensorEquippedEntity>("light_sensors"));
-      m_pcLightEntity->SetCanBeEnabledIfDisabled(true);
-      m_pcLightEntity->Enable();
+      try {
+         m_pcEmbodiedEntity = &(c_entity.GetComponent<CEmbodiedEntity>("body"));
+         m_pcControllableEntity = &(c_entity.GetComponent<CControllableEntity>("controller"));
+         m_pcLightEntity = &(c_entity.GetComponent<CLightSensorEquippedEntity>("light_sensors"));
+         m_pcLightEntity->SetCanBeEnabledIfDisabled(true);
+         m_pcLightEntity->Enable();
+      }
+      catch(CARGoSException& ex) {
+         THROW_ARGOSEXCEPTION_NESTED("Can't set robot for the light default sensor", ex);
+      }
    }
 
    /****************************************/

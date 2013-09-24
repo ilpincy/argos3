@@ -33,11 +33,16 @@ namespace argos {
    /****************************************/
 
    void CProximityDefaultSensor::SetRobot(CComposableEntity& c_entity) {
-      m_pcEmbodiedEntity = &(c_entity.GetComponent<CEmbodiedEntity>("body"));
-      m_pcControllableEntity = &(c_entity.GetComponent<CControllableEntity>("controller"));
-      m_pcProximityEntity = &(c_entity.GetComponent<CProximitySensorEquippedEntity>("proximity_sensors"));
-      m_pcProximityEntity->SetCanBeEnabledIfDisabled(true);
-      m_pcProximityEntity->Enable();
+      try {
+         m_pcEmbodiedEntity = &(c_entity.GetComponent<CEmbodiedEntity>("body"));
+         m_pcControllableEntity = &(c_entity.GetComponent<CControllableEntity>("controller"));
+         m_pcProximityEntity = &(c_entity.GetComponent<CProximitySensorEquippedEntity>("proximity_sensors"));
+         m_pcProximityEntity->SetCanBeEnabledIfDisabled(true);
+         m_pcProximityEntity->Enable();
+      }
+      catch(CARGoSException& ex) {
+         THROW_ARGOSEXCEPTION_NESTED("Can't set robot for the proximity default sensor", ex);
+      }
    }
 
    /****************************************/
