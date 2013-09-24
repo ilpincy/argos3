@@ -36,6 +36,7 @@ set(ARGOS3_SOURCES_PLUGINS_ROBOTS_GENERIC
 # Create generic robot plugin
 #
 add_library(argos3plugin_${ARGOS_BUILD_FOR}_genericrobot SHARED ${ARGOS3_SOURCES_PLUGINS_ROBOTS_GENERIC})
+target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_genericrobot argos3core_${ARGOS_BUILD_FOR})
 
 #
 # Install stuff

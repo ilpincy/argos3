@@ -102,6 +102,7 @@ set_source_files_properties(${ARGOS3_SOURCES_PLUGINS_SIMULATOR_PHYSICS_ENGINES_D
 # Create library
 add_library(argos3plugin_${ARGOS_BUILD_FOR}_dynamics2d SHARED
   ${ARGOS3_SOURCES_PLUGINS_SIMULATOR_PHYSICS_ENGINES_DYNAMICS2D})
+target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_dynamics2d argos3core_${ARGOS_BUILD_FOR})
 
 install(
   FILES
