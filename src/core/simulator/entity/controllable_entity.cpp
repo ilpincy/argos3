@@ -24,23 +24,9 @@ namespace argos {
    /****************************************/
 
    CControllableEntity::CControllableEntity(CComposableEntity* pc_parent,
-                                            const std::string& str_id,
-                                            const std::string& str_controller_id) :
+                                            const std::string& str_id) :
       CEntity(pc_parent, str_id),
       m_pcController(NULL) {
-      SetController(str_controller_id);
-   }
-
-   /****************************************/
-   /****************************************/
-
-   CControllableEntity::CControllableEntity(CComposableEntity* pc_parent,
-                                            const std::string& str_id,
-                                            const std::string& str_controller_id,
-                                            TConfigurationNode& t_controller_config) :
-      CEntity(pc_parent, str_id),
-      m_pcController(NULL) {
-      SetController(str_controller_id, t_controller_config);
    }
 
    /****************************************/

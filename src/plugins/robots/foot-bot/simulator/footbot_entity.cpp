@@ -73,6 +73,146 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   CFootBotEntity::CFootBotEntity(const std::string& str_id,
+                                  const std::string& str_controller_id,
+                                  const CVector3& c_position,
+                                  const CQuaternion& c_orientation,
+                                  Real f_rab_range,
+                                  const CRadians& c_aperture) :
+      CComposableEntity(NULL, str_id),
+      m_pcControllableEntity(NULL),
+      m_pcDistanceScannerEquippedEntity(NULL),
+      m_pcTurretEntity(NULL),
+      m_pcEmbodiedEntity(NULL),
+      m_pcGripperEquippedEntity(NULL),
+      m_pcGroundSensorEquippedEntity(NULL),
+      m_pcLEDEquippedEntity(NULL),
+      m_pcLightSensorEquippedEntity(NULL),
+      m_pcProximitySensorEquippedEntity(NULL),
+      m_pcRABEquippedEntity(NULL),
+      m_pcWheeledEntity(NULL),
+      m_pcWiFiEquippedEntity(NULL) {
+      try {
+         /*
+          * Create and init components
+          */
+         /*
+          * Embodied entity
+          * Better to put this first, because many other entities need this one
+          */
+         m_pcEmbodiedEntity = new CEmbodiedEntity(this, "body_0", c_position, c_orientation);
+         AddComponent(*m_pcEmbodiedEntity);
+         /* Wheeled entity and wheel positions (left, right) */
+         m_pcWheeledEntity = new CWheeledEntity(this, "wheels_0", 2);
+         AddComponent(*m_pcWheeledEntity);
+         m_pcWheeledEntity->SetWheel(0, CVector3(0.0f,  HALF_INTERWHEEL_DISTANCE, 0.0f), WHEEL_RADIUS);
+         m_pcWheeledEntity->SetWheel(1, CVector3(0.0f, -HALF_INTERWHEEL_DISTANCE, 0.0f), WHEEL_RADIUS);
+         /* LED equipped entity, with LEDs [0-11] and beacon [12] */
+         m_pcLEDEquippedEntity = new CLEDEquippedEntity(this,
+                                                        "leds_0",
+                                                        m_pcEmbodiedEntity);
+         AddComponent(*m_pcLEDEquippedEntity);
+         for(UInt32 i = 0; i < 13; ++i) {
+            m_pcLEDEquippedEntity->AddLED(CVector3());
+         }
+         /* Proximity sensor equipped entity */
+         m_pcProximitySensorEquippedEntity =
+            new CProximitySensorEquippedEntity(this,
+                                               "proximity_0");
+         AddComponent(*m_pcProximitySensorEquippedEntity);
+         m_pcProximitySensorEquippedEntity->AddSensorRing(
+            CVector3(0.0f, 0.0f, PROXIMITY_SENSOR_RING_ELEVATION),
+            PROXIMITY_SENSOR_RING_RADIUS,
+            PROXIMITY_SENSOR_RING_START_ANGLE,
+            PROXIMITY_SENSOR_RING_RANGE,
+            24);
+         /* Light sensor equipped entity */
+         m_pcLightSensorEquippedEntity =
+            new CLightSensorEquippedEntity(this,
+                                           "light_0");
+         AddComponent(*m_pcLightSensorEquippedEntity);
+         m_pcLightSensorEquippedEntity->AddSensorRing(
+            CVector3(0.0f, 0.0f, PROXIMITY_SENSOR_RING_ELEVATION),
+            PROXIMITY_SENSOR_RING_RADIUS,
+            PROXIMITY_SENSOR_RING_START_ANGLE,
+            PROXIMITY_SENSOR_RING_RANGE,
+            24);
+         /* Gripper equipped entity */
+         m_pcGripperEquippedEntity =
+            new CGripperEquippedEntity(this,
+                                       "gripper_0",
+                                       CVector3(BODY_RADIUS, 0.0f, GRIPPER_ELEVATION),
+                                       CVector3::X);
+         AddComponent(*m_pcGripperEquippedEntity);
+         /* Ground sensor equipped entity */
+         m_pcGroundSensorEquippedEntity =
+            new CGroundSensorEquippedEntity(this,
+                                            "ground_0");
+         AddComponent(*m_pcGroundSensorEquippedEntity);
+         m_pcGroundSensorEquippedEntity->AddSensor(CVector2(0.063, 0.0116),
+                                                   CGroundSensorEquippedEntity::TYPE_GRAYSCALE);
+         m_pcGroundSensorEquippedEntity->AddSensor(CVector2(0.063, -0.0116),
+                                                   CGroundSensorEquippedEntity::TYPE_GRAYSCALE);
+         m_pcGroundSensorEquippedEntity->AddSensor(CVector2(-0.063, -0.0116),
+                                                   CGroundSensorEquippedEntity::TYPE_GRAYSCALE);
+         m_pcGroundSensorEquippedEntity->AddSensor(CVector2(-0.063, 0.0116),
+                                                   CGroundSensorEquippedEntity::TYPE_GRAYSCALE);
+         m_pcGroundSensorEquippedEntity->AddSensor(CVector2(0.08, 0.0),
+                                                   CGroundSensorEquippedEntity::TYPE_BLACK_WHITE);
+         m_pcGroundSensorEquippedEntity->AddSensor(CVector2(0.042, 0.065),
+                                                   CGroundSensorEquippedEntity::TYPE_BLACK_WHITE);
+         m_pcGroundSensorEquippedEntity->AddSensor(CVector2(0.0, 0.08),
+                                                   CGroundSensorEquippedEntity::TYPE_BLACK_WHITE);
+         m_pcGroundSensorEquippedEntity->AddSensor(CVector2(-0.042, 0.065),
+                                                   CGroundSensorEquippedEntity::TYPE_BLACK_WHITE);
+         m_pcGroundSensorEquippedEntity->AddSensor(CVector2(-0.08, 0.0),
+                                                   CGroundSensorEquippedEntity::TYPE_BLACK_WHITE);
+         m_pcGroundSensorEquippedEntity->AddSensor(CVector2(-0.042, -0.065),
+                                                   CGroundSensorEquippedEntity::TYPE_BLACK_WHITE);
+         m_pcGroundSensorEquippedEntity->AddSensor(CVector2(0.0, -0.08),
+                                                   CGroundSensorEquippedEntity::TYPE_BLACK_WHITE);
+         m_pcGroundSensorEquippedEntity->AddSensor(CVector2(0.042, -0.065),
+                                                   CGroundSensorEquippedEntity::TYPE_BLACK_WHITE);
+         /* Distance scanner */
+         m_pcDistanceScannerEquippedEntity = new CFootBotDistanceScannerEquippedEntity(this,
+                                                                                       "distance_scanner_0");
+         AddComponent(*m_pcDistanceScannerEquippedEntity);
+         /* RAB equipped entity */
+         m_pcRABEquippedEntity = new CRABEquippedEntity(this,
+                                                        "rab_0",
+                                                        10,
+                                                        f_rab_range,
+                                                        *m_pcEmbodiedEntity,
+                                                        CVector3(0.0f, 0.0f, RAB_ELEVATION));
+         AddComponent(*m_pcRABEquippedEntity);
+         /* Omnidirectional camera equipped entity */
+         m_pcOmnidirectionalCameraEquippedEntity = new COmnidirectionalCameraEquippedEntity(this,
+                                                                                            "omnidirectional_camera_0",
+                                                                                            c_aperture,
+                                                                                            CVector3(0.0f, 0.0f, OMNIDIRECTIONAL_CAMERA_ELEVATION));
+         AddComponent(*m_pcOmnidirectionalCameraEquippedEntity);         
+         /* Turret equipped entity */
+         m_pcTurretEntity = new CFootBotTurretEntity(this, "turret_0");
+         AddComponent(*m_pcTurretEntity);
+         /* WiFi equipped entity */
+         m_pcWiFiEquippedEntity = new CWiFiEquippedEntity(this, "wifi_0");
+         AddComponent(*m_pcWiFiEquippedEntity);
+         /* Controllable entity
+            It must be the last one, for actuators/sensors to link to composing entities correctly */
+         m_pcControllableEntity = new CControllableEntity(this, "controller_0");
+         AddComponent(*m_pcControllableEntity);
+         m_pcControllableEntity->SetController(str_controller_id);
+         /* Update components */
+         UpdateComponents();
+      }
+      catch(CARGoSException& ex) {
+         THROW_ARGOSEXCEPTION_NESTED("Failed to initialize entity \"" << GetId() << "\".", ex);
+      }
+   }
+
+   /****************************************/
+   /****************************************/
+
    void CFootBotEntity::Init(TConfigurationNode& t_tree) {
       try {
          /*

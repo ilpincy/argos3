@@ -51,44 +51,15 @@ namespace argos {
        * This constructor is meant to be standalone. 
        * You should not call Init() after using this constructor, or
        * memory leaks are likely to happen. After the
-       * execution of this constructor, a new controller instance is associated
-       * to this entity.
-       * This constructor passes to CCI_Controller::Init() the
-       * <tt>&lt;params&gt;</tt> section found in the controller XML section.
-       * Internally it calls SetController().
+       * execution of this constructor, a new controller instance must be associated
+       * to this entity using SetController().
        * @param pc_parent The parent of this entity.
        * @param str_id The id of this entity.
-       * @param str_controller_id The id of the associated controller.
        * @throws CARGoSException if an error occurs in the creation of the controller
-       * @see CCI_Controller::Init()
        * @see SetController()
        */
       CControllableEntity(CComposableEntity* pc_parent,
-                          const std::string& str_id,
-                          const std::string& str_controller_id);
-
-      /**
-       * Class constructor.
-       * This constructor is meant to be standalone.
-       * You should not call Init() after using this constructor, or
-       * memory leaks are likely to happen. After the
-       * execution of this constructor, a new controller instance is associated
-       * to this entity.
-       * This constructor passes the given XML tree to CCI_Controller::Init()
-       * instead of that found in the controller XML section.
-       * Internally it calls SetController().
-       * @param pc_parent The parent of this entity.
-       * @param str_id The id of this entity.
-       * @param str_controller_id The id of the associated controller.
-       * @param t_controller_config An XML tree to pass to CCI_Controller::Init()
-       * @throws CARGoSException if an error occurs in the creation of the controller
-       * @see CCI_Controller::Init()
-       * @see SetController()
-       */
-      CControllableEntity(CComposableEntity* pc_parent,
-                          const std::string& str_id,
-                          const std::string& str_controller_id,
-                          TConfigurationNode& t_controller_config);
+                          const std::string& str_id);
 
       /**
        * Class destructor.
