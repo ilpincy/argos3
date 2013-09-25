@@ -13,7 +13,7 @@
 
 void CTestLoopFunctions::Init(TConfigurationNode& t_tree) {
    LOG << "CTestLoopFunctions init running!\n";
-   CFootBotEntity& fb = dynamic_cast<CFootBotEntity&>(m_cSpace.GetEntity("fb"));
+   CFootBotEntity& fb = dynamic_cast<CFootBotEntity&>(GetSpace().GetEntity("fb"));
    CLEDEntity& cLedA = fb.GetComponent<CLEDEntity>("leds.led[led_2]");
    CLEDEntity& cLedB = fb.GetComponent<CLEDEntity>("leds.led[led_3]");
    CLEDEntity& cLedC = fb.GetComponent<CLEDEntity>("leds.led[led_4]");

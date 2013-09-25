@@ -148,6 +148,22 @@ namespace argos {
          return CColor::BLACK;
       }
 
+      /**
+       * Returns the simulator instance.
+       * @return The simulator instance.
+       */
+      inline CSimulator& GetSimulator() {
+         return m_cSimulator;
+      }
+
+      /**
+       * Returns a reference to the space state.
+       * @return A reference to the space state.
+       */
+      inline CSpace& GetSpace() {
+         return m_cSpace;
+      }
+
    protected:
 
       /**
@@ -189,7 +205,7 @@ namespace argos {
        */
       void RemoveEntity(CEntity& c_entity);
 
-   protected:
+   private:
 
       /** A reference to the CSimulator instance */
       CSimulator& m_cSimulator;
