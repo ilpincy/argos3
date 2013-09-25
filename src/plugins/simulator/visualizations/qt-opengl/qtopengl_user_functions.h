@@ -20,33 +20,89 @@ class QPainter;
 
 namespace argos {
 
+   /**
+    * The QTOpenGL user functions.
+    * <p>
+    * The QTOpenGL user functions allows you to draw objects on the graphical widget that
+    * shows the 3D robot arena (CQTOpenGLWidget). You have three ways to draw stuff.
+    * </p>
+    * <p>
+    * The first is to use DrawInWorld(). This method is called after everything else has been drawn
+    * in the 3D world, and it allows you to draw custom objects anywhere in the world. When you use
+    * this method, coordinates are relative to the origin of the 3D arena, and you must use OpenGL
+    * primitives.
+    * </p>
+    * <p>
+    * The second way to draw custom stuff is to use DrawOverlay(). This method is called after
+    * DrawInWorld(). It allows you to draw stuff as overlay of the 3D arena widget. This method
+    * requires you to use the methods in the Qt class QPainter.
+    * </p>
+    * <p>
+    * The third way to draw custom stuff is to define an entity-specific method, as follows:
+    * </p>
+    * <pre>
+    * class MyOpenGLUserFunctions : public CQTOpenGLUserFunctions {
+    * public:
+    *    MyOpenGLUserFunctions();
+    *    void Draw(CFootBotEntity& c_entity);
+    *    ...
+    * };
+    * </pre>
+    * <p>
+    * The signature of the method must be as in the example, i.e., the return value <em>must</em>
+    * be <tt>void</tt>, and the function <em>must</em> have as a unique argument an entity (i.e., a
+    * descendant of CEntity). The actual name of the function (e.g., <tt>Draw</tt>) can be anything you
+    * like. To tell ARGoS to use this function, you need to register it in the class constructor as in
+    * this example:
+    * </p>
+    * <pre>
+    * MyOpenGLUserFunctions::MyOpenGLUserFunctions() {
+    *    ...
+    *    RegisterUserFunction<MyOpenGLUserFunctions,CFootBotEntity>(&MyOpenGLUserFunctions::Draw);
+    *    ...
+    * }
+    * </pre>
+    * <p>
+    * After registration, ARGoS will call your method right after drawing an entity of the corresponding
+    * type. The method allows you to draw additional information around the robot. You must use OpenGL
+    * primitives. The coordinate system is relative to the robot reference point, which, for robots, is
+    * usually its base.
+    * </p>
+    */
    class CQTOpenGLUserFunctions {
 
    public:
 
+      /**       
+       * Class constructor.
+       */
       CQTOpenGLUserFunctions();
 
+      /**
+       * Class destructor.
+       */
       virtual ~CQTOpenGLUserFunctions();
 
       /**
-       * @brief Drawing hook executed after the floor is drawn.
+       * Drawing hook executed after the floor is drawn.
        */
-      inline virtual void Draw(CFloorEntity& c_entity) {}
+      virtual void Draw(CFloorEntity& c_entity) {}
 
       /**
-       * @brief Drawing hook executed after all objects have been drawn.
-       * Use this hook to draw your own stuff in the world.
+       * Drawing hook executed after all objects have been drawn.
+       * Use this hook to draw your own stuff in the world. You must use
+       * OpenGL primitives. Coordinates are expressed wrt the world's origin.
        */
-      inline virtual void DrawInWorld() {}
+      virtual void DrawInWorld() {}
 
       /**
-       * @brief Drawing hook to put graphics on top of the OpenGL window.
+       * Drawing hook to put graphics on top of the OpenGL window.
        * Extend this method to draw stuff on top of the 3D graphical window.
        * Use the methods in the Qt4 QPainter class to add all the
        * stuff you want, such as text, shapes and so on.
        * @param c_painter The QPainter object to draw the overlay.
        */
-      inline virtual void DrawOverlay(QPainter& c_painter) {}
+      virtual void DrawOverlay(QPainter& c_painter) {}
 
       /**
        * Returns the QTOpenGL widget.
@@ -65,7 +121,7 @@ namespace argos {
       }
 
       /**
-       * @brief Draws a triangle, parallel to the XY plane.
+       * Draws a triangle, parallel to the XY plane.
        * By default the triangle is equilateral (edge length: 0.2m), red, with the height along the X axis, positioned in the origin.
        * The triangle reference system is positioned in (h/2,b/2,0), with the X axis along the height of the triangle.
        * @param v_center_offset triangle's center offset with respect to the origin.
@@ -83,7 +139,7 @@ namespace argos {
                         Real f_height = 0.1732050808f);
 
       /**
-       * @brief Draws a circle, parallel to the XY plane.
+       * Draws a circle, parallel to the XY plane.
        * By default the circle is red, with a radius of 0.1m and positioned in the origin.
        * The circle reference system is positioned the center of the circle.
        * @param f_radius radius of the circle.
@@ -102,7 +158,7 @@ namespace argos {
 
 
       /**
-       * @brief Draws a cylinder, with the height perpendicular to the XY plane.
+       * Draws a cylinder, with the height perpendicular to the XY plane.
        * By default the cylinder is red, with a radius of 0.1m, an height of 0.1m and positioned in the origin.
        * The cylinder reference system is positioned at half the way along the segment connecting the center of the 2 circular faces, with the z axis along the segment.
        * @param f_radius radius of the cylinder.
@@ -121,7 +177,7 @@ namespace argos {
 
 
       /**
-       * @brief Draws a segment, with optional endpoint markers.
+       * Draws a segment, with optional endpoint markers.
        * By default the segment starts in the origin and ends in (1,0,1), it is drawn in red without end points markers. The end point markers default color is red.
        * @param c_end_point vector specifying the end point of the segment.
        * @param c_start_point vector specifying the start point of the segment.
@@ -141,7 +197,7 @@ namespace argos {
                        const CColor& c_start_point_color = CColor::RED);
 
       /**
-       * @brief Draws a polygon.
+       * Draws a polygon.
        * By default the polygon's color is red.
        * @param vec_points vector of vectors defining the vertices of the polygon
        * @param c_color color of the polygon.
@@ -151,7 +207,7 @@ namespace argos {
 
 
       /**
-       * @brief Draws a point
+       * Draws a point.
        * By default the point is positioned in the origin, drawn in red.
        * @param c_position vector specifying the position of the point
        * @param c_color color of the point.
@@ -176,12 +232,14 @@ namespace argos {
        * @param USER_IMPL A user-defined subclass of CQTOpenGLUserFunctions.
        * @param ENTITY The entity type to pass as a parameter to the user-defined method.
        * @param c_entity The entity to pass as parameter.
+       * @see TThunk
        */
       template <typename USER_IMPL, typename ENTITY>
       void Thunk(CEntity& c_entity);
 
       /**
        * The base function holder.
+       * @see CFunctionHolderImpl
        */
       class CFunctionHolder {};
 
@@ -190,6 +248,7 @@ namespace argos {
        * This template class holds a pointer to a user-defined method.
        * @param USER_IMPL A user-defined subclass of CQTOpenGLUserFunctions.
        * @param ENTITY The entity type to pass as a parameter to the user-defined method.
+       * @see CFunctionHolder
        */
       template <typename USER_IMPL, typename ENTITY> class CFunctionHolderImpl : public CFunctionHolder {
       public:
@@ -200,11 +259,14 @@ namespace argos {
 
       /**
        * The vtable storing the thunks.
+       * @see TThunk
+       * @see Thunk
        */
       CVTable<CQTOpenGLUserFunctions, CEntity, TThunk> m_cThunks;
 
       /**
        * A vector of function holders.
+       * @see CFunctionHolder
        */
       std::vector<CFunctionHolder*> m_vecFunctionHolders;
 
