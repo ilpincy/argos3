@@ -186,4 +186,15 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   void CDynamicLoading::UnloadAllLibraries() {
+      for(TDLHandleMap::iterator it = m_tOpenLibs.begin();
+          it != m_tOpenLibs.end();
+          ++it) {
+         UnloadLibrary(it->second);
+      }
+   }
+
+   /****************************************/
+   /****************************************/
+
 }

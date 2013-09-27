@@ -57,6 +57,11 @@ namespace argos {
        */
       static void LoadAllLibraries();
 
+      /**
+       * Unloads all the dynamic libraries.
+       */
+      static void UnloadAllLibraries();
+
    private:
 
       /**
