@@ -36,10 +36,17 @@ namespace argos {
          GetNodeAttributeOrDefault(tArena, "center", cArenaCenter, cArenaCenter);
          /* Create the positional index for LED entities */
          if(strPosIndexMethod == "grid") {
-            std::string strPosGridSize;
-            GetNodeAttribute(t_tree, "grid_size", strPosGridSize);
             size_t punGridSize[3];
-            ParseValues<size_t>(strPosGridSize, 3, punGridSize, ',');
+            if(!NodeAttributeExists(t_tree, "grid_size")) {
+               punGridSize[0] = cArenaSize.GetX();
+               punGridSize[1] = cArenaSize.GetY();
+               punGridSize[2] = cArenaSize.GetZ();
+            }
+            else {
+               std::string strPosGridSize;
+               GetNodeAttribute(t_tree, "grid_size", strPosGridSize);
+               ParseValues<size_t>(strPosGridSize, 3, punGridSize, ',');
+            }
             CGrid<CLEDEntity>* pcGrid = new CGrid<CLEDEntity>(
                cArenaCenter - cArenaSize * 0.5f, cArenaCenter + cArenaSize * 0.5f,
                punGridSize[0], punGridSize[1], punGridSize[2]);

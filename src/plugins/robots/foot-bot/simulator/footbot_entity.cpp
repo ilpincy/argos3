@@ -115,6 +115,8 @@ namespace argos {
          for(UInt32 i = 0; i < 13; ++i) {
             m_pcLEDEquippedEntity->AddLED(CVector3());
          }
+         m_pcLEDEquippedEntity->Disable();
+         m_pcLEDEquippedEntity->SetCanBeEnabledIfDisabled(false);
          /* Proximity sensor equipped entity */
          m_pcProximitySensorEquippedEntity =
             new CProximitySensorEquippedEntity(this,

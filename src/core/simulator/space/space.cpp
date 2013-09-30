@@ -45,10 +45,17 @@ namespace argos {
       GetNodeAttributeOrDefault(t_tree, "positional_index", strPosIndexMethod, strPosIndexMethod);
       /* Create the positional index for embodied entities */
       if(strPosIndexMethod == "grid") {
-         std::string strPosGridSize;
-         GetNodeAttribute(t_tree, "positional_grid_size", strPosGridSize);
          size_t punGridSize[3];
-         ParseValues<size_t>(strPosGridSize, 3, punGridSize, ',');
+         if(!NodeAttributeExists(t_tree, "positional_grid_size")) {
+            punGridSize[0] = m_cArenaSize.GetX();
+            punGridSize[1] = m_cArenaSize.GetY();
+            punGridSize[2] = m_cArenaSize.GetZ();
+         }
+         else {
+            std::string strPosGridSize;
+            GetNodeAttribute(t_tree, "positional_grid_size", strPosGridSize);
+            ParseValues<size_t>(strPosGridSize, 3, punGridSize, ',');
+         }
          CGrid<CEmbodiedEntity>* pcGrid = new CGrid<CEmbodiedEntity>(
             m_cArenaCenter - m_cArenaSize * 0.5f, m_cArenaCenter + m_cArenaSize * 0.5f,
             punGridSize[0], punGridSize[1], punGridSize[2]);

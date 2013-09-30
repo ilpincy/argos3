@@ -109,6 +109,22 @@ namespace argos {
       }
 
       /**
+       * Returns the offset position of the given LED.
+       * The actual position of an LED is calculated as the sum of the
+       * offset position and the position of the reference.
+       * @return The offset position of the given LED.
+       */
+      inline const CVector3& GetLEDOffsetPosition(size_t un_idx) const {
+         ARGOS_ASSERT(un_idx < m_vecLEDOffsetPositions.size(),
+                      "CLEDEquippedEntity::GetLEDOffsetPosition() : index " <<
+                      un_idx <<
+                      " out of bounds [0:" <<
+                      m_vecLEDOffsetPositions.size()-1 <<
+                      "]" );
+         return m_vecLEDOffsetPositions[un_idx];
+      }
+
+      /**
        * Sets the position of an LED.
        * @param un_index The index of the wanted LED.
        * @param c_position The position of the LED wrt the reference entity.

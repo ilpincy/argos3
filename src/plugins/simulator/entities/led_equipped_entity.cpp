@@ -18,8 +18,6 @@ namespace argos {
                                           CPositionalEntity* pc_reference) :
       CComposableEntity(pc_parent),
       m_pcReferenceEntity(pc_reference) {
-      Disable();
-      SetCanBeEnabledIfDisabled(false);
    }
 
    /****************************************/
@@ -30,8 +28,6 @@ namespace argos {
                                           CPositionalEntity* pc_reference) :
       CComposableEntity(pc_parent, str_id),
       m_pcReferenceEntity(pc_reference) {
-      Disable();
-      SetCanBeEnabledIfDisabled(false);
    }
 
    /****************************************/
@@ -56,6 +52,7 @@ namespace argos {
             m_tLEDs.push_back(pcLED);
             AddComponent(*pcLED);
          }
+         UpdateComponents();
       }
       catch(CARGoSException& ex) {
          THROW_ARGOSEXCEPTION_NESTED("Failed to initialize LED equipped entity \"" << GetId() << "\".", ex);

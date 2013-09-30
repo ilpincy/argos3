@@ -34,6 +34,7 @@ namespace argos {
 
       virtual void Init(TConfigurationNode& t_tree);
       virtual void Reset();
+      virtual void Destroy();
 
       inline CEmbodiedEntity& GetEmbodiedEntity() {
          return *m_pcEmbodiedEntity;
@@ -73,10 +74,11 @@ namespace argos {
 
    private:
 
-      CEmbodiedEntity*      m_pcEmbodiedEntity;
-      CLEDEquippedEntity*   m_pcLEDEquippedEntity;
-      CVector3              m_cSize;
-      Real                  m_fMass;
+      CEmbodiedEntity*    m_pcEmbodiedEntity;
+      CLEDEquippedEntity* m_pcLEDEquippedEntity;
+      CVector3            m_cSize;
+      Real                m_fMass;
+      CLEDMedium*         m_pcLEDMedium;
 
    };
 
