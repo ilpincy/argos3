@@ -166,6 +166,7 @@ namespace argos {
       c_log << "   actuators              print a list of all the available actuators" << std::endl;
       c_log << "   sensors                print a list of all the available sensors" << std::endl;
       c_log << "   physics_engines        print a list of all the available physics engines" << std::endl;
+      c_log << "   media                  print a list of all the available media" << std::endl;
       c_log << "   visualizations         print a list of all the available visualizations" << std::endl;
       c_log << "   entities               print a list of all the available entities" << std::endl << std::endl;
       c_log << "Alternatively, QUERY can be the name of a specific plugin as returned by the" << std::endl;
