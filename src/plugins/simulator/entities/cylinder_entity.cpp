@@ -19,7 +19,8 @@ namespace argos {
       CComposableEntity(NULL),
       m_pcEmbodiedEntity(NULL),
       m_pcLEDEquippedEntity(NULL),
-      m_fMass(1.0f) {
+      m_fMass(1.0f),
+      m_pcLEDMedium(NULL) {
    }
 
    /****************************************/
@@ -87,8 +88,8 @@ namespace argos {
             /* Add the LEDs to the medium */
             std::string strMedium;
             GetNodeAttribute(GetNode(t_tree, "leds"), "medium", strMedium);
-            CLEDMedium& cMedium = CSimulator::GetInstance().GetMedium<CLEDMedium>(strMedium);
-            m_pcLEDEquippedEntity->AddToMedium(cMedium);
+            m_pcLEDMedium = &CSimulator::GetInstance().GetMedium<CLEDMedium>(strMedium);
+            m_pcLEDEquippedEntity->AddToMedium(*m_pcLEDMedium);
          }
          UpdateComponents();
       }
@@ -106,6 +107,13 @@ namespace argos {
       m_pcLEDEquippedEntity->Reset();
       /* Update components */
       UpdateComponents();
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CCylinderEntity::Destroy() {
+      m_pcLEDEquippedEntity->RemoveFromMedium(*m_pcLEDMedium);
    }
 
    /****************************************/

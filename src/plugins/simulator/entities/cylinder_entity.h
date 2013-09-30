@@ -38,6 +38,7 @@ namespace argos {
 
       virtual void Init(TConfigurationNode& t_tree);
       virtual void Reset();
+      virtual void Destroy();
 
       inline CEmbodiedEntity& GetEmbodiedEntity() {
          return *m_pcEmbodiedEntity;
@@ -75,13 +76,14 @@ namespace argos {
          return "cylinder";
       }
 
-   private:
+ private:
 
-      CEmbodiedEntity*      m_pcEmbodiedEntity;
-      CLEDEquippedEntity*   m_pcLEDEquippedEntity;
-      Real                  m_fRadius;
-      Real                  m_fHeight;
-      Real                  m_fMass;
+      CEmbodiedEntity*    m_pcEmbodiedEntity;
+      CLEDEquippedEntity* m_pcLEDEquippedEntity;
+      Real                m_fRadius;
+      Real                m_fHeight;
+      Real                m_fMass;
+      CLEDMedium*         m_pcLEDMedium;
 
    };
 
