@@ -77,7 +77,6 @@ namespace argos {
          m_pcEmbodiedEntity->SetMovable(bMovable);
          /* Init LED equipped entity component */
          m_pcLEDEquippedEntity = new CLEDEquippedEntity(this,
-                                                        GetId() + ".leds",
                                                         m_pcEmbodiedEntity);
          AddComponent(*m_pcLEDEquippedEntity);
          if(NodeExists(t_tree, "leds")) {
@@ -90,6 +89,11 @@ namespace argos {
             GetNodeAttribute(GetNode(t_tree, "leds"), "medium", strMedium);
             m_pcLEDMedium = &CSimulator::GetInstance().GetMedium<CLEDMedium>(strMedium);
             m_pcLEDEquippedEntity->AddToMedium(*m_pcLEDMedium);
+         }
+         else {
+            /* No LEDs added, no need to update this entity */
+            m_pcLEDEquippedEntity->Disable();
+            m_pcLEDEquippedEntity->SetCanBeEnabledIfDisabled(false);
          }
          UpdateComponents();
       }

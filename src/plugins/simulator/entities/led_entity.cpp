@@ -56,7 +56,7 @@ namespace argos {
    void CLEDEntity::SetEnabled(bool b_enabled) {
       CEntity::SetEnabled(b_enabled);
       if(IsEnabled()) {
-         m_cColor = CColor::BLACK;
+         m_cColor = m_cInitColor;
       }
    }
 
