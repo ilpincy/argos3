@@ -7,6 +7,8 @@
 #include "box_entity.h"
 #include <argos3/core/utility/math/matrix/rotationmatrix3.h>
 #include <argos3/core/simulator/space/space.h>
+#include <argos3/core/simulator/simulator.h>
+#include <argos3/plugins/simulator/media/led_medium.h>
 
 namespace argos {
 
@@ -74,7 +76,15 @@ namespace argos {
                                                         m_pcEmbodiedEntity);
          AddComponent(*m_pcLEDEquippedEntity);
          if(NodeExists(t_tree, "leds")) {
+            /* Create LED equipped entity
+             * NOTE: the LEDs are not added to the medium yet
+             */
             m_pcLEDEquippedEntity->Init(GetNode(t_tree, "leds"));
+            /* Add the LEDs to the medium */
+            std::string strMedium;
+            GetNodeAttribute(GetNode(t_tree, "leds"), "medium", strMedium);
+            CLEDMedium& cMedium = CSimulator::GetInstance().GetMedium<CLEDMedium>(strMedium);
+            m_pcLEDEquippedEntity->AddToMedium(cMedium);
          }
          UpdateComponents();
       }
