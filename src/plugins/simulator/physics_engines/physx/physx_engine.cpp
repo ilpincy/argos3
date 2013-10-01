@@ -230,12 +230,44 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   class CPhysXOperationAddBaseEntity : public CPhysXOperationAddEntity {
+   public:
+      virtual ~CPhysXOperationAddBaseEntity() {}
+      void ApplyTo(CPhysXEngine&, CEntity& c_entity) {
+         LOGERR << "Entity type \""
+                << c_entity.GetTypeDescription()
+                << "\" not supported by the PhysX engine."
+                << std::endl;
+      }
+   };
+
+   class CPhysXOperationRemoveBaseEntity : public CPhysXOperationRemoveEntity {
+   public:
+      virtual ~CPhysXOperationRemoveBaseEntity() {}
+      void ApplyTo(CPhysXEngine&, CEntity& c_entity) {
+         LOGERR << "Entity type \""
+                << c_entity.GetTypeDescription()
+                << "\" not supported by the PhysX engine."
+                << std::endl;
+      }
+   };
+
+   REGISTER_PHYSX_OPERATION(CPhysXOperationAddEntity,
+                            CPhysXOperationAddBaseEntity,
+                            CEntity);
+
+   REGISTER_PHYSX_OPERATION(CPhysXOperationRemoveEntity,
+                            CPhysXOperationRemoveBaseEntity,
+                            CEntity);
+
+   /****************************************/
+   /****************************************/
+
    REGISTER_PHYSICS_ENGINE(CPhysXEngine,
                            "physx",
                            "Carlo Pinciroli [ilpincy@gmail.com]",
                            "1.0",
                            "A 3D dynamics physics engine",
-                           "********************************************************************************"
                            "This physics engine is a 3D dynamics engine based on the NVIDIA PhysX library\n"
                            "(http://www.geforce.com/hardware/technology/physx).\n\n"
                            "REQUIRED XML CONFIGURATION\n\n"
