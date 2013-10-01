@@ -100,10 +100,15 @@ namespace argos {
    bool CLEDEntityGridUpdater::operator()(CLEDEntity& c_entity) {
       /* Discard LEDs switched off */
       if(c_entity.GetColor() != CColor::BLACK) {
-         /* Calculate the position of the LED in the space hash */
-         m_cGrid.PositionToCell(m_nI, m_nJ, m_nK, c_entity.GetPosition());
-         /* Update the corresponding cell */
-         m_cGrid.UpdateCell(m_nI, m_nJ, m_nK, c_entity);
+         try {
+            /* Calculate the position of the LED in the space hash */
+            m_cGrid.PositionToCell(m_nI, m_nJ, m_nK, c_entity.GetPosition());
+            /* Update the corresponding cell */
+            m_cGrid.UpdateCell(m_nI, m_nJ, m_nK, c_entity);
+         }
+         catch(CARGoSException& ex) {
+            THROW_ARGOSEXCEPTION_NESTED("While updating the LED grid for LED \"" << c_entity.GetContext() << c_entity.GetId() << "\"", ex);
+         }
       }
       /* Continue with the other entities */
       return true;

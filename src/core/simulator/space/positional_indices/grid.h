@@ -125,9 +125,16 @@ namespace argos {
                                  SInt32& n_k,
                                  const CVector3& c_position) const;
 
+      inline void PositionToCellUnsafe(SInt32& n_i,
+                                       SInt32& n_j,
+                                       SInt32& n_k,
+                                       const CVector3& c_position) const;
+
       inline void ClampCoordinates(SInt32& n_i,
                                    SInt32& n_j,
                                    SInt32& n_k) const;
+
+      inline void ClampCoordinates(CVector3& c_pos) const;
 
       inline SCell& GetCellAt(SInt32 n_i,
                               SInt32 n_j,

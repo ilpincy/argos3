@@ -116,13 +116,6 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CCylinderEntity::Destroy() {
-      m_pcLEDEquippedEntity->RemoveFromMedium(*m_pcLEDMedium);
-   }
-
-   /****************************************/
-   /****************************************/
-
    REGISTER_ENTITY(CCylinderEntity,
                    "cylinder",
                    "Carlo Pinciroli [ilpincy@gmail.com]",

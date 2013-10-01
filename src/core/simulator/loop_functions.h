@@ -164,8 +164,6 @@ namespace argos {
          return m_cSpace;
       }
 
-   protected:
-
       /**
        * Moves the entity to the wanted position and orientation.
        * If the entity is embodied, the movement is allowed only if the

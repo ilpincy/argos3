@@ -3,6 +3,11 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   static const Real EPSILON = 1e-6;
+
+   /****************************************/
+   /****************************************/
+
 #define APPLY_ENTITY_OPERATION_TO_CELL(nI,nJ,nK)                        \
    {                                                                    \
       SCell& sCell = GetCellAt((nI), (nJ), (nK));                       \
@@ -133,9 +138,7 @@ CGrid<ENTITY>::CGrid(const CVector3& c_area_min_corner,
    template<class ENTITY>
    void CGrid<ENTITY>::GetEntitiesAt(CSet<ENTITY*>& c_entities,
                                      const CVector3& c_position) const {
-      if(m_cRangeX.WithinMinBoundIncludedMaxBoundIncluded(c_position.GetX()) &&
-         m_cRangeY.WithinMinBoundIncludedMaxBoundIncluded(c_position.GetY()) &&
-         m_cRangeZ.WithinMinBoundIncludedMaxBoundIncluded(c_position.GetZ())) {
+      try {
          SInt32 i, j, k;
          PositionToCell(i, j, k, c_position);
          const SCell& sCell = GetCellAt(i, j, k);
@@ -146,8 +149,8 @@ CGrid<ENTITY>::CGrid(const CVector3& c_area_min_corner,
             c_entities = sCell.Entities;
          }
       }
-      else {
-         THROW_ARGOSEXCEPTION("CGrid<ENTITY>::GetEntitiesAt() : Position (" << c_position << " out of bounds X -> " << m_cRangeX << " Y -> " << m_cRangeY << " Z -> " << m_cRangeZ);
+      catch(CARGoSException& ex) {
+         THROW_ARGOSEXCEPTION_NESTED("CGrid<ENTITY>::GetEntitiesAt() : Position <" << c_position << "> out of bounds X -> " << m_cRangeX << " Y -> " << m_cRangeY << " Z -> " << m_cRangeZ, ex);
       }
    }
 
@@ -170,7 +173,7 @@ CGrid<ENTITY>::CGrid(const CVector3& c_area_min_corner,
                                                 CEntityOperation& c_operation) {
       /* Calculate cells for center */
       SInt32 nIC, nJC, nKC, nIR, nJR, nKR;
-      PositionToCell(nIC, nJC, nKC, c_center);
+      PositionToCellUnsafe(nIC, nJC, nKC, c_center);
       if(nKC >= 0 && nKC < m_nSizeK) {
          /* Check circle center */
          if((nIC >= 0 && nIC < m_nSizeI) && (nJC >= 0 && nJC < m_nSizeJ)) APPLY_ENTITY_OPERATION_TO_CELL(nIC, nJC, nKC);
@@ -259,9 +262,9 @@ CGrid<ENTITY>::CGrid(const CVector3& c_area_min_corner,
                                              CEntityOperation& c_operation) {
       /* Calculate cell range */
       SInt32 nI1, nJ1, nK1, nI2, nJ2, nK2;
-      PositionToCell(nI1, nJ1, nK1, c_center - c_half_size);
+      PositionToCellUnsafe(nI1, nJ1, nK1, c_center - c_half_size);
       ClampCoordinates(nI1, nJ1, nK1);
-      PositionToCell(nI2, nJ2, nK2, c_center + c_half_size);
+      PositionToCellUnsafe(nI2, nJ2, nK2, c_center + c_half_size);
       ClampCoordinates(nI2, nJ2, nK2);
       /* Go through cells */
       for(SInt32 k = nK1; k <= nK2; ++k) {
@@ -284,7 +287,7 @@ CGrid<ENTITY>::CGrid(const CVector3& c_area_min_corner,
       if(! m_cRangeZ.WithinMinBoundIncludedMaxBoundIncluded(c_center.GetZ())) return;
       /* Calculate cells for center */
       SInt32 nI, nJ, nK;
-      PositionToCell(nI, nJ, nK, c_center);
+      PositionToCellUnsafe(nI, nJ, nK, c_center);
       /* Check circle center */
       if((nI >= 0 && nI < m_nSizeI) && (nJ >= 0 && nJ < m_nSizeJ)) APPLY_ENTITY_OPERATION_TO_CELL(nI, nJ, nK);
       /* Check circle diameter on I */
@@ -341,9 +344,9 @@ CGrid<ENTITY>::CGrid(const CVector3& c_area_min_corner,
                                            bool b_stop_at_closest_match) {
       /* Transform ray start and end position into cell coordinates */
       SInt32 nI1, nJ1, nK1, nI2, nJ2, nK2;
-      PositionToCell(nI1, nJ1, nK1, c_ray.GetStart());
+      PositionToCellUnsafe(nI1, nJ1, nK1, c_ray.GetStart());
       ClampCoordinates(nI1, nJ1, nK1);
-      PositionToCell(nI2, nJ2, nK2, c_ray.GetEnd());
+      PositionToCellUnsafe(nI2, nJ2, nK2, c_ray.GetEnd());
       ClampCoordinates(nI2, nJ2, nK2);
       /* Go through cells one by one, from start to end.
          Stop as soon as an entity is found.
@@ -534,7 +537,7 @@ CGrid<ENTITY>::CGrid(const CVector3& c_area_min_corner,
                                              CCellOperation& c_operation) {
       /* Calculate cells for center */
       SInt32 nIC, nJC, nKC, nIR, nJR, nKR;
-      PositionToCell(nIC, nJC, nKC, c_center);
+      PositionToCellUnsafe(nIC, nJC, nKC, c_center);
       if(nKC >= 0 && nKC < m_nSizeK) {
          /* Check circle center */
          if((nIC >= 0 && nIC < m_nSizeI) && (nJC >= 0 && nJC < m_nSizeJ)) APPLY_CELL_OPERATION_TO_CELL(nIC, nJC, nKC);
@@ -623,9 +626,9 @@ CGrid<ENTITY>::CGrid(const CVector3& c_area_min_corner,
                                           CCellOperation& c_operation) {
       /* Calculate cell range */
       SInt32 nI1, nJ1, nK1, nI2, nJ2, nK2;
-      PositionToCell(nI1, nJ1, nK1, c_center - c_half_size);
+      PositionToCellUnsafe(nI1, nJ1, nK1, c_center - c_half_size);
       ClampCoordinates(nI1, nJ1, nK1);
-      PositionToCell(nI2, nJ2, nK2, c_center + c_half_size);
+      PositionToCellUnsafe(nI2, nJ2, nK2, c_center + c_half_size);
       ClampCoordinates(nI2, nJ2, nK2);
       /* Go through cells */
       for(SInt32 k = nK1; k <= nK2; ++k) {
@@ -648,7 +651,7 @@ CGrid<ENTITY>::CGrid(const CVector3& c_area_min_corner,
       if(! m_cRangeZ.WithinMinBoundIncludedMaxBoundIncluded(c_center.GetZ())) return;
       /* Calculate cells for center */
       SInt32 nI, nJ, nK;
-      PositionToCell(nI, nJ, nK, c_center);
+      PositionToCellUnsafe(nI, nJ, nK, c_center);
       /* Check circle center */
       if((nI >= 0 && nI < m_nSizeI) && (nJ >= 0 && nJ < m_nSizeJ)) APPLY_CELL_OPERATION_TO_CELL(nI, nJ, nK);
       /* Check circle diameter on I */
@@ -704,9 +707,9 @@ CGrid<ENTITY>::CGrid(const CVector3& c_area_min_corner,
                                         CCellOperation& c_operation) {
       /* Transform ray start and end position into cell coordinates */
       SInt32 nI1, nJ1, nK1, nI2, nJ2, nK2;
-      PositionToCell(nI1, nJ1, nK1, c_ray.GetStart());
+      PositionToCellUnsafe(nI1, nJ1, nK1, c_ray.GetStart());
       ClampCoordinates(nI1, nJ1, nK1);
-      PositionToCell(nI2, nJ2, nK2, c_ray.GetEnd());
+      PositionToCellUnsafe(nI2, nJ2, nK2, c_ray.GetEnd());
       ClampCoordinates(nI2, nJ2, nK2);
       /* Go through cells one by one, from start to end.
          Stop as soon as an entity is found.
@@ -882,9 +885,9 @@ CGrid<ENTITY>::CGrid(const CVector3& c_area_min_corner,
                                   SInt32 n_j,
                                   SInt32 n_k,
                                   ENTITY& c_entity) {
-      if((n_i < m_nSizeI) &&
-         (n_j < m_nSizeJ) &&
-         (n_k < m_nSizeK)) {
+      if((n_i >= 0) && (n_i < m_nSizeI) &&
+         (n_j >= 0) && (n_j < m_nSizeJ) &&
+         (n_k >= 0) && (n_k < m_nSizeK)) {
          SCell& sCell = GetCellAt(n_i, n_j, n_k);
          if(sCell.Timestamp < m_unCurTimestamp) {
             sCell.Entities.clear();
@@ -913,6 +916,26 @@ CGrid<ENTITY>::CGrid(const CVector3& c_area_min_corner,
                                       SInt32& n_j,
                                       SInt32& n_k,
                                       const CVector3& c_position) const {
+      if(m_cRangeX.WithinMinBoundIncludedMaxBoundIncluded(c_position.GetX()) &&
+         m_cRangeY.WithinMinBoundIncludedMaxBoundIncluded(c_position.GetY()) &&
+         m_cRangeZ.WithinMinBoundIncludedMaxBoundIncluded(c_position.GetZ())) {
+         n_i = Floor((c_position.GetX() - m_cAreaMinCorner.GetX()) * m_cInvCellSize.GetX());
+         n_j = Floor((c_position.GetY() - m_cAreaMinCorner.GetY()) * m_cInvCellSize.GetY());
+         n_k = Floor((c_position.GetZ() - m_cAreaMinCorner.GetZ()) * m_cInvCellSize.GetZ());
+      }
+      else {
+         THROW_ARGOSEXCEPTION("CGrid<ENTITY>::PositionToCell() : Position <" << c_position << "> out of bounds X -> " << m_cRangeX << " Y -> " << m_cRangeY << " Z -> " << m_cRangeZ);
+      }
+   }
+
+   /****************************************/
+   /****************************************/
+
+   template<class ENTITY>
+   void CGrid<ENTITY>::PositionToCellUnsafe(SInt32& n_i,
+                                            SInt32& n_j,
+                                            SInt32& n_k,
+                                            const CVector3& c_position) const {
       n_i = Floor((c_position.GetX() - m_cAreaMinCorner.GetX()) * m_cInvCellSize.GetX());
       n_j = Floor((c_position.GetY() - m_cAreaMinCorner.GetY()) * m_cInvCellSize.GetY());
       n_k = Floor((c_position.GetZ() - m_cAreaMinCorner.GetZ()) * m_cInvCellSize.GetZ());
@@ -931,6 +954,19 @@ CGrid<ENTITY>::CGrid(const CVector3& c_area_min_corner,
       else if(n_j >= m_nSizeJ) n_j = m_nSizeJ - 1;
       if(n_k < 0) n_k = 0;
       else if(n_k >= m_nSizeK) n_k = m_nSizeK - 1;
+   }
+
+   /****************************************/
+   /****************************************/
+   
+   template<class ENTITY>
+   void CGrid<ENTITY>::ClampCoordinates(CVector3& c_pos) const {
+      if(c_pos.GetX() < m_cRangeX.GetMin()) c_pos.SetX(m_cRangeX.GetMin() + EPSILON);
+      else if(c_pos.GetX() > m_cRangeX.GetMax()) c_pos.SetX(m_cRangeX.GetMax() - EPSILON);
+      if(c_pos.GetY() < m_cRangeY.GetMin()) c_pos.SetY(m_cRangeY.GetMin() + EPSILON);
+      else if(c_pos.GetY() > m_cRangeY.GetMax()) c_pos.SetY(m_cRangeY.GetMax() - EPSILON);
+      if(c_pos.GetZ() < m_cRangeZ.GetMin()) c_pos.SetZ(m_cRangeZ.GetMin() + EPSILON);
+      else if(c_pos.GetZ() > m_cRangeZ.GetMax()) c_pos.SetZ(m_cRangeZ.GetMax() - EPSILON);
    }
 
    /****************************************/

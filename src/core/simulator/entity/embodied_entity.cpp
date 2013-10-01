@@ -334,22 +334,27 @@ namespace argos {
       m_cGrid(c_grid) {}
 
    bool CEmbodiedEntityGridUpdater::operator()(CEmbodiedEntity& c_entity) {
-      /* Get cell of bb min corner, clamping it if is out of bounds */
-      m_cGrid.PositionToCell(m_nMinI, m_nMinJ, m_nMinK, c_entity.GetBoundingBox().MinCorner);
-      m_cGrid.ClampCoordinates(m_nMinI, m_nMinJ, m_nMinK);
-      /* Get cell of bb max corner, clamping it if is out of bounds */
-      m_cGrid.PositionToCell(m_nMaxI, m_nMaxJ, m_nMaxK, c_entity.GetBoundingBox().MaxCorner);
-      m_cGrid.ClampCoordinates(m_nMaxI, m_nMaxJ, m_nMaxK);
-      /* Go through cells */
-      for(SInt32 m_nK = m_nMinK; m_nK <= m_nMaxK; ++m_nK) {
-         for(SInt32 m_nJ = m_nMinJ; m_nJ <= m_nMaxJ; ++m_nJ) {
-            for(SInt32 m_nI = m_nMinI; m_nI <= m_nMaxI; ++m_nI) {
-               m_cGrid.UpdateCell(m_nI, m_nJ, m_nK, c_entity);
+      try {
+         /* Get cell of bb min corner, clamping it if is out of bounds */
+         m_cGrid.PositionToCell(m_nMinI, m_nMinJ, m_nMinK, c_entity.GetBoundingBox().MinCorner);
+         m_cGrid.ClampCoordinates(m_nMinI, m_nMinJ, m_nMinK);
+         /* Get cell of bb max corner, clamping it if is out of bounds */
+         m_cGrid.PositionToCell(m_nMaxI, m_nMaxJ, m_nMaxK, c_entity.GetBoundingBox().MaxCorner);
+         m_cGrid.ClampCoordinates(m_nMaxI, m_nMaxJ, m_nMaxK);
+         /* Go through cells */
+         for(SInt32 m_nK = m_nMinK; m_nK <= m_nMaxK; ++m_nK) {
+            for(SInt32 m_nJ = m_nMinJ; m_nJ <= m_nMaxJ; ++m_nJ) {
+               for(SInt32 m_nI = m_nMinI; m_nI <= m_nMaxI; ++m_nI) {
+                  m_cGrid.UpdateCell(m_nI, m_nJ, m_nK, c_entity);
+               }
             }
          }
+         /* Continue with the other entities */
+         return true;
       }
-      /* Continue with the other entities */
-      return true;
+      catch(CARGoSException& ex) {
+         THROW_ARGOSEXCEPTION_NESTED("While updating the embodied entity grid for embodied entity \"" << c_entity.GetContext() << c_entity.GetId() << "\"", ex);
+      }
    }
 
    /****************************************/
