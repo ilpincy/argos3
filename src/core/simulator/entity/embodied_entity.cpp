@@ -289,7 +289,9 @@ namespace argos {
    bool CEmbodiedEntity::IsCollidingWithSomething() const {
       /* If no model is associated, you can't call this function */
       if(m_tPhysicsModelVector.empty()) {
-         THROW_ARGOSEXCEPTION("CEmbodiedEntity::IsCollidingWithSomething() called on entity \"" << GetId() << "\", but this entity has not been added to any physics engine.");
+         THROW_ARGOSEXCEPTION("CEmbodiedEntity::IsCollidingWithSomething() called on entity \"" <<
+                              GetContext() << GetId() <<
+                              "\", but this entity has not been added to any physics engine.");
       }
       /* Special case: if there is only one model, check that directly */
       if(m_tPhysicsModelVector.size() == 1) {
