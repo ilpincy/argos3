@@ -112,13 +112,6 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CBoxEntity::Destroy() {
-      m_pcLEDEquippedEntity->RemoveFromMedium(*m_pcLEDMedium);
-   }
-
-   /****************************************/
-   /****************************************/
-
    REGISTER_ENTITY(CBoxEntity,
                    "box",
                    "Carlo Pinciroli [ilpincy@gmail.com]",

@@ -34,7 +34,6 @@ namespace argos {
 
       virtual void Init(TConfigurationNode& t_tree);
       virtual void Reset();
-      virtual void Destroy();
 
       inline CEmbodiedEntity& GetEmbodiedEntity() {
          return *m_pcEmbodiedEntity;
