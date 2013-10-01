@@ -569,7 +569,6 @@ namespace argos {
                std::ostringstream ossMsg;
                ossMsg << "Error executing post-space initialization of medium \"" << cMedium.GetId() << "\"";
                cMedium.Destroy();
-               delete &cMedium;
                THROW_ARGOSEXCEPTION_NESTED(ossMsg.str(), ex);
             }
          }
