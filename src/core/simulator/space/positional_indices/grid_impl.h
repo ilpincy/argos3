@@ -133,9 +133,7 @@ CGrid<ENTITY>::CGrid(const CVector3& c_area_min_corner,
    template<class ENTITY>
    void CGrid<ENTITY>::GetEntitiesAt(CSet<ENTITY*>& c_entities,
                                      const CVector3& c_position) const {
-      if(m_cRangeX.WithinMinBoundIncludedMaxBoundIncluded(c_position.GetX()) &&
-         m_cRangeY.WithinMinBoundIncludedMaxBoundIncluded(c_position.GetY()) &&
-         m_cRangeZ.WithinMinBoundIncludedMaxBoundIncluded(c_position.GetZ())) {
+      try {
          SInt32 i, j, k;
          PositionToCell(i, j, k, c_position);
          const SCell& sCell = GetCellAt(i, j, k);
@@ -146,8 +144,8 @@ CGrid<ENTITY>::CGrid(const CVector3& c_area_min_corner,
             c_entities = sCell.Entities;
          }
       }
-      else {
-         THROW_ARGOSEXCEPTION("CGrid<ENTITY>::GetEntitiesAt() : Position (" << c_position << " out of bounds X -> " << m_cRangeX << " Y -> " << m_cRangeY << " Z -> " << m_cRangeZ);
+      catch(CARGoSException& ex) {
+         THROW_ARGOSEXCEPTION_NESTED("CGrid<ENTITY>::GetEntitiesAt() : Position <" << c_position << "> out of bounds X -> " << m_cRangeX << " Y -> " << m_cRangeY << " Z -> " << m_cRangeZ, ex);
       }
    }
 
@@ -882,9 +880,9 @@ CGrid<ENTITY>::CGrid(const CVector3& c_area_min_corner,
                                   SInt32 n_j,
                                   SInt32 n_k,
                                   ENTITY& c_entity) {
-      if((n_i < m_nSizeI) &&
-         (n_j < m_nSizeJ) &&
-         (n_k < m_nSizeK)) {
+      if((n_i >= 0) && (n_i < m_nSizeI) &&
+         (n_j >= 0) && (n_j < m_nSizeJ) &&
+         (n_k >= 0) && (n_k < m_nSizeK)) {
          SCell& sCell = GetCellAt(n_i, n_j, n_k);
          if(sCell.Timestamp < m_unCurTimestamp) {
             sCell.Entities.clear();
@@ -913,9 +911,16 @@ CGrid<ENTITY>::CGrid(const CVector3& c_area_min_corner,
                                       SInt32& n_j,
                                       SInt32& n_k,
                                       const CVector3& c_position) const {
-      n_i = Floor((c_position.GetX() - m_cAreaMinCorner.GetX()) * m_cInvCellSize.GetX());
-      n_j = Floor((c_position.GetY() - m_cAreaMinCorner.GetY()) * m_cInvCellSize.GetY());
-      n_k = Floor((c_position.GetZ() - m_cAreaMinCorner.GetZ()) * m_cInvCellSize.GetZ());
+      if(m_cRangeX.WithinMinBoundIncludedMaxBoundIncluded(c_position.GetX()) &&
+         m_cRangeY.WithinMinBoundIncludedMaxBoundIncluded(c_position.GetY()) &&
+         m_cRangeZ.WithinMinBoundIncludedMaxBoundIncluded(c_position.GetZ())) {
+         n_i = Floor((c_position.GetX() - m_cAreaMinCorner.GetX()) * m_cInvCellSize.GetX());
+         n_j = Floor((c_position.GetY() - m_cAreaMinCorner.GetY()) * m_cInvCellSize.GetY());
+         n_k = Floor((c_position.GetZ() - m_cAreaMinCorner.GetZ()) * m_cInvCellSize.GetZ());
+      }
+      else {
+         THROW_ARGOSEXCEPTION("CGrid<ENTITY>::PositionToCell() : Position <" << c_position << "> out of bounds X -> " << m_cRangeX << " Y -> " << m_cRangeY << " Z -> " << m_cRangeZ);
+      }
    }
 
    /****************************************/
