@@ -289,6 +289,7 @@ namespace argos {
    template <typename LABEL, typename PLUGIN, typename RETURN_TYPE>
    class CEntityOperation {
    public:
+      virtual ~CEntityOperation() {}
       template <typename DERIVED, typename OPERATION_IMPL>
       RETURN_TYPE Hook(PLUGIN& t_plugin, CEntity& c_entity) {
          return Dispatch<DERIVED, OPERATION_IMPL>(t_plugin, c_entity);
