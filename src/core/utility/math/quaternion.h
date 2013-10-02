@@ -61,6 +61,22 @@ namespace argos {
          return m_fValues[3];
       }
 
+      inline void SetW(Real f_w) {
+         m_fValues[0] = f_w;
+      }
+
+      inline void SetX(Real f_x) {
+         m_fValues[1] = f_x;
+      }
+
+      inline void SetY(Real f_y) {
+         m_fValues[2] = f_y;
+      }
+
+      inline void SetZ(Real f_z) {
+         m_fValues[3] = f_z;
+      }
+
       inline CQuaternion Conjugate() const {
          return CQuaternion(m_fValues[0],
                             -m_fValues[1],
