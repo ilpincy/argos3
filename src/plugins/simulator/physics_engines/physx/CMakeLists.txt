@@ -5,19 +5,20 @@
 # Headers for the PhysX engine
 set(ARGOS3_HEADERS_PLUGINS_SIMULATOR_PHYSICS_ENGINES_PHYSX
   physx_engine.h
-  physx_model.h)
+  physx_model.h
+  physx_box_model.h)
 
 #
 # Source files
 #
 set(ARGOS3_SOURCES_PLUGINS_SIMULATOR_PHYSICS_ENGINES_PHYSX
   ${ARGOS3_HEADERS_PLUGINS_SIMULATOR_PHYSICS_ENGINES_PHYSX}
-  physx_engine.cpp)
+  physx_engine.cpp
+  physx_box_model.cpp)
 
 #
 # Set the include and link path
 #
-add_definitions(-malign-double -Wno-unknown-pragmas)
 link_directories(${CMAKE_SOURCE_DIR}/plugins/simulator/physics_engines/physx/physx-dist/Lib/linux32)
 
 #
@@ -28,6 +29,7 @@ add_library(argos3plugin_${ARGOS_BUILD_FOR}_physx SHARED
   ${ARGOS3_SOURCES_PLUGINS_SIMULATOR_PHYSICS_ENGINES_PHYSX})
 target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_physx
   argos3core_${ARGOS_BUILD_FOR}
+  argos3plugin_${ARGOS_BUILD_FOR}_entities
   -Wl,--start-group
   PhysX3CommonCHECKED
   PxTaskCHECKED

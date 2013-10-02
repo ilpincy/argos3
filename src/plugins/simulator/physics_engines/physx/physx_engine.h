@@ -12,6 +12,7 @@ namespace argos {
    class CPhysXModel;
 }
 
+#include <argos3/core/utility/math/quaternion.h>
 #include <argos3/core/simulator/entity/entity.h>
 #include <argos3/core/simulator/physics_engine/physics_engine.h>
 #include <argos3/plugins/simulator/physics_engines/physx/physx-dist/Include/PxPhysicsAPI.h>
@@ -46,6 +47,18 @@ namespace argos {
       void AddPhysicsModel(const std::string& str_id,
                            CPhysXModel& c_model);
       void RemovePhysicsModel(const std::string& str_id);
+
+      inline physx::PxPhysics& GetPhysics() {
+         return *m_pcPhysics;
+      }
+
+      inline physx::PxScene& GetScene() {
+         return *m_pcScene;
+      }
+
+      inline physx::PxMaterial& GetDefaultMaterial() {
+         return *m_pcDefaultMaterial;
+      }
 
    private:
 
@@ -88,10 +101,48 @@ namespace argos {
       /** The PhysX scene */
       physx::PxScene* m_pcScene;
 
+      /** The default model material */
+      physx::PxMaterial* m_pcDefaultMaterial;
+
+      /** The number of iterations per time step */
+      UInt32 m_unIterations;
    };
 
-/****************************************/
-/****************************************/
+   /****************************************/
+   /****************************************/
+
+   inline void CVector3ToPxVec3(const CVector3& c_vector3,
+                                physx::PxVec3& c_pxvec3) {
+      c_pxvec3.x = -c_vector3.GetY();
+      c_pxvec3.y = c_vector3.GetZ();
+      c_pxvec3.z = c_vector3.GetX();
+   }
+
+   inline void PxVec3ToCVector3(const physx::PxVec3& c_pxvec3,
+                                CVector3& c_vector3) {
+      c_vector3.Set(c_pxvec3.z,
+                    -c_pxvec3.x,
+                    c_pxvec3.y);
+   }
+
+   inline void CQuaternionToPxQuat(const CQuaternion& c_quaternion,
+                                   physx::PxQuat& c_pxquat) {
+      c_pxquat.w = c_quaternion.GetW();
+      c_pxquat.x = -c_quaternion.GetY();
+      c_pxquat.y = c_quaternion.GetZ();
+      c_pxquat.z = c_quaternion.GetX();
+   }
+
+   inline void PxQuatToCQuaternion(const physx::PxQuat& c_pxquat,
+                                   CQuaternion& c_quaternion) {
+      c_quaternion.SetW(c_pxquat.w);
+      c_quaternion.SetX(c_pxquat.z);
+      c_quaternion.SetY(-c_pxquat.x);
+      c_quaternion.SetZ(c_pxquat.y);
+   }
+
+   /****************************************/
+   /****************************************/
 
    template <typename ACTION>
    class CPhysXOperation : public CEntityOperation<ACTION, CPhysXEngine, void> {

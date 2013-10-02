@@ -13,7 +13,16 @@
 #   include <cstdlib> // for malloc()
 #endif
 
+#include <typeinfo>
+
 namespace argos {
+
+   /****************************************/
+   /****************************************/
+
+   const Real DEFAULT_STATIC_FRICTION         = 0.7f;
+   const Real DEFAULT_DYNAMIC_FRICTION        = 0.5f;
+   const Real DEFAULT_RESTITUTION_COEFFICIENT = 0.1f;
 
    /****************************************/
    /****************************************/
@@ -30,7 +39,8 @@ namespace argos {
       return pt_ptr;
    }
 
-   void	CPhysXEngine::CPhysXEngineAllocatorCallback::deallocate(void* ptr) {
+   void	CPhysXEngine::CPhysXEngineAllocatorCallback::deallocate(void* pt_ptr) {
+      ::free(pt_ptr);
    }
 
    /****************************************/
@@ -39,9 +49,6 @@ namespace argos {
    CPhysXEngine::CPhysXEngineErrorCallback::CPhysXEngineErrorCallback(CPhysXEngine& c_engine) :
       m_cEngine(c_engine) {
    }
-
-   /****************************************/
-   /****************************************/
 
    void CPhysXEngine::CPhysXEngineErrorCallback::reportError(physx::PxErrorCode::Enum,
                                                              const char* pch_message,
@@ -61,13 +68,44 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   static physx::PxFilterFlags FilterShader(physx::PxFilterObjectAttributes c_attributes0,
+                                            physx::PxFilterData c_filter_data0, 
+                                            physx::PxFilterObjectAttributes c_attributes1,
+                                            physx::PxFilterData c_filter_data1,
+                                            physx::PxPairFlags& c_pair_flags,
+                                            const void* pt_constant_block,
+                                            physx::PxU32 un_constant_block_size) {
+      /*
+       * The shader filter function may not reference any memory other than arguments of the function
+       * and its own local stack variables -- because the function may be compiled and executed on a
+       * remote processor.
+       */
+      /* Let triggers through */
+      if(physx::PxFilterObjectIsTrigger(c_attributes0) ||
+         physx::PxFilterObjectIsTrigger(c_attributes1)) {
+         fprintf(stderr, "[DEBUG] FilterShader() : trigger contact\n");
+         c_pair_flags = physx::PxPairFlag::eTRIGGER_DEFAULT;
+         return physx::PxFilterFlag::eDEFAULT;
+      }
+      /* Generate contacts for all that were not filtered above */
+      fprintf(stderr, "[DEBUG] FilterShader() : generic contact\n");
+      c_pair_flags = physx::PxPairFlag::eCONTACT_DEFAULT;
+      c_pair_flags |= physx::PxPairFlag::eSWEPT_INTEGRATION_LINEAR;
+      return physx::PxFilterFlag::eDEFAULT;
+   }
+   
+   /****************************************/
+   /****************************************/
+
    CPhysXEngine::CPhysXEngine() :
       m_cErrorCallback(*this),
       m_pcFoundation(NULL),
       m_pcPhysics(NULL),
       m_pcCPUDispatcher(NULL),
       m_pcSceneDesc(NULL),
-      m_pcScene(NULL) {
+      m_pcScene(NULL),
+      m_pcDefaultMaterial(NULL),
+      m_unIterations(10) {
    }
 
    /****************************************/
@@ -86,6 +124,27 @@ namespace argos {
           */
          CPhysicsEngine::Init(t_tree);
          /*
+          * Parse XML
+          */
+         GetNodeAttributeOrDefault(t_tree, "iterations", m_unIterations, m_unIterations);
+         SetPhysicsEngineClock(GetSimulationClockTick() /
+                               static_cast<Real>(m_unIterations));
+         LOG << "[INFO] PhysX engine \""
+             << GetId()
+             << "\" will perform "
+             << m_unIterations
+             << " iterations per tick (dt = "
+             << GetPhysicsEngineClock() << " sec)"
+             << std::endl;
+         UInt32 unThreads = 1;
+         GetNodeAttributeOrDefault(t_tree, "cpu_threads", unThreads, unThreads);
+         LOG << "[INFO] PhysX engine \""
+             << GetId()
+             << "\" will use "
+             << unThreads
+             << " CPU threads"
+             << std::endl;
+         /*
           * Init PhysX
           */
          /* Create foundation */
@@ -102,18 +161,29 @@ namespace argos {
             THROW_ARGOSEXCEPTION("Error calling PxInitExtensions()");
          }
          /* Create CPU dispatcher */
-         UInt32 nThreads = 1; // TODO: parse thread number
-         m_pcCPUDispatcher = physx::PxDefaultCpuDispatcherCreate(nThreads);
+         m_pcCPUDispatcher = physx::PxDefaultCpuDispatcherCreate(unThreads);
          if (m_pcCPUDispatcher == NULL) {
-            THROW_ARGOSEXCEPTION("Error calling PxDefaultCpuDispatcherCreate(" << nThreads << ")");
+            THROW_ARGOSEXCEPTION("Error calling PxDefaultCpuDispatcherCreate(" << unThreads << ")");
          }
          /* Create scene descriptor */
          m_pcSceneDesc = new physx::PxSceneDesc(m_pcPhysics->getTolerancesScale());
-         m_pcSceneDesc->gravity = physx::PxVec3(0.0f, 9.81f, 0.0f);
+         m_pcSceneDesc->gravity = physx::PxVec3(0.0f, -9.81f, 0.0f);
          m_pcSceneDesc->cpuDispatcher = m_pcCPUDispatcher;
-         m_pcSceneDesc->filterShader = physx::PxDefaultSimulationFilterShader;
+         m_pcSceneDesc->flags |= physx::PxSceneFlag::eENABLE_SWEPT_INTEGRATION;
+         // m_pcSceneDesc->filterShader = physx::PxDefaultSimulationFilterShader;
+         m_pcSceneDesc->filterShader = FilterShader;
          /* Create scene */
          m_pcScene = m_pcPhysics->createScene(*m_pcSceneDesc);
+         /* Create default material */
+         m_pcDefaultMaterial = m_pcPhysics->createMaterial(DEFAULT_STATIC_FRICTION,
+                                                           DEFAULT_DYNAMIC_FRICTION,
+                                                           DEFAULT_RESTITUTION_COEFFICIENT);
+         /* Add the ground */
+         /* The plane is centered in the origin and */
+         physx::PxRigidStatic* pcGround = PxCreatePlane(*m_pcPhysics,
+                                                        physx::PxPlane(physx::PxVec3(0.0f, 1.0f, 0.0f), 0.0f),
+                                                        *m_pcDefaultMaterial);
+         m_pcScene->addActor(*pcGround);
       }
       catch(CARGoSException& ex) {
          THROW_ARGOSEXCEPTION_NESTED("Error initializing the PhysX engine \"" << GetId() << "\"", ex);
@@ -141,6 +211,8 @@ namespace argos {
       }
       m_tPhysicsModels.clear();
       /* Release PhysX resources */
+      m_pcDefaultMaterial->release();
+      m_pcScene->release();
       m_pcPhysics->release();
       m_pcFoundation->release();
    }
@@ -155,8 +227,10 @@ namespace argos {
          it->second->UpdateFromEntityStatus();
       }
       /* Perform the step */
-      m_pcScene->simulate(GetSimulationClockTick());
-      m_pcScene->fetchResults(true);
+      for(size_t i = 0; i < m_unIterations; ++i) {
+         m_pcScene->simulate(GetPhysicsEngineClock());
+         m_pcScene->fetchResults(true);
+      }
       /* Update the simulated space */
       for(CPhysXModel::TMap::iterator it = m_tPhysicsModels.begin();
           it != m_tPhysicsModels.end(); ++it) {

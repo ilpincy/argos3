@@ -29,7 +29,7 @@ namespace argos {
       CPhysXModel(CPhysXEngine& c_engine,
                   CEmbodiedEntity& c_entity) :
          CPhysicsModel(c_engine, c_entity),
-         m_cDyn2DEngine(c_engine) {}
+         m_cPhysXEngine(c_engine) {}
 
       virtual ~CPhysXModel() {}
 
@@ -47,11 +47,13 @@ namespace argos {
       virtual void UpdateEntityStatus() = 0;
       virtual void UpdateFromEntityStatus() = 0;
 
-   protected:
+      inline CPhysXEngine& GetPhysXEngine() {
+         return m_cPhysXEngine;
+      }
 
-      CPhysXEngine& m_cDyn2DEngine;
-      CVector3 m_cSpacePosition;
-      CQuaternion m_cSpaceOrientation;
+   private:
+
+      CPhysXEngine& m_cPhysXEngine;
 
    };
 
