@@ -23,7 +23,9 @@ endif(ARGOS_BUILD_FOR STREQUAL "simulator")
 # By default, use the thread-safe version
 # When compiling for the simulator, the thread-safe version is mandatory
 #
-option(ARGOS_THREADSAFE_LOG "ON -> compile thread-safe version of log, OFF -> compile thread-unsafe version of log" ON)
+if(NOT DEFINED ARGOS_THREADSAFE_LOG)
+  option(ARGOS_THREADSAFE_LOG "ON -> compile thread-safe version of log, OFF -> compile thread-unsafe version of log" ON)
+endif(NOT DEFINED ARGOS_THREADSAFE_LOG)
 if((NOT ARGOS_THREADSAFE_LOG) AND (ARGOS_BUILD_FOR STREQUAL "SIMULATOR"))
   message(FATAL_ERROR "When compiling for the simulator, ARGOS_THREADSAFE_LOG must be ON")
 endif((NOT ARGOS_THREADSAFE_LOG) AND (ARGOS_BUILD_FOR STREQUAL "SIMULATOR"))
@@ -33,7 +35,9 @@ endif((NOT ARGOS_THREADSAFE_LOG) AND (ARGOS_BUILD_FOR STREQUAL "SIMULATOR"))
 # By default, support for dynamic library loading is on
 # When compiling for the simulator, support for dynamic library loading must be on
 #
-option(ARGOS_DYNAMIC_LIBRARY_LOADING "ON -> compile support for dynamic library loading, OFF -> no support for dynamic library loading" ON)
+if(NOT DEFINED ARGOS_DYNAMIC_LIBRARY_LOADING)
+  option(ARGOS_DYNAMIC_LIBRARY_LOADING "ON -> compile support for dynamic library loading, OFF -> no support for dynamic library loading" ON)
+endif(NOT DEFINED ARGOS_DYNAMIC_LIBRARY_LOADING)
 if((NOT ARGOS_DYNAMIC_LIBRARY_LOADING) AND (ARGOS_BUILD_FOR STREQUAL "SIMULATOR"))
   message(FATAL_ERROR "When compiling for the simulator, ARGOS_DYNAMIC_LIBRARY_LOADING must be ON")
 endif((NOT ARGOS_DYNAMIC_LIBRARY_LOADING) AND (ARGOS_BUILD_FOR STREQUAL "SIMULATOR"))
@@ -41,9 +45,13 @@ endif((NOT ARGOS_DYNAMIC_LIBRARY_LOADING) AND (ARGOS_BUILD_FOR STREQUAL "SIMULAT
 #
 # Whether to use double or float for the Real type
 #
-option(ARGOS_USE_DOUBLE "ON -> use double for Real, OFF -> use float for Real" ON)
+if(NOT DEFINED ARGOS_USE_DOUBLE)
+  option(ARGOS_USE_DOUBLE "ON -> use double for Real, OFF -> use float for Real" ON)
+endif(NOT DEFINED ARGOS_USE_DOUBLE)
 
 #
 # Compile documentation
 #
-option(ARGOS_DOCUMENTATION "ON -> compile documentation, OFF -> dont'compile documentation" ON)
+if(NOT DEFINED ARGOS_DOCUMENTATION)
+  option(ARGOS_DOCUMENTATION "ON -> compile documentation, OFF -> dont'compile documentation" ON)
+endif(NOT DEFINED ARGOS_DOCUMENTATION)
