@@ -13,7 +13,7 @@
 #include <limits>
 #include <cmath>
 
-#ifndef CROSSCOMPILING
+#ifdef ARGOS_BUILD_FOR_SIMULATOR
 #   include <gsl/gsl_randist.h>
 #endif
 
@@ -24,7 +24,7 @@ namespace argos {
 
    std::map<std::string, CRandom::CCategory*> CRandom::m_mapCategories;
 
-#ifndef CROSSCOMPILING
+#ifdef ARGOS_BUILD_FOR_SIMULATOR
    /* Creates an array of all the available generator types, terminated by a null pointer */
    const gsl_rng_type** CRandom::m_pptRNGTypes = gsl_rng_types_setup();
 #endif
@@ -63,7 +63,7 @@ namespace argos {
 #endif
       m_pcIntegerRNGRange(new CRange<UInt32>(*c_rng.m_pcIntegerRNGRange)) {
       /* Clone RNG of original */
-#ifndef CROSSCOMPILING
+#ifdef ARGOS_BUILD_FOR_SIMULATOR
       m_ptRNG = gsl_rng_clone(c_rng.m_ptRNG);
 #else
       m_ptRNG = new random_data;
@@ -89,7 +89,7 @@ namespace argos {
    /****************************************/
 
    void CRandom::CRNG::CreateRNG() {
-#ifndef CROSSCOMPILING
+#ifdef ARGOS_BUILD_FOR_SIMULATOR
       /* Look for RNG type in the RNG type list */
       bool bFound = false;
       const gsl_rng_type** pptRNGType = GetRNGTypes();
@@ -129,7 +129,7 @@ namespace argos {
    /****************************************/
 
    void CRandom::CRNG::DisposeRNG() {
-#ifndef CROSSCOMPILING
+#ifdef ARGOS_BUILD_FOR_SIMULATOR
       gsl_rng_free(m_ptRNG);
 #else
       delete m_ptRNG;
@@ -142,7 +142,7 @@ namespace argos {
    /****************************************/
 
    void CRandom::CRNG::Reset() {
-#ifndef CROSSCOMPILING
+#ifdef ARGOS_BUILD_FOR_SIMULATOR
       gsl_rng_set(m_ptRNG, m_unSeed);
 #else
       initstate_r(m_unSeed, m_pchRNGState, 256, m_ptRNG);
@@ -153,7 +153,7 @@ namespace argos {
    /****************************************/
 
    bool CRandom::CRNG::Bernoulli(Real f_true) {
-#ifndef CROSSCOMPILING
+#ifdef ARGOS_BUILD_FOR_SIMULATOR
       return gsl_rng_uniform(m_ptRNG) < f_true;
 #else
       UInt32 unNumber;
@@ -166,7 +166,7 @@ namespace argos {
    /****************************************/
 
    CRadians CRandom::CRNG::Uniform(const CRange<CRadians>& c_range) {
-#ifndef CROSSCOMPILING
+#ifdef ARGOS_BUILD_FOR_SIMULATOR
       return c_range.GetMin() + gsl_rng_uniform(m_ptRNG) * c_range.GetSpan();
 #else
       UInt32 unNumber;
@@ -181,7 +181,7 @@ namespace argos {
    /****************************************/
 
    Real CRandom::CRNG::Uniform(const CRange<Real>& c_range) {
-#ifndef CROSSCOMPILING
+#ifdef ARGOS_BUILD_FOR_SIMULATOR
       return c_range.GetMin() + gsl_rng_uniform(m_ptRNG) * c_range.GetSpan();
 #else
       UInt32 unNumber;
@@ -197,7 +197,7 @@ namespace argos {
 
    SInt32 CRandom::CRNG::Uniform(const CRange<SInt32>& c_range) {
       SInt32 nRetVal;
-#ifndef CROSSCOMPILING
+#ifdef ARGOS_BUILD_FOR_SIMULATOR
       do {
          m_pcIntegerRNGRange->MapValueIntoRange(nRetVal, gsl_rng_get(m_ptRNG), c_range);
       } while(nRetVal == c_range.GetMax());
@@ -217,7 +217,7 @@ namespace argos {
 
    UInt32 CRandom::CRNG::Uniform(const CRange<UInt32>& c_range) {
       UInt32 unRetVal;
-#ifndef CROSSCOMPILING
+#ifdef ARGOS_BUILD_FOR_SIMULATOR
       do {
          m_pcIntegerRNGRange->MapValueIntoRange(unRetVal, gsl_rng_get(m_ptRNG), c_range);
       } while(unRetVal == c_range.GetMax());
@@ -236,7 +236,7 @@ namespace argos {
    /****************************************/
 
    Real CRandom::CRNG::Exponential(Real f_mean) {
-#ifndef CROSSCOMPILING
+#ifdef ARGOS_BUILD_FOR_SIMULATOR
       return gsl_ran_exponential(m_ptRNG, f_mean);
 #else      
       CRange<Real> fRange(0.0f, 1.0f);
@@ -249,7 +249,7 @@ namespace argos {
 
    Real CRandom::CRNG::Gaussian(Real f_std_dev,
                                 Real f_mean) {
-#ifndef CROSSCOMPILING
+#ifdef ARGOS_BUILD_FOR_SIMULATOR
       return f_mean + gsl_ran_gaussian(m_ptRNG, f_std_dev);
 #else
       /* This is the Box-Muller method in its cartesian variant
@@ -271,7 +271,7 @@ namespace argos {
    /****************************************/
 
    Real CRandom::CRNG::Rayleigh(Real f_sigma) {
-#ifndef CROSSCOMPILING
+#ifdef ARGOS_BUILD_FOR_SIMULATOR
       return gsl_ran_rayleigh(m_ptRNG, f_sigma);
 #else
       /* Draw a number uniformly from (0,1) --- bounds excluded */
@@ -292,7 +292,7 @@ namespace argos {
    /****************************************/
 
    Real CRandom::CRNG::Lognormal(Real f_sigma, Real f_mu) {
-#ifndef CROSSCOMPILING
+#ifdef ARGOS_BUILD_FOR_SIMULATOR
       return gsl_ran_lognormal(m_ptRNG, f_mu, f_sigma);
 #else
       /* Draw a number uniformly from (0,1) */
