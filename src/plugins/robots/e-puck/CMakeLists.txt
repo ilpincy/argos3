@@ -69,15 +69,15 @@ endif(ARGOS_BUILD_FOR_SIMULATOR)
 #
 # Create e-puck plugin
 #
-add_library(argos3plugin_${ARGOS_BUILD_FOR}_epuck SHARED ${ARGOS3_SOURCES_PLUGINS_ROBOTS_EPUCK})
-target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_epuck
+add_library(argos3plugin_${ARGOS_BUILD_FOR} SHARED ${ARGOS3_SOURCES_PLUGINS_ROBOTS_EPUCK})
+target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}
   argos3plugin_${ARGOS_BUILD_FOR}_genericrobot
   argos3plugin_${ARGOS_BUILD_FOR}_actuators
   argos3plugin_${ARGOS_BUILD_FOR}_sensors
   argos3plugin_${ARGOS_BUILD_FOR}_dynamics2d)
-if(ARGOS_COMPILE_QTOPENGL)
-  target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_epuck argos3plugin_${ARGOS_BUILD_FOR}_qtopengl)
-endif(ARGOS_COMPILE_QTOPENGL)
+if(ARGOS_BUILD_FOR_SIMULATOR AND ARGOS_COMPILE_QTOPENGL)
+  target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR} argos3plugin_${ARGOS_BUILD_FOR}_qtopengl)
+endif(ARGOS_BUILD_FOR_SIMULATOR AND ARGOS_COMPILE_QTOPENGL)
 
 # install(FILES ${ARGOS3_HEADERS_PLUGINS_ROBOTS_EPUCK_CONTROLINTERFACE} DESTINATION include/argos3/plugins/robots/e-puck/control_interface)
 

@@ -18,7 +18,7 @@ namespace argos {
 
 #include <map>
 
-#ifndef CROSSCOMPILING
+#ifdef ARGOS_BUILD_FOR_SIMULATOR
 #   include <gsl/gsl_rng.h>
 #else
 #   include <cstdlib>
@@ -225,7 +225,7 @@ namespace argos {
 
          UInt32 m_unSeed;
          std::string m_strType;
-#ifndef CROSSCOMPILING
+#ifdef ARGOS_BUILD_FOR_SIMULATOR
          gsl_rng* m_ptRNG;
 #else
          random_data* m_ptRNG;
@@ -381,7 +381,7 @@ namespace argos {
        * correspond to those available in your installed version of GSL.
        * @return the list of available RNG types.       
        */
-#ifndef CROSSCOMPILING
+#ifdef ARGOS_BUILD_FOR_SIMULATOR
       inline static const gsl_rng_type** GetRNGTypes() {
          return m_pptRNGTypes;
       }
@@ -390,7 +390,7 @@ namespace argos {
    private:
 
       static std::map<std::string, CCategory*> m_mapCategories;
-#ifndef CROSSCOMPILING
+#ifdef ARGOS_BUILD_FOR_SIMULATOR
       static const gsl_rng_type** m_pptRNGTypes;
 #endif
 

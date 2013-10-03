@@ -3,6 +3,7 @@
  */
 #define ARGOS_VERSION "@CPACK_PACKAGE_VERSION@"
 #define ARGOS_RELEASE "@CPACK_PACKAGE_RELEASE@"
+#define ARGOS_BUILD_FOR "@ARGOS_BUILD_FOR@"
 
 /*
  * Whether the build was done with dynamic loading or not
