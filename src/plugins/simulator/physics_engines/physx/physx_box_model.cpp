@@ -22,6 +22,9 @@ namespace argos {
       physx::PxVec3 cHalfSize(c_entity.GetSize().GetY() * 0.5f,
                               c_entity.GetSize().GetZ() * 0.5f,
                               c_entity.GetSize().GetX() * 0.5f);
+      m_cBaseCenterLocal.x = 0.0f;
+      m_cBaseCenterLocal.y = -cHalfSize.y;
+      m_cBaseCenterLocal.z = 0.0f;
       /* Get position and orientation in this engine's representation */
       physx::PxVec3 cPos;
       CVector3ToPxVec3(GetEmbodiedEntity().GetPosition(), cPos);
@@ -29,16 +32,16 @@ namespace argos {
       CQuaternionToPxQuat(GetEmbodiedEntity().GetOrientation(), cOrient);
       /* Create the transform
        * 1. a translation up by half size on y
-       * 2. a rotation around the box center
+       * 2. a rotation around the box base
        * 3. a translation to the final position
        */
       physx::PxTransform cTranslation1(physx::PxVec3(0.0f, cHalfSize.y, 0.0f));
       physx::PxTransform cRotation(cOrient);
       physx::PxTransform cTranslation2(cPos);
       physx::PxTransform cFinalTrans = cTranslation2 * cRotation * cTranslation1;
-      /* Create geometry and switch continuous collision detection (CCD) on */
+      /* Create the box geometry */
       physx::PxBoxGeometry cBoxGeom(cHalfSize);
-      /* Create body */
+      /* Create the box body */
       if(c_entity.GetEmbodiedEntity().IsMovable()) {
          /*
           * The box is movable
@@ -68,8 +71,6 @@ namespace argos {
          c_engine.GetScene().addActor(*m_pcStaticBody);
       }
       /* Calculate bounding box */
-      GetBoundingBox().MinCorner.SetZ(GetEmbodiedEntity().GetPosition().GetZ());
-      GetBoundingBox().MaxCorner.SetZ(GetEmbodiedEntity().GetPosition().GetZ() + m_cBoxEntity.GetSize().GetZ());
       CalculateBoundingBox();
    }
    
@@ -141,13 +142,12 @@ namespace argos {
          fprintf(stderr, "[DEBUG] UPDATE cTrans.q = <%f,%f,%f,%f>\n",
                  cTrans.q.w, cTrans.q.x, cTrans.q.y, cTrans.q.z);
          /* Vector to the box base */
-         physx::PxVec3 cBase(0.0f, -m_cBoxEntity.GetSize().GetZ() * 0.5f, 0.0f);
          /* Transform base */
-         cBase = cTrans.rotate(cBase);
-         cBase += cTrans.p;
+         physx::PxVec3 cBaseGlobal(cTrans.rotate(m_cBaseCenterLocal));
+         cBaseGlobal += cTrans.p;
          /* Set box position into ARGoS space */
          CVector3 cPos;
-         PxVec3ToCVector3(cBase, cPos);
+         PxVec3ToCVector3(cBaseGlobal, cPos);
          GetEmbodiedEntity().SetPosition(cPos);
          fprintf(stderr, "[DEBUG] UPDATE cPos = <%f,%f,%f>\n",
                  cPos.GetX(), cPos.GetY(), cPos.GetZ());

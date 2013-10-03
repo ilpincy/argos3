@@ -105,6 +105,7 @@ namespace argos {
       m_pcSceneDesc(NULL),
       m_pcScene(NULL),
       m_pcDefaultMaterial(NULL),
+      m_pcGround(NULL),
       m_unIterations(10) {
    }
 
@@ -180,10 +181,10 @@ namespace argos {
                                                            DEFAULT_RESTITUTION_COEFFICIENT);
          /* Add the ground */
          /* The plane is centered in the origin and */
-         physx::PxRigidStatic* pcGround = PxCreatePlane(*m_pcPhysics,
-                                                        physx::PxPlane(physx::PxVec3(0.0f, 1.0f, 0.0f), 0.0f),
-                                                        *m_pcDefaultMaterial);
-         m_pcScene->addActor(*pcGround);
+         m_pcGround = PxCreatePlane(*m_pcPhysics,
+                                    physx::PxPlane(physx::PxVec3(0.0f, 1.0f, 0.0f), 0.0f),
+                                    *m_pcDefaultMaterial);
+         m_pcScene->addActor(*m_pcGround);
       }
       catch(CARGoSException& ex) {
          THROW_ARGOSEXCEPTION_NESTED("Error initializing the PhysX engine \"" << GetId() << "\"", ex);
@@ -211,8 +212,11 @@ namespace argos {
       }
       m_tPhysicsModels.clear();
       /* Release PhysX resources */
+      m_pcScene->removeActor(*m_pcGround);
+      m_pcGround->release();
       m_pcDefaultMaterial->release();
       m_pcScene->release();
+      PxCloseExtensions();
       m_pcPhysics->release();
       m_pcFoundation->release();
    }

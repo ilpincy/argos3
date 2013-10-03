@@ -19,6 +19,24 @@ namespace argos {
 
 namespace argos {
 
+   /**
+    * The PhysX engine.
+    * <p>
+    * This class implements the CPhysicsEngine interface using the NVIDIA PhysX
+    * physics engine library.
+    * </p>
+    * <p>
+    * The axes of the space in PhysX are not directed as in the ARGoS space. In the
+    * latter, the XY plane is the ground and Z indicates the up direction (right-hand rule);
+    * the camera is pointed along the X axis, the base of the screen is the Y axis, and the
+    * left-hand vertical side of the screen corresponds to the Z axis. Conversely, in PhysX
+    * the camera is oriented along the Z axis, with the X axis corresponding to the lower side
+    * of the screen and the Y axis corresponding to the left-hand vertical side (left-hand rule).
+    * To convert positions and orientations between the ARGoS space and the PhysX space, you
+    * must use the functions CVector3ToPxVec3(), PxVec3ToCVector3(), CQuaternionToPxQuat(),
+    * PxQuatToCQuaternion().
+    * </p>
+    */
    class CPhysXEngine : public CPhysicsEngine {
 
    public:
@@ -48,14 +66,27 @@ namespace argos {
                            CPhysXModel& c_model);
       void RemovePhysicsModel(const std::string& str_id);
 
+      /**
+       * Returns the PhysX physics.
+       * @return The PhysX physics.
+       */
       inline physx::PxPhysics& GetPhysics() {
          return *m_pcPhysics;
       }
 
+      /**
+       * Returns the PhysX scene.
+       * @return The PhysX scene.
+       */
       inline physx::PxScene& GetScene() {
          return *m_pcScene;
       }
 
+      /**
+       * Returns the default material for the models.
+       * Static friction = 0.7, dynamic friction = 0.5, restitution coefficient = 0.1
+       * @return The default material for the models.
+       */
       inline physx::PxMaterial& GetDefaultMaterial() {
          return *m_pcDefaultMaterial;
       }
@@ -103,6 +134,8 @@ namespace argos {
 
       /** The default model material */
       physx::PxMaterial* m_pcDefaultMaterial;
+      /** The ground plane */
+      physx::PxRigidStatic* m_pcGround;
 
       /** The number of iterations per time step */
       UInt32 m_unIterations;
@@ -111,6 +144,16 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   /**
+    * Converts a CVector3 into a PxVec3.
+    * The CVector3 corresponds to the position of an object in the ARGoS space.
+    * The PxVec corresponds to the position of an object in the PhysX space.
+    * @param c_vector3 The position in the ARGoS space.
+    * @param c_pxvec3 The position in the PhysX space.
+    * @see PxVec3ToCVector3
+    * @see CQuaternionToPxQuat
+    * @see PxQuatToCQuaternion
+    */
    inline void CVector3ToPxVec3(const CVector3& c_vector3,
                                 physx::PxVec3& c_pxvec3) {
       c_pxvec3.x = -c_vector3.GetY();
@@ -118,6 +161,16 @@ namespace argos {
       c_pxvec3.z = c_vector3.GetX();
    }
 
+   /**
+    * Converts a PxVec3 into a CVector3.
+    * The PxVec corresponds to the position of an object in the PhysX space.
+    * The CVector3 corresponds to the position of an object in the ARGoS space.
+    * @param c_pxvec3 The position in the PhysX space.
+    * @param c_vector3 The position in the ARGoS space.
+    * @see CVector3ToPxVec3
+    * @see CQuaternionToPxQuat
+    * @see PxQuatToCQuaternion
+    */
    inline void PxVec3ToCVector3(const physx::PxVec3& c_pxvec3,
                                 CVector3& c_vector3) {
       c_vector3.Set(c_pxvec3.z,
@@ -125,20 +178,40 @@ namespace argos {
                     c_pxvec3.y);
    }
 
+   /**
+    * Converts a CQuaternion into a PxQuat.
+    * The CQuaternion corresponds to the orientation of an object in the ARGoS space.
+    * The PxQuat corresponds to the orientation of an object in the PhysX space.
+    * @param c_quaternion The orientation in the ARGoS space.
+    * @param c_pxquat The orientation in the PhysX space.
+    * @see CVector3ToPxVec3
+    * @see PxVec3ToCVector3
+    * @see PxQuatToCQuaternion
+    */
    inline void CQuaternionToPxQuat(const CQuaternion& c_quaternion,
                                    physx::PxQuat& c_pxquat) {
       c_pxquat.w = c_quaternion.GetW();
-      c_pxquat.x = -c_quaternion.GetY();
-      c_pxquat.y = c_quaternion.GetZ();
-      c_pxquat.z = c_quaternion.GetX();
+      c_pxquat.x = c_quaternion.GetY();
+      c_pxquat.y = -c_quaternion.GetZ();
+      c_pxquat.z = -c_quaternion.GetX();
    }
 
+   /**
+    * Converts a PxQuat into a CQuaternion.
+    * The PxQuat corresponds to the orientation of an object in the PhysX space.
+    * The CQuaternion corresponds to the orientation of an object in the ARGoS space.
+    * @param c_pxquat The orientation in the PhysX space.
+    * @param c_quaternion The orientation in the ARGoS space.
+    * @see CVector3ToPxVec3
+    * @see PxVec3ToCVector3
+    * @see CQuaternionToPxQuat
+    */
    inline void PxQuatToCQuaternion(const physx::PxQuat& c_pxquat,
                                    CQuaternion& c_quaternion) {
       c_quaternion.SetW(c_pxquat.w);
-      c_quaternion.SetX(c_pxquat.z);
-      c_quaternion.SetY(-c_pxquat.x);
-      c_quaternion.SetZ(c_pxquat.y);
+      c_quaternion.SetX(-c_pxquat.z);
+      c_quaternion.SetY(c_pxquat.x);
+      c_quaternion.SetZ(-c_pxquat.y);
    }
 
    /****************************************/

@@ -47,8 +47,9 @@ namespace argos {
          physx::PxRigidStatic* m_pcStaticBody;
       };
 
-      CBoxEntity& m_cBoxEntity;
-      Real        m_fMass;
+      CBoxEntity&   m_cBoxEntity;
+      physx::PxVec3 m_cBaseCenterLocal;
+      Real          m_fMass;
    };
 
 }
