@@ -328,7 +328,7 @@ namespace argos {
                    "footbot_distance_scanner", "rot_z_only",
                    "Carlo Pinciroli [ilpincy@gmail.com]",
                    "1.0",
-                   "The foot-bot distance scanner sensor (optimized for 2D)",
+                   "The foot-bot distance scanner sensor (optimized for 2D).",
                    "This sensor accesses the foot-bot distance scanner sensor. For a complete\n"
                    "description of its usage, refer to the common interface.\n"
                    "In this implementation, the readings are calculated under the assumption that\n"

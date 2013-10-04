@@ -124,7 +124,7 @@ namespace argos {
                    "ground", "rot_z_only",
                    "Carlo Pinciroli [ilpincy@gmail.com]",
                    "1.0",
-                   "A generic ground sensor",
+                   "A generic ground sensor (optimized for 2D).",
                    "This sensor accesses a set of ground sensors. The sensors all return a value\n"
                    "between 0 and 1, where 0 means black and 1 means white. Depending on the type\n"
                    "of ground sensor, readings can either take 0 or 1 as value (bw sensors) or a\n"

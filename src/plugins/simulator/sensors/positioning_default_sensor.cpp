@@ -85,7 +85,7 @@ namespace argos {
                    "positioning", "default",
                    "Carlo Pinciroli [ilpincy@gmail.com]",
                    "1.0",
-                   "A generic positioning sensor",
+                   "A generic positioning sensor.",
                    "This sensor returns the current position and orientation of a robot. This sensor\n"
                    "can be used with any robot, since it accesses only the body component. In\n"
                    "controllers, you must include the ci_positioning_sensor.h header.\n\n"

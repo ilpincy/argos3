@@ -142,7 +142,7 @@ namespace argos {
                    "proximity", "default",
                    "Carlo Pinciroli [ilpincy@gmail.com]",
                    "1.0",
-                   "A generic proximity sensor",
+                   "A generic proximity sensor.",
                    "This sensor accesses a set of proximity sensors. The sensors all return a value\n"
                    "between 0 and 1, where 0 means nothing within range and 1 means an external\n"
                    "object is touching the sensor. Values between 0 and 1 depend on the distance of\n"

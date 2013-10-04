@@ -218,7 +218,7 @@ namespace argos {
                    "colored_blob_omnidirectional_camera", "rot_z_only",
                    "Carlo Pinciroli [ilpincy@gmail.com]",
                    "1.0",
-                   "A generic omnidirectional camera sensor to detect colored blobs",
+                   "A generic omnidirectional camera sensor to detect colored blobs.",
                    "TODO\n\n",
                    "Usable"
 		  );
