@@ -83,12 +83,10 @@ namespace argos {
       /* Let triggers through */
       if(physx::PxFilterObjectIsTrigger(c_attributes0) ||
          physx::PxFilterObjectIsTrigger(c_attributes1)) {
-         fprintf(stderr, "[DEBUG] FilterShader() : trigger contact\n");
          c_pair_flags = physx::PxPairFlag::eTRIGGER_DEFAULT;
          return physx::PxFilterFlag::eDEFAULT;
       }
       /* Generate contacts for all that were not filtered above */
-      fprintf(stderr, "[DEBUG] FilterShader() : generic contact\n");
       c_pair_flags = physx::PxPairFlag::eCONTACT_DEFAULT;
       c_pair_flags |= physx::PxPairFlag::eSWEPT_INTEGRATION_LINEAR;
       return physx::PxFilterFlag::eDEFAULT;
@@ -105,8 +103,7 @@ namespace argos {
       m_pcSceneDesc(NULL),
       m_pcScene(NULL),
       m_pcDefaultMaterial(NULL),
-      m_pcGround(NULL),
-      m_unIterations(10) {
+      m_pcGround(NULL) {
    }
 
    /****************************************/
@@ -127,16 +124,6 @@ namespace argos {
          /*
           * Parse XML
           */
-         GetNodeAttributeOrDefault(t_tree, "iterations", m_unIterations, m_unIterations);
-         SetPhysicsEngineClock(GetSimulationClockTick() /
-                               static_cast<Real>(m_unIterations));
-         LOG << "[INFO] PhysX engine \""
-             << GetId()
-             << "\" will perform "
-             << m_unIterations
-             << " iterations per tick (dt = "
-             << GetPhysicsEngineClock() << " sec)"
-             << std::endl;
          UInt32 unThreads = 1;
          GetNodeAttributeOrDefault(t_tree, "cpu_threads", unThreads, unThreads);
          LOG << "[INFO] PhysX engine \""
@@ -231,8 +218,8 @@ namespace argos {
          it->second->UpdateFromEntityStatus();
       }
       /* Perform the step */
-      for(size_t i = 0; i < m_unIterations; ++i) {
-         m_pcScene->simulate(GetPhysicsEngineClock());
+      for(size_t i = 0; i < GetIterations(); ++i) {
+         m_pcScene->simulate(GetPhysicsClockTick());
          m_pcScene->fetchResults(true);
       }
       /* Update the simulated space */
@@ -281,6 +268,14 @@ namespace argos {
    /****************************************/
 
    void CPhysXEngine::TransferEntities() {
+   }
+
+   /****************************************/
+   /****************************************/
+
+   CEmbodiedEntity* CPhysXEngine::CheckIntersectionWithRay(Real& f_t_on_ray,
+                                                           const CRay3& c_ray) const {
+      return NULL;
    }
 
    /****************************************/

@@ -93,6 +93,7 @@ namespace argos {
 
    bool CPhysXBoxModel::CheckIntersectionWithRay(Real& f_t_on_ray,
                                                  const CRay3& c_ray) const {
+      
       return false;
    }
 
@@ -137,10 +138,6 @@ namespace argos {
          CalculateBoundingBox();
          /* Get the global pose of the box */
          physx::PxTransform cTrans = m_pcDynamicBody->getGlobalPose();
-         fprintf(stderr, "[DEBUG] UPDATE cTrans.p = <%f,%f,%f>\n",
-                 cTrans.p.x, cTrans.p.y, cTrans.p.z);
-         fprintf(stderr, "[DEBUG] UPDATE cTrans.q = <%f,%f,%f,%f>\n",
-                 cTrans.q.w, cTrans.q.x, cTrans.q.y, cTrans.q.z);
          /* Vector to the box base */
          /* Transform base */
          physx::PxVec3 cBaseGlobal(cTrans.rotate(m_cBaseCenterLocal));
@@ -149,13 +146,10 @@ namespace argos {
          CVector3 cPos;
          PxVec3ToCVector3(cBaseGlobal, cPos);
          GetEmbodiedEntity().SetPosition(cPos);
-         fprintf(stderr, "[DEBUG] UPDATE cPos = <%f,%f,%f>\n",
-                 cPos.GetX(), cPos.GetY(), cPos.GetZ());
+         /* Set box orientation into ARGoS space */
          CQuaternion cOrient;
          PxQuatToCQuaternion(cTrans.q, cOrient);
          GetEmbodiedEntity().SetOrientation(cOrient);
-         fprintf(stderr, "[DEBUG] UPDATE cOrient = <%f,%f,%f,%f>\n\n",
-                 cOrient.GetW(), cOrient.GetX(), cOrient.GetY(), cOrient.GetZ());
       }
       m_cBoxEntity.UpdateComponents();
    }

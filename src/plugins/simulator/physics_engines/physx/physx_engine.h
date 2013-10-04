@@ -62,6 +62,9 @@ namespace argos {
 
       virtual void TransferEntities();
 
+      virtual CEmbodiedEntity* CheckIntersectionWithRay(Real& f_t_on_ray,
+                                                        const CRay3& c_ray) const;
+
       void AddPhysicsModel(const std::string& str_id,
                            CPhysXModel& c_model);
       void RemovePhysicsModel(const std::string& str_id);
@@ -137,8 +140,6 @@ namespace argos {
       /** The ground plane */
       physx::PxRigidStatic* m_pcGround;
 
-      /** The number of iterations per time step */
-      UInt32 m_unIterations;
    };
 
    /****************************************/
