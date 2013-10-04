@@ -146,34 +146,34 @@ namespace argos {
  * @param LONG_DESCRIPTION A detailed description of what <tt>CLASSNAME</tt> is and does
  * @param STATUS Status information (usable, draft, todos, etc) for the code in <tt>CLASSNAME</tt>
  */
-#define REGISTER_SYMBOL(BASECLASS,              \
-                        CLASSNAME,              \
-                        LABEL,                  \
-                        AUTHOR,                 \
-                        VERSION,                \
-                        BRIEF_DESCRIPTION,      \
-                        LONG_DESCRIPTION,       \
-                        STATUS)                 \
-   namespace argos {                            \
-   extern "C" {                                 \
-      BASECLASS* CLASSNAME ## Creator() {       \
-         return new CLASSNAME;                  \
-      }                                         \
-   }                                            \
-      class C ## CLASSNAME ## Proxy {           \
-      public:                                   \
-      C ## CLASSNAME ## Proxy() {               \
-         CFactory<BASECLASS>::                  \
-            Register(LABEL,                     \
-                     AUTHOR,                    \
-                     VERSION,                   \
-                     BRIEF_DESCRIPTION,         \
-                     LONG_DESCRIPTION,          \
-                     STATUS,                    \
-                     CLASSNAME ## Creator);     \
-      }                                         \
-      };                                        \
-      C ## CLASSNAME ## Proxy CLASSNAME ## _p;  \
+#define REGISTER_SYMBOL(BASECLASS,                                      \
+                        CLASSNAME,                                      \
+                        LABEL,                                          \
+                        AUTHOR,                                         \
+                        VERSION,                                        \
+                        BRIEF_DESCRIPTION,                              \
+                        LONG_DESCRIPTION,                               \
+                        STATUS)                                         \
+   namespace argos {                                                    \
+      extern "C" {                                                      \
+         BASECLASS* BASECLASS ## CLASSNAME ## Creator() {               \
+            return new CLASSNAME;                                       \
+         }                                                              \
+      }                                                                 \
+      class C ## BASECLASS ## CLASSNAME ## Proxy {                      \
+      public:                                                           \
+      C ## BASECLASS ## CLASSNAME ## Proxy() {                          \
+         CFactory<BASECLASS>::                                          \
+            Register(LABEL,                                             \
+                     AUTHOR,                                            \
+                     VERSION,                                           \
+                     BRIEF_DESCRIPTION,                                 \
+                     LONG_DESCRIPTION,                                  \
+                     STATUS,                                            \
+                     BASECLASS ## CLASSNAME ## Creator);                \
+      }                                                                 \
+      };                                                                \
+      C ## BASECLASS ## CLASSNAME ## Proxy BASECLASS ## CLASSNAME ## _p; \
    }
 
 }
