@@ -27,9 +27,6 @@ namespace argos {
                               CFootBotEntity& c_entity);
       virtual ~CDynamics2DFootBotModel();
       
-      virtual bool CheckIntersectionWithRay(Real& f_t_on_ray,
-                                            const CRay3& c_ray) const;
-
       virtual bool MoveTo(const CVector3& c_position,
                           const CQuaternion& c_orientation,
                           bool b_check_only = false);

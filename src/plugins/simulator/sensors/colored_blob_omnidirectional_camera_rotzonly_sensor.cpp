@@ -51,7 +51,6 @@ namespace argos {
                Abs(m_cLEDRelativePos.GetY()) < m_fGroundHalfRange &&
                m_cLEDRelativePos.GetZ() < m_cCameraPos.GetZ() &&
                !GetClosestEmbodiedEntityIntersectedByRay(m_sIntersectionItem,
-                                                         CSimulator::GetInstance().GetSpace().GetEmbodiedEntityIndex(),
                                                          m_cOcclusionCheckRay,
                                                          m_cEmbodiedEntity)) {
                m_tBlobs.push_back(new CCI_ColoredBlobOmnidirectionalCameraSensor::SBlob(c_led.GetColor(),

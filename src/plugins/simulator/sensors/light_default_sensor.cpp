@@ -27,8 +27,7 @@ namespace argos {
       m_bShowRays(false),
       m_pcRNG(NULL),
       m_bAddNoise(false),
-      m_cSpace(CSimulator::GetInstance().GetSpace()),
-      m_cEmbodiedEntityIndex(m_cSpace.GetEmbodiedEntityIndex()) {}
+      m_cSpace(CSimulator::GetInstance().GetSpace()) {}
 
    /****************************************/
    /****************************************/
@@ -104,7 +103,6 @@ namespace argos {
                cScanningRay.Set(cRayStart, cLight.GetPosition());
                /* Check occlusions */
                if(! GetClosestEmbodiedEntityIntersectedByRay(sIntersection,
-                                                             m_cEmbodiedEntityIndex,
                                                              cScanningRay)) {
                   /* No occlusion, the light is visibile */
                   if(m_bShowRays) {

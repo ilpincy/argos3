@@ -25,9 +25,6 @@ namespace argos {
                                 CCylinderEntity& c_entity);
       virtual ~CDynamics2DCylinderModel();
       
-      virtual bool CheckIntersectionWithRay(Real& f_t_on_ray,
-                                            const CRay3& c_ray) const;
-
       virtual bool MoveTo(const CVector3& c_position,
                           const CQuaternion& c_orientation,
                           bool b_check_only = false);
@@ -43,6 +40,7 @@ namespace argos {
 
    private:
 
+      bool                  m_bMovable;
       CCylinderEntity&      m_cCylinderEntity;
       CDynamics2DGrippable* m_pcGrippable;
       cpFloat               m_fMass;

@@ -77,15 +77,6 @@ namespace argos {
       }
 
       /**
-       * Check whether this object in this engine intersects the given ray.
-       * @param f_t_on_ray In the parametric definition of <em>ray</em> = <em>starting_point</em> + <em>t</em> * <em>direction</em>, this parameter is <em>t</em>. A value between 0 and 1 means that the intersection point lies within the given ray; values outside this range mean that the intersection point is outside the ray extrema.
-       * @param c_ray The test ray.
-       * @returns <tt>true</tt> if an intersection was found, <tt>false</tt> otherwise.
-       */
-      virtual bool CheckIntersectionWithRay(Real& f_t_on_ray,
-                                            const CRay3& c_ray) const = 0;
-
-      /**
        * Moves the entity to the wanted position and orientation.
        * The movement is allowed only if the object does not collide
        * with anything once in the new position.
@@ -118,8 +109,6 @@ namespace argos {
        * @return <tt>true</tt> if this model is colliding with another model.
        */
       virtual bool IsCollidingWithSomething() const = 0;
-
-   protected:
 
       /**
        * Returns an axis-aligned box that contains the physics model.

@@ -150,54 +150,6 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   bool CEmbodiedEntity::CheckIntersectionWithRay(Real& f_t_on_ray,
-                                                  const CRay3& c_ray) const {
-      /* If no model is associated, you can't call this function */
-      if(m_tPhysicsModelVector.empty()) {
-         THROW_ARGOSEXCEPTION("CEmbodiedEntity::CheckIntersectionWithRay() called on entity \"" << GetContext() << GetId() << "\", but this entity has not been added to any physics engine.");
-      }
-      /* Special case: if there is only one model, check that directly */
-      if(m_tPhysicsModelVector.size() == 1) {
-         return m_tPhysicsModelVector[0]->CheckIntersectionWithRay(f_t_on_ray, c_ray);
-      }
-      /* Multiple associations, go through them and find the closest intersection point */
-      else {
-         /* Search for the first match */
-         UInt32 i = 0;
-         bool bFoundFirst = false;
-         while(!bFoundFirst && i < m_tPhysicsModelVector.size()) {
-            if(m_tPhysicsModelVector[i]->CheckIntersectionWithRay(f_t_on_ray, c_ray)) {
-               bFoundFirst = true;
-            }
-            else {
-               ++i;
-            }
-         }
-         /* Did we find an intersection? */
-         if(!bFoundFirst) {
-            /* No, return false */
-            return false;
-         }
-         else {
-            /*
-             * Yes, we did
-             * Now, go through the remaining models and check if there is a closer match
-             */
-            Real fTOnRay;
-            for(size_t j = i+1; j < m_tPhysicsModelVector.size(); ++j) {
-               if(m_tPhysicsModelVector[j]->CheckIntersectionWithRay(fTOnRay, c_ray) &&
-                  fTOnRay < f_t_on_ray) {
-                  f_t_on_ray = fTOnRay;
-               }
-            }
-            return true;
-         }
-      }
-   }
-
-   /****************************************/
-   /****************************************/
-
    bool CEmbodiedEntity::MoveTo(const CVector3& c_position,
                                 const CQuaternion& c_orientation,
                                 bool b_check_only) {
@@ -417,80 +369,28 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   class CCheckEmbodiedEntitiesForIntersection : public CPositionalIndex<CEmbodiedEntity>::COperation {
-
-   public:
-
-      CCheckEmbodiedEntitiesForIntersection(const CRay3& c_ray) :
-         m_fCurTOnRay(2.0f),
-         m_fMinTOnRay(2.0f),
-         m_cRay(c_ray),
-         m_pcClosestEmbodiedEntity(NULL) {}
-
-      Real GetTOnRay() const {
-         return m_fMinTOnRay;
-      }
-
-      CEmbodiedEntity* GetClosestEmbodiedEntity() {
-         return m_pcClosestEmbodiedEntity;
-      }
-
-      virtual bool operator()(CEmbodiedEntity& c_entity) {
-         if(c_entity.CheckIntersectionWithRay(m_fCurTOnRay, m_cRay) &&
-            (m_fCurTOnRay < m_fMinTOnRay)) {
-            m_fMinTOnRay = m_fCurTOnRay;
-            m_pcClosestEmbodiedEntity = &c_entity;
-         }
-         /* Continue with the other matches */
-         return true;
-      }
-
-   protected:
-
-      Real m_fCurTOnRay;
-      Real m_fMinTOnRay;
-      CRay3 m_cRay;
-      CEmbodiedEntity* m_pcClosestEmbodiedEntity;
-   };
-
-   /****************************************/
-   /****************************************/
-
-   class CCheckEmbodiedEntitiesForIntersectionWIgnore : public CCheckEmbodiedEntitiesForIntersection {
-
-   public:
-
-      CCheckEmbodiedEntitiesForIntersectionWIgnore(const CRay3& c_ray,
-                                                   CEmbodiedEntity& c_entity) :
-         CCheckEmbodiedEntitiesForIntersection(c_ray),
-         m_pcIgnoredEmbodiedEntity(&c_entity) {}
-
-      virtual bool operator()(CEmbodiedEntity& c_entity) {
-         if((&c_entity != m_pcIgnoredEmbodiedEntity) &&
-            c_entity.CheckIntersectionWithRay(m_fCurTOnRay, m_cRay) &&
-            (m_fCurTOnRay < m_fMinTOnRay)) {
-            m_fMinTOnRay = m_fCurTOnRay;
-            m_pcClosestEmbodiedEntity = &c_entity;
-         }
-         /* Continue with the other matches */
-         return true;
-      }
-
-   protected:
-
-      CEmbodiedEntity* m_pcIgnoredEmbodiedEntity;
-   };
-
-   /****************************************/
-   /****************************************/
-
    bool GetClosestEmbodiedEntityIntersectedByRay(SEmbodiedEntityIntersectionItem& s_item,
-                                                 CPositionalIndex<CEmbodiedEntity>& c_pos_index,
                                                  const CRay3& c_ray) {
-      CCheckEmbodiedEntitiesForIntersection cOp(c_ray);
-      c_pos_index.ForEntitiesAlongRay(c_ray, cOp, false);
-      s_item.IntersectedEntity = cOp.GetClosestEmbodiedEntity();
-      s_item.TOnRay = cOp.GetTOnRay();
+      /* This variable is instantiated at the first call of this function, once and forever */
+      static CSimulator& cSimulator = CSimulator::GetInstance();
+      /* Initialize s_item */
+      s_item.IntersectedEntity = NULL;
+      s_item.TOnRay = 1.0f;
+      /* Create a reference to the vector of physics engines */
+      CPhysicsEngine::TVector& vecEngines = cSimulator.GetPhysicsEngines();
+      /* Ask each engine to perform the ray query, keeping the closest intersection */
+      Real fTOnRay;
+      CEmbodiedEntity* pcEntity;
+      for(size_t i = 0; i < vecEngines.size(); ++i) {
+         pcEntity = vecEngines[i]->CheckIntersectionWithRay(fTOnRay, c_ray);
+         if(pcEntity != NULL) {
+            if(s_item.TOnRay > fTOnRay) {
+               s_item.TOnRay = fTOnRay;
+               s_item.IntersectedEntity = pcEntity;
+            }
+         }
+      }
+      /* Return true if an intersection was found */
       return (s_item.IntersectedEntity != NULL);
    }
 
@@ -498,13 +398,30 @@ namespace argos {
    /****************************************/
 
    bool GetClosestEmbodiedEntityIntersectedByRay(SEmbodiedEntityIntersectionItem& s_item,
-                                                 CPositionalIndex<CEmbodiedEntity>& c_pos_index,
                                                  const CRay3& c_ray,
                                                  CEmbodiedEntity& c_entity) {
-      CCheckEmbodiedEntitiesForIntersectionWIgnore cOp(c_ray, c_entity);
-      c_pos_index.ForEntitiesAlongRay(c_ray, cOp, false);
-      s_item.IntersectedEntity = cOp.GetClosestEmbodiedEntity();
-      s_item.TOnRay = cOp.GetTOnRay();
+      /* This variable is instantiated at the first call of this function, once and forever */
+      static CSimulator& cSimulator = CSimulator::GetInstance();
+      /* Initialize s_item */
+      s_item.IntersectedEntity = NULL;
+      s_item.TOnRay = 1.0f;
+      /* Create a reference to the vector of physics engines */
+      CPhysicsEngine::TVector& vecEngines = cSimulator.GetPhysicsEngines();
+      /* Ask each engine to perform the ray query, keeping the closest intersection
+         that does not involve the entity to discard */
+      Real fTOnRay;
+      CEmbodiedEntity* pcEntity;
+      for(size_t i = 0; i < vecEngines.size(); ++i) {
+         pcEntity = vecEngines[i]->CheckIntersectionWithRay(fTOnRay, c_ray);
+         if((pcEntity != NULL) &&
+            (pcEntity != &c_entity)){
+            if(s_item.TOnRay > fTOnRay) {
+               s_item.TOnRay = fTOnRay;
+               s_item.IntersectedEntity = pcEntity;
+            }
+         }
+      }
+      /* Return true if an intersection was found */
       return (s_item.IntersectedEntity != NULL);
    }
 

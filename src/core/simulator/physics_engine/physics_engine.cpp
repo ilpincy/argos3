@@ -19,10 +19,27 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   CPhysicsEngine::CPhysicsEngine() :
+      m_unIterations(10),
+      m_fPhysicsClockTick(m_fSimulationClockTick) {}
+
+   /****************************************/
+   /****************************************/
+
    void CPhysicsEngine::Init(TConfigurationNode& t_tree) {
       try {
          /* Get id from the XML */
          GetNodeAttribute(t_tree, "id", m_strId);
+         /* Get iterations per time step */
+         GetNodeAttributeOrDefault(t_tree, "iterations", m_unIterations, m_unIterations);
+         m_fPhysicsClockTick = GetSimulationClockTick() / static_cast<Real>(m_unIterations);
+         LOG << "[INFO] The physics engine \""
+             << GetId()
+             << "\" will perform "
+             << m_unIterations
+             << " iterations per tick (dt = "
+             << GetPhysicsClockTick() << " sec)"
+             << std::endl;
       }
       catch(CARGoSException& ex) {
          THROW_ARGOSEXCEPTION("Error initializing a physics engine");

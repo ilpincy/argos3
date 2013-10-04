@@ -76,9 +76,6 @@ namespace argos {
 
       /** Reference to the space */
       CSpace& m_cSpace;
-
-      /** Reference to the embodied entity index */
-      CPositionalIndex<CEmbodiedEntity>& m_cEmbodiedEntityIndex;
    };
 
 }
