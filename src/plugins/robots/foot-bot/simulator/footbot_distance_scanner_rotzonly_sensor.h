@@ -83,9 +83,6 @@ namespace argos {
       CVector3 m_cOriginRayEnd;
       CVector3 m_cRayStart;
       CVector3 m_cRayEnd;
-
-      /** Reference to the embodied entity index */
-      CPositionalIndex<CEmbodiedEntity>& m_cEmbodiedEntityIndex;
    };
 
 }

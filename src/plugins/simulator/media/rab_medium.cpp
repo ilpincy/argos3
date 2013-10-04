@@ -169,7 +169,6 @@ namespace argos {
                      /* Proceed if the two entities are not obstructed by another object */
                      cOcclusionCheckRay.SetEnd(cOtherRAB.GetPosition());
                      if((!GetClosestEmbodiedEntityIntersectedByRay(sIntersectionItem,
-                                                                   CSimulator::GetInstance().GetSpace().GetEmbodiedEntityIndex(),
                                                                    cOcclusionCheckRay,
                                                                    cRAB.GetReference())) ||
                         (&cOtherRAB.GetReference() == sIntersectionItem.IntersectedEntity)) {

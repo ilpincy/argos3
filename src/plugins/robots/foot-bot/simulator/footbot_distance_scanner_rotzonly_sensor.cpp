@@ -34,8 +34,7 @@ namespace argos {
       m_pcRNG(NULL),
       m_bAddNoise(false),
       m_cSpace(CSimulator::GetInstance().GetSpace()),
-      m_bShowRays(false),
-      m_cEmbodiedEntityIndex(m_cSpace.GetEmbodiedEntityIndex()) {}
+      m_bShowRays(false) {}
 
    /****************************************/
    /****************************************/
@@ -200,7 +199,6 @@ namespace argos {
       /* Get the closest intersection */
       SEmbodiedEntityIntersectionItem sIntersection;
       if(GetClosestEmbodiedEntityIntersectedByRay(sIntersection,
-                                                  m_cEmbodiedEntityIndex,
                                                   c_ray,
                                                   *m_pcEmbodiedEntity)) {
          if(m_bShowRays) m_pcControllableEntity->AddIntersectionPoint(c_ray, sIntersection.TOnRay);

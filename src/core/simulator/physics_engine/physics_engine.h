@@ -11,7 +11,9 @@ namespace argos {
    class CPhysicsEngine;
    class CPhysicsModel;
    class CEntity;
+   class CEmbodiedEntity;
    class CVector3;
+   class CRay3;
 }
 
 #include <map>
@@ -32,8 +34,7 @@ namespace argos {
 
    public:
 
-      CPhysicsEngine() :
-         m_fPhysicsEngineClock(0.0) {}
+      CPhysicsEngine();
       virtual ~CPhysicsEngine() {}
 
       virtual void Init(TConfigurationNode& t_tree);
@@ -70,26 +71,88 @@ namespace argos {
        */
       virtual void TransferEntities()  = 0;
 
+      /**
+       * Check whether an object in this engine intersects the given ray.
+       * @param f_t_on_ray In the parametric definition of <em>ray</em> = <em>starting_point</em> + <em>t</em> * <em>direction</em>, this parameter is <em>t</em>. A value between 0 and 1 means that the intersection point lies within the given ray; values outside this range mean that the intersection point is outside the ray extrema.
+       * @param c_ray The test ray.
+       * @returns A pointer to the embodied entity intersecting the ray, or <tt>NULL</tt> if no intersection occurred.
+       */
+      virtual CEmbodiedEntity* CheckIntersectionWithRay(Real& f_t_on_ray,
+                                                        const CRay3& c_ray) const = 0;
+
+      /**
+       * Returns the simulation clock tick.
+       * The clock tick is the time elapsed between two control steps
+       * in a simulation. This value is set in the XML file through
+       * the 'ticks_per_second' attribute of the <tt>&lt;experiment&gt;</tt>
+       * tag.
+       * @returns The simulation clock tick.
+       */
       static Real GetSimulationClockTick();
+
+      /**
+       * Returns the inverse of GetSimulationClockTick().
+       * @return The inverse of GetSimulationClockTick().
+       */
       static Real GetInverseSimulationClockTick();
+
+      /**
+       * Sets the simulation clock tick.
+       * The clock tick is the time elapsed between two control steps
+       * in a simulation. This value is set in the XML file through
+       * the <tt>ticks_per_second</tt> attribute of the
+       * <tt>&lt;experiment&gt;</tt> tag. You should never use this
+       * method in your code.
+       * @param f_simulation_clock_tick The new simulation clock tick.
+       */
       static void SetSimulationClockTick(Real f_simulation_clock_tick);
 
-      inline Real GetPhysicsEngineClock() const {
-         return m_fPhysicsEngineClock;
+      /**
+       * Returns the number of iterations per simulation clock tick.
+       * Physics engines can perform multiple updates for each simulation
+       * clock tick, to increase the accuracy of the simulation. This
+       * value is set to 1 by default. You can set a different value
+       * using the <tt>iterations</tt> attribute available for every
+       * physics engine tag.
+       * @see GetPhysicsClockTick()
+       */
+      inline UInt32 GetIterations() const {
+         return m_unIterations;
       }
 
-      inline void SetPhysicsEngineClock(Real f_physics_engine_clock) {
-         m_fPhysicsEngineClock = f_physics_engine_clock;
+      /**
+       * Returns the length of the physics engine tick.
+       * This value is calculated as
+       * GetSimulationClockTick() / static_cast<Real>(GetIterations()).
+       * @see GetIterations()
+       */
+      inline Real GetPhysicsClockTick() const {
+         return m_fPhysicsClockTick;
       }
 
+      /**
+       * Returns the id of this physics engine.
+       * @return The id of this physics engine.
+       */
       inline const std::string& GetId() const {
          return m_strId;
       }
+
+      /**
+       * Sets the id of this physics engine.
+       * @param str_id The wanted id.
+       */
       void SetId(const std::string& str_id) {
          m_strId = str_id;
       }
                
-   protected:
+   private:
+
+      /** The number of iterations per simulation time step */
+      UInt32 m_unIterations;
+
+      /** The clock tick for this physics engine */
+      Real m_fPhysicsClockTick;
 
       /** The physics engine's id. */
       std::string m_strId;
@@ -99,9 +162,6 @@ namespace argos {
 
       /** The inverse of m_fSimulationClockTick */
       static Real m_fInverseSimulationClockTick;
-
-      /** The current clock as seen by this physics engine */
-      Real m_fPhysicsEngineClock;
 
    };
 

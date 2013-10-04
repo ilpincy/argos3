@@ -16,11 +16,14 @@ namespace argos {
    CDynamics2DBoxModel::CDynamics2DBoxModel(CDynamics2DEngine& c_engine,
                                             CBoxEntity& c_entity) :
       CDynamics2DModel(c_engine, c_entity.GetEmbodiedEntity()),
+      m_bMovable(false),
       m_cBoxEntity(c_entity),
       m_pcGrippable(NULL),
       m_fMass(c_entity.GetMass()),
       m_ptShape(NULL),
       m_ptBody(NULL) {
+      /* Set movable flag */
+      m_bMovable = c_entity.GetEmbodiedEntity().IsMovable();
       /* Get the size of the entity */
       CVector3 cHalfSize = c_entity.GetSize() * 0.5f;
       /* Create a polygonal object in the physics space */
@@ -36,7 +39,7 @@ namespace argos {
       const CVector3& cPosition = GetEmbodiedEntity().GetPosition();
       CRadians cXAngle, cYAngle, cZAngle;
       GetEmbodiedEntity().GetOrientation().ToEulerAngles(cZAngle, cYAngle, cXAngle);
-      if(c_entity.GetEmbodiedEntity().IsMovable()) {
+      if(m_bMovable) {
          /* The box is movable */
          /* Create the body */
          m_ptBody =
@@ -80,6 +83,8 @@ namespace argos {
       }
       else {
          /* The box is not movable */
+         /* Create a static body */
+         m_ptBody = cpBodyNewStatic();
          /* Manually rotate the vertices */
          cpVect tRot = cpvforangle(cZAngle.GetValue());
          tVertices[0] = cpvrotate(tVertices[0], tRot);
@@ -88,17 +93,19 @@ namespace argos {
          tVertices[3] = cpvrotate(tVertices[3], tRot);
          /* Create the shape */
          m_ptShape =
-            cpSpaceAddStaticShape(m_cDyn2DEngine.GetPhysicsSpace(),
-                                  cpPolyShapeNew(m_cDyn2DEngine.GetGroundBody(),
-                                                 4,
-                                                 tVertices,
-                                                 cpv(cPosition.GetX(), cPosition.GetY())));
+            cpSpaceAddShape(m_cDyn2DEngine.GetPhysicsSpace(),
+                            cpPolyShapeNew(m_ptBody,
+                                           4,
+                                           tVertices,
+                                           cpv(cPosition.GetX(), cPosition.GetY())));
          
          m_ptShape->e = 0.0; // No elasticity
          m_ptShape->u = 0.1; // Little contact friction to help sliding away
          /* This shape is normal (not grippable, not gripper) */
          m_ptShape->collision_type = CDynamics2DEngine::SHAPE_NORMAL;
       }
+      /* Associate this model to the body data for ray queries */
+      m_ptBody->data = this;
       /* Calculate bounding box */
       GetBoundingBox().MinCorner.SetZ(GetEmbodiedEntity().GetPosition().GetZ());
       GetBoundingBox().MaxCorner.SetZ(GetEmbodiedEntity().GetPosition().GetZ() + m_cBoxEntity.GetSize().GetZ());
@@ -109,7 +116,7 @@ namespace argos {
    /****************************************/
 
    CDynamics2DBoxModel::~CDynamics2DBoxModel() {
-      if(m_ptBody != NULL) {
+      if(m_bMovable) {
          delete m_pcGrippable;
          cpSpaceRemoveConstraint(m_cDyn2DEngine.GetPhysicsSpace(), m_ptLinearFriction);
          cpSpaceRemoveConstraint(m_cDyn2DEngine.GetPhysicsSpace(), m_ptAngularFriction);
@@ -121,8 +128,9 @@ namespace argos {
          cpBodyFree(m_ptBody);
       }
       else {
-         cpSpaceRemoveStaticShape(m_cDyn2DEngine.GetPhysicsSpace(), m_ptShape);
+         cpSpaceRemoveShape(m_cDyn2DEngine.GetPhysicsSpace(), m_ptShape);
          cpShapeFree(m_ptShape);
+         cpBodyFree(m_ptBody);
          cpSpaceReindexStatic(m_cDyn2DEngine.GetPhysicsSpace());
       }
    }
@@ -130,38 +138,12 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   bool CDynamics2DBoxModel::CheckIntersectionWithRay(Real& f_t_on_ray,
-                                                       const CRay3& c_ray) const {
-      cpSegmentQueryInfo tInfo;
-      if(cpShapeSegmentQuery(m_ptShape,
-                             cpv(c_ray.GetStart().GetX(), c_ray.GetStart().GetY()),
-                             cpv(c_ray.GetEnd().GetX()  , c_ray.GetEnd().GetY()  ),
-                             &tInfo)) {
-      	 CVector3 cIntersectionPoint;
-      	 c_ray.GetPoint(cIntersectionPoint, tInfo.t);
-      	 if((cIntersectionPoint.GetZ() >= GetEmbodiedEntity().GetPosition().GetZ()) &&
-      			(cIntersectionPoint.GetZ() <= GetEmbodiedEntity().GetPosition().GetZ() + m_cBoxEntity.GetSize().GetZ()) ) {
-            f_t_on_ray = tInfo.t;
-            return true;
-      	 }
-      	 else {
-            return false;
-      	 }
-      }
-      else {
-         return false;
-      }
-   }
-
-   /****************************************/
-   /****************************************/
-
    bool CDynamics2DBoxModel::MoveTo(const CVector3& c_position,
-                                     const CQuaternion& c_orientation,
-                                     bool b_check_only) {
+                                    const CQuaternion& c_orientation,
+                                    bool b_check_only) {
       SInt32 nCollision;
       /* Check whether the box is movable or not */
-      if(m_cBoxEntity.GetEmbodiedEntity().IsMovable()) {
+      if(m_bMovable) {
          /* The box is movable */
          /* Save body position and orientation */
          cpVect tOldPos = m_ptBody->p;
@@ -216,7 +198,7 @@ namespace argos {
    /****************************************/
 
    void CDynamics2DBoxModel::Reset() {
-      if(m_ptBody != NULL) {
+      if(m_bMovable) {
          /* Reset body position */
          const CVector3& cPosition = GetEmbodiedEntity().GetInitPosition();
          m_ptBody->p = cpv(cPosition.GetX(), cPosition.GetY());
@@ -250,7 +232,7 @@ namespace argos {
    /****************************************/
 
    void CDynamics2DBoxModel::UpdateEntityStatus() {
-      if(m_ptBody != NULL) {
+      if(m_bMovable) {
          /* Update bounding box */
          CalculateBoundingBox();
          /* Update entity position and orientation */

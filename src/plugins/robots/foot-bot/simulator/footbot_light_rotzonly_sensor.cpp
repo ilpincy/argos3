@@ -56,8 +56,7 @@ namespace argos {
       m_bShowRays(false),
       m_pcRNG(NULL),
       m_bAddNoise(false),
-      m_cSpace(CSimulator::GetInstance().GetSpace()),
-      m_cEmbodiedEntityIndex(m_cSpace.GetEmbodiedEntityIndex()) {}
+      m_cSpace(CSimulator::GetInstance().GetSpace()) {}
 
    /****************************************/
    /****************************************/
@@ -139,7 +138,6 @@ namespace argos {
             cOcclusionCheckRay.SetEnd(cLight.GetPosition());
             /* Check occlusion between the foot-bot and the light */
             if(! GetClosestEmbodiedEntityIntersectedByRay(sIntersection,
-                                                          m_cEmbodiedEntityIndex,
                                                           cOcclusionCheckRay,
                                                           *m_pcEmbodiedEntity)) {
                /* The light is not occluded */

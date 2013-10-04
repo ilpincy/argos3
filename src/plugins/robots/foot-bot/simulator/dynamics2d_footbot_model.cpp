@@ -116,6 +116,8 @@ namespace argos {
                                                                          1.0f));
       m_ptBaseGripperAngularMotion->maxBias = 0.0f; /* disable joint correction */
       m_ptBaseGripperAngularMotion->maxForce = FOOTBOT_MAX_TORQUE; /* limit the dragging torque */
+      /* Associate this model to the body data for ray queries */
+      m_ptActualBaseBody->data = this;
       /* Switch to active mode if necessary */
       if(m_unLastTurretMode == MODE_SPEED_CONTROL ||
          m_unLastTurretMode == MODE_POSITION_CONTROL) {
@@ -163,32 +165,6 @@ namespace argos {
       cpSpaceRemoveShape(m_cDyn2DEngine.GetPhysicsSpace(), m_ptBaseShape);
       cpShapeFree(m_ptBaseShape);
       cpBodyFree(m_ptActualBaseBody);
-   }
-
-   /****************************************/
-   /****************************************/
-
-   bool CDynamics2DFootBotModel::CheckIntersectionWithRay(Real& f_t_on_ray,
-                                                           const CRay3& c_ray) const {
-      cpSegmentQueryInfo tInfo;
-      if(cpShapeSegmentQuery(m_ptBaseShape,
-                             cpv(c_ray.GetStart().GetX(), c_ray.GetStart().GetY()),
-                             cpv(c_ray.GetEnd().GetX()  , c_ray.GetEnd().GetY()  ),
-                             &tInfo)) {
-      	 CVector3 cIntersectionPoint;
-      	 c_ray.GetPoint(cIntersectionPoint, tInfo.t);
-      	 if((cIntersectionPoint.GetZ() >= GetEmbodiedEntity().GetPosition().GetZ()                 ) &&
-      			(cIntersectionPoint.GetZ() <= GetEmbodiedEntity().GetPosition().GetZ() + FOOTBOT_HEIGHT) ) {
-            f_t_on_ray = tInfo.t;
-            return true;
-      	 }
-      	 else {
-            return false;
-      	 }
-      }
-      else {
-         return false;
-      }
    }
 
    /****************************************/

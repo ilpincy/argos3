@@ -179,20 +179,6 @@ namespace argos {
       CPhysicsModel& GetPhysicsModel(const std::string& str_engine_id);
 
       /**
-       * Checks whether the given ray is occluded by this entity.
-       * Internally it relies on the physics engine native ray cast facilities.
-       * In case this entity is associated to multiple physics models,
-       * all of the models are checked and the closest occlusion is returned.
-       * @param f_t_on_ray In the parametric definition of <em>ray</em> = <em>starting_point</em> + <em>t</em> * <em>direction</em>, this parameter is <em>t</em>. A value between 0 and 1 means that the intersection point lies within the given ray; values outside this range mean that the intersection point is outside the ray extrema.
-       * @param c_ray The test ray.
-       * @return <tt>true</tt> if the ray is occluded by this entity.
-       * @throws CARGoSException if this entity is not associated to any model.
-       * @see CPhysicsModel::CheckIntersectionWithRay()
-       */
-      virtual bool CheckIntersectionWithRay(Real& f_t_on_ray,
-                                            const CRay3& c_ray) const;
-
-      /**
        * Moves the entity to the wanted position and orientation.
        * The movement is allowed only if the object does not collide
        * with anything once in the new position. In case of multiple
@@ -293,7 +279,7 @@ namespace argos {
 
       SEmbodiedEntityIntersectionItem() :
          IntersectedEntity(NULL),
-         TOnRay(0.0f) {}
+         TOnRay(1.0f) {}
 
       SEmbodiedEntityIntersectionItem(CEmbodiedEntity* pc_entity,
                                       Real f_t_on_ray) :
@@ -318,11 +304,9 @@ namespace argos {
    };
 
    extern bool GetClosestEmbodiedEntityIntersectedByRay(SEmbodiedEntityIntersectionItem& s_item,
-                                                        CPositionalIndex<CEmbodiedEntity>& c_pos_index,
                                                         const CRay3& c_ray);
 
    extern bool GetClosestEmbodiedEntityIntersectedByRay(SEmbodiedEntityIntersectionItem& s_item,
-                                                        CPositionalIndex<CEmbodiedEntity>& c_pos_index,
                                                         const CRay3& c_ray,
                                                         CEmbodiedEntity& c_entity);
 
