@@ -32,7 +32,7 @@ rm -rf $PKG
 mkdir -p $PKG $OUTPUT
 make
 make doc
-make DESTDIR=$PKG install
+make DESTDIR=$PKG install/strip
 cd ..
 
 # Remove /etc/ld.so.conf.d, not supported by Slackware
