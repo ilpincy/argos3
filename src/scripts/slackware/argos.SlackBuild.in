@@ -8,6 +8,13 @@ if [ $EUID -ne 0 ]; then
    exit 1
 fi
 
+# Make sure the prefix is /usr
+CMAKE_INSTALL_PREFIX=$(cmake -L 2> /dev/null | grep CMAKE_INSTALL_PREFIX | cut -d= -f2)
+if [ "x$CMAKE_INSTALL_PREFIX" != "x/usr" ]; then
+    echo "CMAKE_INSTALL_PREFIX is set to \"${CMAKE_INSTALL_PREFIX}\" instead of \"/usr\"" 1>&2
+    exit
+fi
+
 PRGNAM=@CPACK_PACKAGE_NAME@
 VERSION=${VERSION:-@CPACK_PACKAGE_VERSION@}
 TAG=${TAG:-@CPACK_PACKAGE_RELEASE@}
