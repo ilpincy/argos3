@@ -6,7 +6,7 @@
   <!-- ************************* -->
   <framework>
     <system threads="0" />
-    <experiment length="0" ticks_per_second="10" random_seed="1234" />
+    <experiment length="1" ticks_per_second="10" random_seed="1234" />
   </framework>
 
   <!-- ****************** -->
@@ -54,16 +54,16 @@
   <!-- *********************** -->
   <!-- * Arena configuration * -->
   <!-- *********************** -->
-  <arena size="10, 10, 5" center="0,0,1">
+  <arena size="10, 10, 5" center="0,0,2.5">
     <!-- <floor id="f" source="loop_functions" pixels_per_meter="100" /> -->
 
-    <box id="t1" size="0.1, 0.1, 0.1" movable="true" mass="1">
-      <body position="1,1,0.5" orientation="0,45,0" />
-    </box>
+    <!-- <box id="t1" size="0.1, 0.1, 0.1" movable="true" mass="1"> -->
+    <!--   <body position="1,1,0.5" orientation="0,45,0" /> -->
+    <!-- </box> -->
 
-    <box id="t2" size="0.1, 0.1, 0.1" movable="true" mass="1">
-      <body position="1,1,0.7" orientation="0,70,0" />
-    </box>
+    <!-- <box id="t2" size="0.1, 0.1, 0.1" movable="true" mass="1"> -->
+    <!--   <body position="1,1,0.7" orientation="0,70,0" /> -->
+    <!-- </box> -->
 
     <!-- <box id="bn" size="0.1, 10, 0.2" movable="false"> -->
     <!--   <body position="5,0,0"  orientation="0,0,0" /> -->
@@ -99,8 +99,17 @@
     <!-- </distribute> -->
 
     <!-- <cylinder id="cyl0" radius="0.05" height="0.2" movable="true" mass="0.1" > -->
-    <!--   <body position="0,0.5,0" orientation="0,0,0" /> -->
+    <!--   <body position="1,1,1" orientation="0,60,0" /> -->
     <!-- </cylinder> -->
+
+    <distribute>
+      <position method="uniform" min="-2,-2,0" max="2,2,5" />
+      <orientation method="uniform" min="0,0,0" max="360,360,360" />
+      <entity quantity="5" max_trials="100" base_num="100">
+        <cylinder id="cyl" radius="0.05" height="0.2" movable="true" mass="0.1" />
+        <!-- <box id="bn" size="0.1, 0.2, 0.3" movable="true" mass="0.1" /> -->
+      </entity>
+    </distribute>
 
   </arena>
 
