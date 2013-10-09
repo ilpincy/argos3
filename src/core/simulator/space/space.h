@@ -232,12 +232,10 @@ namespace argos {
        * Updates the space.
        * The operations are performed in the following order:
        * <ol>
-       * <li>UpdateIndices()
        * <li>UpdateControllableEntities()
        * <li>UpdatePhysics()
        * <li>UpdateMedia()
        * </ol>
-       * @see UpdateIndices()
        * @see UpdateControllableEntities()
        * @see UpdatePhysics()
        * @see UpdateMedia()
@@ -367,21 +365,12 @@ namespace argos {
          m_cArenaCenter = c_center;
       }
 
-      /**
-       * Returns the positional index for embodied entities.
-       * @return The positional index for embodied entities.
-       */
-      inline CPositionalIndex<CEmbodiedEntity>& GetEmbodiedEntityIndex() {
-         return *m_pcEmbodiedEntityIndex;
-      }
-
       virtual void AddControllableEntity(CControllableEntity& c_entity);
       virtual void RemoveControllableEntity(CControllableEntity& c_entity);
       virtual void AddEntityToPhysicsEngine(CEmbodiedEntity& c_entity);
       
    protected:
 
-      virtual void UpdateIndices();
       virtual void UpdateControllableEntities() = 0;
       virtual void UpdatePhysics() = 0;
       virtual void UpdateMedia() = 0;
@@ -423,10 +412,6 @@ namespace argos {
 
       /** A vector of controllable entities */
       CControllableEntity::TVector m_vecControllableEntities;
-
-      /** A positional index for embodied entities */
-      CPositionalIndex<CEmbodiedEntity>* m_pcEmbodiedEntityIndex;
-      CPositionalIndex<CEmbodiedEntity>::COperation* m_pcEmbodiedEntityGridUpdateOperation;
 
       /** The floor entity */
       CFloorEntity* m_pcFloorEntity;

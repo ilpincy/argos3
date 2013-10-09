@@ -155,7 +155,7 @@ namespace argos {
                    "range_and_bearing", "medium",
                    "Carlo Pinciroli [ilpincy@gmail.com]",
                    "1.0",
-                   "The range-and-bearing sensor",
+                   "The range-and-bearing sensor.",
                    "This sensor allows robots to perform situated communication, i.e., a form of\n"
                    "wireless communication whereby the receiver also knows the location of the\n"
                    "sender with respect to its own frame of reference.\n"

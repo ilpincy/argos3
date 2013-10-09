@@ -19,6 +19,13 @@ else(ARGOS_BUILD_FOR STREQUAL "simulator")
 endif(ARGOS_BUILD_FOR STREQUAL "simulator")
 
 #
+# Optimize code for current platform?
+#
+if(NOT DEFINED ARGOS_BUILD_NATIVE)
+  option(ARGOS_BUILD_NATIVE "ON -> compile with platform-specific optimizations, OFF -> compile to portable binary" OFF)
+endif(NOT DEFINED ARGOS_BUILD_NATIVE)
+
+#
 # Compile thread-safe or thread-unsafe log
 # By default, use the thread-safe version
 # When compiling for the simulator, the thread-safe version is mandatory

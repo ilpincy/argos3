@@ -24,8 +24,6 @@ namespace argos {
 
    CSpace::CSpace() :
       m_unSimulationClock(0),
-      m_pcEmbodiedEntityIndex(NULL),
-      m_pcEmbodiedEntityGridUpdateOperation(NULL),
       m_pcFloorEntity(NULL),
       m_ptPhysicsEngines(NULL),
       m_ptMedia(NULL) {}
@@ -40,32 +38,6 @@ namespace argos {
       /* Get the arena center and size */
       GetNodeAttributeOrDefault(t_tree, "center", m_cArenaCenter, m_cArenaCenter);
       GetNodeAttribute(t_tree, "size", m_cArenaSize);
-      /* Get the positional index method */
-      std::string strPosIndexMethod("grid");
-      GetNodeAttributeOrDefault(t_tree, "positional_index", strPosIndexMethod, strPosIndexMethod);
-      /* Create the positional index for embodied entities */
-      if(strPosIndexMethod == "grid") {
-         size_t punGridSize[3];
-         if(!NodeAttributeExists(t_tree, "positional_grid_size")) {
-            punGridSize[0] = m_cArenaSize.GetX();
-            punGridSize[1] = m_cArenaSize.GetY();
-            punGridSize[2] = m_cArenaSize.GetZ();
-         }
-         else {
-            std::string strPosGridSize;
-            GetNodeAttribute(t_tree, "positional_grid_size", strPosGridSize);
-            ParseValues<size_t>(strPosGridSize, 3, punGridSize, ',');
-         }
-         CGrid<CEmbodiedEntity>* pcGrid = new CGrid<CEmbodiedEntity>(
-            m_cArenaCenter - m_cArenaSize * 0.5f, m_cArenaCenter + m_cArenaSize * 0.5f,
-            punGridSize[0], punGridSize[1], punGridSize[2]);
-         m_pcEmbodiedEntityGridUpdateOperation = new CEmbodiedEntityGridUpdater(*pcGrid);
-         pcGrid->SetUpdateEntityOperation(m_pcEmbodiedEntityGridUpdateOperation);
-         m_pcEmbodiedEntityIndex = pcGrid;
-      }
-      else {
-         THROW_ARGOSEXCEPTION("Unknown method \"" << strPosIndexMethod << "\" for the positional index.");
-      }
       /*
        * Add and initialize all entities in XML
        */
@@ -88,8 +60,6 @@ namespace argos {
             Distribute(*itArenaItem);
          }
       }
-      /* Update space-related data */
-      UpdateIndices();
    }
 
    /****************************************/
@@ -102,8 +72,6 @@ namespace argos {
       for(UInt32 i = 0; i < m_vecEntities.size(); ++i) {
          m_vecEntities[i]->Reset();
       }
-      /* Update space-related data */
-      UpdateIndices();
    }
 
    /****************************************/
@@ -114,11 +82,6 @@ namespace argos {
       while(!m_vecRootEntities.empty()) {
          CallEntityOperation<CSpaceOperationRemoveEntity, CSpace, void>(*this, *m_vecRootEntities.back());
       }
-      /* Get rid of positional index */
-      if(m_pcEmbodiedEntityGridUpdateOperation != NULL) {
-         delete m_pcEmbodiedEntityGridUpdateOperation;
-      }
-      delete m_pcEmbodiedEntityIndex;
    }
 
    /****************************************/
@@ -151,8 +114,6 @@ namespace argos {
    /****************************************/
 
    void CSpace::Update() {
-      /* Update space-related data */
-      UpdateIndices();
       /* Update the controllable entities */
       UpdateControllableEntities();
       /* Update the physics engines */
@@ -224,13 +185,6 @@ namespace argos {
       }
    }
       
-   /****************************************/
-   /****************************************/
-
-   void CSpace::UpdateIndices() {
-      m_pcEmbodiedEntityIndex->Update();
-   }
-
    /****************************************/
    /****************************************/
 

@@ -110,7 +110,7 @@ namespace argos {
                           "qt-opengl",
                           "Carlo Pinciroli [ilpincy@gmail.com]",
                           "1.0",
-                          "An interactive graphical renderer based on QT and OpenGL",
+                          "An interactive graphical renderer based on QT and OpenGL.",
                           "The QT-OpenGL renderer is a graphical renderer based on QT >= 4.5 and OpenGL.\n"
                           "It allows the user to watch and modify the simulation as it's running in an\n"
                           "intuitive way.\n\n"

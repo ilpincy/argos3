@@ -117,7 +117,7 @@ namespace argos {
                    "footbot_motor_ground", "rot_z_only",
                    "Carlo Pinciroli [ilpincy@gmail.com]",
                    "1.0",
-                   "The foot-bot motor ground sensor",
+                   "The foot-bot motor ground sensor.",
                    "This sensor accesses the foot-bot motor ground sensor. For a complete description\n"
                    "of its usage, refer to the ci_footbot_motor_ground_sensor.h interface. For the XML\n"
                    "configuration, refer to the default ground sensor.\n",

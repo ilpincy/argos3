@@ -322,7 +322,6 @@ namespace argos {
       void ApplyTo(CSpace& c_space, CEmbodiedEntity& c_entity) {
          /* Add entity to space */
          c_space.AddEntity(c_entity);
-         c_space.GetEmbodiedEntityIndex().AddEntity(c_entity);
          /* Try to add entity to physics engine(s) */
          c_space.AddEntityToPhysicsEngine(c_entity);
       }
@@ -357,7 +356,6 @@ namespace argos {
              */
          }
          /* Remove entity from space */
-         c_space.GetEmbodiedEntityIndex().RemoveEntity(c_entity);
          c_space.RemoveEntity(c_entity);
       }
    };

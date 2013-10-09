@@ -357,7 +357,7 @@ namespace argos {
                            "dynamics2d",
                            "Carlo Pinciroli [ilpincy@gmail.com]",
                            "1.0",
-                           "A 2D dynamics physics engine",
+                           "A 2D dynamics physics engine.",
                            "This physics engine is a 2D dynamics engine based on the Chipmunk library\n"
                            "(http://code.google.com/p/chipmunk-physics).\n\n"
                            "REQUIRED XML CONFIGURATION\n\n"
