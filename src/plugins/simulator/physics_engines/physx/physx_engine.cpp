@@ -212,6 +212,8 @@ namespace argos {
       m_pcGround->release();
       m_pcDefaultMaterial->release();
       m_pcScene->release();
+      delete m_pcSceneDesc;
+      delete m_pcCPUDispatcher;
       PxCloseExtensions();
       m_pcCooking->release();
       m_pcPhysics->release();

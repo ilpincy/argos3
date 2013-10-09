@@ -16,6 +16,7 @@ namespace argos {
 
    template<class ENTITY>
    CPhysXStretchableObjectModel<ENTITY>::~CPhysXStretchableObjectModel() {
+      delete m_pcGeometry;
       if(GetEmbodiedEntity().IsMovable()) {
          GetPhysXEngine().GetScene().removeActor(*m_pcDynamicBody);
          m_pcDynamicBody->release();
