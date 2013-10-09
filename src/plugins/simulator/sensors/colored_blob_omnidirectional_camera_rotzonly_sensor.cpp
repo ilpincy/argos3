@@ -123,8 +123,6 @@ namespace argos {
       m_pcControllableEntity = &(c_entity.GetComponent<CControllableEntity>("controller"));
       /* Get embodied entity */
       m_pcEmbodiedEntity = &(c_entity.GetComponent<CEmbodiedEntity>("body"));
-      /* Get embodied entity index */
-      m_pcEmbodiedIndex = &(CSimulator::GetInstance().GetSpace().GetEmbodiedEntityIndex());
    }
 
    /****************************************/

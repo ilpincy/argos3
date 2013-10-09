@@ -34,8 +34,16 @@ namespace argos {
          Set(c_start, c_direction, f_length);
       }
 
+      inline CVector3& GetStart() {
+         return m_cStart;
+      }
+
       inline const CVector3& GetStart() const {
          return m_cStart;
+      }
+
+      inline CVector3& GetEnd() {
+         return m_cEnd;
       }
 
       inline const CVector3& GetEnd() const {
