@@ -7,6 +7,7 @@ namespace argos {
    CPhysXStretchableObjectModel<ENTITY>::CPhysXStretchableObjectModel(CPhysXEngine& c_engine,
                                                                       ENTITY& c_entity) :
       CPhysXModel(c_engine, c_entity.GetEmbodiedEntity()),
+      m_pcGeometry(NULL),
       m_cEntity(c_entity),
       m_fMass(c_entity.GetMass()) {}
 
@@ -91,7 +92,25 @@ namespace argos {
 
    template<class ENTITY>
    bool CPhysXStretchableObjectModel<ENTITY>::IsCollidingWithSomething() const {
-      return false;
+      /* Get transformation */
+      physx::PxTransform cTrans(m_pcGenericBody->getGlobalPose());
+      /* Create buffer to store the possibly overlapping shapes */
+      physx::PxShape* pcOverlappingShapes[16];
+      /* Perform the query */
+      physx::PxI32 nShapes = GetPhysXEngine().GetScene().overlapMultiple(*m_pcGeometry,
+                                                                         cTrans,
+                                                                         pcOverlappingShapes,
+                                                                         16);
+      if((nShapes == 0) ||
+         ((nShapes == 1) && (pcOverlappingShapes[0] == m_pcShape))) {
+         /* No shape overlaps the geometry, or the only shape
+            that does is the object's shape itself */
+         return false;
+      }
+      else {
+         /* Other shapes overlap the given geometry, we have a collision */
+         return true;
+      }
    }
 
    /****************************************/

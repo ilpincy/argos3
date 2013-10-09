@@ -36,7 +36,7 @@ namespace argos {
       physx::PxTransform cTranslation2(cPos);
       physx::PxTransform cFinalTrans = cTranslation2 * cRotation * cTranslation1;
       /* Create the box geometry */
-      physx::PxBoxGeometry cBoxGeom(cHalfSize);
+      m_pcGeometry = new physx::PxBoxGeometry(cHalfSize);
       /* Create the box body */
       if(GetEmbodiedEntity().IsMovable()) {
          /*
@@ -45,7 +45,7 @@ namespace argos {
          /* Create the body in its initial position and orientation */
          m_pcDynamicBody = GetPhysXEngine().GetPhysics().createRigidDynamic(cFinalTrans);
          /* Create the shape */
-         m_pcShape = m_pcDynamicBody->createShape(cBoxGeom,
+         m_pcShape = m_pcDynamicBody->createShape(*m_pcGeometry,
                                                   GetPhysXEngine().GetDefaultMaterial());
          /* Switch continuous collision detection (CCD) on */
          m_pcShape->setFlag(physx::PxShapeFlag::eUSE_SWEPT_BOUNDS, true);
@@ -61,7 +61,7 @@ namespace argos {
          /* Create the body in its initial position and orientation */
          m_pcStaticBody = GetPhysXEngine().GetPhysics().createRigidStatic(cFinalTrans);
          /* Create the shape */
-         m_pcShape = m_pcStaticBody->createShape(cBoxGeom,
+         m_pcShape = m_pcStaticBody->createShape(*m_pcGeometry,
                                                  GetPhysXEngine().GetDefaultMaterial());
          /* Add body to the scene */
          GetPhysXEngine().GetScene().addActor(*m_pcStaticBody);

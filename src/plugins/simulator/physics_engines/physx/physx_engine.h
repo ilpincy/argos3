@@ -78,6 +78,14 @@ namespace argos {
       }
 
       /**
+       * Returns the PhysX physics as a const reference.
+       * @return The PhysX physics as a const reference.
+       */
+      inline const physx::PxPhysics& GetPhysics() const {
+         return *m_pcPhysics;
+      }
+
+      /**
        * Returns the cooking subsystem.
        * The cooking subsystem is used to create convex meshes.
        * @return The cooking subsystem.
@@ -87,10 +95,27 @@ namespace argos {
       }
 
       /**
+       * Returns the cooking subsystem as a const reference.
+       * The cooking subsystem is used to create convex meshes.
+       * @return The cooking subsystem as a const reference.
+       */
+      inline const physx::PxCooking& GetCooking() const {
+         return *m_pcCooking;
+      }
+
+      /**
        * Returns the PhysX scene.
        * @return The PhysX scene.
        */
       inline physx::PxScene& GetScene() {
+         return *m_pcScene;
+      }
+
+      /**
+       * Returns the PhysX scene as a const reference.
+       * @return The PhysX scene as a const reference.
+       */
+      inline const physx::PxScene& GetScene() const {
          return *m_pcScene;
       }
 

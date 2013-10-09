@@ -50,12 +50,12 @@ namespace argos {
       physx::PxTransform cTranslation2(cPos);
       physx::PxTransform cFinalTrans = cTranslation2 * cRotation * cTranslation1;
       /* Create cylinder geometry */
-      physx::PxConvexMeshGeometry cGeometry(m_pcCylinderMesh,
-                                            physx::PxMeshScale(
-                                               physx::PxVec3(c_entity.GetRadius(),
-                                                             c_entity.GetHeight(),
-                                                             c_entity.GetRadius()),
-                                               physx::PxQuat::createIdentity()));
+      m_pcGeometry = new physx::PxConvexMeshGeometry(m_pcCylinderMesh,
+                                                     physx::PxMeshScale(
+                                                        physx::PxVec3(c_entity.GetRadius(),
+                                                                      c_entity.GetHeight(),
+                                                                      c_entity.GetRadius()),
+                                                        physx::PxQuat::createIdentity()));
       /* Create the cylinder body */
       if(GetEmbodiedEntity().IsMovable()) {
          /*
@@ -64,7 +64,7 @@ namespace argos {
          /* Create the body in its initial position and orientation */
          m_pcDynamicBody = GetPhysXEngine().GetPhysics().createRigidDynamic(cFinalTrans);
          /* Create the shape */
-         m_pcShape = m_pcDynamicBody->createShape(cGeometry,
+         m_pcShape = m_pcDynamicBody->createShape(*m_pcGeometry,
                                                   GetPhysXEngine().GetDefaultMaterial());
          /* Switch continuous collision detection (CCD) on */
          m_pcShape->setFlag(physx::PxShapeFlag::eUSE_SWEPT_BOUNDS, true);
@@ -80,7 +80,7 @@ namespace argos {
          /* Create the body in its initial position and orientation */
          m_pcStaticBody = GetPhysXEngine().GetPhysics().createRigidStatic(cFinalTrans);
          /* Create the shape */
-         m_pcShape = m_pcStaticBody->createShape(cGeometry,
+         m_pcShape = m_pcStaticBody->createShape(*m_pcGeometry,
                                                  GetPhysXEngine().GetDefaultMaterial());
          /* Add body to the scene */
          GetPhysXEngine().GetScene().addActor(*m_pcStaticBody);

@@ -60,6 +60,14 @@ namespace argos {
          return m_cPhysXEngine;
       }
 
+      /**
+       * Returns the PhysX engine state as a const reference.
+       * @return The PhysX engine state as a const reference.
+       */
+      inline const CPhysXEngine& GetPhysXEngine() const {
+         return m_cPhysXEngine;
+      }
+
    private:
 
       /** Reference to the PhysX engine state */

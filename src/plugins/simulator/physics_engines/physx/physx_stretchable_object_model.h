@@ -50,9 +50,11 @@ namespace argos {
    protected:
 
       union {
+         physx::PxRigidActor* m_pcGenericBody;
          physx::PxRigidDynamic* m_pcDynamicBody;
          physx::PxRigidStatic* m_pcStaticBody;
       };
+      physx::PxGeometry* m_pcGeometry;
 
       ENTITY&         m_cEntity;
       physx::PxVec3   m_cBaseCenterLocal;
