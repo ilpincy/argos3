@@ -47,8 +47,6 @@ namespace argos {
          /* Create the shape */
          m_pcShape = m_pcDynamicBody->createShape(*m_pcGeometry,
                                                   GetPhysXEngine().GetDefaultMaterial());
-         /* Switch continuous collision detection (CCD) on */
-         m_pcShape->setFlag(physx::PxShapeFlag::eUSE_SWEPT_BOUNDS, true);
          /* Set body mass */
          physx::PxRigidBodyExt::setMassAndUpdateInertia(*m_pcDynamicBody, m_fMass);
          /* Add body to the scene */

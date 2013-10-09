@@ -90,7 +90,6 @@ namespace argos {
       }
       /* Generate contacts for all that were not filtered above */
       c_pair_flags = physx::PxPairFlag::eCONTACT_DEFAULT;
-      c_pair_flags |= physx::PxPairFlag::eSWEPT_INTEGRATION_LINEAR;
       return physx::PxFilterFlag::eDEFAULT;
    }
    
