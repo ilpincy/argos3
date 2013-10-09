@@ -1,12 +1,15 @@
 #
 # Headers
 #
-# argos3/plugins/simulator/physics_engines/physx_ZN5physx31PxDefaultSimulationFilterShaderEjNS_12PxFilterDataEjS0_RNS_7PxFlagsINS_10PxPairFlag4EnumEtEEPKvj
+# argos3/plugins/simulator/physics_engines/physx
 # Headers for the PhysX engine
 set(ARGOS3_HEADERS_PLUGINS_SIMULATOR_PHYSICS_ENGINES_PHYSX
   physx_engine.h
   physx_model.h
-  physx_box_model.h)
+  physx_stretchable_object_model.h
+  physx_stretchable_object_model_impl.h
+  physx_box_model.h
+  physx_cylinder_model.h)
 
 #
 # Source files
@@ -14,7 +17,8 @@ set(ARGOS3_HEADERS_PLUGINS_SIMULATOR_PHYSICS_ENGINES_PHYSX
 set(ARGOS3_SOURCES_PLUGINS_SIMULATOR_PHYSICS_ENGINES_PHYSX
   ${ARGOS3_HEADERS_PLUGINS_SIMULATOR_PHYSICS_ENGINES_PHYSX}
   physx_engine.cpp
-  physx_box_model.cpp)
+  physx_box_model.cpp
+  physx_cylinder_model.cpp)
 
 #
 # Set the include and link path

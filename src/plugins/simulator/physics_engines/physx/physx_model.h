@@ -18,6 +18,14 @@ namespace argos {
 
 namespace argos {
 
+   /**
+    * The base class for models in the PhysX engine.
+    * All the models in the PhysX engine inherit from this class, which
+    * provides the additional method GetPhysXEngine() over the CPhysicsModel
+    * interface.
+    * @see CPhysicsModel
+    * @see CPhysXEngine
+    */
    class CPhysXModel : public CPhysicsModel {
 
    public:
@@ -33,9 +41,6 @@ namespace argos {
 
       virtual ~CPhysXModel() {}
 
-      virtual bool CheckIntersectionWithRay(Real& f_distance,
-                                            const CRay3& c_ray) const = 0;
-
       virtual bool MoveTo(const CVector3& c_position,
                           const CQuaternion& c_orientation,
                           bool b_check_only = false) {
@@ -47,12 +52,17 @@ namespace argos {
       virtual void UpdateEntityStatus() = 0;
       virtual void UpdateFromEntityStatus() = 0;
 
+      /**
+       * Returns the PhysX engine state.
+       * @return The PhysX engine state.
+       */
       inline CPhysXEngine& GetPhysXEngine() {
          return m_cPhysXEngine;
       }
 
    private:
 
+      /** Reference to the PhysX engine state */
       CPhysXEngine& m_cPhysXEngine;
 
    };

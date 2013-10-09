@@ -7,6 +7,8 @@
 #include "physx_engine.h"
 #include "physx_model.h"
 
+#include <argos3/core/utility/math/ray3.h>
+
 #if defined(PX_LINUX)
 #   include <malloc.h> // for memalign()
 #else
@@ -99,6 +101,7 @@ namespace argos {
       m_cErrorCallback(*this),
       m_pcFoundation(NULL),
       m_pcPhysics(NULL),
+      m_pcCooking(NULL),
       m_pcCPUDispatcher(NULL),
       m_pcSceneDesc(NULL),
       m_pcScene(NULL),
@@ -145,6 +148,12 @@ namespace argos {
          if(m_pcPhysics == NULL) {
             THROW_ARGOSEXCEPTION("Error calling PxCreatePhysics()");
          }
+         /* Create cooking subsystem for convex meshes */
+         m_pcCooking = PxCreateCooking(PX_PHYSICS_VERSION, *m_pcFoundation, physx::PxCookingParams());
+         if (m_pcCooking == NULL) {
+            THROW_ARGOSEXCEPTION("Error calling PxCreateCooking()");
+         }
+         /* Create extension subsystem */
          if (!PxInitExtensions(*m_pcPhysics)) {
             THROW_ARGOSEXCEPTION("Error calling PxInitExtensions()");
          }
@@ -204,6 +213,7 @@ namespace argos {
       m_pcDefaultMaterial->release();
       m_pcScene->release();
       PxCloseExtensions();
+      m_pcCooking->release();
       m_pcPhysics->release();
       m_pcFoundation->release();
    }
@@ -275,7 +285,35 @@ namespace argos {
 
    CEmbodiedEntity* CPhysXEngine::CheckIntersectionWithRay(Real& f_t_on_ray,
                                                            const CRay3& c_ray) const {
-      return NULL;
+      /*
+       * Set ray data
+       */
+      /* Ray start */
+      physx::PxVec3 cRayStart;
+      CVector3ToPxVec3(c_ray.GetStart(), cRayStart);
+      /* Ray direction (normalized) */
+      CVector3 cARGoSRayDir;
+      c_ray.GetDirection(cARGoSRayDir);
+      physx::PxVec3 cRayDir;
+      CVector3ToPxVec3(cARGoSRayDir, cRayDir);
+      /* Ray length */
+      physx::PxReal fRange = c_ray.GetLength();
+      /*
+       * Perform the query
+       */
+      /* Buffer for the results */
+      physx::PxRaycastHit cResult;
+      if(m_pcScene->raycastSingle(cRayStart, cRayDir, fRange,
+                                  physx::PxSceneQueryFlag::eDISTANCE,
+                                  cResult)) {
+         /* The ray hits something */
+         f_t_on_ray = cResult.distance / fRange;
+         return &(reinterpret_cast<CPhysXModel*>(cResult.shape->userData)->GetEmbodiedEntity());
+      }
+      else {
+         /* The ray does not hit anything */
+         return NULL;
+      }
    }
 
    /****************************************/

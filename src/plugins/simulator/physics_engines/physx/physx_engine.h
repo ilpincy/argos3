@@ -78,6 +78,15 @@ namespace argos {
       }
 
       /**
+       * Returns the cooking subsystem.
+       * The cooking subsystem is used to create convex meshes.
+       * @return The cooking subsystem.
+       */
+      inline physx::PxCooking& GetCooking() {
+         return *m_pcCooking;
+      }
+
+      /**
        * Returns the PhysX scene.
        * @return The PhysX scene.
        */
@@ -128,6 +137,8 @@ namespace argos {
       physx::PxFoundation* m_pcFoundation;
       /** The PhysX physics */
       physx::PxPhysics* m_pcPhysics;
+      /** The cooking subsystem for convex meshes */
+      physx::PxCooking* m_pcCooking;
       /** The PhysX CPU dispatcher */
       physx::pxtask::CpuDispatcher* m_pcCPUDispatcher;
       /** The PhysX scene descriptor */
