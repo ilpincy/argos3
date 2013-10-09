@@ -235,6 +235,7 @@ namespace argos {
       CFactory<CSimulatedSensor>::Destroy();
       CFactory<CCI_Controller>::Destroy();
       CFactory<CEntity>::Destroy();
+      CFactory<CLoopFunctions>::Destroy();
       /* Stop profiling and flush the data */
       if(IsProfiling()) {
          m_pcProfiler->Stop();

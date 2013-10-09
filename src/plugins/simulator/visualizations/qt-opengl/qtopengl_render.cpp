@@ -79,6 +79,8 @@ namespace argos {
       delete m_pcMainWindow;
       /* Destroy the QT application */
       delete m_pcApplication;
+      /* Get rid of the factory */
+      CFactory<CQTOpenGLUserFunctions>::Destroy();
    }
 
    /****************************************/
