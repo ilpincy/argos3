@@ -100,7 +100,7 @@ namespace argos {
    
    Real CWheeledEntity::GetWheelVelocity(size_t un_index) const {
       if(un_index < m_unNumWheels) {
-         return m_pfWheelRadia[un_index];
+         return m_pfWheelVelocities[un_index];
       }
       else {
          THROW_ARGOSEXCEPTION("CWheeledEntity::GetWheelVelocity() : index " << un_index << " out of bounds (allowed [0:" << m_unNumWheels << "])");
