@@ -23,7 +23,12 @@ set(ARGOS3_SOURCES_PLUGINS_SIMULATOR_PHYSICS_ENGINES_PHYSX
 #
 # Set the include and link path
 #
-link_directories(${CMAKE_SOURCE_DIR}/plugins/simulator/physics_engines/physx/physx-dist/Lib/linux32)
+if(CMAKE_SIZEOF_VOID_P EQUAL 4)
+  link_directories(${CMAKE_SOURCE_DIR}/plugins/simulator/physics_engines/physx/physx-dist/lib/linux32)
+else(CMAKE_SIZEOF_VOID_P EQUAL 4)
+  link_directories(${CMAKE_SOURCE_DIR}/plugins/simulator/physics_engines/physx/physx-dist/lib/linux64)
+endif(CMAKE_SIZEOF_VOID_P EQUAL 4)
+
 
 #
 # Create physx engine plugin library
@@ -35,22 +40,22 @@ target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_physx
   argos3core_${ARGOS_BUILD_FOR}
   argos3plugin_${ARGOS_BUILD_FOR}_entities
   -Wl,--start-group
-  PhysX3CommonCHECKED
-  PxTaskCHECKED
-  PhysXVisualDebuggerSDKCHECKED
-  PhysXProfileSDKCHECKED
-  RepXUpgrader3CHECKED
-  RepX3CHECKED
-  PhysX3CharacterKinematicCHECKED
-  PhysX3ExtensionsCHECKED
-  PhysX3CookingCHECKED
-  PhysX3VehicleCHECKED
-  PhysX3CHECKED
-  LowLevelClothCHECKED
-  LowLevelCHECKED
-  SceneQueryCHECKED
-  SimulationControllerCHECKED
-  PvdRuntimeCHECKED
+  PhysX3Common
+  PxTask
+  PhysXVisualDebuggerSDK
+  PhysXProfileSDK
+  RepXUpgrader3
+  RepX3
+  PhysX3CharacterKinematic
+  PhysX3Extensions
+  PhysX3Cooking
+  PhysX3Vehicle
+  PhysX3
+  LowLevelCloth
+  LowLevel
+  SceneQuery
+  SimulationController
+  PvdRuntime
   -Wl,--end-group)
 
 #

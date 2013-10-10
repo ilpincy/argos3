@@ -15,7 +15,7 @@ namespace argos {
 #include <argos3/core/utility/math/quaternion.h>
 #include <argos3/core/simulator/entity/entity.h>
 #include <argos3/core/simulator/physics_engine/physics_engine.h>
-#include <argos3/plugins/simulator/physics_engines/physx/physx-dist/Include/PxPhysicsAPI.h>
+#include <argos3/plugins/simulator/physics_engines/physx/physx-dist/include/PxPhysicsAPI.h>
 
 namespace argos {
 
