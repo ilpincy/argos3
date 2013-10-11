@@ -8,7 +8,7 @@ set(ARGOS3_HEADERS_PLUGINS_ROBOTS_MINIQUADROTOR_CONTROLINTERFACE
 if(ARGOS_BUILD_FOR_SIMULATOR)
   set(ARGOS3_HEADERS_PLUGINS_ROBOTS_MINIQUADROTOR_SIMULATOR
     simulator/miniquadrotor_entity.h
-#    simulator/physx_miniquadrotor_model.h
+    simulator/physx_miniquadrotor_model.h
 #    simulator/miniquadrotor_rotor_default_actuator.h
     )
   include(ARGoSCheckQTOpenGL)
@@ -30,7 +30,7 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
     ${ARGOS3_SOURCES_PLUGINS_ROBOTS_MINIQUADROTOR}
     ${ARGOS3_HEADERS_PLUGINS_ROBOTS_MINIQUADROTOR_SIMULATOR}
     simulator/miniquadrotor_entity.cpp
-#    simulator/physx_miniquadrotor_model.cpp
+    simulator/physx_miniquadrotor_model.cpp
 #    simulator/miniquadrotor_rotor_default_actuator.cpp
 )
   # Compile the graphical visualization only if the necessary libraries have been found
@@ -39,6 +39,12 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
       ${ARGOS3_SOURCES_PLUGINS_ROBOTS_MINIQUADROTOR}
       simulator/qtopengl_miniquadrotor.cpp)
   endif(ARGOS_COMPILE_QTOPENGL)
+  # Setup PhysX library dir
+  if(CMAKE_SIZEOF_VOID_P EQUAL 4)
+    link_directories(${CMAKE_SOURCE_DIR}/plugins/simulator/physics_engines/physx/physx-dist/lib/linux32)
+  else(CMAKE_SIZEOF_VOID_P EQUAL 4)
+    link_directories(${CMAKE_SOURCE_DIR}/plugins/simulator/physics_engines/physx/physx-dist/lib/linux64)
+  endif(CMAKE_SIZEOF_VOID_P EQUAL 4)
 endif(ARGOS_BUILD_FOR_SIMULATOR)
 
 #
@@ -50,7 +56,7 @@ target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_miniquadrotor
   argos3plugin_${ARGOS_BUILD_FOR}_actuators
   argos3plugin_${ARGOS_BUILD_FOR}_sensors)
 if(ARGOS_BUILD_FOR_SIMULATOR)
-  # target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_miniquadrotor argos3plugin_${ARGOS_BUILD_FOR}_physx)
+  target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_miniquadrotor argos3plugin_${ARGOS_BUILD_FOR}_physx)
   if(ARGOS_COMPILE_QTOPENGL)
     target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_miniquadrotor argos3plugin_${ARGOS_BUILD_FOR}_qtopengl)
   endif(ARGOS_COMPILE_QTOPENGL)
