@@ -3,7 +3,8 @@
 #
 # argos3/plugins/robots/mini-quadrotor/control_interface
 set(ARGOS3_HEADERS_PLUGINS_ROBOTS_MINIQUADROTOR_CONTROLINTERFACE
-  control_interface/ci_miniquadrotor_rotor_actuator.h)
+  control_interface/ci_miniquadrotor_rotor_actuator.h
+  control_interface/ci_miniquadrotor_trajectory_actuator.h)
 # argos3/plugins/robots/mini-quadrotor/simulator
 if(ARGOS_BUILD_FOR_SIMULATOR)
   set(ARGOS3_HEADERS_PLUGINS_ROBOTS_MINIQUADROTOR_SIMULATOR
@@ -24,7 +25,8 @@ endif(ARGOS_BUILD_FOR_SIMULATOR)
 #
 set(ARGOS3_SOURCES_PLUGINS_ROBOTS_MINIQUADROTOR
   ${ARGOS3_HEADERS_PLUGINS_ROBOTS_MINIQUADROTOR_CONTROLINTERFACE}
-  control_interface/ci_miniquadrotor_rotor_actuator.cpp)
+  control_interface/ci_miniquadrotor_rotor_actuator.cpp
+  control_interface/ci_miniquadrotor_trajectory_actuator.cpp)
 if(ARGOS_BUILD_FOR_SIMULATOR)
   set(ARGOS3_SOURCES_PLUGINS_ROBOTS_MINIQUADROTOR
     ${ARGOS3_SOURCES_PLUGINS_ROBOTS_MINIQUADROTOR}

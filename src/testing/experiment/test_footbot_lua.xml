@@ -102,14 +102,18 @@
     <!--   <body position="1,1,1" orientation="0,60,0" /> -->
     <!-- </cylinder> -->
 
-    <distribute>
-      <position method="uniform" min="-2,-2,0" max="2,2,5" />
-      <orientation method="uniform" min="0,0,0" max="360,360,360" />
-      <entity quantity="5" max_trials="100" base_num="100">
-        <cylinder id="cyl" radius="0.05" height="0.2" movable="true" mass="0.1" />
-        <!-- <box id="bn" size="0.1, 0.2, 0.3" movable="true" mass="0.1" /> -->
-      </entity>
-    </distribute>
+    <!-- <distribute> -->
+    <!--   <position method="uniform" min="-2,-2,0" max="2,2,5" /> -->
+    <!--   <orientation method="uniform" min="0,0,0" max="360,360,360" /> -->
+    <!--   <entity quantity="5" max_trials="100" base_num="100"> -->
+    <!--     <cylinder id="cyl" radius="0.05" height="0.2" movable="true" mass="0.1" /> -->
+    <!--   </entity> -->
+    <!-- </distribute> -->
+
+    <mini-quadrotor id="mq0">
+      <body position="0,0,2" orientation="0,0,0" />
+      <controller config="lua" />
+    </mini-quadrotor>
 
   </arena>
 

@@ -45,12 +45,12 @@ namespace argos {
 
    private:
 
+      CMiniQuadrotorEntity&     m_cMiniQuadrotorEntity;
       physx::PxRigidDynamic*    m_pcBody;
       physx::PxVec3             m_cBaseCenterLocal;
       physx::PxShape*           m_pcRollArmShape;
       physx::PxShape*           m_pcPitchArmShape;
       physx::PxCapsuleGeometry* m_pcArmGeometry;
-      CMiniQuadrotorEntity&     m_cMiniQuadrotorEntity;
 
    };
 
