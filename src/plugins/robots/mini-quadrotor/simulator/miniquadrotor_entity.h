@@ -34,8 +34,6 @@ namespace argos {
                      const CQuaternion& c_orientation = CQuaternion());
       
       virtual void Init(TConfigurationNode& t_tree);
-      virtual void Reset();
-      virtual void Destroy();
 
       inline CControllableEntity& GetControllableEntity() {
          return *m_pcControllableEntity;
