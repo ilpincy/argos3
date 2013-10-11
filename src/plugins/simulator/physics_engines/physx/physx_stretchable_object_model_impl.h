@@ -50,12 +50,7 @@ namespace argos {
    template<class ENTITY>
    void CPhysXStretchableObjectModel<ENTITY>::CalculateBoundingBox() {
       physx::PxBounds3 cPxAABB;
-      if(GetEmbodiedEntity().IsMovable()) {
-         cPxAABB = m_pcDynamicBody->getWorldBounds();
-      }
-      else {
-         cPxAABB = m_pcStaticBody->getWorldBounds();
-      }
+      cPxAABB = m_pcGenericBody->getWorldBounds();
       PxVec3ToCVector3(cPxAABB.minimum, GetBoundingBox().MinCorner);
       PxVec3ToCVector3(cPxAABB.maximum, GetBoundingBox().MaxCorner);
    }
