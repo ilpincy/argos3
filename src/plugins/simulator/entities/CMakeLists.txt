@@ -14,6 +14,7 @@ set(ARGOS3_HEADERS_PLUGINS_SIMULATOR_ENTITIES
   omnidirectional_camera_equipped_entity.h
   proximity_sensor_equipped_entity.h
   rab_equipped_entity.h
+  rotor_equipped_entity.h
   wheeled_entity.h
   wifi_equipped_entity.h)
 
@@ -33,6 +34,7 @@ set(ARGOS3_SOURCES_PLUGINS_SIMULATOR_ENTITIES
   omnidirectional_camera_equipped_entity.cpp
   proximity_sensor_equipped_entity.cpp
   rab_equipped_entity.cpp
+  rotor_equipped_entity.cpp
   wheeled_entity.cpp
   wifi_equipped_entity.cpp)
 

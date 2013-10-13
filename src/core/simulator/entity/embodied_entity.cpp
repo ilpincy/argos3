@@ -54,7 +54,7 @@ namespace argos {
          m_bMovable = true;
       }
       catch(CARGoSException& ex) {
-         THROW_ARGOSEXCEPTION_NESTED("Failed to initialize embodied entity \"" << GetId() << "\".", ex);
+         THROW_ARGOSEXCEPTION_NESTED("Failed to initialize embodied entity \"" << GetContext() << GetId() << "\".", ex);
       }
    }
 
@@ -64,7 +64,7 @@ namespace argos {
    const SBoundingBox& CEmbodiedEntity::GetBoundingBox() const {
       if(GetPhysicsModelsNum() == 0) {
          /* No engine associated to this entity */
-         THROW_ARGOSEXCEPTION("CEmbodiedEntity::GetBoundingBox() : entity \"" << GetId() << "\" is not associated to any engine");
+         THROW_ARGOSEXCEPTION("CEmbodiedEntity::GetBoundingBox() : entity \"" << GetContext() << GetId() << "\" is not associated to any engine");
       }
       return *m_sBoundingBox;
    }
@@ -82,7 +82,7 @@ namespace argos {
    void CEmbodiedEntity::AddPhysicsModel(const std::string& str_engine_id,
                                          CPhysicsModel& c_physics_model) {
       if(m_bMovable && GetPhysicsModelsNum() > 0) {
-         THROW_ARGOSEXCEPTION(GetId() << " is movable embodied entity and can't have more than 1 physics engine entity associated");
+         THROW_ARGOSEXCEPTION(GetContext() << GetId() << " is movable embodied entity and can't have more than 1 physics engine entity associated");
       }
       m_tPhysicsModelMap[str_engine_id] = &c_physics_model;
       m_tPhysicsModelVector.push_back(&c_physics_model);
@@ -95,7 +95,7 @@ namespace argos {
    void CEmbodiedEntity::RemovePhysicsModel(const std::string& str_engine_id) {
       CPhysicsModel::TMap::iterator itMap = m_tPhysicsModelMap.find(str_engine_id);
       if(itMap == m_tPhysicsModelMap.end()) {
-         THROW_ARGOSEXCEPTION("Entity \"" << GetId() << "\" has no associated entity in physics engine " << str_engine_id);
+         THROW_ARGOSEXCEPTION("Entity \"" << GetContext() << GetId() << "\" has no associated entity in physics engine " << str_engine_id);
       }
       CPhysicsModel::TVector::iterator itVec = std::find(m_tPhysicsModelVector.begin(),
                                                          m_tPhysicsModelVector.end(),
@@ -110,7 +110,7 @@ namespace argos {
 
    const CPhysicsModel& CEmbodiedEntity::GetPhysicsModel(size_t un_idx) const {
       if(un_idx > m_tPhysicsModelVector.size()) {
-         THROW_ARGOSEXCEPTION("CEmbodiedEntity::GetPhysicsModel: entity \"" << GetId() << "\": the passed index " << un_idx << " is out of bounds, the max allowed is " << m_tPhysicsModelVector.size());
+         THROW_ARGOSEXCEPTION("CEmbodiedEntity::GetPhysicsModel: entity \"" << GetContext() << GetId() << "\": the passed index " << un_idx << " is out of bounds, the max allowed is " << m_tPhysicsModelVector.size());
       }
       return *m_tPhysicsModelVector[un_idx];
    }
@@ -120,7 +120,7 @@ namespace argos {
 
    CPhysicsModel& CEmbodiedEntity::GetPhysicsModel(size_t un_idx) {
       if(un_idx > m_tPhysicsModelVector.size()) {
-         THROW_ARGOSEXCEPTION("CEmbodiedEntity::GetPhysicsModel: entity \"" << GetId() << "\": the passed index " << un_idx << " is out of bounds, the max allowed is " << m_tPhysicsModelVector.size());
+         THROW_ARGOSEXCEPTION("CEmbodiedEntity::GetPhysicsModel: entity \"" << GetContext() << GetId() << "\": the passed index " << un_idx << " is out of bounds, the max allowed is " << m_tPhysicsModelVector.size());
       }
       return *m_tPhysicsModelVector[un_idx];
    }
@@ -131,7 +131,7 @@ namespace argos {
    const CPhysicsModel& CEmbodiedEntity::GetPhysicsModel(const std::string& str_engine_id) const {
       CPhysicsModel::TMap::const_iterator it = m_tPhysicsModelMap.find(str_engine_id);
       if(it == m_tPhysicsModelMap.end()) {
-         THROW_ARGOSEXCEPTION("Entity \"" << GetId() << "\" has no associated entity in physics engine \"" << str_engine_id << "\"");
+         THROW_ARGOSEXCEPTION("Entity \"" << GetContext() << GetId() << "\" has no associated entity in physics engine \"" << str_engine_id << "\"");
       }
       return *(it->second);
    }
@@ -142,7 +142,7 @@ namespace argos {
    CPhysicsModel& CEmbodiedEntity::GetPhysicsModel(const std::string& str_engine_id) {
       CPhysicsModel::TMap::iterator it = m_tPhysicsModelMap.find(str_engine_id);
       if(it == m_tPhysicsModelMap.end()) {
-         THROW_ARGOSEXCEPTION("Entity \"" << GetId() << "\" has no associated entity in physics engine \"" << str_engine_id << "\"");
+         THROW_ARGOSEXCEPTION("Entity \"" << GetContext() << GetId() << "\" has no associated entity in physics engine \"" << str_engine_id << "\"");
       }
       return *(it->second);
    }
@@ -241,7 +241,9 @@ namespace argos {
    bool CEmbodiedEntity::IsCollidingWithSomething() const {
       /* If no model is associated, you can't call this function */
       if(m_tPhysicsModelVector.empty()) {
-         THROW_ARGOSEXCEPTION("CEmbodiedEntity::IsCollidingWithSomething() called on entity \"" << GetId() << "\", but this entity has not been added to any physics engine.");
+         THROW_ARGOSEXCEPTION("CEmbodiedEntity::IsCollidingWithSomething() called on entity \"" <<
+                              GetContext() << GetId() <<
+                              "\", but this entity has not been added to any physics engine.");
       }
       /* Special case: if there is only one model, check that directly */
       if(m_tPhysicsModelVector.size() == 1) {

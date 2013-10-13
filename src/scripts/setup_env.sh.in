@@ -1,5 +1,5 @@
 #!/bin/sh
 
-export ARGOS_PLUGIN_PATH=@CMAKE_BINARY_DIR@/core:@CMAKE_BINARY_DIR@/core:@CMAKE_BINARY_DIR@/testing:@CMAKE_BINARY_DIR@/plugins/robots/foot-bot:@CMAKE_BINARY_DIR@/plugins/robots/e-puck:@CMAKE_BINARY_DIR@/plugins/robots/generic:@CMAKE_BINARY_DIR@/plugins/simulator/visualizations/qt-opengl:@CMAKE_BINARY_DIR@/plugins/simulator/sensors:@CMAKE_BINARY_DIR@/plugins/simulator/entities:@CMAKE_BINARY_DIR@/plugins/simulator/physics_engines/dynamics2d:@CMAKE_BINARY_DIR@/plugins/simulator/media:@CMAKE_BINARY_DIR@/plugins/simulator/actuators
+export ARGOS_PLUGIN_PATH=@CMAKE_BINARY_DIR@/core:@CMAKE_BINARY_DIR@/core:@CMAKE_BINARY_DIR@/testing:@CMAKE_BINARY_DIR@/plugins/robots/foot-bot:@CMAKE_BINARY_DIR@/plugins/robots/mini-quadrotor:@CMAKE_BINARY_DIR@/plugins/robots/e-puck:@CMAKE_BINARY_DIR@/plugins/robots/generic:@CMAKE_BINARY_DIR@/plugins/simulator/visualizations/qt-opengl:@CMAKE_BINARY_DIR@/plugins/simulator/sensors:@CMAKE_BINARY_DIR@/plugins/simulator/entities:@CMAKE_BINARY_DIR@/plugins/simulator/physics_engines/dynamics2d:@CMAKE_BINARY_DIR@/plugins/simulator/physics_engines/physx:@CMAKE_BINARY_DIR@/plugins/simulator/media:@CMAKE_BINARY_DIR@/plugins/simulator/actuators
 
 export @ARGOS_DYNAMIC_LIBRARY_VARIABLE@=${@ARGOS_DYNAMIC_LIBRARY_VARIABLE@}:${ARGOS_PLUGIN_PATH}

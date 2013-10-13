@@ -24,6 +24,12 @@ set(CMAKE_CXX_FLAGS_RELEASE        "-Os -DNDEBUG")
 set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-Os -ggdb3 -DNDEBUG")
 set(CMAKE_CXX_FLAGS_DEBUG          "-ggdb3")
 
+#
+# Align doubles for higher performance
+# Also: required by the PhysX engine
+#
+add_definitions(-malign-double -Wno-unknown-pragmas)
+
 if(APPLE)
   # MAC OSX
   # Allow for dynamic lookup of undefined symbols
