@@ -17,10 +17,8 @@ namespace argos {
    /****************************************/
 
    CCI_MiniQuadrotorTrajectoryActuator::SWaypoint::SWaypoint(const CVector3& c_position,
-                                                             const CVector3& c_velocity,
                                                              const CRadians& c_yaw) :
       Position(c_position),
-      Velocity(c_velocity),
       Yaw(c_yaw) {}
 
    /****************************************/

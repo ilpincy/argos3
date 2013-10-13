@@ -22,12 +22,10 @@ namespace argos {
 
       struct SWaypoint {
          CVector3 Position;
-         CVector3 Velocity;
          CRadians Yaw;
 
          SWaypoint();
          SWaypoint(const CVector3& c_position,
-                   const CVector3& c_velocity,
                    const CRadians& c_yaw);
       };
 

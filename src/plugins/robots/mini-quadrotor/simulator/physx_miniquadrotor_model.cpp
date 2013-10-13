@@ -6,6 +6,7 @@
 
 #include "physx_miniquadrotor_model.h"
 #include <argos3/plugins/robots/mini-quadrotor/simulator/miniquadrotor_entity.h>
+#include <argos3/plugins/simulator/entities/rotor_equipped_entity.h>
 
 namespace argos {
 
@@ -24,10 +25,10 @@ namespace argos {
    static const Real BODY_HALF_HEIGHT      = BODY_HEIGHT * 0.5f;
    static const Real BODY_MASS             = 0.5f;
    static const Real UPLIFT_COEFFICIENT    = 1.0f; // unused, for the time being
-   static const Real MOMENT_COEFFICIENT    = 1.0f; // unused, for the time being
+   static const Real DRAG_COEFFICIENT      = 1.0f; // unused, for the time being
 
-   static const physx::PxVec3 POSITION_ERROR_COEFF(6.61f, 72.0f, 6.61f);
-   static const physx::PxVec3 VELOCITY_ERROR_COEFF(5.14f, 24.0f, 5.14f);
+   static const physx::PxVec3 POSITION_ERROR_COEFF(6.61f, 72.0f, 6.61f); // unused
+   static const physx::PxVec3 VELOCITY_ERROR_COEFF(5.14f, 24.0f, 5.14f); // unused
 
    static const physx::PxTransform PITCH_ARM_POSE(physx::PxQuat(physx::PxHalfPi, physx::PxVec3(0.0f, 1.0f, 0.0f)));
    static const physx::PxVec3      INERTIA_TENSOR_DIAGONAL(2.32e-3, 2.32e-3, 4e-3);
@@ -143,49 +144,39 @@ namespace argos {
    /****************************************/
 
    void CPhysXMiniQuadrotorModel::UpdateFromEntityStatus() {
-      /* Transform desired waypoint data into this engine representation */
-      const CCI_MiniQuadrotorTrajectoryActuator::SWaypoint& sDesiredWaypoint = m_cMiniQuadrotorEntity.GetDesiredWaypoint();
-      physx::PxVec3 cDesiredPos;
-      CVector3ToPxVec3(sDesiredWaypoint.Position, cDesiredPos);
-      physx::PxVec3 cDesiredVel;
-      CVector3ToPxVec3(sDesiredWaypoint.Velocity, cDesiredVel);
+      /* Get desired rotor velocities */
+      const Real* pfRotorVel = m_cMiniQuadrotorEntity.GetRotorEquippedEntity().GetRotorVelocities();
+      /* Calculate the squares */
+      Real pfSquareRotorVel[4] = {
+         pfRotorVel[0] * pfRotorVel[0],
+         pfRotorVel[1] * pfRotorVel[1],
+         pfRotorVel[2] * pfRotorVel[2],
+         pfRotorVel[3] * pfRotorVel[3]
+      };
       /* Calculate uplift-related control input */
-      physx::PxTransform cPose = m_pcBody->getGlobalPose();
-      physx::PxVec3 cUpVector = cPose.transform(physx::PxVec3(0.0f, 1.0f, 0.0f));
-      physx::PxVec3 cUpliftVector =
-         POSITION_ERROR_COEFF.multiply(cDesiredPos - cPose.p) +
-         VELOCITY_ERROR_COEFF.multiply(cDesiredVel - m_pcBody->getLinearVelocity()) -
-         BODY_MASS * GetPhysXEngine().GetScene().getGravity();
+      Real fUpliftInput =
+         UPLIFT_COEFFICIENT *
+         ((pfSquareRotorVel[0])+
+          (pfSquareRotorVel[1])+
+          (pfSquareRotorVel[2])+
+          (pfSquareRotorVel[3]));
       /* Calculate torque-related control inputs */
+      physx::PxVec3 cTorqueInputs(
+         UPLIFT_COEFFICIENT * ARM_HALF_LENGTH * (pfSquareRotorVel[1] - pfSquareRotorVel[3]),
+         UPLIFT_COEFFICIENT * ARM_HALF_LENGTH * (pfSquareRotorVel[2] - pfSquareRotorVel[0]),
+         DRAG_COEFFICIENT * (pfSquareRotorVel[0] - pfSquareRotorVel[1] + pfSquareRotorVel[2] - pfSquareRotorVel[3]));
       /* Apply uplift */
-      m_pcBody->addForce(cUpliftVector.dot(cUpVector) * cUpVector);
+      physx::PxRigidBodyExt::addLocalForceAtLocalPos(
+         *m_pcBody,
+         physx::PxVec3(0.0f, fUpliftInput, 0.0f),
+         physx::PxVec3(0.0f));
       /* Apply rotational moment */
-      
-
-      // /* Calculate uplift-related control input */
-      // Real fUpliftInput =
-      //    UPLIFT_COEFFICIENT *
-      //    ((pfSquareRotorVel[0])+
-      //     (pfSquareRotorVel[1])+
-      //     (pfSquareRotorVel[2])+
-      //     (pfSquareRotorVel[3]));
-      // /* Calculate torque-related control inputs */
-      // physx::PxVec3 cTorqueInputs(
-      //    UPLIFT_COEFFICIENT * ARM_HALF_LENGTH * (pfSquareRotorVel[1] - pfSquareRotorVel[3]),
-      //    UPLIFT_COEFFICIENT * ARM_HALF_LENGTH * (pfSquareRotorVel[2] - pfSquareRotorVel[0]),
-      //    MOMENT_COEFFICIENT * (pfSquareRotorVel[0] - pfSquareRotorVel[1] + pfSquareRotorVel[2] - pfSquareRotorVel[3]));
-      // /* Apply uplift */
-      // physx::PxRigidBodyExt::addLocalForceAtLocalPos(
-      //    *m_pcBody,
-      //    physx::PxVec3(0.0f, fUpliftInput, 0.0f),
-      //    physx::PxVec3(0.0f));
-      // /* Apply rotational moment */
-      // physx::PxVec3 cTorque =
-      //    INERTIA_TENSOR_INVERSE * (
-      //       (-m_pcBody->getAngularVelocity()).cross(
-      //          INERTIA_TENSOR*m_pcBody->getAngularVelocity()) +
-      //       cTorqueInputs);
-      // m_pcBody->addTorque(cTorque);
+      physx::PxVec3 cTorque =
+         INERTIA_TENSOR_INVERSE * (
+            (-m_pcBody->getAngularVelocity()).cross(
+               INERTIA_TENSOR * m_pcBody->getAngularVelocity()) +
+            cTorqueInputs);
+      m_pcBody->addTorque(cTorque);
    }
 
    /****************************************/

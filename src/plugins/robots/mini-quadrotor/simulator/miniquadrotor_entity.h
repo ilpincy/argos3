@@ -14,7 +14,6 @@ namespace argos {
 }
 
 #include <argos3/core/simulator/entity/composable_entity.h>
-#include <argos3/plugins/simulator/entities/rotor_equipped_entity.h>
 #include <argos3/plugins/robots/mini-quadrotor/control_interface/ci_miniquadrotor_trajectory_actuator.h>
 
 namespace argos {
@@ -43,6 +42,10 @@ namespace argos {
       inline CEmbodiedEntity& GetEmbodiedEntity() {
          return *m_pcEmbodiedEntity;
       }
+
+      inline CRotorEquippedEntity& GetRotorEquippedEntity() {
+         return *m_pcRotorEquippedEntity;
+      }
       
       virtual std::string GetTypeDescription() const {
          return "mini-bot";
@@ -60,6 +63,7 @@ namespace argos {
 
       CControllableEntity*                           m_pcControllableEntity;
       CEmbodiedEntity*                               m_pcEmbodiedEntity;
+      CRotorEquippedEntity*                          m_pcRotorEquippedEntity;
       CCI_MiniQuadrotorTrajectoryActuator::SWaypoint m_sDesiredWaypoint;
    };
 

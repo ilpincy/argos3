@@ -24,7 +24,8 @@ namespace argos {
    CMiniQuadrotorEntity::CMiniQuadrotorEntity() :
       CComposableEntity(NULL),
       m_pcControllableEntity(NULL),
-      m_pcEmbodiedEntity(NULL) {
+      m_pcEmbodiedEntity(NULL),
+      m_pcRotorEquippedEntity(NULL) {
    }
 
    /****************************************/
@@ -36,7 +37,8 @@ namespace argos {
                                               const CQuaternion& c_orientation) :
       CComposableEntity(NULL, str_id),
       m_pcControllableEntity(NULL),
-      m_pcEmbodiedEntity(NULL) {
+      m_pcEmbodiedEntity(NULL),
+      m_pcRotorEquippedEntity(NULL) {
       try {
          /*
           * Create and init components
@@ -47,6 +49,13 @@ namespace argos {
           */
          m_pcEmbodiedEntity = new CEmbodiedEntity(this, "body_0", c_position, c_orientation);
          AddComponent(*m_pcEmbodiedEntity);
+         /* Rotor equipped entity */
+         m_pcRotorEquippedEntity = new CRotorEquippedEntity(this, "rotors_0", 4);
+         m_pcRotorEquippedEntity->SetRotor(0, CVector3(ARM_LENGTH, 0.0f, 0.0f));
+         m_pcRotorEquippedEntity->SetRotor(1, CVector3(0.0f, ARM_LENGTH, 0.0f));
+         m_pcRotorEquippedEntity->SetRotor(2, CVector3(-ARM_LENGTH, 0.0f, 0.0f));
+         m_pcRotorEquippedEntity->SetRotor(3, CVector3(0.0f, -ARM_LENGTH, 0.0f));
+         AddComponent(*m_pcRotorEquippedEntity);
          /* Controllable entity
             It must be the last one, for actuators/sensors to link to composing entities correctly */
          m_pcControllableEntity = new CControllableEntity(this, "controller_0");
@@ -79,6 +88,13 @@ namespace argos {
          m_pcEmbodiedEntity = new CEmbodiedEntity(this);
          AddComponent(*m_pcEmbodiedEntity);
          m_pcEmbodiedEntity->Init(GetNode(t_tree, "body"));
+         /* Rotor equipped entity */
+         m_pcRotorEquippedEntity = new CRotorEquippedEntity(this, "rotors_0", 4);
+         m_pcRotorEquippedEntity->SetRotor(0, CVector3(ARM_LENGTH, 0.0f, 0.0f));
+         m_pcRotorEquippedEntity->SetRotor(1, CVector3(0.0f, ARM_LENGTH, 0.0f));
+         m_pcRotorEquippedEntity->SetRotor(2, CVector3(-ARM_LENGTH, 0.0f, 0.0f));
+         m_pcRotorEquippedEntity->SetRotor(3, CVector3(0.0f, -ARM_LENGTH, 0.0f));
+         AddComponent(*m_pcRotorEquippedEntity);
          /* Controllable entity
             It must be the last one, for actuators/sensors to link to composing entities correctly */
          m_pcControllableEntity = new CControllableEntity(this);
