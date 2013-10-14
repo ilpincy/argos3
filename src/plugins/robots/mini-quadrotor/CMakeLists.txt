@@ -10,7 +10,7 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
   set(ARGOS3_HEADERS_PLUGINS_ROBOTS_MINIQUADROTOR_SIMULATOR
     simulator/miniquadrotor_entity.h
     simulator/physx_miniquadrotor_model.h
-#    simulator/miniquadrotor_rotor_default_actuator.h
+    simulator/miniquadrotor_rotor_default_actuator.h
     )
   include(ARGoSCheckQTOpenGL)
   if(ARGOS_COMPILE_QTOPENGL)
@@ -33,8 +33,7 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
     ${ARGOS3_HEADERS_PLUGINS_ROBOTS_MINIQUADROTOR_SIMULATOR}
     simulator/miniquadrotor_entity.cpp
     simulator/physx_miniquadrotor_model.cpp
-#    simulator/miniquadrotor_rotor_default_actuator.cpp
-)
+    simulator/miniquadrotor_rotor_default_actuator.cpp)
   # Compile the graphical visualization only if the necessary libraries have been found
   if(ARGOS_COMPILE_QTOPENGL)
     set(ARGOS3_SOURCES_PLUGINS_ROBOTS_MINIQUADROTOR

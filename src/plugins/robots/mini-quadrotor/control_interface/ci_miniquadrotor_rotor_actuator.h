@@ -23,6 +23,8 @@ namespace argos {
          Real Velocities[4];
 
          SVelocities();
+         SVelocities(const SVelocities& s_velocities);
+         SVelocities& operator=(const SVelocities& s_velocities);
       };
 
    public:
