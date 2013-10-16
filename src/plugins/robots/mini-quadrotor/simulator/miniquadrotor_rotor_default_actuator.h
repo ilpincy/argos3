@@ -44,7 +44,7 @@ namespace argos {
 
       virtual void Init(TConfigurationNode& t_tree);
 
-      virtual void SetRotorVelocities(CCI_MiniQuadrotorRotorActuator::SVelocities& s_velocities);
+      virtual void SetRotorVelocities(const CCI_MiniQuadrotorRotorActuator::SVelocities& s_velocities);
 
       virtual void Update();
 

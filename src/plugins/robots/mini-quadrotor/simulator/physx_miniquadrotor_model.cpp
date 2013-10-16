@@ -24,8 +24,8 @@ namespace argos {
    static const Real BODY_HEIGHT           = 0.015f;
    static const Real BODY_HALF_HEIGHT      = BODY_HEIGHT * 0.5f;
    static const Real BODY_MASS             = 0.5f;
-   static const Real UPLIFT_COEFFICIENT    = 1.0f; // unused, for the time being
-   static const Real DRAG_COEFFICIENT      = 1.0f; // unused, for the time being
+   static const Real UPLIFT_COEFFICIENT    = 0.01f; // chosen out of my head
+   static const Real DRAG_COEFFICIENT      = 0.01f;  // chosen out of my head
 
    static const physx::PxVec3 POSITION_ERROR_COEFF(6.61f, 72.0f, 6.61f); // unused
    static const physx::PxVec3 VELOCITY_ERROR_COEFF(5.14f, 24.0f, 5.14f); // unused
@@ -171,11 +171,7 @@ namespace argos {
          physx::PxVec3(0.0f, fUpliftInput, 0.0f),
          physx::PxVec3(0.0f));
       /* Apply rotational moment */
-      physx::PxVec3 cTorque =
-         INERTIA_TENSOR_INVERSE * (
-            (-m_pcBody->getAngularVelocity()).cross(
-               INERTIA_TENSOR * m_pcBody->getAngularVelocity()) +
-            cTorqueInputs);
+      physx::PxVec3 cTorque = (-m_pcBody->getAngularVelocity()).cross(INERTIA_TENSOR * m_pcBody->getAngularVelocity()) + cTorqueInputs;
       m_pcBody->addTorque(cTorque);
    }
 

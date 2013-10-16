@@ -23,6 +23,10 @@ namespace argos {
          Real Velocities[4];
 
          SVelocities();
+         SVelocities(Real f_north_vel,
+                     Real f_west_vel,
+                     Real f_south_vel,
+                     Real f_east_vel);
          SVelocities(const SVelocities& s_velocities);
          SVelocities& operator=(const SVelocities& s_velocities);
       };
@@ -31,7 +35,7 @@ namespace argos {
 
       virtual ~CCI_MiniQuadrotorRotorActuator() {}
 
-      virtual void SetRotorVelocities(SVelocities& s_velocities) = 0;
+      virtual void SetRotorVelocities(const SVelocities& s_velocities) = 0;
 
 #ifdef ARGOS_WITH_LUA
       virtual void CreateLuaState(lua_State* pt_lua_state);

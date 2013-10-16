@@ -27,11 +27,11 @@ namespace argos {
       try {
          m_pcRotorEquippedEntity = &(c_entity.GetComponent<CRotorEquippedEntity>("rotors"));
          if(m_pcRotorEquippedEntity->GetNumRotors() != 4) {
-            THROW_ARGOSEXCEPTION("The miniquadrotor rotor actuator can be associated only to a robot with 4 rotors");
+            THROW_ARGOSEXCEPTION("The mini-quadrotor rotor actuator can be associated only to a mini-quadrotor");
          }
       }
       catch(CARGoSException& ex) {
-         THROW_ARGOSEXCEPTION_NESTED("Error setting miniquadrotor rotor actuator to entity \"" << c_entity.GetId() << "\"", ex);
+         THROW_ARGOSEXCEPTION_NESTED("Error setting mini-quadrotor rotor actuator to entity \"" << c_entity.GetId() << "\"", ex);
       }
    }
 
@@ -47,14 +47,14 @@ namespace argos {
          }
       }
       catch(CARGoSException& ex) {
-         THROW_ARGOSEXCEPTION_NESTED("Initialization error in foot-bot rotor actuator.", ex);
+         THROW_ARGOSEXCEPTION_NESTED("Initialization error in mini-quadrotor rotor actuator.", ex);
       }
    }
 
    /****************************************/
    /****************************************/
    
-   void CMiniQuadrotorRotorDefaultActuator::SetRotorVelocities(CCI_MiniQuadrotorRotorActuator::SVelocities& s_velocities) {
+   void CMiniQuadrotorRotorDefaultActuator::SetRotorVelocities(const CCI_MiniQuadrotorRotorActuator::SVelocities& s_velocities) {
       /* Set velocities */
       m_sCurrentVelocities = s_velocities;
       /* Apply noise */
@@ -96,8 +96,8 @@ REGISTER_ACTUATOR(CMiniQuadrotorRotorDefaultActuator,
                   "miniquadrotor_rotor", "default",
                   "Carlo Pinciroli [ilpincy@gmail.com]",
                   "1.0",
-                  "The miniquadrotor rotor actuator.",
-                  "This actuator controls the four rotors a miniquadrotor rotor robot. For a\n"
+                  "The mini-quadrotor rotor actuator.",
+                  "This actuator controls the four rotors of a mini-quadrotor robot. For a\n"
                   "complete description of its usage, refer to the\n"
                   "ci_miniquadrotor_rotor_actuator.h file.\n\n"
                   "REQUIRED XML CONFIGURATION\n\n"
