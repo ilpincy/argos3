@@ -1,5 +1,3 @@
-VELOCITY = 30000
-
 
 
 --[[ This function is executed every time you press the 'execute'

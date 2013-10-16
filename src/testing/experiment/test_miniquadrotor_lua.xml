@@ -28,6 +28,7 @@
         <miniquadrotor_rotor implementation="default" />
       </actuators>
       <sensors>
+        <positioning implementation="default" />
       </sensors>
       <!-- No required configuration -->
       <!-- <params /> -->
