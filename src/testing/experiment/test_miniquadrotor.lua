@@ -1,11 +1,11 @@
-VELOCITY = 35
+VELOCITY = 30000
 
 
 
 --[[ This function is executed every time you press the 'execute'
      button ]]
 function init()
-   robot.rotors.set_velocity(VELOCITY*0.9,VELOCITY,VELOCITY,VELOCITY)
+   robot.rotors.set_velocity(VELOCITY,VELOCITY,VELOCITY,VELOCITY)
 end
 
 

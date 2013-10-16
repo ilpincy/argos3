@@ -23,15 +23,15 @@ namespace argos {
    static const Real BODY_HALF_WIDTH       = ARM_HALF_LENGTH + PROPELLER_HALF_LENGTH;
    static const Real BODY_HEIGHT           = 0.015f;
    static const Real BODY_HALF_HEIGHT      = BODY_HEIGHT * 0.5f;
-   static const Real BODY_MASS             = 0.5f;
-   static const Real UPLIFT_COEFFICIENT    = 0.01f; // chosen out of my head
-   static const Real DRAG_COEFFICIENT      = 0.01f;  // chosen out of my head
+   static const Real BODY_MASS             = 0.06736f;
+   static const Real UPLIFT_COEFFICIENT    = 1.9985e-9;
+   static const Real DRAG_COEFFICIENT      = 4.737e-12;
 
    static const physx::PxVec3 POSITION_ERROR_COEFF(6.61f, 72.0f, 6.61f); // unused
    static const physx::PxVec3 VELOCITY_ERROR_COEFF(5.14f, 24.0f, 5.14f); // unused
 
    static const physx::PxTransform PITCH_ARM_POSE(physx::PxQuat(physx::PxHalfPi, physx::PxVec3(0.0f, 1.0f, 0.0f)));
-   static const physx::PxVec3      INERTIA_TENSOR_DIAGONAL(2.32e-3, 2.32e-3, 4e-3);
+   static const physx::PxVec3      INERTIA_TENSOR_DIAGONAL(2.32e-3, 4e-3, 2.32e-3);
    static const physx::PxMat33     INERTIA_TENSOR(physx::PxMat33::createDiagonal(INERTIA_TENSOR_DIAGONAL));
    static const physx::PxMat33     INERTIA_TENSOR_INVERSE(INERTIA_TENSOR.getInverse());
 
@@ -156,15 +156,15 @@ namespace argos {
       /* Calculate uplift-related control input */
       Real fUpliftInput =
          UPLIFT_COEFFICIENT *
-         ((pfSquareRotorVel[0])+
-          (pfSquareRotorVel[1])+
-          (pfSquareRotorVel[2])+
+         ((pfSquareRotorVel[0]) +
+          (pfSquareRotorVel[1]) +
+          (pfSquareRotorVel[2]) +
           (pfSquareRotorVel[3]));
       /* Calculate torque-related control inputs */
       physx::PxVec3 cTorqueInputs(
-         UPLIFT_COEFFICIENT * ARM_HALF_LENGTH * (pfSquareRotorVel[1] - pfSquareRotorVel[3]),
-         UPLIFT_COEFFICIENT * ARM_HALF_LENGTH * (pfSquareRotorVel[2] - pfSquareRotorVel[0]),
-         DRAG_COEFFICIENT * (pfSquareRotorVel[0] - pfSquareRotorVel[1] + pfSquareRotorVel[2] - pfSquareRotorVel[3]));
+         UPLIFT_COEFFICIENT * ARM_HALF_LENGTH * (pfSquareRotorVel[0] - pfSquareRotorVel[2]),
+         DRAG_COEFFICIENT * (pfSquareRotorVel[0] - pfSquareRotorVel[1] + pfSquareRotorVel[2] - pfSquareRotorVel[3]),
+         UPLIFT_COEFFICIENT * ARM_HALF_LENGTH * (pfSquareRotorVel[1] - pfSquareRotorVel[3]));
       /* Apply uplift */
       physx::PxRigidBodyExt::addLocalForceAtLocalPos(
          *m_pcBody,
