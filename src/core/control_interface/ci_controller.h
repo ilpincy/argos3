@@ -227,6 +227,8 @@ namespace argos {
  * You must register your controller for ARGoS to be able to recognize it.
  * This statement must be included in a .cpp file. It can't be in a header.
  */
+#ifdef ARGOS_DYNAMIC_LIBRARY_LOADING
+
 #define REGISTER_CONTROLLER(CLASSNAME, LABEL) \
    REGISTER_SYMBOL(CCI_Controller,            \
                    CLASSNAME,                 \
@@ -236,5 +238,26 @@ namespace argos {
                    "undefined",               \
                    "undefined",               \
                    "undefined")
+
+#else
+
+extern "C" {
+   extern argos::CCI_Controller* ControllerMaker(const std::string& str_label);
+}
+
+#define REGISTER_CONTROLLER(CLASSNAME, LABEL)                           \
+   extern "C" {                                                         \
+      argos::CCI_Controller* ControllerMaker(const std::string& str_label) { \
+         if(str_label != LABEL) {                                       \
+            THROW_ARGOSEXCEPTION("Controller label \"" <<               \
+                                 str_label <<                           \
+                                 "\" does not match the registered one: \"" << \
+                                 LABEL << "\"");                        \
+         }                                                              \
+         return new CLASSNAME;                                          \
+      }                                                                 \
+   }
+
+#endif
 
 #endif
