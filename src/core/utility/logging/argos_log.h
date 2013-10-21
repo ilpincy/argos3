@@ -123,6 +123,8 @@ namespace argos {
          m_vecStreams.push_back(new std::stringstream);
          pthread_mutex_unlock(&m_tMutex);
       }
+#else
+      void Flush() {}
 #endif
       
       inline CARGoSLog& operator<<(std::ostream& (*c_stream)(std::ostream&)) {

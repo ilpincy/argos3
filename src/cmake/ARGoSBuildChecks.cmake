@@ -38,6 +38,7 @@ endif(ARGOS_BUILD_FOR_SIMULATOR)
 #
 find_package(GSL)
 if(GSL_FOUND)
+  set(ARGOS_WITH_GSL ON)
   add_definitions(${CMAKE_GSL_CXX_FLAGS})
   include_directories(${GSL_INCLUDE_DIR})
   link_directories(${GSL_LINK_DIRECTORIES})

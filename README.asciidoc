@@ -2,7 +2,7 @@ ARGoS README
 =============
 :Author: Carlo Pinciroli
 :Email:  ilpincy@gmail.com
-:Date:   April 1st, 2013
+:Date:   October 18th, 2013
 
 What is ARGoS?
 ---------------
@@ -24,8 +24,8 @@ Downloading ARGoS
 ------------------
 
 You can download a binary package of ARGoS from
-http://iridia.ulb.ac.be/argos/download.php. Alternatively, you can download the
-development sources through git:
+http://bohr.ulb.ac.be/~pincy/argos/download.php. Alternatively, you
+can download the development sources through git:
 
  $ git clone https://github.com/ilpincy/argos3.git argos3
 
@@ -48,6 +48,12 @@ libraries are found:
 
 * _Qt_ >= 4.6
 * _freeglut_ >= 2.6.0
+* _libxi-dev_ (on Ubuntu and other Debian-based systems)
+* _libxmu-dev_ (on Ubuntu and other Debian-based systems)
+
+If you want to create the Lua wrapper you need:
+
+* _lua_ == 5.1
 
 If you want to create the documentation you need:
 
@@ -57,9 +63,11 @@ If you want to create the documentation you need:
 * To create the HTML version of this README:
 ** _asciidoc_ >= 8.6.2
 
-If you want to create the Lua wrapper you need:
+On Mac, you can install all of the necessary requirements using
+http://http://brew.sh/[HomeBrew]. On the command line, type the
+following command:
 
-* _lua_ == 5.1
+ $ brew install pkg-config cmake gsl libpng freeimage lua qt docbook asciidoc graphviz doxygen
 
 Compiling the code
 ~~~~~~~~~~~~~~~~~~
@@ -123,6 +131,7 @@ The compilation of ARGoS can be configured through a set of CMake options:
 | +CMAKE_BUILD_TYPE+          | _STRING_  | Build type (+Debug+, +Release+, etc.) [empty]
 | +CMAKE_INSTALL_PREFIX+      | _STRING_  | Install prefix (+/usr+, +/usr/local+, etc.) [+/usr/local+]
 | +ARGOS_BUILD_FOR+           | _STRING_  | Target of compilation (+simulator+ or robot name) [+simulator+]
+| +ARGOS_BUILD_NATIVE+        | _BOOLEAN_ | Whether to use platform-specific instructions [+OFF+]
 | +ARGOS_THREADSAFE_LOG+      | _BOOLEAN_ | Use or not the thread-safe version of +LOG+/+LOGERR+. [+ON+]
 | +ARGOS_DYNAMIC_LOADING+     | _BOOLEAN_ | Compile (and use) dynamic loading facilities [+ON+]
 | +ARGOS_USE_DOUBLE+          | _BOOLEAN_ | Use +double+ (+ON+) or +float+ (+OFF+) [+ON+]
@@ -136,6 +145,7 @@ wanted to set explictly all the default values, you would write:
  $ cmake -DCMAKE_BUILD_TYPE=Debug \
          -DCMAKE_INSTALL_PREFIX=/usr/local \
          -DARGOS_BUILD_FOR=simulator \
+         -DARGOS_BUILD_NATIVE=OFF \
          -DARGOS_THREADSAFE_LOG=ON \
          -DARGOS_DYNAMIC_LOADING=ON \
          -DARGOS_USE_DOUBLE=ON \
@@ -149,6 +159,13 @@ TIP: For production environments, it is recommended to compile ARGoS with
      +CMAKE_BUILD_TYPE+ set to +Release+. If you want to debug ARGoS, it is
      recommended to set +CMAKE_BUILD_TYPE+ to +Debug+. The other standard
      settings (empty and +RelWithDebInfo+) are supported but should be avoided.
+
+TIP: If you want to squeeze maximum performance from ARGoS, along with compiling
+     with +CMAKE_BUILD_TYPE+ set to +Release+, you can also set +ARGOS_BUILD_NATIVE+
+     to +ON+. This setting instructs the compiler to use the compiler flags
+     +-march=native+ and +-mtune=native+. The code will run faster because you
+     use the entire instruction set of your processor, but the generated binaries
+     won't be portable to computers with different processors.
 
 Using the ARGoS simulator from the source tree
 ----------------------------------------------
@@ -231,4 +248,4 @@ IMPORTANT: the creation of source packages through the command
            +make package_source+ is not supported.
 
 An easier option is to install ARGoS from a package distributed at
-http://iridia.ulb.ac.be/argos/download.php.
+http://bohr.ulb.ac.be/~pincy/argos/download.php.
