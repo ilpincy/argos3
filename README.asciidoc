@@ -63,6 +63,13 @@ If you want to create the documentation you need:
 * To create the HTML version of this README:
 ** _asciidoc_ >= 8.6.2
 
+On Debian, you can install all of the necessary requirements
+with the following command:
+
+ $ sudo apt-get install libgsl0-dev libfreeimage-dev libqt4-dev \
+   freeglut3-dev libxi-dev libxmu-dev liblua5.1-dev doxygen \
+   graphviz-dev asciidoc
+
 On Mac, you can install all of the necessary requirements using
 http://http://brew.sh/[HomeBrew]. On the command line, type the
 following command:
