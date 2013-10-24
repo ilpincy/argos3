@@ -70,11 +70,25 @@ with the following command:
    freeglut3-dev libxi-dev libxmu-dev liblua5.1-dev doxygen \
    graphviz-dev asciidoc
 
+On openSUSE 12.3, you can install all of the necessary requirements
+with the following commands:
+
+ $ sudo zypper ar -n openSUSE-12.3-Graphics \
+   http://download.opensuse.org/repositories/graphics/openSUSE_12.3/ \
+   graphics
+
+ $ sudo zypper refresh
+
+ $ sudo zypper install git cmake gcc gcc-c++ gsl-devel freeimage-devel \
+   doxygen graphviz asciidoc lua51-devel libqt4-devel freeglut-devel \
+   rpmbuild
+
 On Mac, you can install all of the necessary requirements using
 http://http://brew.sh/[HomeBrew]. On the command line, type the
 following command:
 
- $ brew install pkg-config cmake gsl libpng freeimage lua qt docbook asciidoc graphviz doxygen
+ $ brew install pkg-config cmake gsl libpng freeimage lua qt \
+   docbook asciidoc graphviz doxygen
 
 Compiling the code
 ~~~~~~~~~~~~~~~~~~
