@@ -153,11 +153,11 @@ namespace argos {
          AddComponent(*m_pcGroundSensorEquippedEntity);
          m_pcGroundSensorEquippedEntity->AddSensor(CVector2(0.063, 0.0116),
                                                    CGroundSensorEquippedEntity::TYPE_GRAYSCALE);
-         m_pcGroundSensorEquippedEntity->AddSensor(CVector2(0.063, -0.0116),
+         m_pcGroundSensorEquippedEntity->AddSensor(CVector2(-0.063, 0.0116),
                                                    CGroundSensorEquippedEntity::TYPE_GRAYSCALE);
          m_pcGroundSensorEquippedEntity->AddSensor(CVector2(-0.063, -0.0116),
                                                    CGroundSensorEquippedEntity::TYPE_GRAYSCALE);
-         m_pcGroundSensorEquippedEntity->AddSensor(CVector2(-0.063, 0.0116),
+         m_pcGroundSensorEquippedEntity->AddSensor(CVector2(0.063, -0.0116),
                                                    CGroundSensorEquippedEntity::TYPE_GRAYSCALE);
          m_pcGroundSensorEquippedEntity->AddSensor(CVector2(0.08, 0.0),
                                                    CGroundSensorEquippedEntity::TYPE_BLACK_WHITE);

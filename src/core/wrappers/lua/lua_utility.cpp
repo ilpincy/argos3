@@ -62,6 +62,37 @@ namespace argos {
          luaL_checktype(pt_state, 1, LUA_TNUMBER);
          /* Return a number between 0 and the max */
          lua_pushnumber(pt_state,
+                        pcRNG->Uniform(CRange<Real>(0,
+                                                    lua_tonumber(pt_state, 1))));
+         return 1;
+      }
+      else {
+         /* Check parameters */
+         luaL_checktype(pt_state, 1, LUA_TNUMBER);
+         luaL_checktype(pt_state, 2, LUA_TNUMBER);
+         /* Return a number between min and max */
+         lua_pushnumber(pt_state,
+                        pcRNG->Uniform(CRange<Real>(lua_tonumber(pt_state, 1),
+                                                    lua_tonumber(pt_state, 2))));
+         return 1;
+      }
+      /* Can't reach this point */
+      return 0;
+   }
+
+   int LuaRNGUniformInt(lua_State* pt_state) {
+      /* Check number of parameters */
+      if(lua_gettop(pt_state) > 2) {
+         return luaL_error(pt_state, "robot.random.uniform_int() expects 1 or 2 arguments");
+      }
+      /* Get RNG instance */
+      CRandom::CRNG* pcRNG = CLuaUtility::GetDeviceInstance<CRandom::CRNG>(pt_state, "random");
+      /* Perform wanted action */
+      if(lua_gettop(pt_state) == 1) {
+         /* Check parameter */
+         luaL_checktype(pt_state, 1, LUA_TNUMBER);
+         /* Return a number between 0 and the max */
+         lua_pushnumber(pt_state,
                         pcRNG->Uniform(CRange<UInt32>(0,
                                                       Floor(lua_tonumber(pt_state, 1)))));
          return 1;
@@ -246,6 +277,7 @@ namespace argos {
       AddToTable(pt_state, "_instance", pc_rng);
       AddToTable(pt_state, "bernoulli", &LuaRNGBernoulli);
       AddToTable(pt_state, "uniform", &LuaRNGUniform);
+      AddToTable(pt_state, "uniform_int", &LuaRNGUniformInt);
       AddToTable(pt_state, "exponential", &LuaRNGExponential);
       AddToTable(pt_state, "gaussian", &LuaRNGGaussian);
       CloseRobotStateTable(pt_state);
