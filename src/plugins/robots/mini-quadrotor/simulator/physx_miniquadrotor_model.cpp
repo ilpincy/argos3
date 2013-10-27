@@ -27,11 +27,11 @@ namespace argos {
    static const Real UPLIFT_COEFFICIENT    = 1.9985e-9;
    static const Real DRAG_COEFFICIENT      = 4.737e-12;
 
-   static const physx::PxVec3 POSITION_ERROR_COEFF(6.61f, 72.0f, 6.61f); // unused
-   static const physx::PxVec3 VELOCITY_ERROR_COEFF(5.14f, 24.0f, 5.14f); // unused
+   static const physx::PxVec3 POSITION_ERROR_COEFF(6.61f, 6.61f, 72.0f); // unused
+   static const physx::PxVec3 VELOCITY_ERROR_COEFF(5.14f, 5.14f, 24.0f); // unused
 
-   static const physx::PxTransform PITCH_ARM_POSE(physx::PxQuat(physx::PxHalfPi, physx::PxVec3(0.0f, 1.0f, 0.0f)));
-   static const physx::PxVec3      INERTIA_TENSOR_DIAGONAL(2.32e-3, 4e-3, 2.32e-3);
+   static const physx::PxTransform PITCH_ARM_POSE(physx::PxQuat(physx::PxHalfPi, physx::PxVec3(0.0f, 0.0f, 1.0f)));
+   static const physx::PxVec3      INERTIA_TENSOR_DIAGONAL(2.32e-3, 2.32e-3, 4e-3);
    static const physx::PxMat33     INERTIA_TENSOR(physx::PxMat33::createDiagonal(INERTIA_TENSOR_DIAGONAL));
    static const physx::PxMat33     INERTIA_TENSOR_INVERSE(INERTIA_TENSOR.getInverse());
 
@@ -44,8 +44,8 @@ namespace argos {
       m_cMiniQuadrotorEntity(c_entity) {
       /* Calculate base center */
       m_cBaseCenterLocal.x = 0.0f;
-      m_cBaseCenterLocal.y = -BODY_HALF_HEIGHT;
-      m_cBaseCenterLocal.z = 0.0f;
+      m_cBaseCenterLocal.y = 0.0f;
+      m_cBaseCenterLocal.z = -BODY_HALF_HEIGHT;
       /* Get position and orientation in this engine's representation */
       physx::PxVec3 cPos;
       CVector3ToPxVec3(GetEmbodiedEntity().GetPosition(), cPos);
@@ -56,7 +56,7 @@ namespace argos {
        * 2. a rotation around the base
        * 3. a translation to the final position
        */
-      physx::PxTransform cTranslation1(physx::PxVec3(0.0f, BODY_HALF_HEIGHT, 0.0f));
+      physx::PxTransform cTranslation1(physx::PxVec3(0.0f, 0.0f, BODY_HALF_HEIGHT));
       physx::PxTransform cRotation(cOrient);
       physx::PxTransform cTranslation2(cPos);
       physx::PxTransform cFinalTrans = cTranslation2 * cRotation * cTranslation1;
@@ -163,12 +163,12 @@ namespace argos {
       /* Calculate torque-related control inputs */
       physx::PxVec3 cTorqueInputs(
          UPLIFT_COEFFICIENT * ARM_HALF_LENGTH * (pfSquareRotorVel[0] - pfSquareRotorVel[2]),
-         DRAG_COEFFICIENT * (pfSquareRotorVel[0] - pfSquareRotorVel[1] + pfSquareRotorVel[2] - pfSquareRotorVel[3]),
-         UPLIFT_COEFFICIENT * ARM_HALF_LENGTH * (pfSquareRotorVel[1] - pfSquareRotorVel[3]));
+         UPLIFT_COEFFICIENT * ARM_HALF_LENGTH * (pfSquareRotorVel[1] - pfSquareRotorVel[3]),
+         DRAG_COEFFICIENT * (pfSquareRotorVel[0] - pfSquareRotorVel[1] + pfSquareRotorVel[2] - pfSquareRotorVel[3]));
       /* Apply uplift */
       physx::PxRigidBodyExt::addLocalForceAtLocalPos(
          *m_pcBody,
-         physx::PxVec3(0.0f, fUpliftInput, 0.0f),
+         physx::PxVec3(0.0f, 0.0f, fUpliftInput),
          physx::PxVec3(0.0f));
       /* Apply rotational moment */
       physx::PxVec3 cTorque = (-m_pcBody->getAngularVelocity()).cross(INERTIA_TENSOR * m_pcBody->getAngularVelocity()) + cTorqueInputs;
