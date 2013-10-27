@@ -15,23 +15,23 @@ namespace argos {
                                   CBoxEntity& c_entity) :
       CPhysXStretchableObjectModel(c_engine, c_entity) {
       /* Get the half size of the entity */
-      physx::PxVec3 cHalfSize(m_cEntity.GetSize().GetY() * 0.5f,
-                              m_cEntity.GetSize().GetZ() * 0.5f,
-                              m_cEntity.GetSize().GetX() * 0.5f);
+      physx::PxVec3 cHalfSize(m_cEntity.GetSize().GetX() * 0.5f,
+                              m_cEntity.GetSize().GetY() * 0.5f,
+                              m_cEntity.GetSize().GetZ() * 0.5f);
       m_cBaseCenterLocal.x = 0.0f;
-      m_cBaseCenterLocal.y = -cHalfSize.y;
-      m_cBaseCenterLocal.z = 0.0f;
+      m_cBaseCenterLocal.y = 0.0f;
+      m_cBaseCenterLocal.z = -cHalfSize.z;
       /* Get position and orientation in this engine's representation */
       physx::PxVec3 cPos;
       CVector3ToPxVec3(GetEmbodiedEntity().GetPosition(), cPos);
       physx::PxQuat cOrient;
       CQuaternionToPxQuat(GetEmbodiedEntity().GetOrientation(), cOrient);
       /* Create the transform
-       * 1. a translation up by half size on y
+       * 1. a translation up by half size on z
        * 2. a rotation around the box base
        * 3. a translation to the final position
        */
-      physx::PxTransform cTranslation1(physx::PxVec3(0.0f, cHalfSize.y, 0.0f));
+      physx::PxTransform cTranslation1(physx::PxVec3(0.0f, 0.0f, cHalfSize.z));
       physx::PxTransform cRotation(cOrient);
       physx::PxTransform cTranslation2(cPos);
       physx::PxTransform cFinalTrans = cTranslation2 * cRotation * cTranslation1;

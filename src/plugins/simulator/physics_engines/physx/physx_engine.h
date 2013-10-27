@@ -25,17 +25,6 @@ namespace argos {
     * This class implements the CPhysicsEngine interface using the NVIDIA PhysX
     * physics engine library.
     * </p>
-    * <p>
-    * The axes of the space in PhysX are not directed as in the ARGoS space. In the
-    * latter, the XY plane is the ground and Z indicates the up direction (right-hand rule);
-    * the camera is pointed along the X axis, the base of the screen is the Y axis, and the
-    * left-hand vertical side of the screen corresponds to the Z axis. Conversely, in PhysX
-    * the camera is oriented along the Z axis, with the X axis corresponding to the lower side
-    * of the screen and the Y axis corresponding to the left-hand vertical side (left-hand rule).
-    * To convert positions and orientations between the ARGoS space and the PhysX space, you
-    * must use the functions CVector3ToPxVec3(), PxVec3ToCVector3(), CQuaternionToPxQuat(),
-    * PxQuatToCQuaternion().
-    * </p>
     */
    class CPhysXEngine : public CPhysicsEngine {
 
@@ -193,9 +182,9 @@ namespace argos {
     */
    inline void CVector3ToPxVec3(const CVector3& c_vector3,
                                 physx::PxVec3& c_pxvec3) {
-      c_pxvec3.x = -c_vector3.GetY();
-      c_pxvec3.y = c_vector3.GetZ();
-      c_pxvec3.z = c_vector3.GetX();
+      c_pxvec3.x = c_vector3.GetX();
+      c_pxvec3.y = c_vector3.GetY();
+      c_pxvec3.z = c_vector3.GetZ();
    }
 
    /**
@@ -210,9 +199,9 @@ namespace argos {
     */
    inline void PxVec3ToCVector3(const physx::PxVec3& c_pxvec3,
                                 CVector3& c_vector3) {
-      c_vector3.Set(c_pxvec3.z,
-                    -c_pxvec3.x,
-                    c_pxvec3.y);
+      c_vector3.Set(c_pxvec3.x,
+                    c_pxvec3.y,
+                    c_pxvec3.z);
    }
 
    /**
@@ -228,9 +217,9 @@ namespace argos {
    inline void CQuaternionToPxQuat(const CQuaternion& c_quaternion,
                                    physx::PxQuat& c_pxquat) {
       c_pxquat.w = c_quaternion.GetW();
-      c_pxquat.x = c_quaternion.GetY();
-      c_pxquat.y = -c_quaternion.GetZ();
-      c_pxquat.z = -c_quaternion.GetX();
+      c_pxquat.x = c_quaternion.GetX();
+      c_pxquat.y = c_quaternion.GetY();
+      c_pxquat.z = c_quaternion.GetZ();
    }
 
    /**
@@ -246,9 +235,9 @@ namespace argos {
    inline void PxQuatToCQuaternion(const physx::PxQuat& c_pxquat,
                                    CQuaternion& c_quaternion) {
       c_quaternion.SetW(c_pxquat.w);
-      c_quaternion.SetX(-c_pxquat.z);
-      c_quaternion.SetY(c_pxquat.x);
-      c_quaternion.SetZ(-c_pxquat.y);
+      c_quaternion.SetX(c_pxquat.x);
+      c_quaternion.SetY(c_pxquat.y);
+      c_quaternion.SetZ(c_pxquat.z);
    }
 
    /****************************************/

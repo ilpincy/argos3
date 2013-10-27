@@ -33,19 +33,19 @@ namespace argos {
       }
       /* Set center of cylinder base */
       m_cBaseCenterLocal.x = 0.0f;
-      m_cBaseCenterLocal.y = -c_entity.GetHeight() * 0.5f;
-      m_cBaseCenterLocal.z = 0.0f;
+      m_cBaseCenterLocal.y = 0.0f;
+      m_cBaseCenterLocal.z = -c_entity.GetHeight() * 0.5f;
       /* Get position and orientation in this engine's representation */
       physx::PxVec3 cPos;
       CVector3ToPxVec3(GetEmbodiedEntity().GetPosition(), cPos);
       physx::PxQuat cOrient;
       CQuaternionToPxQuat(GetEmbodiedEntity().GetOrientation(), cOrient);
       /* Create the transform
-       * 1. a translation up by half size on y
+       * 1. a translation up by half size on z
        * 2. a rotation around the box base
        * 3. a translation to the final position
        */
-      physx::PxTransform cTranslation1(physx::PxVec3(0.0f, c_entity.GetHeight() * 0.5f, 0.0f));
+      physx::PxTransform cTranslation1(physx::PxVec3(0.0f, 0.0f, c_entity.GetHeight() * 0.5f));
       physx::PxTransform cRotation(cOrient);
       physx::PxTransform cTranslation2(cPos);
       physx::PxTransform cFinalTrans = cTranslation2 * cRotation * cTranslation1;
@@ -53,8 +53,8 @@ namespace argos {
       m_pcGeometry = new physx::PxConvexMeshGeometry(m_pcCylinderMesh,
                                                      physx::PxMeshScale(
                                                         physx::PxVec3(c_entity.GetRadius(),
-                                                                      c_entity.GetHeight(),
-                                                                      c_entity.GetRadius()),
+                                                                      c_entity.GetRadius(),
+                                                                      c_entity.GetHeight()),
                                                         physx::PxQuat::createIdentity()));
       /* Create the cylinder body */
       if(GetEmbodiedEntity().IsMovable()) {
@@ -103,12 +103,12 @@ namespace argos {
       for(size_t i = 0; i < NUM_SLICES; ++i) {
          /* Top face */
          pcVertices[i].x = Cos(cSlice * i);
-         pcVertices[i].y = 0.5f;
-         pcVertices[i].z = Sin(cSlice * i);
+         pcVertices[i].y = Sin(cSlice * i);
+         pcVertices[i].z = 0.5f;
          /* Bottom face */
          pcVertices[i+NUM_SLICES].x = pcVertices[i].x;
-         pcVertices[i+NUM_SLICES].y = -0.5f;
-         pcVertices[i+NUM_SLICES].z = pcVertices[i].z;
+         pcVertices[i+NUM_SLICES].y = pcVertices[i].y;
+         pcVertices[i+NUM_SLICES].z = -0.5f;
       }
       /* Set up the description */
       cDescription.points.count  = NUM_SLICES * 2;

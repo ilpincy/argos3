@@ -163,7 +163,7 @@ namespace argos {
          }
          /* Create scene descriptor */
          m_pcSceneDesc = new physx::PxSceneDesc(m_pcPhysics->getTolerancesScale());
-         m_pcSceneDesc->gravity = physx::PxVec3(0.0f, -9.81f, 0.0f);
+         m_pcSceneDesc->gravity = physx::PxVec3(0.0f, 0.0f, -9.81f);
          m_pcSceneDesc->cpuDispatcher = m_pcCPUDispatcher;
          m_pcSceneDesc->flags |= physx::PxSceneFlag::eENABLE_SWEPT_INTEGRATION;
          // m_pcSceneDesc->filterShader = physx::PxDefaultSimulationFilterShader;
@@ -177,7 +177,7 @@ namespace argos {
          /* Add the ground */
          /* The plane is centered in the origin and */
          m_pcGround = PxCreatePlane(*m_pcPhysics,
-                                    physx::PxPlane(physx::PxVec3(0.0f, 1.0f, 0.0f), 0.0f),
+                                    physx::PxPlane(physx::PxVec3(0.0f, 0.0f, 1.0f), 0.0f),
                                     *m_pcDefaultMaterial);
          m_pcScene->addActor(*m_pcGround);
       }
