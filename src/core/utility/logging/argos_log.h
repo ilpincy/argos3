@@ -136,24 +136,6 @@ namespace argos {
          return *this;
       }
 
-      inline CARGoSLog& operator<<(const std::_Setw& t_msg) {
-#ifdef ARGOS_THREADSAFE_LOG
-         *(m_vecStreams[m_mapStreamOrder.find(pthread_self())->second]) << t_msg;
-#else
-         m_cStream << t_msg;
-#endif
-         return *this;
-      }
-
-      inline CARGoSLog& operator<<(const std::_Setiosflags& t_msg) {
-#ifdef ARGOS_THREADSAFE_LOG
-         *(m_vecStreams[m_mapStreamOrder.find(pthread_self())->second]) << t_msg;
-#else
-         m_cStream << t_msg;
-#endif
-         return *this;
-      }
-
       template <typename T> CARGoSLog& operator<<(const T t_msg) {
          if(m_bColoredOutput) {
 #ifdef ARGOS_THREADSAFE_LOG

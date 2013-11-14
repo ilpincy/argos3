@@ -61,7 +61,6 @@ namespace argos {
       cpBody*  m_ptActualBaseBody;
       cpBody*  m_ptActualGripperBody;
       cpBody*  m_ptControlGripperBody;
-      cpConstraint* m_ptGripperControlLinearMotion;
       cpConstraint* m_ptGripperControlAngularMotion;
       cpConstraint* m_ptBaseGripperLinearMotion;
       cpConstraint* m_ptBaseGripperAngularMotion;

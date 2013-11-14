@@ -134,6 +134,8 @@ namespace ticpp
 		/// Visit an element.
 		virtual bool VisitExit( const Element& /*element*/ )		{ return true; }
 
+
+		using TiXmlVisitor::Visit;
 		/// Visit a declaration
 		virtual bool Visit( const Declaration& /*declaration*/ )	{ return true; }
 		/// Visit a stylesheet reference

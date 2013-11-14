@@ -12,8 +12,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   CARGoSCommandLineArgParser::CARGoSCommandLineArgParser(CSimulator& c_simulator) :
-      m_cSimulator(c_simulator),
+   CARGoSCommandLineArgParser::CARGoSCommandLineArgParser() :
       m_eAction(ACTION_UNKNOWN),
       m_pcInitLogStream(NULL),
       m_pcInitLogErrStream(NULL) {

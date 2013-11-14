@@ -41,7 +41,7 @@ void PrintGridCells(CGrid<CLEDEntity>& g) {
       for(SInt32 j = g.GetSizeJ()-1; j >= 0; --j) {
          for(SInt32 i = 0; i < g.GetSizeI(); ++i) {
             CGrid<CLEDEntity>::SCell& c = g.GetCellAt(i, j, k);
-            fprintf(stdout, "[ %d, %d, %d ] %d entities, timestamp = %d\n", i, j, k, c.Entities.size(), c.Timestamp);
+            fprintf(stdout, "[ %d, %d, %d ] %u entities, timestamp = %u\n", i, j, k, c.Entities.size(), c.Timestamp);
             if(!c.Entities.empty()) {
                for(CSet<CLEDEntity*>::iterator it = c.Entities.begin();
                    it != c.Entities.end();

@@ -27,7 +27,7 @@ namespace argos {
 
 #include <vector>
 #include <map>
-#include <tr1/unordered_map>
+#include <unordered_map>
 #include <string>
 
 namespace argos {
@@ -81,7 +81,7 @@ namespace argos {
       typedef std::vector<CEntity*> TVector;
 
       /** A map of entities */
-      typedef std::tr1::unordered_map<std::string, CEntity*> TMap;
+      typedef std::unordered_map<std::string, CEntity*> TMap;
 
       /** A multi-map of entities */
       typedef std::multimap<std::string, CEntity*> TMultiMap;

@@ -104,8 +104,6 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   extern "C" {
-
       /**
        * Tokenizes the given string according to the wanted delimiters (by default just a " ").
        * @param str_string the string to tokenize.
@@ -170,8 +168,6 @@ namespace argos {
 
       /****************************************/
       /****************************************/
-
-   }
 
 }
 
