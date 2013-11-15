@@ -35,7 +35,7 @@ Compiling ARGoS
 If you downloaded the sources of ARGoS and want to compile its code, you need:
 
 * A UNIX system (Linux or MacOSX; Microsoft Windows is not supported)
-* _g++_ >= 4.2
+* _g++_ >= 4.7
 * _cmake_ >= 2.6
 
 If you want to compile the simulator, you need:
