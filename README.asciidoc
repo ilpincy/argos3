@@ -32,6 +32,9 @@ can download the development sources through git:
 Compiling ARGoS
 ----------------
 
+Requirements
+~~~~~~~~~~~~
+
 If you downloaded the sources of ARGoS and want to compile its code, you need:
 
 * A UNIX system (Linux or MacOSX; Microsoft Windows is not supported)
@@ -63,12 +66,18 @@ If you want to create the documentation you need:
 * To create the HTML version of this README:
 ** _asciidoc_ >= 8.6.2
 
+Debian
+^^^^^^
+
 On Debian, you can install all of the necessary requirements
 with the following command:
 
  $ sudo apt-get install libgsl0-dev libfreeimage-dev libqt4-dev \
    freeglut3-dev libxi-dev libxmu-dev liblua5.1-dev doxygen \
    graphviz-dev asciidoc
+
+OpenSuse
+^^^^^^^^
 
 On openSUSE 12.3, you can install all of the necessary requirements
 with the following commands:
@@ -82,6 +91,9 @@ with the following commands:
  $ sudo zypper install git cmake gcc gcc-c++ gsl-devel freeimage-devel \
    doxygen graphviz asciidoc lua51-devel libqt4-devel freeglut-devel \
    rpmbuild
+
+Mac OSX
+^^^^^^^
 
 On Mac, you can install all of the necessary requirements using
 http://http://brew.sh/[HomeBrew]. On the command line, type the
@@ -194,6 +206,10 @@ TIP: If you want to squeeze maximum performance from ARGoS, along with compiling
 Using the ARGoS simulator from the source tree
 ----------------------------------------------
 
+IMPORTANT: You can't install ARGoS system-wide and run the source version at the same time.
+           If you intend to run ARGoS from the sources, you must uninstall it from the
+           system.
+
 Running the ARGoS simulator
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -222,10 +238,6 @@ the file +$HOME/.config/Iridia-ULB/ARGoS.conf+ as follows:
  #
  # more stuff
  #
-
-IMPORTANT: You can't install ARGoS system-wide and run the source version at the same time.
-           If you intend to run ARGoS from the sources, you must uninstall it from the
-           system.
 
 Debugging the ARGoS simulator
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
