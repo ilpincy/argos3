@@ -11,6 +11,31 @@ function open() {
 }
 
 #
+# Create TAGS file
+#
+function tags() {
+    EDITOR=${EDITOR:-emacs}
+    case ${EDITOR} in
+        "emacs")
+            TAGSCMD=$(which etags)
+            ;;
+        "xemacs")
+            TAGSCMD=$(which etags)
+            ;;
+        "vi")
+            TAGSCMD=$(which ctags)
+            ;;
+        "vim")
+            TAGSCMD=$(which ctags)
+            ;;
+        *)
+    esac
+    OUTPUT=build/TAGS
+    rm -f ${OUTPUT}
+    find src -type f \( -name '*.h' -o -name '*.cpp' -o -name '*.c' \) -print | ${TAGSCMD} -o ${OUTPUT} --declarations -I -
+}
+
+#
 # Build code
 #
 function build {
@@ -150,6 +175,9 @@ fi
 case $1 in
     "open")
         open
+        ;;
+    "tags")
+        tags
         ;;
     "check_headers")
         check_headers
