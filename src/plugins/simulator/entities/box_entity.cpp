@@ -34,13 +34,13 @@ namespace argos {
       CComposableEntity(NULL, str_id),
       m_pcEmbodiedEntity(
          new CEmbodiedEntity(this,
-                             str_id,
+                             "body_0",
                              c_position,
                              c_orientation,
                              b_movable)),
       m_pcLEDEquippedEntity(
          new CLEDEquippedEntity(this,
-                                str_id,
+                                "leds_0",
                                 m_pcEmbodiedEntity)),
       m_fMass(f_mass) {
       AddComponent(*m_pcEmbodiedEntity);
