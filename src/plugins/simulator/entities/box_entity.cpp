@@ -42,6 +42,7 @@ namespace argos {
          new CLEDEquippedEntity(this,
                                 "leds_0",
                                 m_pcEmbodiedEntity)),
+      m_cSize(c_size),
       m_fMass(f_mass) {
       AddComponent(*m_pcEmbodiedEntity);
       AddComponent(*m_pcLEDEquippedEntity);
