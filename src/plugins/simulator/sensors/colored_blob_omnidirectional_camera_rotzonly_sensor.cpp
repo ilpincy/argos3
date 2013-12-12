@@ -65,7 +65,10 @@ namespace argos {
       }
 
       void Setup(Real f_ground_half_range) {
-         m_tBlobs.clear();
+         while(! m_tBlobs.empty()) {
+            delete m_tBlobs.back();
+            m_tBlobs.pop_back();
+         }
          m_fGroundHalfRange = f_ground_half_range;
          m_cEmbodiedEntity.GetOrientation().ToEulerAngles(m_cCameraOrient, m_cTmp1, m_cTmp2);
          m_cCameraPos = m_cEmbodiedEntity.GetPosition();
