@@ -27,8 +27,24 @@ namespace argos {
 
 #include <vector>
 #include <map>
-#include <unordered_map>
 #include <string>
+
+#if defined(__apple_build_version__ )
+// We are on Apple, check compiler version
+# if __clang_major__ >= 5
+  // XCode 5.0.0 or later
+#  include <unordered_map>
+using std::unordered_map;
+# else
+  // XCode 4.6.3 or earlier
+#  include <tr1/unordered_map>
+using std::tr1::unordered_map;
+# endif
+#else
+// We are on Linux, use c++03 standard
+# include <tr1/unordered_map>
+using std::tr1::unordered_map;
+#endif
 
 namespace argos {
 
@@ -81,7 +97,7 @@ namespace argos {
       typedef std::vector<CEntity*> TVector;
 
       /** A map of entities */
-      typedef std::unordered_map<std::string, CEntity*> TMap;
+      typedef unordered_map<std::string, CEntity*> TMap;
 
       /** A multi-map of entities */
       typedef std::multimap<std::string, CEntity*> TMultiMap;

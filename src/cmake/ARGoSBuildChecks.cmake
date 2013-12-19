@@ -1,6 +1,6 @@
 #
 # Check for correct GCC version
-# On Linux it must be >= 4.7
+# On Linux it must be >= 4.3
 #
 macro(CHECK_GCC MIN_VERSION)
   execute_process(COMMAND ${CMAKE_C_COMPILER} -dumpversion OUTPUT_VARIABLE GCC_VERSION)
@@ -15,8 +15,8 @@ if(APPLE)
   # On Apple it must be >= 4.2.1
   check_gcc(4.2.1)
 else(APPLE)
-  # On Linux it must be >= 4.7
-  check_gcc(4.7)
+  # On Linux it must be >= 4.3
+  check_gcc(4.3)
 endif(APPLE)
 
 #
