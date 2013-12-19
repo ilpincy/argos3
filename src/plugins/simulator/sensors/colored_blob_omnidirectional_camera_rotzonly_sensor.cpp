@@ -28,7 +28,12 @@ namespace argos {
          m_bShowRays(b_show_rays) {
          m_pcRootSensingEntity = &m_cEmbodiedEntity.GetParent();
       }
-      virtual ~CLEDCheckOperation() {}
+      virtual ~CLEDCheckOperation() {
+         while(! m_tBlobs.empty()) {
+            delete m_tBlobs.back();
+            m_tBlobs.pop_back();
+         }
+      }
 
       virtual bool operator()(CLEDEntity& c_led) {
          /* Process this LED only if it's lit */
