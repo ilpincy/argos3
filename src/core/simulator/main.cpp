@@ -53,7 +53,6 @@ int main(int n_argc, char** ppch_argv) {
       }
       /* Done, destroy stuff */
       cSimulator.Destroy();
-      CDynamicLoading::UnloadAllLibraries();
    }
    catch(std::exception& ex) {
       /* A fatal error occurred: dispose of data, print error and exit */

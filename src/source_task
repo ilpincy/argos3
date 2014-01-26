@@ -11,6 +11,13 @@ function open() {
 }
 
 #
+# Count lines of code
+#
+function count_lines() {
+    find src -type f \( -name '*.h' -o -name '*.cpp' -o -name '*.c' \) | xargs wc -l
+}
+
+#
 # Create TAGS file
 #
 function tags() {
@@ -175,6 +182,9 @@ fi
 case $1 in
     "open")
         open
+        ;;
+    "count_lines")
+        count_lines
         ;;
     "tags")
         tags

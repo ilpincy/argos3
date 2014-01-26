@@ -65,6 +65,8 @@ namespace argos {
       if(m_pcSpace != NULL) {
          delete m_pcSpace;
       }
+      /* Get rid of all libraries */
+      CDynamicLoading::UnloadAllLibraries();
    }
 
    /****************************************/
