@@ -74,8 +74,8 @@ On Debian, you can install all of the necessary requirements
 with the following command:
 
  $ sudo apt-get install libgsl0-dev libfreeimage-dev libqt4-dev \
-   freeglut3-dev libxi-dev libxmu-dev liblua5.1-dev doxygen \
-   graphviz-dev asciidoc
+   freeglut3-dev libxi-dev libxmu-dev liblua5.1-dev lua5.1 \
+   doxygen graphviz-dev asciidoc
 
 OpenSuse
 ^^^^^^^^
