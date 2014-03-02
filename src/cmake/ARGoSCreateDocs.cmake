@@ -7,7 +7,7 @@ if(ARGOS_DOCUMENTATION)
     DEPENDS ${CMAKE_SOURCE_DIR}/../doc/argos3.1)
   add_custom_target(man
     DEPENDS argos3.1.gz)
-  install(FILES ${CMAKE_BINARY_DIR}/argos3.1.gz DESTINATION man/man1)
+  install(FILES ${CMAKE_BINARY_DIR}/argos3.1.gz DESTINATION share/man/man1)
   set(ARGOS_DOCUMENTATION_DEPENDS man)
 
   #
