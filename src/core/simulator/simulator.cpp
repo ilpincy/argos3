@@ -17,7 +17,7 @@
 #include <argos3/core/simulator/space/space_no_threads.h>
 #include <argos3/core/simulator/space/space_multi_thread_balance_quantity.h>
 #include <argos3/core/simulator/space/space_multi_thread_balance_length.h>
-#include <argos3/core/simulator/visualization/visualization.h>
+#include <argos3/core/simulator/visualization/default_visualization.h>
 #include <argos3/core/simulator/physics_engine/physics_engine.h>
 #include <argos3/core/simulator/loop_functions.h>
 #include <argos3/core/simulator/entity/composable_entity.h>
@@ -36,7 +36,9 @@ namespace argos {
       m_bWasRandomSeedSet(false),
       m_unThreads(0),
       m_pcProfiler(NULL),
-      m_bHumanReadableProfile(true) {}
+      m_bHumanReadableProfile(true),
+      m_bRealTimeClock(false),
+      m_bTerminated(false) {}
 
    /****************************************/
    /****************************************/
@@ -137,6 +139,8 @@ namespace argos {
       if(NodeExists(m_tConfigurationRoot, "loop_functions")) {
          m_pcLoopFunctions->Init(GetNode(m_tConfigurationRoot, "loop_functions"));
       }
+      /* Physics engines */
+      InitPhysics2();
       /* Media */
       InitMedia2();
       /* Initialise visualization */
@@ -147,7 +151,7 @@ namespace argos {
       }
       else {
          LOG << "[INFO] No visualization selected." << std::endl;
-         m_pcVisualization = new CVisualization();
+         m_pcVisualization = new CDefaultVisualization();
       }
       /* Start profiling, if needed */
       if(IsProfiling()) {
@@ -278,11 +282,10 @@ namespace argos {
    /****************************************/
 
    bool CSimulator::IsExperimentFinished() const {
-      /*
-        The experiment is considered finished when the simulation clock exceeds
-        the maximum value set in the XML, or when one of the visualisations asks
-        to terminate.
-      */
+      /* Check if the simulation must be terminated */
+      if(m_bTerminated) {
+         return true;
+      }
       /* Check simulation clock */
       if (m_unMaxSimulationClock > 0 &&
           m_pcSpace->GetSimulationClock() >= m_unMaxSimulationClock) {
@@ -375,6 +378,11 @@ namespace argos {
          LOG << "[INFO] Total experiment length in clock ticks = "
              << (m_unMaxSimulationClock ? ToString(m_unMaxSimulationClock) : "unlimited")
              << std::endl;
+         /* Check for the 'real_time' attribute */
+         GetNodeAttributeOrDefault(tExperiment, "real_time", m_bRealTimeClock, m_bRealTimeClock);
+         if(m_bRealTimeClock) {
+            LOG << "[INFO] Using the real-time clock." << std::endl;
+         }
          /* Get the profiling tag, if present */
          if(NodeExists(t_tree, "profiling")) {
             TConfigurationNode& tProfiling = GetNode(t_tree, "profiling");
@@ -507,6 +515,33 @@ namespace argos {
                pcEngine->Destroy();
                delete pcEngine;
                THROW_ARGOSEXCEPTION_NESTED("Error initializing physics engine type \"" << itEngines->Value() << "\"", ex);
+            }
+         }
+      }
+      catch(CARGoSException& ex) {
+         THROW_ARGOSEXCEPTION_NESTED("Failed to initialize the physics engines. Parse error in the <physics_engines> subtree.", ex);
+      }
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CSimulator::InitPhysics2() {
+      try {
+         /* Cycle through the physics engines */
+         CPhysicsEngine::TMap::iterator it;
+         for(it = m_mapPhysicsEngines.begin(); it != m_mapPhysicsEngines.end(); ++it) {
+            CPhysicsEngine& cPhysicsEngine = *(it->second);
+            try {
+               /* Initialize the physicsengine */
+               cPhysicsEngine.PostSpaceInit();
+            }
+            catch(CARGoSException& ex) {
+               /* Error while executing physicsengine post space init, destroy what done to prevent memory leaks */
+               std::ostringstream ossMsg;
+               ossMsg << "Error executing post-space initialization of physics engine \"" << cPhysicsEngine.GetId() << "\"";
+               cPhysicsEngine.Destroy();
+               THROW_ARGOSEXCEPTION_NESTED(ossMsg.str(), ex);
             }
          }
       }

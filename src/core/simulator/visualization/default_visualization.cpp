@@ -4,7 +4,7 @@
  * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */
 
-#include <argos3/core/simulator/visualization/visualization.h>
+#include <argos3/core/simulator/visualization/default_visualization.h>
 #include <argos3/core/simulator/space/space.h>
 
 #include <unistd.h>
@@ -23,16 +23,13 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CDefaultVisualization::Init(TConfigurationNode& t_tree) {
-      fprintf(stderr, "[DEBUG] Init() - START\n");
-      /* Get visualization id from the XML */
-      //GetNodeAttribute(t_tree, "id", m_strId);
+   CDefaultVisualization::CDefaultVisualization() {
+      fprintf(stderr, "[DEBUG] CDefaultVisualization() - START\n");
       /* Set the pointer to the step function */
       if(m_cSimulator.IsRealTimeClock()) {
          /* Use real-time clock and set time structures */
          m_tStepFunction = &CDefaultVisualization::RealTimeStep;
          timerclear(&m_tStepClockTime);
-         fprintf(stderr, "[DEBUG] CPhysicsEngine::GetSimulationClockTick() = %f\n", CPhysicsEngine::GetSimulationClockTick());
          m_tStepClockTime.tv_usec = 1e6 * CPhysicsEngine::GetSimulationClockTick();
          ::gettimeofday(&m_tStepStartTime, NULL);
       }
@@ -40,7 +37,7 @@ namespace argos {
          /* Use normal clock */
          m_tStepFunction = &CDefaultVisualization::NormalStep;
       }
-      fprintf(stderr, "[DEBUG] Init() - END\n");
+      fprintf(stderr, "[DEBUG] CDefaultVisualization() - END\n");
    }
 
    /****************************************/
@@ -78,10 +75,10 @@ namespace argos {
       if(!timercmp(&m_tStepElapsedTime, &m_tStepClockTime, >)) {
          /* Calculate the waiting time */
          timersub(&m_tStepClockTime, &m_tStepElapsedTime, &m_tStepWaitTime);
-         fprintf(stderr, "[DEBUG] m_tStepElapsedTime.tv_sec = %llu\n", m_tStepElapsedTime.tv_sec);
-         fprintf(stderr, "[DEBUG] m_tStepElapsedTime.tv_usec = %llu\n", m_tStepElapsedTime.tv_usec);
-         fprintf(stderr, "[DEBUG] m_tStepWaitTime.tv_sec = %llu\n", m_tStepWaitTime.tv_sec);
-         fprintf(stderr, "[DEBUG] m_tStepWaitTime.tv_usec = %llu\n", m_tStepWaitTime.tv_usec);
+         fprintf(stderr, "[DEBUG] m_tStepElapsedTime.tv_sec = %ld\n", m_tStepElapsedTime.tv_sec);
+         fprintf(stderr, "[DEBUG] m_tStepElapsedTime.tv_usec = %ld\n", m_tStepElapsedTime.tv_usec);
+         fprintf(stderr, "[DEBUG] m_tStepWaitTime.tv_sec = %ld\n", m_tStepWaitTime.tv_sec);
+         fprintf(stderr, "[DEBUG] m_tStepWaitTime.tv_usec = %ld\n", m_tStepWaitTime.tv_usec);
          /* Wait */
          ::usleep(m_tStepWaitTime.tv_sec * 1e6 + m_tStepWaitTime.tv_usec);
          /* Get the new step end */

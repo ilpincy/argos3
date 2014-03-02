@@ -87,6 +87,7 @@ set(ARGOS3_HEADERS_SIMULATOR_PHYSICSENGINE
   simulator/physics_engine/physics_model.h)
 # argos3/core/simulator/visualization
 set(ARGOS3_HEADERS_SIMULATOR_VISUALIZATION
+  simulator/visualization/default_visualization.h
   simulator/visualization/visualization.h)
 # argos3/core/simulator/space
 set(ARGOS3_HEADERS_SIMULATOR_SPACE_POSITIONAL_INDICES
@@ -165,7 +166,7 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
     ${ARGOS3_HEADERS_SIMULATOR_PHYSICSENGINE}
     simulator/physics_engine/physics_engine.cpp
     ${ARGOS3_HEADERS_SIMULATOR_VISUALIZATION}
-    simulator/visualization/visualization.cpp
+    simulator/visualization/default_visualization.cpp
     ${ARGOS3_HEADERS_SIMULATOR_SPACE}
     simulator/space/space.cpp
     simulator/space/space_multi_thread_balance_length.cpp

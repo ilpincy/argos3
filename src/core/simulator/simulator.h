@@ -262,6 +262,29 @@ namespace argos {
       }
 
       /**
+       * Returns <tt>true</tt> if the clock tick follows the real time.
+       * By default, this flag is <tt>false</tt>.
+       */
+      inline bool IsRealTimeClock() const {
+         return m_bRealTimeClock;
+      }
+
+      /**
+       * When passed <tt>true</tt>, the clock tick follows the real time.
+       * @param b_real_time <tt>true</tt> to make the clock tick follow the real time; <tt>false</tt> otherwise.
+       */
+      inline void SetRealTimeClock(bool b_real_time) {
+         m_bRealTimeClock = b_real_time;
+      }
+
+      /**
+       * Puts an end to the simulation.
+       */
+      inline void Terminate() {
+         m_bTerminated = true;
+      }
+
+      /**
        * Returns the base directory in which the ARGoS core was installed.
        * Usually it is <tt>/usr</tt> or <tt>/usr/local</tt>.
        * @return The directory in which the ARGoS core was installed.
@@ -325,11 +348,16 @@ namespace argos {
 
       /**
        * Returns <tt>true</tt> if the experiment has finished.
-       * Internally it checks whether the time limit has been reached or
-       * the loop functions' IsExperimentFinished() method returned
-       * <tt>true</tt>.
+       * The experiment is considered finished when at least one of these conditions
+       * holds true:
+       * <ul>
+       * <li> a termination was scheduled through CSimulator::Terminate();
+       * <li> the simulation clock exceeds the maximum value set in the XML;
+       * <li> when CLoopFunctions::IsExperimentFinished() returns <tt>true</tt>.
+       * </ul>
        * @return <tt>true</tt> if the experiment has finished.       
        * @see GetMaxSimulationClock()
+       * @see Terminate()
        * @see CLoopFunctions::IsExperimentFinished()
        */
       bool IsExperimentFinished() const;
@@ -341,6 +369,7 @@ namespace argos {
       void InitControllers(TConfigurationNode& t_tree);
       void InitSpace(TConfigurationNode& t_tree);
       void InitPhysics(TConfigurationNode& t_tree);
+      void InitPhysics2();
       void InitMedia(TConfigurationNode& t_tree);
       void InitMedia2();
       void InitVisualization(TConfigurationNode& t_tree);
@@ -442,6 +471,16 @@ namespace argos {
        * Profiler output format: <tt>true</tt> human readable, <tt>false</tt> table format.
        */
       bool m_bHumanReadableProfile;
+
+      /**
+       * <tt>true</tt> when ARGoS must run in real-time; <tt>false</tt> otherwise.
+       */
+      bool m_bRealTimeClock;
+
+      /**
+       * <tt>true</tt> if the simulation must be terminated now.
+       */
+      bool m_bTerminated;
 
    };
 
