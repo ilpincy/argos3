@@ -236,32 +236,40 @@ namespace argos {
       QIcon cPlayIcon;
       cPlayIcon.addPixmap(QPixmap(m_strIconDir + "/play.png"));
       m_pcPlayAction = new QAction(cPlayIcon, tr("&Play"), this);
-      m_pcPlayAction->setToolTip(tr("Play/pause simulation"));
-      m_pcPlayAction->setStatusTip(tr("Play/pause simulation"));
-      m_pcPlayAction->setCheckable(true);
       m_pcPlayAction->setShortcut(Qt::Key_P);
-      /* Add the pause/step button */
-      QIcon cStepIcon;
-      cStepIcon.addPixmap(QPixmap(m_strIconDir + "/step.png"));
-      m_pcStepAction = new QAction(cStepIcon, tr("&Step"), this);
-      m_pcStepAction->setToolTip(tr("Step simulation"));
-      m_pcStepAction->setStatusTip(tr("Step simulation"));
-      m_pcStepAction->setShortcut(Qt::Key_S);
-      /* Add the fast forward button */
-      QIcon cFastForwardIcon;
-      cFastForwardIcon.addPixmap(QPixmap(m_strIconDir + "/fast_forward.png"));
-      m_pcFastForwardAction = new QAction(cFastForwardIcon, tr("&Fast Forward"), this);
-      m_pcFastForwardAction->setToolTip(tr("Fast forward simulation"));
-      m_pcFastForwardAction->setStatusTip(tr("Fast forward simulation"));
-      m_pcFastForwardAction->setCheckable(true);
-      m_pcFastForwardAction->setShortcut(Qt::Key_F);
-      /* Add the reset button */
-      QIcon cResetIcon;
-      cResetIcon.addPixmap(QPixmap(m_strIconDir + "/reset.png"));
-      m_pcResetAction = new QAction(cResetIcon, tr("&Reset"), this);
-      m_pcResetAction->setToolTip(tr("Reset simulation"));
-      m_pcResetAction->setStatusTip(tr("Reset simulation"));
-      m_pcResetAction->setShortcut(Qt::Key_R);
+      if(! CSimulator::GetInstance().IsRealTimeClock()) {
+         m_pcPlayAction->setToolTip(tr("Play/pause simulation"));
+         m_pcPlayAction->setStatusTip(tr("Play/pause simulation"));
+         m_pcPlayAction->setCheckable(true);
+      }
+      else {
+         m_pcPlayAction->setToolTip(tr("Start experiment"));
+         m_pcPlayAction->setStatusTip(tr("Start experiment"));
+      }
+      if(! CSimulator::GetInstance().IsRealTimeClock()) {
+         /* Add the pause/step button */
+         QIcon cStepIcon;
+         cStepIcon.addPixmap(QPixmap(m_strIconDir + "/step.png"));
+         m_pcStepAction = new QAction(cStepIcon, tr("&Step"), this);
+         m_pcStepAction->setToolTip(tr("Step simulation"));
+         m_pcStepAction->setStatusTip(tr("Step simulation"));
+         m_pcStepAction->setShortcut(Qt::Key_S);
+         /* Add the fast forward button */
+         QIcon cFastForwardIcon;
+         cFastForwardIcon.addPixmap(QPixmap(m_strIconDir + "/fast_forward.png"));
+         m_pcFastForwardAction = new QAction(cFastForwardIcon, tr("&Fast Forward"), this);
+         m_pcFastForwardAction->setToolTip(tr("Fast forward simulation"));
+         m_pcFastForwardAction->setStatusTip(tr("Fast forward simulation"));
+         m_pcFastForwardAction->setCheckable(true);
+         m_pcFastForwardAction->setShortcut(Qt::Key_F);
+         /* Add the reset button */
+         QIcon cResetIcon;
+         cResetIcon.addPixmap(QPixmap(m_strIconDir + "/reset.png"));
+         m_pcResetAction = new QAction(cResetIcon, tr("&Reset"), this);
+         m_pcResetAction->setToolTip(tr("Reset simulation"));
+         m_pcResetAction->setStatusTip(tr("Reset simulation"));
+         m_pcResetAction->setShortcut(Qt::Key_R);
+      }
       /* Add the capture button */
       QIcon cCaptureIcon;
       cCaptureIcon.addPixmap(QPixmap(m_strIconDir + "/record.png"));
@@ -341,16 +349,20 @@ namespace argos {
       m_pcSimulationToolBar->addWidget(m_pcCurrentStepLCD);
       m_pcSimulationToolBar->addSeparator();
       m_pcSimulationToolBar->addAction(m_pcPlayAction);
-      m_pcSimulationToolBar->addAction(m_pcStepAction);
-      m_pcSimulationToolBar->addAction(m_pcFastForwardAction);
-      m_pcDrawFrameEvery = new QSpinBox(m_pcSimulationToolBar);
-      m_pcDrawFrameEvery->setToolTip(tr("Draw frame every X steps when in fast-forward"));
-      m_pcDrawFrameEvery->setMinimum(1);
-      m_pcDrawFrameEvery->setMaximum(999);
-      m_pcDrawFrameEvery->setValue(1);
-      m_pcSimulationToolBar->addWidget(m_pcDrawFrameEvery);
+      if(! CSimulator::GetInstance().IsRealTimeClock()) {
+         m_pcSimulationToolBar->addAction(m_pcStepAction);
+         m_pcSimulationToolBar->addAction(m_pcFastForwardAction);
+         m_pcDrawFrameEvery = new QSpinBox(m_pcSimulationToolBar);
+         m_pcDrawFrameEvery->setToolTip(tr("Draw frame every X steps when in fast-forward"));
+         m_pcDrawFrameEvery->setMinimum(1);
+         m_pcDrawFrameEvery->setMaximum(999);
+         m_pcDrawFrameEvery->setValue(1);
+         m_pcSimulationToolBar->addWidget(m_pcDrawFrameEvery);
+      }
       m_pcSimulationToolBar->addSeparator();
-      m_pcSimulationToolBar->addAction(m_pcResetAction);
+      if(! CSimulator::GetInstance().IsRealTimeClock()) {
+         m_pcSimulationToolBar->addAction(m_pcResetAction);
+      }
       m_pcSimulationToolBar->addAction(m_pcCaptureAction);
    }
 
@@ -360,10 +372,12 @@ namespace argos {
    void CQTOpenGLMainWindow::CreateSimulationMenu() {
       m_pcSimulationMenu = menuBar()->addMenu(tr("&Simulation"));
       m_pcSimulationMenu->addAction(m_pcPlayAction);
-      m_pcSimulationMenu->addAction(m_pcStepAction);
-      m_pcSimulationMenu->addAction(m_pcFastForwardAction);
-      m_pcSimulationMenu->addSeparator();
-      m_pcSimulationMenu->addAction(m_pcResetAction);
+      if(! CSimulator::GetInstance().IsRealTimeClock()) {
+         m_pcSimulationMenu->addAction(m_pcStepAction);
+         m_pcSimulationMenu->addAction(m_pcFastForwardAction);
+         m_pcSimulationMenu->addSeparator();
+         m_pcSimulationMenu->addAction(m_pcResetAction);
+      }
       m_pcSimulationMenu->addAction(m_pcCaptureAction);
       m_pcSimulationMenu->addSeparator();
       m_pcSimulationMenu->addAction(m_pcQuitAction);
@@ -507,38 +521,48 @@ namespace argos {
    /****************************************/
 
    void CQTOpenGLMainWindow::CreateConnections() {
-      /* Play/pause button pressed */
-      connect(m_pcPlayAction, SIGNAL(triggered(bool)),
-              m_pcOpenGLWidget, SLOT(PlayPauseSimulation(bool)));
-      /* Step button pressed */
-      connect(m_pcStepAction, SIGNAL(triggered()),
-              m_pcOpenGLWidget, SLOT(StepSimulation()));
-      /* Fast forward button pressed */
-      connect(m_pcFastForwardAction, SIGNAL(triggered(bool)),
-              m_pcOpenGLWidget, SLOT(FastForwardPauseSimulation(bool)));
-      /* Reset button pressed */
-      connect(m_pcResetAction, SIGNAL(triggered()),
-              m_pcOpenGLWidget, SLOT(ResetSimulation()));
-      connect(m_pcResetAction, SIGNAL(triggered()),
-              this, SLOT(ResetSimulation()));
-      /* Capture button toggled */
-      connect(m_pcCaptureAction, SIGNAL(triggered(bool)),
-              m_pcOpenGLWidget, SLOT(SetGrabFrame(bool)));
+      if(! CSimulator::GetInstance().IsRealTimeClock()) {
+         /* Play/pause button pressed */
+         connect(m_pcPlayAction, SIGNAL(triggered(bool)),
+                 m_pcOpenGLWidget, SLOT(PlayPauseSimulation(bool)));
+         /* Step button pressed */
+         connect(m_pcStepAction, SIGNAL(triggered()),
+                 m_pcOpenGLWidget, SLOT(StepSimulation()));
+         /* Fast forward button pressed */
+         connect(m_pcFastForwardAction, SIGNAL(triggered(bool)),
+                 m_pcOpenGLWidget, SLOT(FastForwardPauseSimulation(bool)));
+         /* Reset button pressed */
+         connect(m_pcResetAction, SIGNAL(triggered()),
+                 m_pcOpenGLWidget, SLOT(ResetSimulation()));
+         connect(m_pcResetAction, SIGNAL(triggered()),
+                 this, SLOT(ResetSimulation()));
+         /* 'Draw frame every' spin box value changed */
+         connect(m_pcDrawFrameEvery, SIGNAL(valueChanged(int)),
+                 m_pcOpenGLWidget, SLOT(SetDrawFrameEvery(int)));
+         /* A simulation step has been completed */
+         connect(m_pcOpenGLWidget, SIGNAL(StepDone(int)),
+                 m_pcCurrentStepLCD, SLOT(display(int)));
+         /* The simulation has been completed */
+         connect(m_pcOpenGLWidget, SIGNAL(SimulationDone()),
+                 this, SLOT(SimulationDone()));
+      }
+      else {
+         /* Play/pause button pressed */
+         connect(m_pcPlayAction, SIGNAL(triggered()),
+                 m_pcOpenGLWidget, SLOT(PlaySimulation()));
+         /* The simulation has been completed */
+         connect(m_pcOpenGLWidget, SIGNAL(SimulationDone()),
+                 this, SLOT(SimulationDone()));
+      }
       // /* POV-Ray XML button pressed */
       // connect(m_pcPOVRayXMLAction, SIGNAL(triggered()),
       //         this, SLOT(POVRaySceneXMLPopUp()));
       // /* POV-Ray XML button pressed */
       // connect(m_pcPOVRayPreviewAction, SIGNAL(triggered()),
       //         this, SLOT(POVRayScenePreview()));
-      /* 'Draw frame every' spin box value changed */
-      connect(m_pcDrawFrameEvery, SIGNAL(valueChanged(int)),
-              m_pcOpenGLWidget, SLOT(SetDrawFrameEvery(int)));
-      /* A simulation step has been completed */
-      connect(m_pcOpenGLWidget, SIGNAL(StepDone(int)),
-              m_pcCurrentStepLCD, SLOT(display(int)));
-      /* The simulation has been completed */
-      connect(m_pcOpenGLWidget, SIGNAL(SimulationDone()),
-              this, SLOT(SimulationDone()));
+      /* Capture button toggled */
+      connect(m_pcCaptureAction, SIGNAL(triggered(bool)),
+              m_pcOpenGLWidget, SLOT(SetGrabFrame(bool)));
       /* Toggle antialiasing */
       connect(m_pcToggleAntiAliasingAction, SIGNAL(triggered(bool)),
               m_pcOpenGLWidget, SLOT(SetAntiAliasing(bool)));
@@ -631,12 +655,17 @@ namespace argos {
    /****************************************/
 
    void CQTOpenGLMainWindow::SimulationDone() {
-      m_pcPlayAction->setChecked(false);
-      m_pcPlayAction->setEnabled(false);
-      m_pcStepAction->setEnabled(false);
-      m_pcFastForwardAction->setChecked(false);
-      m_pcFastForwardAction->setEnabled(false);
-      m_pcCaptureAction->setEnabled(false);
+      if(! CSimulator::GetInstance().IsRealTimeClock()) {
+         m_pcPlayAction->setChecked(false);
+         m_pcPlayAction->setEnabled(false);
+         m_pcStepAction->setEnabled(false);
+         m_pcFastForwardAction->setChecked(false);
+         m_pcFastForwardAction->setEnabled(false);
+         m_pcCaptureAction->setEnabled(false);
+      }
+      else {
+         m_pcQuitAction->trigger();
+      }
    }
 
    /****************************************/

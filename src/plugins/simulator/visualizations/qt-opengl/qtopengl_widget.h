@@ -148,6 +148,7 @@ namespace argos {
 
    public slots:
 
+      void PlaySimulation();
       void PlayPauseSimulation(bool b_play);
       void FastForwardPauseSimulation(bool b_play);
       void StepSimulation();

@@ -458,6 +458,13 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   void CQTOpenGLWidget::PlaySimulation() {
+      nTimerId = startTimer(CPhysicsEngine::GetInverseSimulationClockTick());
+   }
+
+   /****************************************/
+   /****************************************/
+
    void CQTOpenGLWidget::PlayPauseSimulation(bool b_play) {
       m_bFastForwarding = false;
       if(b_play) {
