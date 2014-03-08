@@ -550,6 +550,9 @@ namespace argos {
          /* Play/pause button pressed */
          connect(m_pcPlayAction, SIGNAL(triggered()),
                  m_pcOpenGLWidget, SLOT(PlaySimulation()));
+         /* A simulation step has been completed */
+         connect(m_pcOpenGLWidget, SIGNAL(StepDone(int)),
+                 m_pcCurrentStepLCD, SLOT(display(int)));
          /* The simulation has been completed */
          connect(m_pcOpenGLWidget, SIGNAL(SimulationDone()),
                  this, SLOT(SimulationDone()));
