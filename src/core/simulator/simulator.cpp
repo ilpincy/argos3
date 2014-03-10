@@ -284,15 +284,23 @@ namespace argos {
    bool CSimulator::IsExperimentFinished() const {
       /* Check if the simulation must be terminated */
       if(m_bTerminated) {
+         m_pcLoopFunctions->PostExperiment();
          return true;
       }
       /* Check simulation clock */
       if (m_unMaxSimulationClock > 0 &&
           m_pcSpace->GetSimulationClock() >= m_unMaxSimulationClock) {
+         m_pcLoopFunctions->PostExperiment();
          return true;
       }
       /* Call loop function */
-      return m_pcLoopFunctions->IsExperimentFinished();
+      if(! m_pcLoopFunctions->IsExperimentFinished()) {
+         return false;
+      }
+      else {
+         m_pcLoopFunctions->PostExperiment();
+         return true;
+      }
    }
 
    /****************************************/

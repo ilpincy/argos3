@@ -134,6 +134,18 @@ namespace argos {
       }
 
       /**
+       * Executes user-defined logic when the experiment finishes.
+       * This method is called within CSimulator::IsExperimentFinished()
+       * as soon as its return value evaluates to <tt>true</tt>. This
+       * method is executed before Destroy().
+       * You can use this method to perform final calculations at the
+       * end of an experiment.
+       * The default implementation of this method does nothing.
+       */
+      virtual void PostExperiment() {
+      }
+
+      /**
        * Returns the color of the floor in the specified point.
        * This function is called if the floor entity was configured to take the loop functions
        * as source. The floor color is used by the ground sensors to calculate their readings,
