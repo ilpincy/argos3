@@ -163,6 +163,8 @@ namespace argos {
    /****************************************/
 
    void CSimulator::Reset() {
+      /* Reset terminated flag */
+      m_bTerminated = false;
       /* if random seed is 0 or is not specified, init with the current timeval */
       if(m_bWasRandomSeedSet) {
          CRandom::SetSeedOf("argos", m_unRandomSeed);

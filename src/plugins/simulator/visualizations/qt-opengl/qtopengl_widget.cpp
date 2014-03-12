@@ -11,6 +11,7 @@
 #include <argos3/core/utility/logging/argos_log.h>
 #include <argos3/core/utility/math/plane.h>
 #include <argos3/core/simulator/simulator.h>
+#include <argos3/core/simulator/loop_functions.h>
 #include <argos3/core/simulator/space/space.h>
 #include <argos3/core/simulator/entity/floor_entity.h>
 #include <argos3/core/simulator/entity/composable_entity.h>
@@ -458,46 +459,35 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CQTOpenGLWidget::PlaySimulation() {
+   void CQTOpenGLWidget::PlayExperiment() {
+      m_bFastForwarding = false;
+      if(nTimerId != -1) killTimer(nTimerId);
       nTimerId = startTimer(CPhysicsEngine::GetSimulationClockTick() * 1000.0f);
    }
 
    /****************************************/
    /****************************************/
 
-   void CQTOpenGLWidget::PlayPauseSimulation(bool b_play) {
-      m_bFastForwarding = false;
-      if(b_play) {
-         if(nTimerId != -1) killTimer(nTimerId);
-         nTimerId = startTimer(100);
-      }
-      else {
-         killTimer(nTimerId);
-         nTimerId = -1;
-      }
-   }
-
-   /****************************************/
-   /****************************************/
-
-   void CQTOpenGLWidget::FastForwardPauseSimulation(bool b_play) {
+   void CQTOpenGLWidget::FastForwardExperiment() {
       m_nFrameCounter = 0;
-      if(b_play) {
-         m_bFastForwarding = true;
-         if(nTimerId != -1) killTimer(nTimerId);
-         nTimerId = startTimer(1);
-      }
-      else {
-         m_bFastForwarding = false;
-         killTimer(nTimerId);
-         nTimerId = -1;
-      }
+      m_bFastForwarding = true;
+      if(nTimerId != -1) killTimer(nTimerId);
+      nTimerId = startTimer(1);
    }
 
    /****************************************/
    /****************************************/
 
-   void CQTOpenGLWidget::StepSimulation() {
+   void CQTOpenGLWidget::PauseExperiment() {
+      m_bFastForwarding = false;
+      if(nTimerId != -1) killTimer(nTimerId);
+      nTimerId = -1;
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CQTOpenGLWidget::StepExperiment() {
       if(!m_cSimulator.IsExperimentFinished()) {
          m_cSimulator.UpdateSpace();
          if(m_bFastForwarding) {
@@ -513,25 +503,15 @@ namespace argos {
          emit StepDone(m_cSpace.GetSimulationClock());
       }
       else {
-         killTimer(nTimerId);
-         nTimerId = -1;
-         emit SimulationDone();
+         PauseExperiment();
+         emit ExperimentDone();
       }
    }
 
    /****************************************/
    /****************************************/
 
-   void CQTOpenGLWidget::StopSimulation() {
-      m_bFastForwarding = false;
-      killTimer(nTimerId);
-      nTimerId = -1;
-   }
-
-   /****************************************/
-   /****************************************/
-
-   void CQTOpenGLWidget::ResetSimulation() {
+   void CQTOpenGLWidget::ResetExperiment() {
       m_cSimulator.Reset();
       InitializeArena();
       DrawScene();
@@ -711,7 +691,7 @@ namespace argos {
    /****************************************/
 
    void CQTOpenGLWidget::timerEvent(QTimerEvent* pc_event) {
-      StepSimulation();
+      StepExperiment();
    }
 
    /****************************************/
