@@ -13,6 +13,7 @@
 #include <argos3/core/utility/plugins/dynamic_loading.h>
 #include <argos3/core/utility/logging/argos_log.h>
 #include <argos3/core/simulator/simulator.h>
+#include <argos3/core/simulator/loop_functions.h>
 
 #include <QtCore/QVariant>
 #include <QtGui/QAction>
@@ -788,7 +789,7 @@ namespace argos {
       }
       /* Call ARGoS to terminate the experiment */
       CSimulator::GetInstance().Terminate();
-      CSimulator::GetInstance().IsExperimentFinished();
+      CSimulator::GetInstance().GetLoopFunctions().PostExperiment();
       /* Change state and emit signal */
       m_eExperimentState = EXPERIMENT_DONE;
       emit ExperimentDone();

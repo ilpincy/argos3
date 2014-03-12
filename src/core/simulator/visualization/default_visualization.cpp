@@ -6,6 +6,7 @@
 
 #include <argos3/core/simulator/visualization/default_visualization.h>
 #include <argos3/core/simulator/space/space.h>
+#include <argos3/core/simulator/loop_functions.h>
 
 #include <unistd.h>
 
@@ -46,6 +47,8 @@ namespace argos {
       while(!m_cSimulator.IsExperimentFinished()) {
          (this->*m_tStepFunction)();
       }
+      /* The experiment is finished */
+      m_cSimulator.GetLoopFunctions().PostExperiment();
    }
 
    /****************************************/
