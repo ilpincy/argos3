@@ -198,7 +198,7 @@ namespace argos {
       /* Change cursor */
       QApplication::setOverrideCursor(Qt::WaitCursor);
       /* Stop simulation */
-      m_pcMainWindow->PauseExperiment();
+      m_pcMainWindow->SuspendExperiment();
       /* Clear the message table */
       m_pcLuaMessageTable->clearContents();
       m_pcLuaMessageTable->setRowCount(1);
@@ -206,7 +206,6 @@ namespace argos {
       QTemporaryFile cByteCode;
       if(! cByteCode.open()) {
          SetMessage(0, "ALL", "Can't create bytecode file.");
-         m_pcMainWindow->SuspendExperiment();
          QApplication::restoreOverrideCursor();
          return;
       }
@@ -226,13 +225,11 @@ namespace argos {
          cLuaCompiler.start(cLuaC, QStringList() << "-o" << cByteCode.fileName() << m_strFileName);
          if(! cLuaCompiler.waitForFinished()) {
             SetMessage(0, "ALL", QString(cLuaCompiler.readAllStandardError()));
-            m_pcMainWindow->SuspendExperiment();
             QApplication::restoreOverrideCursor();
             return;
          }
          if(cLuaCompiler.exitCode() != 0) {
             SetMessage(0, "ALL", QString(cLuaCompiler.readAllStandardError()));
-            m_pcMainWindow->SuspendExperiment();
             QApplication::restoreOverrideCursor();
             return;
          }
@@ -251,6 +248,8 @@ namespace argos {
          static_cast<CQTOpenGLLuaStateTreeModel*>(m_pcLuaFunctionTree->model())->SetLuaState(
             m_vecControllers[m_unSelectedRobot]->GetLuaState());
       }
+      /* Resume simulation */
+      m_pcMainWindow->ResumeExperiment();
       QApplication::restoreOverrideCursor();
       statusBar()->showMessage(tr("Execution started"), 2000);
    }

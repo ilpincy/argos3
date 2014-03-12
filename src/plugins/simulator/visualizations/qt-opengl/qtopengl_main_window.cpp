@@ -841,6 +841,7 @@ namespace argos {
       m_pcCaptureAction->setEnabled(false);
       m_pcCaptureAction->setChecked(false);
       if(! CSimulator::GetInstance().IsRealTimeClock()) {
+         m_pcPauseAction->setEnabled(false);
          m_pcStepAction->setEnabled(false);
          m_pcFastForwardAction->setEnabled(false);
       }
