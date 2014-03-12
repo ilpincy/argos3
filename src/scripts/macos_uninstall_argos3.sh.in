@@ -8,7 +8,7 @@ echo 'To complete this operation, you will need administrative privileges.'
 echo
 read -p 'Press CTRL-C to exit, or any other key to proceed...'
 echo
-echo -n 'Uninstalling ARGoS3... '
+echo 'Uninstalling ARGoS3... '
 sudo rm -rf @CMAKE_INSTALL_PREFIX@/bin/argos3
 sudo rm -rf @CMAKE_INSTALL_PREFIX@/doc/argos3
 sudo rm -rf @CMAKE_INSTALL_PREFIX@/include/argos3
