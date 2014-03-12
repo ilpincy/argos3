@@ -57,11 +57,6 @@ namespace argos {
       };
 
       /**
-       * Constructor
-       */
-      CCI_FootBotEncoderSensor() {}
-
-      /**
        * Destructor
        */
       virtual ~CCI_FootBotEncoderSensor() {}

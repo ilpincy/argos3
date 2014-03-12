@@ -1,4 +1,3 @@
-
 /**
  * @file <argos3/plugins/robots/generic/control_interface/ci_differential_steering_actuator.cpp>
  *
