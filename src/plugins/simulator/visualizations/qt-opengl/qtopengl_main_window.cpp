@@ -790,6 +790,8 @@ namespace argos {
       /* Call ARGoS to terminate the experiment */
       CSimulator::GetInstance().Terminate();
       CSimulator::GetInstance().GetLoopFunctions().PostExperiment();
+      LOG.Flush();
+      LOGERR.Flush();
       /* Change state and emit signal */
       m_eExperimentState = EXPERIMENT_DONE;
       emit ExperimentDone();

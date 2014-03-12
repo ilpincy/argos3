@@ -49,6 +49,8 @@ namespace argos {
       }
       /* The experiment is finished */
       m_cSimulator.GetLoopFunctions().PostExperiment();
+      LOG.Flush();
+      LOGERR.Flush();
    }
 
    /****************************************/
