@@ -60,7 +60,7 @@ namespace argos {
 
       virtual bool IsPointContained(const CVector3& c_point) = 0;
 
-      virtual UInt32 GetNumPhysicsEngineEntities() = 0;
+      virtual size_t GetNumPhysicsModels() = 0;
 
       /**
        * Adds an entity to the physics engine.
@@ -79,12 +79,12 @@ namespace argos {
       /**
        * Returns <tt>true</tt> if this engine has entities that must be transferred to another engine.
        */
-      virtual bool IsEntityTransferNeeded() const  = 0;
+      virtual bool IsEntityTransferNeeded() const = 0;
 
       /**
        * Executes the transfer of entities to other engines.
        */
-      virtual void TransferEntities()  = 0;
+      virtual void TransferEntities() = 0;
 
       /**
        * Check whether an object in this engine intersects the given ray.
