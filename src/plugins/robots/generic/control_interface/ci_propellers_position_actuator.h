@@ -25,13 +25,13 @@ namespace argos {
       virtual ~CCI_PropellersPositionActuator() {}
 
       /**
-       * Sets the position of the robot.
+       * Sets the absolute position of the robot in the environment.
        * @param c_pos The desired position.
        */
       virtual void SetPosition(const CVector3& c_pos) = 0;
 
       /**
-       * Sets the orientation of the robot.
+       * Sets the absolute orientation of the robot in the world.
        * @param c_orient The desired orientation.
        */
       virtual void SetOrientation(const CQuaternion& c_orient) = 0;
