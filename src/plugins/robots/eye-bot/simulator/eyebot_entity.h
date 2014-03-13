@@ -12,11 +12,11 @@ namespace argos {
    class CEmbodiedEntity;
    class CEyeBotEntity;
    class CLEDEquippedEntity;
+   class CQuadRotorEntity;
    class CRABEquippedEntity;
 }
 
 #include <argos3/core/simulator/entity/composable_entity.h>
-#include <argos3/plugins/simulator/entities/wheeled_entity.h>
 
 namespace argos {
 
@@ -53,6 +53,10 @@ namespace argos {
          return *m_pcLEDEquippedEntity;
       }
 
+      inline CQuadRotorEntity& GetQuadRotorEntity() {
+         return *m_pcQuadRotorEntity;
+      }
+
       inline CRABEquippedEntity& GetRABEquippedEntity() {
          return *m_pcRABEquippedEntity;
       }
@@ -63,10 +67,11 @@ namespace argos {
 
    private:
 
-      CControllableEntity*                   m_pcControllableEntity;
-      CEmbodiedEntity*                       m_pcEmbodiedEntity;
-      CLEDEquippedEntity*                    m_pcLEDEquippedEntity;
-      CRABEquippedEntity*                    m_pcRABEquippedEntity;
+      CControllableEntity* m_pcControllableEntity;
+      CEmbodiedEntity*     m_pcEmbodiedEntity;
+      CLEDEquippedEntity*  m_pcLEDEquippedEntity;
+      CQuadRotorEntity*    m_pcQuadRotorEntity;
+      CRABEquippedEntity*  m_pcRABEquippedEntity;
    };
 
 }

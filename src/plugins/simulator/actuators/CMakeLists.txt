@@ -6,6 +6,7 @@ set(ARGOS3_HEADERS_PLUGINS_SIMULATOR_ACTUATORS
   differential_steering_default_actuator.h
   gripper_default_actuator.h
   leds_default_actuator.h
+  quadrotor_position_default_actuator.h
   range_and_bearing_default_actuator.h)
 
 #
@@ -16,6 +17,7 @@ set(ARGOS3_SOURCES_PLUGINS_SIMULATOR_ACTUATORS
   differential_steering_default_actuator.cpp
   gripper_default_actuator.cpp
   leds_default_actuator.cpp
+  quadrotor_position_default_actuator.cpp
   range_and_bearing_default_actuator.cpp)
 
 #

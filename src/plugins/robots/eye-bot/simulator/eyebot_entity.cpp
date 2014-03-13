@@ -9,8 +9,9 @@
 #include <argos3/core/simulator/space/space.h>
 #include <argos3/core/simulator/entity/controllable_entity.h>
 #include <argos3/core/simulator/entity/embodied_entity.h>
-#include <argos3/plugins/simulator/entities/rab_equipped_entity.h>
 #include <argos3/plugins/simulator/entities/led_equipped_entity.h>
+#include <argos3/plugins/simulator/entities/quadrotor_entity.h>
+#include <argos3/plugins/simulator/entities/rab_equipped_entity.h>
 
 namespace argos {
 
@@ -33,6 +34,7 @@ namespace argos {
       m_pcControllableEntity(NULL),
       m_pcEmbodiedEntity(NULL),
       m_pcLEDEquippedEntity(NULL),
+      m_pcQuadRotorEntity(NULL),
       m_pcRABEquippedEntity(NULL) {
    }
 
@@ -48,6 +50,7 @@ namespace argos {
       m_pcControllableEntity(NULL),
       m_pcEmbodiedEntity(NULL),
       m_pcLEDEquippedEntity(NULL),
+      m_pcQuadRotorEntity(NULL),
       m_pcRABEquippedEntity(NULL) {
       try {
          /*
@@ -59,6 +62,9 @@ namespace argos {
           */
          m_pcEmbodiedEntity = new CEmbodiedEntity(this, "body_0", c_position, c_orientation);
          AddComponent(*m_pcEmbodiedEntity);
+         /* Quadrotor entity */
+         m_pcQuadRotorEntity = new CQuadRotorEntity(this, "quadrotor_0", BODY_RADIUS);
+         AddComponent(*m_pcQuadRotorEntity);
          /* LED equipped entity, with LEDs [0-11] and beacon [12] */
          m_pcLEDEquippedEntity = new CLEDEquippedEntity(this,
                                                         "leds_0",
@@ -115,6 +121,9 @@ namespace argos {
          m_pcEmbodiedEntity = new CEmbodiedEntity(this);
          AddComponent(*m_pcEmbodiedEntity);
          m_pcEmbodiedEntity->Init(GetNode(t_tree, "body"));
+         /* Quadrotor entity */
+         m_pcQuadRotorEntity = new CQuadRotorEntity(this, "quadrotor_0", BODY_RADIUS);
+         AddComponent(*m_pcQuadRotorEntity);
          /* LED equipped entity, with LEDs [0-11] and beacon [12] */
          m_pcLEDEquippedEntity = new CLEDEquippedEntity(this,
                                                         "leds_0",

@@ -13,8 +13,8 @@ set(ARGOS3_HEADERS_PLUGINS_ROBOTS_GENERIC_CONTROLINTERFACE
   control_interface/ci_light_sensor.h
   control_interface/ci_pan_tilt_camera_actuator.h
   control_interface/ci_positioning_sensor.h
-  control_interface/ci_propellers_position_actuator.h
   control_interface/ci_proximity_sensor.h
+  control_interface/ci_quadrotor_position_actuator.h
   control_interface/ci_range_and_bearing_actuator.h
   control_interface/ci_range_and_bearing_sensor.h)
 
@@ -33,8 +33,8 @@ set(ARGOS3_SOURCES_PLUGINS_ROBOTS_GENERIC
   control_interface/ci_light_sensor.cpp
   control_interface/ci_pan_tilt_camera_actuator.cpp
   control_interface/ci_positioning_sensor.cpp
-  control_interface/ci_propellers_position_actuator.cpp
   control_interface/ci_proximity_sensor.cpp
+  control_interface/ci_quadrotor_position_actuator.cpp
   control_interface/ci_range_and_bearing_actuator.cpp
   control_interface/ci_range_and_bearing_sensor.cpp)
 
