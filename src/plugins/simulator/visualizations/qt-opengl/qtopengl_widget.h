@@ -194,11 +194,6 @@ namespace argos {
       void StepExperiment();
 
       /**
-       * Forcedly terminates the execution of the experiment.
-       */
-      void TerminateExperiment();
-
-      /**
        * Resets the state of the experiment to its state right after
        * initialization.
        */
