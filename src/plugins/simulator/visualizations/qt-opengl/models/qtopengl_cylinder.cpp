@@ -195,6 +195,7 @@ namespace argos {
          static CQTOpenGLCylinder m_cModel;
          c_visualization.DrawPositionalEntity(c_entity.GetEmbodiedEntity());
          m_cModel.Draw(c_entity);
+         m_cModel.DrawLEDs(c_entity);
       }
    };
 
