@@ -80,20 +80,18 @@ namespace argos {
       virtual ~CDynamics2DEngine() {}
 
       virtual void Init(TConfigurationNode& t_tree);
-
       virtual void Reset();
-
       virtual void Update();
-
       virtual void Destroy();
+
+      virtual size_t GetNumPhysicsModels();
+      virtual void AddEntity(CEntity& c_entity);
+      virtual void RemoveEntity(CEntity& c_entity);
 
       virtual bool IsPointContained(const CVector3& c_point);
 
-      virtual UInt32 GetNumPhysicsEngineEntities();
-
-      virtual void AddEntity(CEntity& c_entity);
-
-      virtual void RemoveEntity(CEntity& c_entity);
+      virtual CEmbodiedEntity* CheckIntersectionWithRay(Real& f_t_on_ray,
+                                                        const CRay3& c_ray) const;
 
       inline virtual bool IsEntityTransferNeeded() const {
          return ! m_vecTransferData.empty();
@@ -104,9 +102,6 @@ namespace argos {
       inline virtual bool IsEntityTransferActive() const {
          return m_bEntityTransferActive;
       }
-
-      virtual CEmbodiedEntity* CheckIntersectionWithRay(Real& f_t_on_ray,
-                                                        const CRay3& c_ray) const;
 
       bool CalculateTransfer(Real f_x, Real f_y,
                              std::string& str_engine_id);

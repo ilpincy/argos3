@@ -215,7 +215,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   UInt32 CDynamics2DEngine::GetNumPhysicsEngineEntities() {
+   UInt32 CDynamics2DEngine::GetNumPhysicsModels() {
       return m_tPhysicsModels.size();
    }
 
