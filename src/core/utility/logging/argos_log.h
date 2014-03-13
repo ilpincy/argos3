@@ -43,7 +43,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   extern SInt32 DEBUG_INDENTATION;
+   extern size_t DEBUG_INDENTATION;
 
 #define DEBUG(MSG, ...) { fprintf(stderr, "[DEBUG] "); for(size_t i = 0; i < DEBUG_INDENTATION; ++i) fprintf(stderr, "  "); fprintf(stderr, MSG, ##__VA_ARGS__); }
 
