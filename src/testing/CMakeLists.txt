@@ -21,6 +21,11 @@ if(ARGOS_BUILD_FOR_SIMULATOR OR ARGOS_BUILD_FOR STREQUAL "foot-bot")
     experiment/test_footbot_controller.cpp)
   target_link_libraries(test_footbot_controller
     argos3plugin_${ARGOS_BUILD_FOR}_footbot)
+  add_library(test_eyebot_controller MODULE
+    experiment/test_eyebot_controller.h
+    experiment/test_eyebot_controller.cpp)
+  target_link_libraries(test_eyebot_controller
+    argos3plugin_${ARGOS_BUILD_FOR}_eyebot)
   if(ARGOS_COMPILE_QTOPENGL)
     add_library(test_loop_functions MODULE
       experiment/test_loop_functions.h

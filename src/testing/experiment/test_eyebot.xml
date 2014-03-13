@@ -1,0 +1,57 @@
+<?xml version="1.0" ?>
+<argos-configuration>
+
+  <!-- ************************* -->
+  <!-- * General configuration * -->
+  <!-- ************************* -->
+  <framework>
+    <system threads="0" />
+    <experiment length="1" ticks_per_second="10" random_seed="12345" />
+  </framework>
+  
+  <!-- ****************** -->
+  <!-- * Loop functions * -->
+  <!-- ****************** -->
+  <!-- loop_functions label="test_lf" /-->
+
+  <!-- *************** -->
+  <!-- * Controllers * -->
+  <!-- *************** -->
+  <controllers>
+    <test_eyebot_controller id="x">
+      <actuators />
+      <sensors />
+      <params />
+    </test_eyebot_controller>
+  </controllers>
+
+  <!-- *********************** -->
+  <!-- * Arena configuration * -->
+  <!-- *********************** -->
+  <arena size="10, 10, 1" positional_grid_size="10,10,1">
+    <eye-bot id="eb">
+      <body position="0,0,0" orientation="0,0,0"/>
+      <controller config="x"/>
+    </eye-bot>
+  </arena>
+
+  <!-- ******************* -->
+  <!-- * Physics engines * -->
+  <!-- ******************* -->
+  <physics_engines>
+    <pointmass3d id="pm2d" iterations="3" />
+  </physics_engines>
+
+  <!-- ********* -->
+  <!-- * Media * -->
+  <!-- ********* -->
+  <media />
+
+  <!-- ****************** -->
+  <!-- * Visualization * -->
+  <!-- ****************** -->
+  <visualization>
+    <!-- <qt-opengl /> -->
+  </visualization>
+
+</argos-configuration>
