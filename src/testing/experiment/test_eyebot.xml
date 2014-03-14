@@ -18,11 +18,18 @@
   <!-- * Controllers * -->
   <!-- *************** -->
   <controllers>
-    <test_eyebot_controller id="x">
-      <actuators />
+    <!-- <test_eyebot_controller id="x"> -->
+    <!--   <actuators /> -->
+    <!--   <sensors /> -->
+    <!--   <params /> -->
+    <!-- </test_eyebot_controller> -->
+    <lua_controller id="x">
+      <actuators>
+        <leds implementation="default" medium="leds" />
+      </actuators>
       <sensors />
       <params />
-    </test_eyebot_controller>
+    </lua_controller>
   </controllers>
 
   <!-- *********************** -->
@@ -30,7 +37,7 @@
   <!-- *********************** -->
   <arena size="10, 10, 1" positional_grid_size="10,10,1">
     <eye-bot id="eb">
-      <body position="0,0,0" orientation="0,0,0"/>
+      <body position="0,0,1" orientation="0,0,0"/>
       <controller config="x"/>
     </eye-bot>
   </arena>
@@ -45,13 +52,15 @@
   <!-- ********* -->
   <!-- * Media * -->
   <!-- ********* -->
-  <media />
+  <media>
+    <led id="leds" />
+  </media>
 
   <!-- ****************** -->
   <!-- * Visualization * -->
   <!-- ****************** -->
   <visualization>
-    <!-- <qt-opengl /> -->
+    <qt-opengl lua_editor="true" />
   </visualization>
 
 </argos-configuration>
