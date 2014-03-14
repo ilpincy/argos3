@@ -32,12 +32,10 @@ namespace argos {
 
    public:
 
-      CQuadRotorEntity(CComposableEntity* pc_parent,
-                       Real f_arm_length);
+      CQuadRotorEntity(CComposableEntity* pc_parent);
       
       CQuadRotorEntity(CComposableEntity* pc_parent,
-                       const std::string& str_id,
-                       Real f_arm_length);
+                       const std::string& str_id);
 
       virtual ~CQuadRotorEntity() {}
 
@@ -65,7 +63,6 @@ namespace argos {
 
    private:
 
-      Real m_fArmLength;
       EControlMethod m_eControlMethod;
       SPositionControlData m_sPositionControlData;
 

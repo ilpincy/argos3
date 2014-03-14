@@ -63,7 +63,7 @@ namespace argos {
          m_pcEmbodiedEntity = new CEmbodiedEntity(this, "body_0", c_position, c_orientation);
          AddComponent(*m_pcEmbodiedEntity);
          /* Quadrotor entity */
-         m_pcQuadRotorEntity = new CQuadRotorEntity(this, "quadrotor_0", BODY_RADIUS);
+         m_pcQuadRotorEntity = new CQuadRotorEntity(this, "quadrotor_0");
          AddComponent(*m_pcQuadRotorEntity);
          /* LED equipped entity, with LEDs [0-11] and beacon [12] */
          m_pcLEDEquippedEntity = new CLEDEquippedEntity(this,
@@ -122,7 +122,7 @@ namespace argos {
          AddComponent(*m_pcEmbodiedEntity);
          m_pcEmbodiedEntity->Init(GetNode(t_tree, "body"));
          /* Quadrotor entity */
-         m_pcQuadRotorEntity = new CQuadRotorEntity(this, "quadrotor_0", BODY_RADIUS);
+         m_pcQuadRotorEntity = new CQuadRotorEntity(this, "quadrotor_0");
          AddComponent(*m_pcQuadRotorEntity);
          /* LED equipped entity, with LEDs [0-11] and beacon [12] */
          m_pcLEDEquippedEntity = new CLEDEquippedEntity(this,
@@ -138,6 +138,11 @@ namespace argos {
             LED_RING_RADIUS,
             HALF_LED_ANGLE_SLICE,
             16);
+         CVector3 cLEDPos(LED_RING_RADIUS * 0.7f,
+                          0.0f,
+                          LED_LOWER_RING_ELEVATION - 0.01f);
+         cLEDPos.RotateZ(3.0f * CRadians::PI_OVER_FOUR);
+         m_pcLEDEquippedEntity->AddLED(cLEDPos);
          AddComponent(*m_pcLEDEquippedEntity);
          /* RAB equipped entity */
          Real fRange = 3.0f;

@@ -22,7 +22,8 @@ namespace argos {
    CPointMass3DEyeBotModel::CPointMass3DEyeBotModel(CPointMass3DEngine& c_engine,
                                                     CEyeBotEntity& c_eyebot) :
       CPointMass3DModel(c_engine, c_eyebot.GetEmbodiedEntity()),
-      m_cEyeBotEntity(c_eyebot) {
+      m_cEyeBotEntity(c_eyebot),
+      m_cQuadRotorEntity(c_eyebot.GetQuadRotorEntity()) {
       DEBUG_FUNCTION_ENTER;
       DEBUG_FUNCTION_EXIT;
    }
@@ -47,6 +48,7 @@ namespace argos {
 
    void CPointMass3DEyeBotModel::UpdateFromEntityStatus() {
       DEBUG_FUNCTION_ENTER;
+      m_sDesiredPositionData = m_cQuadRotorEntity.GetPositionControlData();
       DEBUG_FUNCTION_EXIT;
    }
 

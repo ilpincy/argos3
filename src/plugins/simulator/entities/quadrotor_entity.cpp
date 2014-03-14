@@ -12,10 +12,8 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   CQuadRotorEntity::CQuadRotorEntity(CComposableEntity* pc_parent,
-                                      Real f_arm_length) :
+   CQuadRotorEntity::CQuadRotorEntity(CComposableEntity* pc_parent) :
       CEntity(pc_parent),
-      m_fArmLength(f_arm_length),
       m_eControlMethod(NO_CONTROL) {
    }
 
@@ -23,10 +21,8 @@ namespace argos {
    /****************************************/
 
    CQuadRotorEntity::CQuadRotorEntity(CComposableEntity* pc_parent,
-                                      const std::string& str_id,
-                                      Real f_arm_length) :
+                                      const std::string& str_id) :
       CEntity(pc_parent, str_id),
-      m_fArmLength(f_arm_length),
       m_eControlMethod(NO_CONTROL) {
    }
 

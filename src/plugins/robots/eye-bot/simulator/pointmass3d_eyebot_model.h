@@ -10,9 +10,11 @@
 namespace argos {
    class CPointMass3DEngine;
    class CPointMass3DEyeBotModel;
+   class CQuadRotorEntity;
 }
 
 #include <argos3/plugins/simulator/physics_engines/pointmass3d/pointmass3d_model.h>
+#include <argos3/plugins/simulator/entities/quadrotor_entity.h>
 #include <argos3/plugins/robots/eye-bot/simulator/eyebot_entity.h>
 
 namespace argos {
@@ -38,6 +40,8 @@ namespace argos {
    private:
 
       CEyeBotEntity& m_cEyeBotEntity;
+      CQuadRotorEntity& m_cQuadRotorEntity;
+      CQuadRotorEntity::SPositionControlData m_sDesiredPositionData;
 
    };
 
