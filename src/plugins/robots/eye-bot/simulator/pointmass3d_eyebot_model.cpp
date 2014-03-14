@@ -10,11 +10,8 @@
 
 namespace argos {
 
-   static const Real SURFACE_AREA = 0.2f;
-   static const Real DRAG_COEFFICIENT = 16.6f; // Drag coefficient
-   static const Real AIR_DENSITY = 1.205f; // Room Temperature
-   static const Real MASS = 0.5f;
-   static const Real EYEBOT_HEIGHT = 0.566;
+   static const Real BODY_HEIGHT = 0.566f;
+   static const Real BODY_RADIUS = 0.25f;
 
    /****************************************/
    /****************************************/
@@ -25,6 +22,7 @@ namespace argos {
       m_cEyeBotEntity(c_eyebot),
       m_cQuadRotorEntity(c_eyebot.GetQuadRotorEntity()) {
       DEBUG_FUNCTION_ENTER;
+      CalculateBoundingBox();
       DEBUG_FUNCTION_EXIT;
    }
 
@@ -38,6 +36,7 @@ namespace argos {
       if(! b_check_only) {
          m_cEyeBotEntity.GetEmbodiedEntity().SetPosition(c_position);
          m_cEyeBotEntity.GetEmbodiedEntity().SetOrientation(c_orientation);
+         CalculateBoundingBox();
       }
       DEBUG_FUNCTION_EXIT;
       return true;
@@ -65,6 +64,8 @@ namespace argos {
 
    void CPointMass3DEyeBotModel::UpdateEntityStatus() {
       DEBUG_FUNCTION_ENTER;
+      /* Update bounding box */
+      CalculateBoundingBox();
       /* Update the components */
       m_cEyeBotEntity.UpdateComponents();
       DEBUG_FUNCTION_EXIT;
@@ -75,6 +76,14 @@ namespace argos {
 
    void CPointMass3DEyeBotModel::CalculateBoundingBox() {
       DEBUG_FUNCTION_ENTER;
+      GetBoundingBox().MinCorner.Set(
+         m_cEmbodiedEntity.GetPosition().GetX() - BODY_RADIUS,
+         m_cEmbodiedEntity.GetPosition().GetY() - BODY_RADIUS,
+         m_cEmbodiedEntity.GetPosition().GetZ());
+      GetBoundingBox().MaxCorner.Set(
+         m_cEmbodiedEntity.GetPosition().GetX() + BODY_RADIUS,
+         m_cEmbodiedEntity.GetPosition().GetY() + BODY_RADIUS,
+         m_cEmbodiedEntity.GetPosition().GetZ() + BODY_HEIGHT);
       DEBUG_FUNCTION_EXIT;
    }
 
