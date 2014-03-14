@@ -463,6 +463,7 @@ namespace argos {
       }
       QToolBar* pcToolBar = addToolBar(tr("File"));
       pcToolBar->setObjectName("FileToolBar");
+      pcToolBar->setIconSize(QSize(32,32));
       pcToolBar->addAction(m_pcFileNewAction);
       pcToolBar->addAction(m_pcFileOpenAction);
       pcToolBar->addAction(m_pcFileSaveAction);
@@ -532,6 +533,7 @@ namespace argos {
       // pcMenu->addAction(m_pcEditFindAction);
       QToolBar* pcToolBar = addToolBar(tr("Edit"));
       pcToolBar->setObjectName("EditToolBar");
+      pcToolBar->setIconSize(QSize(32,32));
       pcToolBar->addAction(m_pcEditUndoAction);
       pcToolBar->addAction(m_pcEditRedoAction);
       pcToolBar->addSeparator();
@@ -557,6 +559,7 @@ namespace argos {
       pcMenu->addAction(m_pcCodeExecuteAction);
       QToolBar* pcToolBar = addToolBar(tr("Code"));
       pcToolBar->setObjectName("CodeToolBar");
+      pcToolBar->setIconSize(QSize(32,32));
       pcToolBar->addAction(m_pcCodeExecuteAction);
    }
 

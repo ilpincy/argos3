@@ -352,12 +352,16 @@ namespace argos {
    void CQTOpenGLMainWindow::CreateExperimentToolBar() {
       m_pcExperimentToolBar = addToolBar(tr("Experiment"));
       m_pcExperimentToolBar->setObjectName("ExperimentToolBar");
+      m_pcExperimentToolBar->setIconSize(QSize(32,32));
       m_pcCurrentStepLCD = new QLCDNumber(m_pcExperimentToolBar);
       m_pcCurrentStepLCD->setToolTip(tr("Current step"));
       m_pcCurrentStepLCD->setNumDigits(6);
       m_pcCurrentStepLCD->setSegmentStyle(QLCDNumber::Flat);
       m_pcExperimentToolBar->addWidget(m_pcCurrentStepLCD);
       m_pcExperimentToolBar->addSeparator();
+      if(! CSimulator::GetInstance().IsRealTimeClock()) {
+         m_pcExperimentToolBar->addAction(m_pcStepAction);
+      }
       m_pcExperimentToolBar->addAction(m_pcPlayAction);
       if(! CSimulator::GetInstance().IsRealTimeClock()) {
          m_pcExperimentToolBar->addAction(m_pcPauseAction);
@@ -368,7 +372,6 @@ namespace argos {
          m_pcDrawFrameEvery->setMaximum(999);
          m_pcDrawFrameEvery->setValue(1);
          m_pcExperimentToolBar->addWidget(m_pcDrawFrameEvery);
-         m_pcExperimentToolBar->addAction(m_pcStepAction);
       }
       m_pcExperimentToolBar->addSeparator();
       m_pcExperimentToolBar->addAction(m_pcTerminateAction);
@@ -406,6 +409,7 @@ namespace argos {
                                          Qt::RightToolBarArea |
                                          Qt::BottomToolBarArea);
       m_pcCameraToolBar->setObjectName("CameraToolBar");
+      m_pcCameraToolBar->setIconSize(QSize(32,32));
       m_pcCameraToolBar->addActions(m_pcSwitchCameraActions);
       m_pcCameraToolBar->addSeparator();
       m_pcFocalLength = new QDoubleSpinBox(m_pcCameraToolBar);
