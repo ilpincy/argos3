@@ -80,9 +80,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   UInt32 CPointMass3DEngine::GetNumPhysicsModels() {
-      DEBUG_FUNCTION_ENTER;
-      DEBUG_FUNCTION_EXIT;
+   size_t CPointMass3DEngine::GetNumPhysicsModels() {
       return m_tPhysicsModels.size();
    }
 
