@@ -233,9 +233,9 @@ namespace argos {
       void DrawAxes();
 
       virtual void timerEvent(QTimerEvent* pc_event);
-      virtual void mouseMoveEvent(QMouseEvent* pc_event);
       virtual void mousePressEvent(QMouseEvent* pc_event);
       virtual void mouseReleaseEvent(QMouseEvent* pc_event);
+      virtual void mouseMoveEvent(QMouseEvent* pc_event);
       virtual void keyPressEvent(QKeyEvent* pc_event);
       virtual void keyReleaseEvent(QKeyEvent* pc_event);
       virtual void resizeEvent(QResizeEvent* pc_event);

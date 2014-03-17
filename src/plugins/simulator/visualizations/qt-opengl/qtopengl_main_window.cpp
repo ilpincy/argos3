@@ -247,7 +247,7 @@ namespace argos {
          m_pcStepAction = new QAction(cStepIcon, tr("&Step"), this);
          m_pcStepAction->setToolTip(tr("Step experiment"));
          m_pcStepAction->setStatusTip(tr("Step experiment"));
-         m_pcStepAction->setShortcut(Qt::Key_S);
+         m_pcStepAction->setShortcut(Qt::Key_X);
          /* Add the fast forward action */
          QIcon cFastForwardIcon;
          cFastForwardIcon.addPixmap(QPixmap(m_strIconDir + "/fast_forward.png"));
@@ -259,7 +259,7 @@ namespace argos {
          QIcon cPauseIcon;
          cPauseIcon. addPixmap(QPixmap(m_strIconDir + "/pause.png"));
          m_pcPauseAction = new QAction(cPauseIcon, tr("&Pause"), this);
-         m_pcPauseAction->setShortcut(Qt::Key_P);
+         m_pcPauseAction->setShortcut(Qt::Key_O);
          m_pcPauseAction->setToolTip(tr("Pause experiment"));
          m_pcPauseAction->setStatusTip(tr("Pause experiment"));
          m_pcPauseAction->setEnabled(false);
@@ -291,7 +291,6 @@ namespace argos {
       /* Add the quit action */
       m_pcQuitAction = new QAction(tr("&Quit"), this);
       m_pcQuitAction->setStatusTip(tr("Quit the simulator"));
-      m_pcQuitAction->setShortcut(Qt::Key_Q);
    }
 
    /****************************************/
