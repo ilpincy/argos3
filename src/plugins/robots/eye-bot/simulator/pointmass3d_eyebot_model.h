@@ -41,8 +41,7 @@ namespace argos {
 
    private:
 
-      Real PDControl(Real f_desired,
-                     Real f_current,
+      Real PDControl(Real f_cur_error,
                      Real f_k_p,
                      Real f_k_d,
                      Real& f_old_error);

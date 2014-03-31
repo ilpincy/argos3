@@ -36,6 +36,21 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   /*
+    * Returns the smallest difference between two angles
+    * The input angles are assumed in the range [-pi:pi]
+    * The returned value is in the same range
+    */
+   static CRadians SmallestAngleDifference(const CRadians& c_a,
+                                           const CRadians& c_b) {
+      CRadians cResult = Abs(c_a - c_b).UnsignedNormalize();
+      cResult.SignedNormalize();
+      return cResult;
+   }
+
+   /****************************************/
+   /****************************************/
+
    CPointMass3DEyeBotModel::CPointMass3DEyeBotModel(CPointMass3DEngine& c_engine,
                                                     CEyeBotEntity& c_eyebot) :
       CPointMass3DModel(c_engine, c_eyebot.GetEmbodiedEntity()),
@@ -107,20 +122,17 @@ namespace argos {
       /* Linear control */
       m_cLinearControl.Set(
          Clamp(MAX_FORCE_X, PDControl(
-            m_sDesiredPositionData.Position.GetX(),
-            m_cEmbodiedEntity.GetPosition().GetX(),
+            m_sDesiredPositionData.Position.GetX() - m_cEmbodiedEntity.GetPosition().GetX(),
             POS_K_P.GetX(),
             POS_K_D.GetX(),
             m_pfPosError[0])),
          Clamp(MAX_FORCE_Y, PDControl(
-            m_sDesiredPositionData.Position.GetY(),
-            m_cEmbodiedEntity.GetPosition().GetY(),
+            m_sDesiredPositionData.Position.GetY() - m_cEmbodiedEntity.GetPosition().GetY(),
             POS_K_P.GetY(),
             POS_K_D.GetY(),
             m_pfPosError[1])),
          Clamp(MAX_FORCE_Z, PDControl(
-            m_sDesiredPositionData.Position.GetZ(),
-            m_cEmbodiedEntity.GetPosition().GetZ(),
+            m_sDesiredPositionData.Position.GetZ() - m_cEmbodiedEntity.GetPosition().GetZ(),
             POS_K_P.GetZ(),
             POS_K_D.GetZ(),
             m_pfPosError[2]) - BODY_MASS * m_cPM3DEngine.GetGravity()));
@@ -129,11 +141,10 @@ namespace argos {
       m_cEmbodiedEntity.GetOrientation().ToEulerAngles(cZAngle, cYAngle, cXAngle);
       m_fRotationalControl =
          Clamp(MAX_TORQUE, PDControl(
-            m_sDesiredPositionData.Yaw.GetValue(),
-            cZAngle.GetValue(),
-            ORIENT_K_P,
-            ORIENT_K_D,
-            m_fOrientError));
+                  (m_sDesiredPositionData.Yaw, cZAngle).SignedNormalize().GetValue(),
+                  ORIENT_K_P,
+                  ORIENT_K_D,
+                  m_fOrientError));
       /*
        * Update force/torque information
        */
@@ -170,17 +181,15 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   Real CPointMass3DEyeBotModel::PDControl(Real f_desired,
-                                           Real f_current,
+   Real CPointMass3DEyeBotModel::PDControl(Real f_cur_error,
                                            Real f_k_p,
                                            Real f_k_d,
                                            Real& f_old_error) {
-      Real f_error = f_desired - f_current;
-      Real f_output =
-         f_k_p * f_error +                                                      /* proportional term */
-         f_k_d * (f_error - f_old_error) / m_cPM3DEngine.GetPhysicsClockTick(); /* derivative term */
-      f_old_error = f_error;
-      return f_output;
+      Real fOutput =
+         f_k_p * f_cur_error +                                                      /* proportional term */
+         f_k_d * (f_cur_error - f_old_error) / m_cPM3DEngine.GetPhysicsClockTick(); /* derivative term */
+      f_old_error = f_cur_error;
+      return fOutput;
    }
 
    /****************************************/
