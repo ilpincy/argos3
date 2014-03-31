@@ -697,7 +697,87 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   void CQTOpenGLWidget::mousePressEvent(QMouseEvent* pc_event) {
+      /*
+       * Mouse press without shift
+       * Either pure press, or press + CTRL
+       */
+      if(! (pc_event->modifiers() & Qt::ShiftModifier)) {
+         m_bMouseGrabbed = true;
+         m_cMouseGrabPos = pc_event->pos();
+      }
+      /*
+       * Mouse press with shift
+       */
+      else {
+         m_bMouseGrabbed = false;
+         SelectInScene(pc_event->pos().x(),
+                       pc_event->pos().y());
+      }
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CQTOpenGLWidget::mouseReleaseEvent(QMouseEvent* pc_event) {
+      /*
+       * Mouse grabbed, selected entity, CTRL pressed
+       */
+      if(m_bMouseGrabbed &&
+         m_sSelectionInfo.IsSelected &&
+         (pc_event->modifiers() & Qt::ControlModifier)) {
+         /* Treat selected entity as a positional entity */
+         CPositionalEntity* pcPosEntity = dynamic_cast<CPositionalEntity*>(
+            m_cSpace.GetRootEntityVector()[m_sSelectionInfo.Index]);
+         if(pcPosEntity == NULL) {
+            /* Treat selected entity as a composable entity with a positional/embodied component */
+            CComposableEntity* pcCompEntity = dynamic_cast<CComposableEntity*>(
+               m_cSpace.GetRootEntityVector()[m_sSelectionInfo.Index]);
+            if(pcCompEntity->HasComponent("position")) {
+               pcPosEntity = &pcCompEntity->GetComponent<CPositionalEntity>("position");
+            }
+            else if(pcCompEntity->HasComponent("body")) {
+               pcPosEntity = &pcCompEntity->GetComponent<CPositionalEntity>("body");
+            }
+            else {
+               /* All conversions failed, get out */
+               m_bMouseGrabbed = false;
+               return;
+            }
+         }
+         /*
+          * If we get here, pcPosEntity is set to a non-NULL value
+          * Move the entity to the wanted place
+          */
+         /* Create a plane coincident with the world XY plane, centered at the entity position */
+         CPlane cXYPlane(pcPosEntity->GetPosition(), CVector3::Z);
+         /* Create a ray from the image pixel to the world */
+         CRay3 cMouseRay = GetCamera().
+            ProjectRayFromMousePosIntoWorld(pc_event->pos().x(),
+                                            pc_event->pos().y());
+         /* Calculate the new entity position as the intersection of the projected mouse position
+            with the plane created before */
+         CVector3 cNewPos;
+         if(cMouseRay.Intersects(cXYPlane, cNewPos)) {
+            pcPosEntity->MoveTo(cNewPos,
+                                pcPosEntity->GetOrientation());
+            /* Entity moved, redraw */
+            DrawScene();
+         }
+      }
+      /*
+       * Mouse was grabbed, button released -> ungrab mouse
+       */
+      m_bMouseGrabbed = false;
+   }
+
+   /****************************************/
+   /****************************************/
+
    void CQTOpenGLWidget::mouseMoveEvent(QMouseEvent* pc_event) {
+      /*
+       * Moving while mouse grabbed -> camera movement
+       */
       if(m_bMouseGrabbed) {
          if(! (pc_event->modifiers() & Qt::ControlModifier)) {
             /*
@@ -728,72 +808,18 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CQTOpenGLWidget::mousePressEvent(QMouseEvent* pc_event) {
-      if(! (pc_event->modifiers() & Qt::ShiftModifier)) {
-         m_bMouseGrabbed = true;
-         m_cMouseGrabPos = pc_event->pos();
-      }
-      else {
-         m_bMouseGrabbed = false;
-         SelectInScene(pc_event->pos().x(),
-                       pc_event->pos().y());
-      }
-   }
-
-   /****************************************/
-   /****************************************/
-
-   void CQTOpenGLWidget::mouseReleaseEvent(QMouseEvent* pc_event) {
-      if(m_bMouseGrabbed &&
-         m_sSelectionInfo.IsSelected &&
-         pc_event->modifiers() & Qt::ControlModifier) {
-         m_bMouseGrabbed = false;
-         CPositionalEntity* pcPosEntity = dynamic_cast<CPositionalEntity*>(
-            m_cSpace.GetRootEntityVector()[m_sSelectionInfo.Index]);
-         if(pcPosEntity == NULL) {
-            CComposableEntity* pcCompEntity = dynamic_cast<CComposableEntity*>(
-               m_cSpace.GetRootEntityVector()[m_sSelectionInfo.Index]);
-            if(pcCompEntity->HasComponent("position")) {
-               pcPosEntity = &pcCompEntity->GetComponent<CPositionalEntity>("position");
-            }
-            else if(pcCompEntity->HasComponent("body")) {
-               pcPosEntity = &pcCompEntity->GetComponent<CPositionalEntity>("body");
-            }
-            else {
-               return;
-            }
-         }
-         CPlane cXYPlane(pcPosEntity->GetPosition(), CVector3::Z);
-         CRay3 cMouseRay = GetCamera().
-            ProjectRayFromMousePosIntoWorld(pc_event->pos().x(),
-                                            pc_event->pos().y());
-         CVector3 cNewPos;
-         if(cMouseRay.Intersects(cXYPlane, cNewPos)) {
-            pcPosEntity->MoveTo(cNewPos,
-                                pcPosEntity->GetOrientation());
-            DrawScene();
-         }
-      }
-      else {
-         m_bMouseGrabbed = false;
-      }
-   }
-
-   /****************************************/
-   /****************************************/
-
    void CQTOpenGLWidget::keyPressEvent(QKeyEvent* pc_event) {
       switch(pc_event->key()) {
          case Qt::Key_W:
          case Qt::Key_Up:
             /* Forwards */
-            m_mapPressedKeys[DIRECTION_UP] = true;
+            m_mapPressedKeys[DIRECTION_FORWARDS] = true;
             reactToKeyEvent();
             break;
          case Qt::Key_S:
          case Qt::Key_Down:
             /* Backwards */
-            m_mapPressedKeys[DIRECTION_DOWN] = true;
+            m_mapPressedKeys[DIRECTION_BACKWARDS] = true;
             reactToKeyEvent();
             break;
          case Qt::Key_A:
@@ -810,12 +836,12 @@ namespace argos {
             break;
          case Qt::Key_E:
             /* Up */
-            m_mapPressedKeys[DIRECTION_FORWARDS] = true;
+            m_mapPressedKeys[DIRECTION_UP] = true;
             reactToKeyEvent();
             break;
          case Qt::Key_Q:
             /* Up */
-            m_mapPressedKeys[DIRECTION_BACKWARDS] = true;
+            m_mapPressedKeys[DIRECTION_DOWN] = true;
             reactToKeyEvent();
             break;
          default:
@@ -830,24 +856,38 @@ namespace argos {
 
    void CQTOpenGLWidget::keyReleaseEvent(QKeyEvent* pc_event) {
       switch(pc_event->key()) {
+         case Qt::Key_W:
          case Qt::Key_Up:
             /* Forwards */
-            m_mapPressedKeys[DIRECTION_UP] = false;
+            m_mapPressedKeys[DIRECTION_FORWARDS] = false;
             reactToKeyEvent();
             break;
+         case Qt::Key_S:
          case Qt::Key_Down:
             /* Backwards */
-            m_mapPressedKeys[DIRECTION_DOWN] = false;
+            m_mapPressedKeys[DIRECTION_BACKWARDS] = false;
             reactToKeyEvent();
             break;
+         case Qt::Key_A:
          case Qt::Key_Left:
             /* Left */
             m_mapPressedKeys[DIRECTION_LEFT] = false;
             reactToKeyEvent();
             break;
+         case Qt::Key_D:
          case Qt::Key_Right:
             /* Right */
             m_mapPressedKeys[DIRECTION_RIGHT] = false;
+            reactToKeyEvent();
+            break;
+         case Qt::Key_E:
+            /* Up */
+            m_mapPressedKeys[DIRECTION_UP] = false;
+            reactToKeyEvent();
+            break;
+         case Qt::Key_Q:
+            /* Up */
+            m_mapPressedKeys[DIRECTION_DOWN] = false;
             reactToKeyEvent();
             break;
          default:
@@ -855,13 +895,6 @@ namespace argos {
             QGLWidget::keyPressEvent(pc_event);
             break;
       }
-   }
-
-   /****************************************/
-   /****************************************/
-
-   void CQTOpenGLWidget::resizeEvent(QResizeEvent* pc_event) {
-      QToolTip::showText(pos() + geometry().center(), QString("Size: %1 x %2").arg(pc_event->size().width()).arg(pc_event->size().height()));
    }
 
    /****************************************/
@@ -882,9 +915,18 @@ namespace argos {
       if(nForwardsBackwards != 0 ||
          nSideways != 0 ||
          nUpDown != 0) {
-         m_cCamera.Move(nForwardsBackwards, nSideways, nUpDown);
+         m_cCamera.Move(15 * nForwardsBackwards,
+                        15 * nSideways,
+                        15 * nUpDown);
          DrawScene();
       }
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CQTOpenGLWidget::resizeEvent(QResizeEvent* pc_event) {
+      QToolTip::showText(pos() + geometry().center(), QString("Size: %1 x %2").arg(pc_event->size().width()).arg(pc_event->size().height()));
    }
 
    /****************************************/
