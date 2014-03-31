@@ -41,9 +41,7 @@ namespace argos {
       CPointMass3DModel(c_engine, c_eyebot.GetEmbodiedEntity()),
       m_cEyeBotEntity(c_eyebot),
       m_cQuadRotorEntity(c_eyebot.GetQuadRotorEntity()) {
-      DEBUG_FUNCTION_ENTER;
       Reset();
-      DEBUG_FUNCTION_EXIT;
    }
 
    /****************************************/
@@ -52,13 +50,11 @@ namespace argos {
    bool CPointMass3DEyeBotModel::MoveTo(const CVector3& c_position,
                                         const CQuaternion& c_orientation,
                                         bool b_check_only) {
-      DEBUG_FUNCTION_ENTER;
       if(! b_check_only) {
          m_cEyeBotEntity.GetEmbodiedEntity().SetPosition(c_position);
          m_cEyeBotEntity.GetEmbodiedEntity().SetOrientation(c_orientation);
          CalculateBoundingBox();
       }
-      DEBUG_FUNCTION_EXIT;
       return true;
    }
 
@@ -77,17 +73,14 @@ namespace argos {
    /****************************************/
 
    void CPointMass3DEyeBotModel::UpdateFromEntityStatus() {
-      DEBUG_FUNCTION_ENTER;
-      m_sDesiredPositionData = m_cQuadRotorEntity.GetPositionControlData();
-      DEBUG_FUNCTION_EXIT;
-   }
+       m_sDesiredPositionData = m_cQuadRotorEntity.GetPositionControlData();
+    }
 
    /****************************************/
    /****************************************/
 
    void CPointMass3DEyeBotModel::Step() {
-      DEBUG_FUNCTION_ENTER;
-      /*
+       /*
        * Update positional information
        */
       /* Integration step */
@@ -148,26 +141,22 @@ namespace argos {
       m_cLinearAcceleration.SetY(m_cLinearControl.GetY());
       m_cLinearAcceleration.SetZ(m_cLinearControl.GetZ() + BODY_MASS * m_cPM3DEngine.GetGravity());
       m_cRotationalAcceleration.SetValue(m_fRotationalControl);
-      DEBUG_FUNCTION_EXIT;
    }
 
    /****************************************/
    /****************************************/
 
    void CPointMass3DEyeBotModel::UpdateEntityStatus() {
-      DEBUG_FUNCTION_ENTER;
       /* Update bounding box */
       CalculateBoundingBox();
       /* Update the components */
       m_cEyeBotEntity.UpdateComponents();
-      DEBUG_FUNCTION_EXIT;
    }
 
    /****************************************/
    /****************************************/
 
    void CPointMass3DEyeBotModel::CalculateBoundingBox() {
-      DEBUG_FUNCTION_ENTER;
       GetBoundingBox().MinCorner.Set(
          m_cEmbodiedEntity.GetPosition().GetX() - BODY_RADIUS,
          m_cEmbodiedEntity.GetPosition().GetY() - BODY_RADIUS,
@@ -176,7 +165,6 @@ namespace argos {
          m_cEmbodiedEntity.GetPosition().GetX() + BODY_RADIUS,
          m_cEmbodiedEntity.GetPosition().GetY() + BODY_RADIUS,
          m_cEmbodiedEntity.GetPosition().GetZ() + BODY_HEIGHT);
-      DEBUG_FUNCTION_EXIT;
    }
 
    /****************************************/

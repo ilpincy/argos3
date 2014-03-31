@@ -60,7 +60,6 @@ namespace argos {
    /****************************************/
 
    void CPointMass3DEngine::Update() {
-      DEBUG_FUNCTION_ENTER;
       /* Update the physics state from the entities */
       for(CPointMass3DModel::TMap::iterator it = m_tPhysicsModels.begin();
           it != m_tPhysicsModels.end(); ++it) {
@@ -78,7 +77,6 @@ namespace argos {
           it != m_tPhysicsModels.end(); ++it) {
          it->second->UpdateEntityStatus();
       }
-      DEBUG_FUNCTION_EXIT;
    }
 
    /****************************************/
