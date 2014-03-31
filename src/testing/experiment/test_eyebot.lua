@@ -1,37 +1,28 @@
--- Put your global variables here
-
-
-
---[[ This function is executed every time you press the 'execute'
-     button ]]
 function init()
-   -- put your code here
+	reset()
 end
 
-
-
---[[ This function is executed at each time step
-     It must contain the logic of your controller ]]
 function step()
-	robot.leds.set_all_colors("red")
-   -- put your code here
+	counter = counter + 1
+	if counter < 30 then
+		robot.quadrotor.set_position(1,1,3)
+		robot.quadrotor.set_yaw(45)
+	elseif counter < 60 then
+		robot.quadrotor.set_position(-1,1,2)
+		robot.quadrotor.set_yaw(90)
+	elseif counter < 90 then
+		robot.quadrotor.set_position(-1,-1,3)
+		robot.quadrotor.set_yaw(135)
+	elseif counter < 120 then
+		robot.quadrotor.set_position(1,-1,2)
+		robot.quadrotor.set_yaw(180)
+	end
 end
 
-
-
---[[ This function is executed every time you press the 'reset'
-     button in the GUI. It is supposed to restore the state
-     of the controller to whatever it was right after init() was
-     called. The state of sensors and actuators is reset
-     automatically by ARGoS. ]]
 function reset()
-   -- put your code here
+	robot.leds.set_all_colors("red")
+	counter = 0
 end
 
-
-
---[[ This function is executed only once, when the robot is removed
-     from the simulation ]]
 function destroy()
-   -- put your code here
 end

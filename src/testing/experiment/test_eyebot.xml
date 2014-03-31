@@ -6,7 +6,7 @@
   <!-- ************************* -->
   <framework>
     <system threads="0" />
-    <experiment length="1" ticks_per_second="10" random_seed="12345" />
+    <experiment length="0" ticks_per_second="10" random_seed="12345" />
   </framework>
   
   <!-- ****************** -->
@@ -18,14 +18,10 @@
   <!-- * Controllers * -->
   <!-- *************** -->
   <controllers>
-    <!-- <test_eyebot_controller id="x"> -->
-    <!--   <actuators /> -->
-    <!--   <sensors /> -->
-    <!--   <params /> -->
-    <!-- </test_eyebot_controller> -->
     <lua_controller id="x">
       <actuators>
         <leds implementation="default" medium="leds" />
+        <quadrotor_position implementation="default" />
       </actuators>
       <sensors />
       <params />
@@ -35,9 +31,9 @@
   <!-- *********************** -->
   <!-- * Arena configuration * -->
   <!-- *********************** -->
-  <arena size="10, 10, 1" positional_grid_size="10,10,1">
+  <arena size="10, 10, 5" positional_grid_size="10,10,1">
     <eye-bot id="eb">
-      <body position="0,0,1" orientation="0,0,0"/>
+      <body position="0,0,0" orientation="0,0,0"/>
       <controller config="x"/>
     </eye-bot>
   </arena>
@@ -46,7 +42,7 @@
   <!-- * Physics engines * -->
   <!-- ******************* -->
   <physics_engines>
-    <pointmass3d id="pm2d" iterations="3" />
+    <pointmass3d id="pm3d" iterations="10" />
   </physics_engines>
 
   <!-- ********* -->
