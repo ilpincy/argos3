@@ -52,8 +52,8 @@ namespace argos {
    protected:
 
       CPointMass3DEngine& m_cPM3DEngine;
-      CVector3 m_cVelocity;
-      CVector3 m_cTotalForce;
+      CVector3 m_cLinearVelocity;
+      CVector3 m_cLinearAcceleration;
 
    };
 

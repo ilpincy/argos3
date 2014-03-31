@@ -31,6 +31,8 @@ namespace argos {
                           const CQuaternion& c_orientation,
                           bool b_check_only = false);
 
+      virtual void Reset();
+
       virtual void UpdateFromEntityStatus();
       virtual void Step();
       virtual void UpdateEntityStatus();
@@ -39,9 +41,24 @@ namespace argos {
 
    private:
 
+      Real PDControl(Real f_desired,
+                     Real f_current,
+                     Real f_k_p,
+                     Real f_k_d,
+                     Real& f_old_error);
+   private:
+
       CEyeBotEntity& m_cEyeBotEntity;
       CQuadRotorEntity& m_cQuadRotorEntity;
       CQuadRotorEntity::SPositionControlData m_sDesiredPositionData;
+      CRadians m_cRotationalVelocity;
+      CRadians m_cRotationalAcceleration;
+
+      CVector3 m_cLinearControl;
+      Real m_fRotationalControl;
+
+      Real m_pfPosError[3];
+      Real m_fOrientError;
 
    };
 

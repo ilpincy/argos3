@@ -7,13 +7,15 @@
 #include "pointmass3d_engine.h"
 #include "pointmass3d_model.h"
 #include <argos3/core/utility/logging/argos_log.h>
+#include <argos3/core/utility/configuration/argos_configuration.h>
 
 namespace argos {
 
    /****************************************/
    /****************************************/
 
-   CPointMass3DEngine::CPointMass3DEngine() {
+   CPointMass3DEngine::CPointMass3DEngine() :
+      m_fGravity(-9.81f) {
    }
 
    /****************************************/
@@ -28,6 +30,8 @@ namespace argos {
    void CPointMass3DEngine::Init(TConfigurationNode& t_tree) {
       /* Init parent */
       CPhysicsEngine::Init(t_tree);
+      /* Set gravity */
+      GetNodeAttributeOrDefault(t_tree, "gravity", m_fGravity, m_fGravity);
    }
 
    /****************************************/

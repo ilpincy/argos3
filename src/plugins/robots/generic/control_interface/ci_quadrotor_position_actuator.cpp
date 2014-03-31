@@ -55,7 +55,7 @@ namespace argos {
       luaL_checktype(pt_lua_state, 1, LUA_TNUMBER);
       /* Perform action */
       CLuaUtility::GetDeviceInstance<CCI_QuadRotorPositionActuator>(pt_lua_state, "quadrotor")->
-         SetYaw(CRadians(lua_tonumber(pt_lua_state, 1)));
+         SetYaw(CRadians(lua_tonumber(pt_lua_state, 1) / 180.0f * CRadians::PI));
       return 0;
    }
 #endif
