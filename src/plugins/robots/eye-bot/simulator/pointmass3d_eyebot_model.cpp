@@ -36,21 +36,6 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   /*
-    * Returns the smallest difference between two angles
-    * The input angles are assumed in the range [-pi:pi]
-    * The returned value is in the same range
-    */
-   static CRadians SmallestAngleDifference(const CRadians& c_a,
-                                           const CRadians& c_b) {
-      CRadians cResult = Abs(c_a - c_b).UnsignedNormalize();
-      cResult.SignedNormalize();
-      return cResult;
-   }
-
-   /****************************************/
-   /****************************************/
-
    CPointMass3DEyeBotModel::CPointMass3DEyeBotModel(CPointMass3DEngine& c_engine,
                                                     CEyeBotEntity& c_eyebot) :
       CPointMass3DModel(c_engine, c_eyebot.GetEmbodiedEntity()),
