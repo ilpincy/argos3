@@ -21,9 +21,19 @@ namespace argos {
 
    void CQuadRotorPositionDefaultActuator::SetRobot(CComposableEntity& c_entity) {
       try {
+         /* Get the quadrotor component */
          m_pcQuadRotorEntity = &(c_entity.GetComponent<CQuadRotorEntity>("quadrotor"));
+         /* Check whether the control methods is unset - only one is allowed */
          if(m_pcQuadRotorEntity->GetControlMethod() == CQuadRotorEntity::NO_CONTROL) {
+            /* Get the robot body */
+            CEmbodiedEntity& cBody = c_entity.GetComponent<CEmbodiedEntity>("body");
+            /* Set the position control method */
             m_pcQuadRotorEntity->SetControlMethod(CQuadRotorEntity::POSITION_CONTROL);
+            /* Set the initial desired data, which corresponds to the current position/yaw of the body */
+            m_sDesiredPosData.Position = cBody.GetPosition();
+            CRadians cYAngle, cXAngle;
+            cBody.GetOrientation().ToEulerAngles(m_sDesiredPosData.Yaw, cYAngle, cXAngle);
+            m_pcQuadRotorEntity->SetPositionControlData(m_sDesiredPosData);
          }
          else {
             THROW_ARGOSEXCEPTION("Can't associate a quadrotor position actuator to entity \"" << c_entity.GetId() << "\" because it conflicts with a previously associated quadrotor actuator.");

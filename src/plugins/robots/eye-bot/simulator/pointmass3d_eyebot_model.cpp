@@ -5,8 +5,10 @@
  */
 
 #include "pointmass3d_eyebot_model.h"
-#include <argos3/plugins/simulator/physics_engines/pointmass3d/pointmass3d_engine.h>
 #include <argos3/core/utility/logging/argos_log.h>
+#include <argos3/core/simulator/simulator.h>
+#include <argos3/core/simulator/space/space.h>
+#include <argos3/plugins/simulator/physics_engines/pointmass3d/pointmass3d_engine.h>
 
 namespace argos {
 
@@ -26,7 +28,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   static Real Clamp(Real f_max,
+   static Real SymmetricClamp(Real f_max,
                      Real f_value) {
       if(f_value >  f_max) return  f_max;
       if(f_value < -f_max) return -f_max;
@@ -73,7 +75,7 @@ namespace argos {
    /****************************************/
 
    void CPointMass3DEyeBotModel::UpdateFromEntityStatus() {
-       m_sDesiredPositionData = m_cQuadRotorEntity.GetPositionControlData();
+      m_sDesiredPositionData = m_cQuadRotorEntity.GetPositionControlData();
     }
 
    /****************************************/
@@ -94,8 +96,6 @@ namespace argos {
          CQuaternion(
             m_cRotationalVelocity * m_cPM3DEngine.GetPhysicsClockTick(),
             CVector3::Z));
-      /* Prevent the robot from getting out of the arena */
-      //m_cPM3DEngine.ClampPosition(m_cEmbodiedEntity.GetPosition());
       /*
        * Update velocity information
        */
@@ -106,17 +106,17 @@ namespace argos {
        */
       /* Linear control */
       m_cLinearControl.Set(
-         Clamp(MAX_FORCE_X, PDControl(
+         SymmetricClamp(MAX_FORCE_X, PDControl(
             m_sDesiredPositionData.Position.GetX() - m_cEmbodiedEntity.GetPosition().GetX(),
             POS_K_P.GetX(),
             POS_K_D.GetX(),
             m_pfPosError[0])),
-         Clamp(MAX_FORCE_Y, PDControl(
+         SymmetricClamp(MAX_FORCE_Y, PDControl(
             m_sDesiredPositionData.Position.GetY() - m_cEmbodiedEntity.GetPosition().GetY(),
             POS_K_P.GetY(),
             POS_K_D.GetY(),
             m_pfPosError[1])),
-         Clamp(MAX_FORCE_Z, PDControl(
+         SymmetricClamp(MAX_FORCE_Z, PDControl(
             m_sDesiredPositionData.Position.GetZ() - m_cEmbodiedEntity.GetPosition().GetZ(),
             POS_K_P.GetZ(),
             POS_K_D.GetZ(),
@@ -125,7 +125,7 @@ namespace argos {
       CRadians cZAngle, cYAngle, cXAngle;
       m_cEmbodiedEntity.GetOrientation().ToEulerAngles(cZAngle, cYAngle, cXAngle);
       m_fRotationalControl =
-         Clamp(MAX_TORQUE, PDControl(
+         SymmetricClamp(MAX_TORQUE, PDControl(
                   (m_sDesiredPositionData.Yaw, cZAngle).SignedNormalize().GetValue(),
                   ORIENT_K_P,
                   ORIENT_K_D,

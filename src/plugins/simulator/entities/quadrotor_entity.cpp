@@ -12,6 +12,15 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   CQuadRotorEntity::SPositionControlData::SPositionControlData(
+      const CVector3& c_position,
+      const CRadians& c_yaw) :
+      Position(c_position),
+      Yaw(c_yaw) {}
+
+   /****************************************/
+   /****************************************/
+
    CQuadRotorEntity::CQuadRotorEntity(CComposableEntity* pc_parent) :
       CEntity(pc_parent),
       m_eControlMethod(NO_CONTROL) {

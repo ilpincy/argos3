@@ -28,6 +28,10 @@ namespace argos {
       struct SPositionControlData {
          CVector3 Position;
          CRadians Yaw;
+
+         SPositionControlData() {}
+         SPositionControlData(const CVector3& c_position,
+                              const CRadians& c_yaw);
       };
 
    public:

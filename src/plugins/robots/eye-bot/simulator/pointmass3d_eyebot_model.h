@@ -45,6 +45,7 @@ namespace argos {
                      Real f_k_p,
                      Real f_k_d,
                      Real& f_old_error);
+
    private:
 
       CEyeBotEntity& m_cEyeBotEntity;
