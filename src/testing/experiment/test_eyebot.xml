@@ -18,22 +18,30 @@
   <!-- * Controllers * -->
   <!-- *************** -->
   <controllers>
-    <lua_controller id="x">
+    <eyebot_circle_controller id="x">
       <actuators>
         <leds implementation="default" medium="leds" />
         <quadrotor_position implementation="default" />
+        <range_and_bearing implementation="default" />
       </actuators>
-      <sensors />
+      <sensors>
+        <range_and_bearing implementation="medium" medium="rab" />
+        <positioning implementation="default" />
+      </sensors>
       <params />
-    </lua_controller>
+    </eyebot_circle_controller>
   </controllers>
 
   <!-- *********************** -->
   <!-- * Arena configuration * -->
   <!-- *********************** -->
   <arena size="10, 10, 5" positional_grid_size="10,10,1">
-    <eye-bot id="eb">
-      <body position="0,0,0" orientation="0,0,0"/>
+    <!-- <eye-bot id="eb1"> -->
+    <!--   <body position="0,0,0" orientation="0,0,0"/> -->
+    <!--   <controller config="x"/> -->
+    <!-- </eye-bot> -->
+    <eye-bot id="eb2">
+      <body position="1,1,0" orientation="0,0,0"/>
       <controller config="x"/>
     </eye-bot>
   </arena>
@@ -50,6 +58,7 @@
   <!-- ********* -->
   <media>
     <led id="leds" />
+    <range_and_bearing id="rab" />
   </media>
 
   <!-- ****************** -->
