@@ -347,6 +347,8 @@ namespace argos {
        */
       inline void SetArenaSize(const CVector3& c_size) {
          m_cArenaSize = c_size;
+         m_cArenaLimits.Set(m_cArenaCenter - m_cArenaSize,
+                            m_cArenaCenter + m_cArenaSize);
       }
 
       /**
@@ -363,6 +365,18 @@ namespace argos {
        */
       inline void SetArenaCenter(const CVector3& c_center) {
          m_cArenaCenter = c_center;
+         m_cArenaLimits.Set(m_cArenaCenter - m_cArenaSize,
+                            m_cArenaCenter + m_cArenaSize);
+      }
+
+      /*
+       * Returns the arena limits.
+       * The arena limits are defined by <tt>arena center - arena size</tt> and
+       * <tt>arena center - arena size</tt>.
+       * @return the arena limits.
+       */
+      inline const CRange<CVector3>& GetArenaLimits() const {
+         return m_cArenaLimits;
       }
 
       virtual void AddControllableEntity(CControllableEntity& c_entity);
@@ -395,6 +409,9 @@ namespace argos {
 
       /** Arena size */
       CVector3 m_cArenaSize;
+
+      /** Arena limits */
+      CRange<CVector3> m_cArenaLimits;
 
       /** A vector of entities. */
       CEntity::TVector m_vecEntities;
