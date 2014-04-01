@@ -25,6 +25,8 @@ namespace argos {
 
    void CPositioningDefaultSensor::SetRobot(CComposableEntity& c_entity) {
       m_pcEmbodiedEntity = &(c_entity.GetComponent<CEmbodiedEntity>("body"));
+      m_sReading.Position = m_pcEmbodiedEntity->GetInitPosition();
+      m_sReading.Orientation = m_pcEmbodiedEntity->GetInitOrientation();
    }
 
    /****************************************/
@@ -74,8 +76,8 @@ namespace argos {
    /****************************************/
 
    void CPositioningDefaultSensor::Reset() {
-      m_sReading.Position = CVector3();
-      m_sReading.Orientation = CQuaternion();
+      m_sReading.Position = m_pcEmbodiedEntity->GetInitPosition();
+      m_sReading.Orientation = m_pcEmbodiedEntity->GetInitOrientation();
    }
 
    /****************************************/
