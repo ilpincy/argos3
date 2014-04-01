@@ -34,8 +34,10 @@ namespace argos {
 
       virtual void Init(TConfigurationNode& t_tree);
 
-      virtual void SetPosition(const CVector3& c_pos);
-      virtual void SetYaw(const CRadians& c_yaw);
+      virtual void SetAbsolutePosition(const CVector3& c_pos);
+      virtual void SetRelativePosition(const CVector3& c_pos);
+      virtual void SetAbsoluteYaw(const CRadians& c_yaw);
+      virtual void SetRelativeYaw(const CRadians& c_yaw);
 
       virtual void Update();
       virtual void Reset();
@@ -43,6 +45,7 @@ namespace argos {
    protected:
 
       CQuadRotorEntity* m_pcQuadRotorEntity;
+      CEmbodiedEntity* m_pcEmbodiedEntity;
       CQuadRotorEntity::SPositionControlData m_sDesiredPosData;
       
    };

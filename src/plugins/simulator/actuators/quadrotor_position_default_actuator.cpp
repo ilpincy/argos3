@@ -26,13 +26,13 @@ namespace argos {
          /* Check whether the control methods is unset - only one is allowed */
          if(m_pcQuadRotorEntity->GetControlMethod() == CQuadRotorEntity::NO_CONTROL) {
             /* Get the robot body */
-            CEmbodiedEntity& cBody = c_entity.GetComponent<CEmbodiedEntity>("body");
+            m_pcEmbodiedEntity = &(c_entity.GetComponent<CEmbodiedEntity>("body"));
             /* Set the position control method */
             m_pcQuadRotorEntity->SetControlMethod(CQuadRotorEntity::POSITION_CONTROL);
             /* Set the initial desired data, which corresponds to the current position/yaw of the body */
-            m_sDesiredPosData.Position = cBody.GetPosition();
+            m_sDesiredPosData.Position = m_pcEmbodiedEntity->GetPosition();
             CRadians cYAngle, cXAngle;
-            cBody.GetOrientation().ToEulerAngles(m_sDesiredPosData.Yaw, cYAngle, cXAngle);
+            m_pcEmbodiedEntity->GetOrientation().ToEulerAngles(m_sDesiredPosData.Yaw, cYAngle, cXAngle);
             m_pcQuadRotorEntity->SetPositionControlData(m_sDesiredPosData);
          }
          else {
@@ -59,15 +59,33 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CQuadRotorPositionDefaultActuator::SetPosition(const CVector3& c_pos) {
+   void CQuadRotorPositionDefaultActuator::SetAbsolutePosition(const CVector3& c_pos) {
       m_sDesiredPosData.Position = c_pos;
    }
 
    /****************************************/
    /****************************************/
 
-   void CQuadRotorPositionDefaultActuator::SetYaw(const CRadians& c_yaw) {
+   void CQuadRotorPositionDefaultActuator::SetRelativePosition(const CVector3& c_pos) {
+      m_sDesiredPosData.Position = c_pos;
+      m_sDesiredPosData.Position.Rotate(m_pcEmbodiedEntity->GetOrientation());
+      m_sDesiredPosData.Position += m_pcEmbodiedEntity->GetPosition();
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CQuadRotorPositionDefaultActuator::SetAbsoluteYaw(const CRadians& c_yaw) {
       m_sDesiredPosData.Yaw = c_yaw;
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CQuadRotorPositionDefaultActuator::SetRelativeYaw(const CRadians& c_yaw) {
+      CRadians cYAngle, cXAngle;
+      m_pcEmbodiedEntity->GetOrientation().ToEulerAngles(m_sDesiredPosData.Yaw, cYAngle, cXAngle);
+      m_sDesiredPosData.Yaw += c_yaw;
    }
 
    /****************************************/
