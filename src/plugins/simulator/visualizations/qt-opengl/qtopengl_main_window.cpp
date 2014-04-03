@@ -770,7 +770,8 @@ namespace argos {
       /* Make sure we are in the right state */
       if(m_eExperimentState != EXPERIMENT_PLAYING &&
          m_eExperimentState != EXPERIMENT_PAUSED &&
-         m_eExperimentState != EXPERIMENT_FAST_FORWARDING) {
+         m_eExperimentState != EXPERIMENT_FAST_FORWARDING &&
+         m_eExperimentState != EXPERIMENT_SUSPENDED) {
          LOGERR << "[BUG] CQTOpenGLMainWindow::TerminateExperiment() called in wrong state: "
                 << m_eExperimentState
                 << std::endl;
