@@ -3,11 +3,15 @@
 #
 # argos3/plugins/robots/eye-bot/control_interface
 set(ARGOS3_HEADERS_PLUGINS_ROBOTS_EYEBOT_CONTROLINTERFACE
+  control_interface/ci_eyebot_light_sensor.h
+  control_interface/ci_eyebot_proximity_sensor.h
 )
 # argos3/plugins/robots/eye-bot/simulator
 if(ARGOS_BUILD_FOR_SIMULATOR)
   set(ARGOS3_HEADERS_PLUGINS_ROBOTS_EYEBOT_SIMULATOR
     simulator/eyebot_entity.h
+    simulator/eyebot_light_rotzonly_sensor.h
+    simulator/eyebot_proximity_default_sensor.h
     simulator/pointmass3d_eyebot_model.h)
 endif(ARGOS_BUILD_FOR_SIMULATOR)
 
@@ -16,6 +20,8 @@ endif(ARGOS_BUILD_FOR_SIMULATOR)
 #
 set(ARGOS3_SOURCES_PLUGINS_ROBOTS_EYEBOT
   ${ARGOS3_HEADERS_PLUGINS_ROBOTS_EYEBOT_CONTROLINTERFACE}
+  control_interface/ci_eyebot_light_sensor.cpp
+  control_interface/ci_eyebot_proximity_sensor.cpp
 )
 
 if(ARGOS_BUILD_FOR_SIMULATOR)
@@ -23,6 +29,8 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
     ${ARGOS3_SOURCES_PLUGINS_ROBOTS_EYEBOT}
     ${ARGOS3_HEADERS_PLUGINS_ROBOTS_EYEBOT_SIMULATOR}
     simulator/eyebot_entity.cpp
+    simulator/eyebot_light_rotzonly_sensor.cpp
+    simulator/eyebot_proximity_default_sensor.cpp
     simulator/pointmass3d_eyebot_model.cpp)
   # Compile the graphical visualization only if the necessary libraries have been found
   include(ARGoSCheckQTOpenGL)
