@@ -81,6 +81,7 @@ namespace argos {
             std::string("led_") + ToString(m_tLEDs.size()),
             c_position,
             c_color);
+      m_vecLEDOffsetPositions.push_back(pcLED->GetPosition());
       m_tLEDs.push_back(pcLED);
       AddComponent(*pcLED);
    }

@@ -711,7 +711,7 @@ namespace argos {
             pcVarModel->Refresh();
             connect(&(m_pcMainWindow->GetOpenGLWidget()), SIGNAL(StepDone(int)),
                     pcVarModel, SLOT(Refresh(int)));
-            connect(m_pcMainWindow, SIGNAL(SimulationReset()),
+            connect(m_pcMainWindow, SIGNAL(ExperimentReset()),
                     pcVarModel, SLOT(Refresh()));
             connect(pcVarModel, SIGNAL(modelReset()),
                     this, SLOT(VariableTreeChanged()),
@@ -727,7 +727,7 @@ namespace argos {
             pcFunModel->Refresh();
             connect(&(m_pcMainWindow->GetOpenGLWidget()), SIGNAL(StepDone(int)),
                     pcFunModel, SLOT(Refresh(int)));
-            connect(m_pcMainWindow, SIGNAL(SimulationReset()),
+            connect(m_pcMainWindow, SIGNAL(ExperimentReset()),
                     pcFunModel, SLOT(Refresh()));
             connect(pcFunModel, SIGNAL(modelReset()),
                     this, SLOT(FunctionTreeChanged()),
@@ -746,7 +746,7 @@ namespace argos {
    void CQTOpenGLLuaMainWindow::HandleEntityDeselection(size_t) {
       disconnect(&(m_pcMainWindow->GetOpenGLWidget()), SIGNAL(StepDone(int)),
                  m_pcLuaVariableTree->model(), SLOT(Refresh(int)));
-      disconnect(m_pcMainWindow, SIGNAL(SimulationReset()),
+      disconnect(m_pcMainWindow, SIGNAL(ExperimentReset()),
                  m_pcLuaVariableTree->model(), SLOT(Refresh()));
       disconnect(m_pcLuaVariableTree->model(), SIGNAL(modelReset()),
                  this, SLOT(VariableTreeChanged()));
@@ -755,7 +755,7 @@ namespace argos {
       m_pcLuaVariableTree->setModel(NULL);
       disconnect(&(m_pcMainWindow->GetOpenGLWidget()), SIGNAL(StepDone(int)),
                  m_pcLuaFunctionTree->model(), SLOT(Refresh(int)));
-      disconnect(m_pcMainWindow, SIGNAL(SimulationReset()),
+      disconnect(m_pcMainWindow, SIGNAL(ExperimentReset()),
                  m_pcLuaFunctionTree->model(), SLOT(Refresh()));
       disconnect(m_pcLuaFunctionTree->model(), SIGNAL(modelReset()),
                  this, SLOT(FunctionTreeChanged()));
