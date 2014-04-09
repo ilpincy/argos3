@@ -105,6 +105,18 @@ namespace argos {
       }
 
       /**
+       * Returns the contents of the byte array as a c-style array.
+       * The returned pointer is valid under two conditions:
+       * (i) the CByteArray object has not been deallocated, and
+       * (ii) the contents of the byte array have not been changed.
+       * If the byte array is empty, this method returns <tt>NULL</tt>.
+       * @return the contents of the byte array as a c-style array.
+       */
+      inline UInt8* ToCArray() {
+         return !Empty() ? &m_vecBuffer[0] : NULL;
+      }
+
+      /**
        * Clears the byte array.
        * After calling this method, the byte array is empty.
        * @see Empty()
