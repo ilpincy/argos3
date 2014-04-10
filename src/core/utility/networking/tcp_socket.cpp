@@ -3,6 +3,8 @@
 #include <argos3/core/utility/string_utilities.h>
 
 #include <arpa/inet.h>
+#include <cstring>
+#include <errno.h>
 #include <netdb.h>
 #include <sys/types.h>
 #include <sys/socket.h>
