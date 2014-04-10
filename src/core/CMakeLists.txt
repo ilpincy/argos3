@@ -28,6 +28,9 @@ set(ARGOS3_HEADERS_UTILITY_DATATYPES
 set(ARGOS3_HEADERS_UTILITY_LOGGING
   utility/logging/argos_colored_text.h
   utility/logging/argos_log.h)
+# argos3/core/utility/networking
+set(ARGOS3_HEADERS_UTILITY_NETWORKING
+  utility/networking/tcp_socket.h)
 # argos3/core/utility/plugins
 set(ARGOS3_HEADERS_UTILITY_PLUGINS
   utility/plugins/dynamic_loading.h
@@ -126,6 +129,8 @@ set(ARGOS3_SOURCES_CORE
   utility/datatypes/color.cpp
   ${ARGOS3_HEADERS_UTILITY_LOGGING}
   utility/logging/argos_log.cpp
+  ${ARGOS3_HEADERS_UTILITY_NETWORKING}
+  utility/networking/tcp_socket.cpp
   ${ARGOS3_HEADERS_UTILITY_PLUGINS}
   ${ARGOS3_HEADERS_UTILITY_PROFILER}
   utility/profiler/profiler.cpp
@@ -216,6 +221,7 @@ install(FILES ${ARGOS3_HEADERS_UTILITY_CONFIGURATION}         DESTINATION includ
 install(FILES ${ARGOS3_HEADERS_UTILITY_CONFIGURATION_TINYXML} DESTINATION include/argos3/core/utility/configuration/tinyxml)
 install(FILES ${ARGOS3_HEADERS_UTILITY_DATATYPES}             DESTINATION include/argos3/core/utility/datatypes)
 install(FILES ${ARGOS3_HEADERS_UTILITY_LOGGING}               DESTINATION include/argos3/core/utility/logging)
+install(FILES ${ARGOS3_HEADERS_UTILITY_NETWORKING}            DESTINATION include/argos3/core/utility/networking)
 install(FILES ${ARGOS3_HEADERS_UTILITY_PLUGINS}               DESTINATION include/argos3/core/utility/plugins)
 install(FILES ${ARGOS3_HEADERS_UTILITY_PROFILER}              DESTINATION include/argos3/core/utility/profiler)
 install(FILES ${ARGOS3_HEADERS_UTILITY_MATH}                  DESTINATION include/argos3/core/utility/math)
