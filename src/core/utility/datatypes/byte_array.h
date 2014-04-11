@@ -345,6 +345,8 @@ namespace argos {
 
       /**
        * Appends an argos::Real to the byte array.
+       * This method assumes that floating-point numbers are represented
+       * in the IEEE754 standard.
        * @param f_value the value of the argos::Real.
        * @return a reference to this byte array.
        */
@@ -352,7 +354,10 @@ namespace argos {
 
       /**
        * Moves an argos::Real from the byte array to the target variable.
-       * The element whose value was written into the target buffer are removed from the byte array.
+       * The element whose value was written into the target buffer are removed
+       * from the byte array.
+       * This method assumes that floating-point numbers are represented
+       * in the IEEE754 standard.
        * @param f_value the buffer for the argos::Real.
        * @return a reference to this byte array.
        */

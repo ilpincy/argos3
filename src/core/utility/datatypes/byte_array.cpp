@@ -45,7 +45,7 @@ namespace argos {
          return un_value;
       }
    }
-
+   
    /****************************************/
    /****************************************/
 
@@ -371,11 +371,13 @@ namespace argos {
    /****************************************/
 
    CByteArray& CByteArray::operator<<(Real f_value) {
-      UInt32 unSize = sizeof(f_value);
-      UInt8* punByte = reinterpret_cast<UInt8*>(&f_value);
-      for(UInt32 i = 0; i < unSize; ++i) {
-         m_vecBuffer.push_back(punByte[i]);
-      }
+#ifdef ARGOS_DOUBLE_PRECISION
+      UInt64 unValue;
+#else
+      UInt32 unValue;
+#endif
+      ::memcpy(&unValue, &f_value, sizeof(unValue));
+      *this << unValue;
       return *this;
    }
 
@@ -383,14 +385,14 @@ namespace argos {
    /****************************************/
 
    CByteArray& CByteArray::operator>>(Real& f_value) {
-      UInt32 unSize = sizeof(f_value);
-      if(Size() < unSize) THROW_ARGOSEXCEPTION("Attempting to extract too many bytes from byte array (" << unSize << " requested, " << Size() << " available)");
-      UInt8* punByte = reinterpret_cast<UInt8*>(&f_value);
-      for(UInt32 i = 0; i < unSize; ++i) {
-         *punByte = m_vecBuffer[i];
-         ++punByte;
-      }
-      m_vecBuffer.erase(m_vecBuffer.begin(), m_vecBuffer.begin() + unSize);
+      if(Size() < sizeof(f_value)) THROW_ARGOSEXCEPTION("Attempting to extract too many bytes from byte array (" << sizeof(f_value) << " requested, " << Size() << " available)");
+#ifdef ARGOS_DOUBLE_PRECISION
+      UInt64 unValue;
+#else
+      UInt32 unValue;
+#endif
+      *this >> unValue;
+      ::memcpy(&f_value, &unValue, sizeof(unValue));
       return *this;
    }
 
