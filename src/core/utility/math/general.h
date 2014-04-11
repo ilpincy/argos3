@@ -58,10 +58,12 @@ namespace argos {
 #define Log  ::log
 #define Sqrt ::sqrt
 #define Exp ::exp
+#define Mod ::fmod
 #else
 #define Log ::logf
 #define Sqrt ::sqrtf
 #define Exp ::expf
+#define Mod ::fmodf
 #endif
 
     /****************************************/
