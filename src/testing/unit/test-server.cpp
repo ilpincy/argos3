@@ -4,17 +4,24 @@ using namespace argos;
 
 int main() {
    try {
-      CTCPSocket s1;
+      CTCPSocket s1, s2;
       std::cout << "[INFO] Accepting connections" << std::endl;
-      CTCPSocket s2 = s1.Accept(12345);
+      s1.Accept(s2, 12345);
       std::cout << "[INFO] Client connected" << std::endl;
       CByteArray b;
-      b << 1;
-      b << 2;
-      b << 3;
-      b << 4;
-      std::cout << "[INFO] Sending 1 2 3 4 (" << b.Size() << " bytes)" << std::endl;
-      s2.SendByteArray(b);
+      s2.ReceiveByteArray(b);
+      std::cout << "[INFO] Received " << b.Size() << " bytes" << std::endl;
+      SInt32 v[4];
+      b >> v[0];
+      b >> v[1];
+      b >> v[2];
+      b >> v[3];
+      std::cout << "[INFO]   "
+                << " " << v[0]
+                << " " << v[1]
+                << " " << v[2]
+                << " " << v[3]
+                << std::endl;
    }
    catch(CARGoSException& ex) {
       std::cerr << ex.what() << std::endl;
