@@ -33,13 +33,14 @@ namespace argos {
 
       /**
        * Accept a connection from a client on the specified local port.
+       * @param c_socket The socket on which the connection has been created
        * @param n_port The wanted port
        * @param n_queue_length The maximum length of the queue of pending connections (also called the backlog)
-       * @return The socket on which the connection has been created
        * @throws CARGoSException in case of error
        */
-      CTCPSocket Accept(SInt32 n_port,
-                        SInt32 n_queue_length = 10);
+      void Accept(CTCPSocket& c_socket,
+                  SInt32 n_port,
+                  SInt32 n_queue_length = 10);
 
       /**
        * Close the socket.

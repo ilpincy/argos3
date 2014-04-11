@@ -69,8 +69,9 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   CTCPSocket CTCPSocket::Accept(SInt32 n_port,
-                                 SInt32 n_queue_length) {
+   void CTCPSocket::Accept(CTCPSocket& c_socket,
+                           SInt32 n_port,
+                           SInt32 n_queue_length) {
       /* Used to store the return value of the network function calls */
       int nRetVal;
       /* Get information on the available interfaces */
@@ -125,7 +126,7 @@ namespace argos {
          Disconnect();
          THROW_ARGOSEXCEPTION("Error accepting connection: " << ::strerror(errno));
       }
-      return CTCPSocket(nNewStream);
+      c_socket.m_nStream = nNewStream;
    }
 
    /****************************************/
