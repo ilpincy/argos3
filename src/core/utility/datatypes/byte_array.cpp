@@ -20,8 +20,8 @@ namespace argos {
       /* Test for host endianness */
       if(*reinterpret_cast<const UInt8*>(&nTest) == nTest) {
          /* Host is little endian, network is big -> convert to big */
-         const UInt32 unHighWord = ::htonl(static_cast<UInt32>(un_value >> 32));
-         const UInt32 unLowWord  = ::htonl(static_cast<UInt32>(un_value & 0xFFFFFFFFLL));
+         const UInt32 unHighWord = htonl(static_cast<UInt32>(un_value >> 32));
+         const UInt32 unLowWord  = htonl(static_cast<UInt32>(un_value & 0xFFFFFFFFLL));
          return static_cast<UInt64>(unLowWord) << 32 | unHighWord;
       }
       else {
@@ -36,8 +36,8 @@ namespace argos {
       /* Test for host endianness */
       if(*reinterpret_cast<const UInt8*>(&nTest) == nTest) {
          /* Host is little endian, network is big -> convert to big */
-         const UInt32 unHighWord = ::ntohl(static_cast<UInt32>(un_value >> 32));
-         const UInt32 unLowWord  = ::ntohl(static_cast<UInt32>(un_value & 0xFFFFFFFFLL));
+         const UInt32 unHighWord = ntohl(static_cast<UInt32>(un_value >> 32));
+         const UInt32 unLowWord  = ntohl(static_cast<UInt32>(un_value & 0xFFFFFFFFLL));
          return static_cast<UInt64>(unLowWord) << 32 | unHighWord;
       }
       else {
@@ -143,7 +143,7 @@ namespace argos {
    /****************************************/
 
    CByteArray& CByteArray::operator<<(UInt16 un_value) {
-      un_value = ::htons(un_value);
+      un_value = htons(un_value);
       UInt8* punByte = reinterpret_cast<UInt8*>(&un_value);
       m_vecBuffer.push_back(punByte[0]);
       m_vecBuffer.push_back(punByte[1]);
@@ -159,7 +159,7 @@ namespace argos {
       punByte[0] = m_vecBuffer[0];
       punByte[1] = m_vecBuffer[1];
       m_vecBuffer.erase(m_vecBuffer.begin(), m_vecBuffer.begin() + 2);
-      un_value = ::ntohs(un_value);
+      un_value = ntohs(un_value);
       return *this;
    }
 
@@ -167,7 +167,7 @@ namespace argos {
    /****************************************/
 
    CByteArray& CByteArray::operator<<(SInt16 n_value) {
-      n_value = ::htons(n_value);
+      n_value = htons(n_value);
       UInt8* punByte = reinterpret_cast<UInt8*>(&n_value);
       m_vecBuffer.push_back(punByte[0]);
       m_vecBuffer.push_back(punByte[1]);
@@ -183,7 +183,7 @@ namespace argos {
       punByte[0] = m_vecBuffer[0];
       punByte[1] = m_vecBuffer[1];
       m_vecBuffer.erase(m_vecBuffer.begin(), m_vecBuffer.begin() + 2);
-      n_value = ::ntohs(n_value);
+      n_value = ntohs(n_value);
       return *this;
    }
 
@@ -191,7 +191,7 @@ namespace argos {
    /****************************************/
 
    CByteArray& CByteArray::operator<<(UInt32 un_value) {
-      un_value = ::htonl(un_value);
+      un_value = htonl(un_value);
       UInt8* punByte = reinterpret_cast<UInt8*>(&un_value);
       m_vecBuffer.push_back(punByte[0]);
       m_vecBuffer.push_back(punByte[1]);
@@ -211,7 +211,7 @@ namespace argos {
       punByte[2] = m_vecBuffer[2];
       punByte[3] = m_vecBuffer[3];
       m_vecBuffer.erase(m_vecBuffer.begin(), m_vecBuffer.begin() + 4);
-      un_value = ::ntohl(un_value);
+      un_value = ntohl(un_value);
       return *this;
    }
 
@@ -219,7 +219,7 @@ namespace argos {
    /****************************************/
 
    CByteArray& CByteArray::operator<<(SInt32 n_value) {
-      n_value = ::htonl(n_value);
+      n_value = htonl(n_value);
       UInt8* punByte = reinterpret_cast<UInt8*>(&n_value);
       m_vecBuffer.push_back(punByte[0]);
       m_vecBuffer.push_back(punByte[1]);
@@ -239,7 +239,7 @@ namespace argos {
       punByte[2] = m_vecBuffer[2];
       punByte[3] = m_vecBuffer[3];
       m_vecBuffer.erase(m_vecBuffer.begin(), m_vecBuffer.begin() + 4);
-      n_value = ::ntohl(n_value);
+      n_value = ntohl(n_value);
       return *this;
    }
 
