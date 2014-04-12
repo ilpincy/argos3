@@ -12,6 +12,16 @@ add_executable(test-grid
 target_link_libraries(test-grid
   argos3core_${ARGOS_BUILD_FOR})
 
+add_executable(test-server
+  unit/test-server.cpp)
+target_link_libraries(test-server
+  argos3core_${ARGOS_BUILD_FOR})
+
+add_executable(test-client
+  unit/test-client.cpp)
+target_link_libraries(test-client
+  argos3core_${ARGOS_BUILD_FOR})
+
 # add_executable(test-reset unit/test-reset.cpp)
 # target_link_libraries(test-reset argos3core_${ARGOS_BUILD_FOR})
 

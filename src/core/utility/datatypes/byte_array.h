@@ -105,6 +105,18 @@ namespace argos {
       }
 
       /**
+       * Returns the contents of the byte array as a c-style array.
+       * The returned pointer is valid under two conditions:
+       * (i) the CByteArray object has not been deallocated, and
+       * (ii) the contents of the byte array have not been changed.
+       * If the byte array is empty, this method returns <tt>NULL</tt>.
+       * @return the contents of the byte array as a c-style array.
+       */
+      inline UInt8* ToCArray() {
+         return !Empty() ? &m_vecBuffer[0] : NULL;
+      }
+
+      /**
        * Clears the byte array.
        * After calling this method, the byte array is empty.
        * @see Empty()
@@ -333,6 +345,8 @@ namespace argos {
 
       /**
        * Appends an argos::Real to the byte array.
+       * This method assumes that floating-point numbers are represented
+       * in the IEEE754 standard.
        * @param f_value the value of the argos::Real.
        * @return a reference to this byte array.
        */
@@ -340,7 +354,10 @@ namespace argos {
 
       /**
        * Moves an argos::Real from the byte array to the target variable.
-       * The element whose value was written into the target buffer are removed from the byte array.
+       * The element whose value was written into the target buffer are removed
+       * from the byte array.
+       * This method assumes that floating-point numbers are represented
+       * in the IEEE754 standard.
        * @param f_value the buffer for the argos::Real.
        * @return a reference to this byte array.
        */

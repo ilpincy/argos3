@@ -5,10 +5,47 @@
  */
 
 #include "byte_array.h"
+
+#include <arpa/inet.h>
 #include <cstring>
 
 namespace argos {
 
+   /****************************************/
+   /****************************************/
+
+   static UInt64 htonll(UInt64 un_value) {
+      /* Define a test variable for endianness - 42 is 'the' answer */
+      static const SInt32 nTest = 42;
+      /* Test for host endianness */
+      if(*reinterpret_cast<const UInt8*>(&nTest) == nTest) {
+         /* Host is little endian, network is big -> convert to big */
+         const UInt32 unHighWord = htonl(static_cast<UInt32>(un_value >> 32));
+         const UInt32 unLowWord  = htonl(static_cast<UInt32>(un_value & 0xFFFFFFFFLL));
+         return static_cast<UInt64>(unLowWord) << 32 | unHighWord;
+      }
+      else {
+         /* Host is big endian - leave as is */
+         return un_value;
+      }
+   }
+
+   static UInt64 ntohll(UInt64 un_value) {
+      /* Define a test variable for endianness - 42 is 'the' answer */
+      static const SInt32 nTest = 42;
+      /* Test for host endianness */
+      if(*reinterpret_cast<const UInt8*>(&nTest) == nTest) {
+         /* Host is little endian, network is big -> convert to big */
+         const UInt32 unHighWord = ntohl(static_cast<UInt32>(un_value >> 32));
+         const UInt32 unLowWord  = ntohl(static_cast<UInt32>(un_value & 0xFFFFFFFFLL));
+         return static_cast<UInt64>(unLowWord) << 32 | unHighWord;
+      }
+      else {
+         /* Host is big endian - leave as is */
+         return un_value;
+      }
+   }
+   
    /****************************************/
    /****************************************/
 
@@ -106,6 +143,7 @@ namespace argos {
    /****************************************/
 
    CByteArray& CByteArray::operator<<(UInt16 un_value) {
+      un_value = htons(un_value);
       UInt8* punByte = reinterpret_cast<UInt8*>(&un_value);
       m_vecBuffer.push_back(punByte[0]);
       m_vecBuffer.push_back(punByte[1]);
@@ -121,6 +159,7 @@ namespace argos {
       punByte[0] = m_vecBuffer[0];
       punByte[1] = m_vecBuffer[1];
       m_vecBuffer.erase(m_vecBuffer.begin(), m_vecBuffer.begin() + 2);
+      un_value = ntohs(un_value);
       return *this;
    }
 
@@ -128,6 +167,7 @@ namespace argos {
    /****************************************/
 
    CByteArray& CByteArray::operator<<(SInt16 n_value) {
+      n_value = htons(n_value);
       UInt8* punByte = reinterpret_cast<UInt8*>(&n_value);
       m_vecBuffer.push_back(punByte[0]);
       m_vecBuffer.push_back(punByte[1]);
@@ -143,6 +183,7 @@ namespace argos {
       punByte[0] = m_vecBuffer[0];
       punByte[1] = m_vecBuffer[1];
       m_vecBuffer.erase(m_vecBuffer.begin(), m_vecBuffer.begin() + 2);
+      n_value = ntohs(n_value);
       return *this;
    }
 
@@ -150,6 +191,7 @@ namespace argos {
    /****************************************/
 
    CByteArray& CByteArray::operator<<(UInt32 un_value) {
+      un_value = htonl(un_value);
       UInt8* punByte = reinterpret_cast<UInt8*>(&un_value);
       m_vecBuffer.push_back(punByte[0]);
       m_vecBuffer.push_back(punByte[1]);
@@ -169,14 +211,16 @@ namespace argos {
       punByte[2] = m_vecBuffer[2];
       punByte[3] = m_vecBuffer[3];
       m_vecBuffer.erase(m_vecBuffer.begin(), m_vecBuffer.begin() + 4);
+      un_value = ntohl(un_value);
       return *this;
    }
 
    /****************************************/
    /****************************************/
 
-   CByteArray& CByteArray::operator<<(SInt32 un_value) {
-      UInt8* punByte = reinterpret_cast<UInt8*>(&un_value);
+   CByteArray& CByteArray::operator<<(SInt32 n_value) {
+      n_value = htonl(n_value);
+      UInt8* punByte = reinterpret_cast<UInt8*>(&n_value);
       m_vecBuffer.push_back(punByte[0]);
       m_vecBuffer.push_back(punByte[1]);
       m_vecBuffer.push_back(punByte[2]);
@@ -187,14 +231,15 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   CByteArray& CByteArray::operator>>(SInt32& un_value) {
+   CByteArray& CByteArray::operator>>(SInt32& n_value) {
       if(Size() < 4) THROW_ARGOSEXCEPTION("Attempting to extract too many bytes from byte array (4 requested, " << Size() << " available)");
-      UInt8* punByte = reinterpret_cast<UInt8*>(&un_value);
+      UInt8* punByte = reinterpret_cast<UInt8*>(&n_value);
       punByte[0] = m_vecBuffer[0];
       punByte[1] = m_vecBuffer[1];
       punByte[2] = m_vecBuffer[2];
       punByte[3] = m_vecBuffer[3];
       m_vecBuffer.erase(m_vecBuffer.begin(), m_vecBuffer.begin() + 4);
+      n_value = ntohl(n_value);
       return *this;
    }
 
@@ -202,6 +247,7 @@ namespace argos {
    /****************************************/
 
    CByteArray& CByteArray::operator<<(UInt64 un_value) {
+      un_value = htonll(un_value);
       UInt8* punByte = reinterpret_cast<UInt8*>(&un_value);
       m_vecBuffer.push_back(punByte[0]);
       m_vecBuffer.push_back(punByte[1]);
@@ -229,14 +275,16 @@ namespace argos {
       punByte[6] = m_vecBuffer[6];
       punByte[7] = m_vecBuffer[7];
       m_vecBuffer.erase(m_vecBuffer.begin(), m_vecBuffer.begin() + 8);
+      un_value = ntohll(un_value);
       return *this;
    }
 
    /****************************************/
    /****************************************/
 
-   CByteArray& CByteArray::operator<<(SInt64 un_value) {
-      UInt8* punByte = reinterpret_cast<UInt8*>(&un_value);
+   CByteArray& CByteArray::operator<<(SInt64 n_value) {
+      n_value = htonll(n_value);
+      UInt8* punByte = reinterpret_cast<UInt8*>(&n_value);
       m_vecBuffer.push_back(punByte[0]);
       m_vecBuffer.push_back(punByte[1]);
       m_vecBuffer.push_back(punByte[2]);
@@ -251,9 +299,9 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   CByteArray& CByteArray::operator>>(SInt64& un_value) {
+   CByteArray& CByteArray::operator>>(SInt64& n_value) {
       if(Size() < 8) THROW_ARGOSEXCEPTION("Attempting to extract too many bytes from byte array (8 requested, " << Size() << " available)");         
-      UInt8* punByte = reinterpret_cast<UInt8*>(&un_value);
+      UInt8* punByte = reinterpret_cast<UInt8*>(&n_value);
       punByte[0] = m_vecBuffer[0];
       punByte[1] = m_vecBuffer[1];
       punByte[2] = m_vecBuffer[2];
@@ -263,6 +311,7 @@ namespace argos {
       punByte[6] = m_vecBuffer[6];
       punByte[7] = m_vecBuffer[7];
       m_vecBuffer.erase(m_vecBuffer.begin(), m_vecBuffer.begin() + 8);
+      n_value = ntohll(n_value);
       return *this;
    }
 
@@ -270,10 +319,11 @@ namespace argos {
    /****************************************/
 
    CByteArray& CByteArray::operator<<(unsigned long int un_value) {
-      UInt32 unSize = sizeof(un_value);
-      UInt8* punByte = reinterpret_cast<UInt8*>(&un_value);
-      for(UInt32 i = 0; i < unSize; ++i) {
-         m_vecBuffer.push_back(punByte[i]);
+      if(sizeof(un_value) == sizeof(UInt32)) {
+         *this << static_cast<UInt32>(un_value);
+      }
+      else if(sizeof(un_value) == sizeof(UInt64)) {
+         *this << static_cast<UInt64>(un_value);
       }
       return *this;
    }
@@ -282,14 +332,12 @@ namespace argos {
    /****************************************/
 
    CByteArray& CByteArray::operator>>(unsigned long int& un_value) {
-      UInt32 unSize = sizeof(un_value);
-      if(Size() < unSize) THROW_ARGOSEXCEPTION("Attempting to extract too many bytes from byte array (" << unSize << " requested, " << Size() << " available)");
-      UInt8* punByte = reinterpret_cast<UInt8*>(&un_value);
-      for(UInt32 i = 0; i < unSize; ++i) {
-         *punByte = m_vecBuffer[i];
-         ++punByte;
-      }
-      m_vecBuffer.erase(m_vecBuffer.begin(), m_vecBuffer.begin() + unSize);
+      if(sizeof(un_value) == sizeof(UInt32)) {
+         *this >> *reinterpret_cast<UInt32*>(&un_value);
+      }      
+      else if(sizeof(un_value) == sizeof(UInt64)) {
+         *this >> *reinterpret_cast<UInt64*>(&un_value);
+      }      
       return *this;
    }
 
@@ -297,10 +345,11 @@ namespace argos {
    /****************************************/
 
    CByteArray& CByteArray::operator<<(signed long int n_value) {
-      UInt32 unSize = sizeof(n_value);
-      UInt8* punByte = reinterpret_cast<UInt8*>(&n_value);
-      for(UInt32 i = 0; i < unSize; ++i) {
-         m_vecBuffer.push_back(punByte[i]);
+      if(sizeof(n_value) == sizeof(SInt32)) {
+         *this << static_cast<SInt32>(n_value);
+      }
+      else if(sizeof(n_value) == sizeof(SInt64)) {
+         *this << static_cast<SInt64>(n_value);
       }
       return *this;
    }
@@ -309,14 +358,12 @@ namespace argos {
    /****************************************/
 
    CByteArray& CByteArray::operator>>(signed long int& n_value) {
-      UInt32 unSize = sizeof(n_value);
-      if(Size() < unSize) THROW_ARGOSEXCEPTION("Attempting to extract too many bytes from byte array (" << unSize << " requested, " << Size() << " available)");
-      UInt8* punByte = reinterpret_cast<UInt8*>(&n_value);
-      for(UInt32 i = 0; i < unSize; ++i) {
-         *punByte = m_vecBuffer[i];
-         ++punByte;
-      }
-      m_vecBuffer.erase(m_vecBuffer.begin(), m_vecBuffer.begin() + unSize);
+      if(sizeof(n_value) == sizeof(SInt32)) {
+         *this >> *reinterpret_cast<SInt32*>(&n_value);
+      }      
+      else if(sizeof(n_value) == sizeof(SInt64)) {
+         *this >> *reinterpret_cast<SInt64*>(&n_value);
+      }      
       return *this;
    }
 
@@ -324,11 +371,13 @@ namespace argos {
    /****************************************/
 
    CByteArray& CByteArray::operator<<(Real f_value) {
-      UInt32 unSize = sizeof(f_value);
-      UInt8* punByte = reinterpret_cast<UInt8*>(&f_value);
-      for(UInt32 i = 0; i < unSize; ++i) {
-         m_vecBuffer.push_back(punByte[i]);
-      }
+#ifdef ARGOS_DOUBLE_PRECISION
+      UInt64 unValue;
+#else
+      UInt32 unValue;
+#endif
+      ::memcpy(&unValue, &f_value, sizeof(unValue));
+      *this << unValue;
       return *this;
    }
 
@@ -336,14 +385,14 @@ namespace argos {
    /****************************************/
 
    CByteArray& CByteArray::operator>>(Real& f_value) {
-      UInt32 unSize = sizeof(f_value);
-      if(Size() < unSize) THROW_ARGOSEXCEPTION("Attempting to extract too many bytes from byte array (" << unSize << " requested, " << Size() << " available)");
-      UInt8* punByte = reinterpret_cast<UInt8*>(&f_value);
-      for(UInt32 i = 0; i < unSize; ++i) {
-         *punByte = m_vecBuffer[i];
-         ++punByte;
-      }
-      m_vecBuffer.erase(m_vecBuffer.begin(), m_vecBuffer.begin() + unSize);
+      if(Size() < sizeof(f_value)) THROW_ARGOSEXCEPTION("Attempting to extract too many bytes from byte array (" << sizeof(f_value) << " requested, " << Size() << " available)");
+#ifdef ARGOS_DOUBLE_PRECISION
+      UInt64 unValue;
+#else
+      UInt32 unValue;
+#endif
+      *this >> unValue;
+      ::memcpy(&f_value, &unValue, sizeof(unValue));
       return *this;
    }
 

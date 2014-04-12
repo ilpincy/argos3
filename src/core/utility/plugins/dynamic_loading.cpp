@@ -20,6 +20,42 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   /*
+    * Tries to load the given library
+    * 1. Tries to load the library as passed
+    * 2. If that fails, it appends the shared library extension and tries again;
+    * 3. If also that fails, it appends the module library extension and tries a last time.
+    * If all fails, t_handle is set to NULL and str_lib is left as-is;
+    * In case of success, it sets t_handle to the handle of the load library, and fixes str_lib to
+    * match the extension of the loaded library.
+    */
+   static CDynamicLoading::TDLHandle LoadLibraryTryingExtensions(std::string& str_lib) {
+      /* Try loading without changes to the given path */
+      CDynamicLoading::TDLHandle tHandle = ::dlopen(str_lib.c_str(), RTLD_LAZY);
+      if(tHandle == NULL) {
+         /* Try adding the shared lib extension to the path */
+         std::string strLibWExt = str_lib + "." + ARGOS_SHARED_LIBRARY_EXTENSION;
+         tHandle = ::dlopen(strLibWExt.c_str(), RTLD_LAZY);
+         if(tHandle != NULL) {
+            /* Success */
+            str_lib = strLibWExt;
+         }
+         else {
+            /* Try adding the module lib extension to the path */
+            strLibWExt = str_lib + "." + ARGOS_MODULE_LIBRARY_EXTENSION;
+            tHandle = ::dlopen(strLibWExt.c_str(), RTLD_LAZY);
+            if(tHandle != NULL) {
+               /* Success */
+               str_lib = strLibWExt;
+            }
+         }
+      }
+      return tHandle;
+   }
+
+   /****************************************/
+   /****************************************/
+
    CDynamicLoading::TDLHandle CDynamicLoading::LoadLibrary(const std::string& str_lib) {
       TDLHandle tHandle;
       /* Check if the provided path is absolute or relative */
@@ -34,7 +70,8 @@ namespace argos {
             return m_tOpenLibs[str_lib];
          }
          /* Not already loaded, load the library and bomb out in case of failure */
-         tHandle = ::dlopen(str_lib.c_str(), RTLD_LAZY);
+         std::string strLoadedLib = str_lib;
+         tHandle = LoadLibraryTryingExtensions(strLoadedLib);
          if(tHandle == NULL) {
             THROW_ARGOSEXCEPTION("Can't load library \""
                                  << str_lib
@@ -42,7 +79,7 @@ namespace argos {
                                  << ::dlerror());
          }
          /* Store the handle to the loaded library */
-         m_tOpenLibs[str_lib] = tHandle;
+         m_tOpenLibs[strLoadedLib] = tHandle;
          return tHandle;
       }
       else {
@@ -81,7 +118,7 @@ namespace argos {
                return m_tOpenLibs[strLibPath];
             }
             /* Not already loaded, try and load the library */
-            tHandle = ::dlopen(strLibPath.c_str(), RTLD_LAZY);
+            tHandle = LoadLibraryTryingExtensions(strLibPath);
             if(tHandle != NULL) {
                /* Store the handle to the loaded library */
                m_tOpenLibs[strLibPath] = tHandle;
