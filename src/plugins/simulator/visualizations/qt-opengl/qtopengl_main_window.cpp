@@ -193,7 +193,7 @@ namespace argos {
       }
       if(cSettings.contains("texture_dir")) {
          m_strTextureDir = cSettings.value("texture_dir").toString();
-         if(m_strTextureDir.at(m_strIconDir.length()-1) != '/') {
+         if(m_strTextureDir.at(m_strTextureDir.length()-1) != '/') {
             m_strTextureDir.append("/");
          }
       }
