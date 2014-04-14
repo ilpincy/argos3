@@ -104,13 +104,12 @@ namespace argos {
    /****************************************/
 
    bool MatchPattern(const std::string& str_input,
-                     const std::string str_pattern) {
+                     const std::string& str_pattern) {
       /* Code taken from
          http://www.opengroup.org/onlinepubs/000095399/functions/regexec.html
        */
       UInt32 nStatus;
       regex_t tRegExp;
-
       if(::regcomp(&tRegExp, str_pattern.c_str(), REG_EXTENDED | REG_NOSUB) != 0) {
          return false;
       }
