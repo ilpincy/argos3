@@ -33,6 +33,7 @@ namespace argos {
       /* Try loading without changes to the given path */
       CDynamicLoading::TDLHandle tHandle = ::dlopen(str_lib.c_str(), RTLD_LAZY);
       if(tHandle == NULL) {
+         LOGERR << "[WARNING] Can't open library \"" << str_lib << "\": " << ::dlerror() << std::endl;
          /* Try adding the shared lib extension to the path */
          std::string strLibWExt = str_lib + "." + ARGOS_SHARED_LIBRARY_EXTENSION;
          tHandle = ::dlopen(strLibWExt.c_str(), RTLD_LAZY);
@@ -41,12 +42,16 @@ namespace argos {
             str_lib = strLibWExt;
          }
          else {
+            LOGERR << "[WARNING] Can't open library \"" << strLibWExt << "\": " << ::dlerror() << std::endl;
             /* Try adding the module lib extension to the path */
             strLibWExt = str_lib + "." + ARGOS_MODULE_LIBRARY_EXTENSION;
             tHandle = ::dlopen(strLibWExt.c_str(), RTLD_LAZY);
             if(tHandle != NULL) {
                /* Success */
                str_lib = strLibWExt;
+            }
+            else {
+               LOGERR << "[WARNING] Can't open library \"" << strLibWExt << "\": " << ::dlerror() << std::endl;
             }
          }
       }
