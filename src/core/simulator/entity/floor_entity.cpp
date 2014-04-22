@@ -24,6 +24,9 @@ namespace argos {
          m_cHalfArenaSize.Set(
             cArenaSize.GetX() * 0.5f,
             cArenaSize.GetY() * 0.5f);
+         const CVector3& cArenaCenter = CSimulator::GetInstance().GetSpace().GetArenaCenter();
+         m_cArenaCenter.Set(cArenaCenter.GetX(),
+                            cArenaCenter.GetY());
          LoadImage(str_path);
       }
 
@@ -94,6 +97,7 @@ namespace argos {
       Real m_fArenaToImageCoordinateXFactor;
       Real m_fArenaToImageCoordinateYFactor;
       CVector2 m_cHalfArenaSize;
+      CVector2 m_cArenaCenter;
       std::string m_strImageFileName;
 
    };
@@ -112,6 +116,9 @@ namespace argos {
          m_cHalfArenaSize.Set(
             cArenaSize.GetX() * 0.5f,
             cArenaSize.GetY() * 0.5f);
+         const CVector3& cArenaCenter = CSimulator::GetInstance().GetSpace().GetArenaCenter();
+         m_cArenaCenter.Set(cArenaCenter.GetX(),
+                            cArenaCenter.GetY());
       }
 
       virtual CColor GetColorAtPoint(Real f_x,
@@ -129,6 +136,7 @@ namespace argos {
             for(UInt32 x = 0; x < cImage.getWidth(); ++x) {
                cFloorPos.Set(x * fFactor, y * fFactor);
                cFloorPos -= m_cHalfArenaSize;
+               cFloorPos += m_cArenaCenter;
                cARGoSPixel = m_cLoopFunctions.GetFloorColor(cFloorPos);
                tFIPPixel.rgbRed = cARGoSPixel.GetRed();
                tFIPPixel.rgbGreen = cARGoSPixel.GetGreen();
@@ -146,6 +154,7 @@ namespace argos {
       CLoopFunctions& m_cLoopFunctions;
       UInt32 m_unPixelsPerMeter;
       CVector2 m_cHalfArenaSize;
+      CVector2 m_cArenaCenter;
    };
 
    /****************************************/

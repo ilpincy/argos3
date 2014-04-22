@@ -61,7 +61,7 @@ namespace argos {
    /****************************************/
 
    void CLEDsDefaultActuator::Destroy() {
-      m_pcLEDEquippedEntity->RemoveFromMedium(*m_pcLEDMedium);
+      m_pcLEDEquippedEntity->RemoveFromMedium();
    }
 
    /****************************************/
