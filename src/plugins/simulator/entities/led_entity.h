@@ -45,6 +45,8 @@ namespace argos {
 
       virtual void Reset();
 
+      virtual void Destroy();
+
       virtual void SetEnabled(bool b_enabled);
 
       /**
@@ -104,12 +106,29 @@ namespace argos {
        * @param c_medium The LED medium.
        * @see CLEDMedium
        */
-      void RemoveFromMedium(CLEDMedium& c_medium);
+      void RemoveFromMedium();
+
+      /**
+       * Returns <tt>true</tt> if this LED is associated to a medium.
+       * @return <tt>true</tt> if this LED is associated to a medium.
+       * @see CLEDMedium
+       */
+      inline bool HasMedium() const {
+         return m_pcMedium != NULL;
+      }
+
+      /**
+       * Returns the medium associated to this LED.
+       * @return The medium associated to this LED.
+       * @see CLEDMedium
+       */
+      CLEDMedium& GetMedium() const;
 
    protected:
 
       CColor m_cColor;
       CColor m_cInitColor;
+      CLEDMedium* m_pcMedium;
 
    };
 
