@@ -185,7 +185,9 @@ namespace argos {
                    "    ...\n"
                    "  </arena>\n\n"
                    "In the example, four LEDs are added around the cylinder. The LEDs have\n"
-                   "different colors and are located around the cylinder.\n",
+                   "different colors and are located around the cylinder. The LEDs are\n"
+                   "managed by the LED medium declared in the <media> section of the\n"
+                   "configuration file with id \"id_of_led_medium\"",
                    "Usable"
       );
 

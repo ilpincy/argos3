@@ -166,7 +166,7 @@ namespace argos {
                    "    ...\n"
                    "    <box id=\"box1\" size=\"0.75,0.1,0.5\" movable=\"true\" mass=\"2.5\">\n"
                    "      <body position=\"0.4,2.3,0\" orientation=\"45,0,0\" />\n"
-                   "      <leds>\n"
+                   "      <leds medium=\"id_of_led_medium\">\n"
                    "        <led position=\" 0.15, 0.15,0.15\" color=\"white\" />\n"
                    "        <led position=\"-0.15, 0.15,0\"    color=\"red\"   />\n"
                    "        <led position=\" 0.15, 0.15,0\"    color=\"blue\"  />\n"
@@ -177,7 +177,8 @@ namespace argos {
                    "  </arena>\n\n"
                    "In the example, four LEDs are added to the box. The LEDs have\n"
                    "different colors and are located one on the top and three\n"
-                   "around the box.\n",
+                   "around the box. The LEDs are managed by the LED medium declared in\n"
+                   "the <media> section of the configuration file with id \"id_of_led_medium\"",
                    "Usable"
       );
 
