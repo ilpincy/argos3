@@ -129,10 +129,6 @@ namespace argos {
                m_tOpenLibs[strLibPath] = tHandle;
                return tHandle;
             }
-            else {
-               LOGERR << ::dlerror()
-                      << std::endl;
-            }
          }
          /* If we get here, it's because no directory worked */
          THROW_ARGOSEXCEPTION("Can't load library \""
