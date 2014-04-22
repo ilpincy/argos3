@@ -209,9 +209,9 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CLEDEquippedEntity::RemoveFromMedium(CLEDMedium& c_medium) {
+   void CLEDEquippedEntity::RemoveFromMedium() {
       for(UInt32 i = 0; i < m_tLEDs.size(); ++i) {
-         m_tLEDs[i]->RemoveFromMedium(c_medium);
+         m_tLEDs[i]->RemoveFromMedium();
       }
    }
 

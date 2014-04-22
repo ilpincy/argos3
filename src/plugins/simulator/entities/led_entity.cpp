@@ -14,7 +14,8 @@ namespace argos {
    /****************************************/
 
    CLEDEntity::CLEDEntity(CComposableEntity* pc_parent) :
-      CPositionalEntity(pc_parent) {}
+      CPositionalEntity(pc_parent),
+      m_pcMedium(NULL) {}
 
    /****************************************/
    /****************************************/
@@ -25,7 +26,8 @@ namespace argos {
                           const CColor& c_color) :
       CPositionalEntity(pc_parent, str_id, c_position, CQuaternion()),
       m_cColor(c_color),
-      m_cInitColor(c_color) {}
+      m_cInitColor(c_color),
+      m_pcMedium(NULL) {}
 
    /****************************************/
    /****************************************/
@@ -53,6 +55,15 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   void CLEDEntity::Destroy() {
+      if(HasMedium()) {
+         RemoveFromMedium();
+      }
+   }
+
+   /****************************************/
+   /****************************************/
+
    void CLEDEntity::SetEnabled(bool b_enabled) {
       CEntity::SetEnabled(b_enabled);
       if(IsEnabled()) {
@@ -64,14 +75,31 @@ namespace argos {
    /****************************************/
 
    void CLEDEntity::AddToMedium(CLEDMedium& c_medium) {
+      m_pcMedium = &c_medium;
       c_medium.AddEntity(*this);
    }
 
    /****************************************/
    /****************************************/
 
-   void CLEDEntity::RemoveFromMedium(CLEDMedium& c_medium) {
-      c_medium.RemoveEntity(*this);
+   void CLEDEntity::RemoveFromMedium() {
+      try {
+         GetMedium().RemoveEntity(*this);
+         m_pcMedium = NULL;
+      }
+      catch(CARGoSException& ex) {
+         THROW_ARGOSEXCEPTION_NESTED("Can't remove LED entity \"" << GetId() << "\" from medium.", ex);
+      }
+   }
+
+   /****************************************/
+   /****************************************/
+      
+   CLEDMedium& CLEDEntity::GetMedium() const {
+      if(m_pcMedium == NULL) {
+         THROW_ARGOSEXCEPTION("LED entity \"" << GetId() << "\" has no medium associated.");
+      }
+      return *m_pcMedium;
    }
 
    /****************************************/
