@@ -65,8 +65,6 @@ namespace argos {
 
       virtual void Reset();
 
-      virtual void Update() {}
-
       /**
        * Adds an LED to this entity.
        * @param c_position The position of the LED wrt the reference entity.
