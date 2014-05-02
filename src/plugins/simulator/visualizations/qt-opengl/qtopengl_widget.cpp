@@ -365,6 +365,7 @@ namespace argos {
    void CQTOpenGLWidget::DrawRays(CControllableEntity& c_entity) {
       if(! c_entity.GetCheckedRays().empty()) {
          glDisable(GL_LIGHTING);
+         glLineWidth(1.0f);
          glBegin(GL_LINES);
          for(UInt32 i = 0; i < c_entity.GetCheckedRays().size(); ++i) {
             if(c_entity.GetCheckedRays()[i].first) {
