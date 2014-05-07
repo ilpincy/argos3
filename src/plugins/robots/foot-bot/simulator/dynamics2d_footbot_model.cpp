@@ -346,8 +346,8 @@ namespace argos {
             m_ptControlGripperBody->w =
                m_cDiffSteering.GetAngularVelocity() +
                (PD_P_CONSTANT * (m_cFootBotEntity.GetTurretEntity().GetRotation().GetValue() - (m_ptActualGripperBody->a - m_ptActualBaseBody->a))
-                + PD_D_CONSTANT * (m_cFootBotEntity.GetTurretEntity().GetRotation().GetValue() - (m_ptActualGripperBody->a - m_ptActualBaseBody->a) - m_fPreviousTurretAngleError) )*
-               m_cDyn2DEngine.GetInverseSimulationClockTick();
+                + PD_D_CONSTANT * (m_cFootBotEntity.GetTurretEntity().GetRotation().GetValue() - (m_ptActualGripperBody->a - m_ptActualBaseBody->a) - m_fPreviousTurretAngleError) ) /
+               m_cDyn2DEngine.GetPhysicsClockTick();
             m_fPreviousTurretAngleError = m_cFootBotEntity.GetTurretEntity().GetRotation().GetValue() - (m_ptActualGripperBody->a - m_ptActualBaseBody->a);
             break;
          case MODE_SPEED_CONTROL:
