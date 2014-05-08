@@ -343,7 +343,7 @@ namespace argos {
 
          /* Position control mode is implemented using a PD controller */
          case MODE_POSITION_CONTROL: {
-            Real fCurRotErr = (m_cFootBotEntity.GetTurretEntity().GetRotation() - (CRadians(m_ptActualGripperBody->a) - CRadians(m_ptActualBaseBody->a))).GetValue();
+            Real fCurRotErr = NormalizedDifference(m_cFootBotEntity.GetTurretEntity().GetRotation(), CRadians(m_ptActualGripperBody->a) - CRadians(m_ptActualBaseBody->a)).GetValue();
             m_ptControlGripperBody->w =
                m_cDiffSteering.GetAngularVelocity() +
                (PD_P_CONSTANT * fCurRotErr +

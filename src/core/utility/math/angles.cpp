@@ -19,11 +19,9 @@ namespace argos {
    const CRange<CRadians> CRadians::SIGNED_RANGE(-CRadians::PI, CRadians::PI);
    const CRange<CRadians> CRadians::UNSIGNED_RANGE(CRadians(), CRadians::TWO_PI);
    const Real CRadians::RADIANS_TO_DEGREES(180.0/CRadians::PI.GetValue());
-   const CRange<SInt32> CRadians::ASEBA_RANGE(-32768, 32767);
 
    const CRange<CDegrees> CDegrees::SIGNED_RANGE(CDegrees(-180.0), CDegrees(180.0));
    const CRange<CDegrees> CDegrees::UNSIGNED_RANGE(CDegrees(0.0), CDegrees(360.0));
    const Real CDegrees::DEGREES_TO_RADIANS(CRadians::PI.GetValue()/180.0);
-   const CRange<SInt16> CDegrees::ASEBA_RANGE(-32768, 32767);
 
 }
