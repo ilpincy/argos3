@@ -178,7 +178,9 @@ namespace argos {
       }
 
       inline CRadians& operator-=(const CRadians& c_radians) {
-         m_fValue -= c_radians.m_fValue;
+         m_fValue = Mod(m_fValue - c_radians.m_fValue + PI.m_fValue, TWO_PI.m_fValue);
+         if(m_fValue < 0.0f) m_fValue += TWO_PI.m_fValue;
+         m_fValue -= PI.m_fValue;
          return *this;
       }
 
@@ -381,7 +383,9 @@ namespace argos {
       }
 
       inline CDegrees& operator-=(const CDegrees& c_degrees) {
-         m_fValue -= c_degrees.m_fValue;
+         m_fValue = Mod(m_fValue - c_degrees.m_fValue + 180.0f, 360.0f);
+         if(m_fValue < 0.0f) m_fValue += 360.0f;
+         m_fValue -= 180.0f;
          return *this;
       }
 
