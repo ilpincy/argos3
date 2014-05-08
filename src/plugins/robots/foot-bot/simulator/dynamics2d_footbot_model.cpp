@@ -22,8 +22,8 @@ namespace argos {
    static const Real FOOTBOT_INTERWHEEL_DISTANCE      = 0.14f;
    static const Real FOOTBOT_HEIGHT                   = 0.146899733f;
 
-   static const Real FOOTBOT_MAX_FORCE                = 1.5f;
-   static const Real FOOTBOT_MAX_TORQUE               = 1.5f;
+   static const Real FOOTBOT_MAX_FORCE                = 15.f;
+   static const Real FOOTBOT_MAX_TORQUE               = 15.f;
 
    enum FOOTBOT_WHEELS {
       FOOTBOT_LEFT_WHEEL = 0,
@@ -342,14 +342,15 @@ namespace argos {
       switch(m_unLastTurretMode) {
 
          /* Position control mode is implemented using a PD controller */
-         case MODE_POSITION_CONTROL:
+         case MODE_POSITION_CONTROL: {
+            Real fCurRotErr = (m_cFootBotEntity.GetTurretEntity().GetRotation() - (CRadians(m_ptActualGripperBody->a) - CRadians(m_ptActualBaseBody->a))).GetValue();
             m_ptControlGripperBody->w =
                m_cDiffSteering.GetAngularVelocity() +
-               (PD_P_CONSTANT * (m_cFootBotEntity.GetTurretEntity().GetRotation().GetValue() - (m_ptActualGripperBody->a - m_ptActualBaseBody->a))
-                + PD_D_CONSTANT * (m_cFootBotEntity.GetTurretEntity().GetRotation().GetValue() - (m_ptActualGripperBody->a - m_ptActualBaseBody->a) - m_fPreviousTurretAngleError) ) /
-               m_cDyn2DEngine.GetPhysicsClockTick();
-            m_fPreviousTurretAngleError = m_cFootBotEntity.GetTurretEntity().GetRotation().GetValue() - (m_ptActualGripperBody->a - m_ptActualBaseBody->a);
+               (PD_P_CONSTANT * fCurRotErr +
+                PD_D_CONSTANT * (fCurRotErr - m_fPreviousTurretAngleError) * m_cDyn2DEngine.GetInverseSimulationClockTick());
+            m_fPreviousTurretAngleError = fCurRotErr;
             break;
+         }
          case MODE_SPEED_CONTROL:
             m_ptControlGripperBody->w =
                m_cDiffSteering.GetAngularVelocity() +

@@ -47,7 +47,7 @@ namespace argos {
 
    void CFootBotTurretEntity::SetRotation(const CRadians& c_rotation) {
       m_cRotation = c_rotation;
-      m_cRotation.UnsignedNormalize();
+      m_cRotation.SignedNormalize();
    }
 
    /****************************************/
