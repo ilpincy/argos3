@@ -105,15 +105,6 @@ namespace argos {
       }
 
       /**
-       * Sets the value from a value in Aseba format
-       * It sets m_fValue (which is in radians) converting from the passed value in Aseba format.
-       * @param n_value a value in Aseba format
-       */
-      inline void FromValueInAseba(SInt16 n_value) {
-         ASEBA_RANGE.MapValueIntoRange(*this, n_value, SIGNED_RANGE);
-      }
-
-      /**
        * Returns the value in radians
        * @return the value in radians
        */
@@ -257,6 +248,9 @@ namespace argos {
        */
       friend CDegrees ToDegrees(const CRadians& c_radians);
 
+      friend CRadians NormalizedDifference(const CRadians& c_rad1,
+                                           const CRadians& c_rad2);
+
       inline friend std::ostream& operator<<(std::ostream& c_os,
                                              const CRadians& c_radians) {
          c_os << "CRadians("
@@ -278,7 +272,6 @@ namespace argos {
 
       static const CRange<CRadians> SIGNED_RANGE; /**< The signed normalization range [-PI:PI] */
       static const CRange<CRadians> UNSIGNED_RANGE; /**< The unsigned normalization range [0:TWO_PI] */
-      static const CRange<SInt32> ASEBA_RANGE; /**< The Aseba normalization range [-32768:32767] */
       static const Real RADIANS_TO_DEGREES; /**< Constant to convert from radians to degrees */
 
    private:
@@ -320,15 +313,6 @@ namespace argos {
        */
       inline void FromValueInRadians(Real f_value) {
          m_fValue = f_value / DEGREES_TO_RADIANS;
-      }
-
-      /**
-       * Sets the value from a value in Aseba format
-       * It sets m_fValue (which is in degrees) converting from the passed value in Aseba format.
-       * @param n_value a value in Aseba format
-       */
-      inline void FromValueInAseba(SInt16 n_value) {
-         ASEBA_RANGE.MapValueIntoRange(*this, n_value, SIGNED_RANGE);
       }
 
       /**
@@ -460,6 +444,9 @@ namespace argos {
        */
       friend CRadians ToRadians(const CDegrees& c_degrees);
 
+      friend CDegrees NormalizedDifference(const CDegrees& c_angle1,
+                                           const CDegrees& c_angle2);
+
       inline friend std::ostream& operator<<(std::ostream& c_os,
                                              const CDegrees& c_degrees) {
          c_os << "CDegrees("
@@ -479,7 +466,6 @@ namespace argos {
       Real m_fValue; /**< Actual angle value in radians */
       static const CRange<CDegrees> SIGNED_RANGE; /**< The signed normalization range [-180:180] */
       static const CRange<CDegrees> UNSIGNED_RANGE; /**< The unsigned normalization range [0:360] */
-      static const CRange<SInt16> ASEBA_RANGE; /**< The Aseba normalization range [-32768:32767] */
       static const Real DEGREES_TO_RADIANS; /**< Constant to convert from degrees to radians */
 
    };
@@ -503,6 +489,41 @@ namespace argos {
     */
    inline CRadians ToRadians(const CDegrees& c_degrees) {
       return CRadians(c_degrees.m_fValue * CDegrees::DEGREES_TO_RADIANS);
+   }
+
+   /**
+    * Calculates the normalized difference between the given angles.
+    * The difference is calculated as c_angle1 - c_angle2 and normalized
+    * in the range [-pi,pi].
+    * @param c_angle1 The first angle
+    * @param c_angle2 The second angle
+    * @return The smallest difference between the two angles
+    */
+   inline CRadians NormalizedDifference(const CRadians& c_angle1,
+                                        const CRadians& c_angle2) {
+      CRadians cResult;
+      cResult.m_fValue = Mod(c_angle1.m_fValue - c_angle2.m_fValue + CRadians::PI.m_fValue,
+                             CRadians::TWO_PI.m_fValue);
+      if(cResult.m_fValue < 0.0f) cResult.m_fValue += CRadians::TWO_PI.m_fValue;
+      cResult.m_fValue -= CRadians::PI.m_fValue;
+      return cResult;
+   }
+   
+   /**
+    * Calculates the normalized difference between the given angles.
+    * The difference is calculated as c_angle1 - c_angle2 and normalized
+    * in the range [-180,180].
+    * @param c_angle1 The first angle
+    * @param c_angle2 The second angle
+    * @return The smallest difference between the two angles
+    */
+   inline CDegrees NormalizedDifference(const CDegrees& c_angle1,
+                                        const CDegrees& c_angle2) {
+      CDegrees cResult;
+      cResult.m_fValue = Mod(c_angle1.m_fValue - c_angle2.m_fValue + 180.0f, 360.0f);
+      if(cResult.m_fValue < 0.0f) cResult.m_fValue += 360.0f;
+      cResult.m_fValue -= 180.0f;
+      return cResult;
    }
    
    /****************************************/
