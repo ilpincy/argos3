@@ -220,9 +220,9 @@ namespace argos {
       for(UInt32 i = 0; i < 12; i++) {
          const CColor& cColor = cLEDEquippedEntity.GetLED(i).GetColor();
          glRotatef(m_fLEDAngleSlice, 0.0f, 0.0f, 1.0f);
-         SetLEDMaterial(cColor.GetRed(),
-                        cColor.GetGreen(),
-                        cColor.GetBlue());
+         SetLEDMaterial(cColor.GetRed()   / 255.0f,
+                        cColor.GetGreen() / 255.0f,
+                        cColor.GetBlue()  / 255.0f);
          glCallList(m_unGrippableSliceList);
       }
       glPopMatrix();
@@ -261,9 +261,9 @@ namespace argos {
       glCallList(m_unIMXList);
       /* Place the beacon */
       const CColor& cBeaconColor = cLEDEquippedEntity.GetLED(12).GetColor();
-      SetLEDMaterial(cBeaconColor.GetRed(),
-                     cBeaconColor.GetGreen(),
-                     cBeaconColor.GetBlue());
+      SetLEDMaterial(cBeaconColor.GetRed()   / 255.0f,
+                     cBeaconColor.GetGreen() / 255.0f,
+                     cBeaconColor.GetBlue()  / 255.0f);
       glCallList(m_unBeaconList);
       /* Place the camera */
       glCallList(m_unCameraList);
