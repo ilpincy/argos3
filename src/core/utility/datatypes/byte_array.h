@@ -182,6 +182,22 @@ namespace argos {
                               size_t un_size);
 
       /**
+       * Removes data from the beginning of the byte array and returns it.
+       * For example:
+       * <pre>
+       *   CByteArray b;
+       *   // ... fill into b ...
+       *   UInt32 i = PopFront<UInt32>();
+       * </pre>
+       * @return the removed data.
+       */
+      template<typename T> T PopFront() {
+         T tRetVal;
+         *this >> tRetVal;
+         return tRetVal;
+      }
+
+      /**
        * Appends a 8-bit unsigned integer to the byte array.
        * @param un_value the value of the 8-bit unsigned integer.
        * @return a reference to this byte array.
