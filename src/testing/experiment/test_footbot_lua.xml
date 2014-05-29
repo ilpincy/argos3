@@ -114,7 +114,6 @@
       <body position="0,0,2" orientation="0,0,0" />
       <controller config="lua" />
     </mini-quadrotor>
-
   </arena>
 
   <!-- ******************* -->

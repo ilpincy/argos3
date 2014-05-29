@@ -161,7 +161,9 @@ namespace argos {
          it->second->UpdateFromEntityStatus();
       }
       /* Perform the step */
-      cpSpaceStep(m_ptSpace, GetSimulationClockTick());
+      for(size_t i = 0; i < GetIterations(); ++i) {
+         cpSpaceStep(m_ptSpace, GetPhysicsClockTick());
+      }
       /* Update the simulated space */
       for(CDynamics2DModel::TMap::iterator it = m_tPhysicsModels.begin();
           it != m_tPhysicsModels.end(); ++it) {

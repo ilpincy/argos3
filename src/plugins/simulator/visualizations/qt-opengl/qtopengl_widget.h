@@ -141,22 +141,89 @@ namespace argos {
 
    signals:
 
+      /**
+       * Emitted whenever a time step has been executed.
+       * @param n_step The time-step count
+       */
       void StepDone(int n_step);
-      void SimulationDone();
+
+      /**
+       * Emitted when the experiment is finished.
+       * An experiment can finish "naturally", when CSimulator::IsExperimentFinished()
+       * returns <tt>true</tt>; or "forcedly", when the user pressed the terminate button.
+       */
+      void ExperimentDone();
+
+      /**
+       * Emitted when an entity is selected.
+       * @param The index of the selected entity
+       */
       void EntitySelected(size_t un_index);
+
+      /**
+       * Emitted when an entity is deselected.
+       * @param The index of the deselected entity
+       */
       void EntityDeselected(size_t un_index);
 
    public slots:
 
-      void PlayPauseSimulation(bool b_play);
-      void FastForwardPauseSimulation(bool b_play);
-      void StepSimulation();
-      void StopSimulation();
-      void ResetSimulation();
+      /**
+       * Plays the experiment.
+       * Internally sets a timer whose period corresponds to the
+       * XML attribute 'ticks_per_second' in the .argos file.
+       */
+      void PlayExperiment();
+
+      /**
+       * Fast forwards the experiment.
+       * Internally sets a timer whose period is 1ms.
+       */
+      void FastForwardExperiment();
+
+      /**
+       * Pauses the experiment.
+       * The experiment can be resumed with PlayExperiment() or
+       * FastForwardExperiment().
+       */
+      void PauseExperiment();
+
+      /**
+       * Executes one experiment time step.
+       */
+      void StepExperiment();
+
+      /**
+       * Resets the state of the experiment to its state right after
+       * initialization.
+       */
+      void ResetExperiment();
+
+      /**
+       * Toggles OpenGL anti-aliasing.
+       */
       void SetAntiAliasing(bool b_antialias_on);
+
+      /**
+       * When fast-forwarding, sets every how many steps a frame must be drawn. 
+       */
       void SetDrawFrameEvery(int n_every);
+
+      /**
+       * Toggles frame grabbing.
+       */
       void SetGrabFrame(bool b_grab_on);
+
+      /**
+       * Sets the current camera in use.
+       * @param n_camera The index of the wanted camera [0-11]
+       */
       void SetCamera(int n_camera);
+
+      /**
+       * Sets the focal length of the current camera.
+       * @param f_length The desired focal length
+       */
       void SetCameraFocalLength(double f_length);
 
    protected:
@@ -166,9 +233,9 @@ namespace argos {
       void DrawAxes();
 
       virtual void timerEvent(QTimerEvent* pc_event);
-      virtual void mouseMoveEvent(QMouseEvent* pc_event);
       virtual void mousePressEvent(QMouseEvent* pc_event);
       virtual void mouseReleaseEvent(QMouseEvent* pc_event);
+      virtual void mouseMoveEvent(QMouseEvent* pc_event);
       virtual void keyPressEvent(QKeyEvent* pc_event);
       virtual void keyReleaseEvent(QKeyEvent* pc_event);
       virtual void resizeEvent(QResizeEvent* pc_event);

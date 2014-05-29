@@ -1,4 +1,5 @@
 #include "omnidirectional_camera_equipped_entity.h"
+#include <argos3/core/simulator/space/space.h>
 
 namespace argos {
 
@@ -34,6 +35,11 @@ namespace argos {
          THROW_ARGOSEXCEPTION_NESTED("Error initializing the omnidirectional camera equipped entity \"" << GetId() << "\"", ex);
       }
    }
+
+   /****************************************/
+   /****************************************/
+
+   REGISTER_STANDARD_SPACE_OPERATIONS_ON_ENTITY(COmnidirectionalCameraEquippedEntity);
 
    /****************************************/
    /****************************************/

@@ -40,6 +40,20 @@ namespace argos {
 
 namespace argos {
 
+   /****************************************/
+   /****************************************/
+
+   extern SInt32 DEBUG_INDENTATION;
+
+#define DEBUG(MSG, ...) { fprintf(stderr, "[DEBUG] "); for(size_t i = 0; i < DEBUG_INDENTATION; ++i) fprintf(stderr, "  "); fprintf(stderr, MSG, ##__VA_ARGS__); }
+
+#define DEBUG_FUNCTION_ENTER { ++DEBUG_INDENTATION; DEBUG("%s - START\n", __PRETTY_FUNCTION__ ); }
+
+#define DEBUG_FUNCTION_EXIT { DEBUG("%s - END\n", __PRETTY_FUNCTION__ ); --DEBUG_INDENTATION; }
+
+   /****************************************/
+   /****************************************/
+
    class CARGoSLog {
 
    private:
@@ -136,24 +150,6 @@ namespace argos {
          return *this;
       }
 
-      inline CARGoSLog& operator<<(const std::_Setw& t_msg) {
-#ifdef ARGOS_THREADSAFE_LOG
-         *(m_vecStreams[m_mapStreamOrder.find(pthread_self())->second]) << t_msg;
-#else
-         m_cStream << t_msg;
-#endif
-         return *this;
-      }
-
-      inline CARGoSLog& operator<<(const std::_Setiosflags& t_msg) {
-#ifdef ARGOS_THREADSAFE_LOG
-         *(m_vecStreams[m_mapStreamOrder.find(pthread_self())->second]) << t_msg;
-#else
-         m_cStream << t_msg;
-#endif
-         return *this;
-      }
-
       template <typename T> CARGoSLog& operator<<(const T t_msg) {
          if(m_bColoredOutput) {
 #ifdef ARGOS_THREADSAFE_LOG
@@ -179,7 +175,13 @@ namespace argos {
 
 }
 
+   /****************************************/
+   /****************************************/
+
 #define RLOG    LOG    << "[" << GetId() << "] "
 #define RLOGERR LOGERR << "[" << GetId() << "] "
+
+   /****************************************/
+   /****************************************/
 
 #endif

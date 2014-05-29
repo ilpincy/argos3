@@ -267,7 +267,6 @@ namespace argos {
       CGrid<CEmbodiedEntity>& m_cGrid;
       SInt32 m_nMinI, m_nMinJ, m_nMinK;
       SInt32 m_nMaxI, m_nMaxJ, m_nMaxK;
-      SInt32 m_nI, m_nJ, m_nK;
    };
 
    /****************************************/

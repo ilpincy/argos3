@@ -282,25 +282,11 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   class CSpaceOperationAddRABEquippedEntity : public CSpaceOperationAddEntity {
-   public:
-      void ApplyTo(CSpace& c_space, CRABEquippedEntity& c_entity) {
-         c_space.AddEntity(c_entity);
-      }
-   };
-   REGISTER_SPACE_OPERATION(CSpaceOperationAddEntity, CSpaceOperationAddRABEquippedEntity, CRABEquippedEntity);
-   
-   class CSpaceOperationRemoveRABEquippedEntity : public CSpaceOperationRemoveEntity {
-   public:
-      void ApplyTo(CSpace& c_space, CRABEquippedEntity& c_entity) {
-         c_space.RemoveEntity(c_entity);
-      }
-   };
-   REGISTER_SPACE_OPERATION(CSpaceOperationRemoveEntity, CSpaceOperationRemoveRABEquippedEntity, CRABEquippedEntity);
+   REGISTER_STANDARD_SPACE_OPERATIONS_ON_ENTITY(CRABEquippedEntity);
 
    /****************************************/
    /****************************************/
-   
+
    CRABEquippedEntityGridCellUpdater::CRABEquippedEntityGridCellUpdater(CGrid<CRABEquippedEntity>& c_grid) :
       m_cGrid(c_grid) {}
    

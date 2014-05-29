@@ -65,8 +65,6 @@ namespace argos {
 
       virtual void Reset();
 
-      virtual void Update() {}
-
       /**
        * Adds an LED to this entity.
        * @param c_position The position of the LED wrt the reference entity.
@@ -181,11 +179,10 @@ namespace argos {
       void AddToMedium(CLEDMedium& c_medium);
 
       /**
-       * Removes the LEDs from the wanted LED medium.
-       * @param c_medium The LED medium.
+       * Removes the LEDs from the associated LED medium.
        * @see CLEDMedium
        */
-      void RemoveFromMedium(CLEDMedium& c_medium);
+      void RemoveFromMedium();
 
       virtual std::string GetTypeDescription() const {
          return "leds";

@@ -32,10 +32,14 @@ can download the development sources through git:
 Compiling ARGoS
 ----------------
 
+Requirements
+~~~~~~~~~~~~
+
 If you downloaded the sources of ARGoS and want to compile its code, you need:
 
 * A UNIX system (Linux or MacOSX; Microsoft Windows is not supported)
-* _g++_ >= 4.2
+* _g++_ >= 4.3 (on Linux)
+* _clang_ >= 3.1 (on MacOSX)
 * _cmake_ >= 2.6
 
 If you want to compile the simulator, you need:
@@ -63,12 +67,18 @@ If you want to create the documentation you need:
 * To create the HTML version of this README:
 ** _asciidoc_ >= 8.6.2
 
+Debian
+^^^^^^
+
 On Debian, you can install all of the necessary requirements
 with the following command:
 
  $ sudo apt-get install libgsl0-dev libfreeimage-dev libqt4-dev \
-   freeglut3-dev libxi-dev libxmu-dev liblua5.1-dev doxygen \
-   graphviz-dev asciidoc
+   freeglut3-dev libxi-dev libxmu-dev liblua5.1-dev lua5.1 \
+   doxygen graphviz-dev asciidoc
+
+OpenSuse
+^^^^^^^^
 
 On openSUSE 12.3, you can install all of the necessary requirements
 with the following commands:
@@ -82,6 +92,9 @@ with the following commands:
  $ sudo zypper install git cmake gcc gcc-c++ gsl-devel freeimage-devel \
    doxygen graphviz asciidoc lua51-devel libqt4-devel freeglut-devel \
    rpmbuild
+
+Mac OSX
+^^^^^^^
 
 On Mac, you can install all of the necessary requirements using
 http://http://brew.sh/[HomeBrew]. On the command line, type the
@@ -194,6 +207,10 @@ TIP: If you want to squeeze maximum performance from ARGoS, along with compiling
 Using the ARGoS simulator from the source tree
 ----------------------------------------------
 
+IMPORTANT: You can't install ARGoS system-wide and run the source version at the same time.
+           If you intend to run ARGoS from the sources, you must uninstall it from the
+           system.
+
 Running the ARGoS simulator
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -211,21 +228,28 @@ run ARGoS:
 If you execute ARGoS with the graphical visualization, you'll notice that
 icons and textures are missing. This is normal, as ARGoS by default looks
 for them in the default install location. To fix this, you need to edit
-the file +$HOME/.config/Iridia-ULB/ARGoS.conf+ as follows:
+the default settings of the GUI.
+
+On Linux, edit the file +$HOME/.config/Iridia-ULB/ARGoS.conf+ as follows:
 
  [MainWindow]
  #
  # other stuff
  #
- icon_dir=/path/to/argos3/src/plugins/simulator/visualizations/qt-opengl/icons/
- texture_dir=/path/to/argos3/src/plugins/simulator/visualizations/qt-opengl/textures/
+ icon_dir=/PATH/TO/argos3/src/plugins/simulator/visualizations/qt-opengl/icons/
+ texture_dir=/PATH/TO/argos3/src/plugins/simulator/visualizations/qt-opengl/textures/
  #
  # more stuff
  #
 
-IMPORTANT: You can't install ARGoS system-wide and run the source version at the same time.
-           If you intend to run ARGoS from the sources, you must uninstall it from the
-           system.
+On Mac, write the following commands on the terminal window:
+
+ $ defaults write be.ac.ulb.Iridia.ARGoS MainWindow.texture_dir -string "/PATH/TO/argos3/src/plugins/simulator/visualizations/qt-opengl/textures/"
+ $ defaults write be.ac.ulb.Iridia.ARGoS MainWindow.icon_dir -string "/PATH/TO/argos3/src/plugins/simulator/visualizations/qt-opengl/icons/"
+ $ killall -u YOURUSERNAME cfprefsd
+
+Be sure to substitute +/PATH/TO/+ with the correct path that contains the +argos3+
+folder, and +YOURUSERNAME+ with your username as displayed on the terminal.
 
 Debugging the ARGoS simulator
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -152,7 +152,7 @@ namespace argos {
        * @throws CARGoSException If no controller has been associated.
        * @see CCI_Controller
        */
-      void ControlStep();
+      virtual void ControlStep();
 
       /**
        * Executes the CSimulatedActuator::Update() method for all associated actuators.

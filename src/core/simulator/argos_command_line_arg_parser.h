@@ -9,7 +9,6 @@
 
 namespace argos {
    class CARGoSCommandLineArgParser;
-   class CSimulator;
 }
 
 #include <argos3/core/utility/configuration/command_line_arg_parser.h>
@@ -42,9 +41,8 @@ namespace argos {
 
       /**
        * Class constructor.
-       * @param c_simulator A reference to the main simulator instance.
        */
-      CARGoSCommandLineArgParser(CSimulator& c_simulator);
+      CARGoSCommandLineArgParser();
 
       /**
        * Class destructor.
@@ -133,7 +131,6 @@ namespace argos {
 
    private:
 
-      CSimulator& m_cSimulator;
       EAction m_eAction;
       std::string m_strExperimentConfigFile;
       std::string m_strQuery;

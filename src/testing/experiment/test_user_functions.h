@@ -15,6 +15,7 @@ public:
 
    virtual void DrawInWorld();
 
+   using CQTOpenGLUserFunctions::Draw;
    void Draw(CFootBotEntity& c_footbot);
 
 };

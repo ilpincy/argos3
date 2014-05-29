@@ -23,11 +23,11 @@ using namespace argos;
  * @return 0 if everything OK; 1 in case of errors.
  */
 int main(int n_argc, char** ppch_argv) {
-   /* Create a new instance of the simulator */
-   CSimulator& cSimulator = CSimulator::GetInstance();
-   /* Configure the command line options */
-   CARGoSCommandLineArgParser cACLAP(cSimulator);
    try {
+      /* Create a new instance of the simulator */
+      CSimulator& cSimulator = CSimulator::GetInstance();
+      /* Configure the command line options */
+      CARGoSCommandLineArgParser cACLAP;
       /* Parse command line */
       cACLAP.Parse(n_argc, ppch_argv);
       switch(cACLAP.GetAction()) {
@@ -53,7 +53,6 @@ int main(int n_argc, char** ppch_argv) {
       }
       /* Done, destroy stuff */
       cSimulator.Destroy();
-      CDynamicLoading::UnloadAllLibraries();
    }
    catch(std::exception& ex) {
       /* A fatal error occurred: dispose of data, print error and exit */

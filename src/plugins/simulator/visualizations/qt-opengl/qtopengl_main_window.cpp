@@ -13,6 +13,7 @@
 #include <argos3/core/utility/plugins/dynamic_loading.h>
 #include <argos3/core/utility/logging/argos_log.h>
 #include <argos3/core/simulator/simulator.h>
+#include <argos3/core/simulator/loop_functions.h>
 
 #include <QtCore/QVariant>
 #include <QtGui/QAction>
@@ -35,8 +36,6 @@
 #include <QLayout>
 #include <QMenuBar>
 #include <QSettings>
-
-#include <cstdio>
 
 namespace argos {
 
@@ -137,19 +136,19 @@ namespace argos {
       m_pcStatusbar = new QStatusBar(this);
       setStatusBar(m_pcStatusbar);
       /* Create actions */
-      CreateSimulationActions();
+      CreateExperimentActions();
       CreateCameraActions();
       // CreatePOVRayActions();
       CreateHelpActions();
       /* Create the central widget */
       CreateOpenGLWidget(t_tree);
       /* Create menus */
-      CreateSimulationMenu();
+      CreateExperimentMenu();
       CreateCameraMenu();
       // CreatePOVRayMenu();
       CreateHelpMenu();
       /* Create toolbars */
-      CreateSimulationToolBar();
+      CreateExperimentToolBar();
       CreateCameraToolBar();
       /* Create the message dock window */
       CreateLogMessageDock();
@@ -157,6 +156,8 @@ namespace argos {
       ReadSettingsPostCreation();
       /* Creates the signal/slot connections */
       CreateConnections();
+      /* Set experiment state */
+      m_eExperimentState = EXPERIMENT_INITIALIZED;
    }
 
    /****************************************/
@@ -192,7 +193,7 @@ namespace argos {
       }
       if(cSettings.contains("texture_dir")) {
          m_strTextureDir = cSettings.value("texture_dir").toString();
-         if(m_strTextureDir.at(m_strIconDir.length()-1) != '/') {
+         if(m_strTextureDir.at(m_strTextureDir.length()-1) != '/') {
             m_strTextureDir.append("/");
          }
       }
@@ -231,38 +232,55 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CQTOpenGLMainWindow::CreateSimulationActions() {
-      /* Add the play button */
+   void CQTOpenGLMainWindow::CreateExperimentActions() {
+      /* Add the play action */
       QIcon cPlayIcon;
-      cPlayIcon.addPixmap(QPixmap(m_strIconDir + "/play.png"));
+      cPlayIcon. addPixmap(QPixmap(m_strIconDir + "/play.png"));
       m_pcPlayAction = new QAction(cPlayIcon, tr("&Play"), this);
-      m_pcPlayAction->setToolTip(tr("Play/pause simulation"));
-      m_pcPlayAction->setStatusTip(tr("Play/pause simulation"));
-      m_pcPlayAction->setCheckable(true);
       m_pcPlayAction->setShortcut(Qt::Key_P);
-      /* Add the pause/step button */
-      QIcon cStepIcon;
-      cStepIcon.addPixmap(QPixmap(m_strIconDir + "/step.png"));
-      m_pcStepAction = new QAction(cStepIcon, tr("&Step"), this);
-      m_pcStepAction->setToolTip(tr("Step simulation"));
-      m_pcStepAction->setStatusTip(tr("Step simulation"));
-      m_pcStepAction->setShortcut(Qt::Key_S);
-      /* Add the fast forward button */
-      QIcon cFastForwardIcon;
-      cFastForwardIcon.addPixmap(QPixmap(m_strIconDir + "/fast_forward.png"));
-      m_pcFastForwardAction = new QAction(cFastForwardIcon, tr("&Fast Forward"), this);
-      m_pcFastForwardAction->setToolTip(tr("Fast forward simulation"));
-      m_pcFastForwardAction->setStatusTip(tr("Fast forward simulation"));
-      m_pcFastForwardAction->setCheckable(true);
-      m_pcFastForwardAction->setShortcut(Qt::Key_F);
-      /* Add the reset button */
+      m_pcPlayAction->setToolTip(tr("Play experiment"));
+      m_pcPlayAction->setStatusTip(tr("Play experiment"));
+      if(! CSimulator::GetInstance().IsRealTimeClock()) {
+         /* Add the step action */
+         QIcon cStepIcon;
+         cStepIcon.addPixmap(QPixmap(m_strIconDir + "/step.png"));
+         m_pcStepAction = new QAction(cStepIcon, tr("&Step"), this);
+         m_pcStepAction->setToolTip(tr("Step experiment"));
+         m_pcStepAction->setStatusTip(tr("Step experiment"));
+         m_pcStepAction->setShortcut(Qt::Key_X);
+         /* Add the fast forward action */
+         QIcon cFastForwardIcon;
+         cFastForwardIcon.addPixmap(QPixmap(m_strIconDir + "/fast_forward.png"));
+         m_pcFastForwardAction = new QAction(cFastForwardIcon, tr("&Fast Forward"), this);
+         m_pcFastForwardAction->setToolTip(tr("Fast forward experiment"));
+         m_pcFastForwardAction->setStatusTip(tr("Fast forward experiment"));
+         m_pcFastForwardAction->setShortcut(Qt::Key_F);
+         /* Add the pause action */
+         QIcon cPauseIcon;
+         cPauseIcon. addPixmap(QPixmap(m_strIconDir + "/pause.png"));
+         m_pcPauseAction = new QAction(cPauseIcon, tr("&Pause"), this);
+         m_pcPauseAction->setShortcut(Qt::Key_O);
+         m_pcPauseAction->setToolTip(tr("Pause experiment"));
+         m_pcPauseAction->setStatusTip(tr("Pause experiment"));
+         m_pcPauseAction->setEnabled(false);
+      }
+      /* Add the terminate action */
+      QIcon cTerminateIcon;
+      cTerminateIcon.addPixmap(QPixmap(m_strIconDir + "/stop.png"));
+      m_pcTerminateAction = new QAction(cTerminateIcon, tr("&Terminate"), this);
+      m_pcTerminateAction->setShortcut(Qt::Key_T);
+      m_pcTerminateAction->setToolTip(tr("Terminate experiment"));
+      m_pcTerminateAction->setStatusTip(tr("Terminate experiment"));
+      m_pcTerminateAction->setEnabled(false);
+      /* Add the reset action */
       QIcon cResetIcon;
       cResetIcon.addPixmap(QPixmap(m_strIconDir + "/reset.png"));
       m_pcResetAction = new QAction(cResetIcon, tr("&Reset"), this);
-      m_pcResetAction->setToolTip(tr("Reset simulation"));
-      m_pcResetAction->setStatusTip(tr("Reset simulation"));
+      m_pcResetAction->setToolTip(tr("Reset experiment"));
+      m_pcResetAction->setStatusTip(tr("Reset experiment"));
       m_pcResetAction->setShortcut(Qt::Key_R);
-      /* Add the capture button */
+      m_pcResetAction->setEnabled(false);
+      /* Add the capture action */
       QIcon cCaptureIcon;
       cCaptureIcon.addPixmap(QPixmap(m_strIconDir + "/record.png"));
       m_pcCaptureAction = new QAction(cCaptureIcon, tr("&Capture"), this);
@@ -270,10 +288,9 @@ namespace argos {
       m_pcCaptureAction->setStatusTip(tr("Capture frames"));
       m_pcCaptureAction->setCheckable(true);
       m_pcCaptureAction->setShortcut(Qt::Key_C);
-      /* Add the quit button */
+      /* Add the quit action */
       m_pcQuitAction = new QAction(tr("&Quit"), this);
       m_pcQuitAction->setStatusTip(tr("Quit the simulator"));
-      m_pcQuitAction->setShortcut(Qt::Key_Q);
    }
 
    /****************************************/
@@ -331,42 +348,55 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CQTOpenGLMainWindow::CreateSimulationToolBar() {
-      m_pcSimulationToolBar = addToolBar(tr("Simulation"));
-      m_pcSimulationToolBar->setObjectName("SimulationToolBar");
-      m_pcCurrentStepLCD = new QLCDNumber(m_pcSimulationToolBar);
+   void CQTOpenGLMainWindow::CreateExperimentToolBar() {
+      m_pcExperimentToolBar = addToolBar(tr("Experiment"));
+      m_pcExperimentToolBar->setObjectName("ExperimentToolBar");
+      m_pcExperimentToolBar->setIconSize(QSize(32,32));
+      m_pcCurrentStepLCD = new QLCDNumber(m_pcExperimentToolBar);
       m_pcCurrentStepLCD->setToolTip(tr("Current step"));
       m_pcCurrentStepLCD->setNumDigits(6);
       m_pcCurrentStepLCD->setSegmentStyle(QLCDNumber::Flat);
-      m_pcSimulationToolBar->addWidget(m_pcCurrentStepLCD);
-      m_pcSimulationToolBar->addSeparator();
-      m_pcSimulationToolBar->addAction(m_pcPlayAction);
-      m_pcSimulationToolBar->addAction(m_pcStepAction);
-      m_pcSimulationToolBar->addAction(m_pcFastForwardAction);
-      m_pcDrawFrameEvery = new QSpinBox(m_pcSimulationToolBar);
-      m_pcDrawFrameEvery->setToolTip(tr("Draw frame every X steps when in fast-forward"));
-      m_pcDrawFrameEvery->setMinimum(1);
-      m_pcDrawFrameEvery->setMaximum(999);
-      m_pcDrawFrameEvery->setValue(1);
-      m_pcSimulationToolBar->addWidget(m_pcDrawFrameEvery);
-      m_pcSimulationToolBar->addSeparator();
-      m_pcSimulationToolBar->addAction(m_pcResetAction);
-      m_pcSimulationToolBar->addAction(m_pcCaptureAction);
+      m_pcExperimentToolBar->addWidget(m_pcCurrentStepLCD);
+      m_pcExperimentToolBar->addSeparator();
+      if(! CSimulator::GetInstance().IsRealTimeClock()) {
+         m_pcExperimentToolBar->addAction(m_pcStepAction);
+      }
+      m_pcExperimentToolBar->addAction(m_pcPlayAction);
+      if(! CSimulator::GetInstance().IsRealTimeClock()) {
+         m_pcExperimentToolBar->addAction(m_pcPauseAction);
+         m_pcExperimentToolBar->addAction(m_pcFastForwardAction);
+         m_pcDrawFrameEvery = new QSpinBox(m_pcExperimentToolBar);
+         m_pcDrawFrameEvery->setToolTip(tr("Draw frame every X steps when in fast-forward"));
+         m_pcDrawFrameEvery->setMinimum(1);
+         m_pcDrawFrameEvery->setMaximum(999);
+         m_pcDrawFrameEvery->setValue(1);
+         m_pcExperimentToolBar->addWidget(m_pcDrawFrameEvery);
+      }
+      m_pcExperimentToolBar->addSeparator();
+      m_pcExperimentToolBar->addAction(m_pcTerminateAction);
+      m_pcExperimentToolBar->addAction(m_pcResetAction);
+      m_pcExperimentToolBar->addSeparator();
+      m_pcExperimentToolBar->addAction(m_pcCaptureAction);
    }
 
    /****************************************/
    /****************************************/
 
-   void CQTOpenGLMainWindow::CreateSimulationMenu() {
-      m_pcSimulationMenu = menuBar()->addMenu(tr("&Simulation"));
-      m_pcSimulationMenu->addAction(m_pcPlayAction);
-      m_pcSimulationMenu->addAction(m_pcStepAction);
-      m_pcSimulationMenu->addAction(m_pcFastForwardAction);
-      m_pcSimulationMenu->addSeparator();
-      m_pcSimulationMenu->addAction(m_pcResetAction);
-      m_pcSimulationMenu->addAction(m_pcCaptureAction);
-      m_pcSimulationMenu->addSeparator();
-      m_pcSimulationMenu->addAction(m_pcQuitAction);
+   void CQTOpenGLMainWindow::CreateExperimentMenu() {
+      m_pcExperimentMenu = menuBar()->addMenu(tr("&Experiment"));
+      m_pcExperimentMenu->addAction(m_pcPlayAction);
+      if(! CSimulator::GetInstance().IsRealTimeClock()) {
+         m_pcExperimentMenu->addAction(m_pcPauseAction);
+         m_pcExperimentMenu->addAction(m_pcFastForwardAction);
+         m_pcExperimentMenu->addAction(m_pcStepAction);
+      }
+      m_pcExperimentMenu->addSeparator();
+      m_pcExperimentMenu->addAction(m_pcTerminateAction);
+      m_pcExperimentMenu->addAction(m_pcResetAction);
+      m_pcExperimentMenu->addSeparator();
+      m_pcExperimentMenu->addAction(m_pcCaptureAction);
+      m_pcExperimentMenu->addSeparator();
+      m_pcExperimentMenu->addAction(m_pcQuitAction);
    }
 
    /****************************************/
@@ -374,8 +404,11 @@ namespace argos {
 
    void CQTOpenGLMainWindow::CreateCameraToolBar() {
       m_pcCameraToolBar = new QToolBar(tr("Camera"));
-      m_pcCameraToolBar->setAllowedAreas(Qt::LeftToolBarArea | Qt::RightToolBarArea | Qt::BottomToolBarArea);
+      m_pcCameraToolBar->setAllowedAreas(Qt::LeftToolBarArea |
+                                         Qt::RightToolBarArea |
+                                         Qt::BottomToolBarArea);
       m_pcCameraToolBar->setObjectName("CameraToolBar");
+      m_pcCameraToolBar->setIconSize(QSize(32,32));
       m_pcCameraToolBar->addActions(m_pcSwitchCameraActions);
       m_pcCameraToolBar->addSeparator();
       m_pcFocalLength = new QDoubleSpinBox(m_pcCameraToolBar);
@@ -471,8 +504,11 @@ namespace argos {
       /* Create a dockable window */
       m_pcLogDock = new QDockWidget(tr("Log"), this);
       m_pcLogDock->setObjectName("LogDockWindow");
-      m_pcLogDock->setFeatures(QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable);
-      m_pcLogDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea | Qt::BottomDockWidgetArea);
+      m_pcLogDock->setFeatures(QDockWidget::DockWidgetMovable |
+                               QDockWidget::DockWidgetFloatable);
+      m_pcLogDock->setAllowedAreas(Qt::LeftDockWidgetArea |
+                                   Qt::RightDockWidgetArea |
+                                   Qt::BottomDockWidgetArea);
       /* Create a textual window to be used as a buffer */
       m_pcDockLogBuffer = new QTextEdit();
       m_pcDockLogBuffer->setReadOnly(true);
@@ -487,8 +523,11 @@ namespace argos {
       /* Create a dockable window */
       m_pcLogErrDock = new QDockWidget(tr("LogErr"), this);
       m_pcLogErrDock->setObjectName("LogErrDockWindow");
-      m_pcLogErrDock->setFeatures(QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable);
-      m_pcLogErrDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea | Qt::BottomDockWidgetArea);
+      m_pcLogErrDock->setFeatures(QDockWidget::DockWidgetMovable |
+                                  QDockWidget::DockWidgetFloatable);
+      m_pcLogErrDock->setAllowedAreas(Qt::LeftDockWidgetArea |
+                                      Qt::RightDockWidgetArea |
+                                      Qt::BottomDockWidgetArea);
       /* Create a textual window to be used as a buffer */
       m_pcDockLogErrBuffer = new QTextEdit();
       m_pcDockLogErrBuffer->setReadOnly(true);
@@ -507,45 +546,51 @@ namespace argos {
    /****************************************/
 
    void CQTOpenGLMainWindow::CreateConnections() {
-      /* Play/pause button pressed */
-      connect(m_pcPlayAction, SIGNAL(triggered(bool)),
-              m_pcOpenGLWidget, SLOT(PlayPauseSimulation(bool)));
-      /* Step button pressed */
-      connect(m_pcStepAction, SIGNAL(triggered()),
-              m_pcOpenGLWidget, SLOT(StepSimulation()));
-      /* Fast forward button pressed */
-      connect(m_pcFastForwardAction, SIGNAL(triggered(bool)),
-              m_pcOpenGLWidget, SLOT(FastForwardPauseSimulation(bool)));
+      /* Play button pressed */
+      connect(m_pcPlayAction, SIGNAL(triggered()),
+              this, SLOT(PlayExperiment()));
       /* Reset button pressed */
       connect(m_pcResetAction, SIGNAL(triggered()),
-              m_pcOpenGLWidget, SLOT(ResetSimulation()));
-      connect(m_pcResetAction, SIGNAL(triggered()),
-              this, SLOT(ResetSimulation()));
-      /* Capture button toggled */
-      connect(m_pcCaptureAction, SIGNAL(triggered(bool)),
-              m_pcOpenGLWidget, SLOT(SetGrabFrame(bool)));
+              this, SLOT(ResetExperiment()));
+      /* A experiment step has been completed */
+      connect(m_pcOpenGLWidget, SIGNAL(StepDone(int)),
+              m_pcCurrentStepLCD, SLOT(display(int)));
+      /* The experiment has been completed */
+      connect(m_pcOpenGLWidget, SIGNAL(ExperimentDone()),
+              this, SLOT(TerminateExperiment()));
+      /* The experiment has been completed */
+      connect(m_pcTerminateAction, SIGNAL(triggered()),
+              this, SLOT(TerminateExperiment()));
+      if(! CSimulator::GetInstance().IsRealTimeClock()) {
+         /* Pause button pressed */
+         connect(m_pcPauseAction, SIGNAL(triggered()),
+                 this, SLOT(PauseExperiment()));
+         /* Step button pressed */
+         connect(m_pcStepAction, SIGNAL(triggered()),
+                 this, SLOT(StepExperiment()));
+         /* Fast forward button pressed */
+         connect(m_pcFastForwardAction, SIGNAL(triggered()),
+                 this, SLOT(FastForwardExperiment()));
+         /* 'Draw frame every' spin box value changed */
+         connect(m_pcDrawFrameEvery, SIGNAL(valueChanged(int)),
+                 m_pcOpenGLWidget, SLOT(SetDrawFrameEvery(int)));
+      }
       // /* POV-Ray XML button pressed */
       // connect(m_pcPOVRayXMLAction, SIGNAL(triggered()),
       //         this, SLOT(POVRaySceneXMLPopUp()));
       // /* POV-Ray XML button pressed */
       // connect(m_pcPOVRayPreviewAction, SIGNAL(triggered()),
       //         this, SLOT(POVRayScenePreview()));
-      /* 'Draw frame every' spin box value changed */
-      connect(m_pcDrawFrameEvery, SIGNAL(valueChanged(int)),
-              m_pcOpenGLWidget, SLOT(SetDrawFrameEvery(int)));
-      /* A simulation step has been completed */
-      connect(m_pcOpenGLWidget, SIGNAL(StepDone(int)),
-              m_pcCurrentStepLCD, SLOT(display(int)));
-      /* The simulation has been completed */
-      connect(m_pcOpenGLWidget, SIGNAL(SimulationDone()),
-              this, SLOT(SimulationDone()));
+      /* Capture button toggled */
+      connect(m_pcCaptureAction, SIGNAL(triggered(bool)),
+              m_pcOpenGLWidget, SLOT(SetGrabFrame(bool)));
       /* Toggle antialiasing */
       connect(m_pcToggleAntiAliasingAction, SIGNAL(triggered(bool)),
               m_pcOpenGLWidget, SLOT(SetAntiAliasing(bool)));
       /* Quit the simulator */
       connect(m_pcQuitAction, SIGNAL(triggered()),
               qApp, SLOT(quit()));
-      /* Quit the simulator */
+      /* Show the 'About Qt' dialog */
       connect(m_pcAboutQTAction, SIGNAL(triggered()),
               qApp, SLOT(aboutQt()));
       /* Toggle the camera */
@@ -602,57 +647,241 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CQTOpenGLMainWindow::StopSimulation() {
-      m_pcOpenGLWidget->StopSimulation();
+   void CQTOpenGLMainWindow::PlayExperiment() {
+      /* Make sure we are in the right state */
+      if(m_eExperimentState != EXPERIMENT_INITIALIZED &&
+         m_eExperimentState != EXPERIMENT_PAUSED) {
+         LOGERR << "[BUG] CQTOpenGLMainWindow::PlayExperiment() called in wrong state: "
+                << m_eExperimentState
+                << std::endl;
+         LOGERR.Flush();
+         return;
+      }
+      /* Toggle action states */
+      m_pcPlayAction->setEnabled(false);
+      m_pcResetAction->setEnabled(false);
+      m_pcTerminateAction->setEnabled(true);
+      if(! CSimulator::GetInstance().IsRealTimeClock()) {
+         m_pcPauseAction->setEnabled(true);
+         m_pcFastForwardAction->setEnabled(false);
+         m_pcStepAction->setEnabled(false);
+      }
+      /* Call OpenGL widget */
+      m_pcOpenGLWidget->PlayExperiment();
+      /* Change state and emit signals */
+      m_eExperimentState = EXPERIMENT_PLAYING;
+      if(m_eExperimentState == EXPERIMENT_INITIALIZED) {
+         /* The experiment has just been started */
+         emit ExperimentStarted();
+      }
+      emit ExperimentPlaying();
    }
 
    /****************************************/
    /****************************************/
 
-   void CQTOpenGLMainWindow::SimulationCanProceed(bool b_allowed) {
-      if(b_allowed) {
-         m_pcPlayAction->setEnabled(true);
+   void CQTOpenGLMainWindow::FastForwardExperiment() {
+      /* Make sure we are in the right state */
+      if(m_eExperimentState != EXPERIMENT_INITIALIZED &&
+         m_eExperimentState != EXPERIMENT_PAUSED) {
+         LOGERR << "[BUG] CQTOpenGLMainWindow::FastForwardExperiment() called in wrong state: "
+                << m_eExperimentState
+                << std::endl;
+         LOGERR.Flush();
+         return;
+      }
+      /* Toggle action states */
+      m_pcPlayAction->setEnabled(false);
+      m_pcPauseAction->setEnabled(true);
+      m_pcResetAction->setEnabled(false);
+      m_pcTerminateAction->setEnabled(true);
+      m_pcFastForwardAction->setEnabled(false);
+      m_pcStepAction->setEnabled(false);
+      /* Call OpenGL widget */
+      m_pcOpenGLWidget->FastForwardExperiment();
+      /* Change state and emit signals */
+      m_eExperimentState = EXPERIMENT_FAST_FORWARDING;
+      if(m_eExperimentState == EXPERIMENT_INITIALIZED) {
+         /* The experiment has just been started */
+         emit ExperimentStarted();
+      }
+      emit ExperimentFastForwarding();
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CQTOpenGLMainWindow::StepExperiment() {
+      /* Make sure we are in the right state */
+      if(m_eExperimentState != EXPERIMENT_INITIALIZED &&
+         m_eExperimentState != EXPERIMENT_PAUSED) {
+         LOGERR << "[BUG] CQTOpenGLMainWindow::StepExperiment() called in wrong state: "
+                << m_eExperimentState
+                << std::endl;
+         LOGERR.Flush();
+         return;
+      }
+      /* Toggle action states */
+      m_pcPlayAction->setEnabled(true);
+      m_pcResetAction->setEnabled(true);
+      m_pcTerminateAction->setEnabled(true);
+      m_pcFastForwardAction->setEnabled(true);
+      m_pcStepAction->setEnabled(true);
+      /* Call OpenGL widget */
+      m_pcOpenGLWidget->StepExperiment();
+      /* Change state and emit signals */
+      m_eExperimentState = EXPERIMENT_PAUSED;
+      emit ExperimentPaused();
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CQTOpenGLMainWindow::PauseExperiment() {
+      /* Make sure we are in the right state */
+      if(m_eExperimentState != EXPERIMENT_PLAYING &&
+         m_eExperimentState != EXPERIMENT_FAST_FORWARDING) {
+         LOGERR << "[BUG] CQTOpenGLMainWindow::PauseExperiment() called in wrong state: "
+                << m_eExperimentState
+                << std::endl;
+         LOGERR.Flush();
+         return;
+      }
+      /* Toggle action states */
+      m_pcPlayAction->setEnabled(true);
+      m_pcResetAction->setEnabled(false);
+      m_pcTerminateAction->setEnabled(true);
+      if(! CSimulator::GetInstance().IsRealTimeClock()) {
+         m_pcPauseAction->setEnabled(false);
+         m_pcFastForwardAction->setEnabled(true);
+         m_pcStepAction->setEnabled(true);
+      }
+      /* Call OpenGL widget */
+      m_pcOpenGLWidget->PauseExperiment();
+      /* Change state and emit signals */
+      m_eExperimentState = EXPERIMENT_PAUSED;
+      emit ExperimentPaused();
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CQTOpenGLMainWindow::TerminateExperiment() {
+      /* Make sure we are in the right state */
+      if(m_eExperimentState != EXPERIMENT_PLAYING &&
+         m_eExperimentState != EXPERIMENT_PAUSED &&
+         m_eExperimentState != EXPERIMENT_FAST_FORWARDING &&
+         m_eExperimentState != EXPERIMENT_SUSPENDED) {
+         LOGERR << "[BUG] CQTOpenGLMainWindow::TerminateExperiment() called in wrong state: "
+                << m_eExperimentState
+                << std::endl;
+         LOGERR.Flush();
+         return;
+      }
+      /* Call OpenGL widget */
+      m_pcOpenGLWidget->PauseExperiment();
+      /* Toggle action states */
+      m_pcPlayAction->setEnabled(false);
+      m_pcResetAction->setEnabled(true);
+      m_pcTerminateAction->setEnabled(false);
+      m_pcCaptureAction->setEnabled(false);
+      m_pcCaptureAction->setChecked(false);
+      if(! CSimulator::GetInstance().IsRealTimeClock()) {
+         m_pcPauseAction->setEnabled(false);
+         m_pcStepAction->setEnabled(false);
+         m_pcFastForwardAction->setEnabled(false);
+      }
+      /* Call ARGoS to terminate the experiment */
+      CSimulator::GetInstance().Terminate();
+      CSimulator::GetInstance().GetLoopFunctions().PostExperiment();
+      LOG.Flush();
+      LOGERR.Flush();
+      /* Change state and emit signal */
+      m_eExperimentState = EXPERIMENT_DONE;
+      emit ExperimentDone();
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CQTOpenGLMainWindow::ResetExperiment() {
+      /* Make sure we are in the right state */
+      if(m_eExperimentState != EXPERIMENT_SUSPENDED &&
+         m_eExperimentState != EXPERIMENT_DONE) {
+         LOGERR << "[BUG] CQTOpenGLMainWindow::ResetExperiment() called in wrong state: "
+                << m_eExperimentState
+                << std::endl;
+         LOGERR.Flush();
+         return;
+      }
+      /* Toggle action states */
+      m_pcPlayAction->setEnabled(true);
+      m_pcResetAction->setEnabled(false);
+      m_pcTerminateAction->setEnabled(false);
+      m_pcCaptureAction->setEnabled(true);
+      m_pcCaptureAction->setChecked(false);
+      if(! CSimulator::GetInstance().IsRealTimeClock()) {
+         m_pcPauseAction->setEnabled(false);
          m_pcStepAction->setEnabled(true);
          m_pcFastForwardAction->setEnabled(true);
-         m_pcCaptureAction->setEnabled(true);
       }
-      else {
-         StopSimulation();
-         m_pcPlayAction->setChecked(false);
-         m_pcPlayAction->setEnabled(false);
-         m_pcStepAction->setEnabled(false);
-         m_pcFastForwardAction->setChecked(false);
-         m_pcFastForwardAction->setEnabled(false);
-         m_pcCaptureAction->setEnabled(false);
-      }
-   }
-
-   /****************************************/
-   /****************************************/
-
-   void CQTOpenGLMainWindow::SimulationDone() {
-      m_pcPlayAction->setChecked(false);
-      m_pcPlayAction->setEnabled(false);
-      m_pcStepAction->setEnabled(false);
-      m_pcFastForwardAction->setChecked(false);
-      m_pcFastForwardAction->setEnabled(false);
-      m_pcCaptureAction->setEnabled(false);
-   }
-
-   /****************************************/
-   /****************************************/
-
-   void CQTOpenGLMainWindow::ResetSimulation() {
-      m_pcPlayAction->setChecked(false);
-      m_pcPlayAction->setEnabled(true);
-      m_pcStepAction->setEnabled(true);
-      m_pcFastForwardAction->setChecked(false);
-      m_pcFastForwardAction->setEnabled(true);
-      m_pcCaptureAction->setEnabled(true);
+      /* Reset step counter and log */
       m_pcCurrentStepLCD->display(0);
       m_pcDockLogBuffer->setHtml("<b>[t=0]</b> Log restarted.");
       m_pcDockLogErrBuffer->setHtml("<b>[t=0]</b> LogErr restarted.");
-      emit SimulationReset();
+      /* Call OpenGL widget */
+      m_pcOpenGLWidget->ResetExperiment();
+      /* Change state and emit signal */
+      m_eExperimentState = EXPERIMENT_INITIALIZED;
+      emit ExperimentReset();
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CQTOpenGLMainWindow::SuspendExperiment() {
+      /* Toggle action states */
+      m_pcPlayAction->setEnabled(false);
+      m_pcResetAction->setEnabled(true);
+      m_pcTerminateAction->setEnabled(true);
+      m_pcCaptureAction->setEnabled(false);
+      m_pcCaptureAction->setChecked(false);
+      if(! CSimulator::GetInstance().IsRealTimeClock()) {
+         m_pcPauseAction->setEnabled(false);
+         m_pcStepAction->setEnabled(false);
+         m_pcFastForwardAction->setEnabled(false);
+      }
+      /* Call OpenGL widget */
+      m_pcOpenGLWidget->PauseExperiment();
+      /* Change state and emit signal */
+      m_eExperimentState = EXPERIMENT_SUSPENDED;
+      emit ExperimentSuspended();
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CQTOpenGLMainWindow::ResumeExperiment() {
+      /* Make sure we are in the right state */
+      if(m_eExperimentState != EXPERIMENT_SUSPENDED) {
+         LOGERR << "[BUG] CQTOpenGLMainWindow::ResumeExperiment() called in wrong state: "
+                << m_eExperimentState
+                << std::endl;
+         LOGERR.Flush();
+         return;
+      }
+      /* Toggle action states */
+      m_pcPlayAction->setEnabled(true);
+      m_pcResetAction->setEnabled(false);
+      m_pcTerminateAction->setEnabled(false);
+      m_pcCaptureAction->setEnabled(true);
+      if(! CSimulator::GetInstance().IsRealTimeClock()) {
+         m_pcStepAction->setEnabled(true);
+         m_pcFastForwardAction->setEnabled(true);
+      }
+      /* Change state and emit signal */
+      m_eExperimentState = EXPERIMENT_PAUSED;
+      emit ExperimentResumed();
    }
 
    /****************************************/
@@ -736,8 +965,8 @@ namespace argos {
    /****************************************/
 
    // QString CQTOpenGLMainWindow::GetPOVRaySceneXMLData() {
-   //    /* Get the current simulation step */
-   //    UInt32 unStep = CSimulator::GetInstance().GetSpace().GetSimulationClock();
+   //    /* Get the current experiment step */
+   //    UInt32 unStep = CSimulator::GetInstance().GetSpace().GetExperimentClock();
    //    /* Get a reference to the camera */
    //    const CQTOpenGLCamera& cCamera = m_pcOpenGLWidget->GetCamera();
    //    /* Get its current position and target */

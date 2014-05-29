@@ -43,6 +43,21 @@ namespace argos {
 
       virtual void Update() = 0;
 
+      /**
+       * Executes extra initialization activities after the space has been initialized.
+       * By default, this method does nothing.
+       * The order in which initialization takes place is:
+       * <ul>
+       * <li>CPhysicsEngine::Init()
+       * <li>CSpace::Init()
+       * <li>CPhysicsEngine::PostSpaceInitInit()
+       * </ul>
+       * @throw CARGoSException if an error occurs
+       * @see Init()
+       * @see CSpace::Init()
+       */
+      virtual void PostSpaceInit() {}
+
       virtual bool IsPointContained(const CVector3& c_point) = 0;
 
       virtual UInt32 GetNumPhysicsEngineEntities() = 0;

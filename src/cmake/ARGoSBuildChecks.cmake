@@ -1,12 +1,23 @@
 #
-# Check for GCC version >= 4.2
+# Check for correct GCC version
+# On Linux it must be >= 4.3
 #
-execute_process(COMMAND ${CMAKE_C_COMPILER} -dumpversion OUTPUT_VARIABLE GCC_VERSION)
-if (GCC_VERSION VERSION_GREATER 4.2 OR GCC_VERSION VERSION_EQUAL 4.2)
-  message(STATUS "GCC/G++ version >= 4.2")
-else(GCC_VERSION VERSION_GREATER 4.2 OR GCC_VERSION VERSION_EQUAL 4.2)
-  message(FATAL_ERROR "You need to have at least GCC/G++ version 4.2!")
-endif(GCC_VERSION VERSION_GREATER 4.2 OR GCC_VERSION VERSION_EQUAL 4.2)
+macro(CHECK_GCC MIN_VERSION)
+  execute_process(COMMAND ${CMAKE_C_COMPILER} -dumpversion OUTPUT_VARIABLE GCC_VERSION)
+  if(GCC_VERSION VERSION_GREATER ${MIN_VERSION} OR GCC_VERSION VERSION_EQUAL ${MIN_VERSION})
+    message(STATUS "GCC/G++ version >= ${MIN_VERSION}")
+  else(GCC_VERSION VERSION_GREATER ${MIN_VERSION} OR GCC_VERSION VERSION_EQUAL ${MIN_VERSION})
+    message(FATAL_ERROR "You need to have at least GCC/G++ version ${MIN_VERSION}!")
+  endif(GCC_VERSION VERSION_GREATER ${MIN_VERSION} OR GCC_VERSION VERSION_EQUAL ${MIN_VERSION})
+endmacro(CHECK_GCC)
+
+if(APPLE)
+  # On Apple it must be >= 4.2.1
+  check_gcc(4.2.1)
+else(APPLE)
+  # On Linux it must be >= 4.3
+  check_gcc(4.3)
+endif(APPLE)
 
 #
 # Check for dynamic library loading facility

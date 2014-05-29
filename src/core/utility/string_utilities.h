@@ -104,8 +104,6 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   extern "C" {
-
       /**
        * Tokenizes the given string according to the wanted delimiters (by default just a " ").
        * @param str_string the string to tokenize.
@@ -155,7 +153,7 @@ namespace argos {
        * @return <tt>true</tt> if str_pattern is matched by str_input.
        */
       bool MatchPattern(const std::string& str_input,
-                        const std::string str_pattern);
+                        const std::string& str_pattern);
 
       /****************************************/
       /****************************************/
@@ -170,8 +168,6 @@ namespace argos {
 
       /****************************************/
       /****************************************/
-
-   }
 
 }
 

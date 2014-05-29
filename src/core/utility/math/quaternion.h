@@ -208,13 +208,41 @@ namespace argos {
 
       inline CQuaternion& BetweenTwoVectors(const CVector3& c_vector1,
                                             const CVector3& c_vector2) {
-         m_fValues[0] = ::sqrt(c_vector1.SquareLength() * c_vector2.SquareLength()) + c_vector1.DotProduct(c_vector2);
-         CVector3 cCrossProd(c_vector1);
-         cCrossProd.CrossProduct(c_vector2);
-         m_fValues[1] = cCrossProd.GetX();
-         m_fValues[2] = cCrossProd.GetY();
-         m_fValues[3] = cCrossProd.GetZ();
-         Normalize();
+         Real fProd = c_vector1.DotProduct(c_vector2);
+         if(fProd > 0.999999f) {
+            /* The two vectors are parallel, no rotation */
+            m_fValues[0] = 1.0;
+            m_fValues[1] = 0.0;
+            m_fValues[2] = 0.0;
+            m_fValues[3] = 0.0;
+         }
+         else if(fProd < -0.999999f) {
+            /* The two vectors are anti-parallel */
+            /* We need to set an arbitrary rotation axis */
+            /* To find it, we calculate the cross product of c_vector1 with either X or Y,
+               depending on which is not coplanar with c_vector1 */
+            CVector3 cRotAxis = c_vector1;
+            if(Abs(c_vector1.DotProduct(CVector3::X)) < 0.999999) {
+               /* Use the X axis */
+               cRotAxis.CrossProduct(CVector3::X);
+            }
+            else {
+               /* Use the Y axis */
+               cRotAxis.CrossProduct(CVector3::Y);
+            }
+            /* The wanted quaternion is a rotation around cRotAxis by 180 degrees */
+            FromAngleAxis(CRadians::PI, cRotAxis);
+         }
+         else {
+            /* The two vectors are not parallel nor anti-parallel */
+            m_fValues[0] = ::sqrt(c_vector1.SquareLength() * c_vector2.SquareLength()) + fProd;
+            CVector3 cCrossProd(c_vector1);
+            cCrossProd.CrossProduct(c_vector2);
+            m_fValues[1] = cCrossProd.GetX();
+            m_fValues[2] = cCrossProd.GetY();
+            m_fValues[3] = cCrossProd.GetZ();
+            Normalize();
+         }
          return *this;
       }
 

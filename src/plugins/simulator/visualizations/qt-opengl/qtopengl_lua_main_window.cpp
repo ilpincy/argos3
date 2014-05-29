@@ -198,8 +198,7 @@ namespace argos {
       /* Change cursor */
       QApplication::setOverrideCursor(Qt::WaitCursor);
       /* Stop simulation */
-      m_pcMainWindow->StopSimulation();
-      m_pcMainWindow->SimulationCanProceed(true);
+      m_pcMainWindow->SuspendExperiment();
       /* Clear the message table */
       m_pcLuaMessageTable->clearContents();
       m_pcLuaMessageTable->setRowCount(1);
@@ -207,7 +206,6 @@ namespace argos {
       QTemporaryFile cByteCode;
       if(! cByteCode.open()) {
          SetMessage(0, "ALL", "Can't create bytecode file.");
-         m_pcMainWindow->SimulationCanProceed(false);
          QApplication::restoreOverrideCursor();
          return;
       }
@@ -227,13 +225,11 @@ namespace argos {
          cLuaCompiler.start(cLuaC, QStringList() << "-o" << cByteCode.fileName() << m_strFileName);
          if(! cLuaCompiler.waitForFinished()) {
             SetMessage(0, "ALL", QString(cLuaCompiler.readAllStandardError()));
-            m_pcMainWindow->SimulationCanProceed(false);
             QApplication::restoreOverrideCursor();
             return;
          }
          if(cLuaCompiler.exitCode() != 0) {
             SetMessage(0, "ALL", QString(cLuaCompiler.readAllStandardError()));
-            m_pcMainWindow->SimulationCanProceed(false);
             QApplication::restoreOverrideCursor();
             return;
          }
@@ -252,6 +248,8 @@ namespace argos {
          static_cast<CQTOpenGLLuaStateTreeModel*>(m_pcLuaFunctionTree->model())->SetLuaState(
             m_vecControllers[m_unSelectedRobot]->GetLuaState());
       }
+      /* Resume simulation */
+      m_pcMainWindow->ResumeExperiment();
       QApplication::restoreOverrideCursor();
       statusBar()->showMessage(tr("Execution started"), 2000);
    }
@@ -465,6 +463,7 @@ namespace argos {
       }
       QToolBar* pcToolBar = addToolBar(tr("File"));
       pcToolBar->setObjectName("FileToolBar");
+      pcToolBar->setIconSize(QSize(32,32));
       pcToolBar->addAction(m_pcFileNewAction);
       pcToolBar->addAction(m_pcFileOpenAction);
       pcToolBar->addAction(m_pcFileSaveAction);
@@ -534,6 +533,7 @@ namespace argos {
       // pcMenu->addAction(m_pcEditFindAction);
       QToolBar* pcToolBar = addToolBar(tr("Edit"));
       pcToolBar->setObjectName("EditToolBar");
+      pcToolBar->setIconSize(QSize(32,32));
       pcToolBar->addAction(m_pcEditUndoAction);
       pcToolBar->addAction(m_pcEditRedoAction);
       pcToolBar->addSeparator();
@@ -559,6 +559,7 @@ namespace argos {
       pcMenu->addAction(m_pcCodeExecuteAction);
       QToolBar* pcToolBar = addToolBar(tr("Code"));
       pcToolBar->setObjectName("CodeToolBar");
+      pcToolBar->setIconSize(QSize(32,32));
       pcToolBar->addAction(m_pcCodeExecuteAction);
    }
 
@@ -653,8 +654,7 @@ namespace argos {
       }
       m_pcLuaMessageTable->setRowCount(nRow);
       if(nRow > 0) {
-         m_pcMainWindow->StopSimulation();
-         m_pcMainWindow->SimulationCanProceed(false);
+         m_pcMainWindow->SuspendExperiment();
       }
       else {
          m_pcLuaMsgDock->hide();
@@ -711,7 +711,7 @@ namespace argos {
             pcVarModel->Refresh();
             connect(&(m_pcMainWindow->GetOpenGLWidget()), SIGNAL(StepDone(int)),
                     pcVarModel, SLOT(Refresh(int)));
-            connect(m_pcMainWindow, SIGNAL(SimulationReset()),
+            connect(m_pcMainWindow, SIGNAL(ExperimentReset()),
                     pcVarModel, SLOT(Refresh()));
             connect(pcVarModel, SIGNAL(modelReset()),
                     this, SLOT(VariableTreeChanged()),
@@ -727,7 +727,7 @@ namespace argos {
             pcFunModel->Refresh();
             connect(&(m_pcMainWindow->GetOpenGLWidget()), SIGNAL(StepDone(int)),
                     pcFunModel, SLOT(Refresh(int)));
-            connect(m_pcMainWindow, SIGNAL(SimulationReset()),
+            connect(m_pcMainWindow, SIGNAL(ExperimentReset()),
                     pcFunModel, SLOT(Refresh()));
             connect(pcFunModel, SIGNAL(modelReset()),
                     this, SLOT(FunctionTreeChanged()),
@@ -746,7 +746,7 @@ namespace argos {
    void CQTOpenGLLuaMainWindow::HandleEntityDeselection(size_t) {
       disconnect(&(m_pcMainWindow->GetOpenGLWidget()), SIGNAL(StepDone(int)),
                  m_pcLuaVariableTree->model(), SLOT(Refresh(int)));
-      disconnect(m_pcMainWindow, SIGNAL(SimulationReset()),
+      disconnect(m_pcMainWindow, SIGNAL(ExperimentReset()),
                  m_pcLuaVariableTree->model(), SLOT(Refresh()));
       disconnect(m_pcLuaVariableTree->model(), SIGNAL(modelReset()),
                  this, SLOT(VariableTreeChanged()));
@@ -755,7 +755,7 @@ namespace argos {
       m_pcLuaVariableTree->setModel(NULL);
       disconnect(&(m_pcMainWindow->GetOpenGLWidget()), SIGNAL(StepDone(int)),
                  m_pcLuaFunctionTree->model(), SLOT(Refresh(int)));
-      disconnect(m_pcMainWindow, SIGNAL(SimulationReset()),
+      disconnect(m_pcMainWindow, SIGNAL(ExperimentReset()),
                  m_pcLuaFunctionTree->model(), SLOT(Refresh()));
       disconnect(m_pcLuaFunctionTree->model(), SIGNAL(modelReset()),
                  this, SLOT(FunctionTreeChanged()));

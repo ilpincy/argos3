@@ -42,6 +42,8 @@ namespace argos {
 
       virtual void Execute();
 
+      virtual void Reset() {}
+
       virtual void Destroy();
 
       CQTOpenGLMainWindow& GetMainWindow();

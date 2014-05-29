@@ -19,9 +19,6 @@ namespace argos {
 #include <argos3/core/utility/configuration/base_configurable_resource.h>
 #include <argos3/core/simulator/simulator.h>
 
-#include <string>
-#include <map>
-
 namespace argos {
 
    class CVisualization : public CBaseConfigurableResource {
@@ -34,22 +31,14 @@ namespace argos {
 
       virtual ~CVisualization() {}
 
-      virtual void Init(TConfigurationNode& t_tree);
+      virtual void Init(TConfigurationNode& t_tree) = 0;
 
-      virtual void Reset() {}
+      virtual void Reset() = 0;
 
-      virtual void Destroy() {}
+      virtual void Destroy() = 0;
 
-      virtual void Execute();
+      virtual void Execute() = 0;
       
-      inline const std::string& GetId() const {
-         return m_strId;
-      }
-
-      inline void SetId(const std::string& str_id) {
-         m_strId = str_id;
-      }
-
    protected:
 
       /** A reference to the simulator */
@@ -57,9 +46,6 @@ namespace argos {
 
       /** A reference to the space */
       CSpace& m_cSpace;
-
-      /** The id of the visualizationer */
-      std::string m_strId;
 
    };
 

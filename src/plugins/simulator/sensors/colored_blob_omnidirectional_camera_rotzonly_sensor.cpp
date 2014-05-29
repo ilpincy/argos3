@@ -28,7 +28,12 @@ namespace argos {
          m_bShowRays(b_show_rays) {
          m_pcRootSensingEntity = &m_cEmbodiedEntity.GetParent();
       }
-      virtual ~CLEDCheckOperation() {}
+      virtual ~CLEDCheckOperation() {
+         while(! m_tBlobs.empty()) {
+            delete m_tBlobs.back();
+            m_tBlobs.pop_back();
+         }
+      }
 
       virtual bool operator()(CLEDEntity& c_led) {
          /* Process this LED only if it's lit */
@@ -53,9 +58,10 @@ namespace argos {
                !GetClosestEmbodiedEntityIntersectedByRay(m_sIntersectionItem,
                                                          m_cOcclusionCheckRay,
                                                          m_cEmbodiedEntity)) {
-               m_tBlobs.push_back(new CCI_ColoredBlobOmnidirectionalCameraSensor::SBlob(c_led.GetColor(),
-                                                                                        m_cLEDRelativePosXY.Angle() - m_cCameraOrient,
-                                                                                        m_cLEDRelativePosXY.Length() * 100.0f));
+               m_tBlobs.push_back(new CCI_ColoredBlobOmnidirectionalCameraSensor::SBlob(
+                                     c_led.GetColor(),
+                                     NormalizedDifference(m_cLEDRelativePosXY.Angle(), m_cCameraOrient),
+                                     m_cLEDRelativePosXY.Length() * 100.0f));
                if(m_bShowRays) {
                   m_cControllableEntity.AddCheckedRay(false, CRay3(m_cCameraPos, c_led.GetPosition()));
                }
@@ -65,7 +71,10 @@ namespace argos {
       }
 
       void Setup(Real f_ground_half_range) {
-         m_tBlobs.clear();
+         while(! m_tBlobs.empty()) {
+            delete m_tBlobs.back();
+            m_tBlobs.pop_back();
+         }
          m_fGroundHalfRange = f_ground_half_range;
          m_cEmbodiedEntity.GetOrientation().ToEulerAngles(m_cCameraOrient, m_cTmp1, m_cTmp2);
          m_cCameraPos = m_cEmbodiedEntity.GetPosition();
@@ -217,7 +226,68 @@ namespace argos {
                    "Carlo Pinciroli [ilpincy@gmail.com]",
                    "1.0",
                    "A generic omnidirectional camera sensor to detect colored blobs.",
-                   "TODO\n\n",
+                   "This sensor accesses an omnidirectional camera that detects colored blobs. The\n"
+                   "sensor returns a list of blobs, each defined by a color and a position with\n"
+                   "respect to the robot reference point on the ground. In controllers, you must\n"
+                   "include the ci_colored_blob_omnidirectional_camera_sensor.h header.\n\n"
+                   "REQUIRED XML CONFIGURATION\n\n"
+                   "  <controllers>\n"
+                   "    ...\n"
+                   "    <my_controller ...>\n"
+                   "      ...\n"
+                   "      <sensors>\n"
+                   "        ...\n"
+                   "        <colored_blob_omnidirectional_camera implementation=\"rot_z_only\"\n"
+                   "                                             medium=\"leds\" />\n"
+                   "        ...\n"
+                   "      </sensors>\n"
+                   "      ...\n"
+                   "    </my_controller>\n"
+                   "    ...\n"
+                   "  </controllers>\n\n"
+                   "The 'medium' attribute must be set to the id of the leds medium declared in the\n"
+                   "<media> section.\n\n"
+                   "OPTIONAL XML CONFIGURATION\n\n"
+                   "It is possible to draw the rays shot by the camera sensor in the OpenGL\n"
+                   "visualization. This can be useful for sensor debugging but also to understand\n"
+                   "what's wrong in your controller. In OpenGL, the rays are drawn in cyan when\n"
+                   "they are not obstructed and in purple when they are. In case a ray is\n"
+                   "obstructed, a black dot is drawn where the intersection occurred.\n"
+                   "To turn this functionality on, add the attribute \"show_rays\" as in this\n"
+                   "example:\n\n"
+                   "  <controllers>\n"
+                   "    ...\n"
+                   "    <my_controller ...>\n"
+                   "      ...\n"
+                   "      <sensors>\n"
+                   "        ...\n"
+                   "        <colored_blob_omnidirectional_camera implementation=\"rot_z_only\"\n"
+                   "                                             medium=\"leds\" />\n"
+                   "                                             show_rays=\"true\" />\n"
+                   "        ...\n"
+                   "      </sensors>\n"
+                   "      ...\n"
+                   "    </my_controller>\n"
+                   "    ...\n"
+                   "  </controllers>\n\n"
+                   "It is possible to add uniform noise to the blobs, thus matching the\n"
+                   "characteristics of a real robot better. This can be done with the attribute\n"
+                   "\"noise_std_dev\".\n\n"
+                   "  <controllers>\n"
+                   "    ...\n"
+                   "    <my_controller ...>\n"
+                   "      ...\n"
+                   "      <sensors>\n"
+                   "        ...\n"
+                   "        <colored_blob_omnidirectional_camera implementation=\"rot_z_only\"\n"
+                   "                                             medium=\"leds\" />\n"
+                   "                                             noise_std_dev=\"0.1\" />\n"
+                   "        ...\n"
+                   "      </sensors>\n"
+                   "      ...\n"
+                   "    </my_controller>\n"
+                   "    ...\n"
+                   "  </controllers>\n",
                    "Usable"
 		  );
 
