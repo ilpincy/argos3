@@ -29,6 +29,10 @@ else(CMAKE_SIZEOF_VOID_P EQUAL 4)
   link_directories(${CMAKE_SOURCE_DIR}/plugins/simulator/physics_engines/physx/physx-dist/lib/linux64)
 endif(CMAKE_SIZEOF_VOID_P EQUAL 4)
 
+#
+# Add necessary definitions
+#
+add_definitions(-DNDEBUG)
 
 #
 # Create physx engine plugin library

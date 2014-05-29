@@ -12,10 +12,13 @@ namespace argos {
    class CPhysXModel;
 }
 
+/* Necessary to fix compilation problems with PhySX headers */
+using namespace std;
+
 #include <argos3/core/utility/math/quaternion.h>
 #include <argos3/core/simulator/entity/entity.h>
 #include <argos3/core/simulator/physics_engine/physics_engine.h>
-#include <argos3/plugins/simulator/physics_engines/physx/physx-dist/include/PxPhysicsAPI.h>
+#include <argos3/plugins/simulator/physics_engines/physx/physx_dist/include/PxPhysicsAPI.h>
 
 namespace argos {
 
@@ -154,7 +157,7 @@ namespace argos {
       /** The cooking subsystem for convex meshes */
       physx::PxCooking* m_pcCooking;
       /** The PhysX CPU dispatcher */
-      physx::pxtask::CpuDispatcher* m_pcCPUDispatcher;
+      physx::CpuDispatcher* m_pcCPUDispatcher;
       /** The PhysX scene descriptor */
       physx::PxSceneDesc* m_pcSceneDesc;
       /** The PhysX scene */
