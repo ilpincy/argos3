@@ -148,7 +148,8 @@ namespace argos {
             THROW_ARGOSEXCEPTION("Error calling PxCreatePhysics()");
          }
          /* Create cooking subsystem for convex meshes */
-         m_pcCooking = PxCreateCooking(PX_PHYSICS_VERSION, *m_pcFoundation, physx::PxCookingParams());
+         m_pcCooking = PxCreateCooking(PX_PHYSICS_VERSION, *m_pcFoundation,
+                                       physx::PxCookingParams(m_pcPhysics->getTolerancesScale()));
          if (m_pcCooking == NULL) {
             THROW_ARGOSEXCEPTION("Error calling PxCreateCooking()");
          }
@@ -165,8 +166,7 @@ namespace argos {
          m_pcSceneDesc = new physx::PxSceneDesc(m_pcPhysics->getTolerancesScale());
          m_pcSceneDesc->gravity = physx::PxVec3(0.0f, 0.0f, -9.81f);
          m_pcSceneDesc->cpuDispatcher = m_pcCPUDispatcher;
-         m_pcSceneDesc->flags |= physx::PxSceneFlag::eENABLE_SWEPT_INTEGRATION;
-         // m_pcSceneDesc->filterShader = physx::PxDefaultSimulationFilterShader;
+         m_pcSceneDesc->flags |= physx::PxSceneFlag::eENABLE_CCD;
          m_pcSceneDesc->filterShader = FilterShader;
          /* Create scene */
          m_pcScene = m_pcPhysics->createScene(*m_pcSceneDesc);

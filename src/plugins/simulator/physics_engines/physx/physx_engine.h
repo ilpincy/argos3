@@ -157,7 +157,7 @@ namespace argos {
       /** The cooking subsystem for convex meshes */
       physx::PxCooking* m_pcCooking;
       /** The PhysX CPU dispatcher */
-      physx::CpuDispatcher* m_pcCPUDispatcher;
+      physx::PxCpuDispatcher* m_pcCPUDispatcher;
       /** The PhysX scene descriptor */
       physx::PxSceneDesc* m_pcSceneDesc;
       /** The PhysX scene */
