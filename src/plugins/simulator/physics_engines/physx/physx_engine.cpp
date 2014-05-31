@@ -29,6 +29,29 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   CPhysXEngine::CQueryIgnoreShape::CQueryIgnoreShape(const physx::PxShape* pc_ignored_shape)
+      : m_pcIgnoredShape(pc_ignored_shape) {}
+
+   physx::PxQueryHitType::Enum CPhysXEngine::CQueryIgnoreShape::preFilter(const physx::PxFilterData&,
+                                                                          const physx::PxShape* pc_shape,
+                                                                          const physx::PxRigidActor*,
+                                                                          physx::PxHitFlags&) {
+      if(m_pcIgnoredShape != pc_shape) {
+         return physx::PxQueryHitType::eBLOCK;
+      }
+      else {
+         return physx::PxQueryHitType::eNONE;
+      }
+   }
+
+   physx::PxQueryHitType::Enum CPhysXEngine::CQueryIgnoreShape::postFilter(const physx::PxFilterData&,
+                                                                           const physx::PxQueryHit&) {
+      return physx::PxQueryHitType::eBLOCK;
+   }
+
+   /****************************************/
+   /****************************************/
+
    void* CPhysXEngine::CPhysXEngineAllocatorCallback::allocate(size_t size, const char*, const char*, int) {
 #if defined(PX_LINUX)
       /* On 32-bit Linux you must use memalign */

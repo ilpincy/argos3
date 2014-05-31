@@ -88,25 +88,24 @@ namespace argos {
 
    template<class ENTITY>
    bool CPhysXStretchableObjectModel<ENTITY>::IsCollidingWithSomething() const {
-      /* Get transformation */
+      /* Set query flags to accept any overlap */
+      static physx::PxQueryFilterData cQueryFlags(
+         physx::PxQueryFlag::eANY_HIT |
+         physx::PxQueryFlag::eSTATIC  |
+         physx::PxQueryFlag::eDYNAMIC |
+         physx::PxQueryFlag::ePREFILTER);
+      /* Get body pose transformation */
       physx::PxTransform cTrans(m_pcGenericBody->getGlobalPose());
-      /* Create buffer to store the possibly overlapping shapes */
-      physx::PxShape* pcOverlappingShapes[16];
-      /* Perform the query */
-      physx::PxI32 nShapes = GetPhysXEngine().GetScene().overlapMultiple(*m_pcGeometry,
-                                                                         cTrans,
-                                                                         pcOverlappingShapes,
-                                                                         16);
-      if((nShapes == 0) ||
-         ((nShapes == 1) && (pcOverlappingShapes[0] == m_pcShape))) {
-         /* No shape overlaps the geometry, or the only shape
-            that does is the object's shape itself */
-         return false;
-      }
-      else {
-         /* Other shapes overlap the given geometry, we have a collision */
-         return true;
-      }
+      /* Buffer to store query results */
+      physx::PxOverlapBuffer cOverlapBuf;
+      /* Create the filter to exclude this object's shape from the overlap results */
+      CPhysXEngine::CQueryIgnoreShape cIgnoreShape(m_pcShape);
+      /* Perform the query - it returns true if anything is overlapping this object */
+      return GetPhysXEngine().GetScene().overlap(*m_pcGeometry,
+                                                 cTrans,
+                                                 cOverlapBuf,
+                                                 cQueryFlags,
+                                                 &cIgnoreShape);
    }
 
    /****************************************/

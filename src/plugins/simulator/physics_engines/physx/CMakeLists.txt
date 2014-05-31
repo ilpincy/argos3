@@ -21,18 +21,27 @@ set(ARGOS3_SOURCES_PLUGINS_SIMULATOR_PHYSICS_ENGINES_PHYSX
   physx_cylinder_model.cpp)
 
 #
-# Set the include and link path
+# Set the link path, depending on the architecture
 #
 if(CMAKE_SIZEOF_VOID_P EQUAL 4)
-  link_directories(${CMAKE_SOURCE_DIR}/plugins/simulator/physics_engines/physx/physx-dist/lib/linux32)
+  # 32 bits
+  if(APPLE)
+    # Mac OSX
+    link_directories(${CMAKE_SOURCE_DIR}/plugins/simulator/physics_engines/physx/physx_dist/lib/osx32)
+  else(APPLE)
+    # Linux
+    link_directories(${CMAKE_SOURCE_DIR}/plugins/simulator/physics_engines/physx/physx_dist/lib/linux32)
+  endif(APPLE)
 else(CMAKE_SIZEOF_VOID_P EQUAL 4)
-  link_directories(${CMAKE_SOURCE_DIR}/plugins/simulator/physics_engines/physx/physx-dist/lib/linux64)
+  # 64 bits
+  if(APPLE)
+    # Mac OSX
+    link_directories(${CMAKE_SOURCE_DIR}/plugins/simulator/physics_engines/physx/physx_dist/lib/osx64)
+  else(APPLE)
+    # Linux
+    link_directories(${CMAKE_SOURCE_DIR}/plugins/simulator/physics_engines/physx/physx_dist/lib/linux64)
+  endif(APPLE)
 endif(CMAKE_SIZEOF_VOID_P EQUAL 4)
-
-#
-# Add necessary definitions
-#
-add_definitions(-DNDEBUG)
 
 #
 # Create physx engine plugin library
@@ -43,24 +52,20 @@ add_library(argos3plugin_${ARGOS_BUILD_FOR}_physx SHARED
 target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_physx
   argos3core_${ARGOS_BUILD_FOR}
   argos3plugin_${ARGOS_BUILD_FOR}_entities
-  -Wl,--start-group
-  PhysX3Common
+  SimulationController
+  SceneQuery
   PxTask
+  PvdRuntime
   PhysXVisualDebuggerSDK
   PhysXProfileSDK
-  RepXUpgrader3
-  RepX3
-  PhysX3CharacterKinematic
+  PhysX3Vehicle
   PhysX3Extensions
   PhysX3Cooking
-  PhysX3Vehicle
+  PhysX3Common
+  PhysX3CharacterKinematic
   PhysX3
   LowLevelCloth
-  LowLevel
-  SceneQuery
-  SimulationController
-  PvdRuntime
-  -Wl,--end-group)
+  LowLevel)
 
 #
 # Install files

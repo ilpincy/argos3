@@ -25,6 +25,12 @@ namespace argos {
 #include <argos3/core/utility/plugins/factory.h>
 #include <argos3/core/utility/plugins/vtable.h>
 
+/* DEBUG START */
+#include <argos3/core/utility/logging/argos_log.h>
+#include <cxxabi.h>
+#include <typeinfo>
+/* DEBUG END */
+
 #include <vector>
 #include <map>
 #include <string>
@@ -331,6 +337,8 @@ namespace argos {
       ~CEntityOperationInstanceHolder() {
          while(!m_vecOperationInstances.empty()) {
             if(m_vecOperationInstances.back() != NULL) {
+               char* pchDemangledTargetType = abi::__cxa_demangle(typeid(m_vecOperationInstances.back()).name(), NULL, NULL, NULL);
+               DEBUG("DELETE %p, %s\n", m_vecOperationInstances.back(), pchDemangledTargetType);
                delete m_vecOperationInstances.back();
             }
             m_vecOperationInstances.pop_back();

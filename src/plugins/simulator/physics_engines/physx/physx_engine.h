@@ -12,12 +12,14 @@ namespace argos {
    class CPhysXModel;
 }
 
-/* Necessary to fix compilation problems with PhySX headers */
-using namespace std;
-
 #include <argos3/core/utility/math/quaternion.h>
 #include <argos3/core/simulator/entity/entity.h>
 #include <argos3/core/simulator/physics_engine/physics_engine.h>
+
+/* Necessary to fix compilation problems with PhySX headers */
+#define NDEBUG
+using namespace std;
+
 #include <argos3/plugins/simulator/physics_engines/physx/physx_dist/include/PxPhysicsAPI.h>
 
 namespace argos {
@@ -30,6 +32,26 @@ namespace argos {
     * </p>
     */
    class CPhysXEngine : public CPhysicsEngine {
+
+   public:
+
+      /**
+       * This class can be used to ignore a specific shape when executing
+       * scene queries.
+       */
+      class CQueryIgnoreShape : public physx::PxQueryFilterCallback {
+      public:
+         CQueryIgnoreShape(const physx::PxShape* pc_ignored_shape);
+         virtual ~CQueryIgnoreShape() {}
+         virtual physx::PxQueryHitType::Enum preFilter(const physx::PxFilterData& c_filter_data,
+                                                       const physx::PxShape* pc_shape,
+                                                       const physx::PxRigidActor* pc_actor,
+                                                       physx::PxHitFlags& c_query_flags);
+         virtual physx::PxQueryHitType::Enum postFilter(const physx::PxFilterData& c_filter_data,
+                                                        const physx::PxQueryHit& c_hit);
+      private:
+         const physx::PxShape* m_pcIgnoredShape;
+      };
 
    public:
 
