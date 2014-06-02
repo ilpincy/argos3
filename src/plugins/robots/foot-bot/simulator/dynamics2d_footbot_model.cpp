@@ -211,8 +211,8 @@ namespace argos {
          m_pcGrippable->ReleaseAll();
          /* Update the active space hash */
          cpSpaceReindexShape(m_cDyn2DEngine.GetPhysicsSpace(), m_ptBaseShape);
-         /* Update bounding box */
-         CalculateBoundingBox();
+         /* Update entity */
+         UpdateEntityStatus();
       }
       /* The movement is allowed if there is no collision */
       return !nCollision;
