@@ -59,6 +59,7 @@ namespace argos {
       virtual ~CPhysXEngine();
 
       virtual void Init(TConfigurationNode& t_tree);
+      virtual void PostSpaceInit();
       virtual void Reset();
       virtual void Destroy();
 
@@ -163,6 +164,9 @@ namespace argos {
       };
 
    private:
+
+      /** Number of subdivisions for broad-phase regions */
+      physx::PxU32 m_unSubdivBPRegions;
 
       /** List of physics models */
       std::map<std::string, CPhysXModel*> m_tPhysicsModels;

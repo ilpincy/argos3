@@ -8,6 +8,8 @@
 #include "physx_model.h"
 
 #include <argos3/core/utility/math/ray3.h>
+#include <argos3/core/simulator/simulator.h>
+#include <argos3/core/simulator/space/space.h>
 
 #if defined(PX_LINUX)
 #   include <malloc.h> // for memalign()
@@ -120,6 +122,7 @@ namespace argos {
    /****************************************/
 
    CPhysXEngine::CPhysXEngine() :
+      m_unSubdivBPRegions(4),
       m_cErrorCallback(*this),
       m_pcFoundation(NULL),
       m_pcPhysics(NULL),
@@ -157,6 +160,11 @@ namespace argos {
              << unThreads
              << " CPU threads"
              << std::endl;
+         GetNodeAttributeOrDefault(t_tree, "subdiv_bp_regions", m_unSubdivBPRegions, m_unSubdivBPRegions);
+         if((m_unSubdivBPRegions < 1) ||
+            (m_unSubdivBPRegions > 16)) {
+            THROW_ARGOSEXCEPTION("The accepted range for subdivision of broad-phase regions is [1-16]; subdiv_bp_regions was set to " << m_unSubdivBPRegions);
+         }
          /*
           * Init PhysX
           */
@@ -191,6 +199,7 @@ namespace argos {
          m_pcSceneDesc->cpuDispatcher = m_pcCPUDispatcher;
          m_pcSceneDesc->flags |= physx::PxSceneFlag::eENABLE_CCD;
          m_pcSceneDesc->filterShader = FilterShader;
+         m_pcSceneDesc->broadPhaseType = physx::PxBroadPhaseType::eMBP;
          /* Create scene */
          m_pcScene = m_pcPhysics->createScene(*m_pcSceneDesc);
          /* Create default material */
@@ -207,6 +216,47 @@ namespace argos {
       catch(CARGoSException& ex) {
          THROW_ARGOSEXCEPTION_NESTED("Error initializing the PhysX engine \"" << GetId() << "\"", ex);
       }
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CPhysXEngine::PostSpaceInit() {
+      /*
+       * Setup the broad-phase regions for the scene
+       */
+      /* Arena bounds */
+      physx::PxBounds3 cArenaBounds;
+      CVector3ToPxVec3(
+         CSimulator::GetInstance().GetSpace().GetArenaCenter() -
+         CSimulator::GetInstance().GetSpace().GetArenaSize() * 0.5f,
+         cArenaBounds.minimum);
+      CVector3ToPxVec3(
+         CSimulator::GetInstance().GetSpace().GetArenaCenter() +
+         CSimulator::GetInstance().GetSpace().GetArenaSize() * 0.5f,
+         cArenaBounds.maximum);
+      /* Create a regular grid subdivision of the arena volume */
+      physx::PxBounds3* pcRegionBounds = new physx::PxBounds3[m_unSubdivBPRegions*m_unSubdivBPRegions];
+      const physx::PxU32 unNumRegions =
+         physx::PxBroadPhaseExt::createRegionsFromWorldBounds(pcRegionBounds,
+                                                              cArenaBounds,
+                                                              m_unSubdivBPRegions,
+                                                              2 /* Up axis = Z axis */);
+      LOG << "[INFO] PhysX engine \""
+          << GetId()
+          << "\" will use "
+          << unNumRegions
+          << " regions for broad-phase"
+          << std::endl;
+      /* Add the regions to the scene */
+      physx::PxBroadPhaseRegion cRegion;
+      cRegion.userData = NULL;
+      for(physx::PxU32 i = 0; i < unNumRegions; ++i) {
+         cRegion.bounds = pcRegionBounds[i];
+         m_pcScene->addBroadPhaseRegion(cRegion, true);
+      }
+      /* Cleanup */
+      delete[] pcRegionBounds;
    }
 
    /****************************************/
