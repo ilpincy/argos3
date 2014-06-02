@@ -65,6 +65,8 @@ namespace argos {
                                                      BODY_HALF_WIDTH);
       /* Create the body in its initial position and orientation */
       m_pcBody = GetPhysXEngine().GetPhysics().createRigidDynamic(cFinalTrans);
+      /* Enable CCD on the body */
+      m_pcBody->setRigidBodyFlag(physx::PxRigidBodyFlag::eENABLE_CCD, true);
       /* Create the shape for the roll arm */
       m_pcRollArmShape = m_pcBody->createShape(*m_pcArmGeometry,
                                                GetPhysXEngine().GetDefaultMaterial());
@@ -112,8 +114,7 @@ namespace argos {
    /****************************************/
 
    void CPhysXMiniQuadrotorModel::CalculateBoundingBox() {
-      physx::PxBounds3 cPxAABB;
-      cPxAABB = m_pcBody->getWorldBounds();
+      physx::PxBounds3 cPxAABB(m_pcBody->getWorldBounds());
       PxVec3ToCVector3(cPxAABB.minimum, GetBoundingBox().MinCorner);
       PxVec3ToCVector3(cPxAABB.maximum, GetBoundingBox().MaxCorner);
    }

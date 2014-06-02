@@ -27,11 +27,11 @@ namespace argos {
       physx::PxQuat cOrient;
       CQuaternionToPxQuat(GetEmbodiedEntity().GetOrientation(), cOrient);
       /* Create the transform
-       * 1. a translation up by half size on z
+       * 1. a translation from m_cBaseCenterLocal to center of mass
        * 2. a rotation around the box base
        * 3. a translation to the final position
        */
-      physx::PxTransform cTranslation1(physx::PxVec3(0.0f, 0.0f, cHalfSize.z));
+      physx::PxTransform cTranslation1(-m_cBaseCenterLocal);
       physx::PxTransform cRotation(cOrient);
       physx::PxTransform cTranslation2(cPos);
       physx::PxTransform cFinalTrans = cTranslation2 * cRotation * cTranslation1;
@@ -44,6 +44,8 @@ namespace argos {
           */
          /* Create the body in its initial position and orientation */
          m_pcDynamicBody = GetPhysXEngine().GetPhysics().createRigidDynamic(cFinalTrans);
+         /* Enable CCD on the body */
+         m_pcDynamicBody->setRigidBodyFlag(physx::PxRigidBodyFlag::eENABLE_CCD, true);
          /* Create the shape */
          m_pcShape = m_pcDynamicBody->createShape(*m_pcGeometry,
                                                   GetPhysXEngine().GetDefaultMaterial());

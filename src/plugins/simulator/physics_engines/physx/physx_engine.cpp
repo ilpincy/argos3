@@ -31,23 +31,20 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   CPhysXEngine::CQueryIgnoreShape::CQueryIgnoreShape(const physx::PxShape* pc_ignored_shape)
-      : m_pcIgnoredShape(pc_ignored_shape) {}
+   CPhysXEngine::CQueryIgnoreShapes::CQueryIgnoreShapes() {}
 
-   physx::PxQueryHitType::Enum CPhysXEngine::CQueryIgnoreShape::preFilter(const physx::PxFilterData&,
-                                                                          const physx::PxShape* pc_shape,
-                                                                          const physx::PxRigidActor*,
-                                                                          physx::PxHitFlags&) {
-      if(m_pcIgnoredShape != pc_shape) {
-         return physx::PxQueryHitType::eBLOCK;
-      }
-      else {
-         return physx::PxQueryHitType::eNONE;
-      }
+   physx::PxQueryHitType::Enum CPhysXEngine::CQueryIgnoreShapes::preFilter(const physx::PxFilterData&,
+                                                                           const physx::PxShape* pc_shape,
+                                                                           const physx::PxRigidActor*,
+                                                                           physx::PxHitFlags&) {
+      return
+         (std::find(m_vecIgnoredShapes.begin(), m_vecIgnoredShapes.end(), pc_shape) == m_vecIgnoredShapes.end()) ?
+         physx::PxQueryHitType::eTOUCH :
+         physx::PxQueryHitType::eNONE;
    }
 
-   physx::PxQueryHitType::Enum CPhysXEngine::CQueryIgnoreShape::postFilter(const physx::PxFilterData&,
-                                                                           const physx::PxQueryHit&) {
+   physx::PxQueryHitType::Enum CPhysXEngine::CQueryIgnoreShapes::postFilter(const physx::PxFilterData&,
+                                                                            const physx::PxQueryHit&) {
       return physx::PxQueryHitType::eBLOCK;
    }
 
@@ -114,7 +111,8 @@ namespace argos {
          return physx::PxFilterFlag::eDEFAULT;
       }
       /* Generate contacts for all that were not filtered above */
-      c_pair_flags = physx::PxPairFlag::eCONTACT_DEFAULT;
+      c_pair_flags = physx::PxPairFlag::eRESOLVE_CONTACTS;
+      c_pair_flags |= physx::PxPairFlag::eCCD_LINEAR;
       return physx::PxFilterFlag::eDEFAULT;
    }
    
@@ -152,14 +150,22 @@ namespace argos {
          /*
           * Parse XML
           */
-         UInt32 unThreads = 1;
+         UInt32 unThreads = 0;
          GetNodeAttributeOrDefault(t_tree, "cpu_threads", unThreads, unThreads);
-         LOG << "[INFO] PhysX engine \""
-             << GetId()
-             << "\" will use "
-             << unThreads
-             << " CPU threads"
-             << std::endl;
+         if(unThreads > 0) {
+            LOG << "[INFO] PhysX engine \""
+                << GetId()
+                << "\" will use "
+                << unThreads
+                << " CPU threads internally"
+                << std::endl;
+         }
+         else {
+            LOG << "[INFO] PhysX engine \""
+                << GetId()
+                << "\" won't use extra threads internally"
+                << std::endl;
+         }
          GetNodeAttributeOrDefault(t_tree, "subdiv_bp_regions", m_unSubdivBPRegions, m_unSubdivBPRegions);
          if((m_unSubdivBPRegions < 1) ||
             (m_unSubdivBPRegions > 16)) {

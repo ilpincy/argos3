@@ -39,10 +39,13 @@ namespace argos {
        * This class can be used to ignore a specific shape when executing
        * scene queries.
        */
-      class CQueryIgnoreShape : public physx::PxQueryFilterCallback {
+      class CQueryIgnoreShapes : public physx::PxQueryFilterCallback {
       public:
-         CQueryIgnoreShape(const physx::PxShape* pc_ignored_shape);
-         virtual ~CQueryIgnoreShape() {}
+         CQueryIgnoreShapes();
+         virtual ~CQueryIgnoreShapes() {}
+         inline void Ignore(const physx::PxShape* pc_shape) {
+            m_vecIgnoredShapes.push_back(pc_shape);
+         }
          virtual physx::PxQueryHitType::Enum preFilter(const physx::PxFilterData& c_filter_data,
                                                        const physx::PxShape* pc_shape,
                                                        const physx::PxRigidActor* pc_actor,
@@ -50,7 +53,7 @@ namespace argos {
          virtual physx::PxQueryHitType::Enum postFilter(const physx::PxFilterData& c_filter_data,
                                                         const physx::PxQueryHit& c_hit);
       private:
-         const physx::PxShape* m_pcIgnoredShape;
+         std::vector<const physx::PxShape*> m_vecIgnoredShapes;
       };
 
    public:
@@ -142,6 +145,15 @@ namespace argos {
       inline physx::PxMaterial& GetDefaultMaterial() {
          return *m_pcDefaultMaterial;
       }
+
+      /**
+       * Returns the arena ground.
+       * @return The arena ground.
+       */
+      inline physx::PxRigidStatic& GetGround() {
+         return *m_pcGround;
+      }
+
 
    private:
 
