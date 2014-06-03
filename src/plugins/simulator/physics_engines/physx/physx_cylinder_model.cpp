@@ -50,12 +50,12 @@ namespace argos {
       physx::PxTransform cTranslation2(cPos);
       physx::PxTransform cFinalTrans = cTranslation2 * cRotation * cTranslation1;
       /* Create cylinder geometry */
-      m_pcGeometry = new physx::PxConvexMeshGeometry(m_pcCylinderMesh,
-                                                     physx::PxMeshScale(
-                                                        physx::PxVec3(c_entity.GetRadius(),
-                                                                      c_entity.GetRadius(),
-                                                                      c_entity.GetHeight()),
-                                                        physx::PxQuat::createIdentity()));
+      m_vecGeometries.push_back(new physx::PxConvexMeshGeometry(m_pcCylinderMesh,
+                                                                physx::PxMeshScale(
+                                                                   physx::PxVec3(c_entity.GetRadius(),
+                                                                                 c_entity.GetRadius(),
+                                                                                 c_entity.GetHeight()),
+                                                                   physx::PxQuat::createIdentity())));
       /* Create the cylinder body */
       if(GetEmbodiedEntity().IsMovable()) {
          /*
@@ -66,12 +66,14 @@ namespace argos {
          /* Enable CCD on the body */
          m_pcDynamicBody->setRigidBodyFlag(physx::PxRigidBodyFlag::eENABLE_CCD, true);
          /* Create the shape */
-         m_pcShape = m_pcDynamicBody->createShape(*m_pcGeometry,
-                                                  GetPhysXEngine().GetDefaultMaterial());
+         m_vecShapes.push_back(m_pcDynamicBody->createShape(*m_vecGeometries.back(),
+                                                            GetPhysXEngine().GetDefaultMaterial()));
          /* Set body mass */
          physx::PxRigidBodyExt::setMassAndUpdateInertia(*m_pcDynamicBody, m_fMass);
          /* Add body to the scene */
          GetPhysXEngine().GetScene().addActor(*m_pcDynamicBody);
+         /* Set this as the body for the base class */
+         m_pcBody = m_pcDynamicBody;
       }
       else {
          /*
@@ -80,13 +82,13 @@ namespace argos {
          /* Create the body in its initial position and orientation */
          m_pcStaticBody = GetPhysXEngine().GetPhysics().createRigidStatic(cFinalTrans);
          /* Create the shape */
-         m_pcShape = m_pcStaticBody->createShape(*m_pcGeometry,
-                                                 GetPhysXEngine().GetDefaultMaterial());
+         m_vecShapes.push_back(m_pcStaticBody->createShape(*m_vecGeometries.back(),
+                                                           GetPhysXEngine().GetDefaultMaterial()));
          /* Add body to the scene */
          GetPhysXEngine().GetScene().addActor(*m_pcStaticBody);
       }
       /* Assign the user data pointer to this model */
-      m_pcShape->userData = this;
+      m_vecShapes.back()->userData = this;
       /* Calculate bounding box */
       CalculateBoundingBox();
    }

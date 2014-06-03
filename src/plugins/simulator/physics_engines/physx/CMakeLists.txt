@@ -6,6 +6,7 @@
 set(ARGOS3_HEADERS_PLUGINS_SIMULATOR_PHYSICS_ENGINES_PHYSX
   physx_engine.h
   physx_model.h
+  physx_single_body_object_model.h
   physx_stretchable_object_model.h
   physx_stretchable_object_model_impl.h
   physx_box_model.h
@@ -18,7 +19,8 @@ set(ARGOS3_SOURCES_PLUGINS_SIMULATOR_PHYSICS_ENGINES_PHYSX
   ${ARGOS3_HEADERS_PLUGINS_SIMULATOR_PHYSICS_ENGINES_PHYSX}
   physx_engine.cpp
   physx_box_model.cpp
-  physx_cylinder_model.cpp)
+  physx_cylinder_model.cpp
+  physx_single_body_object_model.cpp)
 
 #
 # Set the link path, depending on the architecture

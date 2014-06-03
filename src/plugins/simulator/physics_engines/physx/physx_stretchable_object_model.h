@@ -11,7 +11,7 @@ namespace argos {
    class CPhysXBoxModel;
 }
 
-#include <argos3/plugins/simulator/physics_engines/physx/physx_model.h>
+#include <argos3/plugins/simulator/physics_engines/physx/physx_single_body_object_model.h>
 
 namespace argos {
 
@@ -26,7 +26,7 @@ namespace argos {
     * @see CPhysXCylinderModel
     */
    template<class ENTITY>
-   class CPhysXStretchableObjectModel : public CPhysXModel {
+   class CPhysXStretchableObjectModel : public CPhysXSingleBodyObjectModel {
 
    public:
 
@@ -34,32 +34,13 @@ namespace argos {
                                    ENTITY& c_entity);
       virtual ~CPhysXStretchableObjectModel();
 
-      virtual bool MoveTo(const CVector3& c_position,
-                          const CQuaternion& c_orientation,
-                          bool b_check_only = false);
-
-      virtual void Reset();
-
-      virtual void CalculateBoundingBox();
-
-      virtual void UpdateEntityStatus();
-      virtual void UpdateFromEntityStatus() {}
-
-      virtual bool IsCollidingWithSomething() const;
-
    protected:
 
       union {
-         physx::PxRigidActor* m_pcGenericBody;
          physx::PxRigidDynamic* m_pcDynamicBody;
          physx::PxRigidStatic* m_pcStaticBody;
       };
-      physx::PxGeometry* m_pcGeometry;
-
-      ENTITY&         m_cEntity;
-      physx::PxVec3   m_cBaseCenterLocal;
-      Real            m_fMass;
-      physx::PxShape* m_pcShape;
+      Real m_fMass;
    };
 
 }

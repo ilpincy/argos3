@@ -15,9 +15,9 @@ namespace argos {
                                   CBoxEntity& c_entity) :
       CPhysXStretchableObjectModel(c_engine, c_entity) {
       /* Get the half size of the entity */
-      physx::PxVec3 cHalfSize(m_cEntity.GetSize().GetX() * 0.5f,
-                              m_cEntity.GetSize().GetY() * 0.5f,
-                              m_cEntity.GetSize().GetZ() * 0.5f);
+      physx::PxVec3 cHalfSize(c_entity.GetSize().GetX() * 0.5f,
+                              c_entity.GetSize().GetY() * 0.5f,
+                              c_entity.GetSize().GetZ() * 0.5f);
       m_cBaseCenterLocal.x = 0.0f;
       m_cBaseCenterLocal.y = 0.0f;
       m_cBaseCenterLocal.z = -cHalfSize.z;
@@ -36,7 +36,7 @@ namespace argos {
       physx::PxTransform cTranslation2(cPos);
       physx::PxTransform cFinalTrans = cTranslation2 * cRotation * cTranslation1;
       /* Create the box geometry */
-      m_pcGeometry = new physx::PxBoxGeometry(cHalfSize);
+      m_vecGeometries.push_back(new physx::PxBoxGeometry(cHalfSize));
       /* Create the box body */
       if(GetEmbodiedEntity().IsMovable()) {
          /*
@@ -47,12 +47,14 @@ namespace argos {
          /* Enable CCD on the body */
          m_pcDynamicBody->setRigidBodyFlag(physx::PxRigidBodyFlag::eENABLE_CCD, true);
          /* Create the shape */
-         m_pcShape = m_pcDynamicBody->createShape(*m_pcGeometry,
-                                                  GetPhysXEngine().GetDefaultMaterial());
+         m_vecShapes.push_back(m_pcDynamicBody->createShape(*m_vecGeometries.back(),
+                                                            GetPhysXEngine().GetDefaultMaterial()));
          /* Set body mass */
          physx::PxRigidBodyExt::setMassAndUpdateInertia(*m_pcDynamicBody, m_fMass);
          /* Add body to the scene */
          GetPhysXEngine().GetScene().addActor(*m_pcDynamicBody);
+         /* Set this as the body for the base class */
+         m_pcBody = m_pcDynamicBody;
       }
       else {
          /*
@@ -61,13 +63,13 @@ namespace argos {
          /* Create the body in its initial position and orientation */
          m_pcStaticBody = GetPhysXEngine().GetPhysics().createRigidStatic(cFinalTrans);
          /* Create the shape */
-         m_pcShape = m_pcStaticBody->createShape(*m_pcGeometry,
-                                                 GetPhysXEngine().GetDefaultMaterial());
+         m_vecShapes.push_back(m_pcStaticBody->createShape(*m_vecGeometries.back(),
+                                                           GetPhysXEngine().GetDefaultMaterial()));
          /* Add body to the scene */
          GetPhysXEngine().GetScene().addActor(*m_pcStaticBody);
       }
       /* Assign the user data pointer to this model */
-      m_pcShape->userData = this;
+      m_vecShapes.back()->userData = this;
       /* Calculate bounding box */
       CalculateBoundingBox();
    }
