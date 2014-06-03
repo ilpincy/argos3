@@ -40,11 +40,55 @@ namespace argos {
          return m_cEntity;
       }
 
-   protected:
+      inline const CComposableEntity& GetEntity() const {
+         return m_cEntity;
+      }
+
+      inline physx::PxRigidDynamic* GetBody() {
+         return m_pcBody;
+      }
+
+      inline const physx::PxRigidDynamic* GetBody() const {
+         return m_pcBody;
+      }
+
+      inline void SetBody(physx::PxRigidDynamic* pc_body) {
+         m_pcBody = pc_body;
+      }
+
+      inline physx::PxVec3& GetARGoSReferencePoint() {
+         return m_cARGoSReferencePoint;
+      }
+
+      inline const physx::PxVec3& GetARGoSReferencePoint() const {
+         return m_cARGoSReferencePoint;
+      }
+
+      inline void SetARGoSReferencePoint(const physx::PxVec3& c_argos_reference_point) {
+         m_cARGoSReferencePoint = c_argos_reference_point;
+      }
+
+      inline std::vector<physx::PxGeometry*>& GetGeometries() {
+         return m_vecGeometries;
+      }
+
+      inline const std::vector<physx::PxGeometry*>& GetGeometries() const {
+         return m_vecGeometries;
+      }
+
+      inline std::vector<physx::PxShape*>& GetShapes() {
+         return m_vecShapes;
+      }
+
+      inline const std::vector<physx::PxShape*>& GetShapes() const {
+         return m_vecShapes;
+      }
+
+   private:
 
       CComposableEntity&              m_cEntity;
       physx::PxRigidDynamic*          m_pcBody;
-      physx::PxVec3                   m_cBaseCenterLocal;
+      physx::PxVec3                   m_cARGoSReferencePoint;
       std::vector<physx::PxGeometry*> m_vecGeometries;
       std::vector<physx::PxShape*>    m_vecShapes;
    };

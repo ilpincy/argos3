@@ -40,12 +40,10 @@ namespace argos {
 
    CPhysXMiniQuadrotorModel::CPhysXMiniQuadrotorModel(CPhysXEngine& c_engine,
                                                       CMiniQuadrotorEntity& c_entity) :
-      CPhysXModel(c_engine, c_entity.GetEmbodiedEntity()),
+      CPhysXSingleBodyObjectModel(c_engine, c_entity),
       m_cMiniQuadrotorEntity(c_entity) {
       /* Calculate base center */
-      m_cBaseCenterLocal.x = 0.0f;
-      m_cBaseCenterLocal.y = 0.0f;
-      m_cBaseCenterLocal.z = -BODY_HALF_HEIGHT;
+      SetARGoSReferencePoint(physx::PxVec3(0.0f, 0.0f, -BODY_HALF_HEIGHT));
       /* Get position and orientation in this engine's representation */
       physx::PxVec3 cPos;
       CVector3ToPxVec3(GetEmbodiedEntity().GetPosition(), cPos);
@@ -61,84 +59,36 @@ namespace argos {
       physx::PxTransform cTranslation2(cPos);
       physx::PxTransform cFinalTrans = cTranslation2 * cRotation * cTranslation1;
       /* Create the capsule geometry for the arms */
-      m_pcArmGeometry = new physx::PxCapsuleGeometry(BODY_HALF_HEIGHT,
-                                                     BODY_HALF_WIDTH);
+      physx::PxCapsuleGeometry* pcArmGeometry =
+         new physx::PxCapsuleGeometry(BODY_HALF_HEIGHT,
+                                      BODY_HALF_WIDTH);
+      GetGeometries().push_back(pcArmGeometry);
       /* Create the body in its initial position and orientation */
-      m_pcBody = GetPhysXEngine().GetPhysics().createRigidDynamic(cFinalTrans);
+      SetBody(GetPhysXEngine().GetPhysics().createRigidDynamic(cFinalTrans));
       /* Enable CCD on the body */
-      m_pcBody->setRigidBodyFlag(physx::PxRigidBodyFlag::eENABLE_CCD, true);
+      GetBody()->setRigidBodyFlag(physx::PxRigidBodyFlag::eENABLE_CCD, true);
       /* Create the shape for the roll arm */
-      m_pcRollArmShape = m_pcBody->createShape(*m_pcArmGeometry,
-                                               GetPhysXEngine().GetDefaultMaterial());
+      physx::PxShape* pcRollArmShape =
+         GetBody()->createShape(*pcArmGeometry,
+                               GetPhysXEngine().GetDefaultMaterial());
+      GetShapes().push_back(pcRollArmShape);
       /* Assign the user data pointer to this model */
-      m_pcRollArmShape->userData = this;
+      pcRollArmShape->userData = this;
       /* Create the shape for the pitch arm */
-      m_pcPitchArmShape = m_pcBody->createShape(*m_pcArmGeometry,
-                                                GetPhysXEngine().GetDefaultMaterial(),
-                                                PITCH_ARM_POSE);
+      physx::PxShape* pcPitchArmShape =
+         GetBody()->createShape(*pcArmGeometry,
+                               GetPhysXEngine().GetDefaultMaterial(),
+                               PITCH_ARM_POSE);
+      GetShapes().push_back(pcPitchArmShape);
       /* Assign the user data pointer to this model */
-      m_pcPitchArmShape->userData = this;
+      pcPitchArmShape->userData = this;
       /* Set body mass and inertia tensor */
-      m_pcBody->setMass(BODY_MASS);
-      m_pcBody->setMassSpaceInertiaTensor(INERTIA_TENSOR_DIAGONAL);
+      GetBody()->setMass(BODY_MASS);
+      GetBody()->setMassSpaceInertiaTensor(INERTIA_TENSOR_DIAGONAL);
       /* Add body to the scene */
-      GetPhysXEngine().GetScene().addActor(*m_pcBody);
+      GetPhysXEngine().GetScene().addActor(*GetBody());
       /* Calculate bounding box */
       CalculateBoundingBox();
-   }
-
-   /****************************************/
-   /****************************************/
-
-   CPhysXMiniQuadrotorModel::~CPhysXMiniQuadrotorModel() {
-      GetPhysXEngine().GetScene().removeActor(*m_pcBody);
-      m_pcBody->release();
-   }
-
-   /****************************************/
-   /****************************************/
-
-   bool CPhysXMiniQuadrotorModel::MoveTo(const CVector3& c_position,
-                                         const CQuaternion& c_orientation,
-                                         bool b_check_only) {
-      return false;
-   }
-
-   /****************************************/
-   /****************************************/
-
-   void CPhysXMiniQuadrotorModel::Reset() {
-   }
-
-   /****************************************/
-   /****************************************/
-
-   void CPhysXMiniQuadrotorModel::CalculateBoundingBox() {
-      physx::PxBounds3 cPxAABB(m_pcBody->getWorldBounds());
-      PxVec3ToCVector3(cPxAABB.minimum, GetBoundingBox().MinCorner);
-      PxVec3ToCVector3(cPxAABB.maximum, GetBoundingBox().MaxCorner);
-   }
-
-   /****************************************/
-   /****************************************/
-
-   void CPhysXMiniQuadrotorModel::UpdateEntityStatus() {
-      /* Update bounding box */
-      CalculateBoundingBox();
-      /* Get the global pose of the object */
-      physx::PxTransform cTrans = m_pcBody->getGlobalPose();
-      /* Vector to the object base */
-      /* Transform base */
-      physx::PxVec3 cBaseGlobal(cTrans.rotate(m_cBaseCenterLocal));
-      cBaseGlobal += cTrans.p;
-      /* Set object position into ARGoS space */
-      CVector3 cPos;
-      PxVec3ToCVector3(cBaseGlobal, cPos);
-      GetEmbodiedEntity().SetPosition(cPos);
-      /* Set object orientation into ARGoS space */
-      CQuaternion cOrient;
-      PxQuatToCQuaternion(cTrans.q, cOrient);
-      GetEmbodiedEntity().SetOrientation(cOrient);
    }
 
    /****************************************/
@@ -168,19 +118,12 @@ namespace argos {
          DRAG_COEFFICIENT * (pfSquareRotorVel[0] - pfSquareRotorVel[1] + pfSquareRotorVel[2] - pfSquareRotorVel[3]));
       /* Apply uplift */
       physx::PxRigidBodyExt::addLocalForceAtLocalPos(
-         *m_pcBody,
+         *GetBody(),
          physx::PxVec3(0.0f, 0.0f, fUpliftInput),
          physx::PxVec3(0.0f));
       /* Apply rotational moment */
-      physx::PxVec3 cTorque = (-m_pcBody->getAngularVelocity()).cross(INERTIA_TENSOR * m_pcBody->getAngularVelocity()) + cTorqueInputs;
-      m_pcBody->addTorque(cTorque);
-   }
-
-   /****************************************/
-   /****************************************/
-
-   bool CPhysXMiniQuadrotorModel::IsCollidingWithSomething() const {
-      return false;
+      physx::PxVec3 cTorque = (-GetBody()->getAngularVelocity()).cross(INERTIA_TENSOR * GetBody()->getAngularVelocity()) + cTorqueInputs;
+      GetBody()->addTorque(cTorque);
    }
 
    /****************************************/

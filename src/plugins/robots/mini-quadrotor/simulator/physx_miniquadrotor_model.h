@@ -13,11 +13,11 @@ namespace argos {
    class CMiniQuadrotorEntity;
 }
 
-#include <argos3/plugins/simulator/physics_engines/physx/physx_model.h>
+#include <argos3/plugins/simulator/physics_engines/physx/physx_single_body_object_model.h>
 
 namespace argos {
 
-   class CPhysXMiniQuadrotorModel : public CPhysXModel {
+   class CPhysXMiniQuadrotorModel : public CPhysXSingleBodyObjectModel {
 
    public:
 
@@ -28,30 +28,11 @@ namespace argos {
       CPhysXMiniQuadrotorModel(CPhysXEngine& c_engine,
                                CMiniQuadrotorEntity& c_entity);
 
-      virtual ~CPhysXMiniQuadrotorModel();
-
-      virtual bool MoveTo(const CVector3& c_position,
-                          const CQuaternion& c_orientation,
-                          bool b_check_only = false);
-
-      virtual void Reset();
-
-      virtual void CalculateBoundingBox();
-
-      virtual void UpdateEntityStatus();
       virtual void UpdateFromEntityStatus();
-
-      virtual bool IsCollidingWithSomething() const;
 
    private:
 
-      CMiniQuadrotorEntity&     m_cMiniQuadrotorEntity;
-      physx::PxRigidDynamic*    m_pcBody;
-      physx::PxVec3             m_cBaseCenterLocal;
-      physx::PxShape*           m_pcRollArmShape;
-      physx::PxShape*           m_pcPitchArmShape;
-      physx::PxCapsuleGeometry* m_pcArmGeometry;
-
+      CMiniQuadrotorEntity& m_cMiniQuadrotorEntity;
    };
 
 }

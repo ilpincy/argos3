@@ -34,11 +34,24 @@ namespace argos {
                                    ENTITY& c_entity);
       virtual ~CPhysXStretchableObjectModel();
 
+      virtual bool MoveTo(const CVector3& c_position,
+                          const CQuaternion& c_orientation,
+                          bool b_check_only = false);
+
+      virtual void Reset();
+
+      virtual void CalculateBoundingBox();
+
+      virtual void UpdateEntityStatus();
+
+      virtual bool IsCollidingWithSomething() const;
+
    protected:
 
       union {
+         physx::PxRigidActor*   m_pcGenericBody;
          physx::PxRigidDynamic* m_pcDynamicBody;
-         physx::PxRigidStatic* m_pcStaticBody;
+         physx::PxRigidStatic*  m_pcStaticBody;
       };
       Real m_fMass;
    };

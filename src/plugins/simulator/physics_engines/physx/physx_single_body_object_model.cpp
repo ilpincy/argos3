@@ -47,11 +47,11 @@ namespace argos {
       CVector3ToPxVec3(c_position, cPos);
       CQuaternionToPxQuat(c_orientation, cOrient);
       /* Create the transform
-       * 1. a translation from m_cBaseCenterLocal to center of mass
+       * 1. a translation from m_cARGoSReferencePoint to center of mass
        * 2. a rotation around the box base
        * 3. a translation to the final position
        */
-      physx::PxTransform cTranslation1(-m_cBaseCenterLocal);
+      physx::PxTransform cTranslation1(-m_cARGoSReferencePoint);
       physx::PxTransform cRotation(cOrient);
       physx::PxTransform cTranslation2(cPos);
       physx::PxTransform cFinalTrans = cTranslation2 * cRotation * cTranslation1;
@@ -87,11 +87,11 @@ namespace argos {
       CVector3ToPxVec3(GetEmbodiedEntity().GetInitPosition(), cInitPos);
       CQuaternionToPxQuat(GetEmbodiedEntity().GetInitOrientation(), cInitOrient);
       /* Create the transform
-       * 1. a translation from m_cBaseCenterLocal to center of mass
+       * 1. a translation from m_cARGoSReferencePoint to center of mass
        * 2. a rotation around the box base
        * 3. a translation to the final position
        */
-      physx::PxTransform cTranslation1(-m_cBaseCenterLocal);
+      physx::PxTransform cTranslation1(-m_cARGoSReferencePoint);
       physx::PxTransform cRotation(cInitOrient);
       physx::PxTransform cTranslation2(cInitPos);
       physx::PxTransform cFinalTrans = cTranslation2 * cRotation * cTranslation1;
@@ -122,7 +122,7 @@ namespace argos {
       physx::PxTransform cTrans = m_pcBody->getGlobalPose();
       /* Vector to the object base */
       /* Transform base */
-      physx::PxVec3 cBaseGlobal(cTrans.rotate(m_cBaseCenterLocal));
+      physx::PxVec3 cBaseGlobal(cTrans.rotate(m_cARGoSReferencePoint));
       cBaseGlobal += cTrans.p;
       /* Set object position into ARGoS space */
       CVector3 cPos;
@@ -150,12 +150,19 @@ namespace argos {
       physx::PxTransform cTrans(m_pcBody->getGlobalPose());
       /* Buffer to store query results */
       physx::PxOverlapBuffer cOverlapBuf;
-      /* Create the filter to exclude the ground from the overlap results */
+      /*
+       * Create a filter to exclude some shapes from the overlap results
+       */
       CPhysXEngine::CQueryIgnoreShapes cIgnoreShapes;
       physx::PxShape** ppcGroundShapes = new physx::PxShape*[1];
+      /* Exclude ground shape */
       const_cast<CPhysXEngine&>(GetPhysXEngine()).GetGround().getShapes(ppcGroundShapes, 1);
       cIgnoreShapes.Ignore(ppcGroundShapes[0]);
       delete[] ppcGroundShapes;
+      /* Exclude this object's shapes */
+      for(size_t i = 0; i < m_vecShapes.size(); ++i) {
+         cIgnoreShapes.Ignore(m_vecShapes[i]);
+      }
       /* Perform the query - it returns true if anything is overlapping this object */
       for(size_t i = 0; i < m_vecGeometries.size(); ++i) {
          if(GetPhysXEngine().GetScene().overlap(*m_vecGeometries[i],

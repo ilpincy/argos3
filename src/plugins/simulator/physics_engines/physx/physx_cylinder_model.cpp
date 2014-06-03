@@ -32,9 +32,7 @@ namespace argos {
          CreateMesh();
       }
       /* Set center of cylinder base */
-      m_cBaseCenterLocal.x = 0.0f;
-      m_cBaseCenterLocal.y = 0.0f;
-      m_cBaseCenterLocal.z = -c_entity.GetHeight() * 0.5f;
+      SetARGoSReferencePoint(physx::PxVec3(0.0f, 0.0f, -c_entity.GetHeight() * 0.5f));
       /* Get position and orientation in this engine's representation */
       physx::PxVec3 cPos;
       CVector3ToPxVec3(GetEmbodiedEntity().GetPosition(), cPos);
@@ -45,12 +43,12 @@ namespace argos {
        * 2. a rotation around the box base
        * 3. a translation to the final position
        */
-      physx::PxTransform cTranslation1(-m_cBaseCenterLocal);
+      physx::PxTransform cTranslation1(-GetARGoSReferencePoint());
       physx::PxTransform cRotation(cOrient);
       physx::PxTransform cTranslation2(cPos);
       physx::PxTransform cFinalTrans = cTranslation2 * cRotation * cTranslation1;
       /* Create cylinder geometry */
-      m_vecGeometries.push_back(new physx::PxConvexMeshGeometry(m_pcCylinderMesh,
+      GetGeometries().push_back(new physx::PxConvexMeshGeometry(m_pcCylinderMesh,
                                                                 physx::PxMeshScale(
                                                                    physx::PxVec3(c_entity.GetRadius(),
                                                                                  c_entity.GetRadius(),
@@ -66,14 +64,14 @@ namespace argos {
          /* Enable CCD on the body */
          m_pcDynamicBody->setRigidBodyFlag(physx::PxRigidBodyFlag::eENABLE_CCD, true);
          /* Create the shape */
-         m_vecShapes.push_back(m_pcDynamicBody->createShape(*m_vecGeometries.back(),
+         GetShapes().push_back(m_pcDynamicBody->createShape(*GetGeometries().back(),
                                                             GetPhysXEngine().GetDefaultMaterial()));
          /* Set body mass */
          physx::PxRigidBodyExt::setMassAndUpdateInertia(*m_pcDynamicBody, m_fMass);
          /* Add body to the scene */
          GetPhysXEngine().GetScene().addActor(*m_pcDynamicBody);
          /* Set this as the body for the base class */
-         m_pcBody = m_pcDynamicBody;
+         SetBody(m_pcDynamicBody);
       }
       else {
          /*
@@ -82,13 +80,13 @@ namespace argos {
          /* Create the body in its initial position and orientation */
          m_pcStaticBody = GetPhysXEngine().GetPhysics().createRigidStatic(cFinalTrans);
          /* Create the shape */
-         m_vecShapes.push_back(m_pcStaticBody->createShape(*m_vecGeometries.back(),
+         GetShapes().push_back(m_pcStaticBody->createShape(*GetGeometries().back(),
                                                            GetPhysXEngine().GetDefaultMaterial()));
          /* Add body to the scene */
          GetPhysXEngine().GetScene().addActor(*m_pcStaticBody);
       }
       /* Assign the user data pointer to this model */
-      m_vecShapes.back()->userData = this;
+      GetShapes().back()->userData = this;
       /* Calculate bounding box */
       CalculateBoundingBox();
    }
