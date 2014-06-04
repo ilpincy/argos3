@@ -26,6 +26,7 @@ set(ARGOS3_HEADERS_PLUGINS_ROBOTS_FOOTBOT_CONTROLINTERFACE
 if(ARGOS_BUILD_FOR_SIMULATOR)
   set(ARGOS3_HEADERS_PLUGINS_ROBOTS_FOOTBOT_SIMULATOR
     simulator/dynamics2d_footbot_model.h
+    simulator/physx_footbot_model.h
     simulator/footbot_base_ground_rotzonly_sensor.h
     simulator/footbot_distance_scanner_default_actuator.h
     simulator/footbot_distance_scanner_equipped_entity.h
@@ -63,6 +64,7 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
     ${ARGOS3_SOURCES_PLUGINS_ROBOTS_FOOTBOT}
     ${ARGOS3_HEADERS_PLUGINS_ROBOTS_FOOTBOT_SIMULATOR}
     simulator/dynamics2d_footbot_model.cpp
+    simulator/physx_footbot_model.cpp
     simulator/footbot_base_ground_rotzonly_sensor.cpp
     simulator/footbot_distance_scanner_default_actuator.cpp
     simulator/footbot_distance_scanner_equipped_entity.cpp
@@ -86,6 +88,26 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
       simulator/qtopengl_footbot.h
       simulator/qtopengl_footbot.cpp)
   endif(ARGOS_COMPILE_QTOPENGL)
+  # Set the PhysX link path, depending on the architecture
+  if(CMAKE_SIZEOF_VOID_P EQUAL 4)
+    # 32 bits
+    if(APPLE)
+      # Mac OSX
+      link_directories(${CMAKE_SOURCE_DIR}/plugins/simulator/physics_engines/physx/physx_dist/lib/osx32)
+    else(APPLE)
+      # Linux
+      link_directories(${CMAKE_SOURCE_DIR}/plugins/simulator/physics_engines/physx/physx_dist/lib/linux32)
+    endif(APPLE)
+  else(CMAKE_SIZEOF_VOID_P EQUAL 4)
+    # 64 bits
+    if(APPLE)
+      # Mac OSX
+      link_directories(${CMAKE_SOURCE_DIR}/plugins/simulator/physics_engines/physx/physx_dist/lib/osx64)
+    else(APPLE)
+      # Linux
+      link_directories(${CMAKE_SOURCE_DIR}/plugins/simulator/physics_engines/physx/physx_dist/lib/linux64)
+    endif(APPLE)
+  endif(CMAKE_SIZEOF_VOID_P EQUAL 4)
 endif(ARGOS_BUILD_FOR_SIMULATOR)
 
 #
@@ -96,7 +118,8 @@ target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_footbot
   argos3plugin_${ARGOS_BUILD_FOR}_genericrobot
   argos3plugin_${ARGOS_BUILD_FOR}_actuators
   argos3plugin_${ARGOS_BUILD_FOR}_sensors
-  argos3plugin_${ARGOS_BUILD_FOR}_dynamics2d)
+  argos3plugin_${ARGOS_BUILD_FOR}_dynamics2d
+  argos3plugin_${ARGOS_BUILD_FOR}_physx)
 if(ARGOS_COMPILE_QTOPENGL)
   target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_footbot argos3plugin_${ARGOS_BUILD_FOR}_qtopengl)
 endif(ARGOS_COMPILE_QTOPENGL)
