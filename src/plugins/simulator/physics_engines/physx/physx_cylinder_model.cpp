@@ -11,26 +11,9 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   /*
-    * By default, the cylinder mesh is NULL
-    */
-   physx::PxConvexMesh* CPhysXCylinderModel::m_pcCylinderMesh = NULL;
-
-   /*
-    * Number of slices along the cylinder height
-    */
-   static const size_t NUM_SLICES = 20;
-
-   /****************************************/
-   /****************************************/
-
    CPhysXCylinderModel::CPhysXCylinderModel(CPhysXEngine& c_engine,
                                             CCylinderEntity& c_entity) :
       CPhysXStretchableObjectModel(c_engine, c_entity) {
-      /* Create mesh, if necessary */
-      if(m_pcCylinderMesh == NULL) {
-         CreateMesh();
-      }
       /* Set center of cylinder base */
       SetARGoSReferencePoint(physx::PxVec3(0.0f, 0.0f, -c_entity.GetHeight() * 0.5f));
       /* Get position and orientation in this engine's representation */
@@ -48,12 +31,10 @@ namespace argos {
       physx::PxTransform cTranslation2(cPos);
       physx::PxTransform cFinalTrans = cTranslation2 * cRotation * cTranslation1;
       /* Create cylinder geometry */
-      GetGeometries().push_back(new physx::PxConvexMeshGeometry(m_pcCylinderMesh,
-                                                                physx::PxMeshScale(
-                                                                   physx::PxVec3(c_entity.GetRadius(),
-                                                                                 c_entity.GetRadius(),
-                                                                                 c_entity.GetHeight()),
-                                                                   physx::PxQuat::createIdentity())));
+      GetGeometries().push_back(
+         CreateCylinderGeometry(c_engine,
+                                c_entity.GetRadius(),
+                                c_entity.GetHeight()));
       /* Create the cylinder body */
       if(GetEmbodiedEntity().IsMovable()) {
          /*
@@ -89,50 +70,6 @@ namespace argos {
       GetShapes().back()->userData = this;
       /* Calculate bounding box */
       CalculateBoundingBox();
-   }
-
-   /****************************************/
-   /****************************************/
-
-   void CPhysXCylinderModel::CreateMesh() {
-      /* Array of vertices */
-      physx::PxVec3* pcVertices = new physx::PxVec3[NUM_SLICES * 2];
-      /* Description of the convex mesh */
-      physx::PxConvexMeshDesc cDescription;
-      /* Calculate the angle span of a slice */
-      CRadians cSlice(CRadians::TWO_PI / NUM_SLICES);
-      /* Go through the slices */
-      for(size_t i = 0; i < NUM_SLICES; ++i) {
-         /* Top face */
-         pcVertices[i].x = Cos(cSlice * i);
-         pcVertices[i].y = Sin(cSlice * i);
-         pcVertices[i].z = 0.5f;
-         /* Bottom face */
-         pcVertices[i+NUM_SLICES].x = pcVertices[i].x;
-         pcVertices[i+NUM_SLICES].y = pcVertices[i].y;
-         pcVertices[i+NUM_SLICES].z = -0.5f;
-      }
-      /* Set up the description */
-      cDescription.points.count  = NUM_SLICES * 2;
-      cDescription.points.stride = sizeof(physx::PxVec3);
-      cDescription.points.data   = pcVertices;
-      cDescription.flags         = physx::PxConvexFlag::eCOMPUTE_CONVEX;
-      /* Buffer to store the cooked mesh */
-      physx::PxDefaultMemoryOutputStream cCookedMeshBuf;
-      /* Cook mesh */
-      if(! GetPhysXEngine().GetCooking().cookConvexMesh(cDescription,
-                                                        cCookedMeshBuf)) {
-         THROW_ARGOSEXCEPTION("PhysX engine \"" <<
-                              GetPhysXEngine().GetId() <<
-                              "\": error creating the cylinder convex mesh");
-      }
-      /* Buffer to store the mesh data */
-      physx::PxDefaultMemoryInputData cMeshData(cCookedMeshBuf.getData(),
-                                                cCookedMeshBuf.getSize());
-      /* Create mesh */
-      m_pcCylinderMesh = GetPhysXEngine().GetPhysics().createConvexMesh(cMeshData);
-      /* Dispose of vertex array */
-      delete[] pcVertices;
    }
 
    /****************************************/

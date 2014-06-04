@@ -24,15 +24,6 @@ namespace argos {
                           CCylinderEntity& c_entity);
 
       virtual ~CPhysXCylinderModel() {}
-
-   private:
-
-      void CreateMesh();
-
-   private:
-
-      static physx::PxConvexMesh* m_pcCylinderMesh;
-
    };
 
 }
