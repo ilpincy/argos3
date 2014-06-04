@@ -28,6 +28,8 @@ namespace argos {
    const Real DEFAULT_DYNAMIC_FRICTION        = 0.5f;
    const Real DEFAULT_RESTITUTION_COEFFICIENT = 0.1f;
 
+   static const size_t CYLINDER_NUM_SLICES = 20;
+
    /****************************************/
    /****************************************/
 
@@ -129,7 +131,8 @@ namespace argos {
       m_pcSceneDesc(NULL),
       m_pcScene(NULL),
       m_pcDefaultMaterial(NULL),
-      m_pcGround(NULL) {
+      m_pcGroundBody(NULL),
+      m_pcGroundShape(NULL) {
    }
 
    /****************************************/
@@ -212,12 +215,22 @@ namespace argos {
          m_pcDefaultMaterial = m_pcPhysics->createMaterial(DEFAULT_STATIC_FRICTION,
                                                            DEFAULT_DYNAMIC_FRICTION,
                                                            DEFAULT_RESTITUTION_COEFFICIENT);
-         /* Add the ground */
-         /* The plane is centered in the origin and */
-         m_pcGround = PxCreatePlane(*m_pcPhysics,
-                                    physx::PxPlane(physx::PxVec3(0.0f, 0.0f, 1.0f), 0.0f),
-                                    *m_pcDefaultMaterial);
-         m_pcScene->addActor(*m_pcGround);
+         /*
+          * Add the ground
+          */
+         /* Create and add the plane body */
+         m_pcGroundBody = PxCreatePlane(*m_pcPhysics,
+                                        physx::PxPlane(physx::PxVec3(0.0f, 0.0f, 1.0f), 0.0f),
+                                        *m_pcDefaultMaterial);
+         m_pcScene->addActor(*m_pcGroundBody);
+         /* Get a reference to the ground shape */
+         physx::PxShape* ppcGroundShapes[1];
+         m_pcGroundBody->getShapes(ppcGroundShapes, 1);
+         m_pcGroundShape = ppcGroundShapes[0];
+         /*
+          * Create cylinder mesh
+          */
+         m_pcCylinderMesh = CreateCylinderMesh();
       }
       catch(CARGoSException& ex) {
          THROW_ARGOSEXCEPTION_NESTED("Error initializing the PhysX engine \"" << GetId() << "\"", ex);
@@ -286,8 +299,8 @@ namespace argos {
       }
       m_tPhysicsModels.clear();
       /* Release PhysX resources */
-      m_pcScene->removeActor(*m_pcGround);
-      m_pcGround->release();
+      m_pcScene->removeActor(*m_pcGroundBody);
+      m_pcGroundBody->release();
       m_pcDefaultMaterial->release();
       m_pcScene->release();
       delete m_pcSceneDesc;
@@ -416,6 +429,67 @@ namespace argos {
       else {
          THROW_ARGOSEXCEPTION("PhysX model id \"" << str_id << "\" not found in physx engine \"" << GetId() << "\"");
       }
+   }
+
+   /****************************************/
+   /****************************************/
+
+   physx::PxConvexMesh* CPhysXEngine::CreateCylinderMesh() {
+      /* Array of vertices */
+      physx::PxVec3* pcVertices = new physx::PxVec3[CYLINDER_NUM_SLICES * 2];
+      /* Description of the convex mesh */
+      physx::PxConvexMeshDesc cDescription;
+      /* Calculate the angle span of a slice */
+      CRadians cSlice(CRadians::TWO_PI / CYLINDER_NUM_SLICES);
+      /* Go through the slices */
+      for(size_t i = 0; i < CYLINDER_NUM_SLICES; ++i) {
+         /* Top face */
+         pcVertices[i].x = Cos(cSlice * i);
+         pcVertices[i].y = Sin(cSlice * i);
+         pcVertices[i].z = 0.5f;
+         /* Bottom face */
+         pcVertices[i+CYLINDER_NUM_SLICES].x = pcVertices[i].x;
+         pcVertices[i+CYLINDER_NUM_SLICES].y = pcVertices[i].y;
+         pcVertices[i+CYLINDER_NUM_SLICES].z = -0.5f;
+      }
+      /* Set up the description */
+      cDescription.points.count  = CYLINDER_NUM_SLICES * 2;
+      cDescription.points.stride = sizeof(physx::PxVec3);
+      cDescription.points.data   = pcVertices;
+      cDescription.flags         = physx::PxConvexFlag::eCOMPUTE_CONVEX;
+      /* Buffer to store the cooked mesh */
+      physx::PxDefaultMemoryOutputStream cCookedMeshBuf;
+      /* Cook mesh */
+      if(! m_pcCooking->cookConvexMesh(cDescription,
+                                       cCookedMeshBuf)) {
+         THROW_ARGOSEXCEPTION("PhysX engine \"" <<
+                              GetId() <<
+                              "\": error creating the cylinder convex mesh");
+      }
+      /* Buffer to store the mesh data */
+      physx::PxDefaultMemoryInputData cMeshData(cCookedMeshBuf.getData(),
+                                                cCookedMeshBuf.getSize());
+      /* Create mesh */
+      physx::PxConvexMesh* pcMesh = m_pcPhysics->createConvexMesh(cMeshData);
+      /* Dispose of vertex array */
+      delete[] pcVertices;
+      /* Return mesh */
+      return pcMesh;
+   }
+
+   /****************************************/
+   /****************************************/
+
+   physx::PxConvexMeshGeometry* CreateCylinderGeometry(CPhysXEngine& c_physx_engine,
+                                                       physx::PxReal f_radius,
+                                                       physx::PxReal f_height) {
+      return new physx::PxConvexMeshGeometry(
+         &c_physx_engine.GetCylinderMesh(),
+         physx::PxMeshScale(
+            physx::PxVec3(f_radius,
+                          f_radius,
+                          f_height),
+            physx::PxQuat::createIdentity()));
    }
 
    /****************************************/

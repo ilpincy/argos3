@@ -142,18 +142,42 @@ namespace argos {
        * Static friction = 0.7, dynamic friction = 0.5, restitution coefficient = 0.1
        * @return The default material for the models.
        */
-      inline physx::PxMaterial& GetDefaultMaterial() {
+      inline const physx::PxMaterial& GetDefaultMaterial() const {
          return *m_pcDefaultMaterial;
       }
 
       /**
-       * Returns the arena ground.
-       * @return The arena ground.
+       * Returns the body of the arena ground.
+       * @return The body of the arena ground.
        */
-      inline physx::PxRigidStatic& GetGround() {
-         return *m_pcGround;
+      inline const physx::PxRigidStatic& GetGroundBody() const {
+         return *m_pcGroundBody;
       }
 
+      /**
+       * Returns the shape of the arena ground.
+       * @return The shape of the arena ground.
+       */
+      inline const physx::PxShape& GetGroundShape() const {
+         return *m_pcGroundShape;
+      }
+
+      /**
+       * Returns the cylinder mesh.
+       * @return The cylinder mesh.
+       */
+      inline physx::PxConvexMesh& GetCylinderMesh() {
+         return *m_pcCylinderMesh;
+      }
+
+   private:
+
+      /**
+       * Internally used to create the cylinder mesh.
+       * The mesh is 1m tall and has a radius of 1m.
+       * @return The cylinder mesh.
+       */
+      physx::PxConvexMesh* CreateCylinderMesh();
 
    private:
 
@@ -203,9 +227,13 @@ namespace argos {
 
       /** The default model material */
       physx::PxMaterial* m_pcDefaultMaterial;
-      /** The ground plane */
-      physx::PxRigidStatic* m_pcGround;
+      /** The ground plane body */
+      physx::PxRigidStatic* m_pcGroundBody;
+      /** The ground plane shape */
+      physx::PxShape* m_pcGroundShape;
 
+      /** The cylinder mesh */
+      physx::PxConvexMesh* m_pcCylinderMesh;
    };
 
    /****************************************/
@@ -281,6 +309,20 @@ namespace argos {
       c_quaternion.SetZ(c_pxquat.z);
    }
 
+   /**
+    * Creates a cylinder geometry with the given dimensions.
+    * The cylinder bases are parallel to the XY plane and the
+    * reference point of the cylinder corresponds to its center
+    * of mass.
+    * @param c_physx_engine The engine that will manage the cylinder.
+    * @param f_radius The radius of the cylinder.
+    * @param f_height The height of the cylinder.
+    * @return A geometry for the wanted cylinder.
+    */
+   extern physx::PxConvexMeshGeometry* CreateCylinderGeometry(CPhysXEngine& c_physx_engine,
+                                                              physx::PxReal f_radius,
+                                                              physx::PxReal f_height);
+
    /****************************************/
    /****************************************/
 
@@ -322,7 +364,7 @@ namespace argos {
    REGISTER_PHYSX_OPERATION(CPhysXOperationAddEntity,                   \
                             CPhysXOperationAdd ## SPACE_ENTITY,         \
                             SPACE_ENTITY);
-   
+
 #define REGISTER_STANDARD_PHYSX_OPERATION_REMOVE_ENTITY(SPACE_ENTITY)   \
    class CPhysXOperationRemove ## SPACE_ENTITY : public CPhysXOperationRemoveEntity { \
 public:                                                                 \
@@ -339,7 +381,7 @@ void ApplyTo(CPhysXEngine& c_engine,                                    \
    REGISTER_PHYSX_OPERATION(CPhysXOperationRemoveEntity,                \
       CPhysXOperationRemove ## SPACE_ENTITY,                            \
       SPACE_ENTITY);
-   
+
 #define REGISTER_STANDARD_PHYSX_OPERATIONS_ON_ENTITY(SPACE_ENTITY, DYN2D_ENTITY) \
    REGISTER_STANDARD_PHYSX_OPERATION_ADD_ENTITY(SPACE_ENTITY, DYN2D_ENTITY) \
    REGISTER_STANDARD_PHYSX_OPERATION_REMOVE_ENTITY(SPACE_ENTITY)
