@@ -44,7 +44,8 @@ else(APPLE)
   #
   # Align doubles for higher performance
   # Also: required by the PhysX engine
-  add_definitions(-malign-double)
+  set(ARGOS_PC_CFLAGS -malign-double)
+  add_definitions(${ARGOS_PC_CFLAGS})
   # Avoid discarding unused symbols to allow plugins to work
   set(CMAKE_SHARED_LINKER_FLAGS "-Wl,--no-as-needed")
   set(ARGOS_SHARED_LIBRARY_EXTENSION "so")
