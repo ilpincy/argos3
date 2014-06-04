@@ -98,11 +98,8 @@ namespace argos {
        * Create a filter to exclude some shapes from the overlap results
        */
       CPhysXEngine::CQueryIgnoreShapes cIgnoreShapes;
-      physx::PxShape** ppcGroundShapes = new physx::PxShape*[1];
       /* Exclude ground shape */
-      const_cast<CPhysXEngine&>(GetPhysXEngine()).GetGround().getShapes(ppcGroundShapes, 1);
-      cIgnoreShapes.Ignore(ppcGroundShapes[0]);
-      delete[] ppcGroundShapes;
+      cIgnoreShapes.Ignore(&GetPhysXEngine().GetGroundShape());
       /* Exclude this object's shapes */
       for(size_t i = 0; i < GetShapes().size(); ++i) {
          cIgnoreShapes.Ignore(GetShapes()[i]);
