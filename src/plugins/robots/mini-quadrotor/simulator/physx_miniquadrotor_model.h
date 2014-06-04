@@ -21,10 +21,6 @@ namespace argos {
 
    public:
 
-      typedef std::map<std::string, CPhysXModel*> TMap;
-
-   public:
-
       CPhysXMiniQuadrotorModel(CPhysXEngine& c_engine,
                                CMiniQuadrotorEntity& c_entity);
 
