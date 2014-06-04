@@ -23,29 +23,6 @@ set(ARGOS3_SOURCES_PLUGINS_SIMULATOR_PHYSICS_ENGINES_PHYSX
   physx_single_body_object_model.cpp)
 
 #
-# Set the link path, depending on the architecture
-#
-if(CMAKE_SIZEOF_VOID_P EQUAL 4)
-  # 32 bits
-  if(APPLE)
-    # Mac OSX
-    link_directories(${CMAKE_SOURCE_DIR}/plugins/simulator/physics_engines/physx/physx_dist/lib/osx32)
-  else(APPLE)
-    # Linux
-    link_directories(${CMAKE_SOURCE_DIR}/plugins/simulator/physics_engines/physx/physx_dist/lib/linux32)
-  endif(APPLE)
-else(CMAKE_SIZEOF_VOID_P EQUAL 4)
-  # 64 bits
-  if(APPLE)
-    # Mac OSX
-    link_directories(${CMAKE_SOURCE_DIR}/plugins/simulator/physics_engines/physx/physx_dist/lib/osx64)
-  else(APPLE)
-    # Linux
-    link_directories(${CMAKE_SOURCE_DIR}/plugins/simulator/physics_engines/physx/physx_dist/lib/linux64)
-  endif(APPLE)
-endif(CMAKE_SIZEOF_VOID_P EQUAL 4)
-
-#
 # Create physx engine plugin library
 #
 # Create library
