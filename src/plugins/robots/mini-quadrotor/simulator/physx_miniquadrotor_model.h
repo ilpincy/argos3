@@ -29,6 +29,7 @@ namespace argos {
    private:
 
       CMiniQuadrotorEntity& m_cMiniQuadrotorEntity;
+      physx::PxRigidDynamic* m_pcBody;
    };
 
 }

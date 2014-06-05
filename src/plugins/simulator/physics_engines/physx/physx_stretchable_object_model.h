@@ -31,36 +31,17 @@ namespace argos {
    public:
 
       CPhysXStretchableObjectModel(CPhysXEngine& c_engine,
-                                   ENTITY& c_entity);
-      virtual ~CPhysXStretchableObjectModel();
+                                   ENTITY& c_entity) :
+         CPhysXSingleBodyObjectModel(c_engine, c_entity),
+         m_fMass(c_entity.GetMass()) {}
 
-      virtual bool MoveTo(const CVector3& c_position,
-                          const CQuaternion& c_orientation,
-                          bool b_check_only = false);
-
-      virtual void Reset();
-
-      virtual void CalculateBoundingBox();
-
-      virtual void UpdateEntityStatus();
-
-      virtual bool IsCollidingWithSomething() const;
+      virtual ~CPhysXStretchableObjectModel() {}
 
    protected:
 
-      union {
-         physx::PxRigidActor*   m_pcGenericBody;
-         physx::PxRigidDynamic* m_pcDynamicBody;
-         physx::PxRigidStatic*  m_pcStaticBody;
-      };
       Real m_fMass;
    };
 
 }
-
-/*
- * Include template implementation
- */
-#include <argos3/plugins/simulator/physics_engines/physx/physx_stretchable_object_model_impl.h>
 
 #endif

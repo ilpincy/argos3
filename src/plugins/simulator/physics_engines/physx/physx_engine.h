@@ -311,9 +311,17 @@ namespace argos {
 
    /**
     * Creates a cylinder geometry with the given dimensions.
+    * <p>
     * The cylinder bases are parallel to the XY plane and the
     * reference point of the cylinder corresponds to its center
     * of mass.
+    * </p>
+    * <p>
+    * Internally, this function allocates the geometry with a <tt>new</tt>.
+    * Since geometries are copied inside the shapes, once you're done
+    * creating shapes with this geometry, you must <tt>delete</tt>
+    * this geometry to avoid memory leaks.
+    * </p>
     * @param c_physx_engine The engine that will manage the cylinder.
     * @param f_radius The radius of the cylinder.
     * @param f_height The height of the cylinder.

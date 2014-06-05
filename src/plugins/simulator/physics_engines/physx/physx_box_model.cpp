@@ -34,40 +34,46 @@ namespace argos {
       physx::PxTransform cTranslation2(cPos);
       physx::PxTransform cFinalTrans = cTranslation2 * cRotation * cTranslation1;
       /* Create the box geometry */
-      GetGeometries().push_back(new physx::PxBoxGeometry(cHalfSize));
+      physx::PxBoxGeometry cGeometry(cHalfSize);
       /* Create the box body */
       if(GetEmbodiedEntity().IsMovable()) {
          /*
           * The box is movable
           */
          /* Create the body in its initial position and orientation */
-         m_pcDynamicBody = GetPhysXEngine().GetPhysics().createRigidDynamic(cFinalTrans);
+         physx::PxRigidDynamic* pcBody =
+            GetPhysXEngine().GetPhysics().createRigidDynamic(cFinalTrans);
          /* Enable CCD on the body */
-         m_pcDynamicBody->setRigidBodyFlag(physx::PxRigidBodyFlag::eENABLE_CCD, true);
+         pcBody->setRigidBodyFlag(physx::PxRigidBodyFlag::eENABLE_CCD, true);
          /* Create the shape */
-         GetShapes().push_back(m_pcDynamicBody->createShape(*GetGeometries().back(),
-                                                            GetPhysXEngine().GetDefaultMaterial()));
+         physx::PxShape* pcShape =
+            pcBody->createShape(cGeometry,
+                                GetPhysXEngine().GetDefaultMaterial());
+         pcShape->userData = this;
          /* Set body mass */
-         physx::PxRigidBodyExt::setMassAndUpdateInertia(*m_pcDynamicBody, m_fMass);
+         physx::PxRigidBodyExt::setMassAndUpdateInertia(*pcBody, m_fMass);
          /* Add body to the scene */
-         GetPhysXEngine().GetScene().addActor(*m_pcDynamicBody);
-         /* Set this as the body for the base class */
-         SetBody(m_pcDynamicBody);
+         GetPhysXEngine().GetScene().addActor(*pcBody);
+         /* Setup the body */
+         SetupBody(pcBody);
       }
       else {
          /*
           * The box is not movable
           */
          /* Create the body in its initial position and orientation */
-         m_pcStaticBody = GetPhysXEngine().GetPhysics().createRigidStatic(cFinalTrans);
+         physx::PxRigidStatic* pcBody =
+            GetPhysXEngine().GetPhysics().createRigidStatic(cFinalTrans);
          /* Create the shape */
-         GetShapes().push_back(m_pcStaticBody->createShape(*GetGeometries().back(),
-                                                           GetPhysXEngine().GetDefaultMaterial()));
+         physx::PxShape* pcShape =
+            pcBody->createShape(cGeometry,
+                                GetPhysXEngine().GetDefaultMaterial());
+         pcShape->userData = this;
          /* Add body to the scene */
-         GetPhysXEngine().GetScene().addActor(*m_pcStaticBody);
+         GetPhysXEngine().GetScene().addActor(*pcBody);
+         /* Setup the body */
+         SetupBody(pcBody);
       }
-      /* Assign the user data pointer to this model */
-      GetShapes().back()->userData = this;
       /* Calculate bounding box */
       CalculateBoundingBox();
    }

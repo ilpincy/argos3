@@ -1,4 +1,4 @@
-#include "physx_single_body_object_model.h"
+#include "physx_multi_body_object_model.h"
 #include <argos3/core/simulator/entity/composable_entity.h>
 
 namespace argos {
@@ -6,50 +6,25 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   CPhysXSingleBodyObjectModel::CPhysXSingleBodyObjectModel(CPhysXEngine& c_engine,
-                                                            CComposableEntity& c_entity) :
+   CPhysXMultiBodyObjectModel::CPhysXMultiBodyObjectModel(CPhysXEngine& c_engine,
+                                                          CComposableEntity& c_entity) :
       CPhysXModel(c_engine, c_entity.GetComponent<CEmbodiedEntity>("body")),
-      m_cEntity(c_entity),
-      m_pcGenericBody(NULL) {}
+      m_cEntity(c_entity) {}
 
    /****************************************/
    /****************************************/
 
-   CPhysXSingleBodyObjectModel::~CPhysXSingleBodyObjectModel() {
-      m_pcGenericBody->release();
+   CPhysXMultiBodyObjectModel::~CPhysXMultiBodyObjectModel() {
    }
 
    /****************************************/
    /****************************************/
 
-   void CPhysXSingleBodyObjectModel::SetupBody(physx::PxRigidActor* pc_body) {
-      /* Cleanup lists of shapes and geometries */
-      m_vecShapes.clear();
-      m_vecGeometries.clear();
-      /* Fill up the lists */
-      size_t unShapes = pc_body->getNbShapes();
-      physx::PxShape** pcShapes = new physx::PxShape*[unShapes];
-      pc_body->getShapes(pcShapes, unShapes);
-      for(size_t i = 0; i < unShapes; ++i) {
-         m_vecShapes.push_back(pcShapes[i]);
-         m_vecGeometries.push_back(&(pcShapes[i]->getGeometry().any()));
-      }
-      /* Assign pointer to body */
-      m_pcGenericBody = pc_body;
-      /* Set the flag to say whether the body is static or dynamic */
-      m_bIsDynamic = (m_pcGenericBody->is<physx::PxRigidDynamic>() != NULL);
-   }
-
-   /****************************************/
-   /****************************************/
-
-   bool CPhysXSingleBodyObjectModel::MoveTo(const CVector3& c_position,
-                                            const CQuaternion& c_orientation,
-                                            bool b_check_only) {
-      /* Can't move a static body */
-      if(! m_bIsDynamic) return false;
+   bool CPhysXMultiBodyObjectModel::MoveTo(const CVector3& c_position,
+                                           const CQuaternion& c_orientation,
+                                           bool b_check_only) {
       /* Save old body pose */
-      physx::PxTransform cOldPose(m_pcDynamicBody->getGlobalPose());
+      physx::PxTransform cOldPose(m_pcBody->getGlobalPose());
       /* Set target position and orientation */
       physx::PxVec3 cPos;
       physx::PxQuat cOrient;
@@ -65,23 +40,23 @@ namespace argos {
       physx::PxTransform cTranslation2(cPos);
       physx::PxTransform cFinalTrans = cTranslation2 * cRotation * cTranslation1;
       /* Make the body into a kinematic actor to move it */
-      m_pcDynamicBody->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, true);
+      m_pcBody->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, true);
       /* Move the body to the target position */
-      m_pcDynamicBody->setGlobalPose(cFinalTrans);
+      m_pcBody->setGlobalPose(cFinalTrans);
       /* Check whether the body is colliding with something */
       bool bIsColliding = IsCollidingWithSomething();
       if(b_check_only || bIsColliding) {
          /* This was only a check or a collision is detected
           * Restore the old pose
           */
-         m_pcDynamicBody->setGlobalPose(cOldPose);
+         m_pcBody->setGlobalPose(cOldPose);
       }
       else {
          /* The change is accepted, update the entity */
          UpdateEntityStatus();
       }
       /* Reset the body into a dynamic actor */
-      m_pcDynamicBody->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, false);
+      m_pcBody->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, false);
       /* Return true if the move was without collisions */
       return !bIsColliding;
    }
@@ -89,9 +64,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CPhysXSingleBodyObjectModel::Reset() {
-      /* No need to reset a static body */
-      if(! m_bIsDynamic) return;
+   void CPhysXMultiBodyObjectModel::Reset() {
       /* Initial position and orientation from embodied entity */
       physx::PxVec3 cInitPos;
       physx::PxQuat cInitOrient;
@@ -107,18 +80,18 @@ namespace argos {
       physx::PxTransform cTranslation2(cInitPos);
       physx::PxTransform cFinalTrans = cTranslation2 * cRotation * cTranslation1;
       /* Make the body into a kinematic actor to move it */
-      m_pcDynamicBody->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, true);
+      m_pcBody->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, true);
       /* Move the body to the target position */
-      m_pcDynamicBody->setGlobalPose(cFinalTrans);
+      m_pcBody->setGlobalPose(cFinalTrans);
       /* Reset the body into a dynamic actor */
-      m_pcDynamicBody->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, false);
+      m_pcBody->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, false);
    }
 
    /****************************************/
    /****************************************/
 
-   void CPhysXSingleBodyObjectModel::CalculateBoundingBox() {
-      physx::PxBounds3 cPxAABB(m_pcGenericBody->getWorldBounds());
+   void CPhysXMultiBodyObjectModel::CalculateBoundingBox() {
+      physx::PxBounds3 cPxAABB(m_pcBody->getWorldBounds());
       PxVec3ToCVector3(cPxAABB.minimum, GetBoundingBox().MinCorner);
       PxVec3ToCVector3(cPxAABB.maximum, GetBoundingBox().MaxCorner);
    }
@@ -126,13 +99,11 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CPhysXSingleBodyObjectModel::UpdateEntityStatus() {
-      /* No need to update a static entity */
-      if(! m_bIsDynamic) return;
+   void CPhysXMultiBodyObjectModel::UpdateEntityStatus() {
       /* Update bounding box */
       CalculateBoundingBox();
       /* Get the global pose of the object */
-      physx::PxTransform cTrans = m_pcGenericBody->getGlobalPose();
+      physx::PxTransform cTrans = m_pcBody->getGlobalPose();
       /* Vector to the object base */
       /* Transform base */
       physx::PxVec3 cBaseGlobal(cTrans.rotate(m_cARGoSReferencePoint));
@@ -152,7 +123,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   bool CPhysXSingleBodyObjectModel::IsCollidingWithSomething() const {
+   bool CPhysXMultiBodyObjectModel::IsCollidingWithSomething() const {
       /* Set query flags to accept any overlap */
       static physx::PxQueryFilterData cQueryFlags(
          physx::PxQueryFlag::eANY_HIT |
@@ -160,7 +131,7 @@ namespace argos {
          physx::PxQueryFlag::eDYNAMIC |
          physx::PxQueryFlag::ePREFILTER);
       /* Get body pose transformation */
-      physx::PxTransform cTrans(m_pcGenericBody->getGlobalPose());
+      physx::PxTransform cTrans(m_pcBody->getGlobalPose());
       /* Buffer to store query results */
       physx::PxOverlapBuffer cOverlapBuf;
       /*
@@ -173,8 +144,7 @@ namespace argos {
       for(size_t i = 0; i < m_vecShapes.size(); ++i) {
          cIgnoreShapes.Ignore(m_vecShapes[i]);
       }
-      /* Perform the query
-       * It returns true if anything is overlapping this object */
+      /* Perform the query - it returns true if anything is overlapping this object */
       for(size_t i = 0; i < m_vecGeometries.size(); ++i) {
          if(GetPhysXEngine().GetScene().overlap(*m_vecGeometries[i],
                                                 cTrans,

@@ -28,7 +28,7 @@ namespace argos {
    const Real DEFAULT_DYNAMIC_FRICTION        = 0.5f;
    const Real DEFAULT_RESTITUTION_COEFFICIENT = 0.1f;
 
-   static const size_t CYLINDER_NUM_SLICES = 20;
+   static const size_t CYLINDER_NUM_SLICES = 40;
 
    /****************************************/
    /****************************************/

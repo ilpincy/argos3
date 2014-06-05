@@ -59,35 +59,31 @@ namespace argos {
       physx::PxTransform cTranslation2(cPos);
       physx::PxTransform cFinalTrans = cTranslation2 * cRotation * cTranslation1;
       /* Create the capsule geometry for the arms */
-      physx::PxCapsuleGeometry* pcArmGeometry =
-         new physx::PxCapsuleGeometry(BODY_HALF_HEIGHT,
-                                      BODY_HALF_WIDTH);
-      GetGeometries().push_back(pcArmGeometry);
+      physx::PxCapsuleGeometry cArmGeometry(BODY_HALF_HEIGHT,
+                                            BODY_HALF_WIDTH);
       /* Create the body in its initial position and orientation */
-      SetBody(GetPhysXEngine().GetPhysics().createRigidDynamic(cFinalTrans));
+      m_pcBody = GetPhysXEngine().GetPhysics().createRigidDynamic(cFinalTrans);
       /* Enable CCD on the body */
-      GetBody()->setRigidBodyFlag(physx::PxRigidBodyFlag::eENABLE_CCD, true);
+      m_pcBody->setRigidBodyFlag(physx::PxRigidBodyFlag::eENABLE_CCD, true);
       /* Create the shape for the roll arm */
       physx::PxShape* pcRollArmShape =
-         GetBody()->createShape(*pcArmGeometry,
+         m_pcBody->createShape(cArmGeometry,
                                GetPhysXEngine().GetDefaultMaterial());
-      GetShapes().push_back(pcRollArmShape);
-      /* Assign the user data pointer to this model */
       pcRollArmShape->userData = this;
       /* Create the shape for the pitch arm */
       physx::PxShape* pcPitchArmShape =
-         GetBody()->createShape(*pcArmGeometry,
+         m_pcBody->createShape(cArmGeometry,
                                GetPhysXEngine().GetDefaultMaterial(),
                                PITCH_ARM_POSE);
-      GetShapes().push_back(pcPitchArmShape);
-      /* Assign the user data pointer to this model */
       pcPitchArmShape->userData = this;
       /* Set body mass and inertia tensor */
-      GetBody()->setMass(BODY_MASS);
-      GetBody()->setMassSpaceInertiaTensor(INERTIA_TENSOR_DIAGONAL);
+      m_pcBody->setMass(BODY_MASS);
+      m_pcBody->setMassSpaceInertiaTensor(INERTIA_TENSOR_DIAGONAL);
       /* Add body to the scene */
-      GetPhysXEngine().GetScene().addActor(*GetBody());
-      /* Calculate bounding box */
+      GetPhysXEngine().GetScene().addActor(*m_pcBody);
+      /* Setup the body model data */
+      SetupBody(m_pcBody);
+      /* Now we can calculate the bounding box */
       CalculateBoundingBox();
    }
 
@@ -96,7 +92,8 @@ namespace argos {
 
    void CPhysXMiniQuadrotorModel::UpdateFromEntityStatus() {
       /* Get desired rotor velocities */
-      const Real* pfRotorVel = m_cMiniQuadrotorEntity.GetRotorEquippedEntity().GetRotorVelocities();
+      const Real* pfRotorVel =
+         m_cMiniQuadrotorEntity.GetRotorEquippedEntity().GetRotorVelocities();
       /* Calculate the squares */
       Real pfSquareRotorVel[4] = {
          pfRotorVel[0] * pfRotorVel[0],
@@ -118,12 +115,12 @@ namespace argos {
          DRAG_COEFFICIENT * (pfSquareRotorVel[0] - pfSquareRotorVel[1] + pfSquareRotorVel[2] - pfSquareRotorVel[3]));
       /* Apply uplift */
       physx::PxRigidBodyExt::addLocalForceAtLocalPos(
-         *GetBody(),
+         *m_pcBody,
          physx::PxVec3(0.0f, 0.0f, fUpliftInput),
          physx::PxVec3(0.0f));
       /* Apply rotational moment */
-      physx::PxVec3 cTorque = (-GetBody()->getAngularVelocity()).cross(INERTIA_TENSOR * GetBody()->getAngularVelocity()) + cTorqueInputs;
-      GetBody()->addTorque(cTorque);
+      physx::PxVec3 cTorque = (-m_pcBody->getAngularVelocity()).cross(INERTIA_TENSOR * m_pcBody->getAngularVelocity()) + cTorqueInputs;
+      m_pcBody->addTorque(cTorque);
    }
 
    /****************************************/

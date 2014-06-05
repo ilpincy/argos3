@@ -15,7 +15,9 @@ namespace argos {
                                             CCylinderEntity& c_entity) :
       CPhysXStretchableObjectModel(c_engine, c_entity) {
       /* Set center of cylinder base */
-      SetARGoSReferencePoint(physx::PxVec3(0.0f, 0.0f, -c_entity.GetHeight() * 0.5f));
+      SetARGoSReferencePoint(physx::PxVec3(0.0f,
+                                           0.0f,
+                                           -c_entity.GetHeight() * 0.5f));
       /* Get position and orientation in this engine's representation */
       physx::PxVec3 cPos;
       CVector3ToPxVec3(GetEmbodiedEntity().GetPosition(), cPos);
@@ -31,45 +33,53 @@ namespace argos {
       physx::PxTransform cTranslation2(cPos);
       physx::PxTransform cFinalTrans = cTranslation2 * cRotation * cTranslation1;
       /* Create cylinder geometry */
-      GetGeometries().push_back(
+      physx::PxConvexMeshGeometry* pcGeometry =
          CreateCylinderGeometry(c_engine,
                                 c_entity.GetRadius(),
-                                c_entity.GetHeight()));
+                                c_entity.GetHeight());
       /* Create the cylinder body */
       if(GetEmbodiedEntity().IsMovable()) {
          /*
           * The cylinder is movable
           */
          /* Create the body in its initial position and orientation */
-         m_pcDynamicBody = GetPhysXEngine().GetPhysics().createRigidDynamic(cFinalTrans);
+         physx::PxRigidDynamic* pcBody =
+            GetPhysXEngine().GetPhysics().createRigidDynamic(cFinalTrans);
          /* Enable CCD on the body */
-         m_pcDynamicBody->setRigidBodyFlag(physx::PxRigidBodyFlag::eENABLE_CCD, true);
+         pcBody->setRigidBodyFlag(physx::PxRigidBodyFlag::eENABLE_CCD, true);
          /* Create the shape */
-         GetShapes().push_back(m_pcDynamicBody->createShape(*GetGeometries().back(),
-                                                            GetPhysXEngine().GetDefaultMaterial()));
+         physx::PxShape* pcShape =
+            pcBody->createShape(*pcGeometry,
+                                GetPhysXEngine().GetDefaultMaterial());
+         pcShape->userData = this;
          /* Set body mass */
-         physx::PxRigidBodyExt::setMassAndUpdateInertia(*m_pcDynamicBody, m_fMass);
+         physx::PxRigidBodyExt::setMassAndUpdateInertia(*pcBody, m_fMass);
          /* Add body to the scene */
-         GetPhysXEngine().GetScene().addActor(*m_pcDynamicBody);
+         GetPhysXEngine().GetScene().addActor(*pcBody);
          /* Set this as the body for the base class */
-         SetBody(m_pcDynamicBody);
+         SetupBody(pcBody);
       }
       else {
          /*
           * The cylinder is not movable
           */
          /* Create the body in its initial position and orientation */
-         m_pcStaticBody = GetPhysXEngine().GetPhysics().createRigidStatic(cFinalTrans);
+         physx::PxRigidStatic*
+            pcBody = GetPhysXEngine().GetPhysics().createRigidStatic(cFinalTrans);
          /* Create the shape */
-         GetShapes().push_back(m_pcStaticBody->createShape(*GetGeometries().back(),
-                                                           GetPhysXEngine().GetDefaultMaterial()));
+         physx::PxShape* pcShape =
+            pcBody->createShape(*pcGeometry,
+                                GetPhysXEngine().GetDefaultMaterial());
+         pcShape->userData = this;
          /* Add body to the scene */
-         GetPhysXEngine().GetScene().addActor(*m_pcStaticBody);
+         GetPhysXEngine().GetScene().addActor(*pcBody);
+         /* Set this as the body for the base class */
+         SetupBody(pcBody);
       }
-      /* Assign the user data pointer to this model */
-      GetShapes().back()->userData = this;
       /* Calculate bounding box */
       CalculateBoundingBox();
+      /* Cleanup */
+      delete pcGeometry;
    }
 
    /****************************************/
