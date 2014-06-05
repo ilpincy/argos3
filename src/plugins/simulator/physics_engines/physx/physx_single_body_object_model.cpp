@@ -32,6 +32,7 @@ namespace argos {
       for(size_t i = 0; i < unShapes; ++i) {
          m_vecShapes.push_back(pcShapes[i]);
       }
+      delete[] pcShapes;
       /* Assign pointer to body */
       m_pcGenericBody = pc_body;
       /* Set the flag to say whether the body is static or dynamic */
