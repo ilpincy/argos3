@@ -76,14 +76,6 @@ namespace argos {
          m_cARGoSReferencePoint = c_argos_reference_point;
       }
 
-      inline std::vector<physx::PxGeometry*>& GetGeometries() {
-         return m_vecGeometries;
-      }
-
-      inline const std::vector<physx::PxGeometry*>& GetGeometries() const {
-         return m_vecGeometries;
-      }
-
       inline std::vector<physx::PxShape*>& GetShapes() {
          return m_vecShapes;
       }
@@ -102,7 +94,6 @@ namespace argos {
       };
       bool m_bIsDynamic;
       physx::PxVec3                   m_cARGoSReferencePoint;
-      std::vector<physx::PxGeometry*> m_vecGeometries;
       std::vector<physx::PxShape*>    m_vecShapes;
    };
 

@@ -25,14 +25,12 @@ namespace argos {
    void CPhysXSingleBodyObjectModel::SetupBody(physx::PxRigidActor* pc_body) {
       /* Cleanup lists of shapes and geometries */
       m_vecShapes.clear();
-      m_vecGeometries.clear();
       /* Fill up the lists */
       size_t unShapes = pc_body->getNbShapes();
       physx::PxShape** pcShapes = new physx::PxShape*[unShapes];
       pc_body->getShapes(pcShapes, unShapes);
       for(size_t i = 0; i < unShapes; ++i) {
          m_vecShapes.push_back(pcShapes[i]);
-         m_vecGeometries.push_back(&(pcShapes[i]->getGeometry().any()));
       }
       /* Assign pointer to body */
       m_pcGenericBody = pc_body;
@@ -175,8 +173,8 @@ namespace argos {
       }
       /* Perform the query
        * It returns true if anything is overlapping this object */
-      for(size_t i = 0; i < m_vecGeometries.size(); ++i) {
-         if(GetPhysXEngine().GetScene().overlap(*m_vecGeometries[i],
+      for(size_t i = 0; i < m_vecShapes.size(); ++i) {
+         if(GetPhysXEngine().GetScene().overlap(m_vecShapes[i]->getGeometry().any(),
                                                 cTrans,
                                                 cOverlapBuf,
                                                 cQueryFlags,
