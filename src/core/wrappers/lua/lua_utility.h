@@ -1,3 +1,5 @@
+#ifndef LUA_UTILITY_H
+#define LUA_UTILITY_H
 
 /**
  * @file <argos3/core/wrappers/lua/lua_utility.h>
@@ -372,3 +374,4 @@ namespace argos {
 
 }
 
+#endif

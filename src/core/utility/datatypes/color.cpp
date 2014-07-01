@@ -19,6 +19,8 @@ namespace argos {
    CColor CColor::CYAN(0,255,255);
    CColor CColor::YELLOW(255,255,0);
    CColor CColor::ORANGE(255,140,0);
+   CColor CColor::BROWN(165,42,42);
+   CColor CColor::PURPLE(160,32,240);
    CColor CColor::GRAY10(26,26,26);
    CColor CColor::GRAY20(51,51,51);
    CColor CColor::GRAY30(77,77,77);

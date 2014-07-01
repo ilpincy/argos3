@@ -35,6 +35,8 @@ namespace argos {
       static CColor CYAN;
       static CColor YELLOW;
       static CColor ORANGE;
+      static CColor BROWN;
+      static CColor PURPLE;
       static CColor GRAY10;
       static CColor GRAY20;
       static CColor GRAY30;
@@ -149,6 +151,8 @@ namespace argos {
             else if (str_color == "cyan")    *this = CColor::CYAN;
             else if (str_color == "yellow")  *this = CColor::YELLOW;
             else if (str_color == "orange")  *this = CColor::ORANGE;
+            else if (str_color == "brown")   *this = CColor::BROWN;
+            else if (str_color == "purple")  *this = CColor::PURPLE;
             else if (str_color == "gray10")  *this = CColor::GRAY10;
             else if (str_color == "gray20")  *this = CColor::GRAY20;
             else if (str_color == "gray30")  *this = CColor::GRAY30;
@@ -217,6 +221,8 @@ namespace argos {
          else if (c_color == CColor::CYAN)    os << "cyan";
          else if (c_color == CColor::YELLOW)  os << "yellow";
          else if (c_color == CColor::ORANGE)  os << "orange";
+         else if (c_color == CColor::BROWN)   os << "brown";
+         else if (c_color == CColor::PURPLE)  os << "purple";
          else if (c_color == CColor::GRAY10)  os << "gray10";
          else if (c_color == CColor::GRAY20)  os << "gray20";
          else if (c_color == CColor::GRAY30)  os << "gray30";
