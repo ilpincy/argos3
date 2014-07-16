@@ -1,27 +1,6 @@
 #
 # E-puck headers
 #
-# argos3/plugins/robots/e-puck/control_interface
-# set(ARGOS3_HEADERS_PLUGINS_ROBOTS_EPUCK_CONTROLINTERFACE
-#   control_interface/ci_epuck_accelerometer_sensor.h
-#   control_interface/ci_epuck_base_ground_sensor.h
-#   control_interface/ci_epuck_ceiling_camera_sensor.h
-#   control_interface/ci_epuck_distance_scanner_actuator.h
-#   control_interface/ci_epuck_distance_scanner_sensor.h
-#   control_interface/ci_epuck_encoder_sensor.h
-#   control_interface/ci_epuck_gripper_actuator.h
-#   control_interface/ci_epuck_gripper_sensor.h
-#   control_interface/ci_epuck_gyroscopic_sensor.h
-#   control_interface/ci_epuck_light_sensor.h
-#   control_interface/ci_epuck_motor_ground_sensor.h
-#   control_interface/ci_epuck_omnidirectional_camera_sensor.h
-#   control_interface/ci_epuck_proximity_sensor.h
-#   control_interface/ci_epuck_range_and_bearing_actuator.h
-#   control_interface/ci_epuck_range_and_bearing_sensor.h
-#   control_interface/ci_epuck_turret_actuator.h
-#   control_interface/ci_epuck_turret_encoder_sensor.h
-#   control_interface/ci_epuck_turret_torque_sensor.h
-#   control_interface/ci_epuck_wheel_speed_sensor.h)
 # argos3/plugins/robots/e-puck/simulator
 if(ARGOS_BUILD_FOR_SIMULATOR)
   set(ARGOS3_HEADERS_PLUGINS_ROBOTS_EPUCK_SIMULATOR
@@ -32,21 +11,6 @@ endif(ARGOS_BUILD_FOR_SIMULATOR)
 #
 # E-puck sources
 #
-# set(ARGOS3_SOURCES_PLUGINS_ROBOTS_EPUCK
-#   ${ARGOS3_HEADERS_PLUGINS_ROBOTS_EPUCK_CONTROLINTERFACE}
-#   control_interface/ci_epuck_base_ground_sensor.cpp
-#   control_interface/ci_epuck_distance_scanner_actuator.cpp
-#   control_interface/ci_epuck_distance_scanner_sensor.cpp
-#   control_interface/ci_epuck_encoder_sensor.cpp
-#   control_interface/ci_epuck_gripper_actuator.cpp
-#   control_interface/ci_epuck_light_sensor.cpp
-#   control_interface/ci_epuck_motor_ground_sensor.cpp
-#   control_interface/ci_epuck_proximity_sensor.cpp
-#   control_interface/ci_epuck_turret_actuator.cpp
-#   control_interface/ci_epuck_turret_encoder_sensor.cpp
-#   control_interface/ci_epuck_turret_torque_sensor.cpp
-#   control_interface/ci_epuck_wheel_speed_sensor.cpp)
-
 if(ARGOS_BUILD_FOR_SIMULATOR)
   set(ARGOS3_SOURCES_PLUGINS_ROBOTS_EPUCK
     ${ARGOS3_SOURCES_PLUGINS_ROBOTS_EPUCK}
@@ -79,13 +43,13 @@ if(ARGOS_BUILD_FOR_SIMULATOR AND ARGOS_COMPILE_QTOPENGL)
   target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR} argos3plugin_${ARGOS_BUILD_FOR}_qtopengl)
 endif(ARGOS_BUILD_FOR_SIMULATOR AND ARGOS_COMPILE_QTOPENGL)
 
-# install(FILES ${ARGOS3_HEADERS_PLUGINS_ROBOTS_EPUCK_CONTROLINTERFACE} DESTINATION include/argos3/plugins/robots/e-puck/control_interface)
+install(FILES ${ARGOS3_HEADERS_PLUGINS_ROBOTS_EPUCK_CONTROLINTERFACE} DESTINATION include/argos3/plugins/robots/e-puck/control_interface)
 
 if(ARGOS_BUILD_FOR_SIMULATOR)
   install(FILES ${ARGOS3_HEADERS_PLUGINS_ROBOTS_EPUCK_SIMULATOR}      DESTINATION include/argos3/plugins/robots/e-puck/simulator)
 endif(ARGOS_BUILD_FOR_SIMULATOR)
 
-install(TARGETS argos3plugin_${ARGOS_BUILD_FOR}_epuck
+install(TARGETS argos3plugin_${ARGOS_BUILD_FOR}
   RUNTIME DESTINATION bin
   LIBRARY DESTINATION lib/argos3
   ARCHIVE DESTINATION lib/argos3)
