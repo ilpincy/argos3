@@ -157,7 +157,7 @@ namespace argos {
        * @see CGroundRotZOnlySensor
        */
       virtual CColor GetFloorColor(const CVector2& c_pos_on_floor) {
-         return CColor::BLACK;
+         return CColor::WHITE;
       }
 
       /**
@@ -181,7 +181,7 @@ namespace argos {
        * If the entity is embodied, the movement is allowed only if the
        * object does not collide with anything once in the new position.
        * If the entity is just positional, the movement is always allowed.
-       * @oaram c_entity The positional or embodied component of the entity to move.
+       * @param c_entity The positional or embodied component of the entity to move.
        * @param c_position The wanted position.
        * @param c_orientation The wanted orientation.
        * @param b_check_only If <tt>false</tt>, the movement is executed; otherwise, the object is not actually moved.
