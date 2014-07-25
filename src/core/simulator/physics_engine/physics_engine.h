@@ -50,7 +50,7 @@ namespace argos {
        * <ul>
        * <li>CPhysicsEngine::Init()
        * <li>CSpace::Init()
-       * <li>CPhysicsEngine::PostSpaceInitInit()
+       * <li>CPhysicsEngine::PostSpaceInit()
        * </ul>
        * @throw CARGoSException if an error occurs
        * @see Init()
@@ -79,12 +79,12 @@ namespace argos {
       /**
        * Returns <tt>true</tt> if this engine has entities that must be transferred to another engine.
        */
-      virtual bool IsEntityTransferNeeded() const  = 0;
+      virtual bool IsEntityTransferNeeded() const = 0;
 
       /**
        * Executes the transfer of entities to other engines.
        */
-      virtual void TransferEntities()  = 0;
+      virtual void TransferEntities() = 0;
 
       /**
        * Check whether an object in this engine intersects the given ray.
