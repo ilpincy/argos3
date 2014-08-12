@@ -250,39 +250,53 @@ namespace argos {
 
    /****************************************/
    /****************************************/
+
+   struct SDynamics2DSegmentHitData {
+      const CRay3& Ray;
+      Real T;
+      CEmbodiedEntity* Body;
+
+      SDynamics2DSegmentHitData(const CRay3& c_ray) :
+         Ray(c_ray),
+         T(2.0f),
+         Body(NULL) {}
+   };
+
+   static void Dynamics2DSegmentQueryFunc(cpShape* pt_shape, cpFloat f_t, cpVect, void* pt_data) {
+      /* Get the data associated to this query */
+      SDynamics2DSegmentHitData& sData = *reinterpret_cast<SDynamics2DSegmentHitData*>(pt_data);
+      /* Hit found, is it within the limits? */
+      CDynamics2DModel& cModel = *reinterpret_cast<CDynamics2DModel*>(pt_shape->body->data);
+      CVector3 cIntersectionPoint;
+      sData.Ray.GetPoint(cIntersectionPoint, f_t);
+      if((cIntersectionPoint.GetZ() >= cModel.GetBoundingBox().MinCorner.GetZ()) &&
+         (cIntersectionPoint.GetZ() <= cModel.GetBoundingBox().MaxCorner.GetZ()) ) {
+         /* Yes, a real hit */
+         if(f_t < sData.T) {
+            /* Also the closest so far */
+            sData.T = f_t;
+            sData.Body = &cModel.GetEmbodiedEntity();
+         }
+      }
+   }
    
    CEmbodiedEntity* CDynamics2DEngine::CheckIntersectionWithRay(Real& f_t_on_ray,
                                                                 const CRay3& c_ray) const {
-      /* Structure to store the query data */
-      cpSegmentQueryInfo tInfo;
-      /* Query the first hit along the ray */
-      cpShape* ptHit = cpSpaceSegmentQueryFirst(
+      /* Query all hits along the ray */
+      SDynamics2DSegmentHitData sHitData(c_ray);
+      cpSpaceSegmentQuery(
          m_ptSpace,
          cpv(c_ray.GetStart().GetX(), c_ray.GetStart().GetY()),
          cpv(c_ray.GetEnd().GetX()  , c_ray.GetEnd().GetY()  ),
          CP_ALL_LAYERS,
          CP_NO_GROUP,
-         &tInfo);
+         Dynamics2DSegmentQueryFunc,
+         &sHitData);
       /* Check whether we have a hit */
-      if(ptHit) {
-         /* Hit found, is it within the limits? */
-         CDynamics2DModel& cModel = *reinterpret_cast<CDynamics2DModel*>(ptHit->body->data);
-      	 CVector3 cIntersectionPoint;
-      	 c_ray.GetPoint(cIntersectionPoint, tInfo.t);
-      	 if((cIntersectionPoint.GetZ() >= cModel.GetBoundingBox().MinCorner.GetZ()) &&
-      			(cIntersectionPoint.GetZ() <= cModel.GetBoundingBox().MaxCorner.GetZ()) ) {
-            /* Yes, a real hit */
-            f_t_on_ray = tInfo.t;
-            return &cModel.GetEmbodiedEntity();
-      	 }
-      	 else {
-            return NULL;
-      	 }
+      if(sHitData.Body != NULL) {
+         f_t_on_ray = sHitData.T;
       }
-      else {
-         /* Hit not found */
-         return NULL;
-      }
+      return sHitData.Body;
    }
 
    /****************************************/

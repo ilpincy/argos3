@@ -233,7 +233,7 @@ namespace argos {
        * @param c_vector2 The other vector.
        * @return <tt>true</tt> if this vector and the passed one are equal.
        */
-      inline bool operator==(const CVector2& c_vector2) {
+      inline bool operator==(const CVector2& c_vector2) const {
          return (m_fX == c_vector2.m_fX && m_fY == c_vector2.m_fY);
       }
 
@@ -243,7 +243,7 @@ namespace argos {
        * @param c_vector2 The other vector.
        * @return <tt>true</tt> if this vector and the passed one are not equal.
        */
-      inline bool operator!=(const CVector2& c_vector2) {
+      inline bool operator!=(const CVector2& c_vector2) const {
          return (m_fX != c_vector2.m_fX || m_fY != c_vector2.m_fY);
       }
 

@@ -281,6 +281,25 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   void CQTOpenGLUserFunctions::DrawText(const std::string& str_text,
+                                         const CVector3& c_center_offset,
+                                         const CColor& c_color) {
+      glDisable(GL_LIGHTING);
+      glDisable(GL_CULL_FACE);
+      glColor3ub(c_color.GetRed(),
+                 c_color.GetGreen(),
+                 c_color.GetBlue());
+      GetOpenGLWidget().renderText(c_center_offset.GetX(),
+                                   c_center_offset.GetY(),
+                                   c_center_offset.GetZ(),
+                                   str_text.c_str());
+      glEnable(GL_CULL_FACE);
+      glEnable(GL_LIGHTING);
+   }
+
+   /****************************************/
+   /****************************************/
+
    void CQTOpenGLUserFunctions::DrawPolygon(const std::vector<CVector3>& vec_points,
                                             const CColor& c_color) {
       if (vec_points.size() > 2)
@@ -318,4 +337,3 @@ namespace argos {
    /****************************************/
 
 }
-

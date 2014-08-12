@@ -50,7 +50,7 @@ namespace argos {
        * <ul>
        * <li>CPhysicsEngine::Init()
        * <li>CSpace::Init()
-       * <li>CPhysicsEngine::PostSpaceInitInit()
+       * <li>CPhysicsEngine::PostSpaceInit()
        * </ul>
        * @throw CARGoSException if an error occurs
        * @see Init()

@@ -83,52 +83,67 @@ namespace argos {
       CVector3 cSensorToLight;
       /* Buffers to contain data about the intersection */
       SEmbodiedEntityIntersectionItem sIntersection;
-      /* List of light entities */
-      CSpace::TMapPerType& mapLights = m_cSpace.GetEntitiesByType("light");
-      /* Go through the sensors */
-      for(UInt32 i = 0; i < m_tReadings.size(); ++i) {
-         /* Set ray start */
-         cRayStart = m_pcLightEntity->GetSensor(i).Position;
-         cRayStart.Rotate(m_pcEmbodiedEntity->GetOrientation());
-         cRayStart += m_pcEmbodiedEntity->GetPosition();
-         /* Go through all the light entities */
-         for(CSpace::TMapPerType::iterator it = mapLights.begin();
-             it != mapLights.end();
-             ++it) {
-            /* Get a reference to the light */
-            CLightEntity& cLight = *any_cast<CLightEntity*>(it->second);
-            /* Consider the light only if it has non zero intensity */
-            if(cLight.GetIntensity() > 0.0f) {
-               /* Set ray end to light position */
-               cScanningRay.Set(cRayStart, cLight.GetPosition());
-               /* Check occlusions */
-               if(! GetClosestEmbodiedEntityIntersectedByRay(sIntersection,
-                                                             cScanningRay)) {
-                  /* No occlusion, the light is visibile */
-                  if(m_bShowRays) {
-                     m_pcControllableEntity->AddCheckedRay(false, cScanningRay);
+      /* Get the map of light entities */
+      CSpace::TMapPerTypePerId::iterator itLights = m_cSpace.GetEntityMapPerTypePerId().find("light");
+      if (itLights != m_cSpace.GetEntityMapPerTypePerId().end()) {
+         CSpace::TMapPerType& mapLights = itLights->second;
+         /* Go through the sensors */
+         for(UInt32 i = 0; i < m_tReadings.size(); ++i) {
+            /* Set ray start */
+            cRayStart = m_pcLightEntity->GetSensor(i).Position;
+            cRayStart.Rotate(m_pcEmbodiedEntity->GetOrientation());
+            cRayStart += m_pcEmbodiedEntity->GetPosition();
+            /* Go through all the light entities */
+            for(CSpace::TMapPerType::iterator it = mapLights.begin();
+                it != mapLights.end();
+                ++it) {
+               /* Get a reference to the light */
+               CLightEntity& cLight = *any_cast<CLightEntity*>(it->second);
+               /* Consider the light only if it has non zero intensity */
+               if(cLight.GetIntensity() > 0.0f) {
+                  /* Set ray end to light position */
+                  cScanningRay.Set(cRayStart, cLight.GetPosition());
+                  /* Check occlusions */
+                  if(! GetClosestEmbodiedEntityIntersectedByRay(sIntersection,
+                                                                cScanningRay)) {
+                     /* No occlusion, the light is visibile */
+                     if(m_bShowRays) {
+                        m_pcControllableEntity->AddCheckedRay(false, cScanningRay);
+                     }
+                     /* Calculate reading */
+                     cScanningRay.ToVector(cSensorToLight);
+                     m_tReadings[i] += CalculateReading(cSensorToLight.Length(),
+                                                        cLight.GetIntensity());
                   }
-                  /* Calculate reading */
-                  cScanningRay.ToVector(cSensorToLight);
-                  m_tReadings[i] += CalculateReading(cSensorToLight.Length(),
-                                                     cLight.GetIntensity());
-               }
-               else {
-                  /* There is an occlusion, the light is not visible */
-                  if(m_bShowRays) {
-                     m_pcControllableEntity->AddIntersectionPoint(cScanningRay,
-                                                                  sIntersection.TOnRay);
-                     m_pcControllableEntity->AddCheckedRay(true, cScanningRay);
+                  else {
+                     /* There is an occlusion, the light is not visible */
+                     if(m_bShowRays) {
+                        m_pcControllableEntity->AddIntersectionPoint(cScanningRay,
+                                                                     sIntersection.TOnRay);
+                        m_pcControllableEntity->AddCheckedRay(true, cScanningRay);
+                     }
                   }
                }
             }
+            /* Apply noise to the sensor */
+            if(m_bAddNoise) {
+               m_tReadings[i] += m_pcRNG->Uniform(m_cNoiseRange);
+            }
+            /* Trunc the reading between 0 and 1 */
+            UNIT.TruncValue(m_tReadings[i]);
          }
-         /* Apply noise to the sensor */
+      }
+      else {
+         /* There are no lights in the environment */
          if(m_bAddNoise) {
-            m_tReadings[i] += m_pcRNG->Uniform(m_cNoiseRange);
+            /* Go through the sensors */
+            for(UInt32 i = 0; i < m_tReadings.size(); ++i) {
+               /* Apply noise to the sensor */
+               m_tReadings[i] += m_pcRNG->Uniform(m_cNoiseRange);
+               /* Trunc the reading between 0 and 1 */
+               UNIT.TruncValue(m_tReadings[i]);
+            }
          }
-         /* Trunc the reading between 0 and 1 */
-         UNIT.TruncValue(m_tReadings[i]);
       }
    }
 
