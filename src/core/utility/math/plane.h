@@ -1,14 +1,15 @@
-
 /**
  * @file <argos3/core/utility/math/plane.h>
  *
  * @author Carlo Pinciroli <ilpincy@gmail.com>
  */
+
 #ifndef PLANE_H
 #define PLANE_H
 
 namespace argos {
    class CPlane;
+   class CRay3;
 }
 
 #include <argos3/core/utility/math/vector3.h>
@@ -44,6 +45,9 @@ namespace argos {
       inline void SetNormal(const CVector3& c_normal) {
          m_cNormal = c_normal;
       }
+
+      bool Intersects(Real& f_t_on_ray,
+                      const CRay3& c_ray);
 
    private:
 
