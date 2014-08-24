@@ -97,6 +97,24 @@ namespace argos {
          CQuaternion(
             m_cRotationalVelocity * m_cPM3DEngine.GetPhysicsClockTick(),
             CVector3::Z));
+      /* Limit the eye-bot position within the arena limits */
+      CVector3 cClampedPos = m_cEmbodiedEntity.GetPosition();
+      const CRange<CVector3>& cLimits = CSimulator::GetInstance().GetSpace().GetArenaLimits();
+      cClampedPos.SetX(
+         Min(
+            Max(cClampedPos.GetX(),
+                cLimits.GetMin().GetX() + BODY_RADIUS),
+            cLimits.GetMax().GetX() - BODY_RADIUS));
+      cClampedPos.SetY(
+         Min(
+            Max(cClampedPos.GetY(),
+                cLimits.GetMin().GetY() + BODY_RADIUS),
+            cLimits.GetMax().GetY() - BODY_RADIUS));
+      cClampedPos.SetZ(
+         Min(
+            Max(cClampedPos.GetZ(),
+                cLimits.GetMin().GetZ()),
+            cLimits.GetMax().GetZ() - BODY_HEIGHT));
       /*
        * Update velocity information
        */
