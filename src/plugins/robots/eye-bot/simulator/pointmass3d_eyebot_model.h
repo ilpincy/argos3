@@ -39,6 +39,9 @@ namespace argos {
 
       virtual void CalculateBoundingBox();
 
+      virtual bool CheckIntersectionWithRay(Real& f_t_on_ray,
+                                            const CRay3& c_ray) const;
+
    private:
 
       Real PDControl(Real f_cur_error,
@@ -59,7 +62,6 @@ namespace argos {
 
       Real m_pfPosError[3];
       Real m_fOrientError;
-
    };
 
 }

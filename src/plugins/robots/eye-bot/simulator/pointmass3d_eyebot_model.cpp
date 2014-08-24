@@ -6,6 +6,7 @@
 
 #include "pointmass3d_eyebot_model.h"
 #include <argos3/core/utility/logging/argos_log.h>
+#include <argos3/core/utility/math/cylinder.h>
 #include <argos3/core/simulator/simulator.h>
 #include <argos3/core/simulator/space/space.h>
 #include <argos3/plugins/simulator/physics_engines/pointmass3d/pointmass3d_engine.h>
@@ -29,7 +30,7 @@ namespace argos {
    /****************************************/
 
    static Real SymmetricClamp(Real f_max,
-                     Real f_value) {
+                              Real f_value) {
       if(f_value >  f_max) return  f_max;
       if(f_value < -f_max) return -f_max;
       return f_value;
@@ -76,13 +77,13 @@ namespace argos {
 
    void CPointMass3DEyeBotModel::UpdateFromEntityStatus() {
       m_sDesiredPositionData = m_cQuadRotorEntity.GetPositionControlData();
-    }
+   }
 
    /****************************************/
    /****************************************/
 
    void CPointMass3DEyeBotModel::Step() {
-       /*
+      /*
        * Update positional information
        */
       /* Integration step */
@@ -107,29 +108,29 @@ namespace argos {
       /* Linear control */
       m_cLinearControl.Set(
          SymmetricClamp(MAX_FORCE_X, PDControl(
-            m_sDesiredPositionData.Position.GetX() - m_cEmbodiedEntity.GetPosition().GetX(),
-            POS_K_P.GetX(),
-            POS_K_D.GetX(),
-            m_pfPosError[0])),
+                           m_sDesiredPositionData.Position.GetX() - m_cEmbodiedEntity.GetPosition().GetX(),
+                           POS_K_P.GetX(),
+                           POS_K_D.GetX(),
+                           m_pfPosError[0])),
          SymmetricClamp(MAX_FORCE_Y, PDControl(
-            m_sDesiredPositionData.Position.GetY() - m_cEmbodiedEntity.GetPosition().GetY(),
-            POS_K_P.GetY(),
-            POS_K_D.GetY(),
-            m_pfPosError[1])),
+                           m_sDesiredPositionData.Position.GetY() - m_cEmbodiedEntity.GetPosition().GetY(),
+                           POS_K_P.GetY(),
+                           POS_K_D.GetY(),
+                           m_pfPosError[1])),
          SymmetricClamp(MAX_FORCE_Z, PDControl(
-            m_sDesiredPositionData.Position.GetZ() - m_cEmbodiedEntity.GetPosition().GetZ(),
-            POS_K_P.GetZ(),
-            POS_K_D.GetZ(),
-            m_pfPosError[2]) - BODY_MASS * m_cPM3DEngine.GetGravity()));
+                           m_sDesiredPositionData.Position.GetZ() - m_cEmbodiedEntity.GetPosition().GetZ(),
+                           POS_K_P.GetZ(),
+                           POS_K_D.GetZ(),
+                           m_pfPosError[2]) - BODY_MASS * m_cPM3DEngine.GetGravity()));
       /* Rotational control */
       CRadians cZAngle, cYAngle, cXAngle;
       m_cEmbodiedEntity.GetOrientation().ToEulerAngles(cZAngle, cYAngle, cXAngle);
       m_fRotationalControl =
          SymmetricClamp(MAX_TORQUE, PDControl(
-                  (m_sDesiredPositionData.Yaw, cZAngle).SignedNormalize().GetValue(),
-                  ORIENT_K_P,
-                  ORIENT_K_D,
-                  m_fOrientError));
+                           (m_sDesiredPositionData.Yaw - cZAngle).SignedNormalize().GetValue(),
+                           ORIENT_K_P,
+                           ORIENT_K_D,
+                           m_fOrientError));
       /*
        * Update force/torque information
        */
@@ -163,6 +164,18 @@ namespace argos {
          m_cEmbodiedEntity.GetPosition().GetZ() + BODY_HEIGHT);
    }
 
+   /****************************************/
+   /****************************************/
+
+   bool CPointMass3DEyeBotModel::CheckIntersectionWithRay(Real& f_t_on_ray,
+                                                          const CRay3& c_ray) const {
+      CCylinder m_cShape(BODY_RADIUS,
+                         BODY_HEIGHT,
+                         m_cEmbodiedEntity.GetPosition(),
+                         CVector3::Z);
+      return m_cShape.Intersects(f_t_on_ray, c_ray);
+   }
+   
    /****************************************/
    /****************************************/
 

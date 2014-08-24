@@ -49,6 +49,11 @@ namespace argos {
          return false;
       }
 
+      virtual bool CheckIntersectionWithRay(Real& f_t_on_ray,
+                                            const CRay3& c_ray) const {
+         return false;
+      }
+
    protected:
 
       CPointMass3DEngine& m_cPM3DEngine;
