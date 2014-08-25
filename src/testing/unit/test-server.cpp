@@ -6,8 +6,9 @@ int main() {
    try {
       CTCPSocket s1, s2;
       std::cout << "[INFO] Accepting connections" << std::endl;
-      s1.Accept(s2, 12345);
-      std::cout << "[INFO] Client connected" << std::endl;
+      s1.Listen(12345);
+      s1.Accept(s2);
+      std::cout << "[INFO] Client connected from " << s2.GetAddress() << std::endl;
       CByteArray b;
       s2.ReceiveByteArray(b);
       std::cout << "[INFO] Received " << b.Size() << " bytes" << std::endl;
