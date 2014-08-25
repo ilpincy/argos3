@@ -73,7 +73,7 @@ namespace argos {
 
    public:
 
-      /**       
+      /**
        * Class constructor.
        */
       CQTOpenGLUserFunctions();
@@ -217,6 +217,18 @@ namespace argos {
                      const CColor& c_color = CColor::RED,
                      const Real f_point_diameter  = 5.0);
 
+      /**
+       * Draws a string of text.
+       * By default the text is black and aligned left along the origin.
+       * @param str_text text to display
+       * @param c_left_corner_offset The offset of the left corner with respect to the text center.
+       * @param c_color The color of the text.
+       */
+      void DrawText(const std::string& str_text,
+                    const CVector3& c_left_corner_offset = CVector3::ZERO,
+                    const CColor& c_color = CColor::BLACK);
+
+
    private:
 
       /**
@@ -330,7 +342,7 @@ namespace argos {
       }
       m_vecFunctionHolders[unIdx] = new CFunctionHolderImpl<USER_IMPL,ENTITY>(pt_function);
    }
-   
+
    /****************************************/
    /****************************************/
 

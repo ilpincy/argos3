@@ -52,6 +52,8 @@ namespace argos {
       CRadians cXAngle, cYAngle, cZAngle;
       GetEmbodiedEntity().GetOrientation().ToEulerAngles(cZAngle, cYAngle, cXAngle);
       cpBodySetAngle(m_ptActualBaseBody, cZAngle.GetValue());
+      /* Associate this model to the body data for ray queries */
+      m_ptActualBaseBody->data = this;
       /* Create the actual body shape */
       m_ptBaseShape =
          cpSpaceAddShape(m_cDyn2DEngine.GetPhysicsSpace(),

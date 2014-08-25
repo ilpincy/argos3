@@ -118,6 +118,7 @@ namespace argos {
       m_ptBaseGripperAngularMotion->maxForce = FOOTBOT_MAX_TORQUE; /* limit the dragging torque */
       /* Associate this model to the body data for ray queries */
       m_ptActualBaseBody->data = this;
+      m_ptActualGripperBody->data = this;
       /* Switch to active mode if necessary */
       if(m_unLastTurretMode == MODE_SPEED_CONTROL ||
          m_unLastTurretMode == MODE_POSITION_CONTROL) {

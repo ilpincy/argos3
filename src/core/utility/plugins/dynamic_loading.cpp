@@ -34,6 +34,7 @@ namespace argos {
       CDynamicLoading::TDLHandle tHandle = ::dlopen(str_lib.c_str(), RTLD_LAZY);
       if(tHandle == NULL) {
          LOGERR << "[WARNING] Can't open library \"" << str_lib << "\": " << ::dlerror() << std::endl;
+         LOGERR.Flush();
          /* Try adding the shared lib extension to the path */
          std::string strLibWExt = str_lib + "." + ARGOS_SHARED_LIBRARY_EXTENSION;
          tHandle = ::dlopen(strLibWExt.c_str(), RTLD_LAZY);
@@ -43,6 +44,7 @@ namespace argos {
          }
          else {
             LOGERR << "[WARNING] Can't open library \"" << strLibWExt << "\": " << ::dlerror() << std::endl;
+            LOGERR.Flush();
             /* Try adding the module lib extension to the path */
             strLibWExt = str_lib + "." + ARGOS_MODULE_LIBRARY_EXTENSION;
             tHandle = ::dlopen(strLibWExt.c_str(), RTLD_LAZY);
@@ -52,6 +54,7 @@ namespace argos {
             }
             else {
                LOGERR << "[WARNING] Can't open library \"" << strLibWExt << "\": " << ::dlerror() << std::endl;
+               LOGERR.Flush();
             }
          }
       }
@@ -84,6 +87,8 @@ namespace argos {
          }
          /* Store the handle to the loaded library */
          m_tOpenLibs[strLoadedLib] = tHandle;
+         LOG << "[INFO] Loaded library \"" << strLoadedLib << "\"" << std::endl;
+         LOG.Flush();
          return tHandle;
       }
       else {
@@ -126,6 +131,8 @@ namespace argos {
             if(tHandle != NULL) {
                /* Store the handle to the loaded library */
                m_tOpenLibs[strLibPath] = tHandle;
+               LOG << "[INFO] Loaded library \"" << strLibPath << "\"" << std::endl;
+               LOG.Flush();
                return tHandle;
             }
          }
@@ -145,7 +152,7 @@ namespace argos {
          UnloadLibrary(it->second);
       }
       else {
-         THROW_ARGOSEXCEPTION("Can't load library \""
+         THROW_ARGOSEXCEPTION("Can't unload library \""
                               << str_lib
                               << "\": library does not appear to have been loaded.");
       }
@@ -216,6 +223,7 @@ namespace argos {
                    << "\": "
                    << ::strerror(errno)
                    << std::endl;
+            LOGERR.Flush();
          }
       }
    }

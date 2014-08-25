@@ -723,7 +723,7 @@ namespace argos {
       }
       /* Toggle action states */
       m_pcPlayAction->setEnabled(true);
-      m_pcResetAction->setEnabled(true);
+      m_pcResetAction->setEnabled(false);
       m_pcTerminateAction->setEnabled(true);
       m_pcFastForwardAction->setEnabled(true);
       m_pcStepAction->setEnabled(true);

@@ -102,6 +102,48 @@ namespace argos {
                        Square(f_t * (m_cEnd.GetY() - m_cStart.GetY())));
       }
 
+      /* Returns <tt>true</tt> if the passed ray intersects the current one. */
+      inline bool Intersects(const CRay2& c_ray) const {
+         Real fDiscriminant =
+            (c_ray.m_cEnd.GetY() - c_ray.m_cStart.GetY()) *
+            (m_cEnd.GetX() - m_cStart.GetX()) -
+            (c_ray.m_cEnd.GetX() - c_ray.m_cStart.GetX()) *
+            (m_cEnd.GetY() - m_cStart.GetY());
+         if(Abs(fDiscriminant) < 1e-4) {
+            /* The rays are parallel */
+            return false;
+         }
+         /* If we get here, we know the rays are not parallel */
+         /* Calculate value of T on ray 1 for the intersection point */
+         Real fT1 =
+            (m_cStart.GetX() - c_ray.m_cStart.GetX()) *
+            (c_ray.m_cEnd.GetY() - c_ray.m_cStart.GetY()) -
+            (m_cStart.GetY() - c_ray.m_cStart.GetY()) *
+            (c_ray.m_cEnd.GetX() - c_ray.m_cStart.GetX());
+         /* If T on ray 1 is outside the ray, no intersection */
+         if(fT1 < 0.0 || fT1 > 1.0) return false;
+         /* Calculate value of T on ray 2 for the intersection point */
+         Real fT2;
+         if(Abs(c_ray.m_cEnd.GetY() - c_ray.m_cStart.GetY()) > 1e-4) {
+            /* Ray 2 is not vertical */
+            fT2 =
+               (m_cStart.GetY() - c_ray.m_cStart.GetY()) +
+               (m_cEnd.GetY() - m_cStart.GetY()) *
+               fT1 /
+               (c_ray.m_cEnd.GetY() - c_ray.m_cStart.GetY());
+         }
+         else {
+            /* Ray 2 is vertical */
+            fT2 =
+               (m_cStart.GetX() - c_ray.m_cStart.GetX()) +
+               (m_cEnd.GetX() - m_cStart.GetX()) *
+               fT1 /
+               (c_ray.m_cEnd.GetX() - c_ray.m_cStart.GetX());
+         }
+         /* If T on ray 2 is inside the ray, intersection */
+         return(fT1 >= 0.0 && fT1 <= 1.0);
+      }
+
    private:
 
       CVector2 m_cStart;
