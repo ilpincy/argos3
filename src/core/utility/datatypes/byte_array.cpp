@@ -9,6 +9,7 @@
 #include <argos3/core/utility/math/general.h>
 
 #include <arpa/inet.h>
+#include <cstdlib>
 #include <cstring>
 #include <cmath>
 
@@ -85,6 +86,13 @@ namespace argos {
          m_vecBuffer = c_byte_array.m_vecBuffer;
       }
       return *this;
+   }
+
+   /****************************************/
+   /****************************************/
+
+   bool CByteArray::operator==(const CByteArray& c_byte_array) const {
+      return m_vecBuffer == c_byte_array.m_vecBuffer;
    }
 
    /****************************************/

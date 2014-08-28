@@ -170,6 +170,12 @@ namespace argos {
       }
 
       /**
+       * Equality comparison operator.
+       * @return <tt>true</tt> if the content of this array and the given one are identical.
+       */
+      bool operator==(const CByteArray& c_byte_array) const;
+
+      /**
        * Appends bytes to the byte array.
        * The contents of the buffer can be erased, since this method copies them.
        * @param pun_buffer the byte buffer to copy from.
