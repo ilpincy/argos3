@@ -154,7 +154,10 @@ namespace argos {
       ssize_t nSent;
       while(un_size > 0) {
          nSent = ::send(m_nStream, pun_buffer, un_size, 0);
-         if(nSent < 0) THROW_ARGOSEXCEPTION("Error sending data: " << ::strerror(errno));
+         if(nSent < 0) {
+            Disconnect();
+            THROW_ARGOSEXCEPTION("Error sending data: " << ::strerror(errno));
+         }
          un_size -= nSent;
          pun_buffer += nSent;
       }
@@ -168,7 +171,10 @@ namespace argos {
       ssize_t nReceived;
       while(un_size > 0) {
          nReceived = ::recv(m_nStream, pun_buffer, un_size, 0);
-         if(nReceived < 0) THROW_ARGOSEXCEPTION("Error receiving data: " << ::strerror(errno));
+         if(nReceived < 0){
+            Disconnect();
+             THROW_ARGOSEXCEPTION("Error receiving data: " << ::strerror(errno));
+         }
          if(nReceived == 0) return false;
          un_size -= nReceived;
          pun_buffer += nReceived;
