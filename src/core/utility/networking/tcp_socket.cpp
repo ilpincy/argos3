@@ -36,7 +36,7 @@ namespace argos {
       /* Get information on the available interfaces */
       ::addrinfo tHints, *ptInterfaceInfo;
       ::memset(&tHints, 0, sizeof(tHints));
-      tHints.ai_family = AF_UNSPEC;     /* Any protocol family is OK */
+      tHints.ai_family = AF_INET;       /* Only IPv4 is accepted */
       tHints.ai_socktype = SOCK_STREAM; /* TCP socket */
       nRetVal = ::getaddrinfo(str_hostname.c_str(),
                               ToString(n_port).c_str(),
@@ -69,15 +69,14 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CTCPSocket::Accept(CTCPSocket& c_socket,
-                           SInt32 n_port,
+   void CTCPSocket::Listen(SInt32 n_port,
                            SInt32 n_queue_length) {
       /* Used to store the return value of the network function calls */
       int nRetVal;
       /* Get information on the available interfaces */
       ::addrinfo tHints, *ptInterfaceInfo;
       ::memset(&tHints, 0, sizeof(tHints));
-      tHints.ai_family = AF_UNSPEC;     /* Any protocol family is OK */
+      tHints.ai_family = AF_INET;       /* Only IPv4 is accepted */
       tHints.ai_socktype = SOCK_STREAM; /* TCP socket */
       tHints.ai_flags = AI_PASSIVE;     /* Necessary for bind() later on */
       nRetVal = ::getaddrinfo(NULL,
@@ -120,13 +119,22 @@ namespace argos {
          Disconnect();
          THROW_ARGOSEXCEPTION("Can't listen on the socket" << ::strerror(errno));
       }
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CTCPSocket::Accept(CTCPSocket& c_socket) {
       /* Accept connections */
-      int nNewStream = ::accept(m_nStream, NULL, NULL);
+      ::sockaddr tAddress;
+      ::socklen_t tAddressLen = sizeof(tAddress);
+      int nNewStream = ::accept(m_nStream, &tAddress, &tAddressLen);
       if(nNewStream == -1) {
          Disconnect();
          THROW_ARGOSEXCEPTION("Error accepting connection: " << ::strerror(errno));
       }
       c_socket.m_nStream = nNewStream;
+      c_socket.m_strAddress = ::inet_ntoa(reinterpret_cast< ::sockaddr_in* >(&tAddress)->sin_addr);
    }
 
    /****************************************/
@@ -135,6 +143,7 @@ namespace argos {
    void CTCPSocket::Disconnect() {
       ::close(m_nStream);
       m_nStream = -1;
+      m_strAddress = "";
    }
 
    /****************************************/
@@ -145,7 +154,10 @@ namespace argos {
       ssize_t nSent;
       while(un_size > 0) {
          nSent = ::send(m_nStream, pun_buffer, un_size, 0);
-         if(nSent < 0) THROW_ARGOSEXCEPTION("Error sending data: " << ::strerror(errno));
+         if(nSent < 0) {
+            Disconnect();
+            THROW_ARGOSEXCEPTION("Error sending data: " << ::strerror(errno));
+         }
          un_size -= nSent;
          pun_buffer += nSent;
       }
@@ -159,7 +171,10 @@ namespace argos {
       ssize_t nReceived;
       while(un_size > 0) {
          nReceived = ::recv(m_nStream, pun_buffer, un_size, 0);
-         if(nReceived < 0) THROW_ARGOSEXCEPTION("Error receiving data: " << ::strerror(errno));
+         if(nReceived < 0){
+            Disconnect();
+             THROW_ARGOSEXCEPTION("Error receiving data: " << ::strerror(errno));
+         }
          if(nReceived == 0) return false;
          un_size -= nReceived;
          pun_buffer += nReceived;

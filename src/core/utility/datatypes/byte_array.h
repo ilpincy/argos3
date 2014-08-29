@@ -85,6 +85,14 @@ namespace argos {
       }
 
       /**
+       * Swaps the content of this byte array with the content of the passed one.
+       * @param c_other The byte array to swap content with.
+       */
+      inline void Swap(CByteArray& c_other) {
+         m_vecBuffer.swap(c_other.m_vecBuffer);
+      }
+
+      /**
        * Returns <tt>true</tt> if the byte array is empty.
        * @return <tt>true</tt> if the byte array is empty.
        */
@@ -160,6 +168,12 @@ namespace argos {
          if(un_index >= Size()) THROW_ARGOSEXCEPTION("CByteArray: index out of bounds [index = " << un_index << ", size=" << Size() << "]");
          return m_vecBuffer.at(un_index);
       }
+
+      /**
+       * Equality comparison operator.
+       * @return <tt>true</tt> if the content of this array and the given one are identical.
+       */
+      bool operator==(const CByteArray& c_byte_array) const;
 
       /**
        * Appends bytes to the byte array.
@@ -360,24 +374,44 @@ namespace argos {
       CByteArray& operator>>(signed long int& n_value);
 
       /**
-       * Appends an argos::Real to the byte array.
+       * Appends a double to the byte array.
        * This method assumes that floating-point numbers are represented
        * in the IEEE754 standard.
-       * @param f_value the value of the argos::Real.
+       * @param f_value the value of the double.
        * @return a reference to this byte array.
        */
-      CByteArray& operator<<(Real f_value);
+      CByteArray& operator<<(double f_value);
 
       /**
-       * Moves an argos::Real from the beginning of the byte array to the target variable.
+       * Moves a double from the beginning of the byte array to the target variable.
        * The element whose value was written into the target buffer are removed
        * from the byte array.
        * This method assumes that floating-point numbers are represented
        * in the IEEE754 standard.
-       * @param f_value the buffer for the argos::Real.
+       * @param f_value the buffer for the double.
        * @return a reference to this byte array.
        */
-      CByteArray& operator>>(Real& f_value);
+      CByteArray& operator>>(double& f_value);
+
+      /**
+       * Appends a float to the byte array.
+       * This method assumes that floating-point numbers are represented
+       * in the IEEE754 standard.
+       * @param f_value the value of the float.
+       * @return a reference to this byte array.
+       */
+      CByteArray& operator<<(float f_value);
+
+      /**
+       * Moves a float from the beginning of the byte array to the target variable.
+       * The element whose value was written into the target buffer are removed
+       * from the byte array.
+       * This method assumes that floating-point numbers are represented
+       * in the IEEE754 standard.
+       * @param f_value the buffer for the float.
+       * @return a reference to this byte array.
+       */
+      CByteArray& operator>>(float& f_value);
 
       /**
        * Appends a <tt>std::string</tt> to the byte array.

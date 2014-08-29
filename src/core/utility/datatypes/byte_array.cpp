@@ -6,10 +6,19 @@
 
 #include "byte_array.h"
 
+#include <argos3/core/utility/math/general.h>
+
 #include <arpa/inet.h>
+#include <cstdlib>
 #include <cstring>
+#include <cmath>
 
 namespace argos {
+
+   /****************************************/
+   /****************************************/
+
+   static SInt64 MAX_MANTISSA = 9223372036854775806LL; // 2 << 63 - 2;
 
    /****************************************/
    /****************************************/
@@ -77,6 +86,13 @@ namespace argos {
          m_vecBuffer = c_byte_array.m_vecBuffer;
       }
       return *this;
+   }
+
+   /****************************************/
+   /****************************************/
+
+   bool CByteArray::operator==(const CByteArray& c_byte_array) const {
+      return m_vecBuffer == c_byte_array.m_vecBuffer;
    }
 
    /****************************************/
@@ -370,29 +386,96 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   CByteArray& CByteArray::operator<<(Real f_value) {
-#ifdef ARGOS_DOUBLE_PRECISION
-      UInt64 unValue;
-#else
-      UInt32 unValue;
-#endif
-      ::memcpy(&unValue, &f_value, sizeof(unValue));
-      *this << unValue;
+   CByteArray& CByteArray::operator<<(double f_value) {
+      /* Buffer for the mantissa */
+      SInt64 nMantissa;
+      /* Buffer for the exponent */
+      SInt32 nExponent;
+      /* Calculate exponent and shifted significand */
+      /* The absolute value of the significand is either 0 (when f_value is 0) or 
+       * in the range [0.5,1). The sign of the significand is the same as f_value.
+       * The shifted significand is then -0.5 when the significand is 0, and in the
+       * range [0,0.5) otherwise.
+       */
+      double fShiftedSignificand = Abs(frexp(f_value, &nExponent)) - 0.5;
+      /* Calculate mantissa */
+      if(fShiftedSignificand < 0.0) {
+         /* This means f_value was either +0 or -0 */
+         nMantissa = 0;
+      }
+      else {
+         /* Calculate the mantissa
+          * Idea:
+          * - take the shifted significand, which is in [0,0.5)
+          * - multiply it by 2, so it's in [0,1)
+          * - multiply this by the maximum value the mantissa can have
+          * - add 1 to the result to avoid having a zero mantissa
+          *   (because it maps to a zero double when trasforming back)
+          */
+         nMantissa = static_cast<SInt64>(fShiftedSignificand * 2.0 * (MAX_MANTISSA)) + 1;
+         /* Take care of the sign */
+         if(f_value < 0.0) {
+            nMantissa = -nMantissa;
+         }
+      }
+      /* Store exponent and mantissa in the buffer */
+      *this << nMantissa;
+      *this << nExponent;
       return *this;
    }
 
    /****************************************/
    /****************************************/
 
-   CByteArray& CByteArray::operator>>(Real& f_value) {
-      if(Size() < sizeof(f_value)) THROW_ARGOSEXCEPTION("Attempting to extract too many bytes from byte array (" << sizeof(f_value) << " requested, " << Size() << " available)");
-#ifdef ARGOS_DOUBLE_PRECISION
-      UInt64 unValue;
-#else
-      UInt32 unValue;
-#endif
-      *this >> unValue;
-      ::memcpy(&f_value, &unValue, sizeof(unValue));
+   CByteArray& CByteArray::operator>>(double& f_value) {
+      if(Size() < sizeof(SInt64) + sizeof(SInt32)) THROW_ARGOSEXCEPTION("Attempting to extract too many bytes from byte array (" << sizeof(SInt64) + sizeof(SInt32) << " requested, " << Size() << " available)");
+      /* Buffer for the mantissa */
+      SInt64 nMantissa;
+      /* Buffer for the exponent */
+      SInt32 nExponent;
+      /* Extract the values from the buffer */
+      *this >> nMantissa;
+      *this >> nExponent;
+      /* Calculate double value */
+      if(nMantissa == 0) {
+         /* Special case: zero mantissa */
+         f_value = 0.0;
+      }
+      else {
+         /* Calculate the significand, whose absolute value must be in the range [0.5,1).
+          * Idea:
+          * - take the absolute value of the mantissa, which is in the range [1,MANTISSA_MAX]
+          * - subtract 1, so it's in [0,MANTISSA_MAX-1]
+          * - divide by MANTISSA_MAX, so you get a value in [0,1)
+          * - divide by 2, so it's in [0,0.5)
+          * - add 0.5, so you end up in [0.5,1)
+          */
+         double fSignificand = (static_cast<double>(llabs(nMantissa) - 1) / MAX_MANTISSA) / 2.0 + 0.5;
+         /* Calculate f_value */
+         f_value = ldexp(fSignificand, nExponent);
+         /* Take care of the sign */
+         if(nMantissa < 0.0) {
+            f_value = -f_value;
+         }
+      }
+      return *this;
+   }
+
+   /****************************************/
+   /****************************************/
+
+   CByteArray& CByteArray::operator<<(float f_value) {
+      *this << static_cast<double>(f_value);
+      return *this;
+   }
+
+   /****************************************/
+   /****************************************/
+
+   CByteArray& CByteArray::operator>>(float& f_value) {
+      double fDoubleValue;
+      *this >> fDoubleValue;
+      f_value = fDoubleValue;
       return *this;
    }
 
