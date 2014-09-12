@@ -75,6 +75,9 @@ namespace argos {
    /****************************************/
 
    void CLEDEntity::AddToMedium(CLEDMedium& c_medium) {
+      if(HasMedium()) {
+         RemoveFromMedium();
+      }
       m_pcMedium = &c_medium;
       c_medium.AddEntity(*this);
    }
