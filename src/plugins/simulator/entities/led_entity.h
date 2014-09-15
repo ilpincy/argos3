@@ -96,6 +96,10 @@ namespace argos {
 
       /**
        * Adds the LEDs to the wanted LED medium.
+       * If this LED has already been added to a medium, the LED is
+       * removed from that medium and then added to the passed one.
+       * This behavior is to enforce that, at any time, an LED is
+       * under the control of (at most) a single medium.
        * @param c_medium The LED medium.
        * @see CLEDMedium
        */
