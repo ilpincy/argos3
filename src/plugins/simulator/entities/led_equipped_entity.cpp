@@ -14,20 +14,16 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   CLEDEquippedEntity::CLEDEquippedEntity(CComposableEntity* pc_parent,
-                                          CPositionalEntity* pc_reference) :
-      CComposableEntity(pc_parent),
-      m_pcReferenceEntity(pc_reference) {
+   CLEDEquippedEntity::CLEDEquippedEntity(CComposableEntity* pc_parent) :
+      CComposableEntity(pc_parent) {
    }
 
    /****************************************/
    /****************************************/
 
    CLEDEquippedEntity::CLEDEquippedEntity(CComposableEntity* pc_parent,
-                                          const std::string& str_id,
-                                          CPositionalEntity* pc_reference) :
-      CComposableEntity(pc_parent, str_id),
-      m_pcReferenceEntity(pc_reference) {
+                                          const std::string& str_id) :
+      CComposableEntity(pc_parent, str_id) {
    }
 
    /****************************************/
@@ -47,6 +43,16 @@ namespace argos {
             /* Initialise the LED using the XML */
             CLEDEntity* pcLED = new CLEDEntity(this);
             pcLED->Init(*itLED);
+            
+            /* Parse the offset */
+            CVector3 cOffset;
+            GetNodeAttribute(*itLED, "offset", cOffset);
+            /* Parse and look up the anchor */
+            std::string strAnchorId;
+            GetNodeAttribute(*itLED, "anchor", strAnchorId);
+
+            GetParent().GetEmboddiedEntity().EnableAnchor(strAnchorId);
+
             /* Add the LED to this container */
             m_vecLEDOffsetPositions.push_back(pcLED->GetPosition());
             m_tLEDs.push_back(pcLED);
