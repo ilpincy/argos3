@@ -55,6 +55,49 @@ namespace argos {
    public:
 
       /**
+       * An anchor related to the body of an entity.
+       * Anchors are used by entities as reference points. For instance, an LED ring could
+       * use an anchor as the center of the ring. As the anchor moves in the space, the LED
+       * positions would be calculated with respect to it.
+       * An anchor is always initially disabled. To use it, you must first enable it.
+       */
+      struct SAnchor {
+         /** The id of the anchor */
+         std::string Id;
+         /** The position of the anchor wrt the global coordinate system */
+         CVector3 Position;
+         /** The orientation of the anchor wrt the global coordinate system */
+         CQuaternion Orientation;
+         /** A counter for the devices using this anchor */
+         UInt32 InUseCount;
+         /**
+          * Struct constructor.
+          * Initializes the anchor using the provided information.
+          * InUseCount is initialized to 0, i.e., the anchor is initially disabled.
+          * @param str_id The id of the anchor.
+          * @param c_position The position of the anchor wrt the global coordinate system.
+          * @param c_orientation The orientation of the anchor wrt the global coordinate system.
+          * @see CEmbodiedEntity::AddAnchor
+          * @see CEmbodiedEntity::EnableAnchor
+          * @see CEmbodiedEntity::DisableAnchor
+          */
+         SAnchor(const std::string& str_id,
+                 const CVector3& c_rel_position,
+                 const CQuaternion& c_rel_orientation);
+         /**
+          * Restores the initial position of the anchor.
+          */
+         void Reset();
+      private:
+         /** The initial position of the anchor wrt the body coordinate system */
+         CVector3 InitPosition;
+         /** The initial orientation of the anchor wrt the body coordinate system */
+         CQuaternion InitOrientation;
+      };
+
+   public:
+
+      /**
        * Class constructor.
        * This constructor is meant to be used with the Init() method.
        * @param pc_parent The parent of this entity.
@@ -110,6 +153,82 @@ namespace argos {
       inline void SetMovable(bool b_movable) {
          m_bMovable = b_movable;
       }
+
+      /**
+       * Adds an anchor to the embodied entity.
+       * The anchor is initially disabled. To enable it you must call EnableAnchor().
+       * @param str_id The id of the anchor.
+       * @param c_rel_position The position of the anchor wrt the body coordinate system.
+       * @param c_rel_orientation The orientation of the anchor wrt the body coordinate system.
+       * @throws CARGoSException if an anchor with the passed id already exists in this embodied entity.
+       * @see CEmbodiedEntity::SAnchor
+       * @see EnableAnchor
+       */
+      void AddAnchor(const std::string& str_id,
+                     const CVector3& c_rel_position,
+                     const CQuaternion& c_rel_orientation);
+
+      /**
+       * Enables an anchor.
+       * @param str_id The id of the anchor.
+       * @throws CARGoSException if an anchor with the passed id does not exist in this embodied entity.
+       * @see CEmbodiedEntity::SAnchor
+       * @see DisableAnchor
+       */
+      void EnableAnchor(const std::string& str_id);
+
+      /**
+       * Disables an anchor.
+       * @param str_id The id of the anchor.
+       * @throws CARGoSException if an enabled anchor with the passed id does not exist in this embodied entity.
+       * @see CEmbodiedEntity::SAnchor
+       * @see DisableAnchor
+       */
+      void DisableAnchor(const std::string& str_id);
+
+      /**
+       * Returns the wanted anchor.
+       * This method only looks for enabled anchors. It is not allowed to use a disabled anchor.
+       * To use an anchor, one must first enable it.
+       * @param str_id The id of the anchor.
+       * @return The wanted anchor.
+       * @throws CARGoSException if the anchor was not found or was not enabled.
+       * @see CEmbodiedEntity::SAnchor
+       * @see EnableAnchor
+       * @see DisableAnchor
+       */
+      const SAnchor& GetAnchor(const std::string& str_id) const;
+
+      /**
+       * Returns a map of anchors associated to this embodied entity.
+       * The map has the id as key and a pointer to the anchor as value.
+       * @return The map of anchors.
+       * @see CEmbodiedEntity::SAnchor
+       * @see AddAnchor
+       */
+      inline std::map<std::string, SAnchor*>& GetAnchors() {
+         return m_mapAnchors;
+      }
+
+      /**
+       * Returns a vector of enabled anchors for fast looping.
+       * This method is mainly intended for use in a physics engine
+       * when anchors are updated.
+       * @return The vector of currently enabled anchors.
+       * @see EnableAnchor
+       * @see DisableAnchor
+       */
+      inline std::vector<SAnchor*>& GetEnabledAnchors() {
+         return m_vecEnabledAnchors;
+      }
+
+      /**
+       * Returns <tt>true</tt> if the given anchor is enabled, <tt>false</tt> otherwise.
+       * @return <tt>true</tt> if the given anchor is enabled, <tt>false</tt> otherwise.
+       * @see EnableAnchor
+       * @see DisableAnchor
+       */
+      bool IsAnchorEnabled(const std::string& str_id);
 
       /**
        * Returns the bounding box of this embodied entity.
@@ -219,8 +338,20 @@ namespace argos {
       CPhysicsModel::TMap m_tPhysicsModelMap;
       CPhysicsModel::TVector m_tPhysicsModelVector;
       SBoundingBox* m_sBoundingBox;
+      std::map<std::string, SAnchor*> m_mapAnchors;
+      std::vector<SAnchor*> m_vecEnabledAnchors;
 
    };
+
+   /**
+    * Returns <tt>true</tt> if the anchor id matches the given id.
+    * This method makes it easier to run functions such as std::find().
+    * @param ps_anchor A pointer to the anchor.
+    * @param str_id The id to compare.
+    * @return <tt>true</tt> if the anchor id matches the given id.
+    */
+   extern bool operator==(const CEmbodiedEntity::SAnchor* ps_anchor,
+                          const std::string& str_id);
 
    /****************************************/
    /****************************************/
