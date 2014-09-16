@@ -88,16 +88,22 @@ namespace argos {
             8,
             m_pcEmbodiedEntity->GetAnchor("led_ring_center"));
          /* Proximity sensor equipped entity */
+         m_pcEmbodiedEntity->AddAnchor("proximity_sensor_ring_center",
+                                       CVector3(0.0f,
+                                                0.0f,
+                                                PROXIMITY_SENSOR_RING_ELEVATION));
+
          m_pcProximitySensorEquippedEntity =
             new CProximitySensorEquippedEntity(this,
                                                "proximity_0");
          AddComponent(*m_pcProximitySensorEquippedEntity);
          m_pcProximitySensorEquippedEntity->AddSensorRing(
-            CVector3(0.0f, 0.0f, PROXIMITY_SENSOR_RING_ELEVATION),
+            CVector3(),
             PROXIMITY_SENSOR_RING_RADIUS,
             PROXIMITY_SENSOR_RING_START_ANGLE,
             PROXIMITY_SENSOR_RING_RANGE,
-            8);
+            8,
+            m_pcEmbodiedEntity->GetAnchor("proximity_sensor_ring_center"));
          /* Light sensor equipped entity */
          m_pcLightSensorEquippedEntity =
             new CLightSensorEquippedEntity(this,
