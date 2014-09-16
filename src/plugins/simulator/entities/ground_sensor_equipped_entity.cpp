@@ -6,6 +6,7 @@
  */
 #include "ground_sensor_equipped_entity.h"
 #include <argos3/core/simulator/space/space.h>
+#include <argos3/core/simulator/entity/composable_entity.h>
 
 namespace argos {
 

@@ -92,7 +92,6 @@ namespace argos {
                                        CVector3(0.0f,
                                                 0.0f,
                                                 PROXIMITY_SENSOR_RING_ELEVATION));
-
          m_pcProximitySensorEquippedEntity =
             new CProximitySensorEquippedEntity(this,
                                                "proximity_0");
@@ -121,11 +120,14 @@ namespace argos {
                                             "ground_0");
          AddComponent(*m_pcGroundSensorEquippedEntity);
          m_pcGroundSensorEquippedEntity->AddSensor(CVector2(0.03f, -0.009f),
-                                                   CGroundSensorEquippedEntity::TYPE_GRAYSCALE);
+                                                   CGroundSensorEquippedEntity::TYPE_GRAYSCALE,
+                                                   m_pcEmbodiedEntity->GetAnchor("origin"));
          m_pcGroundSensorEquippedEntity->AddSensor(CVector2(0.03f,  0.0f),
-                                                   CGroundSensorEquippedEntity::TYPE_GRAYSCALE);
+                                                   CGroundSensorEquippedEntity::TYPE_GRAYSCALE,
+                                                   m_pcEmbodiedEntity->GetAnchor("origin"));
          m_pcGroundSensorEquippedEntity->AddSensor(CVector2(0.03f,  0.009f),
-                                                   CGroundSensorEquippedEntity::TYPE_GRAYSCALE);
+                                                   CGroundSensorEquippedEntity::TYPE_GRAYSCALE,
+                                                   m_pcEmbodiedEntity->GetAnchor("origin"));
          /* RAB equipped entity */
          Real fRange = 0.8f;
          GetNodeAttributeOrDefault(t_tree, "rab_range", fRange, fRange);

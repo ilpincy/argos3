@@ -72,19 +72,20 @@ namespace argos {
       /*
        * We make the assumption that the robot is rotated only wrt to Z
        */
-      /* Get robot position and orientation */
-      const CVector3& cEntityPos = GetSensor(i).Anchor.Position();
-      const CQuaternion& cEntityRot = GetSensor(i).Anchor.Orientation();
       CRadians cRotZ, cRotY, cRotX;
-      cEntityRot.ToEulerAngles(cRotZ, cRotY, cRotX);
       /* Set robot center */
-      CVector2 cCenterPos(cEntityPos.GetX(), cEntityPos.GetY());
+      CVector2 cCenterPos;
       /* Position of sensor on the ground after rototranslation */
       CVector2 cSensorPos;
       /* Go through the sensors */
       for(UInt32 i = 0; i < m_tReadings.size(); ++i) {
+         CGroundSensorEquippedEntity::SSensor& sSens = m_pcGroundSensorEntity->GetSensor(i);
+         /* Get anchor position and orientation */
+         cCenterPos.Set(sSens.Anchor.Position.GetX(),
+                        sSens.Anchor.Position.GetY());
+         sSens.Anchor.Orientation.ToEulerAngles(cRotZ, cRotY, cRotX);
          /* Calculate sensor position on the ground */
-         cSensorPos = m_pcGroundSensorEntity->GetSensor(i).Offset;
+         cSensorPos = sSens.Offset;
          cSensorPos.Rotate(cRotZ);
          cSensorPos += cCenterPos;
          /* Get the color */
@@ -97,7 +98,7 @@ namespace argos {
             m_tReadings[i] += m_pcRNG->Uniform(m_cNoiseRange);
          }
          /* Is it a BW sensor? */
-         if(m_pcGroundSensorEntity->GetSensor(i).Type == CGroundSensorEquippedEntity::TYPE_BLACK_WHITE) {
+         if(sSens.Type == CGroundSensorEquippedEntity::TYPE_BLACK_WHITE) {
             /* Yes, set 0 or 1 */
             m_tReadings[i] = m_tReadings[i] < 0.5f ? 0.0f : 1.0f;
          }
