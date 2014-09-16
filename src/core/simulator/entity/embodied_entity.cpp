@@ -13,14 +13,14 @@
 
 namespace argos {
 
-   /****************************************/
-   /****************************************/
+/****************************************/
+/****************************************/
 
-   CEmbodiedEntity::SAnchor::SAnchor(const std::string& str_id,
-                                     const CVector3& c_offset_position,
-                                     const CQuaternion& c_offset_orientation,
-                                     const CVector3& c_position,
-                                     const CQuaternion& c_orientation) :
+   SAnchor::SAnchor(const std::string& str_id,
+                    const CVector3& c_offset_position,
+                    const CQuaternion& c_offset_orientation,
+                    const CVector3& c_position,
+                    const CQuaternion& c_orientation) :
       Id(str_id),
       OffsetPosition(c_offset_position),
       OffsetOrientation(c_offset_orientation),
@@ -61,7 +61,7 @@ namespace argos {
       }
       for(std::map<std::string, SAnchor*>::iterator it = m_mapAnchors.begin();
           it != m_mapAnchors.end(); ++it) {
-         /* it->second points to the current anchor */
+/* it->second points to the current anchor */
          delete it->second;
       }
       m_mapAnchors.clear();
@@ -84,15 +84,15 @@ namespace argos {
    /****************************************/
 
    void CEmbodiedEntity::Reset() {
-      /* Reset position and orientation */
+/* Reset position and orientation */
       CPositionalEntity::Reset();
-      /* Reset anchors */
+/* Reset anchors */
       SAnchor* psAnchor;
       for(std::map<std::string, SAnchor*>::iterator it = m_mapAnchors.begin();
           it != m_mapAnchors.end(); ++it) {
-         /* it->second points to the current anchor */
+/* it->second points to the current anchor */
          psAnchor = it->second;
-         /* Calculate global position and orientation */
+/* Calculate global position and orientation */
          psAnchor->Position = psAnchor->OffsetPosition;
          psAnchor->Position.Rotate(GetOrientation());
          psAnchor->Position += GetPosition();
@@ -106,23 +106,23 @@ namespace argos {
    void CEmbodiedEntity::AddAnchor(const std::string& str_id,
                                    const CVector3& c_offset_position,
                                    const CQuaternion& c_offset_orientation) {
-      /* Make sure the anchor id is unique */
+/* Make sure the anchor id is unique */
       if(m_mapAnchors.count(str_id) > 0 ) {
          THROW_ARGOSEXCEPTION("Embodied entity \"" << GetContext() + GetId() << "\" already has an anchor with id " << str_id);
       }
-      /* Calculate anchor position */
+/* Calculate anchor position */
       CVector3 cPos = c_offset_position;
       cPos.Rotate(GetOrientation());
       cPos += GetPosition();
-      /* Calculate anchor orientation */
+/* Calculate anchor orientation */
       CQuaternion cOrient = GetOrientation() * c_offset_orientation;
-      /* Create anchor */
+/* Create anchor */
       SAnchor* psAnchor = new SAnchor(str_id,
                                       c_offset_position,
                                       c_offset_orientation,
                                       cPos,
                                       cOrient);
-      /* Add anchor to map */
+/* Add anchor to map */
       m_mapAnchors[str_id] = psAnchor;
    }
 
@@ -169,9 +169,23 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   const CEmbodiedEntity::SAnchor& CEmbodiedEntity::GetAnchor(const std::string& str_id) const {
+   const SAnchor& CEmbodiedEntity::GetAnchor(const std::string& str_id) const {
       /* Lookup the anchor id */
       std::map<std::string, SAnchor*>::const_iterator it = m_mapAnchors.find(str_id);
+      /* Found? */
+      if(it == m_mapAnchors.end()) {
+         THROW_ARGOSEXCEPTION("Embodied entity \"" << GetContext() + GetId() << "\" has no anchor with id " << str_id);
+      }
+      /* Now it->second points to the requested anchor */
+      return *(it->second);
+   }
+
+   /****************************************/
+   /****************************************/
+
+   SAnchor& CEmbodiedEntity::GetAnchor(const std::string& str_id) {
+      /* Lookup the anchor id */
+      std::map<std::string, SAnchor*>::iterator it = m_mapAnchors.find(str_id);
       /* Found? */
       if(it == m_mapAnchors.end()) {
          THROW_ARGOSEXCEPTION("Embodied entity \"" << GetContext() + GetId() << "\" has no anchor with id " << str_id);
@@ -399,7 +413,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   bool operator==(const CEmbodiedEntity::SAnchor* ps_anchor,
+   bool operator==(const SAnchor* ps_anchor,
                    const std::string& str_id) {
       return (ps_anchor->Id == str_id);
    }

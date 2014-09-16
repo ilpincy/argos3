@@ -48,11 +48,11 @@ namespace argos {
 
          CLEDEntity& LED;
          CVector3 Offset;
-         const CEmbodiedEntity::SAnchor& Anchor;
+         const SAnchor& Anchor;
 
          SActuator(CLEDEntity& c_led,
                    const CVector3& c_offset,
-                   const CEmbodiedEntity::SAnchor& s_anchor);
+                   const SAnchor& s_anchor);
       };
 
    public:
@@ -87,7 +87,7 @@ namespace argos {
        * @param c_color The color of the LED.
        */
       void AddLED(const CVector3& c_offset,
-                  const CEmbodiedEntity::SAnchor& s_anchor,
+                  const SAnchor& s_anchor,
                   const CColor& c_color = CColor::BLACK);
 
       /**
@@ -103,7 +103,7 @@ namespace argos {
                       Real f_radius,
                       const CRadians& c_start_angle,
                       UInt32 un_num_leds,
-                      const CEmbodiedEntity::SAnchor& s_anchor,
+                      const SAnchor& s_anchor,
                       const CColor& c_color = CColor::BLACK);
 
       /**

@@ -170,6 +170,7 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
     simulator/medium/medium.cpp
     ${ARGOS3_HEADERS_SIMULATOR_PHYSICSENGINE}
     simulator/physics_engine/physics_engine.cpp
+    simulator/physics_engine/physics_model.cpp
     ${ARGOS3_HEADERS_SIMULATOR_VISUALIZATION}
     simulator/visualization/default_visualization.cpp
     ${ARGOS3_HEADERS_SIMULATOR_SPACE}

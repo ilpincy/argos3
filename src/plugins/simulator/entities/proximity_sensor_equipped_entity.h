@@ -29,12 +29,12 @@ namespace argos {
 
          CVector3 Offset;
          CVector3 Direction;
-         const CEmbodiedEntity::SAnchor& Anchor;
+         const SAnchor& Anchor;
 
          SSensor(const CVector3& c_offset,
                  const CVector3& c_direction,
                  Real f_range,
-                 const CEmbodiedEntity::SAnchor& s_anchor);
+                 const SAnchor& s_anchor);
       };
 
    public:
@@ -67,14 +67,14 @@ namespace argos {
       void AddSensor(const CVector3& c_offset,
                      const CVector3& c_direction,
                      Real f_range,
-                     const CEmbodiedEntity::SAnchor& s_anchor);
+                     const SAnchor& s_anchor);
 
       void AddSensorRing(const CVector3& c_center,
                          Real f_radius,
                          const CRadians& c_start_angle,
                          Real f_range,
                          UInt32 un_num_sensors,
-                         const CEmbodiedEntity::SAnchor& s_anchor);
+                         const SAnchor& s_anchor);
 
    protected:
 

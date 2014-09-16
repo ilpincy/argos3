@@ -43,6 +43,8 @@ namespace argos {
 
       virtual bool IsCollidingWithSomething() const;
 
+      void UpdateLEDAnchor(SAnchor& s_anchor);
+
    private:
 
       CEPuckEntity& m_cEPuckEntity;

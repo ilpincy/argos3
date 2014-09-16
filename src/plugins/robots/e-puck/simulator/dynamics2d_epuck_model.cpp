@@ -68,6 +68,8 @@ namespace argos {
       GetBoundingBox().MinCorner.SetZ(GetEmbodiedEntity().GetPosition().GetZ());
       GetBoundingBox().MaxCorner.SetZ(GetEmbodiedEntity().GetPosition().GetZ() + EPUCK_HEIGHT);
       CalculateBoundingBox();
+      RegisterAnchorMethod<CDynamics2DEPuckModel>(GetEmbodiedEntity().GetAnchor("led_ring"),
+                                                  &CDynamics2DEPuckModel::UpdateLEDAnchor);
    }
 
    /****************************************/

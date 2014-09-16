@@ -10,9 +10,10 @@
 namespace argos {
    class CPhysicsModel;
    class CPhysicsEngine;
-   class CEmbodiedEntity;
    class CRay3;
    class CQuaternion;
+   class CEmbodiedEntity;
+   struct SAnchor;
 }
 
 #include <argos3/core/utility/datatypes/datatypes.h>
@@ -99,10 +100,15 @@ namespace argos {
       }
 
       /**
-       * Returns an axis-aligned box that contains the physics model.
+       * Calculates the axis-aligned box that contains the entire physics model.
        * The bounding box is often called AABB.
        */
       virtual void CalculateBoundingBox() = 0;
+
+      /**
+       * Calculates the anchors associated to this model.
+       */
+      virtual void CalculateAnchors();
 
       /**
        * Returns <tt>true</tt> if this model is colliding with another model.
@@ -127,7 +133,110 @@ namespace argos {
       CEmbodiedEntity& m_cEmbodiedEntity;
       SBoundingBox m_sBoundingBox;
 
+   private:
+
+      /**
+       * Pointer-to-thunk type definition.
+       * @see Thunk
+       */
+      typedef void (CPhysicsModel::*TThunk)(SAnchor&);
+
+      /**
+       * The base anchor method holder.
+       * @see CAnchorMethodHolderImpl
+       */
+      class CAnchorMethodHolder {};
+
+      /**
+       * The actual anchor method holder.
+       * This template class holds a pointer to a user-defined method.
+       * @param MODEL A user-defined subclass of CPhysicsModel.
+       * @see CAnchorMethodHolder
+       */
+      template <typename MODEL> class CAnchorMethodHolderImpl : public CAnchorMethodHolder {
+      public:
+         typedef void (MODEL::*TMethod)(SAnchor&);
+         TMethod Method;
+         CAnchorMethodHolderImpl(TMethod t_method) : Method(t_method) {}
+      };
+
+   private:
+
+      /**
+       * A templetized thunk.
+       * This is a trampoline method that internally performs the
+       * dispatch to a user-defined method.
+       * @param MODEL A user-defined subclass of CPhysicsModel.
+       * @param s_anchor The anchor to pass as parameter.
+       * @see TThunk
+       */
+      template <typename USER_IMPL>
+      void Thunk(SAnchor& s_anchor);
+
+   private:
+
+      /**
+       * A map of anchor method holders.
+       * @see CAnchorMethodHolder
+       */
+      std::map<SAnchor*, CAnchorMethodHolder*> m_mapAnchorMethodHolders;
+
+      /**
+       * A map of thunks.
+       * @see Thunk
+       * @see TThunk
+       */
+      std::map<SAnchor*, TThunk> m_mapThunks;
+
+   public:
+
+      /**
+       * Registers an anchor method.
+       * @param MODEL A user-defined subclass of CPhysicsModel.
+       * @param s_anchor The anchor to pass as a parameter to the anchor method.
+       * @param pt_method The actual user-defined pointer-to-method.
+       */
+      template <typename MODEL>
+      void RegisterAnchorMethod(SAnchor& s_anchor, void(MODEL::*pt_method)(SAnchor&));
+
+      /**
+       * Calls an anchor method for the given anchor.
+       * @param s_anchor The anchor.
+       */
+      void Call(SAnchor& s_anchor);
+
    };
+
+   /****************************************/
+   /****************************************/
+
+   template <typename MODEL>
+   void CPhysicsModel::Thunk(SAnchor& s_anchor) {
+      /*
+       * When this method is called, the static type of 'this'
+       * is CPhysicsModel. Since we want to call
+       * method in MODEL (subclass of CPhysicsModel),
+       * we need a cast. The cast is static because we trust
+       * the user on not doing anything stupid.
+       */
+      MODEL& cImpl = static_cast<MODEL&>(*this);
+      /* Cast the method holder to its effective type */
+      CAnchorMethodHolderImpl<MODEL>& cMethodHolder = static_cast<CAnchorMethodHolderImpl<MODEL>&>(*m_mapAnchorMethodHolders[&s_anchor]);
+      /* Call the user-defined method */
+      (cImpl.*(cMethodHolder.Method))(s_anchor);
+   }
+
+   template <typename MODEL>
+   void CPhysicsModel::RegisterAnchorMethod(SAnchor& s_anchor,
+                                              void(MODEL::*pt_method)(SAnchor&)) {
+      /* Add the thunk to the VTable */
+      m_mapThunks[&s_anchor] = &CPhysicsModel::Thunk<MODEL>;
+      /* Add the method holder to the map */
+      m_mapAnchorMethodHolders[&s_anchor] = new CAnchorMethodHolderImpl<MODEL>(pt_method);
+   }
+
+   /****************************************/
+   /****************************************/
 
 }
 

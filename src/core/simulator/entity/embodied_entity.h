@@ -25,6 +25,44 @@ namespace argos {
 namespace argos {
 
    /**
+    * An anchor related to the body of an entity.
+    * Anchors are used by entities as reference points. For instance, an LED ring could
+    * use an anchor as the center of the ring. As the anchor moves in the space, the LED
+    * positions would be calculated with respect to it.
+    * An anchor is always initially disabled. To use it, you must first enable it.
+    */
+   struct SAnchor {
+      /** The id of the anchor */
+      std::string Id;
+      /** The initial position of the anchor wrt the body coordinate system */
+      CVector3 OffsetPosition;
+      /** The initial orientation of the anchor wrt the body coordinate system */
+      CQuaternion OffsetOrientation;
+      /** The position of the anchor wrt the global coordinate system */
+      CVector3 Position;
+      /** The orientation of the anchor wrt the global coordinate system */
+      CQuaternion Orientation;
+      /** A counter for the devices using this anchor */
+      UInt32 InUseCount;
+      /**
+       * Struct constructor.
+       * Initializes the anchor using the provided information.
+       * InUseCount is initialized to 0, i.e., the anchor is initially disabled.
+       * @param str_id The id of the anchor.
+       * @param c_offset_position The position of the anchor wrt the body coordinate system.
+       * @param c_offset_orientation The orientation of the anchor wrt the body coordinate system.
+       * @see CEmbodiedEntity::AddAnchor
+       * @see CEmbodiedEntity::EnableAnchor
+       * @see CEmbodiedEntity::DisableAnchor
+       */
+      SAnchor(const std::string& str_id,
+              const CVector3& c_offset_position,
+              const CQuaternion& c_offset_orientation,
+              const CVector3& c_position,
+              const CQuaternion& c_orientation);
+   };
+
+   /**
     * This entity is a link to a body in the physics engine.
     * <p>
     * The embodied entity can either be a root entity (i.e., parentless), or a component.
@@ -51,46 +89,6 @@ namespace argos {
    public:
 
       ENABLE_VTABLE();
-
-   public:
-
-      /**
-       * An anchor related to the body of an entity.
-       * Anchors are used by entities as reference points. For instance, an LED ring could
-       * use an anchor as the center of the ring. As the anchor moves in the space, the LED
-       * positions would be calculated with respect to it.
-       * An anchor is always initially disabled. To use it, you must first enable it.
-       */
-      struct SAnchor {
-         /** The id of the anchor */
-         std::string Id;
-         /** The initial position of the anchor wrt the body coordinate system */
-         CVector3 OffsetPosition;
-         /** The initial orientation of the anchor wrt the body coordinate system */
-         CQuaternion OffsetOrientation;
-         /** The position of the anchor wrt the global coordinate system */
-         CVector3 Position;
-         /** The orientation of the anchor wrt the global coordinate system */
-         CQuaternion Orientation;
-         /** A counter for the devices using this anchor */
-         UInt32 InUseCount;
-         /**
-          * Struct constructor.
-          * Initializes the anchor using the provided information.
-          * InUseCount is initialized to 0, i.e., the anchor is initially disabled.
-          * @param str_id The id of the anchor.
-          * @param c_offset_position The position of the anchor wrt the body coordinate system.
-          * @param c_offset_orientation The orientation of the anchor wrt the body coordinate system.
-          * @see CEmbodiedEntity::AddAnchor
-          * @see CEmbodiedEntity::EnableAnchor
-          * @see CEmbodiedEntity::DisableAnchor
-          */
-         SAnchor(const std::string& str_id,
-                 const CVector3& c_offset_position,
-                 const CQuaternion& c_offset_orientation,
-                 const CVector3& c_position,
-                 const CQuaternion& c_orientation);
-      };
 
    public:
 
@@ -160,7 +158,7 @@ namespace argos {
        * @param c_rel_position The position of the anchor wrt the body coordinate system.
        * @param c_rel_orientation The orientation of the anchor wrt the body coordinate system.
        * @throws CARGoSException if an anchor with the passed id already exists in this embodied entity.
-       * @see CEmbodiedEntity::SAnchor
+       * @see SAnchor
        * @see EnableAnchor
        */
       void AddAnchor(const std::string& str_id,
@@ -171,7 +169,7 @@ namespace argos {
        * Enables an anchor.
        * @param str_id The id of the anchor.
        * @throws CARGoSException if an anchor with the passed id does not exist in this embodied entity.
-       * @see CEmbodiedEntity::SAnchor
+       * @see SAnchor
        * @see DisableAnchor
        */
       void EnableAnchor(const std::string& str_id);
@@ -180,29 +178,38 @@ namespace argos {
        * Disables an anchor.
        * @param str_id The id of the anchor.
        * @throws CARGoSException if an enabled anchor with the passed id does not exist in this embodied entity.
-       * @see CEmbodiedEntity::SAnchor
+       * @see SAnchor
        * @see DisableAnchor
        */
       void DisableAnchor(const std::string& str_id);
 
       /**
-       * Returns the wanted anchor.
-       * This method only looks for enabled anchors. It is not allowed to use a disabled anchor.
-       * To use an anchor, one must first enable it.
+       * Returns the wanted anchor as a const reference.
        * @param str_id The id of the anchor.
        * @return The wanted anchor.
-       * @throws CARGoSException if the anchor was not found or was not enabled.
-       * @see CEmbodiedEntity::SAnchor
+       * @throws CARGoSException if the anchor was not found.
+       * @see SAnchor
        * @see EnableAnchor
        * @see DisableAnchor
        */
       const SAnchor& GetAnchor(const std::string& str_id) const;
 
       /**
+       * Returns the wanted anchor as a non-const reference.
+       * @param str_id The id of the anchor.
+       * @return The wanted anchor.
+       * @throws CARGoSException if the anchor was not found.
+       * @see SAnchor
+       * @see EnableAnchor
+       * @see DisableAnchor
+       */
+      SAnchor& GetAnchor(const std::string& str_id);
+
+      /**
        * Returns a map of anchors associated to this embodied entity.
        * The map has the id as key and a pointer to the anchor as value.
        * @return The map of anchors.
-       * @see CEmbodiedEntity::SAnchor
+       * @see SAnchor
        * @see AddAnchor
        */
       inline std::map<std::string, SAnchor*>& GetAnchors() {
@@ -349,7 +356,7 @@ namespace argos {
     * @param str_id The id to compare.
     * @return <tt>true</tt> if the anchor id matches the given id.
     */
-   extern bool operator==(const CEmbodiedEntity::SAnchor* ps_anchor,
+   extern bool operator==(const SAnchor* ps_anchor,
                           const std::string& str_id);
 
    /****************************************/
