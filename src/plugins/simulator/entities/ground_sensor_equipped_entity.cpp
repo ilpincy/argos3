@@ -55,12 +55,23 @@ namespace argos {
          /* Go through children */
          TConfigurationNodeIterator it;
          for(it = it.begin(&t_tree); it != it.end(); ++it) {
+            std::string strAnchorId;
+            GetNodeAttribute(*it, "anchor", strAnchorId);
+            /*
+             * NOTE: here we get a reference to the embodied entity
+             * This line works under the assumption that:
+             * 1. the GroundSensorEquippedEntity has a parent;
+             * 2. the parent has a child whose id is "body"
+             * 3. the "body" is an embodied entity
+             * If any of the above is false, this line will bomb out.
+             */
+            CEmbodiedEntity& cBody = GetParent().GetComponent<CEmbodiedEntity>("body");
             if(it->Value() == "sensor") {
                CVector2 cOffset;
                GetNodeAttribute(*it, "offset", cOffset);
                std::string strType;
                GetNodeAttribute(*it, "type", strType);
-               AddSensor(cOffset, ParseType(strType));
+               AddSensor(cOffset, ParseType(strType), cBody.GetAnchor(strAnchorId));
             }
             else if(it->Value() == "ring") {
                CVector2 cRingCenter;
@@ -79,7 +90,8 @@ namespace argos {
                              fRadius,
                              cRingStartAngleRadians,
                              eType,
-                             unNumSensors);
+                             unNumSensors,
+                             cBody.GetAnchor(strAnchorId));
             }
             else {
                THROW_ARGOSEXCEPTION("Unrecognized tag \"" << it->Value() << "\"");
@@ -95,8 +107,9 @@ namespace argos {
    /****************************************/
 
    void CGroundSensorEquippedEntity::AddSensor(const CVector2& c_offset,
-                                               ESensorType e_type) {
-      m_tSensors.push_back(new SSensor(c_offset, e_type));
+                                               ESensorType e_type,
+                                               const SAnchor& s_anchor) {
+      m_tSensors.push_back(new SSensor(c_offset, e_type, s_anchor));
    }
 
    /****************************************/
@@ -106,7 +119,8 @@ namespace argos {
                                                       Real f_radius,
                                                       const CRadians& c_start_angle,
                                                       ESensorType e_type,
-                                                      UInt32 un_num_sensors) {
+                                                      UInt32 un_num_sensors,
+                                                      const SAnchor& s_anchor) {
       CRadians cSensorSpacing = CRadians::TWO_PI / un_num_sensors;
       CRadians cAngle;
       CVector2 cOffset;
@@ -116,7 +130,7 @@ namespace argos {
          cOffset.Set(f_radius, 0.0f);
          cOffset.Rotate(cAngle);
          cOffset += c_center;
-         AddSensor(cOffset, e_type);
+         AddSensor(cOffset, e_type, s_anchor);
       }
    }
 
