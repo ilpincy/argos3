@@ -44,11 +44,15 @@ namespace argos {
    public:
 
       struct SActuator {
-         CLEDEntity* LED;
-         CVector3 Offset;
-         EmboddiedEntity::Anchor* Anchor;
+         typedef std::vector<SActuator*> TList;
 
-         typedef std::vector<SActuator> TList;
+         CLEDEntity& LED;
+         CVector3 Offset;
+         const CEmbodiedEntity::SAnchor& Anchor;
+
+         SActuator(CLEDEntity& c_led,
+                   const CVector3& c_offset,
+                   const CEmbodiedEntity::SAnchor& s_anchor);
       };
 
    public:
@@ -67,18 +71,23 @@ namespace argos {
       CLEDEquippedEntity(CComposableEntity* pc_parent,
                          const std::string& str_id);
 
+      /**
+       * Class destructor.
+       */
+      ~CLEDEquippedEntity();
+
       virtual void Init(TConfigurationNode& t_tree);
 
       virtual void Reset();
 
       /**
        * Adds an LED to this entity.
-       * @param c_position The position of the LED wrt the reference entity.
+       * @param c_offset The position of the LED wrt the anchor.
+       * @param s_anchor The anchor of the LED.
        * @param c_color The color of the LED.
-       * @param s_anchor The anchor of the LED
        */
-      void AddLED(const CVector3& c_position,
-                  const EmboddiedEntity::SAnchor& s_anchor,
+      void AddLED(const CVector3& c_offset,
+                  const CEmbodiedEntity::SAnchor& s_anchor,
                   const CColor& c_color = CColor::BLACK);
 
       /**
@@ -87,14 +96,14 @@ namespace argos {
        * @param f_radius The radius of the LED ring.
        * @param c_start_angle The angle at which the first LED must be placed. Expressed wrt the local entity <em>x</em>-axis.
        * @param un_num_leds The number of LEDs to place along the ring.
-       * @param s_anchor The anchor of the LED
+       * @param s_anchor The anchor of the LED.
        * @param c_color The color of the LEDs.
        */
       void AddLEDRing(const CVector3& c_center,
                       Real f_radius,
                       const CRadians& c_start_angle,
                       UInt32 un_num_leds,
-                      const EmboddiedEntity::SAnchor& s_anchor,
+                      const CEmbodiedEntity::SAnchor& s_anchor,
                       const CColor& c_color = CColor::BLACK);
 
       /**
@@ -127,7 +136,7 @@ namespace argos {
                       " out of bounds [0:" <<
                       m_tLEDs.size()-1 <<
                       "]" );
-         return m_tLEDs[un_idx].Offset;
+         return m_tLEDs[un_idx]->Offset;
       }
 
       /**

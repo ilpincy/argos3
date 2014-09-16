@@ -64,6 +64,10 @@ namespace argos {
       struct SAnchor {
          /** The id of the anchor */
          std::string Id;
+         /** The initial position of the anchor wrt the body coordinate system */
+         CVector3 OffsetPosition;
+         /** The initial orientation of the anchor wrt the body coordinate system */
+         CQuaternion OffsetOrientation;
          /** The position of the anchor wrt the global coordinate system */
          CVector3 Position;
          /** The orientation of the anchor wrt the global coordinate system */
@@ -75,24 +79,17 @@ namespace argos {
           * Initializes the anchor using the provided information.
           * InUseCount is initialized to 0, i.e., the anchor is initially disabled.
           * @param str_id The id of the anchor.
-          * @param c_position The position of the anchor wrt the global coordinate system.
-          * @param c_orientation The orientation of the anchor wrt the global coordinate system.
+          * @param c_offset_position The position of the anchor wrt the body coordinate system.
+          * @param c_offset_orientation The orientation of the anchor wrt the body coordinate system.
           * @see CEmbodiedEntity::AddAnchor
           * @see CEmbodiedEntity::EnableAnchor
           * @see CEmbodiedEntity::DisableAnchor
           */
          SAnchor(const std::string& str_id,
-                 const CVector3& c_rel_position,
-                 const CQuaternion& c_rel_orientation);
-         /**
-          * Restores the initial position of the anchor.
-          */
-         void Reset();
-      private:
-         /** The initial position of the anchor wrt the body coordinate system */
-         CVector3 InitPosition;
-         /** The initial orientation of the anchor wrt the body coordinate system */
-         CQuaternion InitOrientation;
+                 const CVector3& c_offset_position,
+                 const CQuaternion& c_offset_orientation,
+                 const CVector3& c_position,
+                 const CQuaternion& c_orientation);
       };
 
    public:
@@ -136,6 +133,8 @@ namespace argos {
        */
       virtual void Init(TConfigurationNode& t_tree);
 
+      virtual void Reset();
+
       /**
        * Returns <tt>true</tt> if the entity is movable.
        * @return <tt>true</tt> if the entity is movable.
@@ -165,8 +164,8 @@ namespace argos {
        * @see EnableAnchor
        */
       void AddAnchor(const std::string& str_id,
-                     const CVector3& c_rel_position,
-                     const CQuaternion& c_rel_orientation);
+                     const CVector3& c_rel_position = CVector3(),
+                     const CQuaternion& c_rel_orientation = CQuaternion());
 
       /**
        * Enables an anchor.

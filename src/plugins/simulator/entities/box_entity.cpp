@@ -40,8 +40,7 @@ namespace argos {
                              b_movable)),
       m_pcLEDEquippedEntity(
          new CLEDEquippedEntity(this,
-                                "leds_0",
-                                m_pcEmbodiedEntity)),
+                                "leds_0")),
       m_cSize(c_size),
       m_fMass(f_mass) {
       AddComponent(*m_pcEmbodiedEntity);
@@ -73,8 +72,7 @@ namespace argos {
          m_pcEmbodiedEntity->Init(GetNode(t_tree, "body"));
          m_pcEmbodiedEntity->SetMovable(bMovable);
          /* Init LED equipped entity component */
-         m_pcLEDEquippedEntity = new CLEDEquippedEntity(this,
-                                                        m_pcEmbodiedEntity);
+         m_pcLEDEquippedEntity = new CLEDEquippedEntity(this);
          AddComponent(*m_pcLEDEquippedEntity);
          if(NodeExists(t_tree, "leds")) {
             /* Create LED equipped entity

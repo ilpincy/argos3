@@ -74,7 +74,7 @@ namespace argos {
          pfColor[2] = cColor.GetBlue()  / 255.0f;
          glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, pfColor);
          /* Perform rototranslation */
-         const CVector3& cPosition = cLEDEquippedEntity.GetLEDOffsetPosition(i);
+         const CVector3& cPosition = cLEDEquippedEntity.GetLEDOffset(i);
          glTranslatef(cPosition.GetX(), cPosition.GetY(), cPosition.GetZ());
          /* Draw the LED */
          glCallList(m_unLEDList);

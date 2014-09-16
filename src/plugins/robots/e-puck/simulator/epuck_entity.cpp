@@ -75,15 +75,18 @@ namespace argos {
          m_pcWheeledEntity->SetWheel(0, CVector3(0.0f,  HALF_INTERWHEEL_DISTANCE, 0.0f), WHEEL_RADIUS);
          m_pcWheeledEntity->SetWheel(1, CVector3(0.0f, -HALF_INTERWHEEL_DISTANCE, 0.0f), WHEEL_RADIUS);
          /* LED equipped entity, with LEDs [0-11] and beacon [12] */
-         m_pcLEDEquippedEntity = new CLEDEquippedEntity(this,
-                                                        "leds_0",
-                                                        m_pcEmbodiedEntity);
+         m_pcEmbodiedEntity->AddAnchor("led_ring_center",
+                                       CVector3(0.0f,
+                                                0.0f,
+                                                LED_RING_ELEVATION));
+         m_pcLEDEquippedEntity = new CLEDEquippedEntity(this, "leds_0");
          AddComponent(*m_pcLEDEquippedEntity);
          m_pcLEDEquippedEntity->AddLEDRing(
-            CVector3(0.0f, 0.0f, LED_RING_ELEVATION),
+            CVector3(),
             LED_RING_RADIUS,
             LED_RING_START_ANGLE,
-            8);
+            8,
+            m_pcEmbodiedEntity->GetAnchor("led_ring_center"));
          /* Proximity sensor equipped entity */
          m_pcProximitySensorEquippedEntity =
             new CProximitySensorEquippedEntity(this,

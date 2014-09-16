@@ -29,7 +29,7 @@ namespace argos {
    /****************************************/
 
    CDynamics2DEPuckModel::CDynamics2DEPuckModel(CDynamics2DEngine& c_engine,
-                                                    CEPuckEntity& c_entity) :
+                                                CEPuckEntity& c_entity) :
       CDynamics2DModel(c_engine, c_entity.GetEmbodiedEntity()),
       m_cEPuckEntity(c_entity),
       m_cWheeledEntity(m_cEPuckEntity.GetWheeledEntity()),
@@ -85,7 +85,7 @@ namespace argos {
    /****************************************/
 
    bool CDynamics2DEPuckModel::CheckIntersectionWithRay(Real& f_t_on_ray,
-                                                           const CRay3& c_ray) const {
+                                                        const CRay3& c_ray) const {
       cpSegmentQueryInfo tInfo;
       if(cpShapeSegmentQuery(m_ptBaseShape,
                              cpv(c_ray.GetStart().GetX(), c_ray.GetStart().GetY()),
@@ -111,8 +111,8 @@ namespace argos {
    /****************************************/
 
    bool CDynamics2DEPuckModel::MoveTo(const CVector3& c_position,
-                                         const CQuaternion& c_orientation,
-                                         bool b_check_only) {
+                                      const CQuaternion& c_orientation,
+                                      bool b_check_only) {
       /* Save body position and orientation */
       cpVect tOldPos = m_ptActualBaseBody->p;
       cpFloat fOldA = m_ptActualBaseBody->a;
@@ -201,8 +201,8 @@ namespace argos {
       if(m_cDyn2DEngine.IsEntityTransferActive()) {
          std::string strEngineId;
          if(m_cDyn2DEngine.CalculateTransfer(GetEmbodiedEntity().GetPosition().GetX(),
-                                        GetEmbodiedEntity().GetPosition().GetY(),
-                                        strEngineId)) {
+                                             GetEmbodiedEntity().GetPosition().GetY(),
+                                             strEngineId)) {
             m_cDyn2DEngine.ScheduleEntityForTransfer(m_cEPuckEntity, strEngineId);
          }
       }
