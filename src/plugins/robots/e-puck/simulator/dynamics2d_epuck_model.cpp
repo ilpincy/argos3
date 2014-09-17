@@ -188,31 +188,6 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CDynamics2DEPuckModel::UpdateEntityStatus() {
-      /* Update bounding box */
-      CalculateBoundingBox();
-      /* Update e-puck body position */
-      m_cDyn2DEngine.PositionPhysicsToSpace(m_cSpacePosition, GetEmbodiedEntity().GetPosition(), m_ptActualBaseBody);
-      GetEmbodiedEntity().SetPosition(m_cSpacePosition);
-      /* Update e-puck body orientation */
-      m_cDyn2DEngine.OrientationPhysicsToSpace(m_cSpaceOrientation, m_ptActualBaseBody);
-      GetEmbodiedEntity().SetOrientation(m_cSpaceOrientation);
-      /* Update e-puck components */
-      m_cEPuckEntity.UpdateComponents();
-      /* Check whether a transfer is necessary */
-      if(m_cDyn2DEngine.IsEntityTransferActive()) {
-         std::string strEngineId;
-         if(m_cDyn2DEngine.CalculateTransfer(GetEmbodiedEntity().GetPosition().GetX(),
-                                             GetEmbodiedEntity().GetPosition().GetY(),
-                                             strEngineId)) {
-            m_cDyn2DEngine.ScheduleEntityForTransfer(m_cEPuckEntity, strEngineId);
-         }
-      }
-   }
-
-   /****************************************/
-   /****************************************/
-
    void CDynamics2DEPuckModel::UpdateFromEntityStatus() {
       /* Do we want to move? */
       if((m_fCurrentWheelVelocity[EPUCK_LEFT_WHEEL] != 0.0f) ||

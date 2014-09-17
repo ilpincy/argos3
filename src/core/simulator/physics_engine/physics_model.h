@@ -127,6 +127,31 @@ namespace argos {
       }
 
       /**
+       * Updates the status of the associated entity.
+       * This method performs all the calculations to update the status of the
+       * entity associated to this model. In particular, it is in this method
+       * that anchors get updated and transfer to other engines is scheduled.
+       * This method internally calls:
+       * <ul>
+       * <li>CalculateBoundingBox()
+       * <li>CalculateAnchors()
+       * <li>CComposableEntity::UpdateComponents()
+       * </ul>
+       * @see CalculateBoundingBox()
+       * @see CalculateAnchors()
+       * @see CComposableEntity::UpdateComponents()
+       */
+      virtual void UpdateEntityStatus();
+
+      /**
+       * Updates the state of this model from the status of the associated entity.
+       * This method takes the current state of the associated entity (e.g., desired
+       * wheel speed, turret rotationss, etc.) and updates the state of this model.
+       * Typically, in this method you apply forces and set speeds.
+       */
+      virtual void UpdateFromEntityStatus() = 0;
+
+      /**
        * Moves the entity to the wanted position and orientation.
        * The movement is allowed only if the object does not collide
        * with anything once in the new position.

@@ -1,5 +1,6 @@
 #include "physics_model.h"
 #include <argos3/core/simulator/entity/embodied_entity.h>
+#include <argos3/core/simulator/entity/composable_entity.h>
 
 namespace argos {
 
@@ -31,6 +32,35 @@ namespace argos {
       m_sBoundingBox(),
       m_vecAnchorMethodHolders(c_entity.GetAnchors().size(), NULL),
       m_vecThunks(c_entity.GetAnchors().size(), NULL) {}
+
+   /****************************************/
+   /****************************************/
+
+   void CPhysicsModel::UpdateEntityStatus() {
+      CalculateBoundingBox();
+      CalculateAnchors();
+      /*
+       * Update entity components
+       */
+      /* Get a reference to the root entity */
+      /* NOTE: here the cast is static because we know that an embodied entity MUST have a parent
+       * which, by definition, is a composable entity */
+      CComposableEntity& cRoot = static_cast<CComposableEntity&>(m_cEmbodiedEntity.GetRootEntity());
+      /* Update its components */
+      cRoot.UpdateComponents();
+      /*
+       * TODO entity transfer
+       */
+      // /* Check whether a transfer is necessary */
+      // if(m_cEngine.IsEntityTransferActive()) {
+      //    std::string strEngineId;
+      //    if(m_cEngine.CalculateTransfer(GetEmbodiedEntity().GetPosition().GetX(),
+      //                                   GetEmbodiedEntity().GetPosition().GetY(),
+      //                                   strEngineId)) {
+      //       m_cEngine.ScheduleEntityForTransfer(m_cEPuckEntity, strEngineId);
+      //    }
+      // }
+   }
 
    /****************************************/
    /****************************************/

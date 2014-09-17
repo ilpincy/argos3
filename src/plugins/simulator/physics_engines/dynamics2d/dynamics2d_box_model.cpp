@@ -233,16 +233,8 @@ namespace argos {
 
    void CDynamics2DBoxModel::UpdateEntityStatus() {
       if(m_bMovable) {
-         /* Update bounding box */
-         CalculateBoundingBox();
-         /* Update entity position and orientation */
-         m_cDyn2DEngine.PositionPhysicsToSpace(m_cSpacePosition, GetEmbodiedEntity().GetPosition(), m_ptBody);
-         GetEmbodiedEntity().SetPosition(m_cSpacePosition);
-         m_cDyn2DEngine.OrientationPhysicsToSpace(m_cSpaceOrientation, m_ptBody);
-         GetEmbodiedEntity().SetOrientation(m_cSpaceOrientation);
+         CPhysicsModel::UpdateEntityStatus();
       }
-      /* Update components */
-      m_cBoxEntity.UpdateComponents();
    }
 
    /****************************************/

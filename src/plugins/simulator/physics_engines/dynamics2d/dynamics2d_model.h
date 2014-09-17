@@ -42,9 +42,6 @@ namespace argos {
 
       virtual void Reset() = 0;
 
-      virtual void UpdateEntityStatus() = 0;
-      virtual void UpdateFromEntityStatus() = 0;
-
    protected:
 
       CDynamics2DEngine& m_cDyn2DEngine;
