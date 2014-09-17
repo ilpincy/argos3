@@ -37,7 +37,7 @@ namespace argos {
                          const std::string& str_id,
                          size_t un_msg_size,
                          Real f_range,
-                         CEmbodiedEntity& c_reference,
+                         const SAnchor& s_anchor,
                          const CVector3& c_position = CVector3(),
                          const CQuaternion& c_orientation = CQuaternion());
 
@@ -65,8 +65,8 @@ namespace argos {
          return m_fRange;
       }
 
-      inline CEmbodiedEntity& GetReference() {
-         return *m_pcReference;
+      inline const SAnchor& GetAnchor() const {
+         return *m_psAnchor;
       }
 
       virtual std::string GetTypeDescription() const {
@@ -75,7 +75,7 @@ namespace argos {
 
    protected:
 
-      CEmbodiedEntity* m_pcReference;
+      const SAnchor* m_psAnchor;
       CVector3 m_cPosOffset;
       CQuaternion m_cRotOffset;
       CByteArray m_cData;

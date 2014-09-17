@@ -16,7 +16,7 @@ namespace argos {
 
    CRABEquippedEntity::CRABEquippedEntity(CComposableEntity* pc_parent) :
       CPositionalEntity(pc_parent),
-      m_pcReference(NULL),
+      m_psAnchor(NULL),
       m_fRange(0.0f) {
       Disable();
       SetCanBeEnabledIfDisabled(false);
@@ -29,20 +29,25 @@ namespace argos {
                                           const std::string& str_id,
                                           size_t un_msg_size,
                                           Real f_range,
-                                          CEmbodiedEntity& c_reference,
+                                          const SAnchor& s_anchor,
                                           const CVector3& c_pos_offset,
                                           const CQuaternion& c_rot_offset) :
       CPositionalEntity(pc_parent,
-                        str_id,
-                        c_reference.GetInitPosition() + c_pos_offset,
-                        c_reference.GetInitOrientation() * c_rot_offset),
-      m_pcReference(&c_reference),
+                        str_id),
+      m_psAnchor(&s_anchor),
       m_cPosOffset(c_pos_offset),
       m_cRotOffset(c_rot_offset),
       m_cData(un_msg_size),
       m_fRange(f_range) {
       Disable();
       SetCanBeEnabledIfDisabled(false);
+      CVector3 cPos = c_pos_offset;
+      cPos.Rotate(s_anchor.Orientation);
+      cPos += s_anchor.Position;
+      SetInitPosition(cPos);
+      SetPosition(cPos);
+      SetInitOrientation(s_anchor.Orientation * c_rot_offset);
+      SetOrientation(GetInitOrientation());
    }
 
    /****************************************/
@@ -60,8 +65,8 @@ namespace argos {
          /* Get reference entity */
          std::string strReference;
          GetNodeAttribute(t_tree, "reference", strReference);
-         m_pcReference = dynamic_cast<CEmbodiedEntity*>(&CSimulator::GetInstance().GetSpace().GetEntity(strReference));
-         if(m_pcReference == NULL) {
+         m_psAnchor = dynamic_cast<CEmbodiedEntity*>(&CSimulator::GetInstance().GetSpace().GetEntity(strReference));
+         if(m_psAnchor == NULL) {
             THROW_ARGOSEXCEPTION("Entity \"" << strReference << "\" can't be used as a reference for range and bearing entity \"" << GetId() << "\"");
          }
          /* Get offsets */
@@ -76,8 +81,8 @@ namespace argos {
                                          ToRadians(cRotOffsetEuler[2]));
          }
          /* Set init position and orientation */
-         SetInitPosition(m_pcReference->GetInitPosition() + m_cPosOffset);
-         SetInitOrientation(m_pcReference->GetInitOrientation() * m_cRotOffset);
+         SetInitPosition(m_psAnchor->GetInitPosition() + m_cPosOffset);
+         SetInitOrientation(m_psAnchor->GetInitOrientation() * m_cRotOffset);
          SetPosition(GetInitPosition());
          SetOrientation(GetInitOrientation());
          /* Get message size */
@@ -96,8 +101,11 @@ namespace argos {
    /****************************************/
 
    void CRABEquippedEntity::Update() {
-      SetPosition(m_pcReference->GetPosition() + m_cPosOffset);
-      SetOrientation(m_pcReference->GetOrientation() * m_cRotOffset);
+      CVector3 cPos = m_cPosOffset;
+      cPos.Rotate(m_psAnchor->Orientation);
+      cPos += m_psAnchor->Position;
+      SetPosition(cPos);
+      SetOrientation(m_psAnchor->Orientation * m_cRotOffset);
    }
 
    /****************************************/
