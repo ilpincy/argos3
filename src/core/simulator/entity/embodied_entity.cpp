@@ -17,10 +17,10 @@ namespace argos {
    /****************************************/
 
    CEmbodiedEntity::CEmbodiedEntity(CComposableEntity* pc_parent) :
-      CPositionalEntity(pc_parent),
+      CEntity(pc_parent),
       m_bMovable(true),
-      m_sBoundingBox(NULL) {
-   }
+      m_sBoundingBox(NULL),
+      m_psOriginAnchor(NULL) {}
 
    /****************************************/
    /****************************************/
@@ -30,13 +30,20 @@ namespace argos {
                                     const CVector3& c_position,
                                     const CQuaternion& c_orientation,
                                     bool b_movable) :
-      CPositionalEntity(pc_parent,
-                        str_id,
-                        c_position,
-                        c_orientation),
+      CEntity(pc_parent, str_id),
       m_bMovable(b_movable),
-      m_sBoundingBox(NULL) {
-      AddAnchor("origin");
+      m_sBoundingBox(NULL),
+      m_psOriginAnchor(new SAnchor("origin",
+                                   0,
+                                   CVector3(),
+                                   CQuaternion(),
+                                   c_position,
+                                   c_orientation)),
+      m_cInitOriginPosition(c_position),
+      m_cInitOriginOrientation(c_orientation) {
+      /* Add anchor to map and enable it */
+      m_mapAnchors[m_psOriginAnchor->Id] = m_psOriginAnchor;
+      EnableAnchor("origin");
    }
 
    /****************************************/
@@ -59,8 +66,23 @@ namespace argos {
 
    void CEmbodiedEntity::Init(TConfigurationNode& t_tree) {
       try {
-         CPositionalEntity::Init(t_tree);
-         AddAnchor("origin");
+         /* Initialize base entity */
+         CEntity::Init(t_tree);
+         /* Get the position of the entity */
+         GetNodeAttributeOrDefault(t_tree, "position", m_cInitOriginPosition, CVector3());
+         /* Get the orientation of the entity */
+         GetNodeAttributeOrDefault(t_tree, "orientation", m_cInitOriginOrientation, CQuaternion());
+         /* Create origin anchor */
+         m_psOriginAnchor = new SAnchor("origin",
+                                        0,
+                                        CVector3(),
+                                        CQuaternion(),
+                                        m_cInitOriginPosition,
+                                        m_cInitOriginOrientation);
+         /* Add anchor to map and enable it */
+         m_mapAnchors[m_psOriginAnchor->Id] = m_psOriginAnchor;
+         EnableAnchor("origin");
+         /* Embodied entities are movable by default */
          m_bMovable = true;
       }
       catch(CARGoSException& ex) {
@@ -72,19 +94,22 @@ namespace argos {
    /****************************************/
 
    void CEmbodiedEntity::Reset() {
-      /* Reset position and orientation */
-      CPositionalEntity::Reset();
-      /* Reset anchors */
+      /* Reset origin anchor first */
+      m_psOriginAnchor->Position = m_cInitOriginPosition;
+      m_psOriginAnchor->Orientation = m_cInitOriginOrientation;
+      /* Reset other anchors */
       SAnchor* psAnchor;
       for(std::map<std::string, SAnchor*>::iterator it = m_mapAnchors.begin();
           it != m_mapAnchors.end(); ++it) {
          /* it->second points to the current anchor */
          psAnchor = it->second;
-         /* Calculate global position and orientation */
-         psAnchor->Position = psAnchor->OffsetPosition;
-         psAnchor->Position.Rotate(GetOrientation());
-         psAnchor->Position += GetPosition();
-         psAnchor->Orientation = GetOrientation() * psAnchor->OffsetOrientation;
+         if(psAnchor->Index > 0) {
+            /* Calculate global position and orientation */
+            psAnchor->Position = psAnchor->OffsetPosition;
+            psAnchor->Position.Rotate(m_cInitOriginOrientation);
+            psAnchor->Position += m_cInitOriginPosition;
+            psAnchor->Orientation = m_cInitOriginOrientation * psAnchor->OffsetOrientation;
+         }
       }
    }
 
@@ -100,10 +125,10 @@ namespace argos {
       }
       /* Calculate anchor position */
       CVector3 cPos = c_offset_position;
-      cPos.Rotate(GetOrientation());
-      cPos += GetPosition();
+      cPos.Rotate(m_psOriginAnchor->Orientation);
+      cPos += m_psOriginAnchor->Position;
       /* Calculate anchor orientation */
-      CQuaternion cOrient = GetOrientation() * c_offset_orientation;
+      CQuaternion cOrient = m_psOriginAnchor->Orientation * c_offset_orientation;
       /* Create anchor */
       SAnchor* psAnchor = new SAnchor(str_id,
                                       m_mapAnchors.size(),
@@ -293,6 +318,8 @@ namespace argos {
                                 const CQuaternion& c_orientation,
                                 bool b_check_only) {
       bool bNoCollision = true;
+      CVector3 cOriginalPosition = m_psOriginAnchor->Position;
+      CQuaternion cOriginalOrientation = m_psOriginAnchor->Orientation;
       for(CPhysicsModel::TVector::const_iterator it = m_tPhysicsModelVector.begin();
           it != m_tPhysicsModelVector.end() && bNoCollision; ++it) {
          if(! (*it)->MoveTo(c_position, c_orientation, b_check_only)) {
@@ -300,9 +327,7 @@ namespace argos {
          }
       }
       if(bNoCollision && !b_check_only) {
-         /* Update space position */
-         SetPosition(c_position);
-         SetOrientation(c_orientation);
+         /* Update parent */
          if( HasParent() ) {
             CComposableEntity* pcEntity = dynamic_cast<CComposableEntity*>(&GetParent());
             if( pcEntity != NULL ) {
@@ -315,7 +340,7 @@ namespace argos {
          /* No Collision or check only, undo changes */
          for(CPhysicsModel::TVector::const_iterator it = m_tPhysicsModelVector.begin();
              it != m_tPhysicsModelVector.end(); ++it) {
-            (*it)->MoveTo(GetPosition(), GetOrientation());
+            (*it)->MoveTo(cOriginalPosition, cOriginalOrientation);
          }
          if(!bNoCollision) {
             /* Collision */

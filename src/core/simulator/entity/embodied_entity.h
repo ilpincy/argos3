@@ -9,10 +9,9 @@
 
 namespace argos {
    class CEmbodiedEntity;
-   class CRotationMatrix3;
 }
 
-#include <argos3/core/simulator/entity/positional_entity.h>
+#include <argos3/core/simulator/entity/entity.h>
 #include <argos3/core/simulator/space/positional_indices/grid.h>
 #include <argos3/core/simulator/space/positional_indices/space_hash.h>
 #include <argos3/core/utility/datatypes/set.h>
@@ -46,7 +45,7 @@ namespace argos {
     * @see CPhysicsEngine
     * @see CPhysicsModel
     */
-   class CEmbodiedEntity : public CPositionalEntity {
+   class CEmbodiedEntity : public CEntity {
 
    public:
 
@@ -111,6 +110,22 @@ namespace argos {
        */
       inline void SetMovable(bool b_movable) {
          m_bMovable = b_movable;
+      }
+
+      /**
+       * Returns a const reference to the origin anchor associated to this entity.
+       * @returns A const reference to the origin anchor associated to this entity.
+       */
+      inline const SAnchor& GetOriginAnchor() const {
+         return *m_psOriginAnchor;
+      }
+
+      /**
+       * Returns a non-const reference to the origin anchor associated to this entity.
+       * @returns A non-const reference to the origin anchor associated to this entity.
+       */
+      inline SAnchor& GetOriginAnchor() {
+         return *m_psOriginAnchor;
       }
 
       /**
@@ -306,8 +321,11 @@ namespace argos {
       CPhysicsModel::TMap m_tPhysicsModelMap;
       CPhysicsModel::TVector m_tPhysicsModelVector;
       SBoundingBox* m_sBoundingBox;
+      SAnchor* m_psOriginAnchor;
       std::map<std::string, SAnchor*> m_mapAnchors;
       std::vector<SAnchor*> m_vecEnabledAnchors;
+      CVector3 m_cInitOriginPosition;
+      CQuaternion m_cInitOriginOrientation;
 
    };
 

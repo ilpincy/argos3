@@ -65,9 +65,8 @@ namespace argos {
          m_cInitOrientation = c_orientation;
       }
 
-      virtual bool MoveTo(const CVector3& c_position,
-                          const CQuaternion& c_orientation,
-                          bool b_check_only = false);
+      virtual void MoveTo(const CVector3& c_position,
+                          const CQuaternion& c_orientation);
 
       virtual std::string GetTypeDescription() const {
          return "position";

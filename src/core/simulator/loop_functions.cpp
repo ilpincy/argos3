@@ -6,13 +6,24 @@
 
 #include "loop_functions.h"
 #include <argos3/core/utility/plugins/factory.h>
+#include <argos3/core/simulator/entity/positional_entity.h>
+#include <argos3/core/simulator/entity/embodied_entity.h>
 
 namespace argos {
 
    /****************************************/
    /****************************************/
    
-   bool CLoopFunctions::MoveEntity(CPositionalEntity& c_entity,
+   void CLoopFunctions::MoveEntity(CPositionalEntity& c_entity,
+                                   const CVector3& c_position,
+                                   const CQuaternion& c_orientation) {
+      c_entity.MoveTo(c_position, c_orientation);
+   }
+
+   /****************************************/
+   /****************************************/
+
+   bool CLoopFunctions::MoveEntity(CEmbodiedEntity& c_entity,
                                    const CVector3& c_position,
                                    const CQuaternion& c_orientation,
                                    bool b_check_only) {

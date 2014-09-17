@@ -14,6 +14,7 @@
 #include <argos3/core/utility/math/rng.h>
 #include <argos3/core/simulator/simulator.h>
 #include <argos3/core/simulator/entity/composable_entity.h>
+#include <argos3/core/simulator/entity/positional_entity.h>
 #include <cstring>
 #include "space.h"
 
@@ -151,7 +152,7 @@ namespace argos {
          pcToAdd = &pcToAdd->GetParent();
       }
       /* Get a reference to the position of the entity */
-      const CVector3& cPos = c_entity.GetPosition();
+      const CVector3& cPos = c_entity.GetOriginAnchor().Position;
       /* Go through engines and check which ones could house the entity */
       CPhysicsEngine::TVector vecPotentialEngines;
       for(size_t i = 0; i < m_ptPhysicsEngines->size(); ++i) {

@@ -27,9 +27,12 @@ namespace argos {
       /* Get the radius of the entity */
       Real fRadius = c_entity.GetRadius();
       /* Create a circle object in the physics space */
-      const CVector3& cPosition = GetEmbodiedEntity().GetPosition();
+      const CVector3& cPosition = GetEmbodiedEntity().GetOriginAnchor().Position;
       if(m_bMovable) {
          /* The cylinder is movable */
+         /* Register the origin anchor update method */
+         RegisterAnchorMethod<CDynamics2DCylinderModel>(GetEmbodiedEntity().GetOriginAnchor(),
+                                                        &CDynamics2DCylinderModel::UpdateOriginAnchor);
          /* Create the body */
          m_ptBody = cpSpaceAddBody(m_cDyn2DEngine.GetPhysicsSpace(),
                                    cpBodyNew(m_fMass,
@@ -39,7 +42,7 @@ namespace argos {
                                                                cpvzero)));
          m_ptBody->p = cpv(cPosition.GetX(), cPosition.GetY());
          CRadians cXAngle, cYAngle, cZAngle;
-         GetEmbodiedEntity().GetOrientation().ToEulerAngles(cZAngle, cYAngle, cXAngle);
+         GetEmbodiedEntity().GetOriginAnchor().Orientation.ToEulerAngles(cZAngle, cYAngle, cXAngle);
          cpBodySetAngle(m_ptBody, cZAngle.GetValue());
          /* Create the shape */
          m_ptShape = cpSpaceAddShape(m_cDyn2DEngine.GetPhysicsSpace(),
@@ -85,8 +88,8 @@ namespace argos {
       /* Associate this model to the body data for ray queries */
       m_ptBody->data = this;
       /* Calculate bounding box */
-      GetBoundingBox().MinCorner.SetZ(GetEmbodiedEntity().GetPosition().GetZ());
-      GetBoundingBox().MaxCorner.SetZ(GetEmbodiedEntity().GetPosition().GetZ() + m_cCylinderEntity.GetHeight());
+      GetBoundingBox().MinCorner.SetZ(GetEmbodiedEntity().GetOriginAnchor().Position.GetZ());
+      GetBoundingBox().MaxCorner.SetZ(GetEmbodiedEntity().GetOriginAnchor().Position.GetZ() + m_cCylinderEntity.GetHeight());
       CalculateBoundingBox();
    }
 
@@ -148,6 +151,8 @@ namespace argos {
             m_pcGrippable->ReleaseAll();
             /* Update the active space hash if the movement is actual */
             cpSpaceReindexShape(m_cDyn2DEngine.GetPhysicsSpace(), m_ptShape);
+            /* Update anchors */
+            CalculateAnchors();
             /* Update bounding box */
             CalculateBoundingBox();
          }
@@ -166,11 +171,11 @@ namespace argos {
    void CDynamics2DCylinderModel::Reset() {
       if(m_bMovable) {
          /* Reset body position */
-         const CVector3& cPosition = GetEmbodiedEntity().GetInitPosition();
+         const CVector3& cPosition = GetEmbodiedEntity().GetOriginAnchor().Position;
          m_ptBody->p = cpv(cPosition.GetX(), cPosition.GetY());
          /* Reset body orientation */
          CRadians cXAngle, cYAngle, cZAngle;
-         GetEmbodiedEntity().GetInitOrientation().ToEulerAngles(cZAngle, cYAngle, cXAngle);
+         GetEmbodiedEntity().GetOriginAnchor().Orientation.ToEulerAngles(cZAngle, cYAngle, cXAngle);
          cpBodySetAngle(m_ptBody, cZAngle.GetValue());
          /* Zero speed and applied forces */
          m_ptBody->v = cpvzero;
@@ -208,6 +213,15 @@ namespace argos {
 
    bool CDynamics2DCylinderModel::IsCollidingWithSomething() const {
       return cpSpaceShapeQuery(m_cDyn2DEngine.GetPhysicsSpace(), m_ptShape, NULL, NULL) > 0;
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CDynamics2DCylinderModel::UpdateOriginAnchor(SAnchor& s_anchor) {
+      s_anchor.Position.SetX(m_ptBody->p.x);
+      s_anchor.Position.SetY(m_ptBody->p.y);
+      s_anchor.Orientation.FromAngleAxis(CRadians(m_ptBody->a), CVector3::Z);
    }
 
    /****************************************/

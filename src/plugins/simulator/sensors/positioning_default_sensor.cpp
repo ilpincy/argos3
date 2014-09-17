@@ -53,12 +53,12 @@ namespace argos {
    /****************************************/
    
    void CPositioningDefaultSensor::Update() {
-      m_sReading.Position = m_pcEmbodiedEntity->GetPosition();
+      m_sReading.Position = m_pcEmbodiedEntity->GetOriginAnchor().Position;
       if(m_bAddNoise) {
          m_sReading.Position += CVector3(m_pcRNG->Uniform(m_cPosNoiseRange),
                                          m_pcRNG->Uniform(m_cPosNoiseRange),
                                          m_pcRNG->Uniform(m_cPosNoiseRange));
-         m_pcEmbodiedEntity->GetOrientation().ToAngleAxis(m_cAngle, m_cAxis);
+         m_pcEmbodiedEntity->GetOriginAnchor().Orientation.ToAngleAxis(m_cAngle, m_cAxis);
          m_cAngle += CRadians(m_pcRNG->Uniform(m_cAngleNoiseRange));
          m_cAxis += CVector3(m_pcRNG->Uniform(m_cAxisNoiseRange),
                              m_pcRNG->Uniform(m_cAxisNoiseRange),
@@ -66,7 +66,7 @@ namespace argos {
          m_sReading.Orientation.FromAngleAxis(m_cAngle, m_cAxis);
       }
       else {
-         m_sReading.Orientation = m_pcEmbodiedEntity->GetOrientation();
+         m_sReading.Orientation = m_pcEmbodiedEntity->GetOriginAnchor().Orientation;
       }
    }
 

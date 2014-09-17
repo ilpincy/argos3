@@ -38,6 +38,8 @@ namespace argos {
 
       virtual bool IsCollidingWithSomething() const;
 
+      void UpdateOriginAnchor(SAnchor& s_anchor);
+
    private:
 
       bool                  m_bMovable;

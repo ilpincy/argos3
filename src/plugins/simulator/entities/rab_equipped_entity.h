@@ -9,11 +9,13 @@
 
 namespace argos {
    class CRABEquippedEntity;
+   class CEmbodiedEntity;
+   struct SAnchor;
 }
 
 #include <argos3/core/utility/datatypes/byte_array.h>
 #include <argos3/core/utility/datatypes/set.h>
-#include <argos3/core/simulator/entity/embodied_entity.h>
+#include <argos3/core/simulator/entity/positional_entity.h>
 #include <argos3/core/utility/math/vector3.h>
 #include <argos3/core/simulator/space/positional_indices/space_hash.h>
 #include <argos3/core/simulator/space/positional_indices/grid.h>

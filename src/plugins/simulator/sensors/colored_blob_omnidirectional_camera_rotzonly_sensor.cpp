@@ -76,8 +76,8 @@ namespace argos {
             m_tBlobs.pop_back();
          }
          m_fGroundHalfRange = f_ground_half_range;
-         m_cEmbodiedEntity.GetOrientation().ToEulerAngles(m_cCameraOrient, m_cTmp1, m_cTmp2);
-         m_cCameraPos = m_cEmbodiedEntity.GetPosition();
+         m_cEmbodiedEntity.GetOriginAnchor().Orientation.ToEulerAngles(m_cCameraOrient, m_cTmp1, m_cTmp2);
+         m_cCameraPos = m_cEmbodiedEntity.GetOriginAnchor().Position;
          m_cCameraPos += m_cOmnicamEntity.GetOffset();
          m_cOcclusionCheckRay.SetStart(m_cCameraPos);
       }
@@ -173,7 +173,7 @@ namespace argos {
          ++m_sReadings.Counter;
          /* Calculate range on the ground */
          CVector3 cCameraPos = m_pcOmnicamEntity->GetOffset();
-         cCameraPos += m_pcEmbodiedEntity->GetPosition();
+         cCameraPos += m_pcEmbodiedEntity->GetOriginAnchor().Position;
          Real fGroundHalfRange = cCameraPos.GetZ() * Tan(m_pcOmnicamEntity->GetAperture());
          /* Prepare the operation */
          m_pcOperation->Setup(fGroundHalfRange);

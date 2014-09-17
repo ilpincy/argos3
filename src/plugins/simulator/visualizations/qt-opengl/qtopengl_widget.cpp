@@ -15,6 +15,7 @@
 #include <argos3/core/simulator/space/space.h>
 #include <argos3/core/simulator/entity/floor_entity.h>
 #include <argos3/core/simulator/entity/composable_entity.h>
+#include <argos3/core/simulator/entity/positional_entity.h>
 
 #include <QDir>
 #include <QToolTip>
@@ -344,11 +345,29 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CQTOpenGLWidget::DrawPositionalEntity(CPositionalEntity& c_entity) {
+   void CQTOpenGLWidget::DrawEntity(CPositionalEntity& c_entity) {
       /* Get the position of the entity */
       const CVector3& cPosition = c_entity.GetPosition();
       /* Get the orientation of the entity */
       const CQuaternion& cOrientation = c_entity.GetOrientation();
+      CRadians cZAngle, cYAngle, cXAngle;
+      cOrientation.ToEulerAngles(cZAngle, cYAngle, cXAngle);
+      /* First, translate the entity */
+      glTranslatef(cPosition.GetX(), cPosition.GetY(), cPosition.GetZ());
+      /* Second, rotate the entity */
+      glRotatef(ToDegrees(cXAngle).GetValue(), 1.0f, 0.0f, 0.0f);
+      glRotatef(ToDegrees(cYAngle).GetValue(), 0.0f, 1.0f, 0.0f);
+      glRotatef(ToDegrees(cZAngle).GetValue(), 0.0f, 0.0f, 1.0f);
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CQTOpenGLWidget::DrawEntity(CEmbodiedEntity& c_entity) {
+      /* Get the position of the entity */
+      const CVector3& cPosition = c_entity.GetOriginAnchor().Position;
+      /* Get the orientation of the entity */
+      const CQuaternion& cOrientation = c_entity.GetOriginAnchor().Orientation;
       CRadians cZAngle, cYAngle, cXAngle;
       cOrientation.ToEulerAngles(cZAngle, cYAngle, cXAngle);
       /* First, translate the entity */
@@ -727,18 +746,15 @@ namespace argos {
       if(m_bMouseGrabbed &&
          m_sSelectionInfo.IsSelected &&
          (pc_event->modifiers() & Qt::ControlModifier)) {
-         /* Treat selected entity as a positional entity */
-         CPositionalEntity* pcPosEntity = dynamic_cast<CPositionalEntity*>(
+         /* Treat selected entity as an embodied entity */
+         CEmbodiedEntity* pcEntity = dynamic_cast<CEmbodiedEntity*>(
             m_cSpace.GetRootEntityVector()[m_sSelectionInfo.Index]);
-         if(pcPosEntity == NULL) {
-            /* Treat selected entity as a composable entity with a positional/embodied component */
+         if(pcEntity == NULL) {
+            /* Treat selected entity as a composable entity with an embodied component */
             CComposableEntity* pcCompEntity = dynamic_cast<CComposableEntity*>(
                m_cSpace.GetRootEntityVector()[m_sSelectionInfo.Index]);
-            if(pcCompEntity->HasComponent("position")) {
-               pcPosEntity = &pcCompEntity->GetComponent<CPositionalEntity>("position");
-            }
-            else if(pcCompEntity->HasComponent("body")) {
-               pcPosEntity = &pcCompEntity->GetComponent<CPositionalEntity>("body");
+            if(pcCompEntity->HasComponent("body")) {
+               pcEntity = &pcCompEntity->GetComponent<CEmbodiedEntity>("body");
             }
             else {
                /* All conversions failed, get out */
@@ -747,11 +763,11 @@ namespace argos {
             }
          }
          /*
-          * If we get here, pcPosEntity is set to a non-NULL value
+          * If we get here, pcEntity is set to a non-NULL value
           * Move the entity to the wanted place
           */
          /* Create a plane coincident with the world XY plane, centered at the entity position */
-         CPlane cXYPlane(pcPosEntity->GetPosition(), CVector3::Z);
+         CPlane cXYPlane(pcEntity->GetOriginAnchor().Position, CVector3::Z);
          /* Create a ray from the image pixel to the world */
          CRay3 cMouseRay = GetCamera().
             ProjectRayFromMousePosIntoWorld(pc_event->pos().x(),
@@ -760,8 +776,8 @@ namespace argos {
             with the plane created before */
          CVector3 cNewPos;
          if(cMouseRay.Intersects(cXYPlane, cNewPos)) {
-            pcPosEntity->MoveTo(cNewPos,
-                                pcPosEntity->GetOrientation());
+            pcEntity->MoveTo(cNewPos,
+                             pcEntity->GetOriginAnchor().Orientation);
             /* Entity moved, redraw */
             DrawScene();
          }

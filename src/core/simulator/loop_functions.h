@@ -12,6 +12,8 @@
 namespace argos {
    class CLoopFunctions;
    class CFloorEntity;
+   class CPositionalEntity;
+   class CEmbodiedEntity;
 }
 
 #include <argos3/core/utility/configuration/base_configurable_resource.h>
@@ -178,16 +180,25 @@ namespace argos {
 
       /**
        * Moves the entity to the wanted position and orientation.
-       * If the entity is embodied, the movement is allowed only if the
+       * @param c_entity The positional component of the entity to move.
+       * @param c_position The wanted position.
+       * @param c_orientation The wanted orientation.
+       */
+      void MoveEntity(CPositionalEntity& c_entity,
+                      const CVector3& c_position,
+                      const CQuaternion& c_orientation);
+
+      /**
+       * Moves the entity to the wanted position and orientation.
+       * The movement is allowed only if the
        * object does not collide with anything once in the new position.
-       * If the entity is just positional, the movement is always allowed.
        * @param c_entity The positional or embodied component of the entity to move.
        * @param c_position The wanted position.
        * @param c_orientation The wanted orientation.
        * @param b_check_only If <tt>false</tt>, the movement is executed; otherwise, the object is not actually moved.
        * @return <tt>true</tt> if no collisions were detected, <tt>false</tt> otherwise.
        */
-      bool MoveEntity(CPositionalEntity& c_entity,
+      bool MoveEntity(CEmbodiedEntity& c_entity,
                       const CVector3& c_position,
                       const CQuaternion& c_orientation,
                       bool b_check_only);

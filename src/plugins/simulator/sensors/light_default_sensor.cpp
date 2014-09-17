@@ -91,8 +91,8 @@ namespace argos {
          for(UInt32 i = 0; i < m_tReadings.size(); ++i) {
             /* Set ray start */
             cRayStart = m_pcLightEntity->GetSensor(i).Position;
-            cRayStart.Rotate(m_pcEmbodiedEntity->GetOrientation());
-            cRayStart += m_pcEmbodiedEntity->GetPosition();
+            cRayStart.Rotate(m_pcEmbodiedEntity->GetOriginAnchor().Orientation);
+            cRayStart += m_pcEmbodiedEntity->GetOriginAnchor().Position;
             /* Go through all the light entities */
             for(CSpace::TMapPerType::iterator it = mapLights.begin();
                 it != mapLights.end();
