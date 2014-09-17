@@ -18,7 +18,8 @@ namespace argos {
    CRABEquippedEntity::CRABEquippedEntity(CComposableEntity* pc_parent) :
       CPositionalEntity(pc_parent),
       m_psAnchor(NULL),
-      m_fRange(0.0f) {
+      m_fRange(0.0f),
+      m_pcEntityBody(NULL) {
       Disable();
       SetCanBeEnabledIfDisabled(false);
    }
@@ -31,6 +32,7 @@ namespace argos {
                                           size_t un_msg_size,
                                           Real f_range,
                                           const SAnchor& s_anchor,
+                                          CEmbodiedEntity& c_entity_body,
                                           const CVector3& c_pos_offset,
                                           const CQuaternion& c_rot_offset) :
       CPositionalEntity(pc_parent,
@@ -39,7 +41,8 @@ namespace argos {
       m_cPosOffset(c_pos_offset),
       m_cRotOffset(c_rot_offset),
       m_cData(un_msg_size),
-      m_fRange(f_range) {
+      m_fRange(f_range),
+      m_pcEntityBody(&c_entity_body) {
       Disable();
       SetCanBeEnabledIfDisabled(false);
       CVector3 cPos = c_pos_offset;
@@ -85,19 +88,18 @@ namespace argos {
           * 3. the "body" is an embodied entity
           * If any of the above is false, this line will bomb out.
           */
-         CEmbodiedEntity& cBody = GetParent().GetComponent<CEmbodiedEntity>("body");
-         m_psAnchor = &cBody.GetAnchor(strAnchorId);
-         /* Set init position and orientation */
-         SetInitPosition(m_psAnchor->OffsetPosition + m_cPosOffset); //!?
-         SetInitOrientation(m_psAnchor->OffsetOrientation * m_cRotOffset);
-         SetPosition(GetInitPosition());
-         SetOrientation(GetInitOrientation());
+         m_pcEntityBody = &GetParent().GetComponent<CEmbodiedEntity>("body");
+         m_psAnchor = &m_pcEntityBody->GetAnchor(strAnchorId);
          /* Get message size */
          size_t unMsgSize;
          GetNodeAttribute(t_tree, "msg_size", unMsgSize);
          m_cData.Resize(unMsgSize);
          /* Get transmission range */
          GetNodeAttribute(t_tree, "range", m_fRange);
+         /* Set init position and orientation */
+         Update();
+         SetInitPosition(GetPosition());
+         SetInitOrientation(GetOrientation());
       }
       catch(CARGoSException& ex) {
          THROW_ARGOSEXCEPTION_NESTED("Error initializing a range and bearing entity \"" << GetId() << "\"", ex);
@@ -122,13 +124,6 @@ namespace argos {
       m_cData.Zero();
    }
 
-   /****************************************/
-   /****************************************/
-
-   CEmbodiedEntity& CRABEquippedEntity::GetSensorBody() {
-      return GetParent().GetComponent<CEmbodiedEntity>("body"); 
-   }
-   
    /****************************************/
    /****************************************/
 

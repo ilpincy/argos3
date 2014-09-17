@@ -271,7 +271,8 @@ namespace argos {
        * @param pt_method The actual user-defined pointer-to-method.
        */
       template <typename MODEL>
-      void RegisterAnchorMethod(SAnchor& s_anchor, void(MODEL::*pt_method)(SAnchor&));
+      void RegisterAnchorMethod(const SAnchor& s_anchor,
+                                void(MODEL::*pt_method)(SAnchor&));
 
    };
 
@@ -295,8 +296,8 @@ namespace argos {
    }
 
    template <typename MODEL>
-   void CPhysicsModel::RegisterAnchorMethod(SAnchor& s_anchor,
-                                              void(MODEL::*pt_method)(SAnchor&)) {
+   void CPhysicsModel::RegisterAnchorMethod(const SAnchor& s_anchor,
+                                            void(MODEL::*pt_method)(SAnchor&)) {
       /* Add the thunk to the VTable */
       m_vecThunks[s_anchor.Index] = &CPhysicsModel::Thunk<MODEL>;
       /* Add the method holder to the map */

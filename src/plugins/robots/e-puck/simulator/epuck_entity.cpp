@@ -129,6 +129,7 @@ namespace argos {
                                                         2,
                                                         fRange,
                                                         m_pcEmbodiedEntity->GetAnchor("origin"),
+                                                        *m_pcEmbodiedEntity,
                                                         CVector3(0.0f, 0.0f, RAB_ELEVATION));
          AddComponent(*m_pcRABEquippedEntity);
          /* Controllable entity

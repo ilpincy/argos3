@@ -45,8 +45,6 @@ namespace argos {
    protected:
 
       CDynamics2DEngine& m_cDyn2DEngine;
-      CVector3 m_cSpacePosition;
-      CQuaternion m_cSpaceOrientation;
 
    };
 

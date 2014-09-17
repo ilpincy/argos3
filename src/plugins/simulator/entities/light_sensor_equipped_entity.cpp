@@ -75,7 +75,7 @@ namespace argos {
             /*
              * NOTE: here we get a reference to the embodied entity
              * This line works under the assumption that:
-             * 1. the PoximitySensorEquippedEntity has a parent;
+             * 1. the entity has a parent;
              * 2. the parent has a child whose id is "body"
              * 3. the "body" is an embodied entity
              * If any of the above is false, this line will bomb out.

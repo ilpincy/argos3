@@ -38,12 +38,11 @@ namespace argos {
 
       virtual void CalculateBoundingBox();
 
-      virtual void UpdateEntityStatus();
       virtual void UpdateFromEntityStatus();
 
       virtual bool IsCollidingWithSomething() const;
 
-      void UpdateLEDAnchor(SAnchor& s_anchor);
+      void UpdateOriginAnchor(SAnchor& s_anchor);
 
    private:
 

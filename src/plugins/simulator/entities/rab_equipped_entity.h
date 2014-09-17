@@ -38,6 +38,7 @@ namespace argos {
                          size_t un_msg_size,
                          Real f_range,
                          const SAnchor& s_anchor,
+                         CEmbodiedEntity& c_entity_body,
                          const CVector3& c_position = CVector3(),
                          const CQuaternion& c_orientation = CQuaternion());
 
@@ -49,7 +50,9 @@ namespace argos {
 
       virtual void Update();
 
-      CEmbodiedEntity& GetSensorBody();
+      inline CEmbodiedEntity& GetEntityBody() {
+         return *m_pcEntityBody;
+      }
 
       inline size_t GetMsgSize() const {
          return m_cData.Size();
@@ -82,6 +85,7 @@ namespace argos {
       CQuaternion m_cRotOffset;
       CByteArray m_cData;
       Real m_fRange;
+      CEmbodiedEntity* m_pcEntityBody;
 
    };
 

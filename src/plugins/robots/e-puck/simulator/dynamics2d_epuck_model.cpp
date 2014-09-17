@@ -39,6 +39,10 @@ namespace argos {
                       EPUCK_INTERWHEEL_DISTANCE),
       m_fMass(0.4f),
       m_fCurrentWheelVelocity(m_cWheeledEntity.GetWheelVelocities()) {
+      /* Get origin anchor and register its update method */
+      const SAnchor& sOrigin = GetEmbodiedEntity().GetAnchor("origin");
+      RegisterAnchorMethod<CDynamics2DEPuckModel>(sOrigin,
+                                                  &CDynamics2DEPuckModel::UpdateOriginAnchor);
       /* Create the actual body with initial position and orientation */
       m_ptActualBaseBody =
          cpSpaceAddBody(m_cDyn2DEngine.GetPhysicsSpace(),
@@ -47,10 +51,10 @@ namespace argos {
                                                     0.0f,
                                                     EPUCK_RADIUS + EPUCK_RADIUS,
                                                     cpvzero)));
-      const CVector3& cPosition = GetEmbodiedEntity().GetPosition();
+      const CVector3& cPosition = sOrigin.Position;
       m_ptActualBaseBody->p = cpv(cPosition.GetX(), cPosition.GetY());
       CRadians cXAngle, cYAngle, cZAngle;
-      GetEmbodiedEntity().GetOrientation().ToEulerAngles(cZAngle, cYAngle, cXAngle);
+      sOrigin.Orientation.ToEulerAngles(cZAngle, cYAngle, cXAngle);
       cpBodySetAngle(m_ptActualBaseBody, cZAngle.GetValue());
       /* Associate this model to the body data for ray queries */
       m_ptActualBaseBody->data = this;
@@ -65,11 +69,9 @@ namespace argos {
       /* Constrain the actual base body to follow the diff steering control */
       m_cDiffSteering.AttachTo(m_ptActualBaseBody);
       /* Calculate bounding box */
-      GetBoundingBox().MinCorner.SetZ(GetEmbodiedEntity().GetPosition().GetZ());
-      GetBoundingBox().MaxCorner.SetZ(GetEmbodiedEntity().GetPosition().GetZ() + EPUCK_HEIGHT);
+      GetBoundingBox().MinCorner.SetZ(sOrigin.Position.GetZ());
+      GetBoundingBox().MaxCorner.SetZ(sOrigin.Position.GetZ() + EPUCK_HEIGHT);
       CalculateBoundingBox();
-      RegisterAnchorMethod<CDynamics2DEPuckModel>(GetEmbodiedEntity().GetAnchor("led_ring"),
-                                                  &CDynamics2DEPuckModel::UpdateLEDAnchor);
    }
 
    /****************************************/
@@ -206,6 +208,15 @@ namespace argos {
 
    bool CDynamics2DEPuckModel::IsCollidingWithSomething() const {
       return cpSpaceShapeQuery(m_cDyn2DEngine.GetPhysicsSpace(), m_ptBaseShape, NULL, NULL) > 0;
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CDynamics2DEPuckModel::UpdateOriginAnchor(SAnchor& s_anchor) {
+      s_anchor.Position.SetX(m_ptActualBaseBody->p.x);
+      s_anchor.Position.SetY(m_ptActualBaseBody->p.y);
+      s_anchor.Orientation.FromAngleAxis(CRadians(m_ptActualBaseBody->a), CVector3::Z);
    }
 
    /****************************************/
