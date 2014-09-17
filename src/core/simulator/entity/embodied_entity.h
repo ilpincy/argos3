@@ -25,44 +25,6 @@ namespace argos {
 namespace argos {
 
    /**
-    * An anchor related to the body of an entity.
-    * Anchors are used by entities as reference points. For instance, an LED ring could
-    * use an anchor as the center of the ring. As the anchor moves in the space, the LED
-    * positions would be calculated with respect to it.
-    * An anchor is always initially disabled. To use it, you must first enable it.
-    */
-   struct SAnchor {
-      /** The id of the anchor */
-      std::string Id;
-      /** The initial position of the anchor wrt the body coordinate system */
-      CVector3 OffsetPosition;
-      /** The initial orientation of the anchor wrt the body coordinate system */
-      CQuaternion OffsetOrientation;
-      /** The position of the anchor wrt the global coordinate system */
-      CVector3 Position;
-      /** The orientation of the anchor wrt the global coordinate system */
-      CQuaternion Orientation;
-      /** A counter for the devices using this anchor */
-      UInt32 InUseCount;
-      /**
-       * Struct constructor.
-       * Initializes the anchor using the provided information.
-       * InUseCount is initialized to 0, i.e., the anchor is initially disabled.
-       * @param str_id The id of the anchor.
-       * @param c_offset_position The position of the anchor wrt the body coordinate system.
-       * @param c_offset_orientation The orientation of the anchor wrt the body coordinate system.
-       * @see CEmbodiedEntity::AddAnchor
-       * @see CEmbodiedEntity::EnableAnchor
-       * @see CEmbodiedEntity::DisableAnchor
-       */
-      SAnchor(const std::string& str_id,
-              const CVector3& c_offset_position,
-              const CQuaternion& c_offset_orientation,
-              const CVector3& c_position,
-              const CQuaternion& c_orientation);
-   };
-
-   /**
     * This entity is a link to a body in the physics engine.
     * <p>
     * The embodied entity can either be a root entity (i.e., parentless), or a component.

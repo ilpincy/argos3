@@ -6,20 +6,42 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CPhysicsModel::CalculateAnchors() {
-      std::vector<SAnchor*>& vecAnchors = m_cEmbodiedEntity.GetEnabledAnchors();
-      for(size_t i = 0; i < vecAnchors.size(); ++i) {
-         Call(*vecAnchors[i]);
-      }
+   SAnchor::SAnchor(const std::string& str_id,
+                    UInt32 un_index,
+                    const CVector3& c_offset_position,
+                    const CQuaternion& c_offset_orientation,
+                    const CVector3& c_position,
+                    const CQuaternion& c_orientation) :
+      Id(str_id),
+      Index(un_index),
+      OffsetPosition(c_offset_position),
+      OffsetOrientation(c_offset_orientation),
+      Position(c_position),
+      Orientation(c_orientation),
+      InUseCount(0) {
    }
 
    /****************************************/
    /****************************************/
 
-   void CPhysicsModel::Call(SAnchor& s_anchor) {
-      if(m_mapThunks.count(&s_anchor) > 0) {
-         TThunk tThunk = m_mapThunks[&s_anchor];
-         (this->*tThunk)(s_anchor);
+   CPhysicsModel::CPhysicsModel(CPhysicsEngine& c_engine,
+                                CEmbodiedEntity& c_entity) :
+      m_cEngine(c_engine),
+      m_cEmbodiedEntity(c_entity),
+      m_sBoundingBox(),
+      m_vecAnchorMethodHolders(c_entity.GetAnchors().size(), NULL),
+      m_vecThunks(c_entity.GetAnchors().size(), NULL) {}
+
+   /****************************************/
+   /****************************************/
+
+   void CPhysicsModel::CalculateAnchors() {
+      std::vector<SAnchor*>& vecAnchors = m_cEmbodiedEntity.GetEnabledAnchors();
+      for(size_t i = 0; i < vecAnchors.size(); ++i) {
+         if(m_vecThunks[vecAnchors[i]->Index] != NULL) {
+            TThunk tThunk = m_vecThunks[vecAnchors[i]->Index];
+            (this->*tThunk)(*vecAnchors[i]);
+         }
       }
    }
 

@@ -16,22 +16,6 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   SAnchor::SAnchor(const std::string& str_id,
-                    const CVector3& c_offset_position,
-                    const CQuaternion& c_offset_orientation,
-                    const CVector3& c_position,
-                    const CQuaternion& c_orientation) :
-      Id(str_id),
-      OffsetPosition(c_offset_position),
-      OffsetOrientation(c_offset_orientation),
-      Position(c_position),
-      Orientation(c_orientation),
-      InUseCount(0) {
-   }
-
-   /****************************************/
-   /****************************************/
-
    CEmbodiedEntity::CEmbodiedEntity(CComposableEntity* pc_parent) :
       CPositionalEntity(pc_parent),
       m_bMovable(true),
@@ -122,6 +106,7 @@ namespace argos {
       CQuaternion cOrient = GetOrientation() * c_offset_orientation;
       /* Create anchor */
       SAnchor* psAnchor = new SAnchor(str_id,
+                                      m_mapAnchors.size(),
                                       c_offset_position,
                                       c_offset_orientation,
                                       cPos,
