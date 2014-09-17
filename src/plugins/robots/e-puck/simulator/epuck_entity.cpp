@@ -78,7 +78,7 @@ namespace argos {
          m_pcLEDEquippedEntity = new CLEDEquippedEntity(this, "leds_0");
          AddComponent(*m_pcLEDEquippedEntity);
          m_pcLEDEquippedEntity->AddLEDRing(
-            CVector3(0.0f, 0.0f, LED_RING_ELEVATION)
+            CVector3(0.0f, 0.0f, LED_RING_ELEVATION),
             LED_RING_RADIUS,
             LED_RING_START_ANGLE,
             8,
@@ -89,7 +89,7 @@ namespace argos {
                                                "proximity_0");
          AddComponent(*m_pcProximitySensorEquippedEntity);
          m_pcProximitySensorEquippedEntity->AddSensorRing(
-            CVector3(0.0f, 0.0f, PROXIMITY_SENSOR_RING_ELEVATION)
+            CVector3(0.0f, 0.0f, PROXIMITY_SENSOR_RING_ELEVATION),
             PROXIMITY_SENSOR_RING_RADIUS,
             PROXIMITY_SENSOR_RING_START_ANGLE,
             PROXIMITY_SENSOR_RING_RANGE,

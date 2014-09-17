@@ -8,6 +8,7 @@
 #include <argos3/core/utility/string_utilities.h>
 #include <argos3/core/simulator/simulator.h>
 #include <argos3/core/simulator/space/space.h>
+#include <argos3/core/simulator/entity/composable_entity.h>
 
 namespace argos {
 
@@ -62,13 +63,6 @@ namespace argos {
           * be calculated from reference entity and offsets.
           */
          CEntity::Init(t_tree);
-         /* Get reference entity */
-         std::string strReference;
-         GetNodeAttribute(t_tree, "reference", strReference);
-         m_psAnchor = dynamic_cast<CEmbodiedEntity*>(&CSimulator::GetInstance().GetSpace().GetEntity(strReference));
-         if(m_psAnchor == NULL) {
-            THROW_ARGOSEXCEPTION("Entity \"" << strReference << "\" can't be used as a reference for range and bearing entity \"" << GetId() << "\"");
-         }
          /* Get offsets */
          GetNodeAttributeOrDefault(t_tree, "pos_offset", m_cPosOffset, m_cPosOffset);
          std::string strRotOffset;
@@ -80,9 +74,22 @@ namespace argos {
                                          ToRadians(cRotOffsetEuler[1]),
                                          ToRadians(cRotOffsetEuler[2]));
          }
+         /* Parse and look up the anchor */
+         std::string strAnchorId;
+         GetNodeAttribute(t_tree, "anchor", strAnchorId);
+         /*
+          * NOTE: here we get a reference to the embodied entity
+          * This line works under the assumption that:
+          * 1. the RABEquippedEntity has a parent;
+          * 2. the parent has a child whose id is "body"
+          * 3. the "body" is an embodied entity
+          * If any of the above is false, this line will bomb out.
+          */
+         CEmbodiedEntity& cBody = GetParent().GetComponent<CEmbodiedEntity>("body");
+         m_psAnchor = &cBody.GetAnchor(strAnchorId);
          /* Set init position and orientation */
-         SetInitPosition(m_psAnchor->GetInitPosition() + m_cPosOffset);
-         SetInitOrientation(m_psAnchor->GetInitOrientation() * m_cRotOffset);
+         SetInitPosition(m_psAnchor->OffsetPosition + m_cPosOffset); //!?
+         SetInitOrientation(m_psAnchor->OffsetOrientation * m_cRotOffset);
          SetPosition(GetInitPosition());
          SetOrientation(GetInitOrientation());
          /* Get message size */
@@ -115,6 +122,13 @@ namespace argos {
       m_cData.Zero();
    }
 
+   /****************************************/
+   /****************************************/
+
+   CEmbodiedEntity& CRABEquippedEntity::GetSensorBody() {
+      return GetParent().GetComponent<CEmbodiedEntity>("body"); 
+   }
+   
    /****************************************/
    /****************************************/
 

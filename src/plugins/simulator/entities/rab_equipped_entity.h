@@ -49,6 +49,8 @@ namespace argos {
 
       virtual void Update();
 
+      CEmbodiedEntity& GetSensorBody();
+
       inline size_t GetMsgSize() const {
          return m_cData.Size();
       }
