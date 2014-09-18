@@ -55,6 +55,12 @@ namespace argos {
       m_fMass(1.6f),
       m_fCurrentWheelVelocity(m_cWheeledEntity.GetWheelVelocities()),
       m_unLastTurretMode(m_cFootBotEntity.GetTurretEntity().GetMode()) {
+      RegisterAnchorMethod<CDynamics2DFootBotModel>(
+         GetEmbodiedEntity().GetOriginAnchor(),
+         &CDynamics2DFootBotModel::UpdateOriginAnchor);
+      RegisterAnchorMethod<CDynamics2DFootBotModel>(
+         GetEmbodiedEntity().GetAnchor("turret"),
+         &CDynamics2DFootBotModel::UpdateOriginAnchor);
       /* Create the actual body with initial position and orientation */
       m_ptActualBaseBody =
          cpSpaceAddBody(m_cDyn2DEngine.GetPhysicsSpace(),
@@ -63,10 +69,10 @@ namespace argos {
                                                     0.0f,
                                                     FOOTBOT_RADIUS + FOOTBOT_RADIUS,
                                                     cpvzero)));
-      const CVector3& cPosition = GetEmbodiedEntity().GetPosition();
+      const CVector3& cPosition = GetEmbodiedEntity().GetOriginAnchor().Position;
       m_ptActualBaseBody->p = cpv(cPosition.GetX(), cPosition.GetY());
       CRadians cXAngle, cYAngle, cZAngle;
-      GetEmbodiedEntity().GetOrientation().ToEulerAngles(cZAngle, cYAngle, cXAngle);
+      GetEmbodiedEntity().GetOriginAnchor().Orientation.ToEulerAngles(cZAngle, cYAngle, cXAngle);
       cpBodySetAngle(m_ptActualBaseBody, cZAngle.GetValue());
       /* Create the actual body shape */
       m_ptBaseShape =
@@ -125,8 +131,8 @@ namespace argos {
          TurretActiveToPassive();
       }
       /* Calculate bounding box */
-      GetBoundingBox().MinCorner.SetZ(GetEmbodiedEntity().GetPosition().GetZ());
-      GetBoundingBox().MaxCorner.SetZ(GetEmbodiedEntity().GetPosition().GetZ() + FOOTBOT_HEIGHT);
+      GetBoundingBox().MinCorner.SetZ(GetEmbodiedEntity().GetOriginAnchor().Position.GetZ());
+      GetBoundingBox().MaxCorner.SetZ(GetEmbodiedEntity().GetOriginAnchor().Position.GetZ() + FOOTBOT_HEIGHT);
       CalculateBoundingBox();
    }
 
@@ -212,6 +218,8 @@ namespace argos {
          m_pcGrippable->ReleaseAll();
          /* Update the active space hash */
          cpSpaceReindexShape(m_cDyn2DEngine.GetPhysicsSpace(), m_ptBaseShape);
+         /* Update anchors */
+         CalculateAnchors();
          /* Update bounding box */
          CalculateBoundingBox();
       }
@@ -224,12 +232,12 @@ namespace argos {
 
    void CDynamics2DFootBotModel::Reset() {
       /* Reset body position */
-      const CVector3& cPosition = GetEmbodiedEntity().GetInitPosition();
+      const CVector3& cPosition = GetEmbodiedEntity().GetOriginAnchor().Position;
       m_ptActualBaseBody->p = cpv(cPosition.GetX(), cPosition.GetY());
       m_ptActualGripperBody->p = cpv(cPosition.GetX(), cPosition.GetY());
       /* Reset body orientation */
       CRadians cXAngle, cYAngle, cZAngle;
-      GetEmbodiedEntity().GetInitOrientation().ToEulerAngles(cZAngle, cYAngle, cXAngle);
+      GetEmbodiedEntity().GetOriginAnchor().Orientation.ToEulerAngles(cZAngle, cYAngle, cXAngle);
       cpBodySetAngle(m_ptActualBaseBody, cZAngle.GetValue());
       cpBodySetAngle(m_ptActualGripperBody, cZAngle.GetValue());
       /* Zero speed and applied forces of actual base body */
@@ -264,33 +272,6 @@ namespace argos {
       GetBoundingBox().MinCorner.SetY(m_ptBaseShape->bb.b);
       GetBoundingBox().MaxCorner.SetX(m_ptBaseShape->bb.r);
       GetBoundingBox().MaxCorner.SetY(m_ptBaseShape->bb.t);
-   }
-
-   /****************************************/
-   /****************************************/
-
-   void CDynamics2DFootBotModel::UpdateEntityStatus() {
-      /* Update bounding box */
-      CalculateBoundingBox();
-      /* Update foot-bot body position */
-      m_cDyn2DEngine.PositionPhysicsToSpace(m_cSpacePosition, GetEmbodiedEntity().GetPosition(), m_ptActualBaseBody);
-      GetEmbodiedEntity().SetPosition(m_cSpacePosition);
-      /* Update foot-bot body orientation */
-      m_cDyn2DEngine.OrientationPhysicsToSpace(m_cSpaceOrientation, m_ptActualBaseBody);
-      GetEmbodiedEntity().SetOrientation(m_cSpaceOrientation);
-      /* Update foot-bot turret rotation */
-      m_cFootBotEntity.GetTurretEntity().SetRotation(CRadians(m_ptActualGripperBody->a - m_ptActualBaseBody->a));
-      /* Update foot-bot components */
-      m_cFootBotEntity.UpdateComponents();
-      /* Check whether a transfer is necessary */
-      if(m_cDyn2DEngine.IsEntityTransferActive()) {
-         std::string strEngineId;
-         if(m_cDyn2DEngine.CalculateTransfer(GetEmbodiedEntity().GetPosition().GetX(),
-                                        GetEmbodiedEntity().GetPosition().GetY(),
-                                        strEngineId)) {
-            m_cDyn2DEngine.ScheduleEntityForTransfer(m_cFootBotEntity, strEngineId);
-         }
-      }
    }
 
    /****************************************/
@@ -341,10 +322,13 @@ namespace argos {
       }
       /* Update the turret data */
       switch(m_unLastTurretMode) {
-
          /* Position control mode is implemented using a PD controller */
          case MODE_POSITION_CONTROL: {
-            Real fCurRotErr = NormalizedDifference(m_cFootBotEntity.GetTurretEntity().GetRotation(), CRadians(m_ptActualGripperBody->a) - CRadians(m_ptActualBaseBody->a)).GetValue();
+            Real fCurRotErr = NormalizedDifference(
+               m_cFootBotEntity.GetTurretEntity().GetRotation(),
+               NormalizedDifference(
+                  CRadians(m_ptActualGripperBody->a),
+                  CRadians(m_ptActualBaseBody->a))).GetValue();
             m_ptControlGripperBody->w =
                m_cDiffSteering.GetAngularVelocity() +
                (PD_P_CONSTANT * fCurRotErr +
@@ -413,6 +397,23 @@ namespace argos {
 
    bool CDynamics2DFootBotModel::IsCollidingWithSomething() const {
       return cpSpaceShapeQuery(m_cDyn2DEngine.GetPhysicsSpace(), m_ptBaseShape, NULL, NULL) > 0;
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CDynamics2DFootBotModel::UpdateOriginAnchor(SAnchor& s_anchor) {
+      s_anchor.Position.SetX(m_ptActualBaseBody->p.x);
+      s_anchor.Position.SetY(m_ptActualBaseBody->p.y);
+      s_anchor.Orientation.FromAngleAxis(CRadians(m_ptActualBaseBody->a), CVector3::Z);
+   }
+   /****************************************/
+   /****************************************/
+
+   void CDynamics2DFootBotModel::UpdateTurretAnchor(SAnchor& s_anchor) {
+      s_anchor.Position.SetX(m_ptActualGripperBody->p.x);
+      s_anchor.Position.SetY(m_ptActualGripperBody->p.y);
+      s_anchor.Orientation.FromAngleAxis(CRadians(m_ptActualGripperBody->a), CVector3::Z);
    }
 
    /****************************************/

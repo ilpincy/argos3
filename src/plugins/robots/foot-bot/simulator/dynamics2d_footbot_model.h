@@ -35,10 +35,13 @@ namespace argos {
 
       virtual void CalculateBoundingBox();
 
-      virtual void UpdateEntityStatus();
       virtual void UpdateFromEntityStatus();
 
       virtual bool IsCollidingWithSomething() const;
+
+      void UpdateOriginAnchor(SAnchor& s_anchor);
+
+      void UpdateTurretAnchor(SAnchor& s_anchor);
 
    private:
 
