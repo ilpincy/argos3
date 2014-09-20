@@ -34,7 +34,7 @@ add_library(argos3plugin_${ARGOS_BUILD_FOR}_physx SHARED
 target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_physx
   argos3core_${ARGOS_BUILD_FOR}
   argos3plugin_${ARGOS_BUILD_FOR}_entities
-  -Wl,--start-group
+  ${ARGOS_START_LIB_GROUP}
   SimulationController
   SceneQuery
   PxTask
@@ -49,7 +49,7 @@ target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_physx
   PhysX3
   LowLevelCloth
   LowLevel
-  -Wl,--end-group)
+  ${ARGOS_END_LIB_GROUP})
 
 #
 # Install files

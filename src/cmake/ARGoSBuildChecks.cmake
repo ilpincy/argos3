@@ -20,6 +20,19 @@ else(APPLE)
 endif(APPLE)
 
 #
+# Set variables depending on current compiler
+#
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+  # using Clang
+  set(ARGOS_START_LIB_GROUP)
+  set(ARGOS_END_LIB_GROUP)
+elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+  # using GCC
+  set(ARGOS_START_LIB_GROUP -Wl,--start-group)
+  set(ARGOS_END_LIB_GROUP -Wl,--start-group)
+endif()
+
+#
 # Check for dynamic library loading facility
 #
 if(ARGOS_DYNAMIC_LIBRARY_LOADING)

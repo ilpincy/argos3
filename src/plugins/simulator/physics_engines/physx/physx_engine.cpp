@@ -532,7 +532,7 @@ namespace argos {
                            "physx",
                            "Carlo Pinciroli [ilpincy@gmail.com]",
                            "1.0",
-                           "A 3D dynamics physics engine",
+                           "A 3D dynamics physics engine.",
                            "This physics engine is a 3D dynamics engine based on the NVIDIA PhysX library\n"
                            "(http://www.geforce.com/hardware/technology/physx).\n\n"
                            "REQUIRED XML CONFIGURATION\n\n"
