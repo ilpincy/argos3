@@ -13,7 +13,9 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
 #
 # Use new policies introduced up to this version
 cmake_policy(VERSION 2.8.12)
-cmake_policy(SET CMP0042 OLD)
+if(POLICY CMP0042)
+  cmake_policy(SET CMP0042 NEW)
+endif(POLICY CMP0042)
 
 #
 # Include path points to the base source dir
