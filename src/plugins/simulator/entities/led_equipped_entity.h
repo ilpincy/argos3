@@ -119,7 +119,7 @@ namespace argos {
        * @return All the LEDs.
        * @see GetLED()
        */
-      inline SActuator::TList& GetAllLEDs() {
+      inline SActuator::TList& GetLEDs() {
          return m_tLEDs;
       }
 

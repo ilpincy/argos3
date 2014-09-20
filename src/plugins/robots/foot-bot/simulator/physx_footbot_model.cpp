@@ -20,9 +20,9 @@ namespace argos {
       SetARGoSReferencePoint(physx::PxVec3(0.0f, 0.0f, 0.0f));
       /* Get position and orientation in this engine's representation */
       physx::PxVec3 cPos;
-      CVector3ToPxVec3(GetEmbodiedEntity().GetPosition(), cPos);
+      CVector3ToPxVec3(GetEmbodiedEntity().GetOriginAnchor().Position, cPos);
       physx::PxQuat cOrient;
-      CQuaternionToPxQuat(GetEmbodiedEntity().GetOrientation(), cOrient);
+      CQuaternionToPxQuat(GetEmbodiedEntity().GetOriginAnchor().Orientation, cOrient);
       /* Create the transform
        * 1. a translation up by half body height
        * 2. a rotation around the base

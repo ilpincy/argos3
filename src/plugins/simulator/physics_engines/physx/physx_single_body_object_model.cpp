@@ -94,8 +94,8 @@ namespace argos {
       /* Initial position and orientation from embodied entity */
       physx::PxVec3 cInitPos;
       physx::PxQuat cInitOrient;
-      CVector3ToPxVec3(GetEmbodiedEntity().GetInitPosition(), cInitPos);
-      CQuaternionToPxQuat(GetEmbodiedEntity().GetInitOrientation(), cInitOrient);
+      CVector3ToPxVec3(GetEmbodiedEntity().GetOriginAnchor().Position, cInitPos);
+      CQuaternionToPxQuat(GetEmbodiedEntity().GetOriginAnchor().Orientation, cInitOrient);
       /* Create the transform
        * 1. a translation from m_cARGoSReferencePoint to center of mass
        * 2. a rotation around the box base
@@ -139,11 +139,11 @@ namespace argos {
       /* Set object position into ARGoS space */
       CVector3 cPos;
       PxVec3ToCVector3(cBaseGlobal, cPos);
-      GetEmbodiedEntity().SetPosition(cPos);
+      GetEmbodiedEntity().GetOriginAnchor().Position = cPos;
       /* Set object orientation into ARGoS space */
       CQuaternion cOrient;
       PxQuatToCQuaternion(cTrans.q, cOrient);
-      GetEmbodiedEntity().SetOrientation(cOrient);
+      GetEmbodiedEntity().GetOriginAnchor().Orientation = cOrient;
       /* Update entity components */
       m_cEntity.UpdateComponents();
    }

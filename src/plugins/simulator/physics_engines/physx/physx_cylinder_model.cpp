@@ -20,9 +20,9 @@ namespace argos {
                                            -c_entity.GetHeight() * 0.5f));
       /* Get position and orientation in this engine's representation */
       physx::PxVec3 cPos;
-      CVector3ToPxVec3(GetEmbodiedEntity().GetPosition(), cPos);
+      CVector3ToPxVec3(GetEmbodiedEntity().GetOriginAnchor().Position, cPos);
       physx::PxQuat cOrient;
-      CQuaternionToPxQuat(GetEmbodiedEntity().GetOrientation(), cOrient);
+      CQuaternionToPxQuat(GetEmbodiedEntity().GetOriginAnchor().Orientation, cOrient);
       /* Create the transform
        * 1. a translation from m_cBaseCenterLocal to center of mass
        * 2. a rotation around the box base
