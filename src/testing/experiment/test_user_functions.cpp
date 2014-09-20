@@ -46,4 +46,4 @@ void CTestUserFunctions::Draw(CFootBotEntity& c_footbot) {
 /********************************************************************************/
 /********************************************************************************/
 
-REGISTER_QTOPENGL_USER_FUNCTIONS(CTestUserFunctions, "test_user_functions");
+//REGISTER_QTOPENGL_USER_FUNCTIONS(CTestUserFunctions, "test_user_functions");

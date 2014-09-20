@@ -6,7 +6,7 @@
   <!-- ************************* -->
   <framework>
     <system threads="0" />
-    <experiment length="7" ticks_per_second="10" random_seed="1234" />
+    <experiment length="1" ticks_per_second="10" random_seed="1234" />
   </framework>
 
   <!-- ****************** -->
@@ -25,28 +25,28 @@
     <lua_controller id="lua">
       <!-- Normal actuator/sensor configuration follows -->
       <actuators>
-        <differential_steering implementation="default" />
-        <range_and_bearing implementation="default" />
-        <leds implementation="default" medium="leds" />
-        <footbot_gripper implementation="default" />
-        <footbot_distance_scanner implementation="default" />
-        <footbot_turret implementation="default" />
+        <!-- <differential_steering implementation="default" /> -->
+        <!-- <range_and_bearing implementation="default" /> -->
+        <!-- <leds implementation="default" medium="leds" /> -->
+        <!-- <footbot_gripper implementation="default" /> -->
+        <!-- <footbot_distance_scanner implementation="default" /> -->
+        <!-- <footbot_turret implementation="default" /> -->
       </actuators>
       <sensors>
-        <range_and_bearing implementation="medium" medium="rab" show_rays="false" />
-        <colored_blob_omnidirectional_camera implementation="rot_z_only" medium="leds" show_rays="true" />
-        <footbot_proximity implementation="default" show_rays="false" />
-        <differential_steering implementation="default" />
-        <!-- footbot_base_ground implementation="rot_z_only" / -->
-        <footbot_distance_scanner implementation="rot_z_only" />
-        <footbot_light implementation="rot_z_only" />
-        <!-- footbot_motor_ground implementation="rot_z_only" / -->
-        <footbot_turret_encoder implementation="default" />
+        <!-- <range_and_bearing implementation="medium" medium="rab" show_rays="false" /> -->
+        <!-- <colored_blob_omnidirectional_camera implementation="rot_z_only" medium="leds" show_rays="true" /> -->
+        <!-- <footbot_proximity implementation="default" show_rays="false" /> -->
+        <!-- <differential_steering implementation="default" /> -->
+        <!-- <footbot_base_ground implementation="rot_z_only" /> -->
+        <!-- <footbot_distance_scanner implementation="rot_z_only" /> -->
+        <!-- <footbot_light implementation="rot_z_only" /> -->
+        <!-- <footbot_motor_ground implementation="rot_z_only" /> -->
+        <!-- <footbot_turret_encoder implementation="default" /> -->
       </sensors>
       <!-- No required configuration -->
-      <!-- params / -->
+      <params />
       <!-- Optionally, you can pass a script as a controller parameter: -->
-      <params script="../../src/testing/experiment/test_leds.lua" />
+      <!-- <params script="../../src/testing/experiment/test_leds.lua" /> -->
     </lua_controller>
 
   </controllers>
@@ -54,61 +54,82 @@
   <!-- *********************** -->
   <!-- * Arena configuration * -->
   <!-- *********************** -->
-  <arena size="10, 10, 2" center="0,0,1" positional_index="grid" positional_grid_size="25,25,1">
-    <!-- floor id="f" source="loop_functions" pixels_per_meter="100" / -->
+  <arena size="10, 10, 5" center="0,0,2.5">
+    <!-- <floor id="f" source="loop_functions" pixels_per_meter="100" /> -->
 
-    <box id="bn" size="0.1, 10, 0.2" movable="false">
-      <body position="5,0,0"  orientation="0,0,0" />
-    </box>
+    <!-- <box id="t1" size="0.1, 0.1, 0.1" movable="true" mass="1"> -->
+    <!--   <body position="1,1,0.5" orientation="0,45,0" /> -->
+    <!-- </box> -->
 
-    <box id="bs" size="0.1, 10, 0.2" movable="false">
-      <body position="-5,0,0"  orientation="0,0,0" />
-    </box>
+    <!-- <box id="t2" size="0.1, 0.1, 0.1" movable="true" mass="1"> -->
+    <!--   <body position="1,1,0.7" orientation="0,70,0" /> -->
+    <!-- </box> -->
 
-    <box id="be" size="10, 0.1, 0.2" movable="false">
-      <body position="0,-5,0"  orientation="0,0,0" />
-    </box>
+    <!-- <box id="bn" size="0.1, 10, 0.2" movable="false"> -->
+    <!--   <body position="5,0,0"  orientation="0,0,0" /> -->
+    <!-- </box> -->
 
-    <box id="bw" size="10, 0.1, 0.2" movable="false">
-      <body position="0,5,0"  orientation="0,0,0" />
-    </box>
+    <!-- <box id="bs" size="0.1, 10, 0.2" movable="false"> -->
+    <!--   <body position="-5,0,0"  orientation="0,0,0" /> -->
+    <!-- </box> -->
 
-    <light id="l0"
-           position="1,1,1"
-           orientation="0,0,0"
-           color="yellow"
-           intensity="1"
-           medium="leds" />
+    <!-- <box id="be" size="10, 0.1, 0.2" movable="false"> -->
+    <!--   <body position="0,-5,0"  orientation="0,0,0" /> -->
+    <!-- </box> -->
 
-    <distribute>
-      <position method="uniform" min="-2,-2,0" max="2,2,0" />
-      <orientation method="uniform" min="0,0,0" max="360,0,0" />
-      <entity quantity="3" max_trials="100" base_num="100">
-        <foot-bot id="fb">
-          <controller config="lua" />
-        </foot-bot>
-      </entity>
-    </distribute>
+    <!-- <box id="bw" size="10, 0.1, 0.2" movable="false"> -->
+    <!--   <body position="0,5,0"  orientation="0,0,0" /> -->
+    <!-- </box> -->
 
-    <cylinder id="cyl0" radius="0.05" height="0.2" movable="true" mass="0.1" >
-      <body position="0,0.5,0" orientation="0,0,0" />
-    </cylinder>
+    <!-- <light id="l0" -->
+    <!--        position="1,1,1" -->
+    <!--        orientation="0,0,0" -->
+    <!--        color="yellow" -->
+    <!--        intensity="1" -->
+    <!--        medium="leds" /> -->
 
+    <!-- <distribute> -->
+    <!--   <position method="uniform" min="-2,-2,0" max="2,2,0" /> -->
+    <!--   <orientation method="uniform" min="0,0,0" max="360,0,0" /> -->
+    <!--   <entity quantity="100" max_trials="100" base_num="100"> -->
+    <!--     <foot-bot id="fb"> -->
+    <!--       <controller config="lua" /> -->
+    <!--     </foot-bot> -->
+    <!--   </entity> -->
+    <!-- </distribute> -->
+
+    <!-- <cylinder id="cyl0" radius="0.05" height="0.2" movable="true" mass="0.1" > -->
+    <!--   <body position="1,1,1" orientation="0,60,0" /> -->
+    <!-- </cylinder> -->
+
+    <!-- <distribute> -->
+    <!--   <position method="uniform" min="-2,-2,0" max="2,2,5" /> -->
+    <!--   <orientation method="uniform" min="0,0,0" max="360,360,360" /> -->
+    <!--   <entity quantity="5" max_trials="100" base_num="100"> -->
+    <!--     <cylinder id="cyl" radius="0.05" height="0.2" movable="true" mass="0.1" /> -->
+    <!--   </entity> -->
+    <!-- </distribute> -->
+
+    <mini-quadrotor id="mq0">
+      <body position="0,0,2" orientation="0,0,0" />
+      <controller config="lua" />
+    </mini-quadrotor>
   </arena>
 
   <!-- ******************* -->
   <!-- * Physics engines * -->
   <!-- ******************* -->
   <physics_engines>
-    <dynamics2d id="dyn2d" />
+    <physx id="dyn3d" iterations="10" cpu_threads="1" />
+    <!-- <dynamics2d id="dyn2d" /> -->
   </physics_engines>
 
   <!-- ********* -->
   <!-- * Media * -->
   <!-- ********* -->
   <media>
-    <range_and_bearing id="rab" index="grid" grid_size="2,2,1" />
-    <led id="leds" index="grid" grid_size="5,5,1" />
+    <!-- <range_and_bearing id="rab" index="grid" grid_size="2,2,1" /> -->
+    <!-- <led id="leds" index="grid" grid_size="5,5,1" /> -->
   </media>
 
   <!-- ***************** -->
@@ -120,12 +141,12 @@
     <!-- * To activate the Lua editor, just use the 'lua_editor' flag attribute * -->
     <!-- ************************************************************************ -->
     <!-- <qt-opengl lua_editor="true"> -->
-    <!--   <camera> -->
-    <!--     <placement idx="0" position="-2,0,2" look_at="0,0,0" lens_focal_length="20" /> -->
-    <!--     <placement idx="1" position="0.884183,0.359128,0.490269" look_at="0.924486,-0.486744,-0.0415919" lens_focal_length="20" /> -->
-    <!--   </camera> -->
-    <!--   <\!-- user_functions label="test_user_functions" / -\-> -->
-    <!-- </qt-opengl> -->
+    <qt-opengl>
+      <camera>
+        <placement idx="0" position="0.451899,0.170544,0.909823" look_at="1.08317,0.903804,0.657193" lens_focal_length="20" />
+      </camera>
+      <!-- <user_functions label="test_user_functions" /> -->
+    </qt-opengl>
 
   </visualization>
 
