@@ -8,7 +8,7 @@
 #define PHYSX_SINGLE_BODY_OBJECT_MODEL_H
 
 namespace argos {
-   class CPhysXBoxModel;
+   class CPhysXSingleBodyObjectModel;
 }
 
 #include <argos3/plugins/simulator/physics_engines/physx/physx_model.h>

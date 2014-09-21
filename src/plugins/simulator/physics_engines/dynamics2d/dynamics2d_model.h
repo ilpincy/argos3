@@ -12,13 +12,18 @@ namespace argos {
 }
 
 #include <argos3/core/simulator/physics_engine/physics_model.h>
-#include <argos3/plugins/simulator/physics_engines/dynamics2d/chipmunk-physics/include/chipmunk.h>
 #include <argos3/plugins/simulator/physics_engines/dynamics2d/dynamics2d_engine.h>
-#include <argos3/core/utility/math/vector3.h>
-#include <argos3/core/utility/math/quaternion.h>
 
 namespace argos {
 
+   /**
+    * The base class for models in the dynamics 2D engine.
+    * All the models in the dynamics 2D engine inherit from this class, which
+    * provides the additional method GetDynamics2DEngine() over the CPhysicsModel
+    * interface.
+    * @see CPhysicsModel
+    * @see CDynamics2DEngine
+    */
    class CDynamics2DModel : public CPhysicsModel {
 
    public:
@@ -42,7 +47,25 @@ namespace argos {
 
       virtual void Reset() = 0;
 
-   protected:
+      virtual void UpdateFromEntityStatus() = 0;
+
+      /**
+       * Returns the dynamics 2D engine state.
+       * @return The dynamics 2D engine state.
+       */
+      inline CDynamics2DEngine& GetDynamics2DEngine() {
+         return m_cDyn2DEngine;
+      }
+
+      /**
+       * Returns the dynamics 2D engine state as a const reference.
+       * @return The dynamics 2D engine state as a const reference.
+       */
+      inline const CDynamics2DEngine& GetDynamics2DEngine() const {
+         return m_cDyn2DEngine;
+      }
+
+   private:
 
       CDynamics2DEngine& m_cDyn2DEngine;
 

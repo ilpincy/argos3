@@ -13,8 +13,6 @@ namespace argos {
 
 #include <argos3/core/simulator/physics_engine/physics_model.h>
 #include <argos3/plugins/simulator/physics_engines/physx/physx_engine.h>
-#include <argos3/core/utility/math/vector3.h>
-#include <argos3/core/utility/math/quaternion.h>
 
 namespace argos {
 

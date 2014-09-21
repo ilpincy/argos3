@@ -181,6 +181,8 @@ namespace argos {
 
       /**
        * Calculates the anchors associated to this model.
+       * The default implementation of this method should fit all possible
+       * use cases. There's usually no need to override it.
        */
       virtual void CalculateAnchors();
 
@@ -198,8 +200,6 @@ namespace argos {
       inline SBoundingBox& GetBoundingBox() {
          return m_sBoundingBox;
       }
-
-      friend class CEmbodiedEntity;
 
    protected:
 
