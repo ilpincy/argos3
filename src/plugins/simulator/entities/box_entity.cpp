@@ -102,8 +102,7 @@ namespace argos {
 
    void CBoxEntity::Reset() {
       /* Reset all components */
-      m_pcEmbodiedEntity->Reset();
-      m_pcLEDEquippedEntity->Reset();
+      CComposableEntity::Reset();
       /* Update components */
       UpdateComponents();
    }
