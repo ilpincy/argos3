@@ -87,14 +87,8 @@ namespace argos {
          /* This shape is normal (not grippable, not gripper) */
          ptShape->collision_type = CDynamics2DEngine::SHAPE_NORMAL;
       }
-      /* Associate this model to the body data for ray queries */
-      ptBody->data = this;
       /* Set the body so that the default methods work as expected */
-      SetBody(ptBody);
-      /* Calculate bounding box */
-      GetBoundingBox().MinCorner.SetZ(GetEmbodiedEntity().GetOriginAnchor().Position.GetZ());
-      GetBoundingBox().MaxCorner.SetZ(GetEmbodiedEntity().GetOriginAnchor().Position.GetZ() + c_entity.GetSize().GetZ());
-      CalculateBoundingBox();
+      SetBody(ptBody, c_entity.GetSize().GetZ());
    }
    
    /****************************************/

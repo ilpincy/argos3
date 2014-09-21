@@ -144,12 +144,18 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CDynamics2DSingleBodyObjectModel::SetBody(cpBody* pt_body) {
-      /* Set the body */
+   void CDynamics2DSingleBodyObjectModel::SetBody(cpBody* pt_body,
+                                                  Real f_height) {
+      /* Set the body and its data field for ray queries */
       m_ptBody = pt_body;
+      m_ptBody->data = this;
       /* Register the origin anchor update method */
       RegisterAnchorMethod<CDynamics2DSingleBodyObjectModel>(GetEmbodiedEntity().GetOriginAnchor(),
                                                              &CDynamics2DSingleBodyObjectModel::UpdateOriginAnchor);
+      /* Calculate the bounding box */
+      GetBoundingBox().MinCorner.SetZ(GetEmbodiedEntity().GetOriginAnchor().Position.GetZ());
+      GetBoundingBox().MaxCorner.SetZ(GetEmbodiedEntity().GetOriginAnchor().Position.GetZ() + f_height);
+      CalculateBoundingBox();
    }
 
    /****************************************/

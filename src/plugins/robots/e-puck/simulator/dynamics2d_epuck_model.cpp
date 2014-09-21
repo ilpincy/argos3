@@ -53,8 +53,6 @@ namespace argos {
       CRadians cXAngle, cYAngle, cZAngle;
       GetEmbodiedEntity().GetOriginAnchor().Orientation.ToEulerAngles(cZAngle, cYAngle, cXAngle);
       cpBodySetAngle(ptBody, cZAngle.GetValue());
-      /* Associate this model to the body data for ray queries */
-      ptBody->data = this;
       /* Create the body shape */
       cpShape* ptShape =
          cpSpaceAddShape(GetDynamics2DEngine().GetPhysicsSpace(),
@@ -66,11 +64,7 @@ namespace argos {
       /* Constrain the actual base body to follow the diff steering control */
       m_cDiffSteering.AttachTo(ptBody);
       /* Set the body so that the default methods work as expected */
-      SetBody(ptBody);
-      /* Calculate bounding box */
-      GetBoundingBox().MinCorner.SetZ(GetEmbodiedEntity().GetOriginAnchor().Position.GetZ());
-      GetBoundingBox().MaxCorner.SetZ(GetEmbodiedEntity().GetOriginAnchor().Position.GetZ() + EPUCK_HEIGHT);
-      CalculateBoundingBox();
+      SetBody(ptBody, EPUCK_HEIGHT);
    }
 
    /****************************************/

@@ -110,10 +110,28 @@ namespace argos {
 
       /**
        * Sets the body and registers the default origin anchor method.
-       * You must call this method for this class to work.
-       * This class retains ownership of the passed body.
+       * <p>
+       * You must call this method for this class' methods to work.
+       * </p>
+       * <p>
+       * This class retains ownership of the passed body, so you don't
+       * need to explicitly delete anything.
+       * </p>
+       * <p>
+       * Internally, this method also sets <tt>pt_body->data</tt> to
+       * point to <tt>this</tt>, which is a requirement for ray
+       * cast queries to work properly.
+       * </p>
+       * <p>
+       * Finally, this method also calculates the initial bounding
+       * box of the object.
+       * </p>
+       * <p>
+       * @param pt_body The object body.
+       * @param f_height The object height.
        */
-      virtual void SetBody(cpBody* pt_body);
+      virtual void SetBody(cpBody* pt_body,
+                           Real f_height);
 
       /**
        * Updates the origin anchor associated to the embodied entity.
