@@ -25,6 +25,8 @@ namespace argos {
    void CPhysXSingleBodyObjectModel::SetBody(physx::PxRigidActor* pc_body) {
       /* Assign pointer to body */
       m_pcGenericBody = pc_body;
+      /* Set userData pointer */
+      m_pcGenericBody->userData = this;
       /* Set the flag to say whether the body is static or dynamic */
       m_bIsDynamic = (m_pcGenericBody->is<physx::PxRigidDynamic>() != NULL);
       /* Register the origin anchor update method */
@@ -41,20 +43,18 @@ namespace argos {
       /* No need to reset a static body */
       if(! m_bIsDynamic) return;
       /* Initial position and orientation from embodied entity */
-      physx::PxVec3 cInitPos;
-      physx::PxQuat cInitOrient;
-      CVector3ToPxVec3(GetEmbodiedEntity().GetOriginAnchor().Position, cInitPos);
-      CQuaternionToPxQuat(GetEmbodiedEntity().GetOriginAnchor().Orientation, cInitOrient);
-      /* Create the transform */
-      physx::PxTransform cRotation(cInitOrient);
-      physx::PxTransform cTranslation(cInitPos);
-      physx::PxTransform cFinalTrans = cTranslation * cRotation * m_cPxOriginToARGoSOrigin;
+      physx::PxTransform cBodyTrans;
+      CVector3ToPxVec3(GetEmbodiedEntity().GetOriginAnchor().Position, cBodyTrans.p);
+      CQuaternionToPxQuat(GetEmbodiedEntity().GetOriginAnchor().Orientation, cBodyTrans.q);
       /* Make the body into a kinematic actor to move it */
       m_pcDynamicBody->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, true);
       /* Move the body to the target position */
-      m_pcDynamicBody->setGlobalPose(cFinalTrans);
+      m_pcDynamicBody->setGlobalPose(cBodyTrans);
       /* Reset the body into a dynamic actor */
       m_pcDynamicBody->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, false);
+      /* Clear applied forces and torques */
+      m_pcDynamicBody->clearForce();
+      m_pcDynamicBody->clearTorque();
    }
 
    /****************************************/
@@ -68,18 +68,13 @@ namespace argos {
       /* Save old body pose */
       physx::PxTransform cOldPose(m_pcDynamicBody->getGlobalPose());
       /* Set target position and orientation */
-      physx::PxVec3 cPos;
-      physx::PxQuat cOrient;
-      CVector3ToPxVec3(c_position, cPos);
-      CQuaternionToPxQuat(c_orientation, cOrient);
-      /* Create the transform */
-      physx::PxTransform cRotation(cOrient);
-      physx::PxTransform cTranslation(cPos);
-      physx::PxTransform cFinalTrans = cTranslation * cRotation * m_cPxOriginToARGoSOrigin;
+      physx::PxTransform cBodyTrans;
+      CVector3ToPxVec3(c_position, cBodyTrans.p);
+      CQuaternionToPxQuat(c_orientation, cBodyTrans.q);
       /* Make the body into a kinematic actor to move it */
       m_pcDynamicBody->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, true);
       /* Move the body to the target position */
-      m_pcDynamicBody->setGlobalPose(cFinalTrans);
+      m_pcDynamicBody->setGlobalPose(cBodyTrans);
       /* Check whether the body is colliding with something */
       bool bIsColliding = IsCollidingWithSomething();
       if(b_check_only || bIsColliding) {
@@ -122,15 +117,11 @@ namespace argos {
 
    void CPhysXSingleBodyObjectModel::UpdateOriginAnchor(SAnchor& s_anchor) {
       /* Get transform of the ARGoS origin anchor */
-      physx::PxTransform cTrans =
-         // global object pose in Physx
-         m_pcGenericBody->getGlobalPose() *
-         // inverse of the transform to make the ARGoS anchor the origin
-         m_cPxOriginToARGoSOrigin.getInverse();
+      physx::PxTransform cBodyTrans = m_pcGenericBody->getGlobalPose();
       /* Set object position into ARGoS space */
-      PxVec3ToCVector3(cTrans.p, s_anchor.Position);
+      PxVec3ToCVector3(cBodyTrans.p, s_anchor.Position);
       /* Set object orientation into ARGoS space */
-      PxQuatToCQuaternion(cTrans.q, s_anchor.Orientation);
+      PxQuatToCQuaternion(cBodyTrans.q, s_anchor.Orientation);
    }
 
    /****************************************/

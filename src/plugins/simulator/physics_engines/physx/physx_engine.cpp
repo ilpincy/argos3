@@ -401,7 +401,7 @@ namespace argos {
                                   cResult)) {
          /* The ray hits something */
          f_t_on_ray = cResult.distance / fRange;
-         return &(reinterpret_cast<CPhysXModel*>(cResult.shape->userData)->GetEmbodiedEntity());
+         return &(reinterpret_cast<CPhysXModel*>(cResult.shape->getActor()->userData)->GetEmbodiedEntity());
       }
       else {
          /* The ray does not hit anything */

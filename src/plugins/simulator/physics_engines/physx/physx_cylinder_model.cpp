@@ -15,17 +15,11 @@ namespace argos {
                                             CCylinderEntity& c_entity) :
       CPhysXStretchableObjectModel(c_engine, c_entity) {
       /* Get position and orientation in this engine's representation */
-      physx::PxVec3 cPos;
-      CVector3ToPxVec3(GetEmbodiedEntity().GetOriginAnchor().Position, cPos);
-      physx::PxQuat cOrient;
-      CQuaternionToPxQuat(GetEmbodiedEntity().GetOriginAnchor().Orientation, cOrient);
-      /* Create the transform */
-      SetPxOriginToARGoSOrigin(
-         physx::PxTransform(
-            physx::PxVec3(0.0f, 0.0f, c_entity.GetHeight() * 0.5f)));
-      physx::PxTransform cRotation(cOrient);
-      physx::PxTransform cTranslation(cPos);
-      physx::PxTransform cFinalTrans = cTranslation * cRotation * GetPxOriginToARGoSOrigin();
+      physx::PxTransform cBodyTrans;
+      CVector3ToPxVec3(GetEmbodiedEntity().GetOriginAnchor().Position, cBodyTrans.p);
+      CQuaternionToPxQuat(GetEmbodiedEntity().GetOriginAnchor().Orientation, cBodyTrans.q);
+      /* Create the shape transform */
+      physx::PxTransform cShapeTrans(physx::PxVec3(0.0f, 0.0f, c_entity.GetHeight() * 0.5f));
       /* Create cylinder geometry */
       physx::PxConvexMeshGeometry* pcGeometry =
          CreateCylinderGeometry(c_engine,
@@ -38,14 +32,14 @@ namespace argos {
           */
          /* Create the body in its initial position and orientation */
          physx::PxRigidDynamic* pcBody =
-            GetPhysXEngine().GetPhysics().createRigidDynamic(cFinalTrans);
+            GetPhysXEngine().GetPhysics().createRigidDynamic(cBodyTrans);
          /* Enable CCD on the body */
          pcBody->setRigidBodyFlag(physx::PxRigidBodyFlag::eENABLE_CCD, true);
          /* Create the shape */
          physx::PxShape* pcShape =
             pcBody->createShape(*pcGeometry,
                                 GetPhysXEngine().GetDefaultMaterial());
-         pcShape->userData = this;
+         pcShape->setLocalPose(cShapeTrans);
          /* Set body mass */
          physx::PxRigidBodyExt::setMassAndUpdateInertia(*pcBody, m_fMass);
          /* Add body to the scene */
@@ -59,12 +53,12 @@ namespace argos {
           */
          /* Create the body in its initial position and orientation */
          physx::PxRigidStatic*
-            pcBody = GetPhysXEngine().GetPhysics().createRigidStatic(cFinalTrans);
+            pcBody = GetPhysXEngine().GetPhysics().createRigidStatic(cBodyTrans);
          /* Create the shape */
          physx::PxShape* pcShape =
             pcBody->createShape(*pcGeometry,
                                 GetPhysXEngine().GetDefaultMaterial());
-         pcShape->userData = this;
+         pcShape->setLocalPose(cShapeTrans);
          /* Add body to the scene */
          GetPhysXEngine().GetScene().addActor(*pcBody);
          /* Set this as the body for the base class */

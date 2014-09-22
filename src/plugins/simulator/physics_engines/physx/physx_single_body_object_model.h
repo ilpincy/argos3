@@ -135,18 +135,6 @@ namespace argos {
        */
       void UpdateOriginAnchor(SAnchor& s_anchor);
 
-      inline physx::PxTransform& GetPxOriginToARGoSOrigin() {
-         return m_cPxOriginToARGoSOrigin;
-      }
-
-      inline const physx::PxTransform& GetPxOriginToARGoSOrigin() const {
-         return m_cPxOriginToARGoSOrigin;
-      }
-
-      inline void SetPxOriginToARGoSOrigin(const physx::PxTransform& c_trans) {
-         m_cPxOriginToARGoSOrigin = c_trans;
-      }
-
    private:
 
       CComposableEntity& m_cEntity;
@@ -156,7 +144,6 @@ namespace argos {
          physx::PxRigidDynamic* m_pcDynamicBody;
       };
       bool m_bIsDynamic;
-      physx::PxTransform m_cPxOriginToARGoSOrigin;
    };
 
 }
