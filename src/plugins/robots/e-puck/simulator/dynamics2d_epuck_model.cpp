@@ -13,14 +13,14 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   static const Real EPUCK_MASS                     = 0.4f;
+   static const Real EPUCK_MASS                = 0.4f;
 
-   static const Real EPUCK_RADIUS                   = 0.035f;
-   static const Real EPUCK_INTERWHEEL_DISTANCE      = 0.053f;
-   static const Real EPUCK_HEIGHT                   = 0.086f;
+   static const Real EPUCK_RADIUS              = 0.035f;
+   static const Real EPUCK_INTERWHEEL_DISTANCE = 0.053f;
+   static const Real EPUCK_HEIGHT              = 0.086f;
 
-   static const Real EPUCK_MAX_FORCE                = 1.5f;
-   static const Real EPUCK_MAX_TORQUE               = 1.5f;
+   static const Real EPUCK_MAX_FORCE           = 1.5f;
+   static const Real EPUCK_MAX_TORQUE          = 1.5f;
 
    enum EPUCK_WHEELS {
       EPUCK_LEFT_WHEEL = 0,
