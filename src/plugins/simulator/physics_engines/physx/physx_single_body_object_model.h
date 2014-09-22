@@ -116,7 +116,7 @@ namespace argos {
        * need to explicitly delete anything.
        * </p>
        * <p>
-       * Internally, this method also sets <tt>pt_body->data</tt> to
+       * Internally, this method also sets <tt>pc_body->userData</tt> to
        * point to <tt>this</tt>, which is a requirement for ray
        * cast queries to work properly.
        * </p>
@@ -125,9 +125,9 @@ namespace argos {
        * box of the object.
        * </p>
        * <p>
-       * @param pc_body The object body.
+       * @param c_body The object body.
        */
-      void SetBody(physx::PxRigidActor* pc_body);
+      void SetBody(physx::PxRigidActor& c_body);
 
       /**
        * Updates the origin anchor associated to the embodied entity.

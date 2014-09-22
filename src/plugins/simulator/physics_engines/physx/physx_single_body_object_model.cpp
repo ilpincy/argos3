@@ -22,9 +22,9 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CPhysXSingleBodyObjectModel::SetBody(physx::PxRigidActor* pc_body) {
+   void CPhysXSingleBodyObjectModel::SetBody(physx::PxRigidActor& c_body) {
       /* Assign pointer to body */
-      m_pcGenericBody = pc_body;
+      m_pcGenericBody = &c_body;
       /* Set userData pointer */
       m_pcGenericBody->userData = this;
       /* Set the flag to say whether the body is static or dynamic */

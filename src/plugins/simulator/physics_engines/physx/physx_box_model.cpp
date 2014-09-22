@@ -46,7 +46,7 @@ namespace argos {
          /* Add body to the scene */
          GetPhysXEngine().GetScene().addActor(*pcBody);
          /* Setup the body */
-         SetBody(pcBody);
+         SetBody(*pcBody);
       }
       else {
          /*
@@ -63,7 +63,7 @@ namespace argos {
          /* Add body to the scene */
          GetPhysXEngine().GetScene().addActor(*pcBody);
          /* Setup the body */
-         SetBody(pcBody);
+         SetBody(*pcBody);
       }
    }
 

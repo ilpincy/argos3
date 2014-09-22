@@ -51,7 +51,8 @@ namespace argos {
        * @throws CARGoSException if c_entity does not contain an embodied entity.
        */
       CPhysXMultiBodyObjectModel(CPhysXEngine& c_engine,
-                                  CComposableEntity& c_entity);
+                                 CComposableEntity& c_entity,
+                                 UInt32 un_num_bodies);
 
       /**
        * Class destructor.
@@ -73,22 +74,6 @@ namespace argos {
        */
       inline const CComposableEntity& GetComposableEntity() const {
          return m_cEntity;
-      }
-
-      /**
-       * Returns the bodies as a non-const vector.
-       * @returns The bodies as a non-const vector.
-       */
-      inline std::vector<physx::PxRigidDynamic*>& GetBodies() {
-         return m_vecBodies;
-      }
-
-      /**
-       * Returns the bodies as a const vector.
-       * @returns The bodies as a const vector.
-       */
-      inline const std::vector<physx::PxRigidDynamic*>& GetBodies() const {
-         return m_vecBodies;
       }
 
       virtual void Reset();
@@ -122,15 +107,16 @@ namespace argos {
        * box of the object.
        * </p>
        * <p>
-       * @param pc_body The object body.
+       * @param c_body The object body.
+       * @param c_trans The transform of the body wrt the origin anchor.
        */
-      void AddBody(physx::PxRigidActor* pc_body,
+      void AddBody(physx::PxRigidDynamic& c_body,
                    const physx::PxTransform& c_trans);
 
    private:
 
-      CComposableEntity&                  m_cEntity;
-      std::vector<physx::PxRigidDynamic*> m_vecBodies;
+      CComposableEntity& m_cEntity;
+      physx::PxAggregate* m_pcAggregate;
    };
 
 }

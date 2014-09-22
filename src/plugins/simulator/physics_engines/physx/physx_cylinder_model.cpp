@@ -45,7 +45,7 @@ namespace argos {
          /* Add body to the scene */
          GetPhysXEngine().GetScene().addActor(*pcBody);
          /* Set this as the body for the base class */
-         SetBody(pcBody);
+         SetBody(*pcBody);
       }
       else {
          /*
@@ -62,7 +62,7 @@ namespace argos {
          /* Add body to the scene */
          GetPhysXEngine().GetScene().addActor(*pcBody);
          /* Set this as the body for the base class */
-         SetBody(pcBody);
+         SetBody(*pcBody);
       }
       /* Cleanup */
       delete pcGeometry;
