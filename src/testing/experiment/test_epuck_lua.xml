@@ -34,7 +34,7 @@
         <ground implementation="rot_z_only" />
         <light implementation="default" show_rays="false" />
         <positioning implementation="default" />
-        <proximity implementation="default" show_rays="false" />
+        <proximity implementation="default" show_rays="true" />
         <range_and_bearing implementation="medium" medium="rab" show_rays="true" />
       </sensors>
       <!-- No required configuration -->

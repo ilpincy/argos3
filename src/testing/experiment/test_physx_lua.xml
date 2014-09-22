@@ -57,10 +57,10 @@
       </entity>
     </distribute>
 
-    <mini-quadrotor id="mq0">
-      <body position="0,0,2" orientation="0,0,0" />
-      <controller config="lua" />
-    </mini-quadrotor>
+    <!-- <mini-quadrotor id="mq0"> -->
+    <!--   <body position="0,0,2" orientation="0,0,0" /> -->
+    <!--   <controller config="lua" /> -->
+    <!-- </mini-quadrotor> -->
   </arena>
 
   <!-- ******************* -->
@@ -87,6 +87,8 @@
     <qt-opengl lua_editor="false">
       <camera>
         <placement idx="0" position="-9.0392,0.249531,9.12501" look_at="-8.25253,0.249531,8.50764" lens_focal_length="20" />
+        <placement idx="1" position="1.19044,2.09028,0.880881" look_at="1.99307,2.61613,0.599341" lens_focal_length="20" />
+        <placement idx="2" position="-2.15218,-0.476379,1.66848" look_at="-2.40581,-1.27034,1.11595" lens_focal_length="20" />
       </camera>
     </qt-opengl>
 
