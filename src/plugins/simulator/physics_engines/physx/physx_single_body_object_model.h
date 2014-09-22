@@ -101,7 +101,6 @@ namespace argos {
 
       virtual void CalculateBoundingBox();
 
-      virtual void UpdateEntityStatus();
       virtual void UpdateFromEntityStatus() {}
 
       virtual bool IsCollidingWithSomething() const;
