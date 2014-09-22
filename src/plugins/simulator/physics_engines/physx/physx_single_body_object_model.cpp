@@ -22,21 +22,39 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CPhysXSingleBodyObjectModel::SetupBody(physx::PxRigidActor* pc_body) {
-      /* Cleanup lists of shapes and geometries */
-      m_vecShapes.clear();
-      /* Fill up the lists */
-      size_t unShapes = pc_body->getNbShapes();
-      physx::PxShape** pcShapes = new physx::PxShape*[unShapes];
-      pc_body->getShapes(pcShapes, unShapes);
-      for(size_t i = 0; i < unShapes; ++i) {
-         m_vecShapes.push_back(pcShapes[i]);
-      }
-      delete[] pcShapes;
+   void CPhysXSingleBodyObjectModel::SetBody(physx::PxRigidActor* pc_body) {
       /* Assign pointer to body */
       m_pcGenericBody = pc_body;
       /* Set the flag to say whether the body is static or dynamic */
       m_bIsDynamic = (m_pcGenericBody->is<physx::PxRigidDynamic>() != NULL);
+      /* Register the origin anchor update method */
+      RegisterAnchorMethod<CPhysXSingleBodyObjectModel>(GetEmbodiedEntity().GetOriginAnchor(),
+                                                        &CPhysXSingleBodyObjectModel::UpdateOriginAnchor);
+      /* Calculate the bounding box */
+      CalculateBoundingBox();
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CPhysXSingleBodyObjectModel::Reset() {
+      /* No need to reset a static body */
+      if(! m_bIsDynamic) return;
+      /* Initial position and orientation from embodied entity */
+      physx::PxVec3 cInitPos;
+      physx::PxQuat cInitOrient;
+      CVector3ToPxVec3(GetEmbodiedEntity().GetOriginAnchor().Position, cInitPos);
+      CQuaternionToPxQuat(GetEmbodiedEntity().GetOriginAnchor().Orientation, cInitOrient);
+      /* Create the transform */
+      physx::PxTransform cRotation(cInitOrient);
+      physx::PxTransform cTranslation(cInitPos);
+      physx::PxTransform cFinalTrans = cTranslation * cRotation * m_cPxOriginToARGoSOrigin;
+      /* Make the body into a kinematic actor to move it */
+      m_pcDynamicBody->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, true);
+      /* Move the body to the target position */
+      m_pcDynamicBody->setGlobalPose(cFinalTrans);
+      /* Reset the body into a dynamic actor */
+      m_pcDynamicBody->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, false);
    }
 
    /****************************************/
@@ -54,15 +72,10 @@ namespace argos {
       physx::PxQuat cOrient;
       CVector3ToPxVec3(c_position, cPos);
       CQuaternionToPxQuat(c_orientation, cOrient);
-      /* Create the transform
-       * 1. a translation from m_cARGoSReferencePoint to center of mass
-       * 2. a rotation around the box base
-       * 3. a translation to the final position
-       */
-      physx::PxTransform cTranslation1(-m_cARGoSReferencePoint);
+      /* Create the transform */
       physx::PxTransform cRotation(cOrient);
-      physx::PxTransform cTranslation2(cPos);
-      physx::PxTransform cFinalTrans = cTranslation2 * cRotation * cTranslation1;
+      physx::PxTransform cTranslation(cPos);
+      physx::PxTransform cFinalTrans = cTranslation * cRotation * m_cPxOriginToARGoSOrigin;
       /* Make the body into a kinematic actor to move it */
       m_pcDynamicBody->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, true);
       /* Move the body to the target position */
@@ -88,34 +101,6 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CPhysXSingleBodyObjectModel::Reset() {
-      /* No need to reset a static body */
-      if(! m_bIsDynamic) return;
-      /* Initial position and orientation from embodied entity */
-      physx::PxVec3 cInitPos;
-      physx::PxQuat cInitOrient;
-      CVector3ToPxVec3(GetEmbodiedEntity().GetOriginAnchor().Position, cInitPos);
-      CQuaternionToPxQuat(GetEmbodiedEntity().GetOriginAnchor().Orientation, cInitOrient);
-      /* Create the transform
-       * 1. a translation from m_cARGoSReferencePoint to center of mass
-       * 2. a rotation around the box base
-       * 3. a translation to the final position
-       */
-      physx::PxTransform cTranslation1(-m_cARGoSReferencePoint);
-      physx::PxTransform cRotation(cInitOrient);
-      physx::PxTransform cTranslation2(cInitPos);
-      physx::PxTransform cFinalTrans = cTranslation2 * cRotation * cTranslation1;
-      /* Make the body into a kinematic actor to move it */
-      m_pcDynamicBody->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, true);
-      /* Move the body to the target position */
-      m_pcDynamicBody->setGlobalPose(cFinalTrans);
-      /* Reset the body into a dynamic actor */
-      m_pcDynamicBody->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, false);
-   }
-
-   /****************************************/
-   /****************************************/
-
    void CPhysXSingleBodyObjectModel::CalculateBoundingBox() {
       physx::PxBounds3 cPxAABB(m_pcGenericBody->getWorldBounds());
       PxVec3ToCVector3(cPxAABB.minimum, GetBoundingBox().MinCorner);
@@ -127,25 +112,25 @@ namespace argos {
 
    void CPhysXSingleBodyObjectModel::UpdateEntityStatus() {
       /* No need to update a static entity */
-      if(! m_bIsDynamic) return;
-      /* Update bounding box */
-      CalculateBoundingBox();
-      /* Get the global pose of the object */
-      physx::PxTransform cTrans = m_pcGenericBody->getGlobalPose();
-      /* Vector to the object base */
-      /* Transform base */
-      physx::PxVec3 cBaseGlobal(cTrans.rotate(m_cARGoSReferencePoint));
-      cBaseGlobal += cTrans.p;
+      if(m_bIsDynamic) {
+         CPhysXModel::UpdateEntityStatus();
+      }
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CPhysXSingleBodyObjectModel::UpdateOriginAnchor(SAnchor& s_anchor) {
+      /* Get transform of the ARGoS origin anchor */
+      physx::PxTransform cTrans =
+         // global object pose in Physx
+         m_pcGenericBody->getGlobalPose() *
+         // inverse of the transform to make the ARGoS anchor the origin
+         m_cPxOriginToARGoSOrigin.getInverse();
       /* Set object position into ARGoS space */
-      CVector3 cPos;
-      PxVec3ToCVector3(cBaseGlobal, cPos);
-      GetEmbodiedEntity().GetOriginAnchor().Position = cPos;
+      PxVec3ToCVector3(cTrans.p, s_anchor.Position);
       /* Set object orientation into ARGoS space */
-      CQuaternion cOrient;
-      PxQuatToCQuaternion(cTrans.q, cOrient);
-      GetEmbodiedEntity().GetOriginAnchor().Orientation = cOrient;
-      /* Update entity components */
-      m_cEntity.UpdateComponents();
+      PxQuatToCQuaternion(cTrans.q, s_anchor.Orientation);
    }
 
    /****************************************/
@@ -169,20 +154,27 @@ namespace argos {
       /* Exclude ground shape */
       cIgnoreShapes.Ignore(&GetPhysXEngine().GetGroundShape());
       /* Exclude this object's shapes */
-      for(size_t i = 0; i < m_vecShapes.size(); ++i) {
-         cIgnoreShapes.Ignore(m_vecShapes[i]);
+      size_t unShapes = m_pcGenericBody->getNbShapes();
+      physx::PxShape** ppcShapes = new physx::PxShape*[unShapes];
+      m_pcGenericBody->getShapes(ppcShapes, unShapes);
+      for(size_t i = 0; i < unShapes; ++i) {
+         cIgnoreShapes.Ignore(ppcShapes[i]);
       }
-      /* Perform the query
-       * It returns true if anything is overlapping this object */
-      for(size_t i = 0; i < m_vecShapes.size(); ++i) {
-         if(GetPhysXEngine().GetScene().overlap(m_vecShapes[i]->getGeometry().any(),
+      /*
+       * Perform the query
+       * It returns true if anything is overlapping this object
+       */
+      for(size_t i = 0; i < unShapes; ++i) {
+         if(GetPhysXEngine().GetScene().overlap(ppcShapes[i]->getGeometry().any(),
                                                 cTrans,
                                                 cOverlapBuf,
                                                 cQueryFlags,
                                                 &cIgnoreShapes)) {
+            delete[] ppcShapes;
             return true;
          }
       }
+      delete[] ppcShapes;
       return false;
    }
 

@@ -14,24 +14,18 @@ namespace argos {
    CPhysXCylinderModel::CPhysXCylinderModel(CPhysXEngine& c_engine,
                                             CCylinderEntity& c_entity) :
       CPhysXStretchableObjectModel(c_engine, c_entity) {
-      /* Set center of cylinder base */
-      SetARGoSReferencePoint(physx::PxVec3(0.0f,
-                                           0.0f,
-                                           -c_entity.GetHeight() * 0.5f));
       /* Get position and orientation in this engine's representation */
       physx::PxVec3 cPos;
       CVector3ToPxVec3(GetEmbodiedEntity().GetOriginAnchor().Position, cPos);
       physx::PxQuat cOrient;
       CQuaternionToPxQuat(GetEmbodiedEntity().GetOriginAnchor().Orientation, cOrient);
-      /* Create the transform
-       * 1. a translation from m_cBaseCenterLocal to center of mass
-       * 2. a rotation around the box base
-       * 3. a translation to the final position
-       */
-      physx::PxTransform cTranslation1(-GetARGoSReferencePoint());
+      /* Create the transform */
+      SetPxOriginToARGoSOrigin(
+         physx::PxTransform(
+            physx::PxVec3(0.0f, 0.0f, c_entity.GetHeight() * 0.5f)));
       physx::PxTransform cRotation(cOrient);
-      physx::PxTransform cTranslation2(cPos);
-      physx::PxTransform cFinalTrans = cTranslation2 * cRotation * cTranslation1;
+      physx::PxTransform cTranslation(cPos);
+      physx::PxTransform cFinalTrans = cTranslation * cRotation * GetPxOriginToARGoSOrigin();
       /* Create cylinder geometry */
       physx::PxConvexMeshGeometry* pcGeometry =
          CreateCylinderGeometry(c_engine,
@@ -57,7 +51,7 @@ namespace argos {
          /* Add body to the scene */
          GetPhysXEngine().GetScene().addActor(*pcBody);
          /* Set this as the body for the base class */
-         SetupBody(pcBody);
+         SetBody(pcBody);
       }
       else {
          /*
@@ -74,10 +68,8 @@ namespace argos {
          /* Add body to the scene */
          GetPhysXEngine().GetScene().addActor(*pcBody);
          /* Set this as the body for the base class */
-         SetupBody(pcBody);
+         SetBody(pcBody);
       }
-      /* Calculate bounding box */
-      CalculateBoundingBox();
       /* Cleanup */
       delete pcGeometry;
    }

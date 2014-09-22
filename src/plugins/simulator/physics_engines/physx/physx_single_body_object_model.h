@@ -15,13 +15,83 @@ namespace argos {
 
 namespace argos {
 
+   /**
+    * Base class for object models with a single body.
+    * <p>
+    * This class offers all the basic functionality to manage
+    * models composed of a single body. These models, while having
+    * only a single body, can have multiple associated shapes.
+    * </p>
+    * <p>
+    * Single-body objects are often passive objects such as boxes and
+    * cylinders.
+    * </p>
+    * <p>
+    * To use this class, simply create a class that inherits from it.
+    * The default implementations for Reset(), MoveTo(), etc. should
+    * be already OK for your needs.
+    * </p>
+    * <p>
+    * In the constructor of your class, be sure to call the method SetBody()
+    * when you have created the body and associated the shapes to it. If this
+    * method is not called, the default implementations will have segfaults.
+    * </p>
+    * <p>
+    * This class retains ownership for the body and shapes you created once
+    * you call SetBody(). In other words, you don't need to free these objects
+    * because ~CPhysXSingleBodyObjectModel() does it for you.
+    * </p>
+    */
    class CPhysXSingleBodyObjectModel : public CPhysXModel {
 
    public:
 
+      /**
+       * Class constructor.
+       * @param c_engine The dynamics 2D engine that manages this model.
+       * @param c_entity The composable entity associated to this model.
+       * @throws CARGoSException if c_entity does not contain an embodied entity.
+       */
       CPhysXSingleBodyObjectModel(CPhysXEngine& c_engine,
                                   CComposableEntity& c_entity);
+
+      /**
+       * Class destructor.
+       * Disposes of the object body and its shapes.
+       */
       virtual ~CPhysXSingleBodyObjectModel();
+
+      /**
+       * Returns the associated composable entity as a non-const reference.
+       * @returns The associated composable entity as a non-const reference.
+       */
+      inline CComposableEntity& GetComposableEntity() {
+         return m_cEntity;
+      }
+
+      /**
+       * Returns the associated composable entity as a const reference.
+       * @returns The associated composable entity as a const reference.
+       */
+      inline const CComposableEntity& GetComposableEntity() const {
+         return m_cEntity;
+      }
+
+      /**
+       * Returns the body as non-const pointer.
+       * @returns The body as non-const pointer.
+       */
+      inline physx::PxRigidActor* GetBody() {
+         return m_pcGenericBody;
+      }
+
+      /**
+       * Returns the body as const pointer.
+       * @returns The body as const pointer.
+       */
+      inline const physx::PxRigidActor* GetBody() const {
+         return m_pcGenericBody;
+      }
 
       virtual void Reset();
 
@@ -37,64 +107,56 @@ namespace argos {
       virtual bool IsCollidingWithSomething() const;
 
       /**
-       * Sets up the internal information for the object model.
-       * Call this method once you're done adding shapes to your
-       * object model.
-       * If you forget to call this method, some of the methods defined in this class
-       * won't work (segmentation fault due to NULL pointers).
-       * If you call this method before adding all the shapes to the body,
-       * some shapes won't be taken into account.
-       * @param pc_body The body of the object model.
+       * Sets the body and registers the default origin anchor method.
+       * <p>
+       * You must call this method for this class' methods to work.
+       * </p>
+       * <p>
+       * This class retains ownership of the passed body, so you don't
+       * need to explicitly delete anything.
+       * </p>
+       * <p>
+       * Internally, this method also sets <tt>pt_body->data</tt> to
+       * point to <tt>this</tt>, which is a requirement for ray
+       * cast queries to work properly.
+       * </p>
+       * <p>
+       * Finally, this method also calculates the initial bounding
+       * box of the object.
+       * </p>
+       * <p>
+       * @param pc_body The object body.
        */
-      void SetupBody(physx::PxRigidActor* pc_body);
+      void SetBody(physx::PxRigidActor* pc_body);
 
-      inline CComposableEntity& GetEntity() {
-         return m_cEntity;
+      /**
+       * Updates the origin anchor associated to the embodied entity.
+       * @param s_anchor The origin anchor.
+       */
+      void UpdateOriginAnchor(SAnchor& s_anchor);
+
+      inline physx::PxTransform& GetPxOriginToARGoSOrigin() {
+         return m_cPxOriginToARGoSOrigin;
       }
 
-      inline const CComposableEntity& GetEntity() const {
-         return m_cEntity;
+      inline const physx::PxTransform& GetPxOriginToARGoSOrigin() const {
+         return m_cPxOriginToARGoSOrigin;
       }
 
-      inline physx::PxRigidActor* GetBody() {
-         return m_pcGenericBody;
-      }
-
-      inline const physx::PxRigidActor* GetBody() const {
-         return m_pcGenericBody;
-      }
-
-      inline physx::PxVec3& GetARGoSReferencePoint() {
-         return m_cARGoSReferencePoint;
-      }
-
-      inline const physx::PxVec3& GetARGoSReferencePoint() const {
-         return m_cARGoSReferencePoint;
-      }
-
-      inline void SetARGoSReferencePoint(const physx::PxVec3& c_argos_reference_point) {
-         m_cARGoSReferencePoint = c_argos_reference_point;
-      }
-
-      inline std::vector<physx::PxShape*>& GetShapes() {
-         return m_vecShapes;
-      }
-
-      inline const std::vector<physx::PxShape*>& GetShapes() const {
-         return m_vecShapes;
+      inline void SetPxOriginToARGoSOrigin(const physx::PxTransform& c_trans) {
+         m_cPxOriginToARGoSOrigin = c_trans;
       }
 
    private:
 
-      CComposableEntity&              m_cEntity;
+      CComposableEntity& m_cEntity;
       union {
          physx::PxRigidActor* m_pcGenericBody;
          physx::PxRigidStatic* m_pcStaticBody;
          physx::PxRigidDynamic* m_pcDynamicBody;
       };
       bool m_bIsDynamic;
-      physx::PxVec3                   m_cARGoSReferencePoint;
-      std::vector<physx::PxShape*>    m_vecShapes;
+      physx::PxTransform m_cPxOriginToARGoSOrigin;
    };
 
 }

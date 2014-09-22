@@ -18,21 +18,18 @@ namespace argos {
       physx::PxVec3 cHalfSize(c_entity.GetSize().GetX() * 0.5f,
                               c_entity.GetSize().GetY() * 0.5f,
                               c_entity.GetSize().GetZ() * 0.5f);
-      SetARGoSReferencePoint(physx::PxVec3(0.0f, 0.0f, -cHalfSize.z));
       /* Get position and orientation in this engine's representation */
       physx::PxVec3 cPos;
       CVector3ToPxVec3(GetEmbodiedEntity().GetOriginAnchor().Position, cPos);
       physx::PxQuat cOrient;
       CQuaternionToPxQuat(GetEmbodiedEntity().GetOriginAnchor().Orientation, cOrient);
-      /* Create the transform
-       * 1. a translation from m_cBaseCenterLocal to center of mass
-       * 2. a rotation around the box base
-       * 3. a translation to the final position
-       */
-      physx::PxTransform cTranslation1(-GetARGoSReferencePoint());
+      /* Create the transform */
+      SetPxOriginToARGoSOrigin(
+         physx::PxTransform(
+            physx::PxVec3(0.0f, 0.0f, cHalfSize.z)));
       physx::PxTransform cRotation(cOrient);
-      physx::PxTransform cTranslation2(cPos);
-      physx::PxTransform cFinalTrans = cTranslation2 * cRotation * cTranslation1;
+      physx::PxTransform cTranslation(cPos);
+      physx::PxTransform cFinalTrans = cTranslation * cRotation * GetPxOriginToARGoSOrigin();
       /* Create the box geometry */
       physx::PxBoxGeometry cGeometry(cHalfSize);
       /* Create the box body */
@@ -55,7 +52,7 @@ namespace argos {
          /* Add body to the scene */
          GetPhysXEngine().GetScene().addActor(*pcBody);
          /* Setup the body */
-         SetupBody(pcBody);
+         SetBody(pcBody);
       }
       else {
          /*
@@ -72,7 +69,7 @@ namespace argos {
          /* Add body to the scene */
          GetPhysXEngine().GetScene().addActor(*pcBody);
          /* Setup the body */
-         SetupBody(pcBody);
+         SetBody(pcBody);
       }
       /* Calculate bounding box */
       CalculateBoundingBox();
