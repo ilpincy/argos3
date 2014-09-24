@@ -39,12 +39,6 @@ namespace argos {
 
       virtual ~CPhysXModel() {}
 
-      virtual bool MoveTo(const CVector3& c_position,
-                          const CQuaternion& c_orientation,
-                          bool b_check_only = false) {
-         return false;
-      }
-
       virtual void Reset() = 0;
 
       virtual void UpdateFromEntityStatus() = 0;

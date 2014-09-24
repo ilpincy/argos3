@@ -322,9 +322,8 @@ namespace argos {
       CQuaternion cOriginalOrientation = m_psOriginAnchor->Orientation;
       for(CPhysicsModel::TVector::const_iterator it = m_tPhysicsModelVector.begin();
           it != m_tPhysicsModelVector.end() && bNoCollision; ++it) {
-         if(! (*it)->MoveTo(c_position, c_orientation, b_check_only)) {
-            bNoCollision = false;
-         }
+         (*it)->MoveTo(c_position, c_orientation);
+         bNoCollision = ! (*it)->IsCollidingWithSomething();
       }
       if(bNoCollision && !b_check_only) {
          /* Update parent */

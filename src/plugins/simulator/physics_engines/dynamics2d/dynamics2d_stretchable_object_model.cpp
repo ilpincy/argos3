@@ -32,17 +32,11 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   bool CDynamics2DStretchableObjectModel::MoveTo(const CVector3& c_position,
-                                                  const CQuaternion& c_orientation,
-                                                  bool b_check_only) {
-      bool bCollision = CDynamics2DSingleBodyObjectModel::MoveTo(c_position, c_orientation, b_check_only);
-      if(m_pcGrippable != NULL &&
-         !bCollision &&
-         !b_check_only) {
-         /* Object moved, release all gripped entities */
-         m_pcGrippable->ReleaseAll();
-      }
-      return bCollision;
+   void CDynamics2DStretchableObjectModel::MoveTo(const CVector3& c_position,
+                                                  const CQuaternion& c_orientation) {
+      CDynamics2DSingleBodyObjectModel::MoveTo(c_position, c_orientation);
+      /* Object moved, release all gripped entities */
+      m_pcGrippable->ReleaseAll();
    }
    
    /****************************************/

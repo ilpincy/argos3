@@ -35,41 +35,16 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   bool CDynamics2DSingleBodyObjectModel::MoveTo(const CVector3& c_position,
-                                                 const CQuaternion& c_orientation,
-                                                 bool b_check_only) {
+   void CDynamics2DSingleBodyObjectModel::MoveTo(const CVector3& c_position,
+                                                 const CQuaternion& c_orientation) {
       /* Can't move a static body */
-      if(cpBodyIsStatic(m_ptBody)) return false;
-      /* The box is movable */
-      /* Save body position and orientation */
-      cpVect tOldPos = m_ptBody->p;
-      cpFloat fOldA = m_ptBody->a;
+      if(cpBodyIsStatic(m_ptBody)) return;
       /* Move the body to the desired position */
       m_ptBody->p = cpv(c_position.GetX(), c_position.GetY());
       CRadians cXAngle, cYAngle, cZAngle;
       c_orientation.ToEulerAngles(cZAngle, cYAngle, cXAngle);
       cpBodySetAngle(m_ptBody, cZAngle.GetValue());
       cpSpaceReindexShapesForBody(GetDynamics2DEngine().GetPhysicsSpace(), m_ptBody);
-      /* Check if there is a collision */
-      SInt32 nCollision = 0;
-      for(cpShape* pt_shape = m_ptBody->shapeList;
-          (nCollision == 0) && (pt_shape != NULL);
-          pt_shape = pt_shape->next) {
-         nCollision = cpSpaceShapeQuery(GetDynamics2DEngine().GetPhysicsSpace(), pt_shape, NULL, NULL);
-      }
-      if(b_check_only || nCollision > 0) {
-         /* Restore old body state if there was a collision or
-            it was only a check for movement */
-         m_ptBody->p = tOldPos;
-         cpBodySetAngle(m_ptBody, fOldA);
-         cpSpaceReindexShapesForBody(GetDynamics2DEngine().GetPhysicsSpace(), m_ptBody);
-      }
-      else {
-         /* Update entity status */
-         UpdateEntityStatus();
-      }
-      /* The movement is allowed if there is no collision */
-      return !nCollision;
    }
 
    /****************************************/

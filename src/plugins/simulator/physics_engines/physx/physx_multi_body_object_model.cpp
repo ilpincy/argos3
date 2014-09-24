@@ -41,10 +41,8 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   bool CPhysXMultiBodyObjectModel::MoveTo(const CVector3& c_position,
-                                           const CQuaternion& c_orientation,
-                                           bool b_check_only) {
-      return false;
+   void CPhysXMultiBodyObjectModel::MoveTo(const CVector3& c_position,
+                                           const CQuaternion& c_orientation) {
    }
 
    /****************************************/

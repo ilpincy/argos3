@@ -60,13 +60,10 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   bool CPhysXSingleBodyObjectModel::MoveTo(const CVector3& c_position,
-                                            const CQuaternion& c_orientation,
-                                            bool b_check_only) {
+   void CPhysXSingleBodyObjectModel::MoveTo(const CVector3& c_position,
+                                            const CQuaternion& c_orientation) {
       /* Can't move a static body */
-      if(! m_bIsDynamic) return false;
-      /* Save old body pose */
-      physx::PxTransform cOldPose(m_pcDynamicBody->getGlobalPose());
+      if(! m_bIsDynamic) return;
       /* Set target position and orientation */
       physx::PxTransform cBodyTrans;
       CVector3ToPxVec3(c_position, cBodyTrans.p);
@@ -75,22 +72,8 @@ namespace argos {
       m_pcDynamicBody->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, true);
       /* Move the body to the target position */
       m_pcDynamicBody->setGlobalPose(cBodyTrans);
-      /* Check whether the body is colliding with something */
-      bool bIsColliding = IsCollidingWithSomething();
-      if(b_check_only || bIsColliding) {
-         /* This was only a check or a collision is detected
-          * Restore the old pose
-          */
-         m_pcDynamicBody->setGlobalPose(cOldPose);
-      }
-      else {
-         /* The change is accepted, update the entity */
-         UpdateEntityStatus();
-      }
       /* Reset the body into a dynamic actor */
       m_pcDynamicBody->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, false);
-      /* Return true if the move was without collisions */
-      return !bIsColliding;
    }
 
    /****************************************/

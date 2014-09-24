@@ -153,16 +153,11 @@ namespace argos {
 
       /**
        * Moves the entity to the wanted position and orientation.
-       * The movement is allowed only if the object does not collide
-       * with anything once in the new position.
        * @param c_position The wanted position.
        * @param c_orientation The wanted orientation.
-       * @param b_check_only If <tt>false</tt>, the movement is executed; otherwise, the object is not actually moved.
-       * @return <tt>true</tt> if no collisions were detected, <tt>false</tt> otherwise.
        */
-      virtual bool MoveTo(const CVector3& c_position,
-                          const CQuaternion& c_orientation,
-                          bool b_check_only = false) = 0;
+      virtual void MoveTo(const CVector3& c_position,
+                          const CQuaternion& c_orientation) = 0;
 
       /**
        * Returns an axis-aligned box that contains the physics model.
