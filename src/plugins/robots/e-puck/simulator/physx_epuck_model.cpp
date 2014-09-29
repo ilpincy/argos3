@@ -5,66 +5,87 @@
  */
 
 #include "physx_epuck_model.h"
-#include <argos3/plugins/ropucks/e-puck/simulator/epuck_entity.h>
+#include <argos3/plugins/robots/e-puck/simulator/epuck_entity.h>
 
 namespace argos {
 
    /****************************************/
    /****************************************/
    
-   static const Real EPUCK_MASS                = 0.4f;
-
-   static const Real EPUCK_RADIUS              = 0.035f;
    static const Real EPUCK_INTERWHEEL_DISTANCE = 0.053f;
-   static const Real EPUCK_HEIGHT              = 0.086f;
+   static const Real EPUCK_WHEEL_RADIUS        = 0.0205f;
+   static const Real EPUCK_WHEEL_THICKNESS     = 0.01f;
+   static const Real EPUCK_WHEEL_MASS          = 0.05f;
+
+   static const Real EPUCK_CHASSIS_LENGTH      = 0.055;
+   static const Real EPUCK_CHASSIS_WIDTH       = (EPUCK_INTERWHEEL_DISTANCE - EPUCK_WHEEL_THICKNESS) * 0.9;
+   static const Real EPUCK_CHASSIS_HEIGHT      = EPUCK_WHEEL_RADIUS * 2.0f;
+   static const Real EPUCK_CHASSIS_ELEVATION   = 0.005f;
+   static const Real EPUCK_CHASSIS_MASS        = 0.3f;
+
+   static const Real EPUCK_BOARD_RADIUS        = 0.035f;
+   static const Real EPUCK_BOARD_HEIGHT        = 0.03f;
+
+   enum EPUCK_WHEELS {
+      EPUCK_LEFT_WHEEL = 0,
+      EPUCK_RIGHT_WHEEL = 1
+   };
 
    /****************************************/
    /****************************************/
    
    CPhysXEPuckModel::CPhysXEPuckModel(CPhysXEngine& c_engine,
                                       CEPuckEntity& c_entity) :
-      CPhysXSingleBodyObjectModel(c_engine, c_entity),
-      m_cEPuckEntity(c_entity),
-      m_fCurrentWheelVelocity(m_cWheeledEntity.GetWheelVelocities() {
-      /* Calculate base center */
-      SetARGoSReferencePoint(physx::PxVec3(0.0f, 0.0f, -EPUCK_HEIGHT * 0.5f));
+      CPhysXMultiBodyObjectModel(c_engine, c_entity, 3),
+      m_fCurrentWheelVelocity(c_entity.GetWheeledEntity().GetWheelVelocities()),
+      m_cDiffDrive(*this,
+                   c_engine,
+                   EPUCK_INTERWHEEL_DISTANCE,
+                   EPUCK_WHEEL_RADIUS,
+                   EPUCK_WHEEL_THICKNESS,
+                   EPUCK_WHEEL_MASS,
+                   physx::PxVec3(EPUCK_CHASSIS_LENGTH,
+                                 EPUCK_CHASSIS_WIDTH,
+                                 EPUCK_CHASSIS_HEIGHT),
+                   EPUCK_CHASSIS_ELEVATION,
+                   EPUCK_CHASSIS_MASS) {
       /* Get position and orientation in this engine's representation */
-      physx::PxVec3 cPos;
-      CVector3ToPxVec3(GetEmbodiedEntity().GetOriginAnchor().Position, cPos);
-      physx::PxQuat cOrient;
-      CQuaternionToPxQuat(GetEmbodiedEntity().GetOriginAnchor().Orientation, cOrient);
-      /* Create the transform
-       * 1. a translation up by half body height
-       * 2. a rotation around the base
-       * 3. a translation to the final position
+      physx::PxTransform cBodyTrans;
+      CVector3ToPxVec3(GetEmbodiedEntity().GetOriginAnchor().Position, cBodyTrans.p);
+      CQuaternionToPxQuat(GetEmbodiedEntity().GetOriginAnchor().Orientation, cBodyTrans.q);
+      /*
+       * Top board
        */
-      physx::PxTransform cTranslation1(-GetARGoSReferencePoint());
-      physx::PxTransform cRotation(cOrient);
-      physx::PxTransform cTranslation2(cPos);
-      physx::PxTransform cFinalTrans = cTranslation2 * cRotation * cTranslation1;
       /* Create cylinder geometry */
-      physx::PxConvexMeshGeometry* pcGeometry =
+      physx::PxConvexMeshGeometry* pcBoardGeometry =
          CreateCylinderGeometry(c_engine,
-                                EPUCK_RADIUS,
-                                EPUCK_HEIGHT);
-      /* Create the body in its initial position and orientation */
-      physx::PxRigidDynamic* pcBody =
-         GetPhysXEngine().GetPhysics().createRigidDynamic(cFinalTrans);
-      /* Enable CCD on the body */
-      pcBody->setRigidBodyFlag(physx::PxRigidBodyFlag::eENABLE_CCD, true);
-      /* Create the shape */
-      physx::PxShape* pcShape =
-         pcBody->createShape(*pcGeometry,
-                             GetPhysXEngine().GetDefaultMaterial());
-      pcShape->userData = this;
-      /* Set body mass */
-      physx::PxRigidBodyExt::setMassAndUpdateInertia(*pcBody, 0.4f);
-      /* Add body to the scene */
-      GetPhysXEngine().GetScene().addActor(*pcBody);
-      /* Set this as the body for the base class */
-      SetupBody(pcBody);
+                                EPUCK_BOARD_RADIUS,
+                                EPUCK_BOARD_HEIGHT);
+      /* Create offset transformation for the board */
+      physx::PxTransform cBoardOffset(0.0f,
+                                      0.0f,
+                                      EPUCK_CHASSIS_ELEVATION +
+                                      EPUCK_CHASSIS_HEIGHT +
+                                      EPUCK_BOARD_HEIGHT * 0.5f);
+      /* Create the shape and attach it to the differential drive component */
+      physx::PxShape* pcBoardShape =
+         m_cDiffDrive.GetMainBodyActor().createShape(*pcBoardGeometry,
+                                                     GetPhysXEngine().GetDefaultMaterial());
+      pcBoardShape->userData = this;
+      /* Place the differential drive component in its initial position */
+      m_cDiffDrive.SetGlobalPose(cBodyTrans);
       /* Cleanup */
-      delete pcGeometry;
+      delete pcBoardGeometry;
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CPhysXEPuckModel::Reset() {
+      /* Reset bodies */
+      CPhysXMultiBodyObjectModel::Reset();
+      /* Zero wheel speeds */
+      m_cDiffDrive.SetTargetWheelLinearVelocity(0.0f, 0.0f);
    }
 
    /****************************************/
@@ -74,12 +95,13 @@ namespace argos {
       /* Do we want to move? */
       if((m_fCurrentWheelVelocity[EPUCK_LEFT_WHEEL] != 0.0f) ||
          (m_fCurrentWheelVelocity[EPUCK_RIGHT_WHEEL] != 0.0f)) {
-         m_cDiffSteering.SetWheelVelocity(m_fCurrentWheelVelocity[EPUCK_LEFT_WHEEL],
-                                          m_fCurrentWheelVelocity[EPUCK_RIGHT_WHEEL]);
+         m_cDiffDrive.SetTargetWheelLinearVelocity
+            (m_fCurrentWheelVelocity[EPUCK_LEFT_WHEEL],
+             m_fCurrentWheelVelocity[EPUCK_RIGHT_WHEEL]);
       }
       else {
          /* No, we don't want to move - zero all speeds */
-         m_cDiffSteering.Reset();
+         m_cDiffDrive.SetTargetWheelLinearVelocity(0.0f, 0.0f);
       }
    }
 

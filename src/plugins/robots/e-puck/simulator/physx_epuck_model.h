@@ -11,26 +11,29 @@ namespace argos {
    class CPhysXEngine;
    class CPhysXEPuckModel;
    class CEPuckEntity;
+   class CWheeledEntity;
 }
 
-#include <argos3/plugins/simulator/physics_engines/physx/physx_single_body_object_model.h>
+#include <argos3/plugins/simulator/physics_engines/physx/physx_differential_drive.h>
+#include <argos3/plugins/simulator/physics_engines/physx/physx_multi_body_object_model.h>
 
 namespace argos {
 
-   class CPhysXEPuckModel : public CPhysXSingleBodyObjectModel {
+   class CPhysXEPuckModel : public CPhysXMultiBodyObjectModel {
 
    public:
 
       CPhysXEPuckModel(CPhysXEngine& c_engine,
                        CEPuckEntity& c_entity);
 
+      virtual void Reset();
+
       virtual void UpdateFromEntityStatus();
 
    private:
 
-      CEPuckEntity& m_cEPuckEntity;
       const Real* m_fCurrentWheelVelocity;
-
+      CPhysXDifferentialDrive m_cDiffDrive;
    };
 
 }

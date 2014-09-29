@@ -5,6 +5,7 @@
 if(ARGOS_BUILD_FOR_SIMULATOR)
   set(ARGOS3_HEADERS_PLUGINS_ROBOTS_EPUCK_SIMULATOR
     simulator/dynamics2d_epuck_model.h
+    simulator/physx_epuck_model.h
     simulator/epuck_entity.h)
 endif(ARGOS_BUILD_FOR_SIMULATOR)
 
@@ -16,6 +17,7 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
     ${ARGOS3_SOURCES_PLUGINS_ROBOTS_EPUCK}
     ${ARGOS3_HEADERS_PLUGINS_ROBOTS_EPUCK_SIMULATOR}
     simulator/dynamics2d_epuck_model.cpp
+    simulator/physx_epuck_model.cpp
     simulator/epuck_entity.cpp)
   # Compile the graphical visualization only if the necessary libraries have been found
   include(ARGoSCheckQTOpenGL)
