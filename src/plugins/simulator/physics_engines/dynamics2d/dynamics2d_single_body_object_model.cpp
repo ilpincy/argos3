@@ -125,8 +125,8 @@ namespace argos {
       m_ptBody = pt_body;
       m_ptBody->data = this;
       /* Register the origin anchor update method */
-      RegisterAnchorMethod<CDynamics2DSingleBodyObjectModel>(GetEmbodiedEntity().GetOriginAnchor(),
-                                                             &CDynamics2DSingleBodyObjectModel::UpdateOriginAnchor);
+      RegisterAnchorMethod(GetEmbodiedEntity().GetOriginAnchor(),
+                           &CDynamics2DSingleBodyObjectModel::UpdateOriginAnchor);
       /* Calculate the bounding box */
       GetBoundingBox().MinCorner.SetZ(GetEmbodiedEntity().GetOriginAnchor().Position.GetZ());
       GetBoundingBox().MaxCorner.SetZ(GetEmbodiedEntity().GetOriginAnchor().Position.GetZ() + f_height);

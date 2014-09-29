@@ -30,8 +30,8 @@ namespace argos {
       /* Set the flag to say whether the body is static or dynamic */
       m_bIsDynamic = (m_pcGenericBody->is<physx::PxRigidDynamic>() != NULL);
       /* Register the origin anchor update method */
-      RegisterAnchorMethod<CPhysXSingleBodyObjectModel>(GetEmbodiedEntity().GetOriginAnchor(),
-                                                        &CPhysXSingleBodyObjectModel::UpdateOriginAnchor);
+      RegisterAnchorMethod(GetEmbodiedEntity().GetOriginAnchor(),
+                           &CPhysXSingleBodyObjectModel::UpdateOriginAnchor);
       /* Calculate the bounding box */
       CalculateBoundingBox();
    }
