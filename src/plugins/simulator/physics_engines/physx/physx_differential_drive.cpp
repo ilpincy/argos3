@@ -169,25 +169,18 @@ namespace argos {
    /****************************************/
 
    void CPhysXDifferentialDrive::SetGlobalPose(const physx::PxTransform& c_pose) {
-      /* Turn the dynamic actors into kinematic ones to allow for direct position
-         control */
-      m_pcMainBodyActor->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC,
-                                         true);
-      m_pcLeftWheelActor->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC,
-                                          true);
-      m_pcRightWheelActor->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC,
-                                           true);
+      /* Turn the dynamic actors into kinematic ones to allow for direct position control */
+      m_pcMainBodyActor->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, true);
+      m_pcLeftWheelActor->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, true);
+      m_pcRightWheelActor->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, true);
       /* Move the actors */
       m_pcMainBodyActor->setGlobalPose(c_pose * m_cMainBodyOffset);
       m_pcLeftWheelActor->setGlobalPose(c_pose * m_cLeftWheelOffset);
       m_pcRightWheelActor->setGlobalPose(c_pose * m_cRightWheelOffset);
       /* Turn the kinematic actors back into dynamic ones */
-      m_pcMainBodyActor->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC,
-                                          false);
-      m_pcLeftWheelActor->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC,
-                                           false);
-      m_pcRightWheelActor->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC,
-                                            false);
+      m_pcMainBodyActor->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, false);
+      m_pcLeftWheelActor->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, false);
+      m_pcRightWheelActor->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, false);
    }
 
    /****************************************/
