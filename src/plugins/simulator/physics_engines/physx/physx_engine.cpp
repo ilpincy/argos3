@@ -35,6 +35,13 @@ namespace argos {
 
    CPhysXEngine::CQueryIgnoreShapes::CQueryIgnoreShapes() {}
 
+   void CPhysXEngine::CQueryIgnoreShapes::Ignore(physx::PxShape** ppc_shapes,
+                                                 size_t un_num_shapes) {
+      for(size_t i = 0; i < un_num_shapes; ++i) {
+         Ignore(ppc_shapes[i]);
+      }
+   }
+
    physx::PxQueryHitType::Enum CPhysXEngine::CQueryIgnoreShapes::preFilter(const physx::PxFilterData&,
                                                                            const physx::PxShape* pc_shape,
                                                                            const physx::PxRigidActor*,

@@ -97,7 +97,7 @@ namespace argos {
        * need to explicitly delete anything.
        * </p>
        * <p>
-       * Internally, this method also sets <tt>pt_body->data</tt> to
+       * Internally, this method also sets <tt>pc_body->userData</tt> to
        * point to <tt>this</tt>, which is a requirement for ray
        * cast queries to work properly.
        * </p>
@@ -114,8 +114,18 @@ namespace argos {
 
    private:
 
+      struct SBody {
+         physx::PxRigidDynamic& Body;
+         physx::PxTransform Offset;
+         SBody(physx::PxRigidDynamic& c_body,
+               const physx::PxTransform& c_offset);
+      };
+
+   private:
+
       CComposableEntity& m_cEntity;
       physx::PxAggregate* m_pcAggregate;
+      std::vector<SBody> m_vecBodies;
    };
 
 }

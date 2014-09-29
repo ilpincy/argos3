@@ -42,16 +42,9 @@ namespace argos {
    void CPhysXSingleBodyObjectModel::Reset() {
       /* No need to reset a static body */
       if(! m_bIsDynamic) return;
-      /* Initial position and orientation from embodied entity */
-      physx::PxTransform cBodyTrans;
-      CVector3ToPxVec3(GetEmbodiedEntity().GetOriginAnchor().Position, cBodyTrans.p);
-      CQuaternionToPxQuat(GetEmbodiedEntity().GetOriginAnchor().Orientation, cBodyTrans.q);
-      /* Make the body into a kinematic actor to move it */
-      m_pcDynamicBody->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, true);
-      /* Move the body to the target position */
-      m_pcDynamicBody->setGlobalPose(cBodyTrans);
-      /* Reset the body into a dynamic actor */
-      m_pcDynamicBody->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, false);
+      /* Move the bodies to the initial position and orientation */
+      MoveTo(GetEmbodiedEntity().GetOriginAnchor().Position,
+             GetEmbodiedEntity().GetOriginAnchor().Orientation);
       /* Clear applied forces and torques */
       m_pcDynamicBody->clearForce();
       m_pcDynamicBody->clearTorque();
@@ -131,9 +124,7 @@ namespace argos {
       size_t unShapes = m_pcGenericBody->getNbShapes();
       physx::PxShape** ppcShapes = new physx::PxShape*[unShapes];
       m_pcGenericBody->getShapes(ppcShapes, unShapes);
-      for(size_t i = 0; i < unShapes; ++i) {
-         cIgnoreShapes.Ignore(ppcShapes[i]);
-      }
+      cIgnoreShapes.Ignore(ppcShapes, unShapes);
       /*
        * Perform the query
        * It returns true if anything is overlapping this object

@@ -46,6 +46,8 @@ namespace argos {
          inline void Ignore(const physx::PxShape* pc_shape) {
             m_vecIgnoredShapes.push_back(pc_shape);
          }
+         void Ignore(physx::PxShape** ppc_shapes,
+                     size_t un_num_shapes);
          virtual physx::PxQueryHitType::Enum preFilter(const physx::PxFilterData& c_filter_data,
                                                        const physx::PxShape* pc_shape,
                                                        const physx::PxRigidActor* pc_actor,
