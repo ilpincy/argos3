@@ -3,6 +3,7 @@
 
 namespace argos {
    class CPhysXDifferentialDrive;
+   class CPhysXMultiBodyObjectModel;
 }
 
 #include <argos3/plugins/simulator/physics_engines/physx/physx_engine.h>
@@ -28,24 +29,31 @@ namespace argos {
       /**
        * Class constructor.
        * Creates the differential drive component.
+       * @param c_model The multi-body model that contains this component.
        * @param c_physx_engine The PhysX engine that manages this component.
        * @param f_interwheel_distance The distance between the wheel centers.
        * @param f_wheel_radius The radius of the wheels.
        * @param f_wheel_thickness The thickness of the wheels.
        * @param c_body_size The size of the main body.
        */
-      CPhysXDifferentialDrive(CPhysXEngine& c_physx_engine,
+      CPhysXDifferentialDrive(CPhysXMultiBodyObjectModel& c_model,
+                              CPhysXEngine& c_physx_engine,
                               physx::PxReal f_interwheel_distance,
                               physx::PxReal f_wheel_radius,
                               physx::PxReal f_wheel_thickness,
                               physx::PxReal f_wheel_mass,
                               const physx::PxVec3& c_body_size,
                               physx::PxReal f_body_elevation,
-                              physx::PxReal f_body_mass
-         );
+                              physx::PxReal f_body_mass);
 
       ~CPhysXDifferentialDrive();
 
+      /**
+       * Sets the global pose of this component.
+       * The global pose is calculated with respect to the local origin
+       * of this component. The local origin in situated at the center
+       * of the base.
+       */
       void SetGlobalPose(const physx::PxTransform& c_pose);
 
       inline void GetCurrentWheelAngles(physx::PxReal& f_left_angle,

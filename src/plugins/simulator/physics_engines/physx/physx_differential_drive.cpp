@@ -1,4 +1,5 @@
 #include "physx_differential_drive.h"
+#include <argos3/plugins/simulator/physics_engines/physx/physx_multi_body_object_model.h>
 
 namespace argos {
 
@@ -6,6 +7,7 @@ namespace argos {
    /****************************************/
 
    CPhysXDifferentialDrive::CPhysXDifferentialDrive(
+      CPhysXMultiBodyObjectModel& c_model,
       CPhysXEngine& c_physx_engine,
       physx::PxReal f_interwheel_distance,
       physx::PxReal f_wheel_radius,
@@ -96,7 +98,7 @@ namespace argos {
       m_cPhysXEngine.GetScene().addActor(*m_pcRightWheelActor);
       /*
        * Connect actors with joints
-       * 
+       *
        * The revolute joint locks all the degrees of freedom, apart from a single
        * rotational one, which works along the local X axis.
        * For this reason, one must orient the joint's X axis along the corresponding
@@ -144,6 +146,12 @@ namespace argos {
       m_pcRightWheelJoint->setRevoluteJointFlag(
          physx::PxRevoluteJointFlag::eDRIVE_ENABLED,
          true);
+      /*
+       * Add bodies to the owner model
+       */
+      c_model.AddBody(*m_pcMainBodyActor, m_cMainBodyOffset);
+      c_model.AddBody(*m_pcLeftWheelActor, m_cLeftWheelOffset);
+      c_model.AddBody(*m_pcRightWheelActor, m_cRightWheelOffset);
       /*
        * Cleanup
        */
