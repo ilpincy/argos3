@@ -30,7 +30,7 @@ extern "C" {
 #endif
 
 #ifndef CP_ALLOW_PRIVATE_ACCESS
-	#define CP_ALLOW_PRIVATE_ACCESS 0
+	#define CP_ALLOW_PRIVATE_ACCESS 1
 #endif
 
 #if CP_ALLOW_PRIVATE_ACCESS == 1

@@ -17,7 +17,6 @@ namespace argos {
 #include <argos3/core/utility/math/ray2.h>
 #include <argos3/core/simulator/entity/controllable_entity.h>
 #include <argos3/core/simulator/physics_engine/physics_engine.h>
-#define CP_ALLOW_PRIVATE_ACCESS 1
 #include <argos3/plugins/simulator/physics_engines/dynamics2d/chipmunk-physics/include/chipmunk.h>
 
 namespace argos {
