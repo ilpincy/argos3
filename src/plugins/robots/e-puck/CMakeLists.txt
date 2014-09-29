@@ -40,7 +40,8 @@ target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_epuck
   argos3plugin_${ARGOS_BUILD_FOR}_genericrobot
   argos3plugin_${ARGOS_BUILD_FOR}_actuators
   argos3plugin_${ARGOS_BUILD_FOR}_sensors
-  argos3plugin_${ARGOS_BUILD_FOR}_dynamics2d)
+  argos3plugin_${ARGOS_BUILD_FOR}_dynamics2d
+  argos3plugin_${ARGOS_BUILD_FOR}_physx)
 if(ARGOS_BUILD_FOR_SIMULATOR AND ARGOS_COMPILE_QTOPENGL)
   target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_epuck argos3plugin_${ARGOS_BUILD_FOR}_qtopengl)
 endif(ARGOS_BUILD_FOR_SIMULATOR AND ARGOS_COMPILE_QTOPENGL)
