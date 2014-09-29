@@ -60,8 +60,6 @@ namespace argos {
       /* Set inertial properties */
       physx::PxRigidBodyExt::setMassAndUpdateInertia(*m_pcMainBodyActor,
                                                      f_body_mass);
-      /* Add actor to the scene */
-      m_cPhysXEngine.GetScene().addActor(*m_pcMainBodyActor);
       /*
        * Create left wheel actor and shapes
        */
@@ -77,8 +75,6 @@ namespace argos {
       /* Set inertial properties */
       physx::PxRigidBodyExt::setMassAndUpdateInertia(*m_pcLeftWheelActor,
                                                      f_wheel_mass);
-      /* Add actor to the scene */
-      m_cPhysXEngine.GetScene().addActor(*m_pcLeftWheelActor);
       /*
        * Create right wheel actor and shapes
        */
@@ -94,8 +90,6 @@ namespace argos {
       /* Set inertial properties */
       physx::PxRigidBodyExt::setMassAndUpdateInertia(*m_pcRightWheelActor,
                                                      f_wheel_mass);
-      /* Add actor to the scene */
-      m_cPhysXEngine.GetScene().addActor(*m_pcRightWheelActor);
       /*
        * Connect actors with joints
        *
@@ -167,10 +161,6 @@ namespace argos {
       /* Remove the joints */
       m_pcLeftWheelJoint->release();
       m_pcRightWheelJoint->release();
-      /* Remove the actors */
-      m_pcMainBodyActor->release();
-      m_pcLeftWheelActor->release();
-      m_pcRightWheelActor->release();
    }
 
    /****************************************/

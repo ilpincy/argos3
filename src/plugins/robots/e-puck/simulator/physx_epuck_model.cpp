@@ -61,21 +61,27 @@ namespace argos {
          CreateCylinderGeometry(c_engine,
                                 EPUCK_BOARD_RADIUS,
                                 EPUCK_BOARD_HEIGHT);
-      /* Create offset transformation for the board */
-      physx::PxTransform cBoardOffset(0.0f,
-                                      0.0f,
-                                      EPUCK_CHASSIS_ELEVATION +
-                                      EPUCK_CHASSIS_HEIGHT +
-                                      EPUCK_BOARD_HEIGHT * 0.5f);
       /* Create the shape and attach it to the differential drive component */
       physx::PxShape* pcBoardShape =
          m_cDiffDrive.GetMainBodyActor().createShape(*pcBoardGeometry,
                                                      GetPhysXEngine().GetDefaultMaterial());
       pcBoardShape->userData = this;
+      /* Set offset transformation for the board */
+      pcBoardShape->setLocalPose(
+         physx::PxTransform(0.0f,
+                            0.0f,
+                            EPUCK_CHASSIS_ELEVATION +
+                            EPUCK_CHASSIS_HEIGHT +
+                            EPUCK_BOARD_HEIGHT * 0.5f));
       /* Place the differential drive component in its initial position */
       m_cDiffDrive.SetGlobalPose(cBodyTrans);
+      /* Calculate the bounding box */
+      CalculateBoundingBox();
       /* Cleanup */
       delete pcBoardGeometry;
+      /* Register the origin anchor update method */
+      RegisterAnchorMethod(GetEmbodiedEntity().GetOriginAnchor(),
+                           &CPhysXEPuckModel::UpdateOriginAnchor);
    }
 
    /****************************************/
@@ -103,6 +109,20 @@ namespace argos {
          /* No, we don't want to move - zero all speeds */
          m_cDiffDrive.SetTargetWheelLinearVelocity(0.0f, 0.0f);
       }
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CPhysXEPuckModel::UpdateOriginAnchor(SAnchor& s_anchor) {
+      /* Get transform of the ARGoS origin anchor */
+      physx::PxTransform cBodyTrans =
+         m_cDiffDrive.GetMainBodyActor().getGlobalPose() *
+         m_cDiffDrive.GetMainBodyOffset().getInverse();
+      /* Set object position into ARGoS space */
+      PxVec3ToCVector3(cBodyTrans.p, s_anchor.Position);
+      /* Set object orientation into ARGoS space */
+      PxQuatToCQuaternion(cBodyTrans.q, s_anchor.Orientation);
    }
 
    /****************************************/

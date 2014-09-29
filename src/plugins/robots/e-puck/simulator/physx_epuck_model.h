@@ -30,6 +30,12 @@ namespace argos {
 
       virtual void UpdateFromEntityStatus();
 
+      /**
+       * Updates the origin anchor associated to the embodied entity.
+       * @param s_anchor The origin anchor.
+       */
+      void UpdateOriginAnchor(SAnchor& s_anchor);
+
    private:
 
       const Real* m_fCurrentWheelVelocity;

@@ -13,6 +13,7 @@ namespace argos {
       m_cEntity(c_entity),
       m_pcAggregate(NULL) {
       m_pcAggregate = c_engine.GetPhysics().createAggregate(un_num_bodies, false);
+      c_engine.GetScene().addAggregate(*m_pcAggregate);
    }
 
    /****************************************/
