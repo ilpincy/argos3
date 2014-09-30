@@ -121,111 +121,125 @@ namespace argos {
       }
 
       /**
-       * Draws a triangle, parallel to the XY plane.
-       * By default the triangle is equilateral (edge length: 0.2m), red, with the height along the X axis, positioned in the origin.
-       * The triangle reference system is positioned in (h/2,b/2,0), with the X axis along the height of the triangle.
-       * @param v_center_offset triangle's center offset with respect to the origin.
-       * @param c_color color of the triangle.
-       * @param b_fill when true (default) the triangle is filled with color
-       * @param c_orientation defines the 3D rotation of the triangle
-       * @param f_base base of the the triangle
-       * @param f_height height of the triangle
+       * Sets the current drawing color.
+       * @param c_color The desired color.
        */
-      void DrawTriangle(const CVector3& c_center_offset = CVector3::ZERO,
-                        const CColor& c_color = CColor::RED,
-                        const bool b_fill = true,
-                        const CQuaternion& c_orientation = CQuaternion(),
-                        Real f_base = 0.2f,
-                        Real f_height = 0.1732050808f);
-
-      /**
-       * Draws a circle, parallel to the XY plane.
-       * By default the circle is red, with a radius of 0.1m and positioned in the origin.
-       * The circle reference system is positioned the center of the circle.
-       * @param f_radius radius of the circle.
-       * @param v_center_offset circle's center offset with respect to the origin.
-       * @param c_color color of the circle.
-       * @param b_fill when true (default) the circle is filled with color
-       * @param c_orientation defines the 3D rotation of the circle
-       * @param un_vertices number of vertices to be used for approximating the circle.
-       */
-      void DrawCircle(Real f_radius = 0.1f,
-                      const CVector3& c_center_offset = CVector3::ZERO,
-                      const CColor& c_color = CColor::RED,
-                      const bool b_fill = true,
-                      const CQuaternion& c_orientation = CQuaternion(),
-                      GLuint un_vertices = 20);
-
-
-      /**
-       * Draws a cylinder, with the height perpendicular to the XY plane.
-       * By default the cylinder is red, with a radius of 0.1m, an height of 0.1m and positioned in the origin.
-       * The cylinder reference system is positioned at half the way along the segment connecting the center of the 2 circular faces, with the z axis along the segment.
-       * @param f_radius radius of the cylinder.
-       * @param f_height height of the cylinder.
-       * @param v_center_offset offset with respect to the origin where the circle will be drawn.
-       * @param c_color color of the cylinder.
-       * @param c_orientation defines the 3D rotation of the cylinder
-       * @param un_vertices number of vertices to be used for approximating the circle.
-       */
-      void DrawCylinder(Real f_radius=0.1f,
-                        Real f_height=0.1f,
-                        const CVector3& c_center_offset = CVector3::ZERO,
-                        const CColor& c_color = CColor::RED,
-                        const CQuaternion& c_orientation = CQuaternion(),
-                        GLuint un_vertices = 20);
-
-
-      /**
-       * Draws a segment, with optional endpoint markers.
-       * By default the segment starts in the origin and ends in (1,0,1), it is drawn in red without end points markers. The end point markers default color is red.
-       * @param c_end_point vector specifying the end point of the segment.
-       * @param c_start_point vector specifying the start point of the segment.
-       * @param c_segment_color color of the segment.
-       * @param b_draw_end_point when true the end point of the segment is drawn.
-       * @param b_draw_start_point when true the start point of the segment is drawn.
-       * @param c_end_point_color color of the end point if drawn.
-       * @param c_start_point_color color of the end point if drawn.
-       */
-      void DrawSegment(const CVector3& c_end_point = CVector3(1.0f,0.0f,1.0f),
-                       const CVector3& c_start_point = CVector3::ZERO,
-                       const CColor& c_segment_color = CColor::RED,
-                       const Real& f_line_width = 1.0f,
-                       bool b_draw_end_point = false,
-                       bool b_draw_start_point = false,
-                       const CColor& c_end_point_color = CColor::RED,
-                       const CColor& c_start_point_color = CColor::RED);
-
-      /**
-       * Draws a polygon.
-       * By default the polygon's color is red.
-       * @param vec_points vector of vectors defining the vertices of the polygon
-       * @param c_color color of the polygon.
-       */
-      void DrawPolygon(const std::vector<CVector3>& vec_points,
-                       const CColor& c_color = CColor::RED);
-
+      void SetColor(const CColor& c_color);
 
       /**
        * Draws a point.
-       * By default the point is positioned in the origin, drawn in red.
-       * @param c_position vector specifying the position of the point
-       * @param c_color color of the point.
-       * @param f_point_diameter diameter of the point.
+       * By default the point drawn in red.
+       * @param c_position The point position.
+       * @param c_color The point color.
+       * @param f_diameter The point diameter.
        */
-      void DrawPoint(const CVector3& c_position = CVector3(1.0f,0.0f,1.0f),
+      void DrawPoint(const CVector3& c_position,
                      const CColor& c_color = CColor::RED,
-                     const Real f_point_diameter  = 5.0);
+                     Real f_diameter  = 5.0);
+
+      /**
+       * Draws an isosceles triangle.
+       * By default the triangle is parallel to the XY plane, equilateral, with the height along the X axis.
+       * The triangle reference system is positioned in at the center of the triangle base.
+       * @param c_position The triangle position.
+       * @param c_orientation The triangle orientation.
+       * @param f_base The length of the triangle base.
+       * @param f_height The length of the triangle height.
+       * @param c_color The triangle color.
+       * @param b_fill When <tt>true</tt>, the triangle is filled.
+       */
+      void DrawTriangle(const CVector3& c_position,
+                        const CQuaternion& c_orientation,
+                        Real f_base,
+                        Real f_height,
+                        const CColor& c_color = CColor::RED,
+                        const bool b_fill = true);
+
+      /**
+       * Draws a 2D polygon.
+       * By default the polygon is parallel to the XY plane and its fill color is red.
+       * @param c_position The polygon position.
+       * @param c_orientation The polygon orientation.
+       * @param vec_points The polygon vertices.
+       * @param c_color The polygon color.
+       * @param b_fill When <tt>true</tt>, the polygon is filled.
+       */
+      void DrawPolygon(const CVector3& c_position,
+                       const CQuaternion& c_orientation,
+                       const std::vector<CVector2>& vec_points,
+                       const CColor& c_color = CColor::RED,
+                       const bool b_fill = true);
+
+      /**
+       * Draws a circle.
+       * By default the circle is parallel to the XY plane and filled in red.
+       * The circle reference system is positioned at the circle center.
+       * @param c_position The circle position.
+       * @param c_orientation The circle orientation.
+       * @param f_radius The circle radius.
+       * @param c_color The circle color.
+       * @param b_fill When <tt>true</tt>, the triangle is filled.
+       * @param un_vertices The number of vertices used to draw the circle.
+       */
+      void DrawCircle(const CVector3& c_position,
+                      const CQuaternion& c_orientation,
+                      Real f_radius,
+                      const CColor& c_color = CColor::RED,
+                      const bool b_fill = true,
+                      GLuint un_vertices = 20);
+
+      /**
+       * Draws a cylinder, with the height perpendicular to the XY plane.
+       * By default the cylinder is red and positioned in the origin.
+       * The reference system is positioned at the center of mass.
+       * @param c_position The cylinder position.
+       * @param c_orientation The cylinder orientation of the cylinder.
+       * @param f_radius The cylinder radius.
+       * @param f_height The cylinder height.
+       * @param c_color The cylinder color.
+       * @param un_vertices The number of vertices used to draw the cylinder bases.
+       */
+      void DrawCylinder(const CVector3& c_position,
+                        const CQuaternion& c_orientation,
+                        Real f_radius,
+                        Real f_height,
+                        const CColor& c_color = CColor::RED,
+                        GLuint un_vertices = 20);
+
+      /**
+       * Draws a box.
+       * By default the box is red and positioned in the origin.
+       * The reference system is positioned at the center of mass.
+       * @param c_position The position of the box center.
+       * @param c_orientation The orientation of the box.
+       * @param c_size The size of the box.
+       * @param c_color The box color.
+       */
+      void DrawBox(const CVector3& c_position,
+                   const CQuaternion& c_orientation,
+                   const CVector3& c_size,
+                   const CColor& c_color = CColor::RED);
+
+      /**
+       * Draws a ray, with optional endpoint markers.
+       * By default the ray is drawn in red without end points markers. The end point markers default color is red.
+       * @param c_ray The ray coordinates.
+       * @param c_color The ray color.
+       * @param f_width The ray width.
+       */
+      void DrawRay(const CRay3& c_ray,
+                   const CColor& c_color = CColor::RED,
+                   Real f_width = 1.0f);
 
       /**
        * Draws a string of text.
-       * By default the text is black and aligned left along the origin.
+       * By default the text is black and aligned left.
        * @param str_text text to display
-       * @param c_left_corner_offset The offset of the left corner with respect to the text center.
-       * @param c_color The color of the text.
+       * @param c_position The text position.
+       * @param c_color The text color.
        */
-      void DrawText(const std::string& str_text,
-                    const CVector3& c_left_corner_offset = CVector3::ZERO,
+      void DrawText(const CVector3& c_position,
+                    const std::string& str_text,
                     const CColor& c_color = CColor::BLACK);
 
 
