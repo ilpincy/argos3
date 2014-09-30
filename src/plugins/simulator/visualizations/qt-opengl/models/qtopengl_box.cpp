@@ -132,29 +132,29 @@ namespace argos {
 	      /* This part covers the faces (South, East, North, West) */
 	      glBegin(GL_QUADS);
 	      /* South face */
-	          glNormal3f(0.0f, -1.0f, 0.0f);
-	          glVertex3f(-0.5f, -0.5f, 1.0f);
-	          glVertex3f(-0.5f, -0.5f, 0.0f);
-	          glVertex3f( 0.5f, -0.5f, 0.0f);
-	          glVertex3f( 0.5f, -0.5f, 1.0f);
-	          /* East face */
-	          glNormal3f(1.0f, 0.0f, 0.0f);
-	          glVertex3f( 0.5f, -0.5f, 1.0f);
-	          glVertex3f( 0.5f, -0.5f, 0.0f);
-	          glVertex3f( 0.5f,  0.5f, 0.0f);
-	          glVertex3f( 0.5f,  0.5f, 1.0f);
-	          /* North face */
-	          glNormal3f(0.0f, 1.0f, 0.0f);
-	          glVertex3f( 0.5f,  0.5f, 1.0f);
-	          glVertex3f( 0.5f,  0.5f, 0.0f);
-	          glVertex3f(-0.5f,  0.5f, 0.0f);
-	          glVertex3f(-0.5f,  0.5f, 1.0f);
-	          /* West face */
-	          glNormal3f(-1.0f, 0.0f, 0.0f);
-	          glVertex3f(-0.5f,  0.5f, 1.0f);
-	          glVertex3f(-0.5f,  0.5f, 0.0f);
-	          glVertex3f(-0.5f, -0.5f, 0.0f);
-	          glVertex3f(-0.5f, -0.5f, 1.0f);
+        glNormal3f(0.0f, -1.0f, 0.0f);
+        glVertex3f(-0.5f, -0.5f, 1.0f);
+        glVertex3f(-0.5f, -0.5f, 0.0f);
+        glVertex3f( 0.5f, -0.5f, 0.0f);
+        glVertex3f( 0.5f, -0.5f, 1.0f);
+        /* East face */
+        glNormal3f(1.0f, 0.0f, 0.0f);
+        glVertex3f( 0.5f, -0.5f, 1.0f);
+        glVertex3f( 0.5f, -0.5f, 0.0f);
+        glVertex3f( 0.5f,  0.5f, 0.0f);
+        glVertex3f( 0.5f,  0.5f, 1.0f);
+        /* North face */
+        glNormal3f(0.0f, 1.0f, 0.0f);
+        glVertex3f( 0.5f,  0.5f, 1.0f);
+        glVertex3f( 0.5f,  0.5f, 0.0f);
+        glVertex3f(-0.5f,  0.5f, 0.0f);
+        glVertex3f(-0.5f,  0.5f, 1.0f);
+        /* West face */
+        glNormal3f(-1.0f, 0.0f, 0.0f);
+        glVertex3f(-0.5f,  0.5f, 1.0f);
+        glVertex3f(-0.5f,  0.5f, 0.0f);
+        glVertex3f(-0.5f, -0.5f, 0.0f);
+        glVertex3f(-0.5f, -0.5f, 1.0f);
 	      glEnd();
 	      /* The shape definitions is finished */
 

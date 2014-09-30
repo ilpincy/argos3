@@ -107,9 +107,9 @@ namespace argos {
       glEnable(GL_NORMALIZE);
 
       /* Set the material */
-	      glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, SPECULAR);
-	      glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, SHININESS);
-	      glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, EMISSION);
+      glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, SPECULAR);
+      glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, SHININESS);
+      glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, EMISSION);
 
       /* Let's start the actual shape */
       /* Side surface */
