@@ -27,6 +27,8 @@ namespace argos {
       m_pcGenericBody = &c_body;
       /* Set userData pointer */
       m_pcGenericBody->userData = this;
+      /* Add body to the scene */
+      GetPhysXEngine().GetScene().addActor(c_body);
       /* Set the flag to say whether the body is static or dynamic */
       m_bIsDynamic = (m_pcGenericBody->is<physx::PxRigidDynamic>() != NULL);
       /* Register the origin anchor update method */
@@ -48,6 +50,9 @@ namespace argos {
       /* Clear applied forces and torques */
       m_pcDynamicBody->clearForce();
       m_pcDynamicBody->clearTorque();
+      /* Update BB and anchors */
+      CalculateBoundingBox();
+      CalculateAnchors();
    }
 
    /****************************************/
@@ -61,12 +66,10 @@ namespace argos {
       physx::PxTransform cBodyTrans;
       CVector3ToPxVec3(c_position, cBodyTrans.p);
       CQuaternionToPxQuat(c_orientation, cBodyTrans.q);
-      /* Make the body into a kinematic actor to move it */
-      m_pcDynamicBody->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, true);
       /* Move the body to the target position */
       m_pcDynamicBody->setGlobalPose(cBodyTrans);
-      /* Reset the body into a dynamic actor */
-      m_pcDynamicBody->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, false);
+      /* Update the status of the entity */
+      UpdateEntityStatus();
    }
 
    /****************************************/

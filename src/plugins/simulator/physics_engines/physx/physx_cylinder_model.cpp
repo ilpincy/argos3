@@ -42,8 +42,6 @@ namespace argos {
          pcShape->setLocalPose(cShapeTrans);
          /* Set body mass */
          physx::PxRigidBodyExt::setMassAndUpdateInertia(*pcBody, m_fMass);
-         /* Add body to the scene */
-         GetPhysXEngine().GetScene().addActor(*pcBody);
          /* Set this as the body for the base class */
          SetBody(*pcBody);
       }
@@ -59,8 +57,6 @@ namespace argos {
             pcBody->createShape(*pcGeometry,
                                 GetPhysXEngine().GetDefaultMaterial());
          pcShape->setLocalPose(cShapeTrans);
-         /* Add body to the scene */
-         GetPhysXEngine().GetScene().addActor(*pcBody);
          /* Set this as the body for the base class */
          SetBody(*pcBody);
       }

@@ -45,6 +45,9 @@ namespace argos {
          m_vecBodies[i].Body.clearForce();
          m_vecBodies[i].Body.clearTorque();
       }
+      /* Update BB and anchors */
+      CalculateBoundingBox();
+      CalculateAnchors();
    }
 
    /****************************************/
@@ -58,13 +61,11 @@ namespace argos {
       CQuaternionToPxQuat(c_orientation, cBodyTrans.q);
       /* Go through the bodies */
       for(size_t i = 0; i < m_vecBodies.size(); ++i) {
-         /* Turn the dynamic actor into a kinematic one to allow for direct position control */
-         m_vecBodies[i].Body.setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, true);
          /* Move the actor */
          m_vecBodies[i].Body.setGlobalPose(cBodyTrans * m_vecBodies[i].Offset);
-         /* Turn the kinematic actor back into a dynamic one */
-         m_vecBodies[i].Body.setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, false);
       }
+      /* Update the status of the entity */
+      UpdateEntityStatus();
    }
 
    /****************************************/
