@@ -327,9 +327,9 @@ namespace argos {
       }
       if(bNoCollision && !b_check_only) {
          /* Update parent */
-         if( HasParent() ) {
+         if(HasParent()) {
             CComposableEntity* pcEntity = dynamic_cast<CComposableEntity*>(&GetParent());
-            if( pcEntity != NULL ) {
+            if(pcEntity != NULL) {
                pcEntity->Update();
             }
          }
