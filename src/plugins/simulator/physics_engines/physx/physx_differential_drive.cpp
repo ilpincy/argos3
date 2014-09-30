@@ -18,7 +18,14 @@ namespace argos {
       physx::PxReal f_body_mass) :
       m_cPhysXEngine(c_physx_engine),
       m_fWheelRadius(f_wheel_radius),
-      m_fWheelThickness(f_wheel_thickness) {
+      m_fWheelThickness(f_wheel_thickness),
+      m_cMainBodySize(c_body_size),
+      m_fBodyJointDistance(
+         m_cMainBodySize.y * 0.5f +
+         (f_interwheel_distance - m_cMainBodySize.y - m_fWheelThickness) * 0.25f),
+      m_fWheelJointDistance(
+         m_fWheelThickness * 0.5f +
+         (f_interwheel_distance - m_cMainBodySize.y - m_fWheelThickness) * 0.25f) {
       /*
        * Calculate offsets
        */
@@ -26,7 +33,7 @@ namespace argos {
       m_cMainBodyOffset =
          physx::PxTransform(0.0f,
                             0.0f,
-                            c_body_size.z * 0.5f + f_body_elevation);
+                            m_cMainBodySize.z * 0.5f + f_body_elevation);
       /* Left wheel */
       m_cLeftWheelOffset =
          physx::PxTransform(0.0f,
@@ -55,7 +62,7 @@ namespace argos {
       m_pcMainBodyActor->setRigidBodyFlag(physx::PxRigidBodyFlag::eENABLE_CCD, true);
       /* Shape */
       m_pcMainBodyShape =
-         m_pcMainBodyActor->createShape(physx::PxBoxGeometry(c_body_size * 0.5f),
+         m_pcMainBodyActor->createShape(physx::PxBoxGeometry(m_cMainBodySize * 0.5f),
                                         m_cPhysXEngine.GetDefaultMaterial());
       /* Set inertial properties */
       physx::PxRigidBodyExt::setMassAndUpdateInertia(*m_pcMainBodyActor,
@@ -91,6 +98,46 @@ namespace argos {
       physx::PxRigidBodyExt::setMassAndUpdateInertia(*m_pcRightWheelActor,
                                                      f_wheel_mass);
       /*
+       * Add bodies to the owner model
+       */
+      c_model.AddBody(*m_pcMainBodyActor, m_cMainBodyOffset);
+      c_model.AddBody(*m_pcLeftWheelActor, m_cLeftWheelOffset);
+      c_model.AddBody(*m_pcRightWheelActor, m_cRightWheelOffset);
+      /*
+       * Cleanup
+       */
+      /* The wheel geometry is copied inside the wheel shapes, so the "original"
+         geometry is not necessary anymore */
+      delete pcWheelGeometry;
+      /*
+       * Attach joints
+       */
+      CreateJoints();
+   }
+
+   /****************************************/
+   /****************************************/
+
+   CPhysXDifferentialDrive::~CPhysXDifferentialDrive() {
+      /* Remove the joints */
+      DestroyJoints();
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CPhysXDifferentialDrive::SetGlobalPose(const physx::PxTransform& c_pose) {
+      /* Move the actors */
+      m_pcMainBodyActor  ->setGlobalPose(c_pose * m_cMainBodyOffset);
+      m_pcLeftWheelActor ->setGlobalPose(c_pose * m_cLeftWheelOffset);
+      m_pcRightWheelActor->setGlobalPose(c_pose * m_cRightWheelOffset);
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CPhysXDifferentialDrive::CreateJoints() {
+      /*
        * Connect actors with joints
        *
        * The revolute joint locks all the degrees of freedom, apart from a single
@@ -109,13 +156,16 @@ namespace argos {
          m_cPhysXEngine.GetPhysics(),
          m_pcMainBodyActor,
          physx::PxTransform(
-            physx::PxVec3(m_cLeftWheelOffset.p.x,
-                          m_cLeftWheelOffset.p.y,
-                          m_cLeftWheelOffset.p.z - m_cMainBodyOffset.p.z),
+            physx::PxVec3(0.0f,
+                          m_fBodyJointDistance,
+                          m_fWheelRadius - m_cMainBodyOffset.p.z),
             physx::PxQuat(CRadians::PI_OVER_TWO.GetValue(),
                           physx::PxVec3(0.0f, 0.0f, 1.0f))),
          m_pcLeftWheelActor,
          physx::PxTransform(
+            physx::PxVec3(0.0f,
+                          0.0f,
+                          -m_fWheelJointDistance),
             physx::PxQuat(-CRadians::PI_OVER_TWO.GetValue(),
                           physx::PxVec3(0.0f, 1.0f, 0.0f))));
       /* Make this joint a motor */
@@ -127,58 +177,30 @@ namespace argos {
          m_cPhysXEngine.GetPhysics(),
          m_pcMainBodyActor,
          physx::PxTransform(
-            physx::PxVec3(m_cRightWheelOffset.p.x,
-                          m_cRightWheelOffset.p.y,
-                          m_cRightWheelOffset.p.z - m_cMainBodyOffset.p.z),
+            physx::PxVec3(0.0f,
+                          -m_fBodyJointDistance,
+                          m_fWheelRadius - m_cMainBodyOffset.p.z),
             physx::PxQuat(-CRadians::PI_OVER_TWO.GetValue(),
                           physx::PxVec3(0.0f, 0.0f, 1.0f))),
          m_pcRightWheelActor,
          physx::PxTransform(
-            physx::PxQuat(CRadians::PI_OVER_TWO.GetValue(),
+            physx::PxVec3(0.0f,
+                          0.0f,
+                          -m_fWheelJointDistance),
+            physx::PxQuat(-CRadians::PI_OVER_TWO.GetValue(),
                           physx::PxVec3(0.0f, 1.0f, 0.0f))));
       /* Make this joint a motor */
       m_pcRightWheelJoint->setRevoluteJointFlag(
          physx::PxRevoluteJointFlag::eDRIVE_ENABLED,
          true);
-      /*
-       * Add bodies to the owner model
-       */
-      c_model.AddBody(*m_pcMainBodyActor, m_cMainBodyOffset);
-      c_model.AddBody(*m_pcLeftWheelActor, m_cLeftWheelOffset);
-      c_model.AddBody(*m_pcRightWheelActor, m_cRightWheelOffset);
-      /*
-       * Cleanup
-       */
-      /* The wheel geometry is copied inside the wheel shapes, so the "original"
-         geometry is not necessary anymore */
-      delete pcWheelGeometry;
    }
 
    /****************************************/
    /****************************************/
 
-   CPhysXDifferentialDrive::~CPhysXDifferentialDrive() {
-      /* Remove the joints */
+   void CPhysXDifferentialDrive::DestroyJoints() {
       m_pcLeftWheelJoint->release();
       m_pcRightWheelJoint->release();
-   }
-
-   /****************************************/
-   /****************************************/
-
-   void CPhysXDifferentialDrive::SetGlobalPose(const physx::PxTransform& c_pose) {
-      /* Turn the dynamic actors into kinematic ones to allow for direct position control */
-      m_pcMainBodyActor->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, true);
-      m_pcLeftWheelActor->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, true);
-      m_pcRightWheelActor->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, true);
-      /* Move the actors */
-      m_pcMainBodyActor->setGlobalPose(c_pose * m_cMainBodyOffset);
-      m_pcLeftWheelActor->setGlobalPose(c_pose * m_cLeftWheelOffset);
-      m_pcRightWheelActor->setGlobalPose(c_pose * m_cRightWheelOffset);
-      /* Turn the kinematic actors back into dynamic ones */
-      m_pcMainBodyActor->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, false);
-      m_pcLeftWheelActor->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, false);
-      m_pcRightWheelActor->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, false);
    }
 
    /****************************************/

@@ -88,6 +88,10 @@ namespace argos {
          return m_fWheelThickness;
       }
 
+      inline const physx::PxVec3& GetMainBodySize() const {
+         return m_cMainBodySize;
+      }
+
       inline const physx::PxTransform& GetMainBodyOffset() const {
          return m_cMainBodyOffset;
       }
@@ -150,12 +154,19 @@ namespace argos {
  
   private:
 
+      void CreateJoints();
+      void DestroyJoints();
+
+  private:
+
       /** The PhysX engine managing this component */
       CPhysXEngine& m_cPhysXEngine;
       /** The radius of the wheels */
       physx::PxReal m_fWheelRadius;
       /** The thickness of the wheels */
       physx::PxReal m_fWheelThickness;
+      /** Main body size */
+      physx::PxVec3 m_cMainBodySize;
       /** The offset of the main body */
       physx::PxTransform m_cMainBodyOffset;
       /** The offset of the left wheel */
@@ -178,6 +189,10 @@ namespace argos {
       physx::PxRevoluteJoint* m_pcLeftWheelJoint;
       /** The joint for the right wheel */
       physx::PxRevoluteJoint* m_pcRightWheelJoint;
+      /** The distance between the body center and the joints center */
+      physx::PxReal m_fBodyJointDistance;
+      /** The distance between the wheel center and its joint center */
+      physx::PxReal m_fWheelJointDistance;
    };
 
 }

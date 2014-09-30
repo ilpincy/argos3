@@ -36,6 +36,10 @@ namespace argos {
        */
       void UpdateOriginAnchor(SAnchor& s_anchor);
 
+      inline CPhysXDifferentialDrive& GetDifferentialDrive() {
+         return m_cDiffDrive;
+      }
+
    private:
 
       const Real* m_fCurrentWheelVelocity;

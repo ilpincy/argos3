@@ -17,8 +17,8 @@ namespace argos {
    static const Real EPUCK_WHEEL_THICKNESS     = 0.01f;
    static const Real EPUCK_WHEEL_MASS          = 0.05f;
 
-   static const Real EPUCK_CHASSIS_LENGTH      = 0.055;
-   static const Real EPUCK_CHASSIS_WIDTH       = (EPUCK_INTERWHEEL_DISTANCE - EPUCK_WHEEL_THICKNESS) * 0.9;
+   static const Real EPUCK_CHASSIS_LENGTH      = 0.055f;
+   static const Real EPUCK_CHASSIS_WIDTH       = (EPUCK_INTERWHEEL_DISTANCE - EPUCK_WHEEL_THICKNESS) * 0.9f;
    static const Real EPUCK_CHASSIS_HEIGHT      = EPUCK_WHEEL_RADIUS * 2.0f;
    static const Real EPUCK_CHASSIS_ELEVATION   = 0.005f;
    static const Real EPUCK_CHASSIS_MASS        = 0.3f;
@@ -123,6 +123,18 @@ namespace argos {
       PxVec3ToCVector3(cBodyTrans.p, s_anchor.Position);
       /* Set object orientation into ARGoS space */
       PxQuatToCQuaternion(cBodyTrans.q, s_anchor.Orientation);
+      physx::PxReal fLeftAngle;
+      physx::PxReal fRightAngle;
+      m_cDiffDrive.GetCurrentWheelAngles(fLeftAngle, fRightAngle);
+      DEBUG("Current wheel rotation: %f, %f\n", fLeftAngle, fRightAngle);
+      physx::PxReal fLeftVelocity;
+      physx::PxReal fRightVelocity;
+      m_cDiffDrive.GetCurrentWheelLinearVelocity(fLeftVelocity, fRightVelocity);
+      DEBUG("Current wheel speed: %f, %f\n", fLeftVelocity, fRightVelocity);
+      physx::PxReal fLeftTargetVelocity;
+      physx::PxReal fRightTargetVelocity;
+      m_cDiffDrive.GetTargetWheelLinearVelocity(fLeftTargetVelocity, fRightTargetVelocity);
+      DEBUG("Target wheel speed: %f, %f\n\n", fLeftTargetVelocity, fRightTargetVelocity);
    }
 
    /****************************************/
