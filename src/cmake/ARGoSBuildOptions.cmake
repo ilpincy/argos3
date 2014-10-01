@@ -19,6 +19,17 @@ else(ARGOS_BUILD_FOR STREQUAL "simulator")
 endif(ARGOS_BUILD_FOR STREQUAL "simulator")
 
 #
+# Install ld.so.conf?
+#
+if(NOT DEFINED ARGOS_INSTALL_LDSOCONF)
+  if(APPLE)
+    option(ARGOS_INSTALL_LDSOCONF "ON -> install argos3.conf in /etc/ld.so.conf/, OFF -> don't" OFF)
+  else(APPLE)
+    option(ARGOS_INSTALL_LDSOCONF "ON -> install argos3.conf in /etc/ld.so.conf/, OFF -> don't" ON)
+  endif(APPLE)
+endif(NOT DEFINED ARGOS_INSTALL_LDSOCONF)
+
+#
 # Optimize code for current platform?
 #
 if(NOT DEFINED ARGOS_BUILD_NATIVE)

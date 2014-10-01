@@ -141,7 +141,7 @@ namespace argos {
                (c_ray.m_cEnd.GetX() - c_ray.m_cStart.GetX());
          }
          /* If T on ray 2 is inside the ray, intersection */
-         return(fT1 >= 0.0 && fT1 <= 1.0);
+         return(fT2 >= 0.0 && fT2 <= 1.0);
       }
 
    private:

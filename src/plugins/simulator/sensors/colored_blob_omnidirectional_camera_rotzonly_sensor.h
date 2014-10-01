@@ -48,8 +48,6 @@ namespace argos {
       CPositionalIndex<CLEDEntity>*         m_pcLEDIndex;
       CPositionalIndex<CEmbodiedEntity>*    m_pcEmbodiedIndex;
       CLEDCheckOperation*                   m_pcOperation;
-      Real                                  m_fDistanceNoiseStdDev;
-      CRandom::CRNG*                        m_pcRNG;
       bool                                  m_bShowRays;
 
    };
