@@ -24,6 +24,7 @@ namespace argos {
    CRangeAndBearingMediumSensor::CRangeAndBearingMediumSensor() :
       m_pcRangeAndBearingEquippedEntity(NULL),
       m_fDistanceNoiseStdDev(0.0f),
+      m_fPacketDropProb(0.0f),
       m_pcRNG(NULL),
       m_cSpace(CSimulator::GetInstance().GetSpace()),
       m_bShowRays(false) {}
@@ -52,7 +53,9 @@ namespace argos {
          GetNodeAttributeOrDefault(t_tree, "show_rays", m_bShowRays, m_bShowRays);
          /* Parse noise */
          GetNodeAttributeOrDefault(t_tree, "noise_std_dev", m_fDistanceNoiseStdDev, m_fDistanceNoiseStdDev);
-         if(m_fDistanceNoiseStdDev > 0.0f) {
+         GetNodeAttributeOrDefault(t_tree, "packet_drop_prob", m_fPacketDropProb, m_fPacketDropProb);
+         if((m_fPacketDropProb > 0.0f) ||
+            (m_fDistanceNoiseStdDev > 0.0f)) {
             m_pcRNG = CRandom::CreateRNG("argos");
          }
          /* Get RAB medium from id specified in the XML */
@@ -83,57 +86,63 @@ namespace argos {
       /* Go through communicating RABs and create packets */
       for(CSet<CRABEquippedEntity*>::iterator it = setRABs.begin();
           it != setRABs.end(); ++it) {
-         /* Create a reference to the RAB entity to process */
-         CRABEquippedEntity& cRABEntity = **it;
-         /* Add ray if requested */
-         if(m_bShowRays) {
-            m_pcControllableEntity->AddCheckedRay(false,
-                                                  CRay3(cRABEntity.GetPosition(),
-                                                        m_pcRangeAndBearingEquippedEntity->GetPosition()));
+         /* Should we drop this packet? */
+         if(m_pcRNG == NULL || /* No noise to apply */
+            !(m_fPacketDropProb > 0.0f &&
+              m_pcRNG->Bernoulli(m_fPacketDropProb)) /* Packet is not dropped */
+            ) {
+            /* Create a reference to the RAB entity to process */
+            CRABEquippedEntity& cRABEntity = **it;
+            /* Add ray if requested */
+            if(m_bShowRays) {
+               m_pcControllableEntity->AddCheckedRay(false,
+                                                     CRay3(cRABEntity.GetPosition(),
+                                                           m_pcRangeAndBearingEquippedEntity->GetPosition()));
+            }
+            /* Calculate vector to entity */
+            cVectorRobotToMessage = cRABEntity.GetPosition();
+            cVectorRobotToMessage -= m_pcRangeAndBearingEquippedEntity->GetPosition();
+            /* If noise was setup, add it */
+            if(m_fDistanceNoiseStdDev > 0.0f) {
+               cVectorRobotToMessage += CVector3(
+                  m_pcRNG->Gaussian(m_fDistanceNoiseStdDev),
+                  m_pcRNG->Uniform(INCLINATION_RANGE),
+                  m_pcRNG->Uniform(CRadians::UNSIGNED_RANGE));
+            }
+            /*
+             * Set range and bearing from cVectorRobotToMessage
+             * First, we must rotate the cVectorRobotToMessage so that
+             * it is local to the robot coordinate system. To do this,
+             * it enough to rotate cVectorRobotToMessage by the inverse
+             * of the robot orientation.
+             */
+            cVectorRobotToMessage.Rotate(m_pcRangeAndBearingEquippedEntity->GetOrientation().Inverse());
+            cVectorRobotToMessage.ToSphericalCoords(sPacket.Range,
+                                                    sPacket.VerticalBearing,
+                                                    sPacket.HorizontalBearing);
+            /* Convert range to cm */
+            sPacket.Range *= 100.0f;
+            /* Normalize horizontal bearing between [-pi,pi] */
+            sPacket.HorizontalBearing.SignedNormalize();
+            /*
+             * The vertical bearing is defined as the angle between the local
+             * robot XY plane and the message source position, i.e., the elevation
+             * in math jargon. However, cVectorRobotToMessage.ToSphericalCoords()
+             * sets sPacket.VerticalBearing to the inclination, which is the angle
+             * between the azimuth vector (robot local Z axis) and
+             * cVectorRobotToMessage. Elevation = 90 degrees - Inclination.
+             */
+            sPacket.VerticalBearing.Negate();
+            sPacket.VerticalBearing += CRadians::PI_OVER_TWO;
+            sPacket.VerticalBearing.SignedNormalize();
+            /* Set message data */
+            sPacket.Data = cRABEntity.GetData();
+            /* Add message to the list */
+            m_tReadings.push_back(sPacket);
          }
-         /* Calculate vector to entity */
-         cVectorRobotToMessage = cRABEntity.GetPosition();
-         cVectorRobotToMessage -= m_pcRangeAndBearingEquippedEntity->GetPosition();
-         /* If noise was setup, add it */
-         if(m_fDistanceNoiseStdDev > 0.0f) {
-            cVectorRobotToMessage += CVector3(
-               m_pcRNG->Gaussian(m_fDistanceNoiseStdDev),
-               m_pcRNG->Uniform(INCLINATION_RANGE),
-               m_pcRNG->Uniform(CRadians::UNSIGNED_RANGE));
-         }
-         /*
-          * Set range and bearing from cVectorRobotToMessage
-          * First, we must rotate the cVectorRobotToMessage so that
-          * it is local to the robot coordinate system. To do this,
-          * it enough to rotate cVectorRobotToMessage by the inverse
-          * of the robot orientation.
-          */
-         cVectorRobotToMessage.Rotate(m_pcRangeAndBearingEquippedEntity->GetOrientation().Inverse());
-         cVectorRobotToMessage.ToSphericalCoords(sPacket.Range,
-                                                 sPacket.VerticalBearing,
-                                                 sPacket.HorizontalBearing);
-         /* Convert range to cm */
-         sPacket.Range *= 100.0f;
-         /* Normalize horizontal bearing between [-pi,pi] */
-         sPacket.HorizontalBearing.SignedNormalize();
-         /*
-          * The vertical bearing is defined as the angle between the local
-          * robot XY plane and the message source position, i.e., the elevation
-          * in math jargon. However, cVectorRobotToMessage.ToSphericalCoords()
-          * sets sPacket.VerticalBearing to the inclination, which is the angle
-          * between the azimuth vector (robot local Z axis) and
-          * cVectorRobotToMessage. Elevation = 90 degrees - Inclination.
-          */
-         sPacket.VerticalBearing.Negate();
-         sPacket.VerticalBearing += CRadians::PI_OVER_TWO;
-         sPacket.VerticalBearing.SignedNormalize();
-         /* Set message data */
-         sPacket.Data = cRABEntity.GetData();
-         /* Add message to the list */
-         m_tReadings.push_back(sPacket);
       }
    }
-
+      
    /****************************************/
    /****************************************/
 
@@ -226,7 +235,25 @@ namespace argos {
                    "      ...\n"
                    "    </my_controller>\n"
                    "    ...\n"
-                   "  </controllers>\n",
+                   "  </controllers>\n\n"
+                   "In addition, it is possible to specify the probability that a packet gets lost\n"
+                   "even though the robot should have received it (i.e., packet dropping). To set\n"
+                   "this probability, use the attribute 'packet_drop_prob' as shown in the example:\n"
+                   "  <controllers>\n"
+                   "    ...\n"
+                   "    <my_controller ...>\n"
+                   "      ...\n"
+                   "      <sensors>\n"
+                   "        ...\n"
+                   "        <range_and_bearing implementation=\"medium\"\n"
+                   "                           medium=\"rab\"\n"
+                   "                           packet_drop_prob=\"0.1\" />\n"
+                   "        ...\n"
+                   "      </sensors>\n"
+                   "      ...\n"
+                   "    </my_controller>\n"
+                   "    ...\n"
+                   "  </controllers>\n" ,
                    "Usable");
    
 }
