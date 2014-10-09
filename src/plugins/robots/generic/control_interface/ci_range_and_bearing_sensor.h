@@ -28,6 +28,13 @@ namespace argos {
       struct SPacket {
          Real Range;
          CRadians HorizontalBearing;
+         /**
+          * The vertical bearing is defined as the angle between the local
+          * robot XY plane and the message source position, i.e., the elevation
+          * in math jargon. This is different from the inclination, which is the
+          * angle between the azimuth vector (robot local Z axis) and
+          * the vector to the message source. Elevation = 90 degrees - Inclination.
+          */
          CRadians VerticalBearing;
          CByteArray Data;
 
