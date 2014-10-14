@@ -1,0 +1,9 @@
+Doxyfile_*
+argos_post_install.sh
+core/.gdbinit
+core/argos3_macos_wrapper.sh
+core/config.h
+macos_uninstall_argos3.sh
+plugins/simulator/visualizations/qt-opengl/moc_*
+postinst
+setup_env.sh
