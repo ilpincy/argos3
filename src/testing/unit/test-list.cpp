@@ -34,14 +34,14 @@ int main() {
    L.insert(&v1);
    L.insert(&v4);
    L.insert(&v1);
-   fprintf(stderr, "%u elements\n", L.size());
+   fprintf(stderr, "%zu elements\n", L.size());
    for(CSet<T*>::const_iterator it = L.begin(); it != L.end(); ++it) {
       fprintf(stderr, "x = %d\n", (*it)->x);
    }
    fprintf(stderr, "\n");
 
    L.clear();
-   fprintf(stderr, "%u elements\n", L.size());
+   fprintf(stderr, "%zu elements\n", L.size());
    for(CSet<T*>::const_iterator it = L.begin(); it != L.end(); ++it) {
       fprintf(stderr, "x = %d\n", (*it)->x);
    }
@@ -64,35 +64,35 @@ int main() {
    }
 
    CSet<T*> M(L);
-   fprintf(stderr, "%u elements\n", M.size());
+   fprintf(stderr, "%zu elements\n", M.size());
    for(CSet<T*>::iterator it = M.begin(); it != M.end(); ++it) {
       fprintf(stderr, "x = %d\n", (*it)->x);
    }
    fprintf(stderr, "\n");
 
    L.erase(&v4);
-   fprintf(stderr, "%u elements\n", L.size());
+   fprintf(stderr, "%zu elements\n", L.size());
    for(CSet<T*>::iterator it = L.begin(); it != L.end(); ++it) {
       fprintf(stderr, "x = %d\n", (*it)->x);
    }
    fprintf(stderr, "\n");
 
    L.erase(&v3);
-   fprintf(stderr, "%u elements\n", L.size());
+   fprintf(stderr, "%zu elements\n", L.size());
    for(CSet<T*>::iterator it = L.begin(); it != L.end(); ++it) {
       fprintf(stderr, "x = %d\n", (*it)->x);
    }
    fprintf(stderr, "\n");
 
    L.erase(&v2);
-   fprintf(stderr, "%u elements\n", L.size());
+   fprintf(stderr, "%zu elements\n", L.size());
    for(CSet<T*>::iterator it = L.begin(); it != L.end(); ++it) {
       fprintf(stderr, "x = %d\n", (*it)->x);
    }
    fprintf(stderr, "\n");
 
    L.erase(&v1);
-   fprintf(stderr, "%u elements\n", L.size());
+   fprintf(stderr, "%zu elements\n", L.size());
    for(CSet<T*>::iterator it = L.begin(); it != L.end(); ++it) {
       fprintf(stderr, "x = %d\n", (*it)->x);
    }
