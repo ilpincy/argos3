@@ -51,6 +51,8 @@ namespace argos {
 
 #define DEBUG_FUNCTION_EXIT { DEBUG("%s - END\n", __PRETTY_FUNCTION__ ); --DEBUG_INDENTATION; }
 
+#define TRACE(LINE) LINE; DEBUG(#LINE "\n");
+
    /****************************************/
    /****************************************/
 

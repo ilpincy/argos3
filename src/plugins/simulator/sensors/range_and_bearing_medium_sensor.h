@@ -43,6 +43,7 @@ namespace argos {
       CControllableEntity* m_pcControllableEntity;
       CRABMedium*          m_pcRangeAndBearingMedium;
       Real                 m_fDistanceNoiseStdDev;
+      Real                 m_fPacketDropProb;
       CRandom::CRNG*       m_pcRNG;
       CSpace&              m_cSpace;
       bool                 m_bShowRays;
