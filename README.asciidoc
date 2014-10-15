@@ -2,7 +2,7 @@ ARGoS README
 =============
 :Author: Carlo Pinciroli
 :Email:  ilpincy@gmail.com
-:Date:   October 18th, 2013
+:Date:   October 15th, 2014
 
 What is ARGoS?
 ---------------
@@ -163,20 +163,21 @@ Advanced compilation configuration
 The compilation of ARGoS can be configured through a set of CMake options:
 
 [options="header"]
-|==========================================================================================================
-| Variable                    | Type      | Meaning [default value]
-| +CMAKE_BUILD_TYPE+          | _STRING_  | Build type (+Debug+, +Release+, etc.) [empty]
-| +CMAKE_INSTALL_PREFIX+      | _STRING_  | Install prefix (+/usr+, +/usr/local+, etc.) [+/usr/local+]
-| +ARGOS_BUILD_FOR+           | _STRING_  | Target of compilation (+simulator+ or robot name) [+simulator+]
-| +ARGOS_BUILD_NATIVE+        | _BOOLEAN_ | Whether to use platform-specific instructions [+OFF+]
-| +ARGOS_THREADSAFE_LOG+      | _BOOLEAN_ | Use or not the thread-safe version of +LOG+/+LOGERR+. [+ON+]
-| +ARGOS_DYNAMIC_LOADING+     | _BOOLEAN_ | Compile (and use) dynamic loading facilities [+ON+]
-| +ARGOS_USE_DOUBLE+          | _BOOLEAN_ | Use +double+ (+ON+) or +float+ (+OFF+) [+ON+]
-| +ARGOS_DOCUMENTATION+       | _BOOLEAN_ | Create documentation (API, manpage, etc.) [+ON+]
-|==========================================================================================================
+|====================================================================================================================
+| Variable                 | Type      | Meaning [default value]
+| +CMAKE_BUILD_TYPE+       | _STRING_  | Build type (+Debug+, +Release+, etc.) [empty]
+| +CMAKE_INSTALL_PREFIX+   | _STRING_  | Install prefix (+/usr+, +/usr/local+, etc.) [+/usr/local+]
+| +ARGOS_BUILD_FOR+        | _STRING_  | Target of compilation (+simulator+ or robot name) [+simulator+]
+| +ARGOS_BUILD_NATIVE+     | _BOOLEAN_ | Whether to use platform-specific instructions [+OFF+]
+| +ARGOS_THREADSAFE_LOG+   | _BOOLEAN_ | Use or not the thread-safe version of +LOG+/+LOGERR+. [+ON+]
+| +ARGOS_DYNAMIC_LOADING+  | _BOOLEAN_ | Compile (and use) dynamic loading facilities [+ON+]
+| +ARGOS_USE_DOUBLE+       | _BOOLEAN_ | Use +double+ (+ON+) or +float+ (+OFF+) [+ON+]
+| +ARGOS_DOCUMENTATION+    | _BOOLEAN_ | Create API documentation [+ON+]
+| +ARGOS_INSTALL_LDSOCONF+ | _BOOLEAN_ | Install the file +/etc/ld.so.conf/argos3.conf+ [+ON+ on Linux, +OFF+ on Mac]
+|====================================================================================================================
 
 You can pass the wanted values from the command line. For instance, if you
-wanted to set explictly all the default values, you would write:
+wanted to set explictly all the default values, when compiling on Linux you would write:
 
  $ cd argos3/build_simulator
  $ cmake -DCMAKE_BUILD_TYPE=Debug \
@@ -187,10 +188,15 @@ wanted to set explictly all the default values, you would write:
          -DARGOS_DYNAMIC_LOADING=ON \
          -DARGOS_USE_DOUBLE=ON \
          -DARGOS_DOCUMENTATION=ON \
+         -DARGOS_INSTALL_LDSOCONF=ON \
          ../src
 
 IMPORTANT: When +ARGOS_BUILD_FOR+ is set to +simulator+, +ARGOS_THREADSAFE_LOG+
            and +ARGOS_DYNAMIC_LOADING+ must be ON.
+
+IMPORTANT: If you want to install ARGoS without root privileges, remember to set
+           +ARGOS_INSTALL_LDSOCONF+ to +OFF+. Otherwise, installation will fail
+           midway.
 
 TIP: For production environments, it is recommended to compile ARGoS with
      +CMAKE_BUILD_TYPE+ set to +Release+. If you want to debug ARGoS, it is
