@@ -20,13 +20,19 @@ namespace argos {
                          COmnidirectionalCameraEquippedEntity& c_omnicam_entity,
                          CEmbodiedEntity& c_embodied_entity,
                          CControllableEntity& c_controllable_entity,
-                         bool b_show_rays) :
+                         bool b_show_rays,
+                         Real f_noise_std_dev) :
          m_tBlobs(t_blobs),
          m_cOmnicamEntity(c_omnicam_entity),
          m_cEmbodiedEntity(c_embodied_entity),
          m_cControllableEntity(c_controllable_entity),
-         m_bShowRays(b_show_rays) {
+         m_bShowRays(b_show_rays),
+         m_fDistanceNoiseStdDev(f_noise_std_dev),
+         m_pcRNG(NULL) {
          m_pcRootSensingEntity = &m_cEmbodiedEntity.GetParent();
+         if(m_fDistanceNoiseStdDev > 0.0f) {
+            m_pcRNG = CRandom::CreateRNG("argos");
+         }
       }
       virtual ~CLEDCheckOperation() {
          while(! m_tBlobs.empty()) {
@@ -58,6 +64,12 @@ namespace argos {
                !GetClosestEmbodiedEntityIntersectedByRay(m_sIntersectionItem,
                                                          m_cOcclusionCheckRay,
                                                          m_cEmbodiedEntity)) {
+               /* If noise was setup, add it */
+               if(m_fDistanceNoiseStdDev > 0.0f) {
+                  m_cLEDRelativePosXY += CVector2(
+                     m_cLEDRelativePosXY.Length() * m_pcRNG->Gaussian(m_fDistanceNoiseStdDev),
+                     m_pcRNG->Uniform(CRadians::UNSIGNED_RANGE));
+               }
                m_tBlobs.push_back(new CCI_ColoredBlobOmnidirectionalCameraSensor::SBlob(
                                      c_led.GetColor(),
                                      NormalizedDifference(m_cLEDRelativePosXY.Angle(), m_cCameraOrient),
@@ -99,6 +111,8 @@ namespace argos {
       CVector2 m_cLEDRelativePosXY;
       SEmbodiedEntityIntersectionItem m_sIntersectionItem;
       CRay3 m_cOcclusionCheckRay;
+      CRandom::CRNG* m_pcRNG;
+      Real m_fDistanceNoiseStdDev;
    };
 
    /****************************************/
@@ -111,8 +125,6 @@ namespace argos {
       m_pcEmbodiedEntity(NULL),
       m_pcLEDIndex(NULL),
       m_pcEmbodiedIndex(NULL),
-      m_fDistanceNoiseStdDev(0.0f),
-      m_pcRNG(NULL),
       m_bShowRays(false) {}
 
    /****************************************/
@@ -144,10 +156,8 @@ namespace argos {
          /* Show rays? */
          GetNodeAttributeOrDefault(t_tree, "show_rays", m_bShowRays, m_bShowRays);
          /* Parse noise */
-         GetNodeAttributeOrDefault(t_tree, "noise_std_dev", m_fDistanceNoiseStdDev, m_fDistanceNoiseStdDev);
-         if(m_fDistanceNoiseStdDev > 0.0f) {
-            m_pcRNG = CRandom::CreateRNG("argos");
-         }
+         Real fDistanceNoiseStdDev;
+         GetNodeAttributeOrDefault(t_tree, "noise_std_dev", fDistanceNoiseStdDev, fDistanceNoiseStdDev);
          /* Get LED medium from id specified in the XML */
          std::string strMedium;
          GetNodeAttribute(t_tree, "medium", strMedium);
@@ -157,7 +167,8 @@ namespace argos {
                                                 *m_pcOmnicamEntity,
                                                 *m_pcEmbodiedEntity,
                                                 *m_pcControllableEntity,
-                                                m_bShowRays);
+                                                m_bShowRays,
+                                                fDistanceNoiseStdDev);
       }
       catch(CARGoSException& ex) {
          THROW_ARGOSEXCEPTION_NESTED("Error initializing the colored blob omnidirectional camera rotzonly sensor", ex);

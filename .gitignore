@@ -17,3 +17,4 @@ argos3_simulator.pc
 cmake_install.cmake
 doinst.sh
 slack-desc
+TAGS
