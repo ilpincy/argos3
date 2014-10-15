@@ -89,8 +89,12 @@ namespace argos {
             LED_RING_RADIUS,
             HALF_LED_ANGLE_SLICE,
             16);
-         m_pcLEDEquippedEntity->Disable();
-         m_pcLEDEquippedEntity->SetCanBeEnabledIfDisabled(false);
+         CVector3 cLEDPos(LED_RING_RADIUS * 0.7f,
+                          0.0f,
+                          LED_LOWER_RING_ELEVATION - 0.01f);
+         cLEDPos.RotateZ(3.0f * CRadians::PI_OVER_FOUR);
+         m_pcLEDEquippedEntity->AddLED(cLEDPos);
+         AddComponent(*m_pcLEDEquippedEntity);
          /* Proximity sensor equipped entity */
          m_pcProximitySensorEquippedEntity =
             new CProximitySensorEquippedEntity(this,

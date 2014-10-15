@@ -33,10 +33,10 @@ namespace argos {
       CEyeBotEntity();
 
       CEyeBotEntity(const std::string& str_id,
-                     const std::string& str_controller_id,
-                     const CVector3& c_position = CVector3(),
-                     const CQuaternion& c_orientation = CQuaternion(),
-                     Real f_rab_range = 3.0f);
+                    const std::string& str_controller_id,
+                    const CVector3& c_position = CVector3(),
+                    const CQuaternion& c_orientation = CQuaternion(),
+                    Real f_rab_range = 3.0f);
 
       virtual void Init(TConfigurationNode& t_tree);
       virtual void Reset();
