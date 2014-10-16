@@ -114,12 +114,14 @@ namespace argos {
    /****************************************/
 
    void CSpace::Update() {
-      /* Update the controllable entities */
-      UpdateControllableEntities();
+      /* Perform the 'act' phase for controllable entities */
+      UpdateControllableEntitiesAct();
       /* Update the physics engines */
       UpdatePhysics();
       /* Update media */
       UpdateMedia();
+      /* Perform the 'sense+step' phase for controllable entities */
+      UpdateControllableEntitiesSenseStep();
    }
 
    /****************************************/

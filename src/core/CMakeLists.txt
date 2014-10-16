@@ -101,7 +101,7 @@ set(ARGOS3_HEADERS_SIMULATOR_SPACE_POSITIONAL_INDICES
   simulator/space/positional_indices/space_hash_native.h)
 set(ARGOS3_HEADERS_SIMULATOR_SPACE
   simulator/space/space.h
-  simulator/space/space_multi_thread_balance_length.h
+#  simulator/space/space_multi_thread_balance_length.h
   simulator/space/space_multi_thread_balance_quantity.h
   simulator/space/space_no_threads.h)
 # argos3/core/wrappers/lua
@@ -174,7 +174,7 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
     simulator/visualization/default_visualization.cpp
     ${ARGOS3_HEADERS_SIMULATOR_SPACE}
     simulator/space/space.cpp
-    simulator/space/space_multi_thread_balance_length.cpp
+#    simulator/space/space_multi_thread_balance_length.cpp
     simulator/space/space_multi_thread_balance_quantity.cpp
     simulator/space/space_no_threads.cpp)
 endif(ARGOS_BUILD_FOR_SIMULATOR)

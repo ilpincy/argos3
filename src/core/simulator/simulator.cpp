@@ -309,7 +309,7 @@ namespace argos {
             GetNodeAttributeOrDefault(tSystem, "threads", m_unThreads, m_unThreads);
             if(m_unThreads == 0) {
                LOG << "[INFO] Not using threads" << std::endl;
-               m_pcSpace = new CSpaceNoThreads;
+               m_pcSpace = new CSpaceNoThreads();
             }
             else {
                LOG << "[INFO] Using " << m_unThreads << " parallel threads" << std::endl;
@@ -320,15 +320,15 @@ namespace argos {
                       << std::endl
                       << "[INFO]   number of tasks, independently of the task length."
                       << std::endl;
-                  m_pcSpace = new CSpaceMultiThreadBalanceQuantity;
+                  m_pcSpace = new CSpaceMultiThreadBalanceQuantity();
                }
-               else if(strThreadingMethod == "balance_length") {
-                  LOG << "[INFO]   Method \"balance_quantity\" chosen: threads will be assigned different"
-                      << std::endl
-                      << "[INFO]   numbers of tasks, depending on the task length."
-                      << std::endl;
-                  m_pcSpace = new CSpaceMultiThreadBalanceLength;
-               }
+               // else if(strThreadingMethod == "balance_length") {
+               //    LOG << "[INFO]   Method \"balance_length\" chosen: threads will be assigned different"
+               //        << std::endl
+               //        << "[INFO]   numbers of tasks, depending on the task length."
+               //        << std::endl;
+               //    m_pcSpace = new CSpaceMultiThreadBalanceLength();
+               // }
                else {
                   THROW_ARGOSEXCEPTION("Error parsing the <system> tag. Unknown threading method \"" << strThreadingMethod << "\". Available methods: \"balance_quantity\" and \"balance_length\".");
                }
@@ -336,7 +336,7 @@ namespace argos {
          }
          else {
             LOG << "[INFO] Not using threads" << std::endl;
-            m_pcSpace = new CSpaceNoThreads;
+            m_pcSpace = new CSpaceNoThreads();
          }
          /* Get 'experiment' node */
          TConfigurationNode tExperiment;
