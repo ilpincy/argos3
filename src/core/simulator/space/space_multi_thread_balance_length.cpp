@@ -8,8 +8,6 @@
 #include <argos3/core/simulator/simulator.h>
 #include <argos3/core/utility/profiler/profiler.h>
 
-#include <cstdio>
-
 namespace argos {
 
    /****************************************/
@@ -19,6 +17,7 @@ namespace argos {
       pthread_mutex_t* StartSenseControlPhaseMutex;
       pthread_mutex_t* StartActPhaseMutex;
       pthread_mutex_t* StartPhysicsPhaseMutex;
+      pthread_mutex_t* StartMediaPhaseMutex;
       pthread_mutex_t* FetchTaskMutex;
    };
 
@@ -33,6 +32,7 @@ namespace argos {
       pthread_mutex_unlock(sData.StartSenseControlPhaseMutex);
       pthread_mutex_unlock(sData.StartActPhaseMutex);
       pthread_mutex_unlock(sData.StartPhysicsPhaseMutex);
+      pthread_mutex_unlock(sData.StartMediaPhaseMutex);
    }
 
    void* LaunchThreadBalanceLength(void* p_data) {
@@ -49,28 +49,13 @@ namespace argos {
       sCancelData.StartSenseControlPhaseMutex = &(psData->Space->m_tStartSenseControlPhaseMutex);
       sCancelData.StartActPhaseMutex = &(psData->Space->m_tStartActPhaseMutex);
       sCancelData.StartPhysicsPhaseMutex = &(psData->Space->m_tStartPhysicsPhaseMutex);
+      sCancelData.StartMediaPhaseMutex = &(psData->Space->m_tStartMediaPhaseMutex);
       sCancelData.FetchTaskMutex = &(psData->Space->m_tFetchTaskMutex);
       pthread_cleanup_push(CleanupThread, &sCancelData);
-      if(psData->ThreadId == 0) {
-         /* Execute the code for the dispatch thread */
-         psData->Space->DispatchThread(psData->ThreadId);
-      }
-      else {
-         /* Execute the code for a slave thread */
-         psData->Space->SlaveThread(psData->ThreadId);
-      }
+      psData->Space->SlaveThread();
       /* Dispose of cancellation data */
       pthread_cleanup_pop(1);
       return NULL;
-   }
-
-   /****************************************/
-   /****************************************/
-
-   void CSpaceMultiThreadBalanceLength::STaskData::Reset() {
-      Index = 0;
-      Used = false;
-      Done = false;
    }
 
    /****************************************/
@@ -85,6 +70,7 @@ namespace argos {
       if((nErrors = pthread_mutex_init(&m_tStartSenseControlPhaseMutex, NULL)) ||
          (nErrors = pthread_mutex_init(&m_tStartActPhaseMutex, NULL)) ||
          (nErrors = pthread_mutex_init(&m_tStartPhysicsPhaseMutex, NULL)) ||
+         (nErrors = pthread_mutex_init(&m_tStartMediaPhaseMutex, NULL)) ||
          (nErrors = pthread_mutex_init(&m_tFetchTaskMutex, NULL))) {
          THROW_ARGOSEXCEPTION("Error creating thread mutexes " << ::strerror(nErrors));
       }
@@ -92,6 +78,7 @@ namespace argos {
       if((nErrors = pthread_cond_init(&m_tStartSenseControlPhaseCond, NULL)) ||
          (nErrors = pthread_cond_init(&m_tStartActPhaseCond, NULL)) ||
          (nErrors = pthread_cond_init(&m_tStartPhysicsPhaseCond, NULL)) ||
+         (nErrors = pthread_cond_init(&m_tStartMediaPhaseCond, NULL)) ||
          (nErrors = pthread_cond_init(&m_tFetchTaskCond, NULL))) {
          THROW_ARGOSEXCEPTION("Error creating thread conditionals " << ::strerror(nErrors));
       }
@@ -99,6 +86,7 @@ namespace argos {
       m_unSenseControlPhaseIdleCounter = CSimulator::GetInstance().GetNumThreads();
       m_unActPhaseIdleCounter = CSimulator::GetInstance().GetNumThreads();
       m_unPhysicsPhaseIdleCounter = CSimulator::GetInstance().GetNumThreads();
+      m_unMediaPhaseIdleCounter = CSimulator::GetInstance().GetNumThreads();
       /* Start threads */
       StartThreads();
    }
@@ -110,13 +98,13 @@ namespace argos {
       /* Destroy the threads to update the controllable entities */
       int nErrors;
       if(m_ptThreads != NULL) {
-         for(UInt32 i = 0; i <= CSimulator::GetInstance().GetNumThreads(); ++i) {
+         for(UInt32 i = 0; i < CSimulator::GetInstance().GetNumThreads(); ++i) {
             if((nErrors = pthread_cancel(m_ptThreads[i]))) {
                THROW_ARGOSEXCEPTION("Error canceling threads " << ::strerror(nErrors));
             }
          }
-         void** ppJoinResult = new void*[CSimulator::GetInstance().GetNumThreads()+1];
-         for(UInt32 i = 0; i <= CSimulator::GetInstance().GetNumThreads(); ++i) {
+         void** ppJoinResult = new void*[CSimulator::GetInstance().GetNumThreads()];
+         for(UInt32 i = 0; i < CSimulator::GetInstance().GetNumThreads(); ++i) {
             if((nErrors = pthread_join(m_ptThreads[i], ppJoinResult + i))) {
                THROW_ARGOSEXCEPTION("Error joining threads " << ::strerror(nErrors));
             }
@@ -129,7 +117,7 @@ namespace argos {
       delete[] m_ptThreads;
       /* Destroy the thread launch info */
       if(m_psThreadData != NULL) {
-         for(UInt32 i = 0; i <= CSimulator::GetInstance().GetNumThreads(); ++i) {
+         for(UInt32 i = 0; i < CSimulator::GetInstance().GetNumThreads(); ++i) {
             delete m_psThreadData[i];
          }
       }
@@ -137,10 +125,12 @@ namespace argos {
       pthread_mutex_destroy(&m_tStartSenseControlPhaseMutex);
       pthread_mutex_destroy(&m_tStartActPhaseMutex);
       pthread_mutex_destroy(&m_tStartPhysicsPhaseMutex);
+      pthread_mutex_destroy(&m_tStartMediaPhaseMutex);
       pthread_mutex_destroy(&m_tFetchTaskMutex);
       pthread_cond_destroy(&m_tStartSenseControlPhaseCond);
       pthread_cond_destroy(&m_tStartActPhaseCond);
       pthread_cond_destroy(&m_tStartPhysicsPhaseCond);
+      pthread_cond_destroy(&m_tStartMediaPhaseCond);
       pthread_cond_destroy(&m_tFetchTaskCond);
 
       /* Destroy the base space */
@@ -153,7 +143,7 @@ namespace argos {
 #define MAIN_START_PHASE(PHASE)                             \
    pthread_mutex_lock(&m_tStart ## PHASE ## PhaseMutex);    \
    m_un ## PHASE ## PhaseIdleCounter = 0;                   \
-   m_sTaskData.Reset();                                     \
+   m_unTaskIndex = 0;                                       \
    pthread_cond_broadcast(&m_tStart ## PHASE ## PhaseCond); \
    pthread_mutex_unlock(&m_tStart ## PHASE ## PhaseMutex);
 
@@ -164,14 +154,12 @@ namespace argos {
    }                                                                                        \
    pthread_mutex_unlock(&m_tStart ## PHASE ## PhaseMutex);
 
-   void CSpaceMultiThreadBalanceLength::UpdateControllableEntities() {
+   void CSpaceMultiThreadBalanceLength::UpdateControllableEntitiesAct() {
       /* Reset the idle thread count */
       m_unSenseControlPhaseIdleCounter = CSimulator::GetInstance().GetNumThreads();
       m_unActPhaseIdleCounter = CSimulator::GetInstance().GetNumThreads();
       m_unPhysicsPhaseIdleCounter = CSimulator::GetInstance().GetNumThreads();
-      /* Sense/control phase */
-      MAIN_START_PHASE(SenseControl);
-      MAIN_WAIT_FOR_END_OF(SenseControl);
+      m_unMediaPhaseIdleCounter = CSimulator::GetInstance().GetNumThreads();
       /* Act phase */
       MAIN_START_PHASE(Act);
       MAIN_WAIT_FOR_END_OF(Act);
@@ -183,6 +171,7 @@ namespace argos {
    void CSpaceMultiThreadBalanceLength::UpdatePhysics() {
       /* Physics phase */
       MAIN_START_PHASE(Physics);
+//      THREAD_DISPATCH_TASK(*m_ptPhysicsEngines);
       MAIN_WAIT_FOR_END_OF(Physics);
       /* Perform entity transfer from engine to engine, if needed */
       for(size_t i = 0; i < m_ptPhysicsEngines->size(); ++i) {
@@ -195,12 +184,32 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   void CSpaceMultiThreadBalanceLength::UpdateMedia() {
+      /* Media phase */
+      MAIN_START_PHASE(Media);
+//      THREAD_DISPATCH_TASK(*m_ptMedia);
+      MAIN_WAIT_FOR_END_OF(Media);
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CSpaceMultiThreadBalanceLength::UpdateControllableEntitiesSenseStep() {
+      /* Sense/control phase */
+      MAIN_START_PHASE(SenseControl);
+//      THREAD_DISPATCH_TASK(m_vecControllableEntities);
+      MAIN_WAIT_FOR_END_OF(SenseControl);
+   }
+
+   /****************************************/
+   /****************************************/
+
    void CSpaceMultiThreadBalanceLength::StartThreads() {
       int nErrors;
       /* Create the threads to update the controllable entities */
-      m_ptThreads = new pthread_t[CSimulator::GetInstance().GetNumThreads() + 1];
-      m_psThreadData = new SThreadLaunchData*[CSimulator::GetInstance().GetNumThreads() + 1];
-      for(UInt32 i = 0; i <= CSimulator::GetInstance().GetNumThreads(); ++i) {
+      m_ptThreads = new pthread_t[CSimulator::GetInstance().GetNumThreads()];
+      m_psThreadData = new SThreadLaunchData*[CSimulator::GetInstance().GetNumThreads()];
+      for(UInt32 i = 0; i < CSimulator::GetInstance().GetNumThreads(); ++i) {
          /* Create the struct with the info to launch the thread */
          m_psThreadData[i] = new SThreadLaunchData(i, this);
          /* Create the thread */
@@ -224,58 +233,12 @@ namespace argos {
    pthread_mutex_unlock(&m_tStart ## PHASE ## PhaseMutex);                                  \
    pthread_testcancel();
 
-#define THREAD_DISPATCH_TASK(TASKVEC)                                 \
-   if(! (TASKVEC).empty()) {                                          \
-      while(! m_sTaskData.Done) {                                     \
-         pthread_mutex_lock(&m_tFetchTaskMutex);                      \
-         while(! m_sTaskData.Used) {                                  \
-            pthread_cond_wait(&m_tFetchTaskCond, &m_tFetchTaskMutex); \
-         }                                                            \
-         ++m_sTaskData.Index;                                         \
-         if(m_sTaskData.Index < (TASKVEC).size()) {                   \
-            m_sTaskData.Used = false;                                 \
-         }                                                            \
-         else {                                                       \
-            m_sTaskData.Done = true;                                  \
-         }                                                            \
-         pthread_cond_broadcast(&m_tFetchTaskCond);                   \
-         pthread_mutex_unlock(&m_tFetchTaskMutex);                    \
-         pthread_testcancel();                                        \
-      }                                                               \
-   }                                                                  \
-   else {                                                             \
-      m_sTaskData.Done = true;                                        \
-      pthread_mutex_unlock(&m_tFetchTaskMutex);                       \
-      pthread_testcancel();                                           \
-   }
-
-   /****************************************/
-   /****************************************/
-
-   void CSpaceMultiThreadBalanceLength::DispatchThread(UInt32 un_id) {
-      while(1) {
-         THREAD_WAIT_FOR_START_OF(SenseControl);
-         THREAD_DISPATCH_TASK(m_vecControllableEntities);
-         THREAD_WAIT_FOR_START_OF(Act);
-         THREAD_DISPATCH_TASK(m_vecControllableEntities);
-         THREAD_WAIT_FOR_START_OF(Physics);
-         THREAD_DISPATCH_TASK(*m_ptPhysicsEngines);
-      }
-   }
-
-   /****************************************/
-   /****************************************/
-
-#define THREAD_PERFORM_TASK(PHASE, SNIPPET)                         \
+#define THREAD_PERFORM_TASK(PHASE, TASKVEC, SNIPPET)                \
    while(1) {                                                       \
       pthread_mutex_lock(&m_tFetchTaskMutex);                       \
-      while(m_sTaskData.Used && ! m_sTaskData.Done) {               \
-         pthread_cond_wait(&m_tFetchTaskCond, &m_tFetchTaskMutex);  \
-      }                                                             \
-      if(! m_sTaskData.Done) {                                      \
-         unTaskIndex = m_sTaskData.Index;                           \
-         m_sTaskData.Used = true;                                   \
-         pthread_cond_broadcast(&m_tFetchTaskCond);                 \
+      if(m_unTaskIndex < (TASKVEC).size()) {                        \
+         unTaskIndex = m_unTaskIndex;                               \
+         ++m_unTaskIndex;                                           \
          pthread_mutex_unlock(&m_tFetchTaskMutex);                  \
          pthread_testcancel();                                      \
          {                                                          \
@@ -296,25 +259,34 @@ namespace argos {
    }                                                                \
    pthread_testcancel();
 
-   void CSpaceMultiThreadBalanceLength::SlaveThread(UInt32 un_id) {
+   void CSpaceMultiThreadBalanceLength::SlaveThread() {
       /* Task index */
       size_t unTaskIndex;
       while(1) {
-         THREAD_WAIT_FOR_START_OF(SenseControl);
-         THREAD_PERFORM_TASK(
-            SenseControl,
-            m_vecControllableEntities[unTaskIndex]->Sense();
-            m_vecControllableEntities[unTaskIndex]->ControlStep();
-            );
          THREAD_WAIT_FOR_START_OF(Act);
          THREAD_PERFORM_TASK(
             Act,
+            m_vecControllableEntities,
             m_vecControllableEntities[unTaskIndex]->Act();
             );
          THREAD_WAIT_FOR_START_OF(Physics);
          THREAD_PERFORM_TASK(
             Physics,
+            *m_ptPhysicsEngines,
             (*m_ptPhysicsEngines)[unTaskIndex]->Update();
+            );
+         THREAD_WAIT_FOR_START_OF(Media);
+         THREAD_PERFORM_TASK(
+            Media,
+            *m_ptMedia,
+            (*m_ptMedia)[unTaskIndex]->Update();
+            );
+         THREAD_WAIT_FOR_START_OF(SenseControl);
+         THREAD_PERFORM_TASK(
+            SenseControl,
+            m_vecControllableEntities,
+            m_vecControllableEntities[unTaskIndex]->Sense();
+            m_vecControllableEntities[unTaskIndex]->ControlStep();
             );
       }
    }

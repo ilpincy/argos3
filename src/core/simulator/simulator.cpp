@@ -322,13 +322,13 @@ namespace argos {
                       << std::endl;
                   m_pcSpace = new CSpaceMultiThreadBalanceQuantity();
                }
-               // else if(strThreadingMethod == "balance_length") {
-               //    LOG << "[INFO]   Method \"balance_length\" chosen: threads will be assigned different"
-               //        << std::endl
-               //        << "[INFO]   numbers of tasks, depending on the task length."
-               //        << std::endl;
-               //    m_pcSpace = new CSpaceMultiThreadBalanceLength();
-               // }
+               else if(strThreadingMethod == "balance_length") {
+                  LOG << "[INFO]   Method \"balance_length\" chosen: threads will be assigned different"
+                      << std::endl
+                      << "[INFO]   numbers of tasks, depending on the task length."
+                      << std::endl;
+                  m_pcSpace = new CSpaceMultiThreadBalanceLength();
+               }
                else {
                   THROW_ARGOSEXCEPTION("Error parsing the <system> tag. Unknown threading method \"" << strThreadingMethod << "\". Available methods: \"balance_quantity\" and \"balance_length\".");
                }

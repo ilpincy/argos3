@@ -29,15 +29,15 @@ namespace argos {
       virtual void Init(TConfigurationNode& t_tree);
       virtual void Destroy();
 
-      virtual void UpdateControllableEntities();
+      virtual void UpdateControllableEntitiesAct();
       virtual void UpdatePhysics();
-      virtual void UpdateMedia() {}
+      virtual void UpdateMedia();
+      virtual void UpdateControllableEntitiesSenseStep();
 
    private:
 
       void StartThreads();
-      void DispatchThread(UInt32 un_id);
-      void SlaveThread(UInt32 un_id);
+      void SlaveThread();
       friend void* LaunchThreadBalanceLength(void* p_data);
 
    private:
@@ -53,27 +53,14 @@ namespace argos {
             Space(pc_space) {}
       };
 
-      /** Data associated to a task to be executed */
-      struct STaskData {
-         /** All tasks in arrays. This is the current array index. */
-         size_t Index;
-         /** True when the current index was used already */
-         bool Used;
-         /** True when there are no more tasks to perform */
-         bool Done;
-
-         /** Resets the task data */
-         void Reset();
-      };
-
-      /** The thread array. Thread #0 is the dispatch one and the others are the slave threads */
+      /** The slave thread array */
       pthread_t* m_ptThreads;
 
       /** Data structure needed to launch the threads */
       SThreadLaunchData** m_psThreadData;
 
-      /** Data structure needed to coordinate the tasks */
-      STaskData m_sTaskData;
+      /** All tasks in arrays. This is the current array index. */
+      size_t m_unTaskIndex;
 
       /** Mutex for the start of the sense/control phase */
       pthread_mutex_t m_tStartSenseControlPhaseMutex;
@@ -81,6 +68,8 @@ namespace argos {
       pthread_mutex_t m_tStartActPhaseMutex;
       /** Mutex for the start of the physics phase */
       pthread_mutex_t m_tStartPhysicsPhaseMutex;
+      /** Mutex for the start of the media phase */
+      pthread_mutex_t m_tStartMediaPhaseMutex;
       /** Mutex to fetch a task from the dispatcher */
       pthread_mutex_t m_tFetchTaskMutex;
 
@@ -90,6 +79,8 @@ namespace argos {
       pthread_cond_t m_tStartActPhaseCond;
       /** Conditional for the start of the physics phase */
       pthread_cond_t m_tStartPhysicsPhaseCond;
+      /** Conditional for the start of the media phase */
+      pthread_cond_t m_tStartMediaPhaseCond;
       /** Conditional controlling task fetching from the dispatcher */
       pthread_cond_t m_tFetchTaskCond;
 
@@ -99,6 +90,8 @@ namespace argos {
       UInt32 m_unActPhaseIdleCounter;
       /** How many threads are idle in the physics phase */
       UInt32 m_unPhysicsPhaseIdleCounter;
+      /** How many threads are idle in the media phase */
+      UInt32 m_unMediaPhaseIdleCounter;
 
    };
 
