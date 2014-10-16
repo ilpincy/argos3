@@ -29,6 +29,7 @@ namespace argos {
       virtual void Init(TConfigurationNode& t_tree);
       virtual void Destroy();
 
+      virtual void Update();
       virtual void UpdateControllableEntitiesAct();
       virtual void UpdatePhysics();
       virtual void UpdateMedia();

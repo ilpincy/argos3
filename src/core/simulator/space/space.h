@@ -13,6 +13,7 @@ namespace argos {
    class CSpace;
    class CRay3;
    class CFloorEntity;
+   class CSimulator;
 }
 
 #include <argos3/core/utility/datatypes/any.h>
@@ -389,6 +390,9 @@ namespace argos {
       friend class CSpaceOperationAddEmbodiedEntity;
 
    protected:
+
+      /* The active simulator instance */
+      CSimulator& m_cSimulator;
 
       /** The current simulation clock */
       UInt32 m_unSimulationClock;

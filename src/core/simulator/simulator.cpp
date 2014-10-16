@@ -264,20 +264,8 @@ namespace argos {
    /****************************************/
 
    void CSimulator::UpdateSpace() {
-      /* Increase the simulation clock */
-      m_pcSpace->IncreaseSimulationClock();
-      /* Call loop functions */
-      m_pcLoopFunctions->PreStep();
-      LOG.Flush();
-      LOGERR.Flush();
       /* Update the space */
       m_pcSpace->Update();
-      LOG.Flush();
-      LOGERR.Flush();
-      /* Call loop functions */
-      m_pcLoopFunctions->PostStep();
-      LOG.Flush();
-      LOGERR.Flush();
    }
 
    /****************************************/

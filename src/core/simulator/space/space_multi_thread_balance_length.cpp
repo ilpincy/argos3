@@ -140,6 +140,19 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   void CSpaceMultiThreadBalanceLength::Update() {
+      /* Reset the idle thread count */
+      m_unSenseControlPhaseIdleCounter = CSimulator::GetInstance().GetNumThreads();
+      m_unActPhaseIdleCounter = CSimulator::GetInstance().GetNumThreads();
+      m_unPhysicsPhaseIdleCounter = CSimulator::GetInstance().GetNumThreads();
+      m_unMediaPhaseIdleCounter = CSimulator::GetInstance().GetNumThreads();
+      /* Update the space */
+      CSpace::Update();
+   }
+
+   /****************************************/
+   /****************************************/
+
 #define MAIN_START_PHASE(PHASE)                             \
    pthread_mutex_lock(&m_tStart ## PHASE ## PhaseMutex);    \
    m_un ## PHASE ## PhaseIdleCounter = 0;                   \
@@ -155,11 +168,6 @@ namespace argos {
    pthread_mutex_unlock(&m_tStart ## PHASE ## PhaseMutex);
 
    void CSpaceMultiThreadBalanceLength::UpdateControllableEntitiesAct() {
-      /* Reset the idle thread count */
-      m_unSenseControlPhaseIdleCounter = CSimulator::GetInstance().GetNumThreads();
-      m_unActPhaseIdleCounter = CSimulator::GetInstance().GetNumThreads();
-      m_unPhysicsPhaseIdleCounter = CSimulator::GetInstance().GetNumThreads();
-      m_unMediaPhaseIdleCounter = CSimulator::GetInstance().GetNumThreads();
       /* Act phase */
       MAIN_START_PHASE(Act);
       MAIN_WAIT_FOR_END_OF(Act);
@@ -171,7 +179,6 @@ namespace argos {
    void CSpaceMultiThreadBalanceLength::UpdatePhysics() {
       /* Physics phase */
       MAIN_START_PHASE(Physics);
-//      THREAD_DISPATCH_TASK(*m_ptPhysicsEngines);
       MAIN_WAIT_FOR_END_OF(Physics);
       /* Perform entity transfer from engine to engine, if needed */
       for(size_t i = 0; i < m_ptPhysicsEngines->size(); ++i) {
@@ -187,7 +194,6 @@ namespace argos {
    void CSpaceMultiThreadBalanceLength::UpdateMedia() {
       /* Media phase */
       MAIN_START_PHASE(Media);
-//      THREAD_DISPATCH_TASK(*m_ptMedia);
       MAIN_WAIT_FOR_END_OF(Media);
    }
 
@@ -197,7 +203,6 @@ namespace argos {
    void CSpaceMultiThreadBalanceLength::UpdateControllableEntitiesSenseStep() {
       /* Sense/control phase */
       MAIN_START_PHASE(SenseControl);
-//      THREAD_DISPATCH_TASK(m_vecControllableEntities);
       MAIN_WAIT_FOR_END_OF(SenseControl);
    }
 
