@@ -304,14 +304,14 @@ namespace argos {
                std::string strThreadingMethod = "balance_quantity";
                GetNodeAttributeOrDefault(tSystem, "method", strThreadingMethod, strThreadingMethod);
                if(strThreadingMethod == "balance_quantity") {
-                  LOG << "[INFO]   Method \"balance_quantity\" chosen: threads will be assigned the same"
+                  LOG << "[INFO]   Chosen method \"balance_quantity\": threads will be assigned the same"
                       << std::endl
                       << "[INFO]   number of tasks, independently of the task length."
                       << std::endl;
                   m_pcSpace = new CSpaceMultiThreadBalanceQuantity();
                }
                else if(strThreadingMethod == "balance_length") {
-                  LOG << "[INFO]   Method \"balance_length\" chosen: threads will be assigned different"
+                  LOG << "[INFO]   Chosen method \"balance_length\": threads will be assigned different"
                       << std::endl
                       << "[INFO]   numbers of tasks, depending on the task length."
                       << std::endl;
