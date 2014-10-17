@@ -115,7 +115,7 @@ namespace argos {
       if(nOptionsOn == 0) {
          THROW_ARGOSEXCEPTION("No --help, --version, --config-file or --query options specified.");
       }
-      if(nOptionsOn > 2) {
+      if(nOptionsOn > 1) {
          THROW_ARGOSEXCEPTION("Options --help, --version, --config-file and --query are mutually exclusive.");
       }
 
@@ -147,7 +147,7 @@ namespace argos {
       c_log << "Usage: argos3 [OPTIONS]" << std::endl;
       c_log << std::endl;
       c_log << "   -h       | --help                  display this usage information" << std::endl;
-      c_log << "   -v       | --version               display the current ARGoS version and release" << std::endl;
+      c_log << "   -v       | --version               display ARGoS version and release" << std::endl;
       c_log << "   -c FILE  | --config-file FILE      the experiment XML configuration file" << std::endl;
       c_log << "   -q QUERY | --query QUERY           query the available plugins." << std::endl;
       c_log << "   -n       | --no-color              do not use colored output [OPTIONAL]" << std::endl;

@@ -46,6 +46,14 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   CSpaceMultiThreadBalanceQuantity::CSpaceMultiThreadBalanceQuantity() :
+      m_psUpdateThreadData(NULL),
+      m_ptUpdateThreads(NULL),
+      m_bIsControllableEntityAssignmentRecalculationNeeded(true) {}
+
+   /****************************************/
+   /****************************************/
+
    void CSpaceMultiThreadBalanceQuantity::Init(TConfigurationNode& t_tree) {
       /* Initialize the space */
       CSpace::Init(t_tree);
@@ -98,8 +106,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CSpaceMultiThreadBalanceQuantity::Destroy()
-   {
+   void CSpaceMultiThreadBalanceQuantity::Destroy() {
       /* Destroy the threads to update the controllable entities */
       int nErrors;
       if(m_ptUpdateThreads != NULL) {
@@ -129,6 +136,8 @@ namespace argos {
       delete[] m_psUpdateThreadData;
       pthread_mutex_destroy(&m_tSenseControlStepConditionalMutex);
       pthread_mutex_destroy(&m_tActConditionalMutex);
+      pthread_mutex_destroy(&m_tPhysicsConditionalMutex);
+      pthread_mutex_destroy(&m_tMediaConditionalMutex);
       pthread_cond_destroy(&m_tSenseControlStepConditional);
       pthread_cond_destroy(&m_tActConditional);
       pthread_cond_destroy(&m_tPhysicsConditional);
@@ -171,9 +180,7 @@ namespace argos {
    }                                                                    \
    pthread_mutex_unlock(&m_t ## PHASE ## ConditionalMutex);
    
-   void CSpaceMultiThreadBalanceQuantity::UpdateControllableEntities() {
-      MAIN_SEND_GO_FOR_PHASE(SenseControlStep);
-      MAIN_WAIT_FOR_PHASE_END(SenseControlStep);
+   void CSpaceMultiThreadBalanceQuantity::UpdateControllableEntitiesAct() {
       MAIN_SEND_GO_FOR_PHASE(Act);
       MAIN_WAIT_FOR_PHASE_END(Act);
       /* Avoid recalculation at the next time step */
@@ -202,6 +209,16 @@ namespace argos {
       /* Update the media */
       MAIN_SEND_GO_FOR_PHASE(Media);
       MAIN_WAIT_FOR_PHASE_END(Media);
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CSpaceMultiThreadBalanceQuantity::UpdateControllableEntitiesSenseStep() {
+      MAIN_SEND_GO_FOR_PHASE(SenseControlStep);
+      MAIN_WAIT_FOR_PHASE_END(SenseControlStep);
+      /* Avoid recalculation at the next time step */
+      m_bIsControllableEntityAssignmentRecalculationNeeded = false;
    }
 
    /****************************************/
@@ -272,7 +289,7 @@ namespace argos {
       /* Variables storing the portion of entities to update */
       CRange<size_t> cEntityRange;
       while(1) {
-         THREAD_WAIT_FOR_GO_SIGNAL(SenseControlStep);
+         THREAD_WAIT_FOR_GO_SIGNAL(Act);
          /* Calculate the portion of entities to update, if needed */
          if(m_bIsControllableEntityAssignmentRecalculationNeeded) {
             cEntityRange = CalculatePluginRangeForThread(unId, m_vecControllableEntities.size());
@@ -280,15 +297,7 @@ namespace argos {
          /* Cope with the fact that there may be less entities than threads */
          if(cEntityRange.GetSpan() > 0) {
             /* This thread has entities */
-            /* Update sensor readings and call controllers */
-            for(size_t i = cEntityRange.GetMin(); i < cEntityRange.GetMax(); ++i) {
-               m_vecControllableEntities[i]->Sense();
-               m_vecControllableEntities[i]->ControlStep();
-            }
-            pthread_testcancel();
-            THREAD_SIGNAL_PHASE_DONE(SenseControlStep);
             /* Actuate control choices */
-            THREAD_WAIT_FOR_GO_SIGNAL(Act);
             for(size_t i = cEntityRange.GetMin(); i < cEntityRange.GetMax(); ++i) {
                m_vecControllableEntities[i]->Act();
             }
@@ -297,12 +306,6 @@ namespace argos {
          }
          else {
             /* This thread has no entities -> dummy computation */
-            /* Update sensor readings */
-            /* Call controllers */
-            THREAD_WAIT_FOR_GO_SIGNAL(SenseControlStep);
-            THREAD_SIGNAL_PHASE_DONE(SenseControlStep);
-            /* Actuate control choices */
-            THREAD_WAIT_FOR_GO_SIGNAL(Act);
             THREAD_SIGNAL_PHASE_DONE(Act);
          }
          /* Update physics engines, if this thread has been assigned to them */
@@ -332,6 +335,22 @@ namespace argos {
          else {
             /* This thread has no media -> dummy computation */
             THREAD_SIGNAL_PHASE_DONE(Media);
+         }
+         /* Update sensor readings and call controllers */
+         THREAD_WAIT_FOR_GO_SIGNAL(SenseControlStep);
+         /* Cope with the fact that there may be less entities than threads */
+         if(cEntityRange.GetSpan() > 0) {
+            /* This thread has entities */
+            for(size_t i = cEntityRange.GetMin(); i < cEntityRange.GetMax(); ++i) {
+               m_vecControllableEntities[i]->Sense();
+               m_vecControllableEntities[i]->ControlStep();
+            }
+            pthread_testcancel();
+            THREAD_SIGNAL_PHASE_DONE(SenseControlStep);
+         }
+         else {
+            /* This thread has no entities -> dummy computation */
+            THREAD_SIGNAL_PHASE_DONE(SenseControlStep);
          }
       }
       pthread_cleanup_pop(1);

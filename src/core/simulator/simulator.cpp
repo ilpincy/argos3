@@ -264,20 +264,8 @@ namespace argos {
    /****************************************/
 
    void CSimulator::UpdateSpace() {
-      /* Increase the simulation clock */
-      m_pcSpace->IncreaseSimulationClock();
-      /* Call loop functions */
-      m_pcLoopFunctions->PreStep();
-      LOG.Flush();
-      LOGERR.Flush();
       /* Update the space */
       m_pcSpace->Update();
-      LOG.Flush();
-      LOGERR.Flush();
-      /* Call loop functions */
-      m_pcLoopFunctions->PostStep();
-      LOG.Flush();
-      LOGERR.Flush();
    }
 
    /****************************************/
@@ -309,25 +297,25 @@ namespace argos {
             GetNodeAttributeOrDefault(tSystem, "threads", m_unThreads, m_unThreads);
             if(m_unThreads == 0) {
                LOG << "[INFO] Not using threads" << std::endl;
-               m_pcSpace = new CSpaceNoThreads;
+               m_pcSpace = new CSpaceNoThreads();
             }
             else {
                LOG << "[INFO] Using " << m_unThreads << " parallel threads" << std::endl;
                std::string strThreadingMethod = "balance_quantity";
                GetNodeAttributeOrDefault(tSystem, "method", strThreadingMethod, strThreadingMethod);
                if(strThreadingMethod == "balance_quantity") {
-                  LOG << "[INFO]   Method \"balance_quantity\" chosen: threads will be assigned the same"
+                  LOG << "[INFO]   Chosen method \"balance_quantity\": threads will be assigned the same"
                       << std::endl
                       << "[INFO]   number of tasks, independently of the task length."
                       << std::endl;
-                  m_pcSpace = new CSpaceMultiThreadBalanceQuantity;
+                  m_pcSpace = new CSpaceMultiThreadBalanceQuantity();
                }
                else if(strThreadingMethod == "balance_length") {
-                  LOG << "[INFO]   Method \"balance_quantity\" chosen: threads will be assigned different"
+                  LOG << "[INFO]   Chosen method \"balance_length\": threads will be assigned different"
                       << std::endl
                       << "[INFO]   numbers of tasks, depending on the task length."
                       << std::endl;
-                  m_pcSpace = new CSpaceMultiThreadBalanceLength;
+                  m_pcSpace = new CSpaceMultiThreadBalanceLength();
                }
                else {
                   THROW_ARGOSEXCEPTION("Error parsing the <system> tag. Unknown threading method \"" << strThreadingMethod << "\". Available methods: \"balance_quantity\" and \"balance_length\".");
@@ -336,7 +324,7 @@ namespace argos {
          }
          else {
             LOG << "[INFO] Not using threads" << std::endl;
-            m_pcSpace = new CSpaceNoThreads;
+            m_pcSpace = new CSpaceNoThreads();
          }
          /* Get 'experiment' node */
          TConfigurationNode tExperiment;

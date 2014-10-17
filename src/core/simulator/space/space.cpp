@@ -15,6 +15,7 @@
 #include <argos3/core/simulator/simulator.h>
 #include <argos3/core/simulator/entity/composable_entity.h>
 #include <argos3/core/simulator/entity/positional_entity.h>
+#include <argos3/core/simulator/loop_functions.h>
 #include <cstring>
 #include "space.h"
 
@@ -24,6 +25,7 @@ namespace argos {
    /****************************************/
 
    CSpace::CSpace() :
+      m_cSimulator(CSimulator::GetInstance()),
       m_unSimulationClock(0),
       m_pcFloorEntity(NULL),
       m_ptPhysicsEngines(NULL),
@@ -34,8 +36,8 @@ namespace argos {
 
    void CSpace::Init(TConfigurationNode& t_tree) {
       /* Get reference to physics engine and media vectors */
-      m_ptPhysicsEngines = &(CSimulator::GetInstance().GetPhysicsEngines());
-      m_ptMedia = &(CSimulator::GetInstance().GetMedia());
+      m_ptPhysicsEngines = &(m_cSimulator.GetPhysicsEngines());
+      m_ptMedia = &(m_cSimulator.GetMedia());
       /* Get the arena center and size */
       GetNodeAttributeOrDefault(t_tree, "center", m_cArenaCenter, m_cArenaCenter);
       GetNodeAttribute(t_tree, "size", m_cArenaSize);
@@ -115,12 +117,23 @@ namespace argos {
    /****************************************/
 
    void CSpace::Update() {
-      /* Update the controllable entities */
-      UpdateControllableEntities();
+      /* Increase the simulation clock */
+      IncreaseSimulationClock();
+      /* Perform the 'act' phase for controllable entities */
+      UpdateControllableEntitiesAct();
       /* Update the physics engines */
       UpdatePhysics();
       /* Update media */
       UpdateMedia();
+      /* Call loop functions */
+      m_cSimulator.GetLoopFunctions().PreStep();
+      /* Perform the 'sense+step' phase for controllable entities */
+      UpdateControllableEntitiesSenseStep();
+      /* Call loop functions */
+      m_cSimulator.GetLoopFunctions().PostStep();
+      /* Flush logs */
+      LOG.Flush();
+      LOGERR.Flush();
    }
 
    /****************************************/

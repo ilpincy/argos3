@@ -109,14 +109,16 @@ namespace argos {
       virtual void Destroy() {}
 
       /**
-       * Executes user-defined logic right before a simulation step is executed.
+       * Executes user-defined logic right before a control step is executed.
+       * This function is executed before the sensors are updated for the current time step.
        * The default implementation of this method does nothing.
        * @see PostStep()
        */
       virtual void PreStep() {}
 
       /**
-       * Executes user-defined logic right after a simulation step is executed.
+       * Executes user-defined logic right after a control step is executed.
+       * This function is executed before the actuators are updated for the next time step.
        * The default implementation of this method does nothing.
        * @see PreStep()
        */
