@@ -103,10 +103,12 @@ cpSpaceSegmentQuery(cpSpace *space, cpVect start, cpVect end, cpLayers layers, c
 		func,
 	};
 	
-	cpSpaceLock(space); {
-    cpSpatialIndexSegmentQuery(space->staticShapes, &context, start, end, 1.0f, (cpSpatialIndexSegmentQueryFunc)segQueryFunc, data);
-    cpSpatialIndexSegmentQuery(space->activeShapes, &context, start, end, 1.0f, (cpSpatialIndexSegmentQueryFunc)segQueryFunc, data);
-	} cpSpaceUnlock(space, cpTrue);
+	/* cpSpaceLock(space); */
+  /* { */
+  cpSpatialIndexSegmentQuery(space->staticShapes, &context, start, end, 1.0f, (cpSpatialIndexSegmentQueryFunc)segQueryFunc, data);
+  cpSpatialIndexSegmentQuery(space->activeShapes, &context, start, end, 1.0f, (cpSpatialIndexSegmentQueryFunc)segQueryFunc, data);
+	/* } */
+  /* cpSpaceUnlock(space, cpTrue); */
 }
 
 typedef struct segQueryFirstContext {
