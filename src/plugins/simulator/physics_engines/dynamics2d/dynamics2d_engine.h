@@ -18,7 +18,6 @@ namespace argos {
 #include <argos3/core/simulator/entity/controllable_entity.h>
 #include <argos3/core/simulator/physics_engine/physics_engine.h>
 #include <argos3/plugins/simulator/physics_engines/dynamics2d/chipmunk-physics/include/chipmunk.h>
-#include <pthread.h>
 
 namespace argos {
 
@@ -171,7 +170,6 @@ namespace argos {
       cpSpace* m_ptSpace;
       cpBody* m_ptGroundBody;
       Real m_fElevation;
-      mutable pthread_mutex_t m_tSpaceQueryMutex;
 
       std::vector<CVector2> m_vecVertices;
       std::vector<SBoundarySegment> m_vecSegments;

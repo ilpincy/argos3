@@ -139,11 +139,6 @@ namespace argos {
                }
             }
          }
-         /* Initialize mutex */
-         int nErrors = pthread_mutex_init(&m_tSpaceQueryMutex, NULL);
-         if(nErrors != 0) {
-            THROW_ARGOSEXCEPTION("Error creating thread mutexes " << ::strerror(nErrors));
-         }
       }
       catch(CARGoSException& ex) {
          THROW_ARGOSEXCEPTION_NESTED("Error initializing the dynamics 2D engine \"" << GetId() << "\"", ex);
@@ -294,7 +289,6 @@ namespace argos {
                                                                 const CRay3& c_ray) const {
       /* Query all hits along the ray */
       SDynamics2DSegmentHitData sHitData(c_ray);
-      pthread_mutex_lock(&m_tSpaceQueryMutex);
       cpSpaceSegmentQuery(
          m_ptSpace,
          cpv(c_ray.GetStart().GetX(), c_ray.GetStart().GetY()),
@@ -303,7 +297,6 @@ namespace argos {
          CP_NO_GROUP,
          Dynamics2DSegmentQueryFunc,
          &sHitData);
-      pthread_mutex_unlock(&m_tSpaceQueryMutex);
       /* Check whether we have a hit */
       if(sHitData.Body != NULL) {
          f_t_on_ray = sHitData.T;
