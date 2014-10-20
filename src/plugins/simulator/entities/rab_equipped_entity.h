@@ -65,6 +65,10 @@ namespace argos {
          return m_fRange;
       }
 
+      inline void SetRange(Real f_range) {
+         m_fRange = f_range;
+      }
+
       inline CEmbodiedEntity& GetReference() {
          return *m_pcReference;
       }
