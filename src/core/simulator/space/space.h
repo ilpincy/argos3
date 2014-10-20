@@ -13,6 +13,7 @@ namespace argos {
    class CSpace;
    class CRay3;
    class CFloorEntity;
+   class CSimulator;
 }
 
 #include <argos3/core/utility/datatypes/any.h>
@@ -232,13 +233,15 @@ namespace argos {
        * Updates the space.
        * The operations are performed in the following order:
        * <ol>
-       * <li>UpdateControllableEntities()
+       * <li>UpdateControllableEntitiesAct()
        * <li>UpdatePhysics()
        * <li>UpdateMedia()
+       * <li>UpdateControllableEntitiesSenseStep()
        * </ol>
-       * @see UpdateControllableEntities()
+       * @see UpdateControllableEntitiesAct()
        * @see UpdatePhysics()
        * @see UpdateMedia()
+       * @see UpdateControllableEntitiesSenseStep()
        */
       virtual void Update();
 
@@ -385,9 +388,10 @@ namespace argos {
       
    protected:
 
-      virtual void UpdateControllableEntities() = 0;
+      virtual void UpdateControllableEntitiesAct() = 0;
       virtual void UpdatePhysics() = 0;
       virtual void UpdateMedia() = 0;
+      virtual void UpdateControllableEntitiesSenseStep() = 0;
 
       void Distribute(TConfigurationNode& t_tree);
 
@@ -400,6 +404,9 @@ namespace argos {
       friend class CSpaceOperationAddEmbodiedEntity;
 
    protected:
+
+      /* The active simulator instance */
+      CSimulator& m_cSimulator;
 
       /** The current simulation clock */
       UInt32 m_unSimulationClock;
@@ -433,10 +440,10 @@ namespace argos {
       /** The floor entity */
       CFloorEntity* m_pcFloorEntity;
 
-      /** A reference to the list of physics engines */
+      /** A pointer to the list of physics engines */
       CPhysicsEngine::TVector* m_ptPhysicsEngines;
 
-      /** A reference to the list of media */
+      /** A pointer to the list of media */
       CMedium::TVector* m_ptMedia;
    };
 

@@ -26,9 +26,10 @@ namespace argos {
       CSpaceNoThreads() {}
       virtual ~CSpaceNoThreads() {}
 
-      virtual void UpdateControllableEntities();
+      virtual void UpdateControllableEntitiesAct();
       virtual void UpdatePhysics();
       virtual void UpdateMedia();
+      virtual void UpdateControllableEntitiesSenseStep();
 
    };
 

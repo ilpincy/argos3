@@ -64,18 +64,16 @@ namespace argos {
 
    public:
 
-      CSpaceMultiThreadBalanceQuantity() :
-         m_psUpdateThreadData(NULL),
-         m_ptUpdateThreads(NULL),
-         m_bIsControllableEntityAssignmentRecalculationNeeded(true) {}
+      CSpaceMultiThreadBalanceQuantity();
       virtual ~CSpaceMultiThreadBalanceQuantity() {}
 
       virtual void Init(TConfigurationNode& t_tree);
       virtual void Destroy();
 
-      virtual void UpdateControllableEntities();
+      virtual void UpdateControllableEntitiesAct();
       virtual void UpdatePhysics();
       virtual void UpdateMedia();
+      virtual void UpdateControllableEntitiesSenseStep();
 
    protected:
 

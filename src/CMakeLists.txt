@@ -106,3 +106,5 @@ configure_file(
   ${CMAKE_BINARY_DIR}/argos3_${ARGOS_BUILD_FOR}.pc
   @ONLY)
 install(FILES ${CMAKE_BINARY_DIR}/argos3_${ARGOS_BUILD_FOR}.pc DESTINATION lib/pkgconfig)
+# Bash completion file
+install(FILES ${CMAKE_SOURCE_DIR}/scripts/argos3_bash_completion.sh DESTINATION share/argos3)

@@ -16,11 +16,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CSpaceNoThreads::UpdateControllableEntities() {
-      for(size_t i = 0; i < m_vecControllableEntities.size(); ++i) {
-         m_vecControllableEntities[i]->Sense();
-         m_vecControllableEntities[i]->ControlStep();
-      }
+   void CSpaceNoThreads::UpdateControllableEntitiesAct() {
       for(size_t i = 0; i < m_vecControllableEntities.size(); ++i) {
          m_vecControllableEntities[i]->Act();
       }
@@ -48,6 +44,16 @@ namespace argos {
    void CSpaceNoThreads::UpdateMedia() {
       for(size_t i = 0; i < m_ptMedia->size(); ++i) {
          (*m_ptMedia)[i]->Update();
+      }
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CSpaceNoThreads::UpdateControllableEntitiesSenseStep() {
+      for(size_t i = 0; i < m_vecControllableEntities.size(); ++i) {
+         m_vecControllableEntities[i]->Sense();
+         m_vecControllableEntities[i]->ControlStep();
       }
    }
 

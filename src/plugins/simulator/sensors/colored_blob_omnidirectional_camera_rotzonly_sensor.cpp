@@ -111,8 +111,8 @@ namespace argos {
       CVector2 m_cLEDRelativePosXY;
       SEmbodiedEntityIntersectionItem m_sIntersectionItem;
       CRay3 m_cOcclusionCheckRay;
-      CRandom::CRNG* m_pcRNG;
       Real m_fDistanceNoiseStdDev;
+      CRandom::CRNG* m_pcRNG;
    };
 
    /****************************************/

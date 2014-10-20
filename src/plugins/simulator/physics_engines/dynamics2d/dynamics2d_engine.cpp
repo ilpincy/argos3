@@ -32,111 +32,116 @@ namespace argos {
    /****************************************/
 
    void CDynamics2DEngine::Init(TConfigurationNode& t_tree) {
-      /* Init parent */
-      CPhysicsEngine::Init(t_tree);
-      /* Parse XML */
-      GetNodeAttributeOrDefault(t_tree, "static_cell_size", m_fStaticHashCellSize, m_fStaticHashCellSize);
-      GetNodeAttributeOrDefault(t_tree, "active_cell_size", m_fActiveHashCellSize, m_fActiveHashCellSize);
-      GetNodeAttributeOrDefault(t_tree, "static_cells",     m_nStaticHashCells,    m_nStaticHashCells);
-      GetNodeAttributeOrDefault(t_tree, "active_cells",     m_nActiveHashCells,    m_nActiveHashCells);
-      GetNodeAttributeOrDefault(t_tree, "elevation",        m_fElevation,          m_fElevation);
-      if(NodeExists(t_tree, "boundaries")) {
-         /* Parse the boundary definition */
-         TConfigurationNode& tBoundaries = GetNode(t_tree, "boundaries");
-         SBoundarySegment sBoundSegment;
-         CVector2 cLastPoint, cCurPoint;
-         std::string strConnectWith;
-         TConfigurationNodeIterator tVertexIt("vertex");
-         /* Get the first vertex */
-         tVertexIt = tVertexIt.begin(&tBoundaries);
-         if(tVertexIt == tVertexIt.end()) {
-            THROW_ARGOSEXCEPTION("Physics engine of type \"dynamics2d\", id \"" << GetId() << "\": you didn't specify any <vertex>!");
-         }
-         GetNodeAttribute(*tVertexIt, "point", cLastPoint);
-         m_vecVertices.push_back(cLastPoint);
-         /* Go through the other vertices */
-         ++tVertexIt;
-         while(tVertexIt != tVertexIt.end()) {
-            /* Read vertex data and fill in segment struct */
-            GetNodeAttribute(*tVertexIt, "point", cCurPoint);
-            m_vecVertices.push_back(cCurPoint);
-            sBoundSegment.Segment.SetStart(cLastPoint);
-            sBoundSegment.Segment.SetEnd(cCurPoint);
-            GetNodeAttribute(*tVertexIt, "connect_with", strConnectWith);
-            if(strConnectWith == "gate") {
-               /* Connect to previous vertex with a gate */
-               sBoundSegment.Type = SBoundarySegment::SEGMENT_TYPE_GATE;
-               GetNodeAttribute(*tVertexIt, "to_engine", sBoundSegment.EngineId);
+      try {
+         /* Init parent */
+         CPhysicsEngine::Init(t_tree);
+         /* Parse XML */
+         GetNodeAttributeOrDefault(t_tree, "static_cell_size", m_fStaticHashCellSize, m_fStaticHashCellSize);
+         GetNodeAttributeOrDefault(t_tree, "active_cell_size", m_fActiveHashCellSize, m_fActiveHashCellSize);
+         GetNodeAttributeOrDefault(t_tree, "static_cells",     m_nStaticHashCells,    m_nStaticHashCells);
+         GetNodeAttributeOrDefault(t_tree, "active_cells",     m_nActiveHashCells,    m_nActiveHashCells);
+         GetNodeAttributeOrDefault(t_tree, "elevation",        m_fElevation,          m_fElevation);
+         if(NodeExists(t_tree, "boundaries")) {
+            /* Parse the boundary definition */
+            TConfigurationNode& tBoundaries = GetNode(t_tree, "boundaries");
+            SBoundarySegment sBoundSegment;
+            CVector2 cLastPoint, cCurPoint;
+            std::string strConnectWith;
+            TConfigurationNodeIterator tVertexIt("vertex");
+            /* Get the first vertex */
+            tVertexIt = tVertexIt.begin(&tBoundaries);
+            if(tVertexIt == tVertexIt.end()) {
+               THROW_ARGOSEXCEPTION("Physics engine of type \"dynamics2d\", id \"" << GetId() << "\": you didn't specify any <vertex>!");
             }
-            else if(strConnectWith == "wall") {
-               /* Connect to previous vertex with a wall */
-               sBoundSegment.Type = SBoundarySegment::SEGMENT_TYPE_WALL;
-               sBoundSegment.EngineId = "";
-            }
-            else {
-               /* Parse error */
-               THROW_ARGOSEXCEPTION("Physics engine of type \"dynamics2d\", id \"" << GetId() << "\": unknown vertex connection method \"" << strConnectWith << "\". Allowed methods are \"wall\" and \"gate\".");
-            }
-            m_vecSegments.push_back(sBoundSegment);
-            /* Next vertex */
-            cLastPoint = cCurPoint;
+            GetNodeAttribute(*tVertexIt, "point", cLastPoint);
+            m_vecVertices.push_back(cLastPoint);
+            /* Go through the other vertices */
             ++tVertexIt;
+            while(tVertexIt != tVertexIt.end()) {
+               /* Read vertex data and fill in segment struct */
+               GetNodeAttribute(*tVertexIt, "point", cCurPoint);
+               m_vecVertices.push_back(cCurPoint);
+               sBoundSegment.Segment.SetStart(cLastPoint);
+               sBoundSegment.Segment.SetEnd(cCurPoint);
+               GetNodeAttribute(*tVertexIt, "connect_with", strConnectWith);
+               if(strConnectWith == "gate") {
+                  /* Connect to previous vertex with a gate */
+                  sBoundSegment.Type = SBoundarySegment::SEGMENT_TYPE_GATE;
+                  GetNodeAttribute(*tVertexIt, "to_engine", sBoundSegment.EngineId);
+               }
+               else if(strConnectWith == "wall") {
+                  /* Connect to previous vertex with a wall */
+                  sBoundSegment.Type = SBoundarySegment::SEGMENT_TYPE_WALL;
+                  sBoundSegment.EngineId = "";
+               }
+               else {
+                  /* Parse error */
+                  THROW_ARGOSEXCEPTION("Physics engine of type \"dynamics2d\", id \"" << GetId() << "\": unknown vertex connection method \"" << strConnectWith << "\". Allowed methods are \"wall\" and \"gate\".");
+               }
+               m_vecSegments.push_back(sBoundSegment);
+               /* Next vertex */
+               cLastPoint = cCurPoint;
+               ++tVertexIt;
+            }
+            /* Check that the boundary is a closed path */
+            if(m_vecVertices.front() != m_vecVertices.back()) {
+               THROW_ARGOSEXCEPTION("Physics engine of type \"dynamics2d\", id \"" << GetId() << "\": the specified path is not closed. The first and last points of the boundaries MUST be the same.");
+            }
          }
-         /* Check that the boundary is a closed path */
-         if(m_vecVertices.front() != m_vecVertices.back()) {
-            THROW_ARGOSEXCEPTION("Physics engine of type \"dynamics2d\", id \"" << GetId() << "\": the specified path is not closed. The first and last points of the boundaries MUST be the same.");
+         /* Initialize physics */
+         cpInitChipmunk();
+         cpResetShapeIdCounter();
+         /* Used to attach static geometries so that they won't move and to simulate friction */
+         m_ptGroundBody = cpBodyNew(INFINITY, INFINITY);
+         /* Create the space to contain the movable objects */
+         m_ptSpace = cpSpaceNew();
+         /* Subiterations to solve constraints.
+            The more, the better for precision but the worse for speed
+         */
+         m_ptSpace->iterations = GetIterations();
+         /* Resize the space hash.
+            This has dramatic effects on performance.
+            TODO: - find optimal parameters automatically (average entity size)
+            cpSpaceReindexStaticHash(m_ptSpace, m_fStaticHashCellSize, m_nStaticHashCells);
+            cpSpaceResizeActiveHash(m_ptSpace, m_fActiveHashCellSize, m_nActiveHashCells);
+         */
+         /* Gripper-Gripped callback functions */
+         cpSpaceAddCollisionHandler(
+            m_ptSpace,
+            SHAPE_GRIPPER,
+            SHAPE_GRIPPABLE,
+            BeginCollisionBetweenGripperAndGrippable,
+            ManageCollisionBetweenGripperAndGrippable,
+            NULL,
+            NULL,
+            NULL);
+         /* Add boundaries, if specified */
+         if(! m_vecSegments.empty()) {
+            cpShape* ptSegment;
+            for(size_t i = 0; i < m_vecSegments.size(); ++i) {
+               if(m_vecSegments[i].Type == SBoundarySegment::SEGMENT_TYPE_WALL) {
+                  ptSegment =
+                     cpSpaceAddShape(
+                        m_ptSpace,
+                        cpSegmentShapeNew(
+                           m_ptGroundBody,
+                           cpv(m_vecSegments[i].Segment.GetStart().GetX(),
+                               m_vecSegments[i].Segment.GetStart().GetY()),
+                           cpv(m_vecSegments[i].Segment.GetEnd().GetX(),
+                               m_vecSegments[i].Segment.GetEnd().GetY()),
+                           0.0f));
+                  ptSegment->e = 0.0f; // no elasticity
+                  ptSegment->u = 1.0f; // max friction
+               }
+               else {
+                  /* There is at least a gate, transfer is activated */
+                  m_bEntityTransferActive = true;
+               }
+            }
          }
       }
-      /* Initialize physics */
-      cpInitChipmunk();
-      cpResetShapeIdCounter();
-      /* Used to attach static geometries so that they won't move and to simulate friction */
-      m_ptGroundBody = cpBodyNew(INFINITY, INFINITY);
-      /* Create the space to contain the movable objects */
-      m_ptSpace = cpSpaceNew();
-      /* Subiterations to solve constraints.
-         The more, the better for precision but the worse for speed
-      */
-      m_ptSpace->iterations = GetIterations();
-      /* Resize the space hash.
-         This has dramatic effects on performance.
-         TODO: - find optimal parameters automatically (average entity size)
-      cpSpaceReindexStaticHash(m_ptSpace, m_fStaticHashCellSize, m_nStaticHashCells);
-      cpSpaceResizeActiveHash(m_ptSpace, m_fActiveHashCellSize, m_nActiveHashCells);
-      */
-      /* Gripper-Gripped callback functions */
-      cpSpaceAddCollisionHandler(
-         m_ptSpace,
-         SHAPE_GRIPPER,
-         SHAPE_GRIPPABLE,
-         BeginCollisionBetweenGripperAndGrippable,
-         ManageCollisionBetweenGripperAndGrippable,
-         NULL,
-         NULL,
-         NULL);
-      /* Add boundaries, if specified */
-      if(! m_vecSegments.empty()) {
-         cpShape* ptSegment;
-         for(size_t i = 0; i < m_vecSegments.size(); ++i) {
-            if(m_vecSegments[i].Type == SBoundarySegment::SEGMENT_TYPE_WALL) {
-               ptSegment =
-                  cpSpaceAddShape(
-                     m_ptSpace,
-                     cpSegmentShapeNew(
-                        m_ptGroundBody,
-                        cpv(m_vecSegments[i].Segment.GetStart().GetX(),
-                            m_vecSegments[i].Segment.GetStart().GetY()),
-                        cpv(m_vecSegments[i].Segment.GetEnd().GetX(),
-                            m_vecSegments[i].Segment.GetEnd().GetY()),
-                        0.0f));
-               ptSegment->e = 0.0f; // no elasticity
-               ptSegment->u = 1.0f; // max friction
-            }
-            else {
-               /* There is at least a gate, transfer is activated */
-               m_bEntityTransferActive = true;
-            }
-         }
+      catch(CARGoSException& ex) {
+         THROW_ARGOSEXCEPTION_NESTED("Error initializing the dynamics 2D engine \"" << GetId() << "\"", ex);
       }
    }
 
