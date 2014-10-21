@@ -54,10 +54,18 @@ namespace argos {
       inline void SetGrippable(CDynamics2DGrippable* pc_grippable) {
          m_pcGrippable = pc_grippable;
       }
-
+      
+      /**
+       * Sets the linear friction of this object.
+       * You must call this method strictly *after* SetBody().
+       */
       void SetLinearFriction(Real f_max_bias,
                              Real f_max_force);
 
+      /**
+       * Sets the angular friction of this object.
+       * You must call this method strictly *after* SetBody().
+       */
       void SetAngularFriction(Real f_max_bias,
                               Real f_max_force);
 

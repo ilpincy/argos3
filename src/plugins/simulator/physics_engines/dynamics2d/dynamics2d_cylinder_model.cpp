@@ -46,6 +46,8 @@ namespace argos {
          /* The shape is grippable */
          SetGrippable(new CDynamics2DGrippable(GetEmbodiedEntity(),
                                                ptShape));
+         /* Set the body so that the default methods work as expected */
+         SetBody(ptBody, c_entity.GetHeight());
          /* Friction with ground */
          SetLinearFriction(0.0f, 1.49f);
          SetAngularFriction(0.0f, 1.49f);
@@ -65,9 +67,9 @@ namespace argos {
          ptShape->u = 0.1; // Little contact friction to help sliding away
          /* This shape is normal (not grippable, not gripper) */
          ptShape->collision_type = CDynamics2DEngine::SHAPE_NORMAL;
+         /* Set the body so that the default methods work as expected */
+         SetBody(ptBody, c_entity.GetHeight());
       }
-      /* Set the body so that the default methods work as expected */
-      SetBody(ptBody, c_entity.GetHeight());
    }
 
    /****************************************/
