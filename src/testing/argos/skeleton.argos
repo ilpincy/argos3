@@ -16,7 +16,6 @@
   <!-- *********************** -->
   <!-- * Arena configuration * -->
   <!-- *********************** -->
-  <!-- Note: rotations are specified and performed in ZYX order (opposite of ARGoS1) -->
   <arena size="2, 2, 1" />
 
   <!-- ******************* -->
@@ -24,10 +23,10 @@
   <!-- ******************* -->
   <physics_engines />
 
-  <!-- ************************************ -->
-  <!-- * Arena -> Physics Engines mapping * -->
-  <!-- ************************************ -->
-  <arena_physics />
+  <!-- ********* -->
+  <!-- * Media * -->
+  <!-- ********* -->
+  <media />
 
   <!-- ****************** -->
   <!-- * Visualization * -->
