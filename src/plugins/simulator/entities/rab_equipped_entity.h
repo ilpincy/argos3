@@ -80,10 +80,6 @@ namespace argos {
          return *m_psAnchor;
       }
 
-      inline CEmbodiedEntity& GetReference() {
-         return *m_pcReference;
-      }
-
       virtual std::string GetTypeDescription() const {
          return "rab";
       }
