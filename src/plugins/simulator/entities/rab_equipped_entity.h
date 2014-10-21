@@ -72,8 +72,16 @@ namespace argos {
          return m_fRange;
       }
 
+      inline void SetRange(Real f_range) {
+         m_fRange = f_range;
+      }
+
       inline const SAnchor& GetAnchor() const {
          return *m_psAnchor;
+      }
+
+      inline CEmbodiedEntity& GetReference() {
+         return *m_pcReference;
       }
 
       virtual std::string GetTypeDescription() const {
