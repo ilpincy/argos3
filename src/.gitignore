@@ -11,6 +11,10 @@ core/*.dylib
 plugins/robots/*/*.dylib
 plugins/simulator/*/*.dylib
 plugins/simulator/*/*/*.dylib
+core/*.so
+plugins/robots/*/*.so
+plugins/simulator/*/*.so
+plugins/simulator/*/*/*.so
 testing/*.so
 testing/*.dylib
 testing/test-client
