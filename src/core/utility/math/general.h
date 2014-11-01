@@ -12,7 +12,7 @@
 #include <argos3/core/utility/datatypes/datatypes.h>
 #include <vector>
 #include <utility>
-
+#include <cmath>
 
 namespace argos {
     /****************************************/
@@ -54,7 +54,7 @@ namespace argos {
     /****************************************/
     /****************************************/
 
-#ifdef ARGOS_DOUBLE_PRECISION
+#ifdef ARGOS_USE_DOUBLE
 #define Log  ::log
 #define Sqrt ::sqrt
 #define Exp ::exp
