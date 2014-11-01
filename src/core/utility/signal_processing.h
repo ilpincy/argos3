@@ -12,6 +12,8 @@ namespace argos {
     * Calculates the mean, variance, and std deviation of a real-valued signal.
     */
    class CStats {
+
+   public:
       
       CStats();
       
