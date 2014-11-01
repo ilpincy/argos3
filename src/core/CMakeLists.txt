@@ -3,6 +3,7 @@
 #
 # argos3/core/utility
 set(ARGOS3_HEADERS_UTILITY
+  utility/signal_processing.h
   utility/string_utilities.h)
 # argos3/core/utility/configuration
 set(ARGOS3_HEADERS_UTILITY_CONFIGURATION
@@ -115,6 +116,7 @@ set(ARGOS3_HEADERS_WRAPPERS_LUA
 # Common for all builds
 set(ARGOS3_SOURCES_CORE
   ${ARGOS3_HEADERS_UTILITY}
+  utility/signal_processing.cpp
   utility/string_utilities.cpp
   ${ARGOS3_HEADERS_UTILITY_CONFIGURATION}
   utility/configuration/command_line_arg_parser.cpp
