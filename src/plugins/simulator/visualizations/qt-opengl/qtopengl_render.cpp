@@ -33,6 +33,21 @@ namespace argos {
       ::strcpy(m_ppcOptions[0], "argos3");
       /* Create the QT application */
       m_pcApplication = new CQTOpenGLApplication(m_nOptionNum, m_ppcOptions);
+      /* Set some data about the application */
+      m_pcApplication->setApplicationName("ARGoS");
+      m_pcApplication->setApplicationVersion("3.0");
+      m_pcApplication->setOrganizationName("Iridia-ULB");
+      m_pcApplication->setOrganizationDomain("iridia.ulb.ac.be");
+      /* Draw the main window */
+      m_pcMainWindow = new CQTOpenGLMainWindow(m_tConfTree);
+#ifdef ARGOS_WITH_LUA
+      /* Create Lua editor if required */
+      if(m_bLuaEditor) {
+         m_pcQTOpenGLLuaMainWindow = new CQTOpenGLLuaMainWindow(m_pcMainWindow);
+      }
+#endif
+      LOG.Flush();
+      LOGERR.Flush();
    }
 
    /****************************************/
@@ -40,24 +55,11 @@ namespace argos {
 
    void CQTOpenGLRender::Execute() {
       try {
-         /* Set some data about the application */
-         m_pcApplication->setApplicationName("ARGoS");
-         m_pcApplication->setApplicationVersion("3.0");
-         m_pcApplication->setOrganizationName("Iridia-ULB");
-         m_pcApplication->setOrganizationDomain("iridia.ulb.ac.be");
-         /* Draw the main window */
-         m_pcMainWindow = new CQTOpenGLMainWindow(m_tConfTree);
+         /* This effectively starts the experiment */
          m_pcMainWindow->show();
-#ifdef ARGOS_WITH_LUA
-         /* Create Lua editor if required */
          if(m_bLuaEditor) {
-            m_pcQTOpenGLLuaMainWindow = new CQTOpenGLLuaMainWindow(m_pcMainWindow);
             m_pcQTOpenGLLuaMainWindow->show();
          }
-#endif
-         LOG.Flush();
-         LOGERR.Flush();
-         /* This effectively starts the experiment */
          m_pcApplication->exec();
       }
       catch(CARGoSException& ex) {
