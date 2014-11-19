@@ -38,6 +38,10 @@ namespace argos {
 
       virtual bool IsCollidingWithSomething() const;
 
+      inline CDynamics2DGrippable& GetGrippable() {
+         return *m_pcGrippable;
+      }
+
    private:
 
       bool                  m_bMovable;
