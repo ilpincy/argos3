@@ -23,6 +23,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+#ifndef htonll
    static UInt64 htonll(UInt64 un_value) {
       /* Define a test variable for endianness - 42 is 'the' answer */
       static const SInt32 nTest = 42;
@@ -38,7 +39,9 @@ namespace argos {
          return un_value;
       }
    }
+#endif
 
+#ifndef ntohll
    static UInt64 ntohll(UInt64 un_value) {
       /* Define a test variable for endianness - 42 is 'the' answer */
       static const SInt32 nTest = 42;
@@ -54,6 +57,7 @@ namespace argos {
          return un_value;
       }
    }
+#endif
    
    /****************************************/
    /****************************************/

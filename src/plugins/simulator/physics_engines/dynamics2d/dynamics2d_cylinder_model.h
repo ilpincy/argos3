@@ -23,8 +23,7 @@ namespace argos {
 
       CDynamics2DCylinderModel(CDynamics2DEngine& c_engine,
                                CCylinderEntity& c_entity);
-      virtual ~CDynamics2DCylinderModel() {}
-      
+      virtual ~CDynamics2DCylinderModel() {}      
    };
 
 }

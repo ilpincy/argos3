@@ -24,7 +24,6 @@ namespace argos {
       CDynamics2DBoxModel(CDynamics2DEngine& c_engine,
                           CBoxEntity& c_entity);
       virtual ~CDynamics2DBoxModel() {}
-
    };
 
 }
