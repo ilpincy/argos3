@@ -232,17 +232,17 @@ namespace argos {
    m_cOriginRayEnd = m_cDirection;                          \
    m_cOriginRayStart *= SHORT_RANGE_RAY_START;              \
    m_cOriginRayEnd *= SHORT_RANGE_RAY_END;                  \
-   m_cRayStart = m_pcEmbodiedEntity->GetPosition();         \
+   m_cRayStart = m_pcEmbodiedEntity->GetOriginAnchor().Position;  \
    m_cRayStart += m_cOriginRayStart;                        \
    m_cRayStart.SetZ(m_cRayStart.GetZ() + SENSOR_ELEVATION); \
-   m_cRayEnd = m_pcEmbodiedEntity->GetPosition();           \
+   m_cRayEnd = m_pcEmbodiedEntity->GetOriginAnchor().Position;  \
    m_cRayEnd += m_cOriginRayEnd;                            \
    m_cRayEnd.SetZ(m_cRayEnd.GetZ() + SENSOR_ELEVATION);     \
    m_cShortRangeRays0[INDEX].Set(m_cRayStart, m_cRayEnd);   \
-   m_cRayStart = m_pcEmbodiedEntity->GetPosition();         \
+   m_cRayStart = m_pcEmbodiedEntity->GetOriginAnchor().Position;  \
    m_cRayStart -= m_cOriginRayStart;                        \
    m_cRayStart.SetZ(m_cRayStart.GetZ() + SENSOR_ELEVATION); \
-   m_cRayEnd = m_pcEmbodiedEntity->GetPosition();           \
+   m_cRayEnd = m_pcEmbodiedEntity->GetOriginAnchor().Position;  \
    m_cRayEnd -= m_cOriginRayEnd;                            \
    m_cRayEnd.SetZ(m_cRayEnd.GetZ() + SENSOR_ELEVATION);     \
    m_cShortRangeRays2[INDEX].Set(m_cRayStart, m_cRayEnd);   \
@@ -254,17 +254,17 @@ namespace argos {
    m_cOriginRayEnd = m_cDirection;                          \
    m_cOriginRayStart *= LONG_RANGE_RAY_START;               \
    m_cOriginRayEnd *= LONG_RANGE_RAY_END;                   \
-   m_cRayStart = m_pcEmbodiedEntity->GetPosition();         \
+   m_cRayStart = m_pcEmbodiedEntity->GetOriginAnchor().Position;  \
    m_cRayStart += m_cOriginRayStart;                        \
    m_cRayStart.SetZ(m_cRayStart.GetZ() + SENSOR_ELEVATION); \
-   m_cRayEnd = m_pcEmbodiedEntity->GetPosition();           \
+   m_cRayEnd = m_pcEmbodiedEntity->GetOriginAnchor().Position;  \
    m_cRayEnd += m_cOriginRayEnd;                            \
    m_cRayEnd.SetZ(m_cRayEnd.GetZ() + SENSOR_ELEVATION);     \
    m_cLongRangeRays1[INDEX].Set(m_cRayStart, m_cRayEnd);    \
-   m_cRayStart = m_pcEmbodiedEntity->GetPosition();         \
+   m_cRayStart = m_pcEmbodiedEntity->GetOriginAnchor().Position;  \
    m_cRayStart -= m_cOriginRayStart;                        \
    m_cRayStart.SetZ(m_cRayStart.GetZ() + SENSOR_ELEVATION); \
-   m_cRayEnd = m_pcEmbodiedEntity->GetPosition();           \
+   m_cRayEnd = m_pcEmbodiedEntity->GetOriginAnchor().Position;  \
    m_cRayEnd -= m_cOriginRayEnd;                            \
    m_cRayEnd.SetZ(m_cRayEnd.GetZ() + SENSOR_ELEVATION);     \
    m_cLongRangeRays3[INDEX].Set(m_cRayStart, m_cRayEnd);
@@ -276,7 +276,7 @@ namespace argos {
       /* We make the assumption that the foot-bot is rotated only around Z */
       /* Get the foot-bot orientation */
       CRadians cTmp1, cTmp2, cOrientationZ;
-      m_pcEmbodiedEntity->GetOrientation().ToEulerAngles(cOrientationZ, cTmp1, cTmp2);
+      m_pcEmbodiedEntity->GetOriginAnchor().Orientation.ToEulerAngles(cOrientationZ, cTmp1, cTmp2);
       /* Sum the distance scanner orientation */
       cOrientationZ += m_pcDistScanEntity->GetRotation();
       /* Calculate the 2D vector representing this rotation */
@@ -296,7 +296,7 @@ namespace argos {
       /* We make the assumption that the foot-bot is rotated only around Z */
       /* Get the foot-bot orientation */
       CRadians cTmp1, cTmp2, cOrientationZ;
-      m_pcEmbodiedEntity->GetOrientation().ToEulerAngles(cOrientationZ, cTmp1, cTmp2);
+      m_pcEmbodiedEntity->GetOriginAnchor().Orientation.ToEulerAngles(cOrientationZ, cTmp1, cTmp2);
       /* Sum the distance scanner orientation */
       cOrientationZ += m_cLastDistScanRotation;
       /* Calculate the 2D vector representing this rotation */

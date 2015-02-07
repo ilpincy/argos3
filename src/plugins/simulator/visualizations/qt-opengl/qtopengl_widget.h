@@ -105,7 +105,8 @@ namespace argos {
       void SelectInScene(UInt32 un_x,
                          UInt32 un_y);
 
-      void DrawPositionalEntity(CPositionalEntity& c_entity);
+      void DrawEntity(CPositionalEntity& c_entity);
+      void DrawEntity(CEmbodiedEntity& c_entity);
 
       void DrawRays(CControllableEntity& c_entity);
 

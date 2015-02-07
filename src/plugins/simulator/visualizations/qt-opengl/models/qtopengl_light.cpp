@@ -95,7 +95,7 @@ namespace argos {
       void ApplyTo(CQTOpenGLWidget& c_visualization,
                    CLightEntity& c_entity) {
          static CQTOpenGLLight m_cModel;
-         c_visualization.DrawPositionalEntity(c_entity);
+         c_visualization.DrawEntity(c_entity);
          m_cModel.Draw(c_entity);
       }
    };
@@ -106,7 +106,7 @@ namespace argos {
                    CLightEntity& c_entity) {
          static CQTOpenGLLight m_cModel;
          glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-         c_visualization.DrawPositionalEntity(c_entity);
+         c_visualization.DrawEntity(c_entity);
          glScalef(1.1, 1.1, 1.1);
          m_cModel.Draw(c_entity);
          glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);

@@ -83,12 +83,12 @@ namespace argos {
       for(UInt32 i = 0; i < m_tReadings.size(); ++i) {
          /* Compute ray for sensor i */
          cRayStart = m_pcProximityEntity->GetSensor(i).Offset;
-         cRayStart.Rotate(m_pcEmbodiedEntity->GetOrientation());
-         cRayStart += m_pcEmbodiedEntity->GetPosition();
+         cRayStart.Rotate(m_pcProximityEntity->GetSensor(i).Anchor.Orientation);
+         cRayStart += m_pcProximityEntity->GetSensor(i).Anchor.Position;
          cRayEnd = m_pcProximityEntity->GetSensor(i).Offset;
          cRayEnd += m_pcProximityEntity->GetSensor(i).Direction;
-         cRayEnd.Rotate(m_pcEmbodiedEntity->GetOrientation());
-         cRayEnd += m_pcEmbodiedEntity->GetPosition();
+         cRayEnd.Rotate(m_pcProximityEntity->GetSensor(i).Anchor.Orientation);
+         cRayEnd += m_pcProximityEntity->GetSensor(i).Anchor.Position;
          cScanningRay.Set(cRayStart,cRayEnd);
          /* Compute reading */
          /* Get the closest intersection */

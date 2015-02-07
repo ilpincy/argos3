@@ -73,8 +73,8 @@ namespace argos {
        * We make the assumption that the robot is rotated only wrt to Z
        */
       /* Get robot position and orientation */
-      const CVector3& cEntityPos = m_pcEmbodiedEntity->GetPosition();
-      const CQuaternion& cEntityRot = m_pcEmbodiedEntity->GetOrientation();
+      const CVector3& cEntityPos = m_pcEmbodiedEntity->GetOriginAnchor().Position;
+      const CQuaternion& cEntityRot = m_pcEmbodiedEntity->GetOriginAnchor().Orientation;
       CRadians cRotZ, cRotY, cRotX;
       cEntityRot.ToEulerAngles(cRotZ, cRotY, cRotX);
       /* Set robot center */

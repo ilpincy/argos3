@@ -1,7 +1,5 @@
 [CORE]
 - The distribute method should honor the random seed, which is not the case now. This prevents repeatability!
-- Move to
-  - The logic of undoing a move should stay in the CEmbodiedEntity, and in the CPhysicsModel::MoveTo() should just move an object and say whether this create a collision.
 - Optimization: the first 64 bytes of a class should be filled with the most used attributes
 
 [MAC]

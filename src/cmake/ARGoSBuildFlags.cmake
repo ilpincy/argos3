@@ -27,6 +27,9 @@ set(CMAKE_CXX_FLAGS_RELEASE        "-Os -DNDEBUG")
 set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-Os -ggdb3 -DNDEBUG")
 set(CMAKE_CXX_FLAGS_DEBUG          "-ggdb3")
 
+# Get rid of annoying warnings
+add_definitions(-Wno-unknown-pragmas)
+
 if(APPLE)
   # MAC OSX
   # Allow for dynamic lookup of undefined symbols
@@ -38,6 +41,11 @@ if(APPLE)
   set(ARGOS_DYNAMIC_LIBRARY_VARIABLE "DYLD_LIBRARY_PATH")
 else(APPLE)
   # Linux
+  #
+  # Align doubles for higher performance
+  # Also: required by the PhysX engine
+  set(ARGOS_PC_CFLAGS -malign-double)
+  add_definitions(${ARGOS_PC_CFLAGS})
   # Avoid discarding unused symbols to allow plugins to work
   set(CMAKE_SHARED_LINKER_FLAGS "-Wl,--no-as-needed")
   set(ARGOS_SHARED_LIBRARY_EXTENSION "so")

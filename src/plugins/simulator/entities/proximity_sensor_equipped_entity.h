@@ -13,6 +13,7 @@ namespace argos {
 
 #include <argos3/core/utility/math/vector3.h>
 #include <argos3/core/simulator/entity/entity.h>
+#include <argos3/core/simulator/entity/embodied_entity.h>
 #include <map>
 
 namespace argos {
@@ -24,19 +25,17 @@ namespace argos {
       ENABLE_VTABLE();
 
       struct SSensor {
+         typedef std::vector<SSensor*> TList;
+
          CVector3 Offset;
          CVector3 Direction;
+         const SAnchor& Anchor;
+
          SSensor(const CVector3& c_offset,
                  const CVector3& c_direction,
-                 Real f_range) :
-            Offset(c_offset),
-            Direction(c_direction) {
-            Direction.Normalize();
-            Direction *= f_range;
-         }
+                 Real f_range,
+                 const SAnchor& s_anchor);
       };
-
-      typedef std::vector<SSensor*> TSensors;
 
    public:
 
@@ -61,24 +60,26 @@ namespace argos {
          return *m_tSensors[un_idx];
       }
 
-      inline TSensors& GetSensors() {
+      inline SSensor::TList& GetSensors() {
          return m_tSensors;
       }
 
       void AddSensor(const CVector3& c_offset,
                      const CVector3& c_direction,
-                     Real f_range);
+                     Real f_range,
+                     const SAnchor& s_anchor);
 
       void AddSensorRing(const CVector3& c_center,
                          Real f_radius,
                          const CRadians& c_start_angle,
                          Real f_range,
-                         UInt32 un_num_sensors);
+                         UInt32 un_num_sensors,
+                         const SAnchor& s_anchor);
 
    protected:
 
       /** The list of sensors */
-      TSensors m_tSensors;
+      SSensor::TList m_tSensors;
 
    };
 

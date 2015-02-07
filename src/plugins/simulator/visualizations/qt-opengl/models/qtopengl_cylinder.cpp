@@ -64,7 +64,7 @@ namespace argos {
       glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, pfShininess);
       glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, pfEmission);
       CLEDEquippedEntity& cLEDEquippedEntity = c_entity.GetLEDEquippedEntity();
-      for(UInt32 i = 0; i < cLEDEquippedEntity.GetAllLEDs().size(); ++i) {
+      for(UInt32 i = 0; i < cLEDEquippedEntity.GetLEDs().size(); ++i) {
          glPushMatrix();
          /* Set the material */
          const CColor& cColor = cLEDEquippedEntity.GetLED(i).GetColor();
@@ -73,7 +73,7 @@ namespace argos {
          pfColor[2] = cColor.GetBlue()  / 255.0f;
          glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, pfColor);
          /* Perform rototranslation */
-         const CVector3& cPosition = cLEDEquippedEntity.GetLEDOffsetPosition(i);
+         const CVector3& cPosition = cLEDEquippedEntity.GetLEDOffset(i);
          glTranslatef(cPosition.GetX(), cPosition.GetY(), cPosition.GetZ());
          /* Draw the LED */
          glCallList(m_unLEDList);
@@ -107,9 +107,9 @@ namespace argos {
       glEnable(GL_NORMALIZE);
 
       /* Set the material */
-	      glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, SPECULAR);
-	      glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, SHININESS);
-	      glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, EMISSION);
+      glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, SPECULAR);
+      glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, SHININESS);
+      glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, EMISSION);
 
       /* Let's start the actual shape */
       /* Side surface */
@@ -193,7 +193,7 @@ namespace argos {
       void ApplyTo(CQTOpenGLWidget& c_visualization,
                    CCylinderEntity& c_entity) {
          static CQTOpenGLCylinder m_cModel;
-         c_visualization.DrawPositionalEntity(c_entity.GetEmbodiedEntity());
+         c_visualization.DrawEntity(c_entity.GetEmbodiedEntity());
          m_cModel.Draw(c_entity);
          m_cModel.DrawLEDs(c_entity);
       }

@@ -6,8 +6,23 @@
  */
 #include "light_sensor_equipped_entity.h"
 #include <argos3/core/simulator/space/space.h>
+#include <argos3/core/simulator/entity/composable_entity.h>
 
 namespace argos {
+
+   /****************************************/
+   /****************************************/
+
+   CLightSensorEquippedEntity::SSensor::SSensor(const CVector3& c_position,
+                                                const CVector3& c_direction,
+                                                Real f_range,
+                                                const SAnchor& s_anchor) :
+      Position(c_position),
+      Direction(c_direction),
+      Anchor(s_anchor) {
+      Direction.Normalize();
+      Direction *= f_range;
+   }
 
    /****************************************/
    /****************************************/
@@ -55,13 +70,24 @@ namespace argos {
          /* Go through children */
          TConfigurationNodeIterator it;
          for(it = it.begin(&t_tree); it != it.end(); ++it) {
+            std::string strAnchorId;
+            GetNodeAttribute(*it, "anchor", strAnchorId);
+            /*
+             * NOTE: here we get a reference to the embodied entity
+             * This line works under the assumption that:
+             * 1. the entity has a parent;
+             * 2. the parent has a child whose id is "body"
+             * 3. the "body" is an embodied entity
+             * If any of the above is false, this line will bomb out.
+             */
+            CEmbodiedEntity& cBody = GetParent().GetComponent<CEmbodiedEntity>("body");
             if(it->Value() == "sensor") {
                CVector3 cPos, cDir;
                Real fRange;
                GetNodeAttribute(*it, "position", cPos);
                GetNodeAttribute(*it, "direction", cDir);
                GetNodeAttribute(*it, "range", fRange);
-               AddSensor(cPos, cDir, fRange);
+               AddSensor(cPos, cDir, fRange, cBody.GetAnchor(strAnchorId));
             }
             else if(it->Value() == "ring") {
                CVector3 cRingCenter;
@@ -79,7 +105,8 @@ namespace argos {
                              fRadius,
                              cRingStartAngleRadians,
                              fRange,
-                             unNumSensors);
+                             unNumSensors,
+                             cBody.GetAnchor(strAnchorId));
             }
             else {
                THROW_ARGOSEXCEPTION("Unrecognized tag \"" << it->Value() << "\"");
@@ -95,19 +122,21 @@ namespace argos {
    /****************************************/
 
    void CLightSensorEquippedEntity::AddSensor(const CVector3& c_position,
-                                                  const CVector3& c_direction,
-                                                  Real f_range) {
-      m_tSensors.push_back(new SSensor(c_position, c_direction, f_range));
+                                              const CVector3& c_direction,
+                                              Real f_range,
+                                              const SAnchor& s_anchor) {
+      m_tSensors.push_back(new SSensor(c_position, c_direction, f_range, s_anchor));
    }
 
    /****************************************/
    /****************************************/
    
    void CLightSensorEquippedEntity::AddSensorRing(const CVector3& c_center,
-                                                      Real f_radius,
-                                                      const CRadians& c_start_angle,
-                                                      Real f_range,
-                                                      UInt32 un_num_sensors) {
+                                                  Real f_radius,
+                                                  const CRadians& c_start_angle,
+                                                  Real f_range,
+                                                  UInt32 un_num_sensors,
+                                                  const SAnchor& s_anchor) {
       CRadians cSensorSpacing = CRadians::TWO_PI / un_num_sensors;
       CRadians cAngle;
       CVector3 cPos, cDir;
@@ -119,7 +148,7 @@ namespace argos {
          cPos += c_center;
          cDir.Set(f_range, 0.0f, 0.0f);
          cDir.RotateZ(cAngle);
-         AddSensor(cPos, cDir, f_range);
+         AddSensor(cPos, cDir, f_range, s_anchor);
       }
    }
 

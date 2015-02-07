@@ -109,10 +109,10 @@ namespace argos {
       }
       /* Get foot-bot orientation */
       CRadians cTmp1, cTmp2, cOrientationZ;
-      m_pcEmbodiedEntity->GetOrientation().ToEulerAngles(cOrientationZ, cTmp1, cTmp2);
+      m_pcEmbodiedEntity->GetOriginAnchor().Orientation.ToEulerAngles(cOrientationZ, cTmp1, cTmp2);
       /* Ray used for scanning the environment for obstacles */
       CRay3 cOcclusionCheckRay;
-      cOcclusionCheckRay.SetStart(m_pcEmbodiedEntity->GetPosition());
+      cOcclusionCheckRay.SetStart(m_pcEmbodiedEntity->GetOriginAnchor().Position);
       CVector3 cRobotToLight;
       /* Buffer for the angle of the light wrt to the foot-bot */
       CRadians cAngleLightWrtFootbot;

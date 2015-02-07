@@ -1,0 +1,85 @@
+<?xml version="1.0" ?>
+<argos-configuration>
+
+  <!-- ************************* -->
+  <!-- * General configuration * -->
+  <!-- ************************* -->
+  <framework>
+    <system threads="0" />
+    <experiment length="0" ticks_per_second="10" random_seed="1234" />
+  </framework>
+
+  <!-- ****************** -->
+  <!-- * Loop functions * -->
+  <!-- ****************** -->
+  <!-- loop_functions label="test_lf" /-->
+
+  <!-- *************** -->
+  <!-- * Controllers * -->
+  <!-- *************** -->
+  <controllers>
+
+    <!-- ***************************************************** -->
+    <!-- * This is the Lua controller to associate to robots * -->
+    <!-- ***************************************************** -->
+    <lua_controller id="lua">
+      <!-- Normal actuator/sensor configuration follows -->
+      <actuators>
+        <miniquadrotor_rotor implementation="default" />
+      </actuators>
+      <sensors>
+        <positioning implementation="default" />
+      </sensors>
+      <!-- No required configuration -->
+      <!-- <params /> -->
+      <!-- Optionally, you can pass a script as a controller parameter: -->
+      <params script="../../src/testing/experiment/test_miniquadrotor.lua" />
+    </lua_controller>
+
+  </controllers>
+
+  <!-- *********************** -->
+  <!-- * Arena configuration * -->
+  <!-- *********************** -->
+  <arena size="10, 10, 5" center="0,0,2.5">
+    <!-- <floor id="f" source="loop_functions" pixels_per_meter="100" /> -->
+
+    <mini-quadrotor id="mq0">
+      <body position="0,0,0" orientation="0,0,0" />
+      <controller config="lua" />
+    </mini-quadrotor>
+
+    <box id="bx" size="0.1,0.1,0.1" movable="false">
+      <body position="1,0,0" orientation="0,0,0" />
+    </box>
+
+  </arena>
+
+  <!-- ******************* -->
+  <!-- * Physics engines * -->
+  <!-- ******************* -->
+  <physics_engines>
+    <physx id="dyn3d" iterations="10" cpu_threads="1" />
+  </physics_engines>
+
+  <!-- ********* -->
+  <!-- * Media * -->
+  <!-- ********* -->
+  <media />
+
+  <!-- ***************** -->
+  <!-- * Visualization * -->
+  <!-- ***************** -->
+  <visualization>
+
+    <!-- ************************************************************************ -->
+    <!-- * To activate the Lua editor, just use the 'lua_editor' flag attribute * -->
+    <!-- ************************************************************************ -->
+    <qt-opengl lua_editor="true">
+      <camera />
+      <!-- <user_functions label="test_user_functions" /> -->
+    </qt-opengl>
+
+  </visualization>
+
+</argos-configuration>

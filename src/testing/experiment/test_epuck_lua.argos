@@ -1,0 +1,121 @@
+<?xml version="1.0" ?>
+<argos-configuration>
+
+  <!-- ************************* -->
+  <!-- * General configuration * -->
+  <!-- ************************* -->
+  <framework>
+    <system threads="0" />
+    <experiment length="0" ticks_per_second="10" random_seed="1234" />
+  </framework>
+
+  <!-- ****************** -->
+  <!-- * Loop functions * -->
+  <!-- ****************** -->
+  <!-- loop_functions label="test_lf" /-->
+
+  <!-- *************** -->
+  <!-- * Controllers * -->
+  <!-- *************** -->
+  <controllers>
+
+    <!-- ***************************************************** -->
+    <!-- * This is the Lua controller to associate to robots * -->
+    <!-- ***************************************************** -->
+    <lua_controller id="lua">
+      <!-- Normal actuator/sensor configuration follows -->
+      <actuators>
+        <differential_steering implementation="default" />
+        <leds implementation="default" medium="led" />
+        <range_and_bearing implementation="default" />
+      </actuators>
+      <sensors>
+        <differential_steering implementation="default" />
+        <ground implementation="rot_z_only" />
+        <light implementation="default" show_rays="false" />
+        <positioning implementation="default" />
+        <proximity implementation="default" show_rays="true" />
+        <range_and_bearing implementation="medium" medium="rab" show_rays="true" />
+      </sensors>
+      <!-- No required configuration -->
+      <params />
+      <!-- Optionally, you can pass a script as a controller parameter: -->
+      <!-- <params script="../../src/testing/experiment/test_rab.lua" /> -->
+    </lua_controller>
+
+  </controllers>
+
+  <!-- *********************** -->
+  <!-- * Arena configuration * -->
+  <!-- *********************** -->
+  <arena size="5, 5, 2" center="0,0,1" positional_grid_size="50,50,1">
+    <floor id="f" source="loop_functions" pixels_per_meter="100" />
+
+    <box id="bn" size="0.1, 3, 0.2" movable="false">
+      <body position="1.5,0,0"  orientation="0,0,0" />
+    </box>
+
+    <box id="bs" size="0.1, 3, 0.2" movable="false">
+      <body position="-1.5,0,0"  orientation="0,0,0" />
+    </box>
+
+    <box id="be" size="3, 0.1, 0.2" movable="false">
+      <body position="0,-1.5,0"  orientation="0,0,0" />
+    </box>
+
+    <box id="bw" size="3, 0.1, 0.2" movable="false">
+      <body position="0,1.5,0"  orientation="0,0,0" />
+    </box>
+
+    <light id="l0"
+           position="1,1,1"
+           orientation="0,0,0"
+           color="yellow"
+           intensity="1"
+           medium="led" />
+
+    <distribute>
+      <position method="uniform" min="-1.5,-1.5,0" max="1.5,1.5,0" />
+      <orientation method="uniform" min="0,0,0" max="360,0,0" />
+      <entity quantity="100" max_trials="100" base_num="100">
+        <e-puck id="fb">
+          <controller config="lua" />
+        </e-puck>
+      </entity>
+    </distribute>
+
+  </arena>
+
+  <!-- ******************* -->
+  <!-- * Physics engines * -->
+  <!-- ******************* -->
+  <physics_engines>
+    <dynamics2d id="dyn2d" />
+  </physics_engines>
+
+  <!-- ********* -->
+  <!-- * Media * -->
+  <!-- ********* -->
+  <media>
+    <range_and_bearing id="rab" />
+    <led id="led" />
+  </media>
+
+  <!-- ***************** -->
+  <!-- * Visualization * -->
+  <!-- ***************** -->
+  <visualization>
+
+    <!-- ************************************************************************ -->
+    <!-- * To activate the Lua editor, just use the 'lua_editor' flag attribute * -->
+    <!-- ************************************************************************ -->
+    <qt-opengl lua_editor="true">
+      <camera>
+        <placement idx="0" position="-2,0,2" look_at="0,0,0" lens_focal_length="20" />
+        <placement idx="1" position="0.884183,0.359128,0.490269" look_at="0.924486,-0.486744,-0.0415919" lens_focal_length="20" />
+      </camera>
+    </qt-opengl>
+
+  </visualization>
+
+</argos-configuration>

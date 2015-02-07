@@ -170,8 +170,8 @@ namespace argos {
                      cOcclusionCheckRay.SetEnd(cOtherRAB.GetPosition());
                      if((!GetClosestEmbodiedEntityIntersectedByRay(sIntersectionItem,
                                                                    cOcclusionCheckRay,
-                                                                   cRAB.GetReference())) ||
-                        (&cOtherRAB.GetReference() == sIntersectionItem.IntersectedEntity)) {
+                                                                   cRAB.GetEntityBody())) ||
+                        (&cOtherRAB.GetEntityBody() == sIntersectionItem.IntersectedEntity)) {
                         /* If we get here, the two RAB entities are in direct line of sight */
                         /* cRAB can receive cOtherRAB's message if it is in range, and viceversa */
                         /* Calculate square distance */

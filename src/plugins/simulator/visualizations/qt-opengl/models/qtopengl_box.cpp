@@ -65,7 +65,7 @@ namespace argos {
       glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, pfShininess);
       glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, pfEmission);
       CLEDEquippedEntity& cLEDEquippedEntity = c_entity.GetLEDEquippedEntity();
-      for(UInt32 i = 0; i < cLEDEquippedEntity.GetAllLEDs().size(); ++i) {
+      for(UInt32 i = 0; i < cLEDEquippedEntity.GetLEDs().size(); ++i) {
          glPushMatrix();
          /* Set the material */
          const CColor& cColor = cLEDEquippedEntity.GetLED(i).GetColor();
@@ -74,7 +74,7 @@ namespace argos {
          pfColor[2] = cColor.GetBlue()  / 255.0f;
          glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, pfColor);
          /* Perform rototranslation */
-         const CVector3& cPosition = cLEDEquippedEntity.GetLEDOffsetPosition(i);
+         const CVector3& cPosition = cLEDEquippedEntity.GetLEDOffset(i);
          glTranslatef(cPosition.GetX(), cPosition.GetY(), cPosition.GetZ());
          /* Draw the LED */
          glCallList(m_unLEDList);
@@ -132,29 +132,29 @@ namespace argos {
 	      /* This part covers the faces (South, East, North, West) */
 	      glBegin(GL_QUADS);
 	      /* South face */
-	          glNormal3f(0.0f, -1.0f, 0.0f);
-	          glVertex3f(-0.5f, -0.5f, 1.0f);
-	          glVertex3f(-0.5f, -0.5f, 0.0f);
-	          glVertex3f( 0.5f, -0.5f, 0.0f);
-	          glVertex3f( 0.5f, -0.5f, 1.0f);
-	          /* East face */
-	          glNormal3f(1.0f, 0.0f, 0.0f);
-	          glVertex3f( 0.5f, -0.5f, 1.0f);
-	          glVertex3f( 0.5f, -0.5f, 0.0f);
-	          glVertex3f( 0.5f,  0.5f, 0.0f);
-	          glVertex3f( 0.5f,  0.5f, 1.0f);
-	          /* North face */
-	          glNormal3f(0.0f, 1.0f, 0.0f);
-	          glVertex3f( 0.5f,  0.5f, 1.0f);
-	          glVertex3f( 0.5f,  0.5f, 0.0f);
-	          glVertex3f(-0.5f,  0.5f, 0.0f);
-	          glVertex3f(-0.5f,  0.5f, 1.0f);
-	          /* West face */
-	          glNormal3f(-1.0f, 0.0f, 0.0f);
-	          glVertex3f(-0.5f,  0.5f, 1.0f);
-	          glVertex3f(-0.5f,  0.5f, 0.0f);
-	          glVertex3f(-0.5f, -0.5f, 0.0f);
-	          glVertex3f(-0.5f, -0.5f, 1.0f);
+        glNormal3f(0.0f, -1.0f, 0.0f);
+        glVertex3f(-0.5f, -0.5f, 1.0f);
+        glVertex3f(-0.5f, -0.5f, 0.0f);
+        glVertex3f( 0.5f, -0.5f, 0.0f);
+        glVertex3f( 0.5f, -0.5f, 1.0f);
+        /* East face */
+        glNormal3f(1.0f, 0.0f, 0.0f);
+        glVertex3f( 0.5f, -0.5f, 1.0f);
+        glVertex3f( 0.5f, -0.5f, 0.0f);
+        glVertex3f( 0.5f,  0.5f, 0.0f);
+        glVertex3f( 0.5f,  0.5f, 1.0f);
+        /* North face */
+        glNormal3f(0.0f, 1.0f, 0.0f);
+        glVertex3f( 0.5f,  0.5f, 1.0f);
+        glVertex3f( 0.5f,  0.5f, 0.0f);
+        glVertex3f(-0.5f,  0.5f, 0.0f);
+        glVertex3f(-0.5f,  0.5f, 1.0f);
+        /* West face */
+        glNormal3f(-1.0f, 0.0f, 0.0f);
+        glVertex3f(-0.5f,  0.5f, 1.0f);
+        glVertex3f(-0.5f,  0.5f, 0.0f);
+        glVertex3f(-0.5f, -0.5f, 0.0f);
+        glVertex3f(-0.5f, -0.5f, 1.0f);
 	      glEnd();
 	      /* The shape definitions is finished */
 
@@ -206,7 +206,7 @@ namespace argos {
       void ApplyTo(CQTOpenGLWidget& c_visualization,
                    CBoxEntity& c_entity) {
          static CQTOpenGLBox m_cModel;
-         c_visualization.DrawPositionalEntity(c_entity.GetEmbodiedEntity());
+         c_visualization.DrawEntity(c_entity.GetEmbodiedEntity());
          m_cModel.Draw(c_entity);
          m_cModel.DrawLEDs(c_entity);
       }

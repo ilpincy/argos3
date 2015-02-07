@@ -1,12 +1,21 @@
 #
 # Set minimum required version
 #
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 2.8.12)
 
 #
 # Set the path additional cmake files must be searched for
 #
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
+
+#
+# Set CMake policies to select wanted behaviors
+#
+# Use new policies introduced up to this version
+cmake_policy(VERSION 2.8.12)
+if(POLICY CMP0042)
+  cmake_policy(SET CMP0042 NEW)
+endif(POLICY CMP0042)
 
 #
 # Include path points to the base source dir

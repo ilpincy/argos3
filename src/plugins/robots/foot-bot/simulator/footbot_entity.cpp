@@ -109,11 +109,11 @@ namespace argos {
          m_pcWheeledEntity->SetWheel(1, CVector3(0.0f, -HALF_INTERWHEEL_DISTANCE, 0.0f), WHEEL_RADIUS);
          /* LED equipped entity, with LEDs [0-11] and beacon [12] */
          m_pcLEDEquippedEntity = new CLEDEquippedEntity(this,
-                                                        "leds_0",
-                                                        m_pcEmbodiedEntity);
+                                                        "leds_0");
          AddComponent(*m_pcLEDEquippedEntity);
          for(UInt32 i = 0; i < 13; ++i) {
-            m_pcLEDEquippedEntity->AddLED(CVector3());
+            m_pcLEDEquippedEntity->AddLED(CVector3(),
+                                          m_pcEmbodiedEntity->GetOriginAnchor());
          }
          m_pcLEDEquippedEntity->Disable();
          m_pcLEDEquippedEntity->SetCanBeEnabledIfDisabled(false);
@@ -127,7 +127,8 @@ namespace argos {
             PROXIMITY_SENSOR_RING_RADIUS,
             PROXIMITY_SENSOR_RING_START_ANGLE,
             PROXIMITY_SENSOR_RING_RANGE,
-            24);
+            24,
+            m_pcEmbodiedEntity->GetOriginAnchor());
          /* Light sensor equipped entity */
          m_pcLightSensorEquippedEntity =
             new CLightSensorEquippedEntity(this,
@@ -138,7 +139,8 @@ namespace argos {
             PROXIMITY_SENSOR_RING_RADIUS,
             PROXIMITY_SENSOR_RING_START_ANGLE,
             PROXIMITY_SENSOR_RING_RANGE,
-            24);
+            24,
+            m_pcEmbodiedEntity->GetOriginAnchor());
          /* Gripper equipped entity */
          m_pcGripperEquippedEntity =
             new CGripperEquippedEntity(this,
@@ -152,29 +154,41 @@ namespace argos {
                                             "ground_0");
          AddComponent(*m_pcGroundSensorEquippedEntity);
          m_pcGroundSensorEquippedEntity->AddSensor(CVector2(0.063, 0.0116),
-                                                   CGroundSensorEquippedEntity::TYPE_GRAYSCALE);
+                                                   CGroundSensorEquippedEntity::TYPE_GRAYSCALE,
+                                                   m_pcEmbodiedEntity->GetOriginAnchor());
          m_pcGroundSensorEquippedEntity->AddSensor(CVector2(-0.063, 0.0116),
-                                                   CGroundSensorEquippedEntity::TYPE_GRAYSCALE);
+                                                   CGroundSensorEquippedEntity::TYPE_GRAYSCALE,
+                                                   m_pcEmbodiedEntity->GetOriginAnchor());
          m_pcGroundSensorEquippedEntity->AddSensor(CVector2(-0.063, -0.0116),
-                                                   CGroundSensorEquippedEntity::TYPE_GRAYSCALE);
+                                                   CGroundSensorEquippedEntity::TYPE_GRAYSCALE,
+                                                   m_pcEmbodiedEntity->GetOriginAnchor());
          m_pcGroundSensorEquippedEntity->AddSensor(CVector2(0.063, -0.0116),
-                                                   CGroundSensorEquippedEntity::TYPE_GRAYSCALE);
+                                                   CGroundSensorEquippedEntity::TYPE_GRAYSCALE,
+                                                   m_pcEmbodiedEntity->GetOriginAnchor());
          m_pcGroundSensorEquippedEntity->AddSensor(CVector2(0.08, 0.0),
-                                                   CGroundSensorEquippedEntity::TYPE_BLACK_WHITE);
+                                                   CGroundSensorEquippedEntity::TYPE_BLACK_WHITE,
+                                                   m_pcEmbodiedEntity->GetOriginAnchor());
          m_pcGroundSensorEquippedEntity->AddSensor(CVector2(0.042, 0.065),
-                                                   CGroundSensorEquippedEntity::TYPE_BLACK_WHITE);
+                                                   CGroundSensorEquippedEntity::TYPE_BLACK_WHITE,
+                                                   m_pcEmbodiedEntity->GetOriginAnchor());
          m_pcGroundSensorEquippedEntity->AddSensor(CVector2(0.0, 0.08),
-                                                   CGroundSensorEquippedEntity::TYPE_BLACK_WHITE);
+                                                   CGroundSensorEquippedEntity::TYPE_BLACK_WHITE,
+                                                   m_pcEmbodiedEntity->GetOriginAnchor());
          m_pcGroundSensorEquippedEntity->AddSensor(CVector2(-0.042, 0.065),
-                                                   CGroundSensorEquippedEntity::TYPE_BLACK_WHITE);
+                                                   CGroundSensorEquippedEntity::TYPE_BLACK_WHITE,
+                                                   m_pcEmbodiedEntity->GetOriginAnchor());
          m_pcGroundSensorEquippedEntity->AddSensor(CVector2(-0.08, 0.0),
-                                                   CGroundSensorEquippedEntity::TYPE_BLACK_WHITE);
+                                                   CGroundSensorEquippedEntity::TYPE_BLACK_WHITE,
+                                                   m_pcEmbodiedEntity->GetOriginAnchor());
          m_pcGroundSensorEquippedEntity->AddSensor(CVector2(-0.042, -0.065),
-                                                   CGroundSensorEquippedEntity::TYPE_BLACK_WHITE);
+                                                   CGroundSensorEquippedEntity::TYPE_BLACK_WHITE,
+                                                   m_pcEmbodiedEntity->GetOriginAnchor());
          m_pcGroundSensorEquippedEntity->AddSensor(CVector2(0.0, -0.08),
-                                                   CGroundSensorEquippedEntity::TYPE_BLACK_WHITE);
+                                                   CGroundSensorEquippedEntity::TYPE_BLACK_WHITE,
+                                                   m_pcEmbodiedEntity->GetOriginAnchor());
          m_pcGroundSensorEquippedEntity->AddSensor(CVector2(0.042, -0.065),
-                                                   CGroundSensorEquippedEntity::TYPE_BLACK_WHITE);
+                                                   CGroundSensorEquippedEntity::TYPE_BLACK_WHITE,
+                                                   m_pcEmbodiedEntity->GetOriginAnchor());
          /* Distance scanner */
          m_pcDistanceScannerEquippedEntity = new CFootBotDistanceScannerEquippedEntity(this,
                                                                                        "distance_scanner_0");
@@ -184,6 +198,7 @@ namespace argos {
                                                         "rab_0",
                                                         10,
                                                         f_rab_range,
+                                                        m_pcEmbodiedEntity->GetOriginAnchor(),
                                                         *m_pcEmbodiedEntity,
                                                         CVector3(0.0f, 0.0f, RAB_ELEVATION));
          AddComponent(*m_pcRABEquippedEntity);
@@ -196,6 +211,7 @@ namespace argos {
          /* Turret equipped entity */
          m_pcTurretEntity = new CFootBotTurretEntity(this, "turret_0");
          AddComponent(*m_pcTurretEntity);
+         m_pcEmbodiedEntity->AddAnchor("turret", CVector3(0.0f, 0.0f, GRIPPER_ELEVATION));
          /* WiFi equipped entity */
          m_pcWiFiEquippedEntity = new CWiFiEquippedEntity(this, "wifi_0");
          AddComponent(*m_pcWiFiEquippedEntity);
@@ -237,12 +253,10 @@ namespace argos {
          m_pcWheeledEntity->SetWheel(0, CVector3(0.0f,  HALF_INTERWHEEL_DISTANCE, 0.0f), WHEEL_RADIUS);
          m_pcWheeledEntity->SetWheel(1, CVector3(0.0f, -HALF_INTERWHEEL_DISTANCE, 0.0f), WHEEL_RADIUS);
          /* LED equipped entity, with LEDs [0-11] and beacon [12] */
-         m_pcLEDEquippedEntity = new CLEDEquippedEntity(this,
-                                                        "leds_0",
-                                                        m_pcEmbodiedEntity);
+         m_pcLEDEquippedEntity = new CLEDEquippedEntity(this, "leds_0");
          AddComponent(*m_pcLEDEquippedEntity);
          for(UInt32 i = 0; i < 13; ++i) {
-            m_pcLEDEquippedEntity->AddLED(CVector3());
+            m_pcLEDEquippedEntity->AddLED(CVector3(), m_pcEmbodiedEntity->GetOriginAnchor());
          }
          /* Proximity sensor equipped entity */
          m_pcProximitySensorEquippedEntity =
@@ -254,7 +268,8 @@ namespace argos {
             PROXIMITY_SENSOR_RING_RADIUS,
             PROXIMITY_SENSOR_RING_START_ANGLE,
             PROXIMITY_SENSOR_RING_RANGE,
-            24);
+            24,
+            m_pcEmbodiedEntity->GetOriginAnchor());
          /* Light sensor equipped entity */
          m_pcLightSensorEquippedEntity =
             new CLightSensorEquippedEntity(this,
@@ -265,7 +280,8 @@ namespace argos {
             PROXIMITY_SENSOR_RING_RADIUS,
             PROXIMITY_SENSOR_RING_START_ANGLE,
             PROXIMITY_SENSOR_RING_RANGE,
-            24);
+            24,
+            m_pcEmbodiedEntity->GetOriginAnchor());
          /* Gripper equipped entity */
          m_pcGripperEquippedEntity =
             new CGripperEquippedEntity(this,
@@ -279,29 +295,41 @@ namespace argos {
                                             "ground_0");
          AddComponent(*m_pcGroundSensorEquippedEntity);
          m_pcGroundSensorEquippedEntity->AddSensor(CVector2(0.063, 0.0116),
-                                                   CGroundSensorEquippedEntity::TYPE_GRAYSCALE);
+                                                   CGroundSensorEquippedEntity::TYPE_GRAYSCALE,
+                                                   m_pcEmbodiedEntity->GetOriginAnchor());
          m_pcGroundSensorEquippedEntity->AddSensor(CVector2(-0.063, 0.0116),
-                                                   CGroundSensorEquippedEntity::TYPE_GRAYSCALE);
+                                                   CGroundSensorEquippedEntity::TYPE_GRAYSCALE,
+                                                   m_pcEmbodiedEntity->GetOriginAnchor());
          m_pcGroundSensorEquippedEntity->AddSensor(CVector2(-0.063, -0.0116),
-                                                   CGroundSensorEquippedEntity::TYPE_GRAYSCALE);
+                                                   CGroundSensorEquippedEntity::TYPE_GRAYSCALE,
+                                                   m_pcEmbodiedEntity->GetOriginAnchor());
          m_pcGroundSensorEquippedEntity->AddSensor(CVector2(0.063, -0.0116),
-                                                   CGroundSensorEquippedEntity::TYPE_GRAYSCALE);
+                                                   CGroundSensorEquippedEntity::TYPE_GRAYSCALE,
+                                                   m_pcEmbodiedEntity->GetOriginAnchor());
          m_pcGroundSensorEquippedEntity->AddSensor(CVector2(0.08, 0.0),
-                                                   CGroundSensorEquippedEntity::TYPE_BLACK_WHITE);
+                                                   CGroundSensorEquippedEntity::TYPE_BLACK_WHITE,
+                                                   m_pcEmbodiedEntity->GetOriginAnchor());
          m_pcGroundSensorEquippedEntity->AddSensor(CVector2(0.042, 0.065),
-                                                   CGroundSensorEquippedEntity::TYPE_BLACK_WHITE);
+                                                   CGroundSensorEquippedEntity::TYPE_BLACK_WHITE,
+                                                   m_pcEmbodiedEntity->GetOriginAnchor());
          m_pcGroundSensorEquippedEntity->AddSensor(CVector2(0.0, 0.08),
-                                                   CGroundSensorEquippedEntity::TYPE_BLACK_WHITE);
+                                                   CGroundSensorEquippedEntity::TYPE_BLACK_WHITE,
+                                                   m_pcEmbodiedEntity->GetOriginAnchor());
          m_pcGroundSensorEquippedEntity->AddSensor(CVector2(-0.042, 0.065),
-                                                   CGroundSensorEquippedEntity::TYPE_BLACK_WHITE);
+                                                   CGroundSensorEquippedEntity::TYPE_BLACK_WHITE,
+                                                   m_pcEmbodiedEntity->GetOriginAnchor());
          m_pcGroundSensorEquippedEntity->AddSensor(CVector2(-0.08, 0.0),
-                                                   CGroundSensorEquippedEntity::TYPE_BLACK_WHITE);
+                                                   CGroundSensorEquippedEntity::TYPE_BLACK_WHITE,
+                                                   m_pcEmbodiedEntity->GetOriginAnchor());
          m_pcGroundSensorEquippedEntity->AddSensor(CVector2(-0.042, -0.065),
-                                                   CGroundSensorEquippedEntity::TYPE_BLACK_WHITE);
+                                                   CGroundSensorEquippedEntity::TYPE_BLACK_WHITE,
+                                                   m_pcEmbodiedEntity->GetOriginAnchor());
          m_pcGroundSensorEquippedEntity->AddSensor(CVector2(0.0, -0.08),
-                                                   CGroundSensorEquippedEntity::TYPE_BLACK_WHITE);
+                                                   CGroundSensorEquippedEntity::TYPE_BLACK_WHITE,
+                                                   m_pcEmbodiedEntity->GetOriginAnchor());
          m_pcGroundSensorEquippedEntity->AddSensor(CVector2(0.042, -0.065),
-                                                   CGroundSensorEquippedEntity::TYPE_BLACK_WHITE);
+                                                   CGroundSensorEquippedEntity::TYPE_BLACK_WHITE,
+                                                   m_pcEmbodiedEntity->GetOriginAnchor());
          /* Distance scanner */
          m_pcDistanceScannerEquippedEntity = new CFootBotDistanceScannerEquippedEntity(this,
                                                                                        "distance_scanner_0");
@@ -313,6 +341,7 @@ namespace argos {
                                                         "rab_0",
                                                         10,
                                                         fRange,
+                                                        m_pcEmbodiedEntity->GetOriginAnchor(),
                                                         *m_pcEmbodiedEntity,
                                                         CVector3(0.0f, 0.0f, RAB_ELEVATION));
          AddComponent(*m_pcRABEquippedEntity);
@@ -327,6 +356,7 @@ namespace argos {
          /* Turret equipped entity */
          m_pcTurretEntity = new CFootBotTurretEntity(this, "turret_0");
          AddComponent(*m_pcTurretEntity);
+         m_pcEmbodiedEntity->AddAnchor("turret", CVector3(0.0f, 0.0f, GRIPPER_ELEVATION));
          /* WiFi equipped entity */
          m_pcWiFiEquippedEntity = new CWiFiEquippedEntity(this, "wifi_0");
          AddComponent(*m_pcWiFiEquippedEntity);
@@ -356,13 +386,6 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CFootBotEntity::Destroy() {
-      CComposableEntity::Destroy();
-   }
-
-   /****************************************/
-   /****************************************/
-
 #define UPDATE(COMPONENT) if(COMPONENT->IsEnabled()) COMPONENT->Update();
 
    void CFootBotEntity::UpdateComponents() {
@@ -370,49 +393,12 @@ namespace argos {
       UPDATE(m_pcTurretEntity);
       UPDATE(m_pcGripperEquippedEntity);
       UPDATE(m_pcRABEquippedEntity);
-      if(m_pcLEDEquippedEntity->IsEnabled()) SetLEDPosition();
+      UPDATE(m_pcLEDEquippedEntity);
    }
 
    /****************************************/
    /****************************************/
    
-#define SET_RING_LED_POSITION(IDX)                                      \
-   cLEDPosition.Set(LED_RING_RADIUS, 0.0f, LED_RING_ELEVATION);         \
-   cLEDAngle = cLEDAnglePhase;                                          \
-   cLEDAngle += LED_ANGLE_SLICE * IDX;                                  \
-   cLEDPosition.RotateZ(cLEDAngle);                                     \
-   cLEDPosition.Rotate(m_pcEmbodiedEntity->GetOrientation());           \
-   cLEDPosition += cEntityPosition;                                     \
-   m_pcLEDEquippedEntity->SetLEDPosition(IDX, cLEDPosition);
-   
-   void CFootBotEntity::SetLEDPosition() {
-      /* Set LED positions */
-      const CVector3& cEntityPosition = GetEmbodiedEntity().GetPosition();
-      CVector3 cLEDPosition;
-      CRadians cLEDAnglePhase = HALF_LED_ANGLE_SLICE + m_pcTurretEntity->GetRotation();
-      CRadians cLEDAngle;
-      SET_RING_LED_POSITION(0);
-      SET_RING_LED_POSITION(1);
-      SET_RING_LED_POSITION(2);
-      SET_RING_LED_POSITION(3);
-      SET_RING_LED_POSITION(4);
-      SET_RING_LED_POSITION(5);
-      SET_RING_LED_POSITION(6);
-      SET_RING_LED_POSITION(7);
-      SET_RING_LED_POSITION(8);
-      SET_RING_LED_POSITION(9);
-      SET_RING_LED_POSITION(10);
-      SET_RING_LED_POSITION(11);
-      /* Set beacon position */
-      cLEDPosition.Set(0.0f, 0.0f, BEACON_ELEVATION);
-      cLEDPosition.Rotate(m_pcEmbodiedEntity->GetOrientation());
-      cLEDPosition += cEntityPosition;
-      m_pcLEDEquippedEntity->SetLEDPosition(12, cLEDPosition);
-   }
-
-   /****************************************/
-   /****************************************/
-
    REGISTER_ENTITY(CFootBotEntity,
                    "foot-bot",
                    "Carlo Pinciroli [ilpincy@gmail.com]",

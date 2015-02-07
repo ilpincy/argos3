@@ -9,6 +9,7 @@
 
 namespace argos {
    class CLightSensorEquippedEntity;
+   struct SAnchor;
 }
 
 #include <argos3/core/utility/math/vector3.h>
@@ -24,19 +25,17 @@ namespace argos {
       ENABLE_VTABLE();
 
       struct SSensor {
+         typedef std::vector<SSensor*> TList;
+         
          CVector3 Position;
          CVector3 Direction;
+         const SAnchor& Anchor;
+
          SSensor(const CVector3& c_position,
                  const CVector3& c_direction,
-                 Real f_range) :
-            Position(c_position),
-            Direction(c_direction) {
-            Direction.Normalize();
-            Direction *= f_range;
-         }
+                 Real f_range,
+                 const SAnchor& s_anchor); 
       };
-
-      typedef std::vector<SSensor*> TSensors;
 
    public:
 
@@ -61,24 +60,26 @@ namespace argos {
          return *m_tSensors[un_idx];
       }
 
-      inline TSensors& GetSensors() {
+      inline SSensor::TList& GetSensors() {
          return m_tSensors;
       }
 
       void AddSensor(const CVector3& c_position,
                      const CVector3& c_direction,
-                     Real f_range);
+                     Real f_range,
+                     const SAnchor& s_anchor);
 
       void AddSensorRing(const CVector3& c_center,
                          Real f_radius,
                          const CRadians& c_start_angle,
                          Real f_range,
-                         UInt32 un_num_sensors);
+                         UInt32 un_num_sensors,
+                         const SAnchor& s_anchor);
 
    protected:
 
       /** The list of sensors */
-      TSensors m_tSensors;
+      SSensor::TList m_tSensors;
 
    };
 

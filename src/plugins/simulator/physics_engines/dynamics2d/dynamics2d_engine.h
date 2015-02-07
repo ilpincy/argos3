@@ -117,6 +117,10 @@ namespace argos {
          return m_ptSpace;
       }
 
+      inline const cpSpace* GetPhysicsSpace() const {
+         return m_ptSpace;
+      }
+
       inline cpBody* GetGroundBody() {
          return m_ptGroundBody;
       }

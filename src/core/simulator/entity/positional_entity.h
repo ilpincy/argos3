@@ -27,8 +27,8 @@ namespace argos {
 
       CPositionalEntity(CComposableEntity* pc_parent,
                         const std::string& str_id,
-                        const CVector3& c_position,
-                        const CQuaternion& c_orientation);
+                        const CVector3& c_position = CVector3(),
+                        const CQuaternion& c_orientation = CQuaternion());
 
       virtual void Init(TConfigurationNode& t_tree);
       virtual void Reset();
@@ -65,9 +65,8 @@ namespace argos {
          m_cInitOrientation = c_orientation;
       }
 
-      virtual bool MoveTo(const CVector3& c_position,
-                          const CQuaternion& c_orientation,
-                          bool b_check_only = false);
+      virtual void MoveTo(const CVector3& c_position,
+                          const CQuaternion& c_orientation);
 
       virtual std::string GetTypeDescription() const {
          return "position";

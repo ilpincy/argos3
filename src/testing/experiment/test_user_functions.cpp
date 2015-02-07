@@ -28,10 +28,10 @@ void CTestUserFunctions::DrawInWorld() {
        ++it) {
       CFootBotEntity& cFB = *any_cast<CFootBotEntity*>(it->second);
       CLEDEquippedEntity& cLEDs = cFB.GetLEDEquippedEntity();
-      for(CLEDEntity::TList::iterator it = cLEDs.GetAllLEDs().begin();
-          it != cLEDs.GetAllLEDs().end();
+      for(CLEDEquippedEntity::SActuator::TList::iterator it = cLEDs.GetLEDs().begin();
+          it != cLEDs.GetLEDs().end();
           ++it) {
-         DrawPoint((*it)->GetPosition(), (*it)->GetColor(), 50.0f);
+         DrawPoint((*it)->LED.GetPosition(), (*it)->LED.GetColor(), 50.0f);
       }
    }
 }
@@ -46,4 +46,4 @@ void CTestUserFunctions::Draw(CFootBotEntity& c_footbot) {
 /********************************************************************************/
 /********************************************************************************/
 
-REGISTER_QTOPENGL_USER_FUNCTIONS(CTestUserFunctions, "test_user_functions");
+//REGISTER_QTOPENGL_USER_FUNCTIONS(CTestUserFunctions, "test_user_functions");

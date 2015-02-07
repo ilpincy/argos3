@@ -83,8 +83,7 @@ namespace argos {
          if(tHandle == NULL) {
             THROW_ARGOSEXCEPTION("Can't load library \""
                                  << str_lib
-                                 << "\", "
-                                 << ::dlerror());
+                                 << "\"");
          }
          /* Store the handle to the loaded library */
          m_tOpenLibs[strLoadedLib] = tHandle;

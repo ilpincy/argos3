@@ -1,0 +1,97 @@
+<?xml version="1.0" ?>
+<argos-configuration>
+
+  <!-- ************************* -->
+  <!-- * General configuration * -->
+  <!-- ************************* -->
+  <framework>
+    <system threads="0" />
+    <experiment length="0" ticks_per_second="10" random_seed="1234" />
+  </framework>
+
+  <!-- ****************** -->
+  <!-- * Loop functions * -->
+  <!-- ****************** -->
+  <!-- loop_functions label="test_lf" /-->
+
+  <!-- *************** -->
+  <!-- * Controllers * -->
+  <!-- *************** -->
+  <controllers>
+
+    <!-- ***************************************************** -->
+    <!-- * This is the Lua controller to associate to robots * -->
+    <!-- ***************************************************** -->
+    <lua_controller id="lua">
+      <!-- Normal actuator/sensor configuration follows -->
+      <actuators>
+      </actuators>
+      <sensors>
+      </sensors>
+      <!-- No required configuration -->
+      <params />
+      <!-- Optionally, you can pass a script as a controller parameter: -->
+      <!-- <params script="../../src/testing/experiment/test_leds.lua" /> -->
+    </lua_controller>
+
+  </controllers>
+
+  <!-- *********************** -->
+  <!-- * Arena configuration * -->
+  <!-- *********************** -->
+  <arena size="10, 10, 5" center="0,0,2.5">
+
+    <distribute>
+      <position method="uniform" min="-5,-5,0" max="-2,-2,5" />
+      <orientation method="uniform" min="0,0,0" max="360,360,360" />
+      <entity quantity="100" max_trials="10" base_num="100">
+        <cylinder id="c" radius="0.05" height="0.2" movable="true" mass="0.1" />
+      </entity>
+    </distribute>
+
+    <distribute>
+      <position method="uniform" min="2,2,0" max="5,5,5" />
+      <orientation method="uniform" min="0,0,0" max="360,360,360" />
+      <entity quantity="100" max_trials="10" base_num="100">
+        <box id="b" size="0.1,0.1,0.1" movable="true" mass="0.1" />
+      </entity>
+    </distribute>
+
+    <!-- <mini-quadrotor id="mq0"> -->
+    <!--   <body position="0,0,2" orientation="0,0,0" /> -->
+    <!--   <controller config="lua" /> -->
+    <!-- </mini-quadrotor> -->
+  </arena>
+
+  <!-- ******************* -->
+  <!-- * Physics engines * -->
+  <!-- ******************* -->
+  <physics_engines>
+    <physx id="dyn3d" />
+    <!-- <dynamics2d id="dyn2d" /> -->
+  </physics_engines>
+
+  <!-- ********* -->
+  <!-- * Media * -->
+  <!-- ********* -->
+  <media>
+    <!-- <range_and_bearing id="rab" index="grid" grid_size="2,2,1" /> -->
+    <!-- <led id="leds" index="grid" grid_size="5,5,1" /> -->
+  </media>
+
+  <!-- ***************** -->
+  <!-- * Visualization * -->
+  <!-- ***************** -->
+  <visualization>
+
+    <qt-opengl lua_editor="false">
+      <camera>
+        <placement idx="0" position="-9.0392,0.249531,9.12501" look_at="-8.25253,0.249531,8.50764" lens_focal_length="20" />
+        <placement idx="1" position="1.19044,2.09028,0.880881" look_at="1.99307,2.61613,0.599341" lens_focal_length="20" />
+        <placement idx="2" position="-2.15218,-0.476379,1.66848" look_at="-2.40581,-1.27034,1.11595" lens_focal_length="20" />
+      </camera>
+    </qt-opengl>
+
+  </visualization>
+
+</argos-configuration>

@@ -47,8 +47,6 @@ namespace argos {
 
       virtual void Init(TConfigurationNode& t_tree);
       virtual void Reset();
-      virtual void Destroy();
-
       virtual void UpdateComponents();
       
       inline CControllableEntity& GetControllableEntity() {
@@ -106,10 +104,6 @@ namespace argos {
       virtual std::string GetTypeDescription() const {
          return "foot-bot";
       }
-
-   private:
-
-      void SetLEDPosition();
 
    private:
 

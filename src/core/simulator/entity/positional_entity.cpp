@@ -62,14 +62,10 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   bool CPositionalEntity::MoveTo(const CVector3& c_position,
-                                  const CQuaternion& c_orientation,
-                                  bool b_check_only) {
-      if(! b_check_only) {
-         SetPosition(c_position);
-         SetOrientation(c_orientation);
-      }
-      return true;
+   void CPositionalEntity::MoveTo(const CVector3& c_position,
+                                  const CQuaternion& c_orientation) {
+      SetPosition(c_position);
+      SetOrientation(c_orientation);
    }
 
    /****************************************/
