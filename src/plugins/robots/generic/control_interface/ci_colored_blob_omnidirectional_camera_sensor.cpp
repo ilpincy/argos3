@@ -56,7 +56,7 @@ namespace argos {
    void CCI_ColoredBlobOmnidirectionalCameraSensor::ReadingsToLuaState(lua_State* pt_lua_state) {
       lua_getfield(pt_lua_state, -1, "colored_blob_omnidirectional_camera");
       /* Save the number of elements in the blob list */
-      size_t unLastBlobNum = lua_objlen(pt_lua_state, -1);
+      size_t unLastBlobNum = lua_rawlen(pt_lua_state, -1);
       /* Overwrite the table with the new messages */
       for(size_t i = 0; i < m_sReadings.BlobList.size(); ++i) {
          SBlob& sBlob = *(m_sReadings.BlobList[i]);
