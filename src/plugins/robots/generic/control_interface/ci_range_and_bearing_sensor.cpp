@@ -42,7 +42,7 @@ namespace argos {
    void CCI_RangeAndBearingSensor::ReadingsToLuaState(lua_State* pt_lua_state) {
       lua_getfield(pt_lua_state, -1, "range_and_bearing");
       /* Save the number of elements in the RAB table */
-      size_t unLastMsgNum = lua_objlen(pt_lua_state, -1);
+      size_t unLastMsgNum = lua_rawlen(pt_lua_state, -1);
       /* Overwrite the table with the new messages */
       for(size_t i = 0; i < m_tReadings.size(); ++i) {
          CLuaUtility::StartTable(pt_lua_state, i+1);

@@ -30,7 +30,7 @@ namespace argos {
          /* Get reference to actuator */
          CCI_RangeAndBearingActuator* pcAct = CLuaUtility::GetDeviceInstance<CCI_RangeAndBearingActuator>(pt_lua_state, "range_and_bearing");
          /* Check whether sizes match */
-         if(pcAct->GetSize() != lua_objlen(pt_lua_state, -1)) {
+         if(pcAct->GetSize() != lua_rawlen(pt_lua_state, -1)) {
             return luaL_error(pt_lua_state, "robot.range_and_bearing.set_data(array) expects an array of %d numbers", pcAct->GetSize());
          }
          /* Fill up a byte array, checking that all elements are numbers */
