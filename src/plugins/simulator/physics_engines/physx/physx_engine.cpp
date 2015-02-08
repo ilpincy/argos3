@@ -349,7 +349,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   UInt32 CPhysXEngine::GetNumPhysicsEngineEntities() {
+   size_t CPhysXEngine::GetNumPhysicsModels() {
       return m_tPhysicsModels.size();
    }
 

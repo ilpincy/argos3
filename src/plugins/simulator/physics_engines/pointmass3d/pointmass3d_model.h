@@ -27,21 +27,16 @@ namespace argos {
    public:
 
       CPointMass3DModel(CPointMass3DEngine& c_engine,
-                        CEmbodiedEntity& c_entity) :
-         CPhysicsModel(c_engine, c_entity),
-         m_cPM3DEngine(c_engine) {}
+                        CEmbodiedEntity& c_entity);
 
       virtual ~CPointMass3DModel() {}
 
-      virtual bool MoveTo(const CVector3& c_position,
-                          const CQuaternion& c_orientation,
-                          bool b_check_only = false) {
-         return false;
-      }
+      virtual void MoveTo(const CVector3& c_position,
+                          const CQuaternion& c_orientation);
 
-      virtual void Reset() {}
+      virtual void Reset();
 
-      virtual void UpdateEntityStatus() = 0;
+      virtual void UpdateEntityStatus();
       virtual void Step() = 0;
       virtual void UpdateFromEntityStatus() = 0;
 
@@ -50,15 +45,25 @@ namespace argos {
       }
 
       virtual bool CheckIntersectionWithRay(Real& f_t_on_ray,
-                                            const CRay3& c_ray) const {
-         return false;
-      }
+                                            const CRay3& c_ray) const = 0;
+
+      /**
+       * Updates the origin anchor associated to the embodied entity.
+       */
+      void UpdateOriginAnchor(SAnchor& s_anchor);
 
    protected:
 
       CPointMass3DEngine& m_cPM3DEngine;
-      CVector3 m_cLinearVelocity;
-      CVector3 m_cLinearAcceleration;
+
+      /** The position of the model in this engine. */
+      CVector3 m_cPosition;
+
+      /** The linear velocity of this model in the engine. */
+      CVector3 m_cVelocity;
+
+      /** The acceleration of this model in the engine. */
+      CVector3 m_cAcceleration;
 
    };
 

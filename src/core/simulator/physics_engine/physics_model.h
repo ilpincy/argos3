@@ -196,7 +196,7 @@ namespace argos {
          return m_sBoundingBox;
       }
 
-   protected:
+   private:
 
       CPhysicsEngine& m_cEngine;
       CEmbodiedEntity& m_cEmbodiedEntity;

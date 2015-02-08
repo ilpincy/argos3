@@ -5,8 +5,9 @@
 # Headers of the 2d dynamics physics engine
 set(ARGOS3_HEADERS_PLUGINS_SIMULATOR_PHYSICS_ENGINES_POINTMASS3D
   pointmass3d_cylinder_model.h
+  pointmass3d_engine.h
   pointmass3d_model.h
-  pointmass3d_engine.h)
+  pointmass3d_quadrotor_model.h)
 
 #
 # Source files
@@ -14,7 +15,9 @@ set(ARGOS3_HEADERS_PLUGINS_SIMULATOR_PHYSICS_ENGINES_POINTMASS3D
 set(ARGOS3_SOURCES_PLUGINS_SIMULATOR_PHYSICS_ENGINES_POINTMASS3D
   ${ARGOS3_HEADERS_PLUGINS_SIMULATOR_PHYSICS_ENGINES_POINTMASS3D}
   pointmass3d_cylinder_model.cpp
-  pointmass3d_engine.cpp)
+  pointmass3d_engine.cpp
+  pointmass3d_model.cpp
+  pointmass3d_quadrotor_model.cpp)
 
 #
 # Create pointmass3d engine plugin library

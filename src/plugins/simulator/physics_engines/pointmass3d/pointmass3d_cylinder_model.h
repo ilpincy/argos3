@@ -27,12 +27,6 @@ namespace argos {
                                 CCylinderEntity& c_cylinder);
       virtual ~CPointMass3DCylinderModel() {}
       
-      virtual bool MoveTo(const CVector3& c_position,
-                          const CQuaternion& c_orientation,
-                          bool b_check_only = false);
-
-      virtual void Reset();
-
       virtual void UpdateFromEntityStatus() {}
       virtual void Step() {}
       virtual void UpdateEntityStatus() {}

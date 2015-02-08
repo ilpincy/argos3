@@ -1,10 +1,10 @@
 /**
- * @file <argos3/plugins/robots/foot-bot/simulator/pointmass3d_eyebot_model.h>
+ * @file <argos3/plugins/rorotors/foot-rotor/simulator/pointmass3d_quadrotor_model.h>
  *
  * @author Carlo Pinciroli - <cpinciro@ulb.ac.be>
  */
 
-#include "pointmass3d_eyebot_model.h"
+#include "pointmass3d_quadrotor_model.h"
 #include <argos3/core/utility/logging/argos_log.h>
 #include <argos3/core/utility/math/cylinder.h>
 #include <argos3/core/simulator/simulator.h>
@@ -39,18 +39,18 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   CPointMass3DEyeBotModel::CPointMass3DEyeBotModel(CPointMass3DEngine& c_engine,
-                                                    CEyeBotEntity& c_eyebot) :
-      CPointMass3DModel(c_engine, c_eyebot.GetEmbodiedEntity()),
-      m_cEyeBotEntity(c_eyebot),
-      m_cQuadRotorEntity(c_eyebot.GetQuadRotorEntity()) {
+   CPointMass3DQuadRotorModel::CPointMass3DQuadRotorModel(CPointMass3DEngine& c_engine,
+                                                          CEmbodiedEntity& c_body,
+                                                          CQuadRotorEntity& c_quadrotor) :
+      CPointMass3DModel(c_engine, c_body),
+      m_cQuadRotorEntity(c_quadrotor) {
       Reset();
    }
 
    /****************************************/
    /****************************************/
 
-   void CPointMass3DEyeBotModel::Reset() {
+   void CPointMass3DQuadRotorModel::Reset() {
       CPointMass3DModel::Reset();
       m_pfPosError[0] = 0.0f;
       m_pfPosError[1] = 0.0f;
@@ -61,110 +61,99 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CPointMass3DEyeBotModel::UpdateFromEntityStatus() {
+   void CPointMass3DQuadRotorModel::UpdateFromEntityStatus() {
       m_sDesiredPositionData = m_cQuadRotorEntity.GetPositionControlData();
    }
 
    /****************************************/
    /****************************************/
 
-   void CPointMass3DEyeBotModel::Step() {
+   void CPointMass3DQuadRotorModel::Step() {
       /*
        * Update positional information
        */
       /* Integration step */
-      m_cPosition.Set(
-         m_cEmbodiedEntity.GetPosition().GetX() + m_cLinearVelocity.GetX() * m_cPM3DEngine.GetPhysicsClockTick(),
-         m_cEmbodiedEntity.GetPosition().GetY() + m_cLinearVelocity.GetY() * m_cPM3DEngine.GetPhysicsClockTick(),
-         m_cEmbodiedEntity.GetPosition().GetZ() + m_cLinearVelocity.GetZ() * m_cPM3DEngine.GetPhysicsClockTick()));
-   m_cEmbodiedEntity.SetOrientation(
-      m_cEmbodiedEntity.GetOrientation() *
-      CQuaternion(
-         m_cRotationalVelocity * m_cPM3DEngine.GetPhysicsClockTick(),
-         CVector3::Z));
-      /* Limit the eye-bot position within the arena limits */
-      CVector3 cClampedPos = m_cEmbodiedEntity.GetPosition();
+      m_cPosition += m_cVelocity        * m_cPM3DEngine.GetPhysicsClockTick();
+      m_cYaw      += m_cRotationalSpeed * m_cPM3DEngine.GetPhysicsClockTick();
+      /* Limit the quad-rotor position within the arena limits */
       const CRange<CVector3>& cLimits = CSimulator::GetInstance().GetSpace().GetArenaLimits();
-      cClampedPos.SetX(
-         Min(
-            Max(cClampedPos.GetX(),
-                cLimits.GetMin().GetX() + BODY_RADIUS),
-            cLimits.GetMax().GetX() - BODY_RADIUS));
-      cClampedPos.SetY(
-         Min(
-            Max(cClampedPos.GetY(),
-                cLimits.GetMin().GetY() + BODY_RADIUS),
-            cLimits.GetMax().GetY() - BODY_RADIUS));
-      cClampedPos.SetZ(
-         Min(
-            Max(cClampedPos.GetZ(),
-                cLimits.GetMin().GetZ()),
-            cLimits.GetMax().GetZ() - BODY_HEIGHT));
+      m_cPosition.SetX(
+         Min(Max(m_cPosition.GetX(),
+                 cLimits.GetMin().GetX() + BODY_RADIUS),
+             cLimits.GetMax().GetX() - BODY_RADIUS));
+      m_cPosition.SetY(
+         Min(Max(m_cPosition.GetY(),
+                 cLimits.GetMin().GetY() + BODY_RADIUS),
+             cLimits.GetMax().GetY() - BODY_RADIUS));
+      m_cPosition.SetZ(
+         Min(Max(m_cPosition.GetZ(),
+                 cLimits.GetMin().GetZ()),
+             cLimits.GetMax().GetZ() - BODY_HEIGHT));
+      /* Normalize the yaw */
+      m_cYaw.UnsignedNormalize();
       /*
        * Update velocity information
        */
-      m_cLinearVelocity += (m_cPM3DEngine.GetPhysicsClockTick() / BODY_MASS) * m_cLinearAcceleration;
-      m_cRotationalVelocity += (m_cPM3DEngine.GetPhysicsClockTick() / BODY_INERTIA) * m_cRotationalAcceleration;
+      m_cVelocity        += (m_cPM3DEngine.GetPhysicsClockTick() / BODY_MASS)    * m_cAcceleration;
+      m_cRotationalSpeed += (m_cPM3DEngine.GetPhysicsClockTick() / BODY_INERTIA) * m_cTorque;
       /*
        * Update control information
        */
       /* Linear control */
       m_cLinearControl.Set(
          SymmetricClamp(MAX_FORCE_X, PDControl(
-                           m_sDesiredPositionData.Position.GetX() - m_cEmbodiedEntity.GetPosition().GetX(),
+                           m_sDesiredPositionData.Position.GetX() - m_cPosition.GetX(),
                            POS_K_P.GetX(),
                            POS_K_D.GetX(),
                            m_pfPosError[0])),
          SymmetricClamp(MAX_FORCE_Y, PDControl(
-                           m_sDesiredPositionData.Position.GetY() - m_cEmbodiedEntity.GetPosition().GetY(),
+                           m_sDesiredPositionData.Position.GetY() - m_cPosition.GetY(),
                            POS_K_P.GetY(),
                            POS_K_D.GetY(),
                            m_pfPosError[1])),
          SymmetricClamp(MAX_FORCE_Z, PDControl(
-                           m_sDesiredPositionData.Position.GetZ() - m_cEmbodiedEntity.GetPosition().GetZ(),
+                           m_sDesiredPositionData.Position.GetZ() - m_cPosition.GetZ(),
                            POS_K_P.GetZ(),
                            POS_K_D.GetZ(),
                            m_pfPosError[2]) - BODY_MASS * m_cPM3DEngine.GetGravity()));
       /* Rotational control */
-      CRadians cZAngle, cYAngle, cXAngle;
-      m_cEmbodiedEntity.GetOrientation().ToEulerAngles(cZAngle, cYAngle, cXAngle);
       m_fRotationalControl =
          SymmetricClamp(MAX_TORQUE, PDControl(
-                           (m_sDesiredPositionData.Yaw - cZAngle).SignedNormalize().GetValue(),
+                           (m_sDesiredPositionData.Yaw - m_cYaw).SignedNormalize().GetValue(),
                            ORIENT_K_P,
                            ORIENT_K_D,
                            m_fOrientError));
       /*
        * Update force/torque information
        */
-      m_cLinearAcceleration.SetX(m_cLinearControl.GetX());
-      m_cLinearAcceleration.SetY(m_cLinearControl.GetY());
-      m_cLinearAcceleration.SetZ(m_cLinearControl.GetZ() + BODY_MASS * m_cPM3DEngine.GetGravity());
-      m_cRotationalAcceleration.SetValue(m_fRotationalControl);
+      m_cAcceleration.SetX(m_cLinearControl.GetX());
+      m_cAcceleration.SetY(m_cLinearControl.GetY());
+      m_cAcceleration.SetZ(m_cLinearControl.GetZ() + BODY_MASS * m_cPM3DEngine.GetGravity());
+      m_cTorque.SetValue(m_fRotationalControl);
    }
 
    /****************************************/
    /****************************************/
 
-   void CPointMass3DEyeBotModel::CalculateBoundingBox() {
+   void CPointMass3DQuadRotorModel::CalculateBoundingBox() {
       GetBoundingBox().MinCorner.Set(
-         m_cEmbodiedEntity.GetPosition().GetX() - BODY_RADIUS,
-         m_cEmbodiedEntity.GetPosition().GetY() - BODY_RADIUS,
-         m_cEmbodiedEntity.GetPosition().GetZ());
+         GetEmbodiedEntity().GetOriginAnchor().Position.GetX() - BODY_RADIUS,
+         GetEmbodiedEntity().GetOriginAnchor().Position.GetY() - BODY_RADIUS,
+         GetEmbodiedEntity().GetOriginAnchor().Position.GetZ());
       GetBoundingBox().MaxCorner.Set(
-         m_cEmbodiedEntity.GetPosition().GetX() + BODY_RADIUS,
-         m_cEmbodiedEntity.GetPosition().GetY() + BODY_RADIUS,
-         m_cEmbodiedEntity.GetPosition().GetZ() + BODY_HEIGHT);
+         GetEmbodiedEntity().GetOriginAnchor().Position.GetX() + BODY_RADIUS,
+         GetEmbodiedEntity().GetOriginAnchor().Position.GetY() + BODY_RADIUS,
+         GetEmbodiedEntity().GetOriginAnchor().Position.GetZ() + BODY_HEIGHT);
    }
 
    /****************************************/
    /****************************************/
 
-   bool CPointMass3DEyeBotModel::CheckIntersectionWithRay(Real& f_t_on_ray,
-                                                          const CRay3& c_ray) const {
+   bool CPointMass3DQuadRotorModel::CheckIntersectionWithRay(Real& f_t_on_ray,
+                                                             const CRay3& c_ray) const {
       CCylinder m_cShape(BODY_RADIUS,
                          BODY_HEIGHT,
-                         m_cEmbodiedEntity.GetPosition(),
+                         m_cPosition,
                          CVector3::Z);
       return m_cShape.Intersects(f_t_on_ray, c_ray);
    }
@@ -172,21 +161,16 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   Real CPointMass3DEyeBotModel::PDControl(Real f_cur_error,
-                                           Real f_k_p,
-                                           Real f_k_d,
-                                           Real& f_old_error) {
+   Real CPointMass3DQuadRotorModel::PDControl(Real f_cur_error,
+                                              Real f_k_p,
+                                              Real f_k_d,
+                                              Real& f_old_error) {
       Real fOutput =
          f_k_p * f_cur_error +                                                      /* proportional term */
          f_k_d * (f_cur_error - f_old_error) / m_cPM3DEngine.GetPhysicsClockTick(); /* derivative term */
       f_old_error = f_cur_error;
       return fOutput;
    }
-
-   /****************************************/
-   /****************************************/
-
-   REGISTER_STANDARD_POINTMASS3D_OPERATIONS_ON_ENTITY(CEyeBotEntity, CPointMass3DEyeBotModel);
 
    /****************************************/
    /****************************************/

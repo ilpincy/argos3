@@ -76,24 +76,26 @@ namespace argos {
          m_pcQuadRotorEntity = new CQuadRotorEntity(this, "quadrotor_0");
          AddComponent(*m_pcQuadRotorEntity);
          /* LED equipped entity, with LEDs [0-11] and beacon [12] */
-         m_pcLEDEquippedEntity = new CLEDEquippedEntity(this,
-                                                        "leds_0",
-                                                        m_pcEmbodiedEntity);
+         m_pcLEDEquippedEntity = new CLEDEquippedEntity(this, "leds_0");
          m_pcLEDEquippedEntity->AddLEDRing(
             CVector3(0.0f, 0.0f, LED_LOWER_RING_ELEVATION),
             LED_RING_RADIUS,
             HALF_LED_ANGLE_SLICE,
-            16);
+            16,
+            m_pcEmbodiedEntity->GetOriginAnchor());
          m_pcLEDEquippedEntity->AddLEDRing(
             CVector3(0.0f, 0.0f, LED_UPPER_RING_ELEVATION),
             LED_RING_RADIUS,
             HALF_LED_ANGLE_SLICE,
-            16);
+            16,
+            m_pcEmbodiedEntity->GetOriginAnchor());
          CVector3 cLEDPos(LED_RING_RADIUS * 0.7f,
                           0.0f,
                           LED_LOWER_RING_ELEVATION - 0.01f);
          cLEDPos.RotateZ(3.0f * CRadians::PI_OVER_FOUR);
-         m_pcLEDEquippedEntity->AddLED(cLEDPos);
+         m_pcLEDEquippedEntity->AddLED(
+            cLEDPos,
+            m_pcEmbodiedEntity->GetOriginAnchor());
          AddComponent(*m_pcLEDEquippedEntity);
          /* Proximity sensor equipped entity */
          m_pcProximitySensorEquippedEntity =
@@ -105,7 +107,8 @@ namespace argos {
             PROXIMITY_SENSOR_RING_RADIUS,
             PROXIMITY_SENSOR_RING_START_ANGLE,
             PROXIMITY_SENSOR_RING_RANGE,
-            24);
+            24,
+            m_pcEmbodiedEntity->GetOriginAnchor());
          /* Light sensor equipped entity */
          m_pcLightSensorEquippedEntity =
             new CLightSensorEquippedEntity(this,
@@ -116,14 +119,16 @@ namespace argos {
             PROXIMITY_SENSOR_RING_RADIUS,
             PROXIMITY_SENSOR_RING_START_ANGLE,
             PROXIMITY_SENSOR_RING_RANGE,
-            24);
+            24,
+            m_pcEmbodiedEntity->GetOriginAnchor());
          /* RAB equipped entity */
-         m_pcRABEquippedEntity = new CRABEquippedEntity(this,
-                                                        "rab_0",
-                                                        10,
-                                                        f_rab_range,
-                                                        *m_pcEmbodiedEntity,
-                                                        CVector3());
+         m_pcRABEquippedEntity = new CRABEquippedEntity(
+            this,
+            "rab_0",
+            10,
+            f_rab_range,
+            m_pcEmbodiedEntity->GetOriginAnchor(),
+            *m_pcEmbodiedEntity);
          AddComponent(*m_pcRABEquippedEntity);
          /* Controllable entity
             It must be the last one, for actuators/sensors to link to composing entities correctly */
@@ -161,24 +166,26 @@ namespace argos {
          m_pcQuadRotorEntity = new CQuadRotorEntity(this, "quadrotor_0");
          AddComponent(*m_pcQuadRotorEntity);
          /* LED equipped entity, with LEDs [0-11] and beacon [12] */
-         m_pcLEDEquippedEntity = new CLEDEquippedEntity(this,
-                                                        "leds_0",
-                                                        m_pcEmbodiedEntity);
+         m_pcLEDEquippedEntity = new CLEDEquippedEntity(this, "leds_0");
          m_pcLEDEquippedEntity->AddLEDRing(
             CVector3(0.0f, 0.0f, LED_LOWER_RING_ELEVATION),
             LED_RING_RADIUS,
             HALF_LED_ANGLE_SLICE,
-            16);
+            16,
+            m_pcEmbodiedEntity->GetOriginAnchor());
          m_pcLEDEquippedEntity->AddLEDRing(
             CVector3(0.0f, 0.0f, LED_UPPER_RING_ELEVATION),
             LED_RING_RADIUS,
             HALF_LED_ANGLE_SLICE,
-            16);
+            16,
+            m_pcEmbodiedEntity->GetOriginAnchor());
          CVector3 cLEDPos(LED_RING_RADIUS * 0.7f,
                           0.0f,
                           LED_LOWER_RING_ELEVATION - 0.01f);
          cLEDPos.RotateZ(3.0f * CRadians::PI_OVER_FOUR);
-         m_pcLEDEquippedEntity->AddLED(cLEDPos);
+         m_pcLEDEquippedEntity->AddLED(
+            cLEDPos,
+            m_pcEmbodiedEntity->GetOriginAnchor());
          AddComponent(*m_pcLEDEquippedEntity);
          /* Proximity sensor equipped entity */
          m_pcProximitySensorEquippedEntity =
@@ -190,7 +197,8 @@ namespace argos {
             PROXIMITY_SENSOR_RING_RADIUS,
             PROXIMITY_SENSOR_RING_START_ANGLE,
             PROXIMITY_SENSOR_RING_RANGE,
-            24);
+            24,
+            m_pcEmbodiedEntity->GetOriginAnchor());
          /* Light sensor equipped entity */
          m_pcLightSensorEquippedEntity =
             new CLightSensorEquippedEntity(this,
@@ -201,16 +209,18 @@ namespace argos {
             PROXIMITY_SENSOR_RING_RADIUS,
             PROXIMITY_SENSOR_RING_START_ANGLE,
             PROXIMITY_SENSOR_RING_RANGE,
-            24);
+            24,
+            m_pcEmbodiedEntity->GetOriginAnchor());
          /* RAB equipped entity */
          Real fRange = 3.0f;
          GetNodeAttributeOrDefault(t_tree, "rab_range", fRange, fRange);
-         m_pcRABEquippedEntity = new CRABEquippedEntity(this,
-                                                        "rab_0",
-                                                        10,
-                                                        fRange,
-                                                        *m_pcEmbodiedEntity,
-                                                        CVector3());
+         m_pcRABEquippedEntity = new CRABEquippedEntity(
+            this,
+            "rab_0",
+            10,
+            fRange,
+            m_pcEmbodiedEntity->GetOriginAnchor(),
+            *m_pcEmbodiedEntity);
          AddComponent(*m_pcRABEquippedEntity);
          /* Controllable entity
             It must be the last one, for actuators/sensors to link to composing entities correctly */

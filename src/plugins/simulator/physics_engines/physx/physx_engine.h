@@ -72,7 +72,7 @@ namespace argos {
 
       virtual bool IsPointContained(const CVector3& c_point);
 
-      virtual UInt32 GetNumPhysicsEngineEntities();
+      virtual size_t GetNumPhysicsModels();
 
       virtual void AddEntity(CEntity& c_entity);
 

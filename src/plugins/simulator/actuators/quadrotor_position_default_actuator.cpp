@@ -30,9 +30,9 @@ namespace argos {
             /* Set the position control method */
             m_pcQuadRotorEntity->SetControlMethod(CQuadRotorEntity::POSITION_CONTROL);
             /* Set the initial desired data, which corresponds to the current position/yaw of the body */
-            m_sDesiredPosData.Position = m_pcEmbodiedEntity->GetPosition();
+            m_sDesiredPosData.Position = m_pcEmbodiedEntity->GetOriginAnchor().Position;
             CRadians cYAngle, cXAngle;
-            m_pcEmbodiedEntity->GetOrientation().ToEulerAngles(m_sDesiredPosData.Yaw, cYAngle, cXAngle);
+            m_pcEmbodiedEntity->GetOriginAnchor().Orientation.ToEulerAngles(m_sDesiredPosData.Yaw, cYAngle, cXAngle);
             m_pcQuadRotorEntity->SetPositionControlData(m_sDesiredPosData);
          }
          else {
@@ -68,8 +68,8 @@ namespace argos {
 
    void CQuadRotorPositionDefaultActuator::SetRelativePosition(const CVector3& c_pos) {
       m_sDesiredPosData.Position = c_pos;
-      m_sDesiredPosData.Position.Rotate(m_pcEmbodiedEntity->GetOrientation());
-      m_sDesiredPosData.Position += m_pcEmbodiedEntity->GetPosition();
+      m_sDesiredPosData.Position.Rotate(m_pcEmbodiedEntity->GetOriginAnchor().Orientation);
+      m_sDesiredPosData.Position += m_pcEmbodiedEntity->GetOriginAnchor().Position;
    }
 
    /****************************************/
@@ -84,7 +84,7 @@ namespace argos {
 
    void CQuadRotorPositionDefaultActuator::SetRelativeYaw(const CRadians& c_yaw) {
       CRadians cYAngle, cXAngle;
-      m_pcEmbodiedEntity->GetOrientation().ToEulerAngles(m_sDesiredPosData.Yaw, cYAngle, cXAngle);
+      m_pcEmbodiedEntity->GetOriginAnchor().Orientation.ToEulerAngles(m_sDesiredPosData.Yaw, cYAngle, cXAngle);
       m_sDesiredPosData.Yaw += c_yaw;
    }
 
