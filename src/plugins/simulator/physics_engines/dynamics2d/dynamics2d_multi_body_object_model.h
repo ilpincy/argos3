@@ -1,14 +1,14 @@
 /**
- * @file <argos3/plugins/simulator/physics_engines/dynamics2d/dynamics2d_single_body_object_model.h>
+ * @file <argos3/plugins/simulator/physics_engines/dynamics2d/dynamics2d_multi_body_object_model.h>
  *
  * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */
 
-#ifndef DYNAMICS2D_SINGLE_BODY_OBJECT_MODEL_H
-#define DYNAMICS2D_SINGLE_BODY_OBJECT_MODEL_H
+#ifndef DYNAMICS2D_MULTI_BODY_OBJECT_MODEL_H
+#define DYNAMICS2D_MULTI_BODY_OBJECT_MODEL_H
 
 namespace argos {
-   class CDynamics2DSingleBodyObjectModel;
+   class CDynamics2DMultiBodyObjectModel;
 }
 
 #include <argos3/plugins/simulator/physics_engines/dynamics2d/dynamics2d_model.h>
@@ -17,16 +17,13 @@ namespace argos {
 namespace argos {
 
    /**
-    * Base class for object models with a single body.
+    * Base class for object models with multiple bodies.
     * <p>
     * This class offers all the basic functionality to manage
-    * models composed of a single body. These models, while having
-    * only a single body, can have multiple associated shapes.
+    * models composed of multiple bodies.
     * </p>
     * <p>
-    * Single-body objects are often passive objects such as boxes and
-    * cylinders, and simple robots with no moving parts, such as the
-    * e-puck.
+    * Multi-body objects are often active objects such as robots.
     * </p>
     * <p>
     * To use this class, simply create a class that inherits from it.
@@ -34,17 +31,17 @@ namespace argos {
     * be already OK for your needs.
     * </p>
     * <p>
-    * In the constructor of your class, be sure to call the method SetBody()
-    * when you have created the body and associated the shapes to it. If this
+    * In the constructor of your class, be sure to call the method AddBody()
+    * when you have created the bodies and associated the shapes to them. If this
     * method is not called, the default implementations will have segfaults.
     * </p>
     * <p>
-    * This class retains ownership for the body and shapes you created once
-    * you call SetBody(). In other words, you don't need to free these objects
-    * because ~CDynamics2DSingleBodyObjectModel() does it for you.
+    * This class retains ownership for the bodies and shapes you created once
+    * you call AddBody(). In other words, you don't need to free these objects
+    * because ~CDynamics2DMultiBodyObjectModel() does it for you.
     * </p>
     */
-   class CDynamics2DSingleBodyObjectModel : public CDynamics2DModel {
+   class CDynamics2DMultiBodyObjectModel : public CDynamics2DModel {
 
    public:
 
@@ -54,14 +51,14 @@ namespace argos {
        * @param c_entity The composable entity associated to this model.
        * @throws CARGoSException if c_entity does not contain an embodied entity.
        */
-      CDynamics2DSingleBodyObjectModel(CDynamics2DEngine& c_engine,
-                                       CComposableEntity& c_entity);
+      CDynamics2DMultiBodyObjectModel(CDynamics2DEngine& c_engine,
+                                      CComposableEntity& c_entity);
 
       /**
        * Class destructor.
        * Disposes of the object body and its shapes.
        */
-      virtual ~CDynamics2DSingleBodyObjectModel();
+      virtual ~CDynamics2DMultiBodyObjectModel();
 
       /**
        * Returns the associated composable entity as a non-const reference.
@@ -79,22 +76,6 @@ namespace argos {
          return m_cEntity;
       }
 
-      /**
-       * Returns the body as non-const pointer.
-       * @returns The body as non-const pointer.
-       */
-      inline cpBody* GetBody() {
-         return m_ptBody;
-      }
-
-      /**
-       * Returns the body as const pointer.
-       * @returns The body as const pointer.
-       */
-      inline const cpBody* GetBody() const {
-         return m_ptBody;
-      }
-
       virtual void Reset();
 
       virtual void MoveTo(const CVector3& c_position,
@@ -102,14 +83,12 @@ namespace argos {
 
       virtual void CalculateBoundingBox();
 
-      virtual void UpdateEntityStatus();
-
       virtual void UpdateFromEntityStatus()  = 0;
 
       virtual bool IsCollidingWithSomething() const;
 
       /**
-       * Sets the body and registers the default origin anchor method.
+       * Adds a body.
        * <p>
        * You must call this method for this class' methods to work.
        * </p>
@@ -118,7 +97,7 @@ namespace argos {
        * need to explicitly delete anything.
        * </p>
        * <p>
-       * Internally, this method also sets <tt>pt_body->data</tt> to
+       * Internally, this method also sets <tt>pc_body->userData</tt> to
        * point to <tt>this</tt>, which is a requirement for ray
        * cast queries to work properly.
        * </p>
@@ -128,20 +107,32 @@ namespace argos {
        * </p>
        * <p>
        * @param pt_body The object body.
+       * @param t_offset_pos The position of the body wrt the origin anchor.
+       * @param t_offset_orient The orientation of the body wrt the origin anchor.
        * @param f_height The object height.
        */
-      virtual void SetBody(cpBody* pt_body,
+      virtual void AddBody(cpBody* pt_body,
+                           const cpVect& t_offset_pos,
+                           cpFloat t_offset_orient,
                            Real f_height);
+      
+   private:
 
-      /**
-       * Updates the origin anchor associated to the embodied entity.
-       */
-      void UpdateOriginAnchor(SAnchor& s_anchor);
+      struct SBody {
+         cpBody* Body;
+         cpVect  OffsetPos;
+         cpFloat OffsetOrient;
+         Real    Height;
+         SBody(cpBody* pt_body,
+               const cpVect& t_offset_pos,
+               cpFloat t_offset_orient,
+               Real f_height);
+      };
 
    private:
 
       CComposableEntity& m_cEntity;
-      cpBody*            m_ptBody;
+      std::vector<SBody> m_vecBodies;
    };
 
 }

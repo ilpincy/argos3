@@ -43,6 +43,8 @@ namespace argos {
 
       virtual void Reset();
 
+      virtual void UpdateFromEntityStatus() {}
+
       inline Real GetMass() const {
          return m_fMass;
       }

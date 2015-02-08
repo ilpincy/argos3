@@ -48,6 +48,7 @@ namespace argos {
        * Class constructor.
        * @param c_engine The dynamics 2D engine that manages this model.
        * @param c_entity The composable entity associated to this model.
+       * @param un_num_bodies The number of bodies that compose this model.
        * @throws CARGoSException if c_entity does not contain an embodied entity.
        */
       CPhysXMultiBodyObjectModel(CPhysXEngine& c_engine,

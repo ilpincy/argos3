@@ -317,38 +317,27 @@ namespace argos {
    bool CEmbodiedEntity::MoveTo(const CVector3& c_position,
                                 const CQuaternion& c_orientation,
                                 bool b_check_only) {
-      bool bNoCollision = true;
-      CVector3 cOriginalPosition = m_psOriginAnchor->Position;
+      /* Can't move a static entity or an entity with no model associated */
+      if(! m_bMovable || GetPhysicsModelsNum() == 0) return false;
+      /* If we are here it's because the entity is movable,
+       * and it has one associated model */
+      /* Save current position and orientation */
+      CVector3    cOriginalPosition    = m_psOriginAnchor->Position;
       CQuaternion cOriginalOrientation = m_psOriginAnchor->Orientation;
-      for(CPhysicsModel::TVector::const_iterator it = m_tPhysicsModelVector.begin();
-          it != m_tPhysicsModelVector.end() && bNoCollision; ++it) {
-         (*it)->MoveTo(c_position, c_orientation);
-         bNoCollision = ! (*it)->IsCollidingWithSomething();
-      }
+      /* Move entity and check for collisions */
+      m_tPhysicsModelVector[0]->MoveTo(c_position, c_orientation);
+      bool bNoCollision = ! m_tPhysicsModelVector[0]->IsCollidingWithSomething();
+      /* Depending on the presence of collisions... */
       if(bNoCollision && !b_check_only) {
-         /* Update parent */
-         if(HasParent()) {
-            CComposableEntity* pcEntity = dynamic_cast<CComposableEntity*>(&GetParent());
-            if(pcEntity != NULL) {
-               pcEntity->Update();
-            }
-         }
+         /* No collision and not a simple check -> update parent */
+         /* Tell the caller that we managed to move the entity */
          return true;
       }
       else {
-         /* No Collision or check only, undo changes */
-         for(CPhysicsModel::TVector::const_iterator it = m_tPhysicsModelVector.begin();
-             it != m_tPhysicsModelVector.end(); ++it) {
-            (*it)->MoveTo(cOriginalPosition, cOriginalOrientation);
-         }
-         if(!bNoCollision) {
-            /* Collision */
-            return false;
-         }
-         else {
-            /* No collision, it was a check-only */
-            return true;
-         }
+         /* No Collision or just a check, undo changes */
+         m_tPhysicsModelVector[0]->MoveTo(cOriginalPosition, cOriginalOrientation);
+         /* Tell the caller about collisions */
+         return !bNoCollision;
       }
    }
 

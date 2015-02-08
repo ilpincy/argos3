@@ -32,7 +32,7 @@ namespace argos {
 
    void CPointMass3DModel::MoveTo(const CVector3& c_position,
                                   const CQuaternion& c_orientation) {
-      CalculateBoundingBox();
+      m_cPosition = GetEmbodiedEntity().GetOriginAnchor().Position;
       UpdateEntityStatus();
    }
 

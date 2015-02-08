@@ -37,14 +37,15 @@ namespace argos {
 
    void CDynamics2DSingleBodyObjectModel::MoveTo(const CVector3& c_position,
                                                  const CQuaternion& c_orientation) {
-      /* Can't move a static body */
-      if(cpBodyIsStatic(m_ptBody)) return;
       /* Move the body to the desired position */
       m_ptBody->p = cpv(c_position.GetX(), c_position.GetY());
       CRadians cXAngle, cYAngle, cZAngle;
       c_orientation.ToEulerAngles(cZAngle, cYAngle, cXAngle);
       cpBodySetAngle(m_ptBody, cZAngle.GetValue());
+      /* Update shape index */
       cpSpaceReindexShapesForBody(GetDynamics2DEngine().GetPhysicsSpace(), m_ptBody);
+      /* Update ARGoS entity state */
+      UpdateEntityStatus();
    }
 
    /****************************************/

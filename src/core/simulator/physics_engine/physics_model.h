@@ -152,7 +152,22 @@ namespace argos {
       virtual void UpdateFromEntityStatus() = 0;
 
       /**
-       * Moves the entity to the wanted position and orientation.
+       * <p>
+       * Moves the entity to the wanted position and orientation within this engine.
+       * When you create a new model, you must implement this method. Don't forget
+       * to call UpdateEntityStatus() after you've changed the position.
+       * </p>
+       * <p>
+       * This method should never be called directly from user code. It is called
+       * internally by CEmbodiedEntity::MoveTo(), which is meant to be called
+       * from user code.
+       * </p>
+       * <p>
+       * CEmbodiedEntity::MoveTo() never calls this method if the embodied entity
+       * is static. This is because static entities cannot be moved around. Thus,
+       * there's no need in your code to check whether the associated entity is
+       * static.
+       * </p>
        * @param c_position The wanted position.
        * @param c_orientation The wanted orientation.
        */

@@ -45,9 +45,8 @@ namespace argos {
          m_vecBodies[i].Body.clearForce();
          m_vecBodies[i].Body.clearTorque();
       }
-      /* Update BB and anchors */
-      CalculateBoundingBox();
-      CalculateAnchors();
+      /* Update ARGoS entity status */
+      UpdateEntityStatus();
    }
 
    /****************************************/

@@ -60,8 +60,6 @@ namespace argos {
 
    void CPhysXSingleBodyObjectModel::MoveTo(const CVector3& c_position,
                                             const CQuaternion& c_orientation) {
-      /* Can't move a static body */
-      if(! m_bIsDynamic) return;
       /* Set target position and orientation */
       physx::PxTransform cBodyTrans;
       CVector3ToPxVec3(c_position, cBodyTrans.p);
