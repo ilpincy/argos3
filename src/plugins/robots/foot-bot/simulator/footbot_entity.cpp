@@ -111,12 +111,15 @@ namespace argos {
          m_pcLEDEquippedEntity = new CLEDEquippedEntity(this,
                                                         "leds_0");
          AddComponent(*m_pcLEDEquippedEntity);
-         for(UInt32 i = 0; i < 13; ++i) {
-            m_pcLEDEquippedEntity->AddLED(CVector3(),
-                                          m_pcEmbodiedEntity->GetOriginAnchor());
-         }
-         m_pcLEDEquippedEntity->Disable();
-         m_pcLEDEquippedEntity->SetCanBeEnabledIfDisabled(false);
+         m_pcLEDEquippedEntity->AddLEDRing(
+            CVector3(0.0f, 0.0f, LED_RING_ELEVATION),
+            LED_RING_RADIUS,
+            HALF_LED_ANGLE_SLICE,
+            12,
+            m_pcEmbodiedEntity->GetOriginAnchor());
+         m_pcLEDEquippedEntity->AddLED(
+            CVector3(0.0f, 0.0f, BEACON_ELEVATION),
+            m_pcEmbodiedEntity->GetOriginAnchor());
          /* Proximity sensor equipped entity */
          m_pcProximitySensorEquippedEntity =
             new CProximitySensorEquippedEntity(this,
@@ -255,9 +258,15 @@ namespace argos {
          /* LED equipped entity, with LEDs [0-11] and beacon [12] */
          m_pcLEDEquippedEntity = new CLEDEquippedEntity(this, "leds_0");
          AddComponent(*m_pcLEDEquippedEntity);
-         for(UInt32 i = 0; i < 13; ++i) {
-            m_pcLEDEquippedEntity->AddLED(CVector3(), m_pcEmbodiedEntity->GetOriginAnchor());
-         }
+         m_pcLEDEquippedEntity->AddLEDRing(
+            CVector3(0.0f, 0.0f, LED_RING_ELEVATION),
+            LED_RING_RADIUS,
+            HALF_LED_ANGLE_SLICE,
+            12,
+            m_pcEmbodiedEntity->GetOriginAnchor());
+         m_pcLEDEquippedEntity->AddLED(
+            CVector3(0.0f, 0.0f, BEACON_ELEVATION),
+            m_pcEmbodiedEntity->GetOriginAnchor());
          /* Proximity sensor equipped entity */
          m_pcProximitySensorEquippedEntity =
             new CProximitySensorEquippedEntity(this,

@@ -102,10 +102,10 @@ namespace argos {
       }      
       GetBoundingBox().MinCorner.SetX(tBoundingBox.l);
       GetBoundingBox().MinCorner.SetY(tBoundingBox.b);
+      GetBoundingBox().MinCorner.SetZ(GetDynamics2DEngine().GetElevation());
       GetBoundingBox().MaxCorner.SetX(tBoundingBox.r);
       GetBoundingBox().MaxCorner.SetY(tBoundingBox.t);
-      GetBoundingBox().MinCorner.SetZ(GetDynamics2DEngine().GetElevation());
-      GetBoundingBox().MinCorner.SetZ(GetDynamics2DEngine().GetElevation() + fMaxHeight);
+      GetBoundingBox().MaxCorner.SetZ(GetDynamics2DEngine().GetElevation() + fMaxHeight);
    }
 
    /****************************************/

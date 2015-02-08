@@ -26,6 +26,7 @@ namespace argos {
 
    CLEDEquippedEntity::CLEDEquippedEntity(CComposableEntity* pc_parent) :
       CComposableEntity(pc_parent) {
+      Disable();
    }
 
    /****************************************/
@@ -34,6 +35,7 @@ namespace argos {
    CLEDEquippedEntity::CLEDEquippedEntity(CComposableEntity* pc_parent,
                                           const std::string& str_id) :
       CComposableEntity(pc_parent, str_id) {
+      Disable();
    }
 
    /****************************************/

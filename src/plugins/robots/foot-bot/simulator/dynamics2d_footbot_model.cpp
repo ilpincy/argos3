@@ -197,10 +197,10 @@ namespace argos {
    void CDynamics2DFootBotModel::CalculateBoundingBox() {
       GetBoundingBox().MinCorner.SetX(m_ptBaseShape->bb.l);
       GetBoundingBox().MinCorner.SetY(m_ptBaseShape->bb.b);
+      GetBoundingBox().MinCorner.SetZ(GetDynamics2DEngine().GetElevation());
       GetBoundingBox().MaxCorner.SetX(m_ptBaseShape->bb.r);
       GetBoundingBox().MaxCorner.SetY(m_ptBaseShape->bb.t);
-      GetBoundingBox().MinCorner.SetZ(GetDynamics2DEngine().GetElevation());
-      GetBoundingBox().MinCorner.SetZ(GetDynamics2DEngine().GetElevation() + FOOTBOT_HEIGHT);
+      GetBoundingBox().MaxCorner.SetZ(GetDynamics2DEngine().GetElevation() + FOOTBOT_HEIGHT);
    }
 
    /****************************************/
