@@ -41,17 +41,6 @@ namespace argos {
 
       virtual void Reset() = 0;
 
-      virtual void MoveTo(const CVector3& c_position,
-                          const CQuaternion& c_orientation) = 0;
-
-      virtual void CalculateBoundingBox() = 0;
-
-      virtual void UpdateEntityStatus() = 0;
-
-      virtual void UpdateFromEntityStatus() = 0;
-
-      virtual bool IsCollidingWithSomething() const = 0;
-
       /**
        * Returns the dynamics 2D engine state.
        * @return The dynamics 2D engine state.

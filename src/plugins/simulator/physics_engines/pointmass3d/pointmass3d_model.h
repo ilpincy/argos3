@@ -36,7 +36,6 @@ namespace argos {
 
       virtual void Reset();
 
-      virtual void UpdateEntityStatus();
       virtual void Step() = 0;
       virtual void UpdateFromEntityStatus() = 0;
 

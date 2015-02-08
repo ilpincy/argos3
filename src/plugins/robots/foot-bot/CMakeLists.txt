@@ -63,7 +63,7 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
   set(ARGOS3_SOURCES_PLUGINS_ROBOTS_FOOTBOT
     ${ARGOS3_SOURCES_PLUGINS_ROBOTS_FOOTBOT}
     ${ARGOS3_HEADERS_PLUGINS_ROBOTS_FOOTBOT_SIMULATOR}
-    # simulator/dynamics2d_footbot_model.cpp
+    simulator/dynamics2d_footbot_model.cpp
     # simulator/physx_footbot_model.cpp
     simulator/footbot_base_ground_rotzonly_sensor.cpp
     simulator/footbot_distance_scanner_default_actuator.cpp

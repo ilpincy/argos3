@@ -42,7 +42,7 @@ namespace argos {
 
    CDynamics2DFootBotModel::CDynamics2DFootBotModel(CDynamics2DEngine& c_engine,
                                                     CFootBotEntity& c_entity) :
-      CDynamics2DModel(c_engine, c_entity.GetEmbodiedEntity()),
+      CDynamics2DMultiBodyObjectModel(c_engine, c_entity),
       m_cFootBotEntity(c_entity),
       m_cWheeledEntity(m_cFootBotEntity.GetWheeledEntity()),
       m_cGripperEntity(c_entity.GetGripperEquippedEntity()),
@@ -63,7 +63,7 @@ namespace argos {
          &CDynamics2DFootBotModel::UpdateOriginAnchor);
       /* Create the actual body with initial position and orientation */
       m_ptActualBaseBody =
-         cpSpaceAddBody(m_cDyn2DEngine.GetPhysicsSpace(),
+         cpSpaceAddBody(GetDynamics2DEngine().GetPhysicsSpace(),
                         cpBodyNew(m_fMass,
                                   cpMomentForCircle(m_fMass,
                                                     0.0f,
@@ -76,7 +76,7 @@ namespace argos {
       cpBodySetAngle(m_ptActualBaseBody, cZAngle.GetValue());
       /* Create the actual body shape */
       m_ptBaseShape =
-         cpSpaceAddShape(m_cDyn2DEngine.GetPhysicsSpace(),
+         cpSpaceAddShape(GetDynamics2DEngine().GetPhysicsSpace(),
                          cpCircleShapeNew(m_ptActualBaseBody,
                                           FOOTBOT_RADIUS,
                                           cpvzero));
@@ -87,9 +87,11 @@ namespace argos {
                                                m_ptBaseShape);
       /* Constrain the actual base body to follow the diff steering control */
       m_cDiffSteering.AttachTo(m_ptActualBaseBody);
+      /* Add the body so that the default methods work as expected */
+      AddBody(m_ptActualBaseBody, cpvzero, 0, FOOTBOT_HEIGHT);
       /* Create the gripper body */      
       m_ptActualGripperBody =
-         cpSpaceAddBody(m_cDyn2DEngine.GetPhysicsSpace(),
+         cpSpaceAddBody(GetDynamics2DEngine().GetPhysicsSpace(),
                         cpBodyNew(m_fMass / 20.0,
                                   cpMomentForCircle(m_fMass,
                                                     0.0f,
@@ -100,40 +102,35 @@ namespace argos {
                      cZAngle.GetValue() +
                      m_cFootBotEntity.GetTurretEntity().GetRotation().GetValue());
       /* Create the gripper shape */
-      m_ptGripperShape = 
-         cpSpaceAddShape(m_cDyn2DEngine.GetPhysicsSpace(),
+      cpShape* ptGripperShape = 
+         cpSpaceAddShape(GetDynamics2DEngine().GetPhysicsSpace(),
                          cpCircleShapeNew(m_ptActualGripperBody,
                                           0.01f,
                                           cpv(FOOTBOT_RADIUS, 0.0f)));
-      m_pcGripper = new CDynamics2DGripper(m_cDyn2DEngine,
+      m_pcGripper = new CDynamics2DGripper(GetDynamics2DEngine(),
                                            m_cGripperEntity,
-                                           m_ptGripperShape);
+                                           ptGripperShape);
       /* Constrain the actual gripper body to follow the actual base body */
       m_ptBaseGripperLinearMotion =
-         cpSpaceAddConstraint(m_cDyn2DEngine.GetPhysicsSpace(),
+         cpSpaceAddConstraint(GetDynamics2DEngine().GetPhysicsSpace(),
                               cpPivotJointNew2(m_ptActualBaseBody,
                                                m_ptActualGripperBody,
                                                cpvzero,
                                                cpvzero));
-      m_ptBaseGripperAngularMotion = cpSpaceAddConstraint(m_cDyn2DEngine.GetPhysicsSpace(),
+      m_ptBaseGripperAngularMotion = cpSpaceAddConstraint(GetDynamics2DEngine().GetPhysicsSpace(),
                                                           cpGearJointNew(m_ptActualBaseBody,
                                                                          m_ptActualGripperBody,
                                                                          0.0f,
                                                                          1.0f));
       m_ptBaseGripperAngularMotion->maxBias = 0.0f; /* disable joint correction */
       m_ptBaseGripperAngularMotion->maxForce = FOOTBOT_MAX_TORQUE; /* limit the dragging torque */
-      /* Associate this model to the body data for ray queries */
-      m_ptActualBaseBody->data = this;
-      m_ptActualGripperBody->data = this;
+      /* Add the gripper body so that the default methods work as expected */
+      AddBody(m_ptActualGripperBody, cpvzero, 0, FOOTBOT_HEIGHT);
       /* Switch to active mode if necessary */
       if(m_unLastTurretMode == MODE_SPEED_CONTROL ||
          m_unLastTurretMode == MODE_POSITION_CONTROL) {
          TurretActiveToPassive();
       }
-      /* Calculate bounding box */
-      GetBoundingBox().MinCorner.SetZ(GetEmbodiedEntity().GetOriginAnchor().Position.GetZ());
-      GetBoundingBox().MaxCorner.SetZ(GetEmbodiedEntity().GetOriginAnchor().Position.GetZ() + FOOTBOT_HEIGHT);
-      CalculateBoundingBox();
    }
 
    /****************************************/
@@ -145,123 +142,53 @@ namespace argos {
       switch(m_unLastTurretMode) {
          case MODE_OFF:
          case MODE_PASSIVE:
-            cpSpaceRemoveConstraint(m_cDyn2DEngine.GetPhysicsSpace(), m_ptBaseGripperLinearMotion);
-            cpSpaceRemoveConstraint(m_cDyn2DEngine.GetPhysicsSpace(), m_ptBaseGripperAngularMotion);
-            cpSpaceRemoveBody(m_cDyn2DEngine.GetPhysicsSpace(), m_ptActualGripperBody);
-            cpSpaceRemoveShape(m_cDyn2DEngine.GetPhysicsSpace(), m_ptGripperShape);
+            cpSpaceRemoveConstraint(GetDynamics2DEngine().GetPhysicsSpace(), m_ptBaseGripperLinearMotion);
+            cpSpaceRemoveConstraint(GetDynamics2DEngine().GetPhysicsSpace(), m_ptBaseGripperAngularMotion);
             cpConstraintFree(m_ptBaseGripperLinearMotion);
             cpConstraintFree(m_ptBaseGripperAngularMotion);
-            cpShapeFree(m_ptGripperShape);
-            cpBodyFree(m_ptActualGripperBody);
             break;
          case MODE_POSITION_CONTROL:
          case MODE_SPEED_CONTROL:
-            cpSpaceRemoveConstraint(m_cDyn2DEngine.GetPhysicsSpace(), m_ptBaseGripperLinearMotion);
-            cpSpaceRemoveConstraint(m_cDyn2DEngine.GetPhysicsSpace(), m_ptGripperControlAngularMotion);
-            cpSpaceRemoveBody(m_cDyn2DEngine.GetPhysicsSpace(), m_ptActualGripperBody);
-            cpSpaceRemoveShape(m_cDyn2DEngine.GetPhysicsSpace(), m_ptGripperShape);
+            cpSpaceRemoveConstraint(GetDynamics2DEngine().GetPhysicsSpace(), m_ptBaseGripperLinearMotion);
+            cpSpaceRemoveConstraint(GetDynamics2DEngine().GetPhysicsSpace(), m_ptGripperControlAngularMotion);
             cpConstraintFree(m_ptBaseGripperLinearMotion);
             cpConstraintFree(m_ptGripperControlAngularMotion);
-            cpShapeFree(m_ptGripperShape);
-            cpBodyFree(m_ptActualGripperBody);
             cpBodyFree(m_ptControlGripperBody);
             break;
       }
       m_cDiffSteering.Detach();
-      cpSpaceRemoveBody(m_cDyn2DEngine.GetPhysicsSpace(), m_ptActualBaseBody);
-      cpSpaceRemoveShape(m_cDyn2DEngine.GetPhysicsSpace(), m_ptBaseShape);
-      cpShapeFree(m_ptBaseShape);
-      cpBodyFree(m_ptActualBaseBody);
    }
 
    /****************************************/
    /****************************************/
 
-   bool CDynamics2DFootBotModel::MoveTo(const CVector3& c_position,
-                                         const CQuaternion& c_orientation,
-                                         bool b_check_only) {
-      /* Save body position and orientation */
-      cpVect tOldPos = m_ptActualBaseBody->p;
-      cpFloat fOldA = m_ptActualBaseBody->a;
-      /* Move the body to the desired position */
-      m_ptActualBaseBody->p = cpv(c_position.GetX(), c_position.GetY());
-      CRadians cXAngle, cYAngle, cZAngle;
-      c_orientation.ToEulerAngles(cZAngle, cYAngle, cXAngle);
-      cpBodySetAngle(m_ptActualBaseBody, cZAngle.GetValue());
-      /* Create a shape sensor to test the movement */
-      cpShape* ptTestShape = cpCircleShapeNew(m_ptActualBaseBody,
-                                              FOOTBOT_RADIUS,
-                                              cpvzero);
-      /* Check if there is a collision */
-      SInt32 nCollision = cpSpaceShapeQuery(m_cDyn2DEngine.GetPhysicsSpace(), ptTestShape, NULL, NULL);
-      /* Dispose of the sensor shape */
-      cpShapeFree(ptTestShape);
-      /* Should we keep this movement? */
-      if(b_check_only || nCollision) {
-         /*
-          * No, because it was only a check or there was a collision
-          * Restore old body state
-          */
-         m_ptActualBaseBody->p = tOldPos;
-         cpBodySetAngle(m_ptActualBaseBody, fOldA);
-      }
-      else {
-         /*
-          * It wasn't a check and there were no collisions
-          * Keep the movement and move the gripper body too
-          */
-         m_ptActualGripperBody->p = cpv(c_position.GetX(), c_position.GetY());
-         cpBodySetAngle(m_ptActualGripperBody,
-                        cZAngle.GetValue() + m_cFootBotEntity.GetTurretEntity().GetRotation().GetValue());
-         /* Release grippers and gripees */
-         m_pcGripper->Release();
-         m_pcGrippable->ReleaseAll();
-         /* Update the active space hash */
-         cpSpaceReindexShape(m_cDyn2DEngine.GetPhysicsSpace(), m_ptBaseShape);
-         /* Update anchors */
-         CalculateAnchors();
-         /* Update bounding box */
-         CalculateBoundingBox();
-      }
-      /* The movement is allowed if there is no collision */
-      return !nCollision;
+   void CDynamics2DFootBotModel::MoveTo(const CVector3& c_position,
+                                        const CQuaternion& c_orientation) {
+      /* Release grippers and grippees */
+      m_pcGripper->Release();
+      m_pcGrippable->ReleaseAll();
+      /* Move robot */
+      CDynamics2DMultiBodyObjectModel::MoveTo(c_position,
+                                              c_orientation);
    }
 
    /****************************************/
    /****************************************/
 
    void CDynamics2DFootBotModel::Reset() {
-      /* Reset body position */
-      const CVector3& cPosition = GetEmbodiedEntity().GetOriginAnchor().Position;
-      m_ptActualBaseBody->p = cpv(cPosition.GetX(), cPosition.GetY());
-      m_ptActualGripperBody->p = cpv(cPosition.GetX(), cPosition.GetY());
-      /* Reset body orientation */
-      CRadians cXAngle, cYAngle, cZAngle;
-      GetEmbodiedEntity().GetOriginAnchor().Orientation.ToEulerAngles(cZAngle, cYAngle, cXAngle);
-      cpBodySetAngle(m_ptActualBaseBody, cZAngle.GetValue());
-      cpBodySetAngle(m_ptActualGripperBody, cZAngle.GetValue());
-      /* Zero speed and applied forces of actual base body */
-      m_ptActualBaseBody->v = cpvzero;
-      m_ptActualBaseBody->w = 0.0f;
-      cpBodyResetForces(m_ptActualBaseBody);
       /* Zero speed and applied forces of base control body */
       m_cDiffSteering.Reset();
       /* Release grippers and gripees */
       m_pcGripper->Release();
       m_pcGrippable->ReleaseAll();
-      /* Zero speed and applied forces of actual gripper body */
-      m_ptActualGripperBody->v = cpvzero;
-      m_ptActualGripperBody->w = 0.0f;
-      cpBodyResetForces(m_ptActualGripperBody);
       /* Switch to turret passive mode if needed */
       if(m_unLastTurretMode == MODE_SPEED_CONTROL ||
          m_unLastTurretMode == MODE_POSITION_CONTROL) {
          TurretActiveToPassive();
          m_unLastTurretMode = MODE_OFF;
       }
-      /* Update bounding box */
-      cpShapeCacheBB(m_ptBaseShape);
-      CalculateBoundingBox();
+      /* Reset the rest */
+      CDynamics2DMultiBodyObjectModel::Reset();
    }
 
    /****************************************/
@@ -272,6 +199,8 @@ namespace argos {
       GetBoundingBox().MinCorner.SetY(m_ptBaseShape->bb.b);
       GetBoundingBox().MaxCorner.SetX(m_ptBaseShape->bb.r);
       GetBoundingBox().MaxCorner.SetY(m_ptBaseShape->bb.t);
+      GetBoundingBox().MinCorner.SetZ(GetDynamics2DEngine().GetElevation());
+      GetBoundingBox().MinCorner.SetZ(GetDynamics2DEngine().GetElevation() + FOOTBOT_HEIGHT);
    }
 
    /****************************************/
@@ -332,7 +261,7 @@ namespace argos {
             m_ptControlGripperBody->w =
                m_cDiffSteering.GetAngularVelocity() +
                (PD_P_CONSTANT * fCurRotErr +
-                PD_D_CONSTANT * (fCurRotErr - m_fPreviousTurretAngleError) * m_cDyn2DEngine.GetInverseSimulationClockTick());
+                PD_D_CONSTANT * (fCurRotErr - m_fPreviousTurretAngleError) * GetDynamics2DEngine().GetInverseSimulationClockTick());
             m_fPreviousTurretAngleError = fCurRotErr;
             break;
          }
@@ -359,12 +288,12 @@ namespace argos {
 
    void CDynamics2DFootBotModel::TurretPassiveToActive() {
       /* Delete constraints to actual base body */
-      cpSpaceRemoveConstraint(m_cDyn2DEngine.GetPhysicsSpace(), m_ptBaseGripperAngularMotion);
+      cpSpaceRemoveConstraint(GetDynamics2DEngine().GetPhysicsSpace(), m_ptBaseGripperAngularMotion);
       cpConstraintFree(m_ptBaseGripperAngularMotion);
       /* Create gripper control body */
       m_ptControlGripperBody = cpBodyNew(INFINITY, INFINITY);
       /* Create angular constraint from gripper control body to gripper actual body */
-      m_ptGripperControlAngularMotion = cpSpaceAddConstraint(m_cDyn2DEngine.GetPhysicsSpace(),
+      m_ptGripperControlAngularMotion = cpSpaceAddConstraint(GetDynamics2DEngine().GetPhysicsSpace(),
                                                              cpGearJointNew(m_ptActualGripperBody,
                                                                             m_ptControlGripperBody,
                                                                             0.0f,
@@ -378,25 +307,18 @@ namespace argos {
 
    void CDynamics2DFootBotModel::TurretActiveToPassive() {
       /* Delete constraint from actual gripper body to gripper control body */
-      cpSpaceRemoveConstraint(m_cDyn2DEngine.GetPhysicsSpace(), m_ptGripperControlAngularMotion);
+      cpSpaceRemoveConstraint(GetDynamics2DEngine().GetPhysicsSpace(), m_ptGripperControlAngularMotion);
       cpConstraintFree(m_ptGripperControlAngularMotion);
       /* Delete control body */
       cpBodyFree(m_ptControlGripperBody);
       /* Create constraints from actual gripper body to actual base body */
-      m_ptBaseGripperAngularMotion = cpSpaceAddConstraint(m_cDyn2DEngine.GetPhysicsSpace(),
+      m_ptBaseGripperAngularMotion = cpSpaceAddConstraint(GetDynamics2DEngine().GetPhysicsSpace(),
                                                           cpGearJointNew(m_ptActualBaseBody,
                                                                          m_ptActualGripperBody,
                                                                          0.0f,
                                                                          1.0f));
       m_ptBaseGripperAngularMotion->maxBias = 0.0f; /* disable joint correction */
       m_ptBaseGripperAngularMotion->maxForce = FOOTBOT_MAX_TORQUE; /* limit the dragging torque */
-   }
-
-   /****************************************/
-   /****************************************/
-
-   bool CDynamics2DFootBotModel::IsCollidingWithSomething() const {
-      return cpSpaceShapeQuery(m_cDyn2DEngine.GetPhysicsSpace(), m_ptBaseShape, NULL, NULL) > 0;
    }
 
    /****************************************/
