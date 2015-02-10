@@ -60,7 +60,7 @@ namespace argos {
          &CDynamics2DFootBotModel::UpdateOriginAnchor);
       RegisterAnchorMethod<CDynamics2DFootBotModel>(
          GetEmbodiedEntity().GetAnchor("turret"),
-         &CDynamics2DFootBotModel::UpdateOriginAnchor);
+         &CDynamics2DFootBotModel::UpdateTurretAnchor);
       /* Create the actual body with initial position and orientation */
       m_ptActualBaseBody =
          cpSpaceAddBody(GetDynamics2DEngine().GetPhysicsSpace(),
@@ -186,6 +186,7 @@ namespace argos {
          m_unLastTurretMode == MODE_POSITION_CONTROL) {
          TurretActiveToPassive();
          m_unLastTurretMode = MODE_OFF;
+         GetEmbodiedEntity().DisableAnchor("turret");
       }
       /* Reset the rest */
       CDynamics2DMultiBodyObjectModel::Reset();
@@ -219,6 +220,13 @@ namespace argos {
       }
       /* Update turret structures if the state changed state in the last step */
       if(m_cFootBotEntity.GetTurretEntity().GetMode() != m_unLastTurretMode) {
+         /* Enable or disable the anchor */
+         if(m_cFootBotEntity.GetTurretEntity().GetMode() != MODE_OFF) {
+            GetEmbodiedEntity().EnableAnchor("turret");
+         }
+         else {
+            GetEmbodiedEntity().DisableAnchor("turret");
+         }
          /* Manage the thing like a state machine */
          switch(m_unLastTurretMode) {
             case MODE_OFF:

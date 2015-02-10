@@ -47,8 +47,8 @@ namespace argos {
 
    private:
 
-      CFootBotEntity& m_cFootBotEntity;
-      CWheeledEntity& m_cWheeledEntity;
+      CFootBotEntity&         m_cFootBotEntity;
+      CWheeledEntity&         m_cWheeledEntity;
       CGripperEquippedEntity& m_cGripperEntity;
 
       CDynamics2DDifferentialSteeringControl m_cDiffSteering;

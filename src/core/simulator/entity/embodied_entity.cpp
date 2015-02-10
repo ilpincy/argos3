@@ -116,9 +116,9 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CEmbodiedEntity::AddAnchor(const std::string& str_id,
-                                   const CVector3& c_offset_position,
-                                   const CQuaternion& c_offset_orientation) {
+   SAnchor& CEmbodiedEntity::AddAnchor(const std::string& str_id,
+                                       const CVector3& c_offset_position,
+                                       const CQuaternion& c_offset_orientation) {
       /* Make sure the anchor id is unique */
       if(m_mapAnchors.count(str_id) > 0 ) {
          THROW_ARGOSEXCEPTION("Embodied entity \"" << GetContext() + GetId() << "\" already has an anchor with id " << str_id);
@@ -138,6 +138,7 @@ namespace argos {
                                       cOrient);
       /* Add anchor to map */
       m_mapAnchors[str_id] = psAnchor;
+      return *psAnchor;
    }
 
    /****************************************/

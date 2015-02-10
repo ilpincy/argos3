@@ -134,14 +134,15 @@ namespace argos {
        * @param str_id The id of the anchor.
        * @param c_rel_position The position of the anchor wrt the body coordinate system.
        * @param c_rel_orientation The orientation of the anchor wrt the body coordinate system.
+       * @return A reference to the newly created anchor.
        * @throws CARGoSException if an anchor with the passed id already exists in this embodied entity.
        * @see SAnchor
        * @see EnableAnchor
        */
-      void AddAnchor(const std::string& str_id,
-                     const CVector3& c_rel_position = CVector3(),
-                     const CQuaternion& c_rel_orientation = CQuaternion());
-
+      SAnchor& AddAnchor(const std::string& str_id,
+                         const CVector3& c_rel_position = CVector3(),
+                         const CQuaternion& c_rel_orientation = CQuaternion());
+      
       /**
        * Enables an anchor.
        * @param str_id The id of the anchor.

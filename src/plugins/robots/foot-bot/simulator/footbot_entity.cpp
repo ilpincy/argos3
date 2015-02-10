@@ -101,6 +101,7 @@ namespace argos {
           * Better to put this first, because many other entities need this one
           */
          m_pcEmbodiedEntity = new CEmbodiedEntity(this, "body_0", c_position, c_orientation);
+         SAnchor& cTurretAnchor = m_pcEmbodiedEntity->AddAnchor("turret");
          AddComponent(*m_pcEmbodiedEntity);
          /* Wheeled entity and wheel positions (left, right) */
          m_pcWheeledEntity = new CWheeledEntity(this, "wheels_0", 2);
@@ -116,10 +117,10 @@ namespace argos {
             LED_RING_RADIUS,
             HALF_LED_ANGLE_SLICE,
             12,
-            m_pcEmbodiedEntity->GetOriginAnchor());
+            cTurretAnchor);
          m_pcLEDEquippedEntity->AddLED(
             CVector3(0.0f, 0.0f, BEACON_ELEVATION),
-            m_pcEmbodiedEntity->GetOriginAnchor());
+            cTurretAnchor);
          /* Proximity sensor equipped entity */
          m_pcProximitySensorEquippedEntity =
             new CProximitySensorEquippedEntity(this,
