@@ -24,7 +24,7 @@ Downloading ARGoS
 ------------------
 
 You can download a binary package of ARGoS from
-http://bohr.ulb.ac.be/~pincy/argos/download.php. Alternatively, you
+http://www.argos-sim.info/download.php. Alternatively, you
 can download the development sources through git:
 
  $ git clone https://github.com/ilpincy/argos3.git argos3
@@ -57,7 +57,7 @@ libraries are found:
 
 If you want to create the Lua wrapper you need:
 
-* _lua_ == 5.1
+* _lua_ >= 5.2
 
 If you want to create the documentation you need:
 
@@ -74,23 +74,23 @@ On Debian, you can install all of the necessary requirements
 with the following command:
 
  $ sudo apt-get install libgsl0-dev libfreeimage-dev libqt4-dev \
-   freeglut3-dev libxi-dev libxmu-dev liblua5.1-dev lua5.1 \
+   freeglut3-dev libxi-dev libxmu-dev liblua5.2-dev lua5.2 \
    doxygen graphviz-dev asciidoc
 
 OpenSuse
 ^^^^^^^^
 
-On openSUSE 12.3, you can install all of the necessary requirements
+On openSUSE 13.2, you can install all of the necessary requirements
 with the following commands:
 
- $ sudo zypper ar -n openSUSE-12.3-Graphics \
-   http://download.opensuse.org/repositories/graphics/openSUSE_12.3/ \
+ $ sudo zypper ar -n openSUSE-13.2-Graphics \
+   http://download.opensuse.org/repositories/graphics/openSUSE_13.2/ \
    graphics
 
  $ sudo zypper refresh
 
  $ sudo zypper install git cmake gcc gcc-c++ gsl-devel freeimage-devel \
-   doxygen graphviz asciidoc lua51-devel libqt4-devel freeglut-devel \
+   doxygen graphviz asciidoc lua-devel libqt4-devel freeglut-devel \
    rpmbuild
 
 Mac OSX
@@ -304,4 +304,4 @@ IMPORTANT: the creation of source packages through the command
            +make package_source+ is not supported.
 
 An easier option is to install ARGoS from a package distributed at
-http://bohr.ulb.ac.be/~pincy/argos/download.php.
+http://www.argos-sim.info/download.php.
