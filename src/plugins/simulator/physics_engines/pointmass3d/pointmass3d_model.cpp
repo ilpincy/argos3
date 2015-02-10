@@ -13,8 +13,8 @@ namespace argos {
       /* Register the origin anchor update method */
       RegisterAnchorMethod(GetEmbodiedEntity().GetOriginAnchor(),
                            &CPointMass3DModel::UpdateOriginAnchor);
-      /* Calculate the bounding box */
-      Reset();
+      /* Set initial position */
+      m_cPosition = GetEmbodiedEntity().GetOriginAnchor().Position;
    }
    
    /****************************************/
@@ -32,7 +32,7 @@ namespace argos {
 
    void CPointMass3DModel::MoveTo(const CVector3& c_position,
                                   const CQuaternion& c_orientation) {
-      m_cPosition = GetEmbodiedEntity().GetOriginAnchor().Position;
+      m_cPosition = c_position;
       UpdateEntityStatus();
    }
 

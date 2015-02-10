@@ -14,7 +14,6 @@ namespace argos {
 
 #include <argos3/core/control_interface/ci_actuator.h>
 #include <argos3/core/utility/math/vector3.h>
-#include <argos3/core/utility/math/quaternion.h>
 
 namespace argos {
 

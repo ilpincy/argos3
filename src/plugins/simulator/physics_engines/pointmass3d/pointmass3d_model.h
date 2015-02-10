@@ -51,8 +51,25 @@ namespace argos {
        */
       void UpdateOriginAnchor(SAnchor& s_anchor);
 
+      /**
+       * Returns a reference to the physics engine controlling this model.
+       * @return A reference to the physics engine controlling this model.
+       */
+      CPointMass3DEngine& GetPM3DEngine() {
+         return m_cPM3DEngine;
+      }
+
+      /**
+       * Returns a const reference to the physics engine controlling this model.
+       * @return A const reference to the physics engine controlling this model.
+       */
+      const CPointMass3DEngine& GetPM3DEngine() const {
+         return m_cPM3DEngine;
+      }
+
    protected:
 
+      /** Reference to the physics engine */
       CPointMass3DEngine& m_cPM3DEngine;
 
       /** The position of the model in this engine. */

@@ -13,22 +13,6 @@
 
 namespace argos {
 
-   static const Real     BODY_HEIGHT  = 0.566f;
-   static const Real     BODY_RADIUS  = 0.25f;
-   static const Real     BODY_MASS    = 1.00f;
-   static const Real     BODY_INERTIA = 0.01f;
-   static const CVector3 POS_K_P(20.0f, 20.0f, 20.0f);
-   static const CVector3 POS_K_D(10.0f, 10.0f, 10.0f);
-   static const Real     ORIENT_K_P = 0.5f;
-   static const Real     ORIENT_K_D = 0.1f;
-   static const Real     MAX_FORCE_X = 1000.0f;
-   static const Real     MAX_FORCE_Y = 1000.0f;
-   static const Real     MAX_FORCE_Z = 1000.0f;
-   static const Real     MAX_TORQUE = 1.0f;
-
-   /****************************************/
-   /****************************************/
-
    static Real SymmetricClamp(Real f_max,
                               Real f_value) {
       if(f_value >  f_max) return  f_max;
@@ -41,9 +25,37 @@ namespace argos {
 
    CPointMass3DQuadRotorModel::CPointMass3DQuadRotorModel(CPointMass3DEngine& c_engine,
                                                           CEmbodiedEntity& c_body,
-                                                          CQuadRotorEntity& c_quadrotor) :
+                                                          CQuadRotorEntity& c_quadrotor,
+                                                          Real f_body_height,
+                                                          Real f_arm_length,
+                                                          Real f_body_mass,
+                                                          Real f_body_inertia,
+                                                          const CVector3& c_pos_kp,
+                                                          const CVector3& c_pos_kd,
+                                                          Real f_yaw_kp,
+                                                          Real f_yaw_kd,
+                                                          const CVector2& c_vel_kp,
+                                                          const CVector2& c_vel_kd,
+                                                          Real f_rot_kp,
+                                                          Real f_rot_kd,
+                                                          const CVector3& c_max_force,
+                                                          Real f_max_torque) :
       CPointMass3DModel(c_engine, c_body),
-      m_cQuadRotorEntity(c_quadrotor) {
+      m_cQuadRotorEntity(c_quadrotor),
+      m_fBodyHeight(f_body_height),
+      m_fArmLength(f_arm_length),
+      m_fBodyMass(f_body_mass),
+      m_fBodyInertia(f_body_inertia),
+      m_cPosKP(c_pos_kp),
+      m_cPosKD(c_pos_kd),
+      m_fYawKP(f_yaw_kp),
+      m_fYawKD(f_yaw_kd),
+      m_cVelKP(c_vel_kp),
+      m_cVelKD(c_vel_kd),
+      m_fRotKP(f_rot_kp),
+      m_fRotKD(f_rot_kd),
+      m_cMaxForce(c_max_force),
+      m_fMaxTorque(f_max_torque) {
       Reset();
    }
 
@@ -52,10 +64,10 @@ namespace argos {
 
    void CPointMass3DQuadRotorModel::Reset() {
       CPointMass3DModel::Reset();
-      m_pfPosError[0] = 0.0f;
-      m_pfPosError[1] = 0.0f;
-      m_pfPosError[2] = 0.0f;
-      m_fOrientError = 0.0f;
+      m_pfLinearError[0] = 0.0f;
+      m_pfLinearError[1] = 0.0f;
+      m_pfLinearError[2] = 0.0f;
+      m_fRotError = 0.0f;
    }
 
    /****************************************/
@@ -72,64 +84,69 @@ namespace argos {
       /*
        * Update positional information
        */
+      DEBUG("BEFORE - Quadrotor position = <%f, %f, %f> yaw = %f\n",
+            m_cPosition.GetX(), m_cPosition.GetY(), m_cPosition.GetZ(), m_cYaw.GetValue());
+      DEBUG("BEFORE - Quadrotor velocity = <%f, %f, %f> rot = %f\n",
+            m_cVelocity.GetX(), m_cVelocity.GetY(), m_cVelocity.GetZ(), m_cRotSpeed.GetValue());
+      DEBUG("BEFORE - Quadrotor acceleration = <%f, %f, %f> torque = %f\n",
+            m_cAcceleration.GetX(), m_cAcceleration.GetY(), m_cAcceleration.GetZ(), m_cTorque.GetValue());
       /* Integration step */
-      m_cPosition += m_cVelocity        * m_cPM3DEngine.GetPhysicsClockTick();
-      m_cYaw      += m_cRotationalSpeed * m_cPM3DEngine.GetPhysicsClockTick();
+      m_cPosition += m_cVelocity * m_cPM3DEngine.GetPhysicsClockTick();
+      m_cYaw      += m_cRotSpeed * m_cPM3DEngine.GetPhysicsClockTick();
+      DEBUG("UPDATE - Quadrotor position = <%f, %f, %f> yaw = %f\n",
+            m_cPosition.GetX(), m_cPosition.GetY(), m_cPosition.GetZ(), m_cYaw.GetValue());
       /* Limit the quad-rotor position within the arena limits */
+      const CVector3& cCenter = CSimulator::GetInstance().GetSpace().GetArenaCenter();
+      const CVector3& cSize   = CSimulator::GetInstance().GetSpace().GetArenaSize();
       const CRange<CVector3>& cLimits = CSimulator::GetInstance().GetSpace().GetArenaLimits();
+      DEBUG("ARENA center = <%f, %f, %f>\n",
+            cCenter.GetX(), cCenter.GetY(), cCenter.GetZ());
+      DEBUG("ARENA size = <%f, %f, %f>\n",
+            cSize.GetX(), cSize.GetY(), cSize.GetZ());
+      DEBUG("ARENA limits = X<%f, %f>, Y<%f, %f>, Z<%f, %f>\n",
+            cLimits.GetMin().GetX(), cLimits.GetMax().GetX(), 
+            cLimits.GetMin().GetY(), cLimits.GetMax().GetY(), 
+            cLimits.GetMin().GetZ(), cLimits.GetMax().GetZ());
       m_cPosition.SetX(
          Min(Max(m_cPosition.GetX(),
-                 cLimits.GetMin().GetX() + BODY_RADIUS),
-             cLimits.GetMax().GetX() - BODY_RADIUS));
+                 cLimits.GetMin().GetX() + m_fArmLength),
+             cLimits.GetMax().GetX() - m_fArmLength));
       m_cPosition.SetY(
          Min(Max(m_cPosition.GetY(),
-                 cLimits.GetMin().GetY() + BODY_RADIUS),
-             cLimits.GetMax().GetY() - BODY_RADIUS));
+                 cLimits.GetMin().GetY() + m_fArmLength),
+             cLimits.GetMax().GetY() - m_fArmLength));
       m_cPosition.SetZ(
          Min(Max(m_cPosition.GetZ(),
                  cLimits.GetMin().GetZ()),
-             cLimits.GetMax().GetZ() - BODY_HEIGHT));
+             cLimits.GetMax().GetZ() - m_fBodyHeight));
       /* Normalize the yaw */
       m_cYaw.UnsignedNormalize();
       /*
        * Update velocity information
        */
-      m_cVelocity        += (m_cPM3DEngine.GetPhysicsClockTick() / BODY_MASS)    * m_cAcceleration;
-      m_cRotationalSpeed += (m_cPM3DEngine.GetPhysicsClockTick() / BODY_INERTIA) * m_cTorque;
+      m_cVelocity += (m_cPM3DEngine.GetPhysicsClockTick() / m_fBodyMass)    * m_cAcceleration;
+      m_cRotSpeed += (m_cPM3DEngine.GetPhysicsClockTick() / m_fBodyInertia) * m_cTorque;
       /*
        * Update control information
        */
-      /* Linear control */
-      m_cLinearControl.Set(
-         SymmetricClamp(MAX_FORCE_X, PDControl(
-                           m_sDesiredPositionData.Position.GetX() - m_cPosition.GetX(),
-                           POS_K_P.GetX(),
-                           POS_K_D.GetX(),
-                           m_pfPosError[0])),
-         SymmetricClamp(MAX_FORCE_Y, PDControl(
-                           m_sDesiredPositionData.Position.GetY() - m_cPosition.GetY(),
-                           POS_K_P.GetY(),
-                           POS_K_D.GetY(),
-                           m_pfPosError[1])),
-         SymmetricClamp(MAX_FORCE_Z, PDControl(
-                           m_sDesiredPositionData.Position.GetZ() - m_cPosition.GetZ(),
-                           POS_K_P.GetZ(),
-                           POS_K_D.GetZ(),
-                           m_pfPosError[2]) - BODY_MASS * m_cPM3DEngine.GetGravity()));
-      /* Rotational control */
-      m_fRotationalControl =
-         SymmetricClamp(MAX_TORQUE, PDControl(
-                           (m_sDesiredPositionData.Yaw - m_cYaw).SignedNormalize().GetValue(),
-                           ORIENT_K_P,
-                           ORIENT_K_D,
-                           m_fOrientError));
+      if(m_cQuadRotorEntity.GetControlMethod() == CQuadRotorEntity::POSITION_CONTROL)
+         PositionalControl();
+      else
+         SpeedControl();
       /*
        * Update force/torque information
        */
       m_cAcceleration.SetX(m_cLinearControl.GetX());
       m_cAcceleration.SetY(m_cLinearControl.GetY());
-      m_cAcceleration.SetZ(m_cLinearControl.GetZ() + BODY_MASS * m_cPM3DEngine.GetGravity());
+      m_cAcceleration.SetZ(m_cLinearControl.GetZ() + m_fBodyMass * m_cPM3DEngine.GetGravity());
       m_cTorque.SetValue(m_fRotationalControl);
+      DEBUG("AFTER - Quadrotor position = <%f, %f, %f> yaw = %f\n",
+            m_cPosition.GetX(), m_cPosition.GetY(), m_cPosition.GetZ(), m_cYaw.GetValue());
+      DEBUG("AFTER - Quadrotor velocity = <%f, %f, %f> rot = %f\n",
+            m_cVelocity.GetX(), m_cVelocity.GetY(), m_cVelocity.GetZ(), m_cRotSpeed.GetValue());
+      DEBUG("AFTER - Quadrotor acceleration = <%f, %f, %f> torque = %f\n",
+            m_cAcceleration.GetX(), m_cAcceleration.GetY(), m_cAcceleration.GetZ(), m_cTorque.GetValue());
+      DEBUG("\n");
    }
 
    /****************************************/
@@ -137,13 +154,13 @@ namespace argos {
 
    void CPointMass3DQuadRotorModel::CalculateBoundingBox() {
       GetBoundingBox().MinCorner.Set(
-         GetEmbodiedEntity().GetOriginAnchor().Position.GetX() - BODY_RADIUS,
-         GetEmbodiedEntity().GetOriginAnchor().Position.GetY() - BODY_RADIUS,
+         GetEmbodiedEntity().GetOriginAnchor().Position.GetX() - m_fArmLength,
+         GetEmbodiedEntity().GetOriginAnchor().Position.GetY() - m_fArmLength,
          GetEmbodiedEntity().GetOriginAnchor().Position.GetZ());
       GetBoundingBox().MaxCorner.Set(
-         GetEmbodiedEntity().GetOriginAnchor().Position.GetX() + BODY_RADIUS,
-         GetEmbodiedEntity().GetOriginAnchor().Position.GetY() + BODY_RADIUS,
-         GetEmbodiedEntity().GetOriginAnchor().Position.GetZ() + BODY_HEIGHT);
+         GetEmbodiedEntity().GetOriginAnchor().Position.GetX() + m_fArmLength,
+         GetEmbodiedEntity().GetOriginAnchor().Position.GetY() + m_fArmLength,
+         GetEmbodiedEntity().GetOriginAnchor().Position.GetZ() + m_fBodyHeight);
    }
 
    /****************************************/
@@ -151,13 +168,69 @@ namespace argos {
 
    bool CPointMass3DQuadRotorModel::CheckIntersectionWithRay(Real& f_t_on_ray,
                                                              const CRay3& c_ray) const {
-      CCylinder m_cShape(BODY_RADIUS,
-                         BODY_HEIGHT,
+      CCylinder m_cShape(m_fArmLength,
+                         m_fBodyHeight,
                          m_cPosition,
                          CVector3::Z);
       return m_cShape.Intersects(f_t_on_ray, c_ray);
    }
    
+   /****************************************/
+   /****************************************/
+
+   void CPointMass3DQuadRotorModel::PositionalControl() {
+      /* Linear control */
+      m_cLinearControl.Set(
+         SymmetricClamp(m_cMaxForce.GetX(), PDControl(
+                           m_sDesiredPositionData.Position.GetX() - m_cPosition.GetX(),
+                           m_cPosKP.GetX(),
+                           m_cPosKD.GetX(),
+                           m_pfLinearError[0])),
+         SymmetricClamp(m_cMaxForce.GetY(), PDControl(
+                           m_sDesiredPositionData.Position.GetY() - m_cPosition.GetY(),
+                           m_cPosKP.GetY(),
+                           m_cPosKD.GetY(),
+                           m_pfLinearError[1])),
+         SymmetricClamp(m_cMaxForce.GetZ(), PDControl(
+                           m_sDesiredPositionData.Position.GetZ() - m_cPosition.GetZ(),
+                           m_cPosKP.GetZ(),
+                           m_cPosKD.GetZ(),
+                           m_pfLinearError[2]) - m_fBodyMass * m_cPM3DEngine.GetGravity()));
+      /* Rotational control */
+      m_fRotationalControl =
+         SymmetricClamp(m_fMaxTorque, PDControl(
+                           (m_sDesiredPositionData.Yaw - m_cYaw).SignedNormalize().GetValue(),
+                           m_fYawKP,
+                           m_fYawKD,
+                           m_fRotError));
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CPointMass3DQuadRotorModel::SpeedControl() {
+      /* Linear control */
+      m_cLinearControl.Set(
+         SymmetricClamp(m_cMaxForce.GetX(), PDControl(
+                           m_sDesiredSpeedData.Velocity.GetX() - m_cVelocity.GetX(),
+                           m_cVelKP.GetX(),
+                           m_cVelKD.GetX(),
+                           m_pfLinearError[0])),
+         SymmetricClamp(m_cMaxForce.GetY(), PDControl(
+                           m_sDesiredSpeedData.Velocity.GetY() - m_cVelocity.GetY(),
+                           m_cVelKP.GetY(),
+                           m_cVelKD.GetY(),
+                           m_pfLinearError[1])),
+         SymmetricClamp(m_cMaxForce.GetZ(), m_fBodyMass * m_cPM3DEngine.GetGravity()));
+      /* Rotational control */
+      m_fRotationalControl =
+         SymmetricClamp(m_fMaxTorque, PDControl(
+                           (m_sDesiredSpeedData.RotSpeed - m_cRotSpeed).GetValue(),
+                           m_fRotKP,
+                           m_fRotKD,
+                           m_fRotError));
+   }
+
    /****************************************/
    /****************************************/
 

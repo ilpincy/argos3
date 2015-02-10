@@ -22,7 +22,8 @@ namespace argos {
 
       enum EControlMethod {
          NO_CONTROL = 0,
-         POSITION_CONTROL
+         POSITION_CONTROL,
+         SPEED_CONTROL
       };
 
       struct SPositionControlData {
@@ -32,6 +33,15 @@ namespace argos {
          SPositionControlData() {}
          SPositionControlData(const CVector3& c_position,
                               const CRadians& c_yaw);
+      };
+
+      struct SSpeedControlData {
+         CVector2 Velocity;
+         CRadians RotSpeed;
+
+         SSpeedControlData() {}
+         SSpeedControlData(const CVector2& c_velocity,
+                           const CRadians& c_rot_speed);
       };
 
    public:
@@ -61,14 +71,23 @@ namespace argos {
          m_sPositionControlData = s_data;
       }
 
+      const SSpeedControlData& GetSpeedControlData() const {
+         return m_sSpeedControlData;
+      }
+
+      void SetSpeedControlData(const SSpeedControlData& s_data) {
+         m_sSpeedControlData = s_data;
+      }
+
       virtual std::string GetTypeDescription() const {
          return "quadrotor";
       }
 
    private:
 
-      EControlMethod m_eControlMethod;
+      EControlMethod       m_eControlMethod;
       SPositionControlData m_sPositionControlData;
+      SSpeedControlData    m_sSpeedControlData;
 
    };
 

@@ -11,8 +11,8 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
   set(ARGOS3_HEADERS_PLUGINS_ROBOTS_EYEBOT_SIMULATOR
     simulator/eyebot_entity.h
     simulator/eyebot_light_rotzonly_sensor.h
-    simulator/eyebot_proximity_default_sensor.h)
-    # simulator/pointmass3d_eyebot_model.h)
+    simulator/eyebot_proximity_default_sensor.h
+    simulator/pointmass3d_eyebot_model.h)
 endif(ARGOS_BUILD_FOR_SIMULATOR)
 
 #
@@ -30,8 +30,8 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
     ${ARGOS3_HEADERS_PLUGINS_ROBOTS_EYEBOT_SIMULATOR}
     simulator/eyebot_entity.cpp
     simulator/eyebot_light_rotzonly_sensor.cpp
-    simulator/eyebot_proximity_default_sensor.cpp)
-    # simulator/pointmass3d_eyebot_model.cpp)
+    simulator/eyebot_proximity_default_sensor.cpp
+    simulator/pointmass3d_eyebot_model.cpp)
   # Compile the graphical visualization only if the necessary libraries have been found
   include(ARGoSCheckQTOpenGL)
   if(ARGOS_COMPILE_QTOPENGL)

@@ -21,7 +21,7 @@ namespace argos {
     * 1. left wheel speed (a number)
     * 2. right wheel speed (a number)
     */
-   int LuaSetLinearVelocity(lua_State* pt_lua_state) {
+   int LuaSetDiffSteeringLinearVelocity(lua_State* pt_lua_state) {
       /* Check parameters */
       if(lua_gettop(pt_lua_state) != 2) {
          return luaL_error(pt_lua_state, "robot.wheels.set_velocity() expects 2 arguments");
@@ -43,7 +43,7 @@ namespace argos {
    void CCI_DifferentialSteeringActuator::CreateLuaState(lua_State* pt_lua_state) {
       CLuaUtility::OpenRobotStateTable(pt_lua_state, "wheels");
       CLuaUtility::AddToTable(pt_lua_state, "_instance", this);
-      CLuaUtility::AddToTable(pt_lua_state, "set_velocity", &LuaSetLinearVelocity);
+      CLuaUtility::AddToTable(pt_lua_state, "set_velocity", &LuaSetDiffSteeringLinearVelocity);
       CLuaUtility::CloseRobotStateTable(pt_lua_state);
    }
 #endif

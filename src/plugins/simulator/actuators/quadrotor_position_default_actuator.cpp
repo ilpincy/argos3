@@ -29,11 +29,6 @@ namespace argos {
             m_pcEmbodiedEntity = &(c_entity.GetComponent<CEmbodiedEntity>("body"));
             /* Set the position control method */
             m_pcQuadRotorEntity->SetControlMethod(CQuadRotorEntity::POSITION_CONTROL);
-            /* Set the initial desired data, which corresponds to the current position/yaw of the body */
-            m_sDesiredPosData.Position = m_pcEmbodiedEntity->GetOriginAnchor().Position;
-            CRadians cYAngle, cXAngle;
-            m_pcEmbodiedEntity->GetOriginAnchor().Orientation.ToEulerAngles(m_sDesiredPosData.Yaw, cYAngle, cXAngle);
-            m_pcQuadRotorEntity->SetPositionControlData(m_sDesiredPosData);
          }
          else {
             THROW_ARGOSEXCEPTION("Can't associate a quadrotor position actuator to entity \"" << c_entity.GetId() << "\" because it conflicts with a previously associated quadrotor actuator.");
@@ -50,6 +45,7 @@ namespace argos {
    void CQuadRotorPositionDefaultActuator::Init(TConfigurationNode& t_tree) {
       try {
          CCI_QuadRotorPositionActuator::Init(t_tree);
+         Reset();
       }
       catch(CARGoSException& ex) {
          THROW_ARGOSEXCEPTION_NESTED("Initialization error in quadrotor position actuator.", ex);
@@ -99,8 +95,10 @@ namespace argos {
    /****************************************/
 
    void CQuadRotorPositionDefaultActuator::Reset() {
-      m_sDesiredPosData.Position = CVector3();
-      m_sDesiredPosData.Yaw = CRadians::ZERO;
+      m_sDesiredPosData.Position = m_pcEmbodiedEntity->GetOriginAnchor().Position;
+      CRadians cYAngle, cXAngle;
+      m_pcEmbodiedEntity->GetOriginAnchor().Orientation.ToEulerAngles(m_sDesiredPosData.Yaw, cYAngle, cXAngle);
+      Update();
    }
 
    /****************************************/
