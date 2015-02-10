@@ -84,29 +84,11 @@ namespace argos {
       /*
        * Update positional information
        */
-      DEBUG("BEFORE - Quadrotor position = <%f, %f, %f> yaw = %f\n",
-            m_cPosition.GetX(), m_cPosition.GetY(), m_cPosition.GetZ(), m_cYaw.GetValue());
-      DEBUG("BEFORE - Quadrotor velocity = <%f, %f, %f> rot = %f\n",
-            m_cVelocity.GetX(), m_cVelocity.GetY(), m_cVelocity.GetZ(), m_cRotSpeed.GetValue());
-      DEBUG("BEFORE - Quadrotor acceleration = <%f, %f, %f> torque = %f\n",
-            m_cAcceleration.GetX(), m_cAcceleration.GetY(), m_cAcceleration.GetZ(), m_cTorque.GetValue());
       /* Integration step */
       m_cPosition += m_cVelocity * m_cPM3DEngine.GetPhysicsClockTick();
       m_cYaw      += m_cRotSpeed * m_cPM3DEngine.GetPhysicsClockTick();
-      DEBUG("UPDATE - Quadrotor position = <%f, %f, %f> yaw = %f\n",
-            m_cPosition.GetX(), m_cPosition.GetY(), m_cPosition.GetZ(), m_cYaw.GetValue());
       /* Limit the quad-rotor position within the arena limits */
-      const CVector3& cCenter = CSimulator::GetInstance().GetSpace().GetArenaCenter();
-      const CVector3& cSize   = CSimulator::GetInstance().GetSpace().GetArenaSize();
       const CRange<CVector3>& cLimits = CSimulator::GetInstance().GetSpace().GetArenaLimits();
-      DEBUG("ARENA center = <%f, %f, %f>\n",
-            cCenter.GetX(), cCenter.GetY(), cCenter.GetZ());
-      DEBUG("ARENA size = <%f, %f, %f>\n",
-            cSize.GetX(), cSize.GetY(), cSize.GetZ());
-      DEBUG("ARENA limits = X<%f, %f>, Y<%f, %f>, Z<%f, %f>\n",
-            cLimits.GetMin().GetX(), cLimits.GetMax().GetX(), 
-            cLimits.GetMin().GetY(), cLimits.GetMax().GetY(), 
-            cLimits.GetMin().GetZ(), cLimits.GetMax().GetZ());
       m_cPosition.SetX(
          Min(Max(m_cPosition.GetX(),
                  cLimits.GetMin().GetX() + m_fArmLength),
@@ -140,13 +122,6 @@ namespace argos {
       m_cAcceleration.SetY(m_cLinearControl.GetY());
       m_cAcceleration.SetZ(m_cLinearControl.GetZ() + m_fBodyMass * m_cPM3DEngine.GetGravity());
       m_cTorque.SetValue(m_fRotationalControl);
-      DEBUG("AFTER - Quadrotor position = <%f, %f, %f> yaw = %f\n",
-            m_cPosition.GetX(), m_cPosition.GetY(), m_cPosition.GetZ(), m_cYaw.GetValue());
-      DEBUG("AFTER - Quadrotor velocity = <%f, %f, %f> rot = %f\n",
-            m_cVelocity.GetX(), m_cVelocity.GetY(), m_cVelocity.GetZ(), m_cRotSpeed.GetValue());
-      DEBUG("AFTER - Quadrotor acceleration = <%f, %f, %f> torque = %f\n",
-            m_cAcceleration.GetX(), m_cAcceleration.GetY(), m_cAcceleration.GetZ(), m_cTorque.GetValue());
-      DEBUG("\n");
    }
 
    /****************************************/
