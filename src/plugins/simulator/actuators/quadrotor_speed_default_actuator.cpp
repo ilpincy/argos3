@@ -55,7 +55,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CQuadRotorSpeedDefaultActuator::SetLinearVelocity(const CVector2& c_velocity) {
+   void CQuadRotorSpeedDefaultActuator::SetLinearVelocity(const CVector3& c_velocity) {
       m_sDesiredSpeedData.Velocity = c_velocity;
    }
 
@@ -77,7 +77,7 @@ namespace argos {
    /****************************************/
 
    void CQuadRotorSpeedDefaultActuator::Reset() {
-      m_sDesiredSpeedData.Velocity = CVector2();
+      m_sDesiredSpeedData.Velocity = CVector3();
       m_sDesiredSpeedData.RotSpeed = CRadians::ZERO;
       Update();
    }

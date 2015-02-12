@@ -34,8 +34,8 @@ namespace argos {
                                  const CVector3& c_pos_kd,
                                  Real f_yaw_kp,
                                  Real f_yaw_kd,
-                                 const CVector2& c_vel_kp,
-                                 const CVector2& c_vel_kd,
+                                 const CVector3& c_vel_kp,
+                                 const CVector3& c_vel_kd,
                                  Real f_rot_kp,
                                  Real f_rot_kd,
                                  const CVector3& c_max_force = CVector3(1000.0f, 1000.0f, 1000.0f),
@@ -92,10 +92,10 @@ namespace argos {
       Real m_fYawKD;
 
       /** The coefficient for proportional velocity control */
-      CVector2 m_cVelKP;
+      CVector3 m_cVelKP;
 
       /** The coefficient for derivative velocity control */
-      CVector2 m_cVelKD;
+      CVector3 m_cVelKD;
 
       /** The coefficient for proportional rotational speed control */
       Real m_fRotKP;

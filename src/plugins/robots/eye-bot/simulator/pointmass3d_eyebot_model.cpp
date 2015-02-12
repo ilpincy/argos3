@@ -21,8 +21,8 @@ namespace argos {
    static const CVector3 POS_K_D(10.0f, 10.0f, 10.0f);
    static const Real     YAW_K_P = 0.5f;
    static const Real     YAW_K_D = 0.1f;
-   static const CVector2 VEL_K_P(20.0f, 20.0f);
-   static const CVector2 VEL_K_D(10.0f, 10.0f);
+   static const CVector3 VEL_K_P(20.0f, 20.0f, 20.0f);
+   static const CVector3 VEL_K_D(10.0f, 10.0f, 10.0f);
    static const Real     ROT_K_P = 0.5f;
    static const Real     ROT_K_D = 0.1f;
 

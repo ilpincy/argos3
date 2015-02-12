@@ -17,21 +17,24 @@ namespace argos {
 
 #ifdef ARGOS_WITH_LUA
    /*
-    * The stack must have two values in this order:
+    * The stack must have three values in this order:
     * 1. x coordinate of the velocity (a number)
     * 2. y coordinate of the velocity (a number)
+    * 3. z coordinate of the velocity (a number)
     */
    int LuaSetQuadRotorLinearVelocity(lua_State* pt_lua_state) {
       /* Check parameters */
-      if(lua_gettop(pt_lua_state) != 2) {
-         return luaL_error(pt_lua_state, "robot.quadrotor.set_linear_velocity() expects 2 arguments");
+      if(lua_gettop(pt_lua_state) != 3) {
+         return luaL_error(pt_lua_state, "robot.quadrotor.set_linear_velocity() expects 3 arguments");
       }
       luaL_checktype(pt_lua_state, 1, LUA_TNUMBER);
       luaL_checktype(pt_lua_state, 2, LUA_TNUMBER);
+      luaL_checktype(pt_lua_state, 3, LUA_TNUMBER);
       /* Perform action */
       CLuaUtility::GetDeviceInstance<CCI_QuadRotorSpeedActuator>(pt_lua_state, "quadrotor")->
-         SetLinearVelocity(CVector2(lua_tonumber(pt_lua_state, 1),
-                                    lua_tonumber(pt_lua_state, 2)));
+         SetLinearVelocity(CVector3(lua_tonumber(pt_lua_state, 1),
+                                    lua_tonumber(pt_lua_state, 2),
+                                    lua_tonumber(pt_lua_state, 3)));
       return 0;
    }
 #endif

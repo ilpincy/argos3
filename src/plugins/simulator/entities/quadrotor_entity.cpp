@@ -22,7 +22,7 @@ namespace argos {
    /****************************************/
 
    CQuadRotorEntity::SSpeedControlData::SSpeedControlData(
-      const CVector2& c_velocity,
+      const CVector3& c_velocity,
       const CRadians& c_rot_speed) :
       Velocity(c_velocity),
       RotSpeed(c_rot_speed) {}
@@ -52,7 +52,7 @@ namespace argos {
    void CQuadRotorEntity::Reset() {
       m_sPositionControlData.Position.Set(0.0f, 0.0f, 0.0f);
       m_sPositionControlData.Yaw.SetValue(0.0f);
-      m_sSpeedControlData.Velocity.Set(0.0f, 0.0f);
+      m_sSpeedControlData.Velocity.Set(0.0f, 0.0f, 0.0f);
       m_sSpeedControlData.RotSpeed.SetValue(0.0);
    }
 

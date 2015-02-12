@@ -13,7 +13,7 @@ namespace argos {
 }
 
 #include <argos3/core/control_interface/ci_actuator.h>
-#include <argos3/core/utility/math/vector2.h>
+#include <argos3/core/utility/math/vector3.h>
 
 namespace argos {
 
@@ -27,7 +27,7 @@ namespace argos {
        * Sets the linear velocity of the quadrotor.
        * @param c_velocity The desired linear velocity.
        */
-      virtual void SetLinearVelocity(const CVector2& c_velocity) = 0;
+      virtual void SetLinearVelocity(const CVector3& c_velocity) = 0;
 
       /**
        * Sets the rotational velocity of the quadrotor around the local Z axis (yaw).

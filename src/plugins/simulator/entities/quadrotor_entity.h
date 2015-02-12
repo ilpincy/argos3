@@ -36,11 +36,11 @@ namespace argos {
       };
 
       struct SSpeedControlData {
-         CVector2 Velocity;
+         CVector3 Velocity;
          CRadians RotSpeed;
 
          SSpeedControlData() {}
-         SSpeedControlData(const CVector2& c_velocity,
+         SSpeedControlData(const CVector3& c_velocity,
                            const CRadians& c_rot_speed);
       };
 

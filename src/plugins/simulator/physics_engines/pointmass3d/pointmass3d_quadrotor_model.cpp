@@ -34,8 +34,8 @@ namespace argos {
                                                           const CVector3& c_pos_kd,
                                                           Real f_yaw_kp,
                                                           Real f_yaw_kd,
-                                                          const CVector2& c_vel_kp,
-                                                          const CVector2& c_vel_kd,
+                                                          const CVector3& c_vel_kp,
+                                                          const CVector3& c_vel_kd,
                                                           Real f_rot_kp,
                                                           Real f_rot_kd,
                                                           const CVector3& c_max_force,
@@ -196,7 +196,11 @@ namespace argos {
                            m_cVelKP.GetY(),
                            m_cVelKD.GetY(),
                            m_pfLinearError[1])),
-         SymmetricClamp(m_cMaxForce.GetZ(), m_fBodyMass * m_cPM3DEngine.GetGravity()));
+         SymmetricClamp(m_cMaxForce.GetZ(), PDControl(
+                           m_sDesiredSpeedData.Velocity.GetZ() - m_cVelocity.GetZ(),
+                           m_cVelKP.GetZ(),
+                           m_cVelKD.GetZ(),
+                           m_pfLinearError[2]) - m_fBodyMass * m_cPM3DEngine.GetGravity()));
       /* Rotational control */
       m_fRotationalControl =
          SymmetricClamp(m_fMaxTorque, PDControl(

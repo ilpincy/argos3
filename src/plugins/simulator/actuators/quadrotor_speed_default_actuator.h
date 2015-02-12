@@ -34,7 +34,7 @@ namespace argos {
 
       virtual void Init(TConfigurationNode& t_tree);
 
-      virtual void SetLinearVelocity(const CVector2& c_velocity);
+      virtual void SetLinearVelocity(const CVector3& c_velocity);
       virtual void SetRotationalSpeed(const CRadians& c_speed);
 
       virtual void Update();
