@@ -185,13 +185,13 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
     simulator/space/space_no_threads.cpp)
 endif(ARGOS_BUILD_FOR_SIMULATOR)
 # Compile Lua wrapper only if Lua was found
-if(LUA51_FOUND)
+if(ARGOS_WITH_LUA)
   set(ARGOS3_SOURCES_CORE
     ${ARGOS3_SOURCES_CORE}
     ${ARGOS3_HEADERS_WRAPPERS_LUA}
     wrappers/lua/lua_controller.cpp
     wrappers/lua/lua_utility.cpp)
-endif(LUA51_FOUND)
+endif(ARGOS_WITH_LUA)
 
 
 #
@@ -215,13 +215,12 @@ if(FREEIMAGE_FOUND)
   target_link_libraries(argos3core_${ARGOS_BUILD_FOR} ${FREEIMAGE_LIBRARIES})
 endif(FREEIMAGE_FOUND)
 # Link Lua library if necessary
-if(LUA51_FOUND)
+if(ARGOS_WITH_LUA)
   target_link_libraries(argos3core_${ARGOS_BUILD_FOR} ${LUA_LIBRARIES})
-endif(LUA51_FOUND)
+endif(ARGOS_WITH_LUA)
 
 #
 # Core library installation
-#
 install(FILES ${ARGOS3_HEADERS_UTILITY}                       DESTINATION include/argos3/core/utility)
 install(FILES ${ARGOS3_HEADERS_UTILITY_CONFIGURATION}         DESTINATION include/argos3/core/utility/configuration)
 install(FILES ${ARGOS3_HEADERS_UTILITY_CONFIGURATION_TINYXML} DESTINATION include/argos3/core/utility/configuration/tinyxml)
@@ -243,9 +242,9 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
   install(FILES ${ARGOS3_HEADERS_SIMULATOR_SPACE_POSITIONAL_INDICES} DESTINATION include/argos3/core/simulator/space/positional_indices)
   install(FILES ${ARGOS3_HEADERS_SIMULATOR_SPACE}             DESTINATION include/argos3/core/simulator/space)
 endif(ARGOS_BUILD_FOR_SIMULATOR)
-if(LUA51_FOUND)
+if(ARGOS_WITH_LUA)
   install(FILES ${ARGOS3_HEADERS_WRAPPERS_LUA}                DESTINATION include/argos3/core/wrappers/lua)
-endif(LUA51_FOUND)
+endif(ARGOS_WITH_LUA)
 install(TARGETS argos3core_${ARGOS_BUILD_FOR}
   RUNTIME DESTINATION bin
   LIBRARY DESTINATION lib/argos3
@@ -280,6 +279,7 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
     FILES
     ${CMAKE_SOURCE_DIR}/cmake/ARGoSCheckQTOpenGL.cmake
     ${CMAKE_SOURCE_DIR}/cmake/FindGSL.cmake
+    ${CMAKE_SOURCE_DIR}/cmake/FindLua52.cmake
     DESTINATION
     share/argos3/cmake)
   #

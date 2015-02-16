@@ -26,7 +26,7 @@ set(ARGOS3_HEADERS_PLUGINS_ROBOTS_FOOTBOT_CONTROLINTERFACE
 if(ARGOS_BUILD_FOR_SIMULATOR)
   set(ARGOS3_HEADERS_PLUGINS_ROBOTS_FOOTBOT_SIMULATOR
     simulator/dynamics2d_footbot_model.h
-    simulator/physx_footbot_model.h
+    # simulator/physx_footbot_model.h
     simulator/footbot_base_ground_rotzonly_sensor.h
     simulator/footbot_distance_scanner_default_actuator.h
     simulator/footbot_distance_scanner_equipped_entity.h
@@ -98,8 +98,8 @@ target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_footbot
   argos3plugin_${ARGOS_BUILD_FOR}_genericrobot
   argos3plugin_${ARGOS_BUILD_FOR}_actuators
   argos3plugin_${ARGOS_BUILD_FOR}_sensors
-  argos3plugin_${ARGOS_BUILD_FOR}_dynamics2d
-  argos3plugin_${ARGOS_BUILD_FOR}_physx)
+  argos3plugin_${ARGOS_BUILD_FOR}_dynamics2d)
+  # argos3plugin_${ARGOS_BUILD_FOR}_physx)
 if(ARGOS_COMPILE_QTOPENGL)
   target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_footbot argos3plugin_${ARGOS_BUILD_FOR}_qtopengl)
 endif(ARGOS_COMPILE_QTOPENGL)
