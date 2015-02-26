@@ -208,7 +208,9 @@ namespace argos {
 
       inline CQuaternion& BetweenTwoVectors(const CVector3& c_vector1,
                                             const CVector3& c_vector2) {
-         Real fProd = c_vector1.DotProduct(c_vector2);
+         Real fProd =
+            c_vector1.DotProduct(c_vector2) /
+            Sqrt(c_vector1.SquareLength() * c_vector2.SquareLength());
          if(fProd > 0.999999f) {
             /* The two vectors are parallel, no rotation */
             m_fValues[0] = 1.0;
@@ -235,7 +237,7 @@ namespace argos {
          }
          else {
             /* The two vectors are not parallel nor anti-parallel */
-            m_fValues[0] = ::sqrt(c_vector1.SquareLength() * c_vector2.SquareLength()) + fProd;
+            m_fValues[0] = Sqrt(c_vector1.SquareLength() * c_vector2.SquareLength()) + fProd;
             CVector3 cCrossProd(c_vector1);
             cCrossProd.CrossProduct(c_vector2);
             m_fValues[1] = cCrossProd.GetX();
