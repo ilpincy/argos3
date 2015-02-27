@@ -57,9 +57,11 @@ namespace argos {
       try {
          /* This effectively starts the experiment */
          m_pcMainWindow->show();
+#ifdef ARGOS_WITH_LUA
          if(m_bLuaEditor) {
             m_pcQTOpenGLLuaMainWindow->show();
          }
+#endif
          m_pcApplication->exec();
       }
       catch(CARGoSException& ex) {
