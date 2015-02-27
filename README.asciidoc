@@ -57,7 +57,7 @@ libraries are found:
 
 If you want to create the Lua wrapper you need:
 
-* _lua_ >= 5.2
+* _lua_ == 5.2
 
 If you want to create the documentation you need:
 
