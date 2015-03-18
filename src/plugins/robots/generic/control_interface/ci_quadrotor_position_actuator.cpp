@@ -117,6 +117,8 @@ namespace argos {
       CLuaUtility::AddToTable(pt_lua_state, "_instance", this);
       CLuaUtility::AddToTable(pt_lua_state, "set_absolute_position", &LuaSetAbsolutePosition);
       CLuaUtility::AddToTable(pt_lua_state, "set_absolute_yaw", &LuaSetAbsoluteYaw);
+      CLuaUtility::AddToTable(pt_lua_state, "set_relative_position", &LuaSetRelativePosition);
+      CLuaUtility::AddToTable(pt_lua_state, "set_relative_yaw", &LuaSetRelativeYaw);
       CLuaUtility::CloseRobotStateTable(pt_lua_state);
    }
 #endif
