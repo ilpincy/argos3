@@ -105,7 +105,6 @@ namespace argos {
       makeCurrent();
       initializeGL();
       resizeGL(width(), height());
-      InitializeArena();
    }
 
    /****************************************/
@@ -150,6 +149,7 @@ namespace argos {
       glLightfv(GL_LIGHT1, GL_POSITION, m_pfLight1Position);
       glEnable(GL_LIGHT0);
       glEnable(GL_LIGHT1);
+      InitializeArena();
    }
 
    /****************************************/
@@ -533,7 +533,6 @@ namespace argos {
 
    void CQTOpenGLWidget::ResetExperiment() {
       m_cSimulator.Reset();
-      InitializeArena();
       DrawScene();
    }
 
@@ -607,6 +606,7 @@ namespace argos {
          m_cSpace.GetFloorEntity().ClearChanged();
       }
       catch(CARGoSException& ex) {}
+      glDisable(GL_TEXTURE_2D);
    }
 
    /****************************************/
