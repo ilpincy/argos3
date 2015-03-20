@@ -169,6 +169,7 @@ namespace argos {
 
    void CQTOpenGLWidget::DrawScene() {
       makeCurrent();
+      resizeGL(width(), height());
       glShadeModel(GL_SMOOTH);
       glEnable(GL_LINE_SMOOTH);
       glEnable(GL_LIGHTING);
