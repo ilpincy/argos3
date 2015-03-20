@@ -484,6 +484,7 @@ namespace argos {
          m_pcToggleAntiAliasingAction->setChecked(false);
          m_pcToggleAntiAliasingAction->setEnabled(false);
       }
+      m_pcOpenGLWidget->initializeGL();
       /* Invert mouse controls? */
       bool bInvertMouse;
       GetNodeAttributeOrDefault(t_tree, "invert_mouse", bInvertMouse, false);

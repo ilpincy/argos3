@@ -93,18 +93,12 @@ namespace argos {
       m_mapPressedKeys[DIRECTION_RIGHT]     = false;
       m_mapPressedKeys[DIRECTION_FORWARDS]  = false;
       m_mapPressedKeys[DIRECTION_BACKWARDS] = false;
-      /* Antialiasing */
-      m_bAntiAliasing = format().sampleBuffers();
 #ifdef QTOPENGL_WITH_SDL
       /* Joystick support */
       if(m_cJoystick.connected()) {
          m_cJoystick.open(0);
       }
 #endif
-      /* Initialize the arena */
-      makeCurrent();
-      initializeGL();
-      resizeGL(width(), height());
    }
 
    /****************************************/
@@ -131,25 +125,28 @@ namespace argos {
    /****************************************/
 
    void CQTOpenGLWidget::initializeGL() {
-      glShadeModel(GL_SMOOTH);
-      glEnable(GL_LINE_SMOOTH);
-      glEnable(GL_LIGHTING);
-      glEnable(GL_CULL_FACE);
-      glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
-      glHint(GL_TEXTURE_COMPRESSION_HINT, GL_NICEST);
-      glEnable(GL_DEPTH_TEST);
-      qglClearColor(Qt::darkCyan);
-      glClearAccum(0.0, 0.0, 0.0, 0.0);
-      /* Place the lights */
-      glLightfv(GL_LIGHT0, GL_AMBIENT,  m_pfLightAmbient);
-      glLightfv(GL_LIGHT0, GL_DIFFUSE,  m_pfLightDiffuse);
-      glLightfv(GL_LIGHT0, GL_POSITION, m_pfLight0Position);
-      glLightfv(GL_LIGHT1, GL_AMBIENT,  m_pfLightAmbient);
-      glLightfv(GL_LIGHT1, GL_DIFFUSE,  m_pfLightDiffuse);
-      glLightfv(GL_LIGHT1, GL_POSITION, m_pfLight1Position);
-      glEnable(GL_LIGHT0);
-      glEnable(GL_LIGHT1);
-      InitializeArena();
+      /* Antialiasing */
+      m_bAntiAliasing = format().sampleBuffers();
+      /* Set up the texture parameters for the floor plane
+         (here we refer to the standard floor, not the floor entity) */
+      QImage cGroundTexture(pcMainWindow->GetTextureDir() + "/ground.png");
+      m_unGroundTexture = bindTexture(cGroundTexture,
+                                      GL_TEXTURE_2D,
+                                      GL_RGB,
+                                      QGLContext::MipmapBindOption | QGLContext::LinearFilteringBindOption);
+      /* Now take care of the floor entity */
+      try {
+         /* Create an image to use as texture */
+         m_cSpace.GetFloorEntity().SaveAsImage("/tmp/argos_floor.png");
+         m_bUsingFloorTexture = true;
+         /* Use the image as texture */
+         m_unFloorTexture = bindTexture(QImage("/tmp/argos_floor.png"),
+                                        GL_TEXTURE_2D,
+                                        GL_RGB,
+                                        QGLContext::MipmapBindOption | QGLContext::LinearFilteringBindOption);
+         m_cSpace.GetFloorEntity().ClearChanged();
+      }
+      catch(CARGoSException& ex) {}
    }
 
    /****************************************/
@@ -172,8 +169,24 @@ namespace argos {
 
    void CQTOpenGLWidget::DrawScene() {
       makeCurrent();
-      resizeGL(width(), height());
-      initializeGL();
+      glShadeModel(GL_SMOOTH);
+      glEnable(GL_LINE_SMOOTH);
+      glEnable(GL_LIGHTING);
+      glEnable(GL_CULL_FACE);
+      glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+      glHint(GL_TEXTURE_COMPRESSION_HINT, GL_NICEST);
+      glEnable(GL_DEPTH_TEST);
+      qglClearColor(Qt::darkCyan);
+      glClearAccum(0.0, 0.0, 0.0, 0.0);
+      /* Place the lights */
+      glLightfv(GL_LIGHT0, GL_AMBIENT,  m_pfLightAmbient);
+      glLightfv(GL_LIGHT0, GL_DIFFUSE,  m_pfLightDiffuse);
+      glLightfv(GL_LIGHT0, GL_POSITION, m_pfLight0Position);
+      glLightfv(GL_LIGHT1, GL_AMBIENT,  m_pfLightAmbient);
+      glLightfv(GL_LIGHT1, GL_DIFFUSE,  m_pfLightDiffuse);
+      glLightfv(GL_LIGHT1, GL_POSITION, m_pfLight1Position);
+      glEnable(GL_LIGHT0);
+      glEnable(GL_LIGHT1);
       /* Calculate the perspective */
       glMatrixMode(GL_PROJECTION);
       glLoadIdentity();
@@ -533,6 +546,9 @@ namespace argos {
 
    void CQTOpenGLWidget::ResetExperiment() {
       m_cSimulator.Reset();
+      deleteTexture(m_unGroundTexture);
+      if(m_bUsingFloorTexture) deleteTexture(m_unFloorTexture);
+      initializeGL();
       DrawScene();
    }
 
@@ -585,28 +601,6 @@ namespace argos {
    /****************************************/
 
    void CQTOpenGLWidget::InitializeArena() {
-      /* Set up the texture parameters for the floor plane
-         (here we refer to the standard floor, not the floor entity) */
-      glEnable(GL_TEXTURE_2D);
-      QImage cGroundTexture(pcMainWindow->GetTextureDir() + "/ground.png");
-      m_unGroundTexture = bindTexture(cGroundTexture,
-                                      GL_TEXTURE_2D,
-                                      GL_RGB,
-                                      QGLContext::MipmapBindOption | QGLContext::LinearFilteringBindOption);
-      /* Now take care of the floor entity */
-      try {
-         /* Create an image to use as texture */
-         m_cSpace.GetFloorEntity().SaveAsImage("/tmp/argos_floor.png");
-         m_bUsingFloorTexture = true;
-         /* Use the image as texture */
-         m_unFloorTexture = bindTexture(QImage("/tmp/argos_floor.png"),
-                                        GL_TEXTURE_2D,
-                                        GL_RGB,
-                                        QGLContext::MipmapBindOption | QGLContext::LinearFilteringBindOption);
-         m_cSpace.GetFloorEntity().ClearChanged();
-      }
-      catch(CARGoSException& ex) {}
-      glDisable(GL_TEXTURE_2D);
    }
 
    /****************************************/
