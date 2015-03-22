@@ -7,27 +7,35 @@ project(argos3_${ARGOS_BUILD_FOR})
 # General CPack configuration
 #
 # Version information
-execute_process(
-  COMMAND git describe --abbrev=0
-  COMMAND cut -d. -f1
-  COMMAND tr -d '\n'
-  OUTPUT_VARIABLE CPACK_PACKAGE_VERSION_MAJOR)
-execute_process(
-  COMMAND git describe --abbrev=0
-  COMMAND cut -d. -f2
-  COMMAND tr -d '\n'
-  OUTPUT_VARIABLE CPACK_PACKAGE_VERSION_MINOR)
-execute_process(
-  COMMAND git describe --abbrev=0
-  COMMAND cut -d. -f3
-  COMMAND cut -d- -f1
-  COMMAND tr -d '\n'
-  OUTPUT_VARIABLE CPACK_PACKAGE_VERSION_PATCH)
+if(NOT DEFINED CPACK_PACKAGE_VERSION_MAJOR)
+  execute_process(
+    COMMAND git describe --abbrev=0
+    COMMAND cut -d. -f1
+    COMMAND tr -d '\n'
+    OUTPUT_VARIABLE CPACK_PACKAGE_VERSION_MAJOR)
+endif(NOT DEFINED CPACK_PACKAGE_VERSION_MAJOR)
+if(NOT DEFINED CPACK_PACKAGE_VERSION_MINOR)
+  execute_process(
+    COMMAND git describe --abbrev=0
+    COMMAND cut -d. -f2
+    COMMAND tr -d '\n'
+    OUTPUT_VARIABLE CPACK_PACKAGE_VERSION_MINOR)
+endif(NOT DEFINED CPACK_PACKAGE_VERSION_MINOR)
+if(NOT DEFINED CPACK_PACKAGE_VERSION_PATCH)
+  execute_process(
+    COMMAND git describe --abbrev=0
+    COMMAND cut -d. -f3
+    COMMAND cut -d- -f1
+    COMMAND tr -d '\n'
+    OUTPUT_VARIABLE CPACK_PACKAGE_VERSION_PATCH)
+endif(NOT DEFINED CPACK_PACKAGE_VERSION_PATCH)
+if(NOT DEFINED CPACK_PACKAGE_RELEASE)
 execute_process(
   COMMAND git describe --abbrev=0
   COMMAND cut -d- -f2
   COMMAND tr -d '\n'
   OUTPUT_VARIABLE CPACK_PACKAGE_RELEASE)
+endif(NOT DEFINED CPACK_PACKAGE_RELEASE)
 # Other stuff
 set(CPACK_PACKAGE_DESCRIPTION "ARGoS (multi-physics multi-robot simulator)
  ARGoS is a highly scalable multi-robot simulator. Among its distinctive
