@@ -215,7 +215,6 @@ namespace argos {
          /* Turret equipped entity */
          m_pcTurretEntity = new CFootBotTurretEntity(this, "turret_0");
          AddComponent(*m_pcTurretEntity);
-         m_pcEmbodiedEntity->AddAnchor("turret", CVector3(0.0f, 0.0f, GRIPPER_ELEVATION));
          /* WiFi equipped entity */
          m_pcWiFiEquippedEntity = new CWiFiEquippedEntity(this, "wifi_0");
          AddComponent(*m_pcWiFiEquippedEntity);
