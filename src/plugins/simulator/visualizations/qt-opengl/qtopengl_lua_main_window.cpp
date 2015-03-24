@@ -42,7 +42,7 @@ namespace argos {
    static QString SCRIPT_TEMPLATE =
       "-- Use Shift + Click to select a robot\n"
       "-- When a robot is selected, its variables appear in this editor\n\n"
-      "-- Use Ctrl + Click to move a selected robot to a different location\n\n\n\n"
+      "-- Use Ctrl + Click (Cmd + Click on Mac) to move a selected robot to a different location\n\n\n\n"
       "-- Put your global variables here\n\n\n\n"
       "--[[ This function is executed every time you press the 'execute' button ]]\n"
       "function init()\n"
