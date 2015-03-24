@@ -84,6 +84,7 @@ namespace argos {
             GetNodeAttribute(GetNode(t_tree, "leds"), "medium", strMedium);
             m_pcLEDMedium = &CSimulator::GetInstance().GetMedium<CLEDMedium>(strMedium);
             m_pcLEDEquippedEntity->AddToMedium(*m_pcLEDMedium);
+            m_pcLEDEquippedEntity->Enable();
          }
          else {
             /* No LEDs added, no need to update this entity */

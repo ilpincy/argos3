@@ -48,7 +48,6 @@ namespace argos {
    /****************************************/
 
    void CLEDEntity::Reset() {
-      CPositionalEntity::Reset();
       m_cColor = m_cInitColor;
    }
 
