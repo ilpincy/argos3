@@ -153,21 +153,15 @@ namespace argos {
    void CQTOpenGLLuaStateTreeModel::ProcessLuaState(lua_State* pt_state,
                                                     CQTOpenGLLuaStateTreeItem* pc_item) {
       QList<QVariant> cData;
-      DEBUG("Item process start nValueType = %d\tnKeyType = %d\n",
-            lua_type(pt_state, -1),
-            lua_type(pt_state, -2));
       switch(lua_type(pt_state, -2)) {
          case LUA_TBOOLEAN:
             cData << lua_toboolean(pt_state, -2);
-            DEBUG("cData[0] = %d\n", cData[0].toBool());
             break;
          case LUA_TNUMBER:
             cData << lua_tonumber(pt_state, -2);
-            DEBUG("cData[0] = %f\n", cData[0].toFloat());
             break;
          case LUA_TSTRING:
             cData << lua_tostring(pt_state, -2);
-            DEBUG("cData[0] = '%s'\n", cData[0].toString().toAscii().constData());
             break;
          default: break;
       }
@@ -176,26 +170,7 @@ namespace argos {
          pc_item->AddChild(pcChild);
          lua_pushnil(pt_state);
          while(lua_next(pt_state, -2)) {
-            // switch(lua_type(pt_state, -1)) {
-            //    case LUA_TBOOLEAN:
-            //       DEBUG("cData[0] = %d\n", lua_toboolean(pt_state, -1));
-            //       break;
-            //    case LUA_TNUMBER:
-            //       DEBUG("cData[0] = %f\n", lua_tonumber(pt_state, -1));
-            //       break;
-            //    case LUA_TSTRING:
-            //       cData << lua_tostring(pt_state, -2);
-            //       DEBUG("cData[0] = '%s'\n", lua_tostring(pt_state, -1));
-            //       break;
-            //    default: break;
-            // }
-            DEBUG("Table item nValueType = %d\tnKeyType = %d\n",
-                  lua_type(pt_state, -1),
-                  lua_type(pt_state, -2));
             if(IsTypeVisitable(pt_state)) {
-               DEBUG("Table item nValueType = %d\tnKeyType = %d\n",
-                     lua_type(pt_state, -1),
-                     lua_type(pt_state, -2));
                ProcessLuaState(pt_state, pcChild);
             }
             lua_pop(pt_state, 1);
@@ -267,9 +242,6 @@ namespace argos {
    bool CQTOpenGLLuaStateTreeVariableModel::IsTypeVisitable(lua_State* pt_state) {
       int nValueType = lua_type(pt_state, -1);
       int nKeyType = lua_type(pt_state, -2);
-      DEBUG("Variable::IsTypeVisitable nValueType = %d\tnKeyType = %d\n",
-            lua_type(pt_state, -1),
-            lua_type(pt_state, -2));
       if(nValueType == LUA_TSTRING || nValueType == LUA_TNUMBER || nValueType == LUA_TBOOLEAN) {
          if(nKeyType != LUA_TSTRING) {
             return true;
@@ -327,9 +299,6 @@ namespace argos {
    bool CQTOpenGLLuaStateTreeFunctionModel::IsTypeVisitable(lua_State* pt_state) {
       int nValueType = lua_type(pt_state, -1);
       int nKeyType = lua_type(pt_state, -2);
-      DEBUG("Function::IsTypeVisitable nValueType = %d\tnKeyType = %d\n",
-            lua_type(pt_state, -1),
-            lua_type(pt_state, -2));
       if(nValueType == LUA_TFUNCTION && nKeyType == LUA_TSTRING) {
             return 
                std::string(lua_tostring(pt_state, -2)) != "assert" &&
