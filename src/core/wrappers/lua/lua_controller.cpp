@@ -183,7 +183,10 @@ namespace argos {
          return "OK";
       }
       else {
-         return lua_tostring(m_ptLuaState, -1);
+         SInt32 i = 0;
+         while(i < lua_gettop(m_ptLuaState) && lua_type(m_ptLuaState, i) != LUA_TSTRING) ++i;
+         if(i == lua_gettop(m_ptLuaState)) return "Unknown compilation error";
+         else return lua_tostring(m_ptLuaState, i);
       }
    }
 

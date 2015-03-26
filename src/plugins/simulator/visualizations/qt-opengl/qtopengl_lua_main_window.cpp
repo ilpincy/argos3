@@ -179,18 +179,18 @@ namespace argos {
       }
       /* luac is installed, but is it the right version? */
       cLuaCompiler.waitForFinished();
-      if(QString(cLuaCompiler.readAllStandardOutput()).mid(4,3) == "5.1") {
+      if(QString(cLuaCompiler.readAllStandardOutput()).mid(4,3) == "5.2") {
          return "luac";
       }
-      cLuaCompiler.start("luac5.1", QStringList() << "-v");
+      cLuaCompiler.start("luac5.2", QStringList() << "-v");
       if(!cLuaCompiler.waitForStarted()) {
-         /* luac51 is not installed */
+         /* luac52 is not installed */
          return "";
       }
       else {
-         /* luac51 is installed */
+         /* luac52 is installed */
          cLuaCompiler.waitForFinished();
-         return "luac5.1";
+         return "luac5.2";
       }
    }
 
@@ -214,10 +214,10 @@ namespace argos {
       /*
        * Compile script
        */
-      /* Check for luac 5.1 */
+      /* Check for luac 5.2 */
       QString cLuaC = DetectLuaC();
       if(cLuaC == "") {
-         /* luac 5.1 not found, fall back to sending the script directly to robots */
+         /* luac 5.2 not found, fall back to sending the script directly to robots */
          for(size_t i = 0; i < m_vecControllers.size(); ++i) {
             m_vecControllers[i]->SetLuaScript(m_strFileName.toStdString());
          }
