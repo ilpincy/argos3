@@ -18,11 +18,13 @@ namespace argos {
    CDynamics2DSingleBodyObjectModel::~CDynamics2DSingleBodyObjectModel() {
       bool bIsStatic = cpBodyIsStatic(m_ptBody);
       /* Dispose of shapes */
-      for(cpShape* pt_shape = m_ptBody->shapeList;
-          pt_shape != NULL;
-          pt_shape = pt_shape->next) {
-         cpSpaceRemoveShape(GetDynamics2DEngine().GetPhysicsSpace(), pt_shape);
-         cpShapeFree(pt_shape);
+      cpShape* ptCurShape = m_ptBody->shapeList;
+      cpShape* ptNextShape;
+      while(ptCurShape) {
+	ptNextShape = ptCurShape->next;
+	cpSpaceRemoveShape(GetDynamics2DEngine().GetPhysicsSpace(), ptCurShape);
+	cpShapeFree(ptCurShape);
+	ptCurShape = ptNextShape;
       }
       /* Dispose of body */
       if(! bIsStatic)
