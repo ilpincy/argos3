@@ -156,7 +156,7 @@ namespace argos {
          /* Show rays? */
          GetNodeAttributeOrDefault(t_tree, "show_rays", m_bShowRays, m_bShowRays);
          /* Parse noise */
-         Real fDistanceNoiseStdDev;
+         Real fDistanceNoiseStdDev = 0;
          GetNodeAttributeOrDefault(t_tree, "noise_std_dev", fDistanceNoiseStdDev, fDistanceNoiseStdDev);
          /* Get LED medium from id specified in the XML */
          std::string strMedium;
