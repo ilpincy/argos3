@@ -45,7 +45,7 @@ namespace argos {
 
    extern size_t DEBUG_INDENTATION;
 
-#define DEBUG(MSG, ...) { fprintf(stderr, "[DEBUG] "); for(size_t i = 0; i < DEBUG_INDENTATION; ++i) fprintf(stderr, "  "); fprintf(stderr, MSG, ##__VA_ARGS__); }
+#define DEBUG(MSG, ...) { fprintf(stderr, "[DEBUG] "); for(size_t ARGOS_I = 0; ARGOS_I < DEBUG_INDENTATION; ++ARGOS_I) fprintf(stderr, "  "); fprintf(stderr, MSG, ##__VA_ARGS__); }
 
 #define DEBUG_FUNCTION_ENTER { ++DEBUG_INDENTATION; DEBUG("%s - START\n", __PRETTY_FUNCTION__ ); }
 
