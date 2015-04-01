@@ -22,20 +22,14 @@ namespace argos {
 
       virtual ~CCI_RangeAndBearingActuator() {}
 
-      inline size_t GetSize() const {
-         return m_cData.Size();
-      }
+      size_t GetSize() const;
 
       void SetData(const CByteArray& c_data);
 
-      inline void SetData(size_t un_idx,
-                          UInt8 un_value) {
-         m_cData[un_idx] = un_value;
-      }
+      void SetData(size_t un_idx,
+		   UInt8 un_value);
 
-      inline void ClearData() {
-         m_cData.Zero();
-      }
+      void ClearData();
 
 #ifdef ARGOS_WITH_LUA
       virtual void CreateLuaState(lua_State* pt_lua_state);

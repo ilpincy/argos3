@@ -15,6 +15,13 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   const std::vector<Real>& CCI_LightSensor::GetReadings() const {
+     return m_tReadings;
+   }
+
+   /****************************************/
+   /****************************************/
+
 #ifdef ARGOS_WITH_LUA
    void CCI_LightSensor::CreateLuaState(lua_State* pt_lua_state) {
       CLuaUtility::StartTable(pt_lua_state, "light");

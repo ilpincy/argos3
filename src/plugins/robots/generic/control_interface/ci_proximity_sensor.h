@@ -21,9 +21,7 @@ namespace argos {
 
       virtual ~CCI_ProximitySensor() {}
 
-      inline const std::vector<Real>& GetReadings() const {
-         return m_tReadings;
-      }
+      const std::vector<Real>& GetReadings() const;
 
 #ifdef ARGOS_WITH_LUA
       virtual void CreateLuaState(lua_State* pt_lua_state);

@@ -66,6 +66,20 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   void CCI_GripperActuator::Lock() {
+     SetLockState(1.0f);
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CCI_GripperActuator::Unlock() {
+     SetLockState(0.0f);
+   }
+
+   /****************************************/
+   /****************************************/
+
 #ifdef ARGOS_WITH_LUA
    void CCI_GripperActuator::CreateLuaState(lua_State* pt_lua_state) {
       CLuaUtility::StartTable(pt_lua_state, "gripper");

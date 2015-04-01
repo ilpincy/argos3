@@ -27,9 +27,7 @@ namespace argos {
       /**
        * Returns the current altitude.
        */
-      inline Real GetReading() const {
-         return m_fReading;
-      }
+      Real GetReading() const;
 
 #ifdef ARGOS_WITH_LUA
       virtual void CreateLuaState(lua_State* pt_lua_state);

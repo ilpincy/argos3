@@ -54,9 +54,16 @@ namespace argos {
       m_tReadings[7].Offset.Set( 4.2,-6.5);
    }
 
-  /****************************************/
-  /****************************************/
-  
+   /****************************************/
+   /****************************************/
+
+   const CCI_FootBotBaseGroundSensor::TReadings& CCI_FootBotBaseGroundSensor::GetReadings() const {
+     return m_tReadings;
+   }
+      
+   /****************************************/
+   /****************************************/
+
    std::ostream& operator<<(std::ostream& c_os,
                             const CCI_FootBotBaseGroundSensor::SReading& s_reading) {
       c_os << "Value=<" << s_reading.Value

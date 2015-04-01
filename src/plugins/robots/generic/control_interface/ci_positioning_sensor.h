@@ -29,9 +29,7 @@ namespace argos {
 
       virtual ~CCI_PositioningSensor() {}
 
-      inline const SReading& GetReading() const {
-         return m_sReading;
-      }
+      const SReading& GetReading() const;
 
 #ifdef ARGOS_WITH_LUA
       virtual void CreateLuaState(lua_State* pt_lua_state);

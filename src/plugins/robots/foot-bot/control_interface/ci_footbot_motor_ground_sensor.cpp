@@ -28,6 +28,13 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   const CCI_FootBotMotorGroundSensor::TReadings& CCI_FootBotMotorGroundSensor::GetReadings() const {
+     return m_tReadings;
+   }
+
+   /****************************************/
+   /****************************************/
+
    std::ostream& operator<<(std::ostream& c_os,
                             const CCI_FootBotMotorGroundSensor::SReading& s_reading) {
       c_os << "Value=<" << s_reading.Value

@@ -32,9 +32,7 @@ namespace argos {
 
       virtual ~CCI_FootBotTurretEncoderSensor() {}
 
-      inline const CRadians& GetRotation() const {
-         return m_cRotation;
-      }
+      const CRadians& GetRotation() const;
 
 #ifdef ARGOS_WITH_LUA
       virtual void CreateLuaState(lua_State* pt_lua_state);

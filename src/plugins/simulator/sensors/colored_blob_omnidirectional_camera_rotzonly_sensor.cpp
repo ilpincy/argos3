@@ -125,7 +125,8 @@ namespace argos {
       m_pcEmbodiedEntity(NULL),
       m_pcLEDIndex(NULL),
       m_pcEmbodiedIndex(NULL),
-      m_bShowRays(false) {}
+      m_bShowRays(false) {
+   }
 
    /****************************************/
    /****************************************/

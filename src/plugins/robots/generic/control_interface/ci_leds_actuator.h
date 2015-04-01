@@ -31,9 +31,7 @@ namespace argos {
       /**
        * @brief Returns the number of LEDs
        */
-      inline size_t GetNumLEDs() const {
-         return m_tSettings.size();
-      }
+      size_t GetNumLEDs() const;
 
       /**
        * @brief Sets the color of a single LED.

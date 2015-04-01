@@ -15,6 +15,13 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   const CCI_PositioningSensor::SReading& CCI_PositioningSensor::GetReading() const {
+     return m_sReading;
+   }
+
+   /****************************************/
+   /****************************************/
+
 #ifdef ARGOS_WITH_LUA
    void CCI_PositioningSensor::CreateLuaState(lua_State* pt_lua_state) {
       CLuaUtility::StartTable(pt_lua_state, "positioning");

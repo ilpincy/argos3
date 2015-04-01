@@ -3,25 +3,16 @@
 #
 # argos3/plugins/robots/foot-bot/control_interface
 set(ARGOS3_HEADERS_PLUGINS_ROBOTS_FOOTBOT_CONTROLINTERFACE
-  control_interface/ci_footbot_accelerometer_sensor.h
   control_interface/ci_footbot_base_ground_sensor.h
-  control_interface/ci_footbot_ceiling_camera_sensor.h
   control_interface/ci_footbot_distance_scanner_actuator.h
   control_interface/ci_footbot_distance_scanner_sensor.h
   control_interface/ci_footbot_encoder_sensor.h
   control_interface/ci_footbot_gripper_actuator.h
-  control_interface/ci_footbot_gripper_sensor.h
-  control_interface/ci_footbot_gyroscopic_sensor.h
   control_interface/ci_footbot_light_sensor.h
   control_interface/ci_footbot_motor_ground_sensor.h
-  control_interface/ci_footbot_omnidirectional_camera_sensor.h
   control_interface/ci_footbot_proximity_sensor.h
-  control_interface/ci_footbot_range_and_bearing_actuator.h
-  control_interface/ci_footbot_range_and_bearing_sensor.h
   control_interface/ci_footbot_turret_actuator.h
-  control_interface/ci_footbot_turret_encoder_sensor.h
-  control_interface/ci_footbot_turret_torque_sensor.h
-  control_interface/ci_footbot_wheel_speed_sensor.h)
+  control_interface/ci_footbot_turret_encoder_sensor.h)
 # argos3/plugins/robots/foot-bot/simulator
 if(ARGOS_BUILD_FOR_SIMULATOR)
   set(ARGOS3_HEADERS_PLUGINS_ROBOTS_FOOTBOT_SIMULATOR
@@ -55,9 +46,7 @@ set(ARGOS3_SOURCES_PLUGINS_ROBOTS_FOOTBOT
   control_interface/ci_footbot_motor_ground_sensor.cpp
   control_interface/ci_footbot_proximity_sensor.cpp
   control_interface/ci_footbot_turret_actuator.cpp
-  control_interface/ci_footbot_turret_encoder_sensor.cpp
-  control_interface/ci_footbot_turret_torque_sensor.cpp
-  control_interface/ci_footbot_wheel_speed_sensor.cpp)
+  control_interface/ci_footbot_turret_encoder_sensor.cpp)
 
 if(ARGOS_BUILD_FOR_SIMULATOR)
   set(ARGOS3_SOURCES_PLUGINS_ROBOTS_FOOTBOT

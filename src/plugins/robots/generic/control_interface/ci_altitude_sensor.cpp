@@ -12,27 +12,31 @@
 
 namespace argos {
 
-   /****************************************/
-   /****************************************/
+  /****************************************/
+  /****************************************/
 
 #ifdef ARGOS_WITH_LUA
-   void CCI_AltitudeSensor::CreateLuaState(lua_State* pt_lua_state) {
-      CLuaUtility::AddToTable(pt_lua_state, "altitude", m_fReading);
-   }
+  void CCI_AltitudeSensor::CreateLuaState(lua_State* pt_lua_state) {
+    CLuaUtility::AddToTable(pt_lua_state, "altitude", m_fReading);
+  }
 #endif
 
-   /****************************************/
-   /****************************************/
+  /****************************************/
+  /****************************************/
 
 #ifdef ARGOS_WITH_LUA
-   void CCI_AltitudeSensor::ReadingsToLuaState(lua_State* pt_lua_state) {
-      lua_pushnumber(pt_lua_state, m_fReading);
-      lua_setfield(pt_lua_state, -2, "altitude");
-   }
+  void CCI_AltitudeSensor::ReadingsToLuaState(lua_State* pt_lua_state) {
+    lua_pushnumber(pt_lua_state, m_fReading);
+    lua_setfield(pt_lua_state, -2, "altitude");
+  }
 #endif
 
 
-   /****************************************/
-   /****************************************/
+  /****************************************/
+  /****************************************/
+
+  Real CCI_AltitudeSensor::GetReading() const {
+    return m_fReading;
+  }
 
 }

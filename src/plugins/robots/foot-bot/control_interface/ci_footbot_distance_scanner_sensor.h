@@ -117,9 +117,7 @@ namespace argos {
        * It is suggested to use the short/long maps instead.
        *
        */
-      inline const TReadingsMap& GetReadingsMap(){
-         return m_tReadingsMap;
-      }
+      const TReadingsMap& GetReadingsMap();
 
       /**
        *
@@ -132,9 +130,7 @@ namespace argos {
        * If the value is -2 it means that the sensor is empy (obstacle too far / no obstacle, i.e. > 30cm from the robot border)
        *
        */
-      inline const TReadingsMap& GetShortReadingsMap(){
-         return m_tShortReadingsMap;
-      }
+      const TReadingsMap& GetShortReadingsMap();
 
       /**
        *
@@ -147,9 +143,7 @@ namespace argos {
        * If the value is -2 it means that the sensor is empy (obstacle too far / no obstacle, i.e. > 150cm from the robot border)
        *
        */
-      inline const TReadingsMap& GetLongReadingsMap(){
-         return m_tLongReadingsMap;
-      }
+      const TReadingsMap& GetLongReadingsMap();
 
 #ifdef ARGOS_WITH_LUA
       virtual void CreateLuaState(lua_State* pt_lua_state);

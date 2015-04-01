@@ -42,18 +42,14 @@ namespace argos {
        * This corresponds to calling SetLockState(1.0f).
        * @see SetLockState()
        */
-      inline void Lock() {
-         SetLockState(1.0f);
-      }
+      void Lock();
 
       /**
        * Unlocks the gripper.
        * This corresponds to calling SetLockState(0.0f).
        * @see SetLockState()
        */
-      inline void Unlock() {
-         SetLockState(0.0f);
-      }
+      void Unlock();
 
 #ifdef ARGOS_WITH_LUA
       virtual void CreateLuaState(lua_State* pt_lua_state);

@@ -15,6 +15,13 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   const CCI_RangeAndBearingSensor::TReadings& CCI_RangeAndBearingSensor::GetReadings() const {
+     return m_tReadings;
+   }
+
+   /****************************************/
+   /****************************************/
+
 #ifdef ARGOS_WITH_LUA
    void CCI_RangeAndBearingSensor::CreateLuaState(lua_State* pt_lua_state) {
       CLuaUtility::OpenRobotStateTable(pt_lua_state, "range_and_bearing");

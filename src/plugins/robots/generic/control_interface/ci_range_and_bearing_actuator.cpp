@@ -90,6 +90,28 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   size_t CCI_RangeAndBearingActuator::GetSize() const {
+     return m_cData.Size();
+   }
+  
+   /****************************************/
+   /****************************************/
+
+   void CCI_RangeAndBearingActuator::SetData(size_t un_idx,
+					    UInt8 un_value) {
+     m_cData[un_idx] = un_value;
+   }
+  
+   /****************************************/
+   /****************************************/
+
+   void CCI_RangeAndBearingActuator::ClearData() {
+     m_cData.Zero();
+   }
+
+   /****************************************/
+   /****************************************/
+
 #ifdef ARGOS_WITH_LUA
    void CCI_RangeAndBearingActuator::CreateLuaState(lua_State* pt_lua_state) {
       CLuaUtility::StartTable(pt_lua_state, "range_and_bearing");

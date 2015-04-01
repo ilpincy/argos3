@@ -65,9 +65,7 @@ namespace argos {
        * @brief Returns the reading of the encoder sensor
        * Returns the reading of the encoder sensor
        */
-      inline const SReading& GetReading() const {
-         return m_sReading;
-      }
+      const SReading& GetReading() const;
 
 #ifdef ARGOS_WITH_LUA
       virtual void CreateLuaState(lua_State* pt_lua_state);

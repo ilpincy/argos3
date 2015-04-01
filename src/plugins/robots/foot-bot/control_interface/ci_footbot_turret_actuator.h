@@ -115,34 +115,25 @@ namespace argos {
        * @see SetRotation
        *
        */
-      inline void SetActiveWithRotation(const CRadians& c_angle) {
-         SetPositionControlMode();
-         SetRotation(c_angle);
-      }
+      void SetActiveWithRotation(const CRadians& c_angle);
 
       /**
        * @brief Sets the turret control mode to speed control
        * @see SetMode
        */
-      inline void SetSpeedControlMode() {
-         SetMode(MODE_SPEED_CONTROL);
-      }
+      void SetSpeedControlMode();
 
       /**
        * @brief Sets the turret control mode to position control
        * @see SetMode
        */
-      inline void SetPositionControlMode() {
-         SetMode(MODE_POSITION_CONTROL);
-      }
+      void SetPositionControlMode();
 
       /**
        * @brief Sets the turret control mode to passive
        * @see SetMode
        */
-      inline void SetPassiveMode() {
-         SetMode(MODE_PASSIVE);
-      }
+      void SetPassiveMode();
 
 #ifdef ARGOS_WITH_LUA
       virtual void CreateLuaState(lua_State* pt_lua_state);

@@ -98,6 +98,13 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   size_t CCI_LEDsActuator::GetNumLEDs() const {
+     return m_tSettings.size();
+   }
+
+   /****************************************/
+   /****************************************/
+
    void CCI_LEDsActuator::SetSingleColor(UInt32 un_led_number,
                                          const CColor& c_color) {
       m_tSettings[un_led_number] = c_color;

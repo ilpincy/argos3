@@ -33,6 +33,13 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   const CCI_FootBotProximitySensor::TReadings& CCI_FootBotProximitySensor::GetReadings() const {
+     return m_tReadings;
+   }
+
+   /****************************************/
+   /****************************************/
+
 #ifdef ARGOS_WITH_LUA
    void CCI_FootBotProximitySensor::CreateLuaState(lua_State* pt_lua_state) {
       CLuaUtility::OpenRobotStateTable(pt_lua_state, "proximity");

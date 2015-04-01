@@ -65,23 +65,17 @@ namespace argos {
       /**
        * Sets gripper aperture to lock, positive direction.
        */
-      inline void LockPositive() {
-         SetAperture(LOCKED_POSITIVE);
-      }
+      void LockPositive();
 
       /**
        * Sets gripper aperture to lock, negative direction.
        */
-      inline void LockNegative() {
-         SetAperture(LOCKED_NEGATIVE);
-      }
+      void LockNegative();
 
       /**
        * Unlock gripper: objects are released.
        */
-      inline void Unlock() {
-         SetAperture(UNLOCKED);
-      }
+      void Unlock();
 
 #ifdef ARGOS_WITH_LUA
       virtual void CreateLuaState(lua_State* pt_lua_state);

@@ -20,6 +20,13 @@ namespace argos {
    /****************************************/
    /****************************************/
    
+   const CRadians& CCI_FootBotTurretEncoderSensor::GetRotation() const {
+     return m_cRotation;
+   }
+
+   /****************************************/
+   /****************************************/
+   
 #ifdef ARGOS_WITH_LUA
    void CCI_FootBotTurretEncoderSensor::CreateLuaState(lua_State* pt_lua_state) {
       CLuaUtility::OpenRobotStateTable(pt_lua_state, "turret");

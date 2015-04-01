@@ -16,8 +16,8 @@ namespace argos {
 
 namespace argos {
 
-   class CColoredBlobOmnidirectionalCameraRotZOnlySensor : public CSimulatedSensor,
-                                                           public CCI_ColoredBlobOmnidirectionalCameraSensor {
+  class CColoredBlobOmnidirectionalCameraRotZOnlySensor : public CCI_ColoredBlobOmnidirectionalCameraSensor,
+                                                          public CSimulatedSensor {
 
    public:
 
@@ -35,10 +35,10 @@ namespace argos {
 
       virtual void Destroy();
 
-			virtual void Enable();
-
-			virtual void Disable();
-
+      virtual void Enable();
+      
+      virtual void Disable();
+			
    protected:
 
       bool                                  m_bEnabled;

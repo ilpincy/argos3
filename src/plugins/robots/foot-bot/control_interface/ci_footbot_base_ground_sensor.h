@@ -67,9 +67,7 @@ namespace argos {
 
       virtual ~CCI_FootBotBaseGroundSensor() {}
       
-      inline const TReadings& GetReadings() const {
-         return m_tReadings;
-      }
+      const TReadings& GetReadings() const;
       
 #ifdef ARGOS_WITH_LUA
       virtual void CreateLuaState(lua_State* pt_lua_state);

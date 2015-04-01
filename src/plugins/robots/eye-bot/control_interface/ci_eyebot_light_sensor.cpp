@@ -32,6 +32,13 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   const CCI_EyeBotLightSensor::TReadings& CCI_EyeBotLightSensor::GetReadings() const {
+     return m_tReadings;
+   }
+
+   /****************************************/
+   /****************************************/
+
 #ifdef ARGOS_WITH_LUA
    void CCI_EyeBotLightSensor::CreateLuaState(lua_State* pt_lua_state) {
       CLuaUtility::OpenRobotStateTable(pt_lua_state, "light");
