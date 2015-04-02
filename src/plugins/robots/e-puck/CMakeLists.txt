@@ -38,8 +38,6 @@ endif(ARGOS_BUILD_FOR_SIMULATOR)
 add_library(argos3plugin_${ARGOS_BUILD_FOR}_epuck SHARED ${ARGOS3_SOURCES_PLUGINS_ROBOTS_EPUCK})
 target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_epuck
   argos3plugin_${ARGOS_BUILD_FOR}_genericrobot
-  argos3plugin_${ARGOS_BUILD_FOR}_actuators
-  argos3plugin_${ARGOS_BUILD_FOR}_sensors
   argos3plugin_${ARGOS_BUILD_FOR}_dynamics2d)
   # argos3plugin_${ARGOS_BUILD_FOR}_physx)
 if(ARGOS_BUILD_FOR_SIMULATOR AND ARGOS_COMPILE_QTOPENGL)

@@ -51,8 +51,6 @@ endif(ARGOS_BUILD_FOR_SIMULATOR)
 add_library(argos3plugin_${ARGOS_BUILD_FOR}_eyebot SHARED ${ARGOS3_SOURCES_PLUGINS_ROBOTS_EYEBOT})
 target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_eyebot
   argos3plugin_${ARGOS_BUILD_FOR}_genericrobot
-  argos3plugin_${ARGOS_BUILD_FOR}_actuators
-  argos3plugin_${ARGOS_BUILD_FOR}_sensors
   argos3plugin_${ARGOS_BUILD_FOR}_pointmass3d)
 if(ARGOS_COMPILE_QTOPENGL)
   target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_eyebot argos3plugin_${ARGOS_BUILD_FOR}_qtopengl)

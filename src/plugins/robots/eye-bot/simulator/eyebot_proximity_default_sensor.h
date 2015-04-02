@@ -15,12 +15,12 @@ namespace argos {
 }
 
 #include <argos3/plugins/robots/eye-bot/control_interface/ci_eyebot_proximity_sensor.h>
-#include <argos3/plugins/simulator/sensors/proximity_default_sensor.h>
+#include <argos3/plugins/robots/generic/simulator/proximity_default_sensor.h>
 
 namespace argos {
 
    class CEyeBotProximityDefaultSensor : public CCI_EyeBotProximitySensor,
-                                          public CSimulatedSensor {
+                                         public CSimulatedSensor {
 
    public:
 

@@ -15,7 +15,7 @@ namespace argos {
 }
 
 #include <argos3/plugins/robots/foot-bot/control_interface/ci_footbot_proximity_sensor.h>
-#include <argos3/plugins/simulator/sensors/proximity_default_sensor.h>
+#include <argos3/plugins/robots/generic/simulator/proximity_default_sensor.h>
 
 namespace argos {
 

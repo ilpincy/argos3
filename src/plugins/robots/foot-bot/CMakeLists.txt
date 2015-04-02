@@ -85,8 +85,6 @@ endif(ARGOS_BUILD_FOR_SIMULATOR)
 add_library(argos3plugin_${ARGOS_BUILD_FOR}_footbot SHARED ${ARGOS3_SOURCES_PLUGINS_ROBOTS_FOOTBOT})
 target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_footbot
   argos3plugin_${ARGOS_BUILD_FOR}_genericrobot
-  argos3plugin_${ARGOS_BUILD_FOR}_actuators
-  argos3plugin_${ARGOS_BUILD_FOR}_sensors
   argos3plugin_${ARGOS_BUILD_FOR}_dynamics2d)
   # argos3plugin_${ARGOS_BUILD_FOR}_physx)
 if(ARGOS_COMPILE_QTOPENGL)
