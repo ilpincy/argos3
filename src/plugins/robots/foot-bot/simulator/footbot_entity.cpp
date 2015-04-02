@@ -78,6 +78,7 @@ namespace argos {
                                   const CVector3& c_position,
                                   const CQuaternion& c_orientation,
                                   Real f_rab_range,
+                                  size_t un_rab_data_size,
                                   const CRadians& c_aperture) :
       CComposableEntity(NULL, str_id),
       m_pcControllableEntity(NULL),
@@ -200,7 +201,7 @@ namespace argos {
          /* RAB equipped entity */
          m_pcRABEquippedEntity = new CRABEquippedEntity(this,
                                                         "rab_0",
-                                                        10,
+                                                        un_rab_data_size,
                                                         f_rab_range,
                                                         m_pcEmbodiedEntity->GetOriginAnchor(),
                                                         *m_pcEmbodiedEntity,
@@ -346,9 +347,11 @@ namespace argos {
          /* RAB equipped entity */
          Real fRange = 3.0f;
          GetNodeAttributeOrDefault(t_tree, "rab_range", fRange, fRange);
+         UInt32 unDataSize = 10;
+         GetNodeAttributeOrDefault(t_tree, "rab_data_size", unDataSize, unDataSize);
          m_pcRABEquippedEntity = new CRABEquippedEntity(this,
                                                         "rab_0",
-                                                        10,
+                                                        unDataSize,
                                                         fRange,
                                                         m_pcEmbodiedEntity->GetOriginAnchor(),
                                                         *m_pcEmbodiedEntity,
@@ -451,6 +454,17 @@ namespace argos {
                    "  <arena ...>\n"
                    "    ...\n"
                    "    <foot-bot id=\"fb0\" rab_range=\"4\">\n"
+                   "      <body position=\"0.4,2.3,0.25\" orientation=\"45,0,0\" />\n"
+                   "      <controller config=\"mycntrl\" />\n"
+                   "    </foot-bot>\n"
+                   "    ...\n"
+                   "  </arena>\n\n"
+                   "You can also set the data sent at each time step through the range-and-bearing"
+                   "system. By default, a message sent by a foot-bot is 10 bytes long. By using the"
+                   "'rab_data_size' attribute, you can change it to, i.e., 20 bytes as follows:\n\n"
+                   "  <arena ...>\n"
+                   "    ...\n"
+                   "    <foot-bot id=\"fb0\" rab_data_size=\"20\">\n"
                    "      <body position=\"0.4,2.3,0.25\" orientation=\"45,0,0\" />\n"
                    "      <controller config=\"mycntrl\" />\n"
                    "    </foot-bot>\n"

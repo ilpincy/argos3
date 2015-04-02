@@ -56,6 +56,105 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   CEPuckEntity::CEPuckEntity(const std::string& str_id,
+                              const std::string& str_controller_id,
+                              const CVector3& c_position,
+                              const CQuaternion& c_orientation,
+                              Real f_rab_range,
+                              size_t un_rab_data_size) :
+      CComposableEntity(NULL, str_id),
+      m_pcControllableEntity(NULL),
+      m_pcEmbodiedEntity(NULL),
+      m_pcGroundSensorEquippedEntity(NULL),
+      m_pcLEDEquippedEntity(NULL),
+      m_pcLightSensorEquippedEntity(NULL),
+      m_pcProximitySensorEquippedEntity(NULL),
+      m_pcRABEquippedEntity(NULL),
+      m_pcWheeledEntity(NULL) {
+      try {
+         /*
+          * Create and init components
+          */
+         /* Embodied entity */
+         m_pcEmbodiedEntity = new CEmbodiedEntity(this, "body_0", c_position, c_orientation);
+         AddComponent(*m_pcEmbodiedEntity);
+         /* Wheeled entity and wheel positions (left, right) */
+         m_pcWheeledEntity = new CWheeledEntity(this, "wheels_0", 2);
+         AddComponent(*m_pcWheeledEntity);
+         m_pcWheeledEntity->SetWheel(0, CVector3(0.0f,  HALF_INTERWHEEL_DISTANCE, 0.0f), WHEEL_RADIUS);
+         m_pcWheeledEntity->SetWheel(1, CVector3(0.0f, -HALF_INTERWHEEL_DISTANCE, 0.0f), WHEEL_RADIUS);
+         /* LED equipped entity */
+         m_pcLEDEquippedEntity = new CLEDEquippedEntity(this, "leds_0");
+         AddComponent(*m_pcLEDEquippedEntity);
+         m_pcLEDEquippedEntity->AddLEDRing(
+            CVector3(0.0f, 0.0f, LED_RING_ELEVATION),
+            LED_RING_RADIUS,
+            LED_RING_START_ANGLE,
+            8,
+            m_pcEmbodiedEntity->GetOriginAnchor());
+         /* Proximity sensor equipped entity */
+         m_pcProximitySensorEquippedEntity =
+            new CProximitySensorEquippedEntity(this,
+                                               "proximity_0");
+         AddComponent(*m_pcProximitySensorEquippedEntity);
+         m_pcProximitySensorEquippedEntity->AddSensorRing(
+            CVector3(0.0f, 0.0f, PROXIMITY_SENSOR_RING_ELEVATION),
+            PROXIMITY_SENSOR_RING_RADIUS,
+            PROXIMITY_SENSOR_RING_START_ANGLE,
+            PROXIMITY_SENSOR_RING_RANGE,
+            8,
+            m_pcEmbodiedEntity->GetOriginAnchor());
+         /* Light sensor equipped entity */
+         m_pcLightSensorEquippedEntity =
+            new CLightSensorEquippedEntity(this,
+                                           "light_0");
+         AddComponent(*m_pcLightSensorEquippedEntity);
+         m_pcLightSensorEquippedEntity->AddSensorRing(
+            CVector3(0.0f, 0.0f, PROXIMITY_SENSOR_RING_ELEVATION),
+            PROXIMITY_SENSOR_RING_RADIUS,
+            PROXIMITY_SENSOR_RING_START_ANGLE,
+            PROXIMITY_SENSOR_RING_RANGE,
+            8,
+            m_pcEmbodiedEntity->GetOriginAnchor());
+         /* Ground sensor equipped entity */
+         m_pcGroundSensorEquippedEntity =
+            new CGroundSensorEquippedEntity(this,
+                                            "ground_0");
+         AddComponent(*m_pcGroundSensorEquippedEntity);
+         m_pcGroundSensorEquippedEntity->AddSensor(CVector2(0.03f, -0.009f),
+                                                   CGroundSensorEquippedEntity::TYPE_GRAYSCALE,
+                                                   m_pcEmbodiedEntity->GetOriginAnchor());
+         m_pcGroundSensorEquippedEntity->AddSensor(CVector2(0.03f,  0.0f),
+                                                   CGroundSensorEquippedEntity::TYPE_GRAYSCALE,
+                                                   m_pcEmbodiedEntity->GetOriginAnchor());
+         m_pcGroundSensorEquippedEntity->AddSensor(CVector2(0.03f,  0.009f),
+                                                   CGroundSensorEquippedEntity::TYPE_GRAYSCALE,
+                                                   m_pcEmbodiedEntity->GetOriginAnchor());
+         /* RAB equipped entity */
+         m_pcRABEquippedEntity = new CRABEquippedEntity(this,
+                                                        "rab_0",
+                                                        un_rab_data_size,
+                                                        f_rab_range,
+                                                        m_pcEmbodiedEntity->GetOriginAnchor(),
+                                                        *m_pcEmbodiedEntity,
+                                                        CVector3(0.0f, 0.0f, RAB_ELEVATION));
+         AddComponent(*m_pcRABEquippedEntity);
+         /* Controllable entity
+            It must be the last one, for actuators/sensors to link to composing entities correctly */
+         m_pcControllableEntity = new CControllableEntity(this, "controller_0");
+         AddComponent(*m_pcControllableEntity);
+         m_pcControllableEntity->SetController(str_controller_id);
+         /* Update components */
+         UpdateComponents();
+      }
+      catch(CARGoSException& ex) {
+         THROW_ARGOSEXCEPTION_NESTED("Failed to initialize entity \"" << GetId() << "\".", ex);
+      }
+   }
+
+   /****************************************/
+   /****************************************/
+
    void CEPuckEntity::Init(TConfigurationNode& t_tree) {
       try {
          /*
@@ -124,9 +223,11 @@ namespace argos {
          /* RAB equipped entity */
          Real fRange = 0.8f;
          GetNodeAttributeOrDefault(t_tree, "rab_range", fRange, fRange);
+         UInt32 unDataSize = 2;
+         GetNodeAttributeOrDefault(t_tree, "rab_data_size", unDataSize, unDataSize);
          m_pcRABEquippedEntity = new CRABEquippedEntity(this,
                                                         "rab_0",
-                                                        2,
+                                                        unDataSize,
                                                         fRange,
                                                         m_pcEmbodiedEntity->GetOriginAnchor(),
                                                         *m_pcEmbodiedEntity,
@@ -187,7 +288,7 @@ namespace argos {
                    "REQUIRED XML CONFIGURATION\n\n"
                    "  <arena ...>\n"
                    "    ...\n"
-                   "    <e-puck id=\"fb0\">\n"
+                   "    <e-puck id=\"eb0\">\n"
                    "      <body position=\"0.4,2.3,0.25\" orientation=\"45,90,0\" />\n"
                    "      <controller config=\"mycntrl\" />\n"
                    "    </e-puck>\n"
@@ -212,7 +313,28 @@ namespace argos {
                    "e-puck. The value of the attribute must be set to the id of a previously\n"
                    "defined controller. Controllers are defined in the <controllers> XML subtree.\n\n"
                    "OPTIONAL XML CONFIGURATION\n\n"
-                   "None for the time being.\n",
+                   "You can set the emission range of the range-and-bearing system. By default, a\n"
+                   "message sent by an e-puck can be received up to 80cm. By using the 'rab_range'\n"
+                   "attribute, you can change it to, i.e., 4m as follows:\n\n"
+                   "  <arena ...>\n"
+                   "    ...\n"
+                   "    <e-puck id=\"eb0\" rab_range=\"4\">\n"
+                   "      <body position=\"0.4,2.3,0.25\" orientation=\"45,90,0\" />\n"
+                   "      <controller config=\"mycntrl\" />\n"
+                   "    </e-puck>\n"
+                   "    ...\n"
+                   "  </arena>\n\n"
+                   "You can also set the data sent at each time step through the range-and-bearing"
+                   "system. By default, a message sent by an e-puck is 2 bytes long. By using the"
+                   "'rab_data_size' attribute, you can change it to, i.e., 20 bytes as follows:\n\n"
+                   "  <arena ...>\n"
+                   "    ...\n"
+                   "    <e-puck id=\"eb0\" rab_data_size=\"20\">\n"
+                   "      <body position=\"0.4,2.3,0.25\" orientation=\"45,90,0\" />\n"
+                   "      <controller config=\"mycntrl\" />\n"
+                   "    </e-puck>\n"
+                   "    ...\n"
+                   "  </arena>\n\n",
                    "Under development"
       );
 

@@ -33,6 +33,13 @@ namespace argos {
 
       CEPuckEntity();
 
+      CEPuckEntity(const std::string& str_id,
+                   const std::string& str_controller_id,
+                   const CVector3& c_position = CVector3(),
+                   const CQuaternion& c_orientation = CQuaternion(),
+                   Real f_rab_range = 0.8f,
+                   size_t un_rab_data_size = 2);
+      
       virtual void Init(TConfigurationNode& t_tree);
       virtual void Reset();
       virtual void Destroy();
