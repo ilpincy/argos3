@@ -42,7 +42,25 @@ namespace argos {
             if(! m_bIsOK) {
                THROW_ARGOSEXCEPTION("Error loading Lua script \"" << strScriptFileName << "\": " << lua_tostring(m_ptLuaState, -1));
             }
+            if(! t_tree.NoChildren()) {
+            	/* Put the robot state table on top */
+            	lua_getglobal(m_ptLuaState, "robot");
+            	/* Add a table named params to the global state table and fill it with values*/
+                CLuaUtility::OpenRobotStateTable(m_ptLuaState, "params");
+            	TConfigurationNodeIterator it;
+				for(it = it.begin(&t_tree);it != it.end(); ++it) {
+					std::string key;
+					std::string value;
+					it.Get()->GetValue(&key);
+					it.Get()->GetTextOrDefault(&value, "");
+					CLuaUtility::AddToTable(m_ptLuaState, key, value);
+				}
+				CLuaUtility::CloseRobotStateTable(m_ptLuaState);
+				/* Pop the robot state table */
+				lua_pop(m_ptLuaState, 1);
+            }
          }
+
          else {
             /* Create a new Lua stack */
             m_ptLuaState = luaL_newstate();
