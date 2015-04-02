@@ -38,29 +38,11 @@ namespace argos {
          std::string strScriptFileName;
          GetNodeAttributeOrDefault(t_tree, "script", strScriptFileName, strScriptFileName);
          if(strScriptFileName != "") {
-            SetLuaScript(strScriptFileName);
+            SetLuaScript(strScriptFileName, t_tree);
             if(! m_bIsOK) {
                THROW_ARGOSEXCEPTION("Error loading Lua script \"" << strScriptFileName << "\": " << lua_tostring(m_ptLuaState, -1));
             }
-            if(! t_tree.NoChildren()) {
-            	/* Put the robot state table on top */
-            	lua_getglobal(m_ptLuaState, "robot");
-            	/* Add a table named params to the global state table and fill it with values*/
-                CLuaUtility::OpenRobotStateTable(m_ptLuaState, "params");
-            	TConfigurationNodeIterator it;
-				for(it = it.begin(&t_tree);it != it.end(); ++it) {
-					std::string key;
-					std::string value;
-					it.Get()->GetValue(&key);
-					it.Get()->GetTextOrDefault(&value, "");
-					CLuaUtility::AddToTable(m_ptLuaState, key, value);
-				}
-				CLuaUtility::CloseRobotStateTable(m_ptLuaState);
-				/* Pop the robot state table */
-				lua_pop(m_ptLuaState, 1);
-            }
          }
-
          else {
             /* Create a new Lua stack */
             m_ptLuaState = luaL_newstate();
@@ -119,7 +101,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CLuaController::SetLuaScript(const std::string& str_script) {
+   void CLuaController::SetLuaScript(const std::string& str_script, TConfigurationNode& t_tree) {
       /* First, delete old script */
       if(m_bScriptActive) {
          lua_close(m_ptLuaState);
@@ -139,6 +121,7 @@ namespace argos {
       /* Create and set variables */
       CreateLuaState();
       SensorReadingsToLuaState();
+      ParametersToLuaState(t_tree);
       /* Execute script init function */
       if(!CLuaUtility::CallLuaFunction(m_ptLuaState, "init")) {
          m_bIsOK = false;
@@ -146,6 +129,11 @@ namespace argos {
       }
       m_bIsOK = true;
       m_bScriptActive = true;
+   }
+
+   void CLuaController::SetLuaScript(const std::string& str_script) {
+	   TConfigurationNode t_tree;
+	   SetLuaScript(str_script, t_tree);
    }
 
    /****************************************/
@@ -192,6 +180,24 @@ namespace argos {
       /* Pop the robot state table */
       lua_pop(m_ptLuaState, 1);
    }
+
+   void CLuaController::ParametersToLuaState(TConfigurationNode& t_tree){
+		/* Put the robot state table on top */
+		lua_getglobal(m_ptLuaState, "robot");
+		/* Add a table named params to the global state table and fill it with values*/
+		CLuaUtility::OpenRobotStateTable(m_ptLuaState, "params");
+		TConfigurationAttributeIterator it;
+		for (it = it.begin(&t_tree); it != it.end(); ++it) {
+			std::string key;
+			std::string value;
+			it.Get()->GetName(&key);
+			it.Get()->GetValue(&value);
+			CLuaUtility::AddToTable(m_ptLuaState, key, value);
+		}
+		CLuaUtility::CloseRobotStateTable(m_ptLuaState);
+		/* Pop the robot state table */
+		lua_pop(m_ptLuaState, 1);
+}
 
    /****************************************/
    /****************************************/
