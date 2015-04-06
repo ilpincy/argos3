@@ -11,6 +11,7 @@ set(ARGOS3_HEADERS_PLUGINS_ROBOTS_GENERIC_CONTROLINTERFACE
   control_interface/ci_ground_sensor.h
   control_interface/ci_leds_actuator.h
   control_interface/ci_light_sensor.h
+  control_interface/ci_light_updated_sensor.h
   control_interface/ci_pan_tilt_camera_actuator.h
   control_interface/ci_positioning_sensor.h
   control_interface/ci_proximity_sensor.h
@@ -29,6 +30,7 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
     simulator/ground_rotzonly_sensor.h
     simulator/leds_default_actuator.h
     simulator/light_default_sensor.h
+    simulator/light_updated_default_sensor.h
     simulator/positioning_default_sensor.h
     simulator/proximity_default_sensor.h
     simulator/quadrotor_position_default_actuator.h
@@ -50,6 +52,7 @@ set(ARGOS3_SOURCES_PLUGINS_ROBOTS_GENERIC
   control_interface/ci_ground_sensor.cpp
   control_interface/ci_leds_actuator.cpp
   control_interface/ci_light_sensor.cpp
+  control_interface/ci_light_updated_sensor.cpp
   control_interface/ci_pan_tilt_camera_actuator.cpp
   control_interface/ci_positioning_sensor.cpp
   control_interface/ci_proximity_sensor.cpp
@@ -68,6 +71,7 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
     simulator/ground_rotzonly_sensor.cpp
     simulator/leds_default_actuator.cpp
     simulator/light_default_sensor.cpp
+    simulator/light_updated_default_sensor.cpp
     simulator/positioning_default_sensor.cpp
     simulator/proximity_default_sensor.cpp
     simulator/quadrotor_position_default_actuator.cpp
