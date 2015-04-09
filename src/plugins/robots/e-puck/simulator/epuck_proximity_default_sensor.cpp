@@ -122,10 +122,10 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CEPuckProximityDefaultSensor::Reset() {
-      for(UInt32 i = 0; i < GetReadings().size(); ++i) {
+   void CEPuckProximityDefaultSensor::Reset()
+   {
+      for(UInt32 i = 0; i < GetReadings().size(); ++i)
          m_tReadings[i].Value = 0.0f;
-      }
    }
 
    /****************************************/
@@ -133,11 +133,16 @@ namespace argos {
 
    Real CEPuckProximityDefaultSensor::CalculateReading(Real f_distance)
    {
-      return Exp(-f_distance);
+      //return Exp(-f_distance);
 
-      /*Real value = 298.701f * pow(f_distance,2) - 36.8961f * f_distance + 1.08212f; // from the e-puck model by Lorenzo Garattoni and Gianpiero Francesca // seems wrong
+      // from the e-puck model by Lorenzo Garattoni and Gianpiero Francesca
+      Real value = 0.0f;
+      if(f_distance <= 0.05) // less than 5cm - the IR readings drop pretty fast
+      {
+          value = 298.701f * pow(f_distance,2) - 36.8961f * f_distance + 1.08212f;
+      }
       CRange<Real>(0.0f,1.0f).TruncValue(value);
-      return value;*/
+      return value;
    }
 
    /****************************************/
