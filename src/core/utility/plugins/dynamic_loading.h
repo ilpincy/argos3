@@ -66,13 +66,6 @@ namespace argos {
       static void UnloadLibrary(const std::string& str_lib);
 
       /**
-       * Unloads a dynamic library.
-       * @param t_lib The handle to the dynamic library to unload
-       * @throws CARGoSException in case of error
-       */
-      static void UnloadLibrary(TDLHandle t_lib);
-
-      /**
        * Loads all the dynamic libraries in the current ARGOS_PLUGIN_PATH.
        * Internally used to execute queries (<tt>argos3 --query</tt>).
        * @throws CARGoSException in case of error

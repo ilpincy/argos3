@@ -33,8 +33,6 @@ namespace argos {
       /* Try loading without changes to the given path */
       CDynamicLoading::TDLHandle tHandle = ::dlopen(str_lib.c_str(), RTLD_LAZY);
       if(tHandle == NULL) {
-         LOGERR << "[WARNING] Can't open library \"" << str_lib << "\": " << ::dlerror() << std::endl;
-         LOGERR.Flush();
          /* Try adding the shared lib extension to the path */
          std::string strLibWExt = str_lib + "." + ARGOS_SHARED_LIBRARY_EXTENSION;
          tHandle = ::dlopen(strLibWExt.c_str(), RTLD_LAZY);
@@ -43,18 +41,12 @@ namespace argos {
             str_lib = strLibWExt;
          }
          else {
-            LOGERR << "[WARNING] Can't open library \"" << strLibWExt << "\": " << ::dlerror() << std::endl;
-            LOGERR.Flush();
             /* Try adding the module lib extension to the path */
             strLibWExt = str_lib + "." + ARGOS_MODULE_LIBRARY_EXTENSION;
             tHandle = ::dlopen(strLibWExt.c_str(), RTLD_LAZY);
             if(tHandle != NULL) {
                /* Success */
                str_lib = strLibWExt;
-            }
-            else {
-               LOGERR << "[WARNING] Can't open library \"" << strLibWExt << "\": " << ::dlerror() << std::endl;
-               LOGERR.Flush();
             }
          }
       }
@@ -83,7 +75,11 @@ namespace argos {
          if(tHandle == NULL) {
             THROW_ARGOSEXCEPTION("Can't load library \""
                                  << str_lib
-                                 << "\"");
+                                 << "\" even after trying to add extensions for shared library ("
+                                 << ARGOS_SHARED_LIBRARY_EXTENSION
+                                 << ") and module library ("
+                                 << ARGOS_MODULE_LIBRARY_EXTENSION
+                                 << ")");
          }
          /* Store the handle to the loaded library */
          m_tOpenLibs[strLoadedLib] = tHandle;
@@ -139,7 +135,11 @@ namespace argos {
          /* If we get here, it's because no directory worked */
          THROW_ARGOSEXCEPTION("Can't load library \""
                               << str_lib
-                              << "\".");
+                              << "\" even after trying to add extensions for shared library ("
+                              << ARGOS_SHARED_LIBRARY_EXTENSION
+                              << ") and module library ("
+                              << ARGOS_MODULE_LIBRARY_EXTENSION
+                              << ")");
       }
    }
 
@@ -149,20 +149,19 @@ namespace argos {
    void CDynamicLoading::UnloadLibrary(const std::string& str_lib) {
       TDLHandleMap::iterator it = m_tOpenLibs.find(str_lib);
       if(it != m_tOpenLibs.end()) {
-         UnloadLibrary(it->second);
+         do {
+            if(::dlclose(it->second) != 0) {
+               THROW_ARGOSEXCEPTION("Can't unload library \""
+                                    << str_lib
+                                    << "\"");
+            }
+         } while(::dlopen(str_lib.c_str(), RTLD_NOLOAD) != NULL);
       }
       else {
          THROW_ARGOSEXCEPTION("Can't unload library \""
                               << str_lib
                               << "\": library does not appear to have been loaded.");
       }
-   }
-
-   /****************************************/
-   /****************************************/
-
-   void CDynamicLoading::UnloadLibrary(TDLHandle t_lib) {
-      ::dlclose(t_lib);
    }
 
    /****************************************/
@@ -202,12 +201,16 @@ namespace argos {
             /* Directory open, now go through the files in the directory */
             while((ptDirData = ::readdir(ptDir)) != NULL) {
                /* We have a file, check that it is a library file */
-               if(std::string(ptDirData->d_name).rfind("." ARGOS_SHARED_LIBRARY_EXTENSION) != std::string::npos) {
+               if(strlen(ptDirData->d_name) > strlen(ARGOS_SHARED_LIBRARY_EXTENSION) &&
+                  std::string(ptDirData->d_name).rfind("." ARGOS_SHARED_LIBRARY_EXTENSION) +
+                  strlen(ARGOS_SHARED_LIBRARY_EXTENSION) + 1 == strlen(ptDirData->d_name)) {
                   /* It's a library file, load it */
                   LoadLibrary(strDir + ptDirData->d_name);
                }
-               if(std::string(ARGOS_SHARED_LIBRARY_EXTENSION) != std::string(ARGOS_MODULE_LIBRARY_EXTENSION)) {
-                  if(std::string(ptDirData->d_name).rfind("." ARGOS_MODULE_LIBRARY_EXTENSION) != std::string::npos) {
+               if(strcmp(ARGOS_SHARED_LIBRARY_EXTENSION, ARGOS_MODULE_LIBRARY_EXTENSION) != 0) {
+                  if(strlen(ptDirData->d_name) > strlen(ARGOS_MODULE_LIBRARY_EXTENSION) &&
+                     std::string(ptDirData->d_name).rfind("." ARGOS_MODULE_LIBRARY_EXTENSION) +
+                     strlen(ARGOS_MODULE_LIBRARY_EXTENSION) + 1 == strlen(ptDirData->d_name)) {
                      /* It's a library file, load it */
                      LoadLibrary(strDir + ptDirData->d_name);
                   }
@@ -235,8 +238,9 @@ namespace argos {
       for(TDLHandleMap::iterator it = m_tOpenLibs.begin();
           it != m_tOpenLibs.end();
           ++it) {
-         UnloadLibrary(it->second);
+         UnloadLibrary(it->first);
       }
+      m_tOpenLibs.clear();
    }
 
    /****************************************/
