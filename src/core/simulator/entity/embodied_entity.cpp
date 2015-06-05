@@ -338,7 +338,7 @@ namespace argos {
          /* No Collision or just a check, undo changes */
          m_tPhysicsModelVector[0]->MoveTo(cOriginalPosition, cOriginalOrientation);
          /* Tell the caller about collisions */
-         return !bNoCollision;
+         return bNoCollision;
       }
    }
 
