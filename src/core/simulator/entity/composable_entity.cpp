@@ -110,7 +110,9 @@ namespace argos {
       try {
          /* Search for the path separator character and take the first path segment */
          size_t unFirstSeparatorIdx = str_path.find(".");
-         std::string strFrontIdentifier = str_path.substr(0, unFirstSeparatorIdx);
+         std::string strFrontIdentifier;
+         if(unFirstSeparatorIdx == std::string::npos) strFrontIdentifier = str_path;
+         else strFrontIdentifier = str_path.substr(0, unFirstSeparatorIdx);
          /* Try to find the relevant component in this context */
          CEntity::TMultiMap::iterator itComponent = FindComponent(strFrontIdentifier);
          if(itComponent != m_mapComponents.end()) {
@@ -148,7 +150,9 @@ namespace argos {
    bool CComposableEntity::HasComponent(const std::string& str_path) {
       /* Search for the path separator character and take the first path segement */
       size_t unFirstSeparatorIdx = str_path.find(".");
-      std::string strFrontIdentifier = str_path.substr(0, unFirstSeparatorIdx);
+      std::string strFrontIdentifier;
+      if(unFirstSeparatorIdx == std::string::npos) strFrontIdentifier = str_path;
+      else strFrontIdentifier = str_path.substr(0, unFirstSeparatorIdx);
       /* Try to find the relevant component in this context */
       CEntity::TMultiMap::iterator itComponent = FindComponent(strFrontIdentifier);
       if(itComponent != m_mapComponents.end()) {
