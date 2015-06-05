@@ -203,7 +203,7 @@ namespace argos {
       bool MoveEntity(CEmbodiedEntity& c_entity,
                       const CVector3& c_position,
                       const CQuaternion& c_orientation,
-                      bool b_check_only);
+                      bool b_check_only = false);
 
       /**
        * Adds the passed entity to the simulation.
