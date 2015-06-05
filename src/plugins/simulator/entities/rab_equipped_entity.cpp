@@ -22,7 +22,6 @@ namespace argos {
       m_fRange(0.0f),
       m_pcEntityBody(NULL) {
       Disable();
-      SetCanBeEnabledIfDisabled(false);
    }
 
    /****************************************/
@@ -45,7 +44,6 @@ namespace argos {
       m_fRange(f_range),
       m_pcEntityBody(&c_entity_body) {
       Disable();
-      SetCanBeEnabledIfDisabled(false);
       CVector3 cPos = c_pos_offset;
       cPos.Rotate(s_anchor.Orientation);
       cPos += s_anchor.Position;

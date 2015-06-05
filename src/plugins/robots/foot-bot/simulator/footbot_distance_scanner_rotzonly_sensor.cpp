@@ -63,7 +63,6 @@ namespace argos {
       m_pcEmbodiedEntity = &(c_entity.GetComponent<CEmbodiedEntity>("body"));
       m_pcControllableEntity = &(c_entity.GetComponent<CControllableEntity>("controller"));
       m_pcDistScanEntity = &(c_entity.GetComponent<CFootBotDistanceScannerEquippedEntity>("distance_scanner"));
-      m_pcDistScanEntity->SetCanBeEnabledIfDisabled(true);
       m_pcDistScanEntity->Enable();
    }
 

@@ -5,6 +5,7 @@
  */
 
 #include "led_entity.h"
+#include <argos3/core/simulator/simulator.h>
 #include <argos3/core/simulator/space/space.h>
 #include <argos3/plugins/simulator/media/led_medium.h>
 
@@ -15,7 +16,9 @@ namespace argos {
 
    CLEDEntity::CLEDEntity(CComposableEntity* pc_parent) :
       CPositionalEntity(pc_parent),
-      m_pcMedium(NULL) {}
+      m_pcMedium(NULL) {
+      Disable();
+   }
 
    /****************************************/
    /****************************************/
@@ -27,7 +30,9 @@ namespace argos {
       CPositionalEntity(pc_parent, str_id, c_position, CQuaternion()),
       m_cColor(c_color),
       m_cInitColor(c_color),
-      m_pcMedium(NULL) {}
+      m_pcMedium(NULL) {
+      SetColor(c_color);
+   }
 
    /****************************************/
    /****************************************/
@@ -64,21 +69,25 @@ namespace argos {
    /****************************************/
 
    void CLEDEntity::SetEnabled(bool b_enabled) {
-      CEntity::SetEnabled(b_enabled);
-      if(IsEnabled()) {
-         m_cColor = m_cInitColor;
-      }
+      CEntity::SetEnabled(m_cColor != CColor::BLACK);
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CLEDEntity::SetColor(const CColor& c_color) {
+      m_cColor = c_color;
+      SetEnabled(c_color != CColor::BLACK);
    }
 
    /****************************************/
    /****************************************/
 
    void CLEDEntity::AddToMedium(CLEDMedium& c_medium) {
-      if(HasMedium()) {
-         RemoveFromMedium();
-      }
+      if(HasMedium()) RemoveFromMedium();
       m_pcMedium = &c_medium;
       c_medium.AddEntity(*this);
+      Enable();
    }
 
    /****************************************/
@@ -88,6 +97,7 @@ namespace argos {
       try {
          GetMedium().RemoveEntity(*this);
          m_pcMedium = NULL;
+         Disable();
       }
       catch(CARGoSException& ex) {
          THROW_ARGOSEXCEPTION_NESTED("Can't remove LED entity \"" << GetId() << "\" from medium.", ex);

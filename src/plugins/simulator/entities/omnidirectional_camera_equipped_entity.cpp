@@ -8,6 +8,7 @@ namespace argos {
 
    COmnidirectionalCameraEquippedEntity::COmnidirectionalCameraEquippedEntity(CComposableEntity* pc_parent) :
       CEntity(pc_parent) {
+      Disable();
    }
 
    /****************************************/
@@ -20,6 +21,7 @@ namespace argos {
       CEntity(pc_parent, str_id),
       m_cAperture(c_aperture),
       m_cOffset(c_offset) {      
+      Disable();
    }
 
    /****************************************/

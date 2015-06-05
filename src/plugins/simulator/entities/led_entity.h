@@ -75,9 +75,7 @@ namespace argos {
        * @param c_color the wanted color.
        * @see GetColor()
        */
-      inline void SetColor(const CColor& c_color) {
-         m_cColor = c_color;
-      }
+      void SetColor(const CColor& c_color);
 
       /**
        * Sets the initialization color for this LED.

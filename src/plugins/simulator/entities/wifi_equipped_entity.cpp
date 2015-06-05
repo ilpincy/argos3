@@ -13,14 +13,18 @@ namespace argos {
    /****************************************/
 
    CWiFiEquippedEntity::CWiFiEquippedEntity(CComposableEntity* pc_parent) :
-      CEntity(pc_parent) {}
+      CEntity(pc_parent) {
+      Disable();
+   }
 
    /****************************************/
    /****************************************/
 
    CWiFiEquippedEntity::CWiFiEquippedEntity(CComposableEntity* pc_parent,
                                             const std::string& str_id) :
-      CEntity(pc_parent, str_id) {}
+      CEntity(pc_parent, str_id) {
+      Disable();
+   }
 
    /****************************************/
    /****************************************/

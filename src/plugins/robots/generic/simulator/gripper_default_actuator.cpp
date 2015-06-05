@@ -21,7 +21,6 @@ namespace argos {
 
    void CGripperDefaultActuator::SetRobot(CComposableEntity& c_entity) {
       m_pcGripperEquippedEntity = &(c_entity.GetComponent<CGripperEquippedEntity>("gripper"));
-      m_pcGripperEquippedEntity->SetCanBeEnabledIfDisabled(true);
       m_pcGripperEquippedEntity->Enable();
    }
 

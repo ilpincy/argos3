@@ -66,7 +66,6 @@ namespace argos {
          m_pcEmbodiedEntity = &(c_entity.GetComponent<CEmbodiedEntity>("body"));
          m_pcControllableEntity = &(c_entity.GetComponent<CControllableEntity>("controller"));
          m_pcLightEntity = &(c_entity.GetComponent<CLightSensorEquippedEntity>("light_sensors"));
-         m_pcLightEntity->SetCanBeEnabledIfDisabled(true);
          m_pcLightEntity->Enable();
       }
       catch(CARGoSException& ex) {
@@ -237,7 +236,7 @@ namespace argos {
                    "      ...\n"
                    "      <sensors>\n"
                    "        ...\n"
-                   "        <light implementation=\"rot_z_only\" />\n"
+                   "        <eyebot_light implementation=\"rot_z_only\" />\n"
                    "        ...\n"
                    "      </sensors>\n"
                    "      ...\n"
@@ -258,8 +257,8 @@ namespace argos {
                    "      ...\n"
                    "      <sensors>\n"
                    "        ...\n"
-                   "        <light implementation=\"rot_z_only\"\n"
-                   "                   show_rays=\"true\" />\n"
+                   "        <eyebot_light implementation=\"rot_z_only\"\n"
+                   "                      show_rays=\"true\" />\n"
                    "        ...\n"
                    "      </sensors>\n"
                    "      ...\n"
@@ -276,8 +275,8 @@ namespace argos {
                    "      ...\n"
                    "      <sensors>\n"
                    "        ...\n"
-                   "        <light implementation=\"rot_z_only\"\n"
-                   "                   noise_level=\"0.1\" />\n"
+                   "        <eyebot_light implementation=\"rot_z_only\"\n"
+                   "                      noise_level=\"0.1\" />\n"
                    "        ...\n"
                    "      </sensors>\n"
                    "      ...\n"

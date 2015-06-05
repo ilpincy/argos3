@@ -138,9 +138,8 @@ namespace argos {
    /****************************************/
 
    void CColoredBlobOmnidirectionalCameraRotZOnlySensor::SetRobot(CComposableEntity& c_entity) {
-      /* Get and enable omndirectional camera equipped entity */
+      /* Get omndirectional camera equipped entity */
       m_pcOmnicamEntity = &(c_entity.GetComponent<COmnidirectionalCameraEquippedEntity>("omnidirectional_camera"));
-      m_pcOmnicamEntity->SetCanBeEnabledIfDisabled(true);
       /* Get controllable entity */
       m_pcControllableEntity = &(c_entity.GetComponent<CControllableEntity>("controller"));
       /* Get embodied entity */

@@ -35,6 +35,32 @@ namespace argos {
       virtual void Init(TConfigurationNode& t_tree);
       virtual void Reset();
 
+      /*
+       * Enables the LEDs for this entity.
+       * Adds the LED equipped entity to the given medium.
+       * If you don't call this method, the LEDs added with
+       * CBoxEntity::AddLED() won't be update correctly.
+       * @param c_medium The medium to which the LEDs must be associated.
+       * @see CBoxEntity::AddLED()
+       */
+      void EnableLEDs(CLEDMedium& c_medium);
+
+      /*
+       * Disables the LEDs for this entity.
+       */
+      void DisableLEDs();
+
+      /**
+       * Adds an LED to this entity.
+       * For the LEDs to be updated correctly, you must first call
+       * CBoxEntity::EnableLEDs().
+       * @param c_offset The position of the LED wrt the origin anchor.
+       * @param c_color The color of the LED.
+       * @see CBoxEntity::EnableLEDs()
+       */
+      void AddLED(const CVector3& c_offset,
+                  const CColor& c_color = CColor::BLACK);
+
       inline CEmbodiedEntity& GetEmbodiedEntity() {
          return *m_pcEmbodiedEntity;
       }

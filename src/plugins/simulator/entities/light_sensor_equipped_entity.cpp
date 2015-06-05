@@ -29,7 +29,7 @@ namespace argos {
 
    CLightSensorEquippedEntity::CLightSensorEquippedEntity(CComposableEntity* pc_parent) :
       CEntity(pc_parent) {
-      SetCanBeEnabledIfDisabled(false);
+      Disable();
    }
    
    /****************************************/
@@ -38,7 +38,7 @@ namespace argos {
    CLightSensorEquippedEntity::CLightSensorEquippedEntity(CComposableEntity* pc_parent,
                                                                   const std::string& str_id) :
       CEntity(pc_parent, str_id) {
-      SetCanBeEnabledIfDisabled(false);
+      Disable();
    }
 
    /****************************************/

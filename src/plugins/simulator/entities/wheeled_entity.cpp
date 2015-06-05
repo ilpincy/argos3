@@ -22,6 +22,7 @@ namespace argos {
       ::memset(m_pfWheelRadia, 0, m_unNumWheels * sizeof(Real));
       m_pfWheelVelocities = new Real[m_unNumWheels];
       ::memset(m_pfWheelVelocities, 0, m_unNumWheels * sizeof(Real));
+      Disable();
    }
 
    /****************************************/
@@ -38,6 +39,7 @@ namespace argos {
       ::memset(m_pfWheelRadia, 0, m_unNumWheels * sizeof(Real));
       m_pfWheelVelocities = new Real[m_unNumWheels];
       ::memset(m_pfWheelVelocities, 0, m_unNumWheels * sizeof(Real));
+      Disable();
    }
    
    /****************************************/

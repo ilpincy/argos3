@@ -258,26 +258,6 @@ namespace argos {
        */
       virtual void SetEnabled(bool b_enabled);
 
-      /**
-       * Returns <tt>true</tt> if this entity, once disabled, can be re-enabled.
-       * @return <tt>true</tt> if this entity, once disabled, can be re-enabled.
-       * @see m_bEnabled
-       * @see m_bCanBeEnabledIfDisabled
-       */
-      bool CanBeEnabledIfDisabled() const {
-         return m_bCanBeEnabledIfDisabled;
-      }
-
-      /**
-       * Sets whether this entity, once disabled, can be re-enabled
-       * @return <tt>true</tt> if this entity, once disabled, can be re-enabled; <tt>false</tt> otherwise
-       * @see m_bEnabled
-       * @see m_bCanBeEnabledIfDisabled
-       */
-      void SetCanBeEnabledIfDisabled(bool b_can_it) {
-         m_bCanBeEnabledIfDisabled = b_can_it;
-      }
-
    private:
 
       /** The parent of this entity */
@@ -288,14 +268,6 @@ namespace argos {
 
       /** When <tt>true</tt>, this entity is updated; when <tt>false</tt>, this entity is not updated */
       bool m_bEnabled;
-
-      /**
-       * This flag is used when an entity is disabled.
-       * If it is set to <tt>true</tt>, it means that the entity can be re-enabled;
-       * when set to <tt>false</tt>, the entity stays disabled even if SetEnabled(<tt>true</tt>)
-       * is called.
-       */
-      bool m_bCanBeEnabledIfDisabled;
 
    };
 

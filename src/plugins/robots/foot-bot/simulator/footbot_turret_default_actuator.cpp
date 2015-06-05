@@ -22,7 +22,6 @@ namespace argos {
 
    void CFootBotTurretDefaultActuator::SetRobot(CComposableEntity& c_entity) {
       m_pcTurretEntity = &(c_entity.GetComponent<CFootBotTurretEntity>("turret"));
-      m_pcTurretEntity->SetCanBeEnabledIfDisabled(true);
       m_pcTurretEntity->Enable();
    }
 

@@ -15,7 +15,6 @@ namespace argos {
 
    void CRangeAndBearingDefaultActuator::SetRobot(CComposableEntity& c_entity) {
       m_pcRangeAndBearingEquippedEntity = &c_entity.GetComponent<CRABEquippedEntity>("rab");
-      m_pcRangeAndBearingEquippedEntity->SetCanBeEnabledIfDisabled(true);
       m_pcRangeAndBearingEquippedEntity->Enable();
       m_cData.Resize(m_pcRangeAndBearingEquippedEntity->GetMsgSize());
    }

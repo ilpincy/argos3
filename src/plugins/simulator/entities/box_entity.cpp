@@ -84,12 +84,6 @@ namespace argos {
             GetNodeAttribute(GetNode(t_tree, "leds"), "medium", strMedium);
             m_pcLEDMedium = &CSimulator::GetInstance().GetMedium<CLEDMedium>(strMedium);
             m_pcLEDEquippedEntity->AddToMedium(*m_pcLEDMedium);
-            m_pcLEDEquippedEntity->Enable();
-         }
-         else {
-            /* No LEDs added, no need to update this entity */
-            m_pcLEDEquippedEntity->Disable();
-            m_pcLEDEquippedEntity->SetCanBeEnabledIfDisabled(false);
          }
          UpdateComponents();
       }
@@ -105,6 +99,31 @@ namespace argos {
       /* Reset all components */
       CComposableEntity::Reset();
       /* Update components */
+      UpdateComponents();
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CBoxEntity::EnableLEDs(CLEDMedium& c_medium) {
+      m_pcLEDEquippedEntity->AddToMedium(c_medium);
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CBoxEntity::DisableLEDs() {
+      m_pcLEDEquippedEntity->RemoveFromMedium();
+   }
+   
+   /****************************************/
+   /****************************************/
+
+   void CBoxEntity::AddLED(const CVector3& c_offset,
+                           const CColor& c_color) {
+      m_pcLEDEquippedEntity->AddLED(c_offset,
+                                    GetEmbodiedEntity().GetOriginAnchor(),
+                                    c_color);
       UpdateComponents();
    }
 

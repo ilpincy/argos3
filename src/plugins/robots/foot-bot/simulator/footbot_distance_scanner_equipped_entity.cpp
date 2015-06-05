@@ -18,7 +18,6 @@ namespace argos {
       m_unMode(MODE_OFF),
       m_fRotationSpeed(0.0f) {
       Disable();
-      SetCanBeEnabledIfDisabled(false);
    }
    
    /****************************************/
@@ -30,7 +29,6 @@ namespace argos {
       m_unMode(MODE_OFF),
       m_fRotationSpeed(0.0f) {
       Disable();
-      SetCanBeEnabledIfDisabled(false);
    }
    
    /****************************************/

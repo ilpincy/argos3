@@ -221,10 +221,12 @@ namespace argos {
       /* LED position wrt global reference frame */
       CVector3 cLEDPosition;
       for(UInt32 i = 0; i < m_tLEDs.size(); ++i) {
-         cLEDPosition = m_tLEDs[i]->Offset;
-         cLEDPosition.Rotate(m_tLEDs[i]->Anchor.Orientation);
-         cLEDPosition += m_tLEDs[i]->Anchor.Position;
-         m_tLEDs[i]->LED.SetPosition(cLEDPosition);
+         if(m_tLEDs[i]->LED.IsEnabled()) {
+            cLEDPosition = m_tLEDs[i]->Offset;
+            cLEDPosition.Rotate(m_tLEDs[i]->Anchor.Orientation);
+            cLEDPosition += m_tLEDs[i]->Anchor.Position;
+            m_tLEDs[i]->LED.SetPosition(cLEDPosition);
+         }
       }
    }
 
@@ -235,6 +237,7 @@ namespace argos {
       for(UInt32 i = 0; i < m_tLEDs.size(); ++i) {
          m_tLEDs[i]->LED.AddToMedium(c_medium);
       }
+      Enable();
    }
 
    /****************************************/
@@ -244,6 +247,7 @@ namespace argos {
       for(UInt32 i = 0; i < m_tLEDs.size(); ++i) {
          m_tLEDs[i]->LED.RemoveFromMedium();
       }
+      Disable();
    }
 
    /****************************************/

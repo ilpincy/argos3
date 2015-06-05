@@ -36,7 +36,6 @@ namespace argos {
       /* Assign RAB equipped entity to this sensor */
       m_pcRangeAndBearingEquippedEntity = &c_entity.GetComponent<CRABEquippedEntity>("rab");
       /* Enable the RAB equipped entity */
-      m_pcRangeAndBearingEquippedEntity->SetCanBeEnabledIfDisabled(true);
       m_pcRangeAndBearingEquippedEntity->Enable();
       /* Get reference to controllable entity */
       m_pcControllableEntity = &c_entity.GetComponent<CControllableEntity>("controller");

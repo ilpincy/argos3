@@ -37,7 +37,6 @@ namespace argos {
          m_pcEmbodiedEntity = &(c_entity.GetComponent<CEmbodiedEntity>("body"));
          m_pcControllableEntity = &(c_entity.GetComponent<CControllableEntity>("controller"));
          m_pcLightEntity = &(c_entity.GetComponent<CLightSensorEquippedEntity>("light_sensors"));
-         m_pcLightEntity->SetCanBeEnabledIfDisabled(true);
          m_pcLightEntity->Enable();
       }
       catch(CARGoSException& ex) {

@@ -32,6 +32,7 @@ namespace argos {
          m_pfWheelVelocities = m_pcWheeledEntity->GetWheelVelocities();
          m_sReading.WheelAxisLength = 100.0f * Distance(m_pcWheeledEntity->GetWheelPosition(0),
                                                         m_pcWheeledEntity->GetWheelPosition(1));
+         m_pcWheeledEntity->Enable();
       }
       catch(CARGoSException& ex) {
          THROW_ARGOSEXCEPTION_NESTED("Error setting differential steering sensor to entity \"" << c_entity.GetId() << "\"", ex);
