@@ -100,7 +100,12 @@ namespace argos {
       CPhysicsModel(CPhysicsEngine& c_engine,
                     CEmbodiedEntity& c_entity);
 
-      virtual ~CPhysicsModel() {}
+      virtual ~CPhysicsModel() {
+         while(!m_vecAnchorMethodHolders.empty()) {
+            delete m_vecAnchorMethodHolders.back();
+            m_vecAnchorMethodHolders.pop_back();
+         }
+      }
 
       /**
        * Returns the physics engine associated to this physics model.
