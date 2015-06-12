@@ -33,7 +33,9 @@ namespace argos {
          virtual CColor GetColorAtPoint(Real f_x,
                                         Real f_y) = 0;
 
+#ifdef ARGOS_WITH_FREEIMAGE
          virtual void SaveAsImage(const std::string& str_path) = 0;
+#endif
 
       };
 
@@ -61,9 +63,11 @@ namespace argos {
        * The given path can include environment variables, which are expanded
        * internally.
        */
+#ifdef ARGOS_WITH_FREEIMAGE
       CFloorEntity(const std::string& str_id,
                    const std::string& str_file_name);
-
+#endif
+      
       /**
        * Class constructor.
        * Creates a floor with the given id, using the loop functions as color source.
@@ -132,9 +136,9 @@ namespace argos {
        * The type of the file is inferred from the extension of the passed path.
        * @param str_path The path of the output file.
        */
-      inline void SaveAsImage(const std::string& str_path) {
-         m_pcColorSource->SaveAsImage(str_path);
-      }
+#ifdef ARGOS_WITH_FREEIMAGE
+      void SaveAsImage(const std::string& str_path);
+#endif
 
       virtual std::string GetTypeDescription() const {
          return "floor";

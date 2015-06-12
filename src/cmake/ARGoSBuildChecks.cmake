@@ -78,10 +78,12 @@ endif(GSL_FOUND)
 #
 if(ARGOS_BUILD_FOR_SIMULATOR)
   find_package(FreeImage)
-  if(NOT FREEIMAGE_FOUND)
-    message(FATAL_ERROR "Required library FreeImage not found.")
-  endif(NOT FREEIMAGE_FOUND)
-  include_directories(${FREEIMAGE_INCLUDE_PATH})
+  if(FREEIMAGE_FOUND)
+    set(ARGOS_WITH_FREEIMAGE ON)
+    include_directories(${FREEIMAGE_INCLUDE_PATH})
+  else(FREEIMAGE_FOUND)
+    message(STATUS "FreeImage not found, image source and OpenGL drawing for the floor entity won't be available")
+  endif(FREEIMAGE_FOUND)
 endif(ARGOS_BUILD_FOR_SIMULATOR)
 
 #

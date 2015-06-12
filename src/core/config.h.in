@@ -39,6 +39,11 @@
 #cmakedefine ARGOS_WITH_GSL
 
 /*
+ * Whether ARGoS was compiled with FreeImage support
+ */
+#cmakedefine ARGOS_WITH_FREEIMAGE
+
+/*
  * Whether to use the ARGoS threadsafe log
  */
 #cmakedefine ARGOS_THREADSAFE_LOG

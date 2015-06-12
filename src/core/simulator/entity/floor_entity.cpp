@@ -5,16 +5,20 @@
  */
 
 #include "floor_entity.h"
-#include <FreeImagePlus.h>
 #include <argos3/core/simulator/simulator.h>
 #include <argos3/core/simulator/space/space.h>
 #include <argos3/core/simulator/loop_functions.h>
 
+#ifdef ARGOS_WITH_FREEIMAGE
+#include <FreeImagePlus.h>
+#endif
+
 namespace argos {
 
-      /****************************************/
-      /****************************************/
+   /****************************************/
+   /****************************************/
 
+#ifdef ARGOS_WITH_FREEIMAGE
    class CFloorColorFromImageFile : public CFloorEntity::CFloorColorSource {
 
    public:
@@ -101,9 +105,10 @@ namespace argos {
       std::string m_strImageFileName;
 
    };
+#endif
 
-      /****************************************/
-      /****************************************/
+   /****************************************/
+   /****************************************/
 
    class CFloorColorFromLoopFunctions : public CFloorEntity::CFloorColorSource {
 
@@ -123,9 +128,10 @@ namespace argos {
 
       virtual CColor GetColorAtPoint(Real f_x,
                                      Real f_y) {
-    	 return m_cLoopFunctions.GetFloorColor(CVector2(f_x, f_y));
+         return m_cLoopFunctions.GetFloorColor(CVector2(f_x, f_y));
       }
 
+#ifdef ARGOS_WITH_FREEIMAGE
       virtual void SaveAsImage(const std::string& str_path) {
          fipImage cImage(FIT_BITMAP, m_unPixelsPerMeter * m_cHalfArenaSize.GetX()*2, m_unPixelsPerMeter * m_cHalfArenaSize.GetY()*2, 24);
          Real fFactor = 1.0f / static_cast<Real>(m_unPixelsPerMeter);
@@ -148,6 +154,7 @@ namespace argos {
             THROW_ARGOSEXCEPTION("Cannot save image \"" << str_path << "\" for floor entity.");
          }
       }
+#endif
 
    private:
 
@@ -169,6 +176,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+#ifdef ARGOS_WITH_FREEIMAGE
    CFloorEntity::CFloorEntity(const std::string& str_id,
                               const std::string& str_file_name) :
       CEntity(NULL, str_id),
@@ -179,6 +187,7 @@ namespace argos {
       ExpandEnvVariables(strFileName);
       m_pcColorSource = new CFloorColorFromImageFile(strFileName);
    }
+#endif
 
    /****************************************/
    /****************************************/
@@ -208,18 +217,24 @@ namespace argos {
       /* Parse XML */
       std::string strColorSource;
       GetNodeAttribute(t_tree, "source", strColorSource);
-      if(strColorSource == "image") {
+      if(strColorSource == "loop_functions") {
+         m_eColorSource = FROM_LOOP_FUNCTIONS;
+         UInt32 unPixelsPerMeter;
+         GetNodeAttribute(t_tree, "pixels_per_meter", unPixelsPerMeter);
+         m_pcColorSource = new CFloorColorFromLoopFunctions(unPixelsPerMeter);
+      }
+      else if(strColorSource == "image") {
+#ifdef ARGOS_WITH_FREEIMAGE
          m_eColorSource = FROM_IMAGE;
          std::string strPath;
          GetNodeAttribute(t_tree, "path", strPath);
          ExpandEnvVariables(strPath);
          m_pcColorSource = new CFloorColorFromImageFile(strPath);
-      }
-      else if(strColorSource == "loop_functions") {
-         m_eColorSource = FROM_LOOP_FUNCTIONS;
-         UInt32 unPixelsPerMeter;
-         GetNodeAttribute(t_tree, "pixels_per_meter", unPixelsPerMeter);
-         m_pcColorSource = new CFloorColorFromLoopFunctions(unPixelsPerMeter);
+#else
+         THROW_ARGOSEXCEPTION("ARGoS was compiled without FreeImage, this image source is unsupported for the floor entity \"" <<
+                              GetId() <<
+                              "\"");
+#endif
       }
       else {
          THROW_ARGOSEXCEPTION("Unknown image source \"" <<
@@ -236,6 +251,15 @@ namespace argos {
    void CFloorEntity::Reset() {
       m_pcColorSource->Reset();
    }
+
+   /****************************************/
+   /****************************************/
+
+#ifdef ARGOS_WITH_FREEIMAGE
+      void CFloorEntity::SaveAsImage(const std::string& str_path) {
+         m_pcColorSource->SaveAsImage(str_path);
+      }
+#endif
 
    /****************************************/
    /****************************************/
