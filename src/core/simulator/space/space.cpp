@@ -41,8 +41,8 @@ namespace argos {
       /* Get the arena center and size */
       GetNodeAttributeOrDefault(t_tree, "center", m_cArenaCenter, m_cArenaCenter);
       GetNodeAttribute(t_tree, "size", m_cArenaSize);
-      m_cArenaLimits.Set(m_cArenaCenter - m_cArenaSize,
-                         m_cArenaCenter + m_cArenaSize);
+      m_cArenaLimits.Set(m_cArenaCenter - m_cArenaSize / 2.0f,
+                         m_cArenaCenter + m_cArenaSize / 2.0f);
       /*
        * Add and initialize all entities in XML
        */
