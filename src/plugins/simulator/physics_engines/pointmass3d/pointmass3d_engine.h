@@ -49,6 +49,14 @@ namespace argos {
                            CPointMass3DModel& c_model);
       void RemovePhysicsModel(const std::string& str_id);
 
+      std::map<std::string, CPointMass3DModel*>& GetPhysicsModels() {
+         return m_tPhysicsModels;
+      }
+
+      const std::map<std::string, CPointMass3DModel*>& GetPhysicsModels() const {
+         return m_tPhysicsModels;
+      }
+
       inline Real GetGravity() const {
          return m_fGravity;
       }
