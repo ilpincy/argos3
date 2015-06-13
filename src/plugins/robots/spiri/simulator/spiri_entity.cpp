@@ -20,6 +20,14 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   static const Real HEIGHT         = 0.090f;
+   static const Real BODY_HEIGHT    = HEIGHT * 3.0f / 4.0f;
+   static const Real BODY_ELEVATION = HEIGHT - BODY_HEIGHT;
+   static const Real RAB_ELEVATION  = (BODY_ELEVATION + BODY_HEIGHT) / 2.0f;
+
+   /****************************************/
+   /****************************************/
+
    CSpiriEntity::CSpiriEntity() :
       CComposableEntity(NULL),
       m_pcControllableEntity(NULL),
@@ -56,14 +64,16 @@ namespace argos {
          m_pcQuadRotorEntity = new CQuadRotorEntity(this, "quadrotor_0");
          AddComponent(*m_pcQuadRotorEntity);
          /* RAB equipped entity */
+         SAnchor& cRABAnchor = m_pcEmbodiedEntity->AddAnchor("rab", CVector3(0.0f, 0.0f, RAB_ELEVATION));
          m_pcRABEquippedEntity = new CRABEquippedEntity(
             this,
             "rab_0",
             un_rab_data_size,
             f_rab_range,
-            m_pcEmbodiedEntity->GetOriginAnchor(),
+            cRABAnchor,
             *m_pcEmbodiedEntity);
          AddComponent(*m_pcRABEquippedEntity);
+         m_pcEmbodiedEntity->EnableAnchor("rab");
          /* Controllable entity
             It must be the last one, for actuators/sensors to link to composing entities correctly */
          m_pcControllableEntity = new CControllableEntity(this, "controller_0");
@@ -104,14 +114,16 @@ namespace argos {
          GetNodeAttributeOrDefault(t_tree, "rab_range", fRange, fRange);
          UInt32 unDataSize = 10;
          GetNodeAttributeOrDefault(t_tree, "rab_data_size", unDataSize, unDataSize);
+         SAnchor& cRABAnchor = m_pcEmbodiedEntity->AddAnchor("rab", CVector3(0.0f, 0.0f, RAB_ELEVATION));
          m_pcRABEquippedEntity = new CRABEquippedEntity(
             this,
             "rab_0",
             unDataSize,
             fRange,
-            m_pcEmbodiedEntity->GetOriginAnchor(),
+            cRABAnchor,
             *m_pcEmbodiedEntity);
          AddComponent(*m_pcRABEquippedEntity);
+         m_pcEmbodiedEntity->EnableAnchor("rab");
          /* Controllable entity
             It must be the last one, for actuators/sensors to link to composing entities correctly */
          m_pcControllableEntity = new CControllableEntity(this);

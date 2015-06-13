@@ -26,6 +26,8 @@ namespace argos {
       CPointMass3DSpiriModel(CPointMass3DEngine& c_engine,
                               CSpiriEntity& c_spiri);
       virtual ~CPointMass3DSpiriModel() {}
+
+      virtual void UpdateRABAnchor(SAnchor& s_anchor);
       
    };
 
