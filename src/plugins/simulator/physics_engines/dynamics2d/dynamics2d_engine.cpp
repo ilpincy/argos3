@@ -24,8 +24,7 @@ namespace argos {
       m_nActiveHashCells(1000),
       m_ptSpace(NULL),
       m_ptGroundBody(NULL),
-      m_fElevation(0.0f),
-      m_bEntityTransferActive(false) {
+      m_fElevation(0.0f) {
    }
 
    /****************************************/
@@ -41,53 +40,11 @@ namespace argos {
          GetNodeAttributeOrDefault(t_tree, "static_cells",     m_nStaticHashCells,    m_nStaticHashCells);
          GetNodeAttributeOrDefault(t_tree, "active_cells",     m_nActiveHashCells,    m_nActiveHashCells);
          GetNodeAttributeOrDefault(t_tree, "elevation",        m_fElevation,          m_fElevation);
-         if(NodeExists(t_tree, "boundaries")) {
-            /* Parse the boundary definition */
-            TConfigurationNode& tBoundaries = GetNode(t_tree, "boundaries");
-            SBoundarySegment sBoundSegment;
-            CVector2 cLastPoint, cCurPoint;
-            std::string strConnectWith;
-            TConfigurationNodeIterator tVertexIt("vertex");
-            /* Get the first vertex */
-            tVertexIt = tVertexIt.begin(&tBoundaries);
-            if(tVertexIt == tVertexIt.end()) {
-               THROW_ARGOSEXCEPTION("Physics engine of type \"dynamics2d\", id \"" << GetId() << "\": you didn't specify any <vertex>!");
-            }
-            GetNodeAttribute(*tVertexIt, "point", cLastPoint);
-            m_vecVertices.push_back(cLastPoint);
-            /* Go through the other vertices */
-            ++tVertexIt;
-            while(tVertexIt != tVertexIt.end()) {
-               /* Read vertex data and fill in segment struct */
-               GetNodeAttribute(*tVertexIt, "point", cCurPoint);
-               m_vecVertices.push_back(cCurPoint);
-               sBoundSegment.Segment.SetStart(cLastPoint);
-               sBoundSegment.Segment.SetEnd(cCurPoint);
-               GetNodeAttribute(*tVertexIt, "connect_with", strConnectWith);
-               if(strConnectWith == "gate") {
-                  /* Connect to previous vertex with a gate */
-                  sBoundSegment.Type = SBoundarySegment::SEGMENT_TYPE_GATE;
-                  GetNodeAttribute(*tVertexIt, "to_engine", sBoundSegment.EngineId);
-               }
-               else if(strConnectWith == "wall") {
-                  /* Connect to previous vertex with a wall */
-                  sBoundSegment.Type = SBoundarySegment::SEGMENT_TYPE_WALL;
-                  sBoundSegment.EngineId = "";
-               }
-               else {
-                  /* Parse error */
-                  THROW_ARGOSEXCEPTION("Physics engine of type \"dynamics2d\", id \"" << GetId() << "\": unknown vertex connection method \"" << strConnectWith << "\". Allowed methods are \"wall\" and \"gate\".");
-               }
-               m_vecSegments.push_back(sBoundSegment);
-               /* Next vertex */
-               cLastPoint = cCurPoint;
-               ++tVertexIt;
-            }
-            /* Check that the boundary is a closed path */
-            if(m_vecVertices.front() != m_vecVertices.back()) {
-               THROW_ARGOSEXCEPTION("Physics engine of type \"dynamics2d\", id \"" << GetId() << "\": the specified path is not closed. The first and last points of the boundaries MUST be the same.");
-            }
-         }
+         /* Override volume top and bottom with the value of m_fElevation */
+         if(!GetVolume().TopFace)    GetVolume().TopFace    = new SHorizontalFace;
+         if(!GetVolume().BottomFace) GetVolume().BottomFace = new SHorizontalFace;
+         GetVolume().TopFace->Height    = m_fElevation;
+         GetVolume().BottomFace->Height = m_fElevation;
          /* Initialize physics */
          cpInitChipmunk();
          cpResetShapeIdCounter();
@@ -115,30 +72,6 @@ namespace argos {
             NULL,
             NULL,
             NULL);
-         /* Add boundaries, if specified */
-         if(! m_vecSegments.empty()) {
-            cpShape* ptSegment;
-            for(size_t i = 0; i < m_vecSegments.size(); ++i) {
-               if(m_vecSegments[i].Type == SBoundarySegment::SEGMENT_TYPE_WALL) {
-                  ptSegment =
-                     cpSpaceAddShape(
-                        m_ptSpace,
-                        cpSegmentShapeNew(
-                           m_ptGroundBody,
-                           cpv(m_vecSegments[i].Segment.GetStart().GetX(),
-                               m_vecSegments[i].Segment.GetStart().GetY()),
-                           cpv(m_vecSegments[i].Segment.GetEnd().GetX(),
-                               m_vecSegments[i].Segment.GetEnd().GetY()),
-                           0.0f));
-                  ptSegment->e = 0.0f; // no elasticity
-                  ptSegment->u = 1.0f; // max friction
-               }
-               else {
-                  /* There is at least a gate, transfer is activated */
-                  m_bEntityTransferActive = true;
-               }
-            }
-         }
       }
       catch(CARGoSException& ex) {
          THROW_ARGOSEXCEPTION_NESTED("Error initializing the dynamics 2D engine \"" << GetId() << "\"", ex);
@@ -194,34 +127,6 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   bool CDynamics2DEngine::IsPointContained(const CVector3& c_point) {
-      /* Check that Z-coordinate is within elevation */
-      if(c_point.GetZ() > m_fElevation || c_point.GetZ() < m_fElevation) {
-         return false;
-      }
-      if(! IsEntityTransferActive()) {
-         /* The engine has no boundaries on XY, so the wanted point is in for sure */
-         return true;
-      }
-      else {
-         /* Check the boundaries */
-         for(size_t i = 0; i < m_vecSegments.size(); ++i) {
-            const CVector2& cP0 = m_vecSegments[i].Segment.GetStart();
-            const CVector2& cP1 = m_vecSegments[i].Segment.GetEnd();
-            Real fCriterion =
-               (c_point.GetY() - cP0.GetY()) * (cP1.GetX() - cP0.GetX()) -
-               (c_point.GetX() - cP0.GetX()) * (cP1.GetY() - cP0.GetY());
-            if(fCriterion > 0.0f) {
-               return false;
-            }
-         }
-         return true;
-      }
-   }
-
-   /****************************************/
-   /****************************************/
-
    size_t CDynamics2DEngine::GetNumPhysicsModels() {
       return m_tPhysicsModels.size();
    }
@@ -239,18 +144,6 @@ namespace argos {
 
    void CDynamics2DEngine::RemoveEntity(CEntity& c_entity) {
       CallEntityOperation<CDynamics2DOperationRemoveEntity, CDynamics2DEngine, void>(*this, c_entity);
-   }
-
-   /****************************************/
-   /****************************************/
-
-   void CDynamics2DEngine::TransferEntities() {
-      for(size_t i = 0; i < m_vecTransferData.size(); ++i) {
-         CPhysicsEngine& cToEngine = CSimulator::GetInstance().GetPhysicsEngine(m_vecTransferData[i].EngineId);
-         cToEngine.AddEntity(*m_vecTransferData[i].Entity);
-         RemoveEntity(*m_vecTransferData[i].Entity);
-      }
-      m_vecTransferData.clear();
    }
 
    /****************************************/
@@ -302,32 +195,6 @@ namespace argos {
          f_t_on_ray = sHitData.T;
       }
       return sHitData.Body;
-   }
-
-   /****************************************/
-   /****************************************/
-
-   bool CDynamics2DEngine::CalculateTransfer(Real f_x, Real f_y,
-                                             std::string& str_engine_id) {
-      /*
-       * TODO: this method makes the assumption that only one gate is trespassed at any time.
-       * This assumption may be false in some ill-shaped polygons or when the gate isn't just a
-       * segment, but is a sequence of segments.
-       */
-      for(size_t i = 0; i < m_vecSegments.size(); ++i) {
-         if(m_vecSegments[i].Type == SBoundarySegment::SEGMENT_TYPE_GATE) {
-            const CVector2& cP0 = m_vecSegments[i].Segment.GetStart();
-            const CVector2& cP1 = m_vecSegments[i].Segment.GetEnd();
-            Real fCriterion =
-               (f_y - cP0.GetY()) * (cP1.GetX() - cP0.GetX()) -
-               (f_x - cP0.GetX()) * (cP1.GetY() - cP0.GetY());
-            if(fCriterion < 0.0f) {
-               str_engine_id = m_vecSegments[i].EngineId;
-               return true;
-            }
-         }
-      }
-      return false;
    }
 
    /****************************************/

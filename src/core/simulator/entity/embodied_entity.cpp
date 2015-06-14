@@ -247,7 +247,7 @@ namespace argos {
    void CEmbodiedEntity::AddPhysicsModel(const std::string& str_engine_id,
                                          CPhysicsModel& c_physics_model) {
       if(m_bMovable && GetPhysicsModelsNum() > 0) {
-         THROW_ARGOSEXCEPTION(GetContext() << GetId() << " is movable embodied entity and can't have more than 1 physics engine entity associated");
+         THROW_ARGOSEXCEPTION(GetContext() << GetId() << " is a movable embodied entity and can't have more than 1 physics engine entity associated");
       }
       m_tPhysicsModelMap[str_engine_id] = &c_physics_model;
       m_tPhysicsModelVector.push_back(&c_physics_model);

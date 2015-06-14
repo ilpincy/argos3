@@ -49,17 +49,15 @@ namespace argos {
       /* Update its components */
       cRoot.UpdateComponents();
       /*
-       * TODO entity transfer
+       * Check whether a transfer is necessary
        */
-      // /* Check whether a transfer is necessary */
-      // if(m_cEngine.IsEntityTransferActive()) {
-      //    std::string strEngineId;
-      //    if(m_cEngine.CalculateTransfer(GetEmbodiedEntity().GetPosition().GetX(),
-      //                                   GetEmbodiedEntity().GetPosition().GetY(),
-      //                                   strEngineId)) {
-      //       m_cEngine.ScheduleEntityForTransfer(m_cEPuckEntity, strEngineId);
-      //    }
-      // }
+      CPhysicsEngine* pcEngine = m_cEngine.CalculateTransfer(GetEmbodiedEntity().GetOriginAnchor().Position);
+      if(!pcEngine) {
+         THROW_ARGOSEXCEPTION("Can't transfer entity \"" << cRoot.GetId() << "\" from engine \"" << m_cEngine.GetId() << "\" to position " << GetEmbodiedEntity().GetOriginAnchor().Position << ". It is out of this engine's boundaries, and no other engine contains that point.");
+      }
+      else if(pcEngine != &m_cEngine) {
+         m_cEngine.ScheduleEntityForTransfer(*pcEngine, cRoot);
+      }
    }
 
    /****************************************/

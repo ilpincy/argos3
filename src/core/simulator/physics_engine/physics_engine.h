@@ -18,6 +18,7 @@ namespace argos {
 
 #include <map>
 #include <argos3/core/utility/logging/argos_log.h>
+#include <argos3/core/utility/math/ray2.h>
 #include <argos3/core/utility/configuration/base_configurable_resource.h>
 #include <argos3/core/utility/configuration/argos_configuration.h>
 #include <argos3/core/utility/datatypes/datatypes.h>
@@ -26,6 +27,52 @@ namespace argos {
 namespace argos {
 
    class CPhysicsEngine : public CBaseConfigurableResource {
+
+   public:
+
+      /**
+       * A boundary face for entity transfer among physics engines.
+       */
+      struct SBoundaryFace {
+         std::string EngineId;
+      };
+
+      /**
+       * A boundary face for top/bottom parts of the volume.
+       */
+      struct SHorizontalFace : public SBoundaryFace {
+         Real Height;
+      };
+
+      /**
+       * A boundary face for side parts of the volume.
+       */
+      struct SVerticalFace : public SBoundaryFace {
+         CRay2 BaseSegment;
+      };
+
+      /**
+       * The volume boundaries
+       */
+      struct SVolume {
+         SHorizontalFace*            TopFace;
+         SHorizontalFace*            BottomFace;
+         std::vector<SVerticalFace*> SideFaces;
+         SVolume();
+         ~SVolume();
+         void Init(TConfigurationNode& t_node);
+         bool IsActive() const;
+      };
+      
+      /**
+       * Data tuple to manage entity transfer among physics engines.
+       */
+      struct SEntityTransferData {
+         CPhysicsEngine* Engine; // Destination physics engine
+         CEntity* Entity;        // Entity to transfer
+         SEntityTransferData() :
+            Engine(NULL), Entity(NULL) {}
+      };
 
    public:
 
@@ -58,7 +105,10 @@ namespace argos {
        */
       virtual void PostSpaceInit() {}
 
-      virtual bool IsPointContained(const CVector3& c_point) = 0;
+      /**
+       * Returns <tt>true</tt> if the given point is contained in this physics engine.
+       */
+      virtual bool IsPointContained(const CVector3& c_point);
 
       virtual size_t GetNumPhysicsModels() = 0;
 
@@ -79,12 +129,56 @@ namespace argos {
       /**
        * Returns <tt>true</tt> if this engine has entities that must be transferred to another engine.
        */
-      virtual bool IsEntityTransferNeeded() const = 0;
+      inline bool IsEntityTransferNeeded() const {
+         return !m_vecTransferData.empty();
+      }
+
+      /**
+       * Returns <tt>true</tt> if entity transfer is active for this engine.
+       */
+      inline bool IsEntityTransferActive() const {
+         return m_sVolume.IsActive();
+      }
+
+      /**
+       * Returns the engine to which a point belongs.
+       * Internally, it first checks whether the given point belongs to
+       * this engine. If not, it goes through all the other engines and
+       * checkes to which one the point belongs. In this way, in case of
+       * overlaps among engines, the transfer is done only if a robot is
+       * effectively out of an engine.
+       * If no suitable engine could be found, this method returns NULL.
+       * @param The position to test.
+       * @return The physics engine to which the point belongs, or NULL.
+       */
+      virtual CPhysicsEngine* CalculateTransfer(const CVector3& f_pos);
+
+      /**
+       * Schedules an entity of transfer.
+       * @param c_entity The entity to transfer.
+       * @param str_engine_id The id if the destination engine.
+       */
+      virtual void ScheduleEntityForTransfer(CPhysicsEngine& c_engine,
+                                             CEntity& c_entity);
 
       /**
        * Executes the transfer of entities to other engines.
        */
-      virtual void TransferEntities() = 0;
+      virtual void TransferEntities();
+
+      /**
+       * Returns the boundary faces for the volume associated to this engine.
+       */
+      inline SVolume& GetVolume() {
+         return m_sVolume;
+      }
+
+      /**
+       * Returns the boundary faces for the volume associated to this engine.
+       */
+      inline const SVolume& GetVolume() const {
+         return m_sVolume;
+      }
 
       /**
        * Check whether an object in this engine intersects the given ray.
@@ -178,6 +272,11 @@ namespace argos {
       /** The inverse of m_fSimulationClockTick */
       static Real m_fInverseSimulationClockTick;
 
+      /** Boundary faces of the volume assigned to this engine */
+      SVolume m_sVolume;
+
+      /** Entity transfer data */
+      std::vector<SEntityTransferData> m_vecTransferData;
    };
 
 }

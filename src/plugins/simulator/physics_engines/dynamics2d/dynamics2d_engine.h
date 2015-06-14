@@ -14,7 +14,6 @@ namespace argos {
    class CEmbodiedEntity;
 }
 
-#include <argos3/core/utility/math/ray2.h>
 #include <argos3/core/simulator/entity/controllable_entity.h>
 #include <argos3/core/simulator/physics_engine/physics_engine.h>
 #include <argos3/plugins/simulator/physics_engines/dynamics2d/chipmunk-physics/include/chipmunk.h>
@@ -55,26 +54,6 @@ namespace argos {
          LAYER_NORMAL = CP_ALL_LAYERS
       };
 
-      struct SBoundarySegment {
-         CRay2 Segment;
-         enum {
-            SEGMENT_TYPE_WALL,
-            SEGMENT_TYPE_GATE
-         } Type;
-         std::string EngineId;
-
-         SBoundarySegment() : 
-            Type(SEGMENT_TYPE_WALL) {}
-      };
-
-      struct SEntityTransferData {
-         std::string EngineId;
-         CEntity* Entity;
-
-         SEntityTransferData() :
-            Entity(NULL) {}
-      };
-
       CDynamics2DEngine();
 
       virtual ~CDynamics2DEngine() {}
@@ -88,30 +67,8 @@ namespace argos {
       virtual void AddEntity(CEntity& c_entity);
       virtual void RemoveEntity(CEntity& c_entity);
 
-      virtual bool IsPointContained(const CVector3& c_point);
-
       virtual CEmbodiedEntity* CheckIntersectionWithRay(Real& f_t_on_ray,
                                                         const CRay3& c_ray) const;
-
-      inline virtual bool IsEntityTransferNeeded() const {
-         return ! m_vecTransferData.empty();
-      }
-
-      virtual void TransferEntities();
-
-      inline virtual bool IsEntityTransferActive() const {
-         return m_bEntityTransferActive;
-      }
-
-      bool CalculateTransfer(Real f_x, Real f_y,
-                             std::string& str_engine_id);
-
-      inline void ScheduleEntityForTransfer(CEntity& c_entity,
-                                            const std::string& str_engine_id) {
-         m_vecTransferData.push_back(SEntityTransferData());
-         m_vecTransferData.back().EngineId = str_engine_id;
-         m_vecTransferData.back().Entity = &c_entity;
-      }
 
       inline cpSpace* GetPhysicsSpace() {
          return m_ptSpace;
@@ -165,11 +122,6 @@ namespace argos {
       cpSpace* m_ptSpace;
       cpBody* m_ptGroundBody;
       Real m_fElevation;
-
-      std::vector<CVector2> m_vecVertices;
-      std::vector<SBoundarySegment> m_vecSegments;
-      std::vector<SEntityTransferData> m_vecTransferData;
-      bool m_bEntityTransferActive;
 
       CControllableEntity::TMap m_tControllableEntities;
       std::map<std::string, CDynamics2DModel*> m_tPhysicsModels;

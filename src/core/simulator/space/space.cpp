@@ -191,13 +191,21 @@ namespace argos {
          vecPotentialEngines[0]->AddEntity(*pcToAdd);
       }
       else {
-         /* More than one engine matches, bomb out */
+         /* More than one engine matches, just pick the first out found */
          std::ostringstream ossEngines;
          ossEngines << "\"" << vecPotentialEngines[0]->GetId() << "\"";
          for(size_t i = 1; i < vecPotentialEngines.size(); ++i) {
             ossEngines << ", \"" << vecPotentialEngines[i]->GetId() << "\"";
          }
-         THROW_ARGOSEXCEPTION("Multiple engines can house \"" << c_entity.GetId() << "\", but a movable entity and can only be added to a single engine. Conflicting engines: " << ossEngines);
+         LOGERR << "Multiple engines can house \""
+                << c_entity.GetId()
+                << "\", but a movable entity and can only be added to a single engine. Potential engines: "
+                << ossEngines.str()
+                << ". The entity was added to \""
+                << vecPotentialEngines[0]->GetId()
+                << "\""
+                << std::endl;
+         vecPotentialEngines[0]->AddEntity(*pcToAdd);
       }
    }
       
