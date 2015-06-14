@@ -162,10 +162,7 @@ namespace argos {
 
    void CSpace::AddEntityToPhysicsEngine(CEmbodiedEntity& c_entity) {
       /* Get a reference to the root entity */
-      CEntity* pcToAdd = &c_entity;
-      while(pcToAdd->HasParent()) {
-         pcToAdd = &pcToAdd->GetParent();
-      }
+      CEntity* pcToAdd = &c_entity.GetRootEntity();
       /* Get a reference to the position of the entity */
       const CVector3& cPos = c_entity.GetOriginAnchor().Position;
       /* Go through engines and check which ones could house the entity */
@@ -181,31 +178,28 @@ namespace argos {
       }
       /* If the entity is not movable, add the entity to all the matching engines */
       if(! c_entity.IsMovable()) {
+         bool bAdded = false;
          for(size_t i = 0; i < vecPotentialEngines.size(); ++i) {
-            vecPotentialEngines[i]->AddEntity(*pcToAdd);
+            bAdded |= vecPotentialEngines[i]->AddEntity(*pcToAdd);
+         }
+         if(!bAdded) {
+            THROW_ARGOSEXCEPTION("No physics engine can house entity \"" << pcToAdd->GetId() << "\".");
          }
       }
       /* If the entity is movable, only one engine can be associated to the embodied entity */
       else if(vecPotentialEngines.size() == 1) {
          /* Only one engine matches, bingo! */
-         vecPotentialEngines[0]->AddEntity(*pcToAdd);
+         if(!vecPotentialEngines[0]->AddEntity(*pcToAdd)) {
+            THROW_ARGOSEXCEPTION("No physics engine can house entity \"" << pcToAdd->GetId() << "\".");
+         }
       }
       else {
-         /* More than one engine matches, just pick the first out found */
-         std::ostringstream ossEngines;
-         ossEngines << "\"" << vecPotentialEngines[0]->GetId() << "\"";
-         for(size_t i = 1; i < vecPotentialEngines.size(); ++i) {
-            ossEngines << ", \"" << vecPotentialEngines[i]->GetId() << "\"";
+         /* More than one engine matches, pick the first that can manage the entity */
+         for(size_t i = 0; i < vecPotentialEngines.size(); ++i) {
+            if(vecPotentialEngines[i]->AddEntity(*pcToAdd)) return;
          }
-         LOGERR << "Multiple engines can house \""
-                << c_entity.GetId()
-                << "\", but a movable entity and can only be added to a single engine. Potential engines: "
-                << ossEngines.str()
-                << ". The entity was added to \""
-                << vecPotentialEngines[0]->GetId()
-                << "\""
-                << std::endl;
-         vecPotentialEngines[0]->AddEntity(*pcToAdd);
+         /* No engine can house the entity */
+         THROW_ARGOSEXCEPTION("No physics engine can house entity \"" << pcToAdd->GetId() << "\".");
       }
    }
       

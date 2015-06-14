@@ -294,6 +294,16 @@ namespace argos {
    };
 
    /**
+    * Type to use as return value for operation outcome
+    */
+   struct SOperationOutcome {
+      bool Value;
+      SOperationOutcome() : Value(false) {}
+      SOperationOutcome(bool b_value) : Value(b_value) {}
+      bool operator()() const { return Value; }
+   };
+
+   /**
     * @cond HIDDEN_SYMBOLS
     */
    template <typename LABEL, typename PLUGIN, typename RETURN_TYPE>

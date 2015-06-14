@@ -51,13 +51,8 @@ namespace argos {
       /*
        * Check whether a transfer is necessary
        */
-      CPhysicsEngine* pcEngine = m_cEngine.CalculateTransfer(GetEmbodiedEntity().GetOriginAnchor().Position);
-      if(!pcEngine) {
-         THROW_ARGOSEXCEPTION("Can't transfer entity \"" << cRoot.GetId() << "\" from engine \"" << m_cEngine.GetId() << "\" to position " << GetEmbodiedEntity().GetOriginAnchor().Position << ". It is out of this engine's boundaries, and no other engine contains that point.");
-      }
-      else if(pcEngine != &m_cEngine) {
-         m_cEngine.ScheduleEntityForTransfer(*pcEngine, cRoot);
-      }
+      if(!m_cEngine.IsPointContained(GetEmbodiedEntity().GetOriginAnchor().Position))
+         m_cEngine.ScheduleEntityForTransfer(m_cEmbodiedEntity);
    }
 
    /****************************************/

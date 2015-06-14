@@ -10,6 +10,7 @@
 #include <argos3/core/utility/math/vector3.h>
 #include <argos3/core/utility/string_utilities.h>
 #include <argos3/core/simulator/simulator.h>
+#include <argos3/core/simulator/space/space.h>
 #include <argos3/core/simulator/entity/entity.h>
 
 namespace argos {
@@ -176,34 +177,8 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   CPhysicsEngine* CPhysicsEngine::CalculateTransfer(const CVector3& c_pos) {
-      /* First check wheter the point is contained here */
-      if(IsPointContained(c_pos)) {
-         /* Yes, return this engine */
-         return this;
-      }
-      else {
-         /* No, check other engines */
-         CPhysicsEngine::TVector& vecEngines = CSimulator::GetInstance().GetPhysicsEngines();
-         for(size_t i = 0; i < vecEngines.size(); ++i) {
-            if(vecEngines[i] != this &&
-               vecEngines[i]->IsPointContained(c_pos)) {
-               return vecEngines[i];
-            }
-         }
-         /* No engine found */
-         return NULL;
-      }
-   }
-
-   /****************************************/
-   /****************************************/
-
-   void CPhysicsEngine::ScheduleEntityForTransfer(CPhysicsEngine& c_engine,
-                                                  CEntity& c_entity) {
-      m_vecTransferData.push_back(SEntityTransferData());
-      m_vecTransferData.back().Engine = &c_engine;
-      m_vecTransferData.back().Entity = &c_entity;
+   void CPhysicsEngine::ScheduleEntityForTransfer(CEmbodiedEntity& c_entity) {
+      m_vecTransferData.push_back(&c_entity);
    }
 
    /****************************************/
@@ -211,8 +186,8 @@ namespace argos {
 
    void CPhysicsEngine::TransferEntities() {
       for(size_t i = 0; i < m_vecTransferData.size(); ++i) {
-         RemoveEntity(*m_vecTransferData[i].Entity);
-         m_vecTransferData[i].Engine->AddEntity(*m_vecTransferData[i].Entity);
+         RemoveEntity(m_vecTransferData[i]->GetRootEntity());
+         CSimulator::GetInstance().GetSpace().AddEntityToPhysicsEngine(*m_vecTransferData[i]);
       }
       m_vecTransferData.clear();
    }

@@ -89,15 +89,21 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CPointMass3DEngine::AddEntity(CEntity& c_entity) {
-      CallEntityOperation<CPointMass3DOperationAddEntity, CPointMass3DEngine, void>(*this, c_entity);
+   bool CPointMass3DEngine::AddEntity(CEntity& c_entity) {
+      SOperationOutcome cOutcome =
+         CallEntityOperation<CPointMass3DOperationAddEntity, CPointMass3DEngine, SOperationOutcome>
+         (*this, c_entity);
+      return cOutcome.Value;
    }
 
    /****************************************/
    /****************************************/
 
-   void CPointMass3DEngine::RemoveEntity(CEntity& c_entity) {
-      CallEntityOperation<CPointMass3DOperationRemoveEntity, CPointMass3DEngine, void>(*this, c_entity);
+   bool CPointMass3DEngine::RemoveEntity(CEntity& c_entity) {
+      SOperationOutcome cOutcome =
+         CallEntityOperation<CPointMass3DOperationRemoveEntity, CPointMass3DEngine, SOperationOutcome>
+         (*this, c_entity);
+      return cOutcome.Value;
    }
 
    /****************************************/

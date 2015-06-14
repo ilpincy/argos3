@@ -64,8 +64,8 @@ namespace argos {
       virtual void Destroy();
 
       virtual size_t GetNumPhysicsModels();
-      virtual void AddEntity(CEntity& c_entity);
-      virtual void RemoveEntity(CEntity& c_entity);
+      virtual bool AddEntity(CEntity& c_entity);
+      virtual bool RemoveEntity(CEntity& c_entity);
 
       virtual CEmbodiedEntity* CheckIntersectionWithRay(Real& f_t_on_ray,
                                                         const CRay3& c_ray) const;
@@ -132,7 +132,7 @@ namespace argos {
    /****************************************/
 
    template <typename ACTION>
-   class CDynamics2DOperation : public CEntityOperation<ACTION, CDynamics2DEngine, void> {
+   class CDynamics2DOperation : public CEntityOperation<ACTION, CDynamics2DEngine, SOperationOutcome> {
    public:
       virtual ~CDynamics2DOperation() {}
    };
@@ -148,14 +148,14 @@ namespace argos {
    };
 
 #define REGISTER_DYNAMICS2D_OPERATION(ACTION, OPERATION, ENTITY)        \
-   REGISTER_ENTITY_OPERATION(ACTION, CDynamics2DEngine, OPERATION, void, ENTITY);
+   REGISTER_ENTITY_OPERATION(ACTION, CDynamics2DEngine, OPERATION, SOperationOutcome, ENTITY);
 
 #define REGISTER_STANDARD_DYNAMICS2D_OPERATION_ADD_ENTITY(SPACE_ENTITY, DYN2D_MODEL) \
    class CDynamics2DOperationAdd ## SPACE_ENTITY : public CDynamics2DOperationAddEntity { \
    public:                                                              \
    CDynamics2DOperationAdd ## SPACE_ENTITY() {}                         \
    virtual ~CDynamics2DOperationAdd ## SPACE_ENTITY() {}                \
-   void ApplyTo(CDynamics2DEngine& c_engine,                            \
+   SOperationOutcome ApplyTo(CDynamics2DEngine& c_engine,               \
                 SPACE_ENTITY& c_entity) {                               \
       DYN2D_MODEL* pcPhysModel = new DYN2D_MODEL(c_engine,              \
                                                  c_entity);             \
@@ -164,6 +164,7 @@ namespace argos {
       c_entity.                                                         \
          GetComponent<CEmbodiedEntity>("body").                         \
          AddPhysicsModel(c_engine.GetId(), *pcPhysModel);               \
+      return SOperationOutcome(true);                                   \
    }                                                                    \
    };                                                                   \
    REGISTER_DYNAMICS2D_OPERATION(CDynamics2DOperationAddEntity,         \
@@ -175,12 +176,13 @@ namespace argos {
    public:                                                              \
    CDynamics2DOperationRemove ## SPACE_ENTITY() {}                      \
    virtual ~CDynamics2DOperationRemove ## SPACE_ENTITY() {}             \
-   void ApplyTo(CDynamics2DEngine& c_engine,                            \
+   SOperationOutcome ApplyTo(CDynamics2DEngine& c_engine,               \
                 SPACE_ENTITY& c_entity) {                               \
       c_engine.RemovePhysicsModel(c_entity.GetId());                    \
       c_entity.                                                         \
          GetComponent<CEmbodiedEntity>("body").                         \
          RemovePhysicsModel(c_engine.GetId());                          \
+      return SOperationOutcome(true);                                   \
    }                                                                    \
    };                                                                   \
    REGISTER_DYNAMICS2D_OPERATION(CDynamics2DOperationRemoveEntity,      \

@@ -134,16 +134,22 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CDynamics2DEngine::AddEntity(CEntity& c_entity) {
-      CallEntityOperation<CDynamics2DOperationAddEntity, CDynamics2DEngine, void>(*this, c_entity);
+   bool CDynamics2DEngine::AddEntity(CEntity& c_entity) {
+      SOperationOutcome cOutcome =
+         CallEntityOperation<CDynamics2DOperationAddEntity, CDynamics2DEngine, SOperationOutcome>
+         (*this, c_entity);
       cpResetShapeIdCounter();
+      return cOutcome.Value;
    }
 
    /****************************************/
    /****************************************/
 
-   void CDynamics2DEngine::RemoveEntity(CEntity& c_entity) {
-      CallEntityOperation<CDynamics2DOperationRemoveEntity, CDynamics2DEngine, void>(*this, c_entity);
+   bool CDynamics2DEngine::RemoveEntity(CEntity& c_entity) {
+      SOperationOutcome cOutcome =
+         CallEntityOperation<CDynamics2DOperationRemoveEntity, CDynamics2DEngine, SOperationOutcome>
+         (*this, c_entity);
+      return cOutcome.Value;
    }
 
    /****************************************/

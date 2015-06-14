@@ -64,16 +64,6 @@ namespace argos {
          bool IsActive() const;
       };
       
-      /**
-       * Data tuple to manage entity transfer among physics engines.
-       */
-      struct SEntityTransferData {
-         CPhysicsEngine* Engine; // Destination physics engine
-         CEntity* Entity;        // Entity to transfer
-         SEntityTransferData() :
-            Engine(NULL), Entity(NULL) {}
-      };
-
    public:
 
       typedef std::vector<CPhysicsEngine*> TVector;
@@ -116,15 +106,17 @@ namespace argos {
        * Adds an entity to the physics engine.
        * Important: when you implement this function, you must also take care of adding
        * the physics model to the associated embodied entity.
+       * @return <tt>true</tt> if the entity was added, <tt>false</tt> otherwise.
        */
-      virtual void AddEntity(CEntity& c_entity) = 0;
+      virtual bool AddEntity(CEntity& c_entity) = 0;
 
       /**
        * Removes an entity from the physics engine.
        * Important: when you implement this function, you must also take care of removing
        * the physics model to the associated embodied entity.
+       * @return <tt>true</tt> if the entity was added, <tt>false</tt> otherwise.
        */
-      virtual void RemoveEntity(CEntity& c_entity) = 0;
+      virtual bool RemoveEntity(CEntity& c_entity) = 0;
 
       /**
        * Returns <tt>true</tt> if this engine has entities that must be transferred to another engine.
@@ -141,25 +133,11 @@ namespace argos {
       }
 
       /**
-       * Returns the engine to which a point belongs.
-       * Internally, it first checks whether the given point belongs to
-       * this engine. If not, it goes through all the other engines and
-       * checkes to which one the point belongs. In this way, in case of
-       * overlaps among engines, the transfer is done only if a robot is
-       * effectively out of an engine.
-       * If no suitable engine could be found, this method returns NULL.
-       * @param The position to test.
-       * @return The physics engine to which the point belongs, or NULL.
-       */
-      virtual CPhysicsEngine* CalculateTransfer(const CVector3& f_pos);
-
-      /**
        * Schedules an entity of transfer.
        * @param c_entity The entity to transfer.
        * @param str_engine_id The id if the destination engine.
        */
-      virtual void ScheduleEntityForTransfer(CPhysicsEngine& c_engine,
-                                             CEntity& c_entity);
+      virtual void ScheduleEntityForTransfer(CEmbodiedEntity& c_entity);
 
       /**
        * Executes the transfer of entities to other engines.
@@ -276,7 +254,7 @@ namespace argos {
       SVolume m_sVolume;
 
       /** Entity transfer data */
-      std::vector<SEntityTransferData> m_vecTransferData;
+      std::vector<CEmbodiedEntity*> m_vecTransferData;
    };
 
 }
