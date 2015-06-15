@@ -7,6 +7,11 @@ target_link_libraries(test-range argos3core_${ARGOS_BUILD_FOR})
 
 add_executable(test-list unit/test-list.cpp)
 
+add_executable(test-cylinder
+  unit/test-cylinder.cpp)
+target_link_libraries(test-cylinder
+  argos3core_${ARGOS_BUILD_FOR})
+
 add_executable(test-grid
   unit/test-grid.cpp)
 target_link_libraries(test-grid
