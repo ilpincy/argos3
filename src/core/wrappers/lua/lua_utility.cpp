@@ -368,6 +368,17 @@ namespace argos {
    /****************************************/
 
    void CLuaUtility::AddToTable(lua_State* pt_state,
+                          const std::string& str_key,
+                          const std::string& f_data){
+	  lua_pushstring(pt_state, str_key.c_str());
+	  lua_pushstring(pt_state, f_data .c_str());
+	  lua_settable  (pt_state, -3             );
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CLuaUtility::AddToTable(lua_State* pt_state,
                                 int n_key,
                                 Real f_data) {
       lua_pushnumber(pt_state, n_key );
