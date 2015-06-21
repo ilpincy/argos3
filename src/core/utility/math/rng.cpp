@@ -240,7 +240,7 @@ namespace argos {
       return gsl_ran_exponential(m_ptRNG, f_mean);
 #else      
       CRange<Real> fRange(0.0f, 1.0f);
-      return -log(Uniform(fRange)) / f_mean;
+      return -log(Uniform(fRange)) * f_mean;
 #endif
    }
    
