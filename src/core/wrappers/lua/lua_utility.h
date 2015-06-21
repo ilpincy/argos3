@@ -197,11 +197,11 @@ namespace argos {
        * before this function was called.
        * @param pt_state The Lua state.
        * @param str_key The string key for the parent table.
-       * @param f_data The data to add to the table.
+       * @param str_data The data to add to the table.
        */
       static void AddToTable(lua_State* pt_state,
                              const std::string& str_key,
-                             const std::string& f_data);
+                             const std::string& str_data);
 
       /**
        * Adds a Real with the given numeric key to the table located at the top of the stack.

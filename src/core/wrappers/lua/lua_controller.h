@@ -33,9 +33,10 @@ namespace argos {
          return m_ptLuaState;
       }
 
-      virtual void SetLuaScript(const std::string& str_script);
+      virtual void SetLuaScript(const std::string& str_script,
+                                TConfigurationNode& t_tree);
 
-      virtual void SetLuaScript(const std::string& str_script, TConfigurationNode& t_tree);
+      virtual void SetLuaScript(const std::string& str_script);
 
       virtual void CreateLuaState();
 

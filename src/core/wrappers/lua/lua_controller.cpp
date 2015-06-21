@@ -101,7 +101,8 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CLuaController::SetLuaScript(const std::string& str_script, TConfigurationNode& t_tree) {
+   void CLuaController::SetLuaScript(const std::string& str_script,
+                                     TConfigurationNode& t_tree) {
       /* First, delete old script */
       if(m_bScriptActive) {
          lua_close(m_ptLuaState);
@@ -131,11 +132,14 @@ namespace argos {
       m_bScriptActive = true;
    }
 
-   void CLuaController::SetLuaScript(const std::string& str_script) {
-	   TConfigurationNode t_tree;
-	   SetLuaScript(str_script, t_tree);
-   }
+   /****************************************/
+   /****************************************/
 
+   void CLuaController::SetLuaScript(const std::string& str_script) {
+      TConfigurationNode t_tree;
+      SetLuaScript(str_script, t_tree);
+   }
+   
    /****************************************/
    /****************************************/
 
@@ -181,23 +185,26 @@ namespace argos {
       lua_pop(m_ptLuaState, 1);
    }
 
+   /****************************************/
+   /****************************************/
+
    void CLuaController::ParametersToLuaState(TConfigurationNode& t_tree){
-		/* Put the robot state table on top */
-		lua_getglobal(m_ptLuaState, "robot");
-		/* Add a table named params to the global state table and fill it with values*/
-		CLuaUtility::OpenRobotStateTable(m_ptLuaState, "params");
-		TConfigurationAttributeIterator it;
-		for (it = it.begin(&t_tree); it != it.end(); ++it) {
-			std::string key;
-			std::string value;
-			it.Get()->GetName(&key);
-			it.Get()->GetValue(&value);
-			CLuaUtility::AddToTable(m_ptLuaState, key, value);
-		}
-		CLuaUtility::CloseRobotStateTable(m_ptLuaState);
-		/* Pop the robot state table */
-		lua_pop(m_ptLuaState, 1);
-}
+      /* Put the robot state table on top */
+      lua_getglobal(m_ptLuaState, "robot");
+      /* Add a table for the XML params to the global symbol table and fill it with values */
+      CLuaUtility::OpenRobotStateTable(m_ptLuaState, "params");
+      TConfigurationAttributeIterator it;
+      std::string strKey;
+      std::string strValue;
+      for (it = it.begin(&t_tree); it != it.end(); ++it) {
+         it.Get()->GetName(&strKey);
+         it.Get()->GetValue(&strValue);
+         CLuaUtility::AddToTable(m_ptLuaState, strKey, strValue);
+      }
+      CLuaUtility::CloseRobotStateTable(m_ptLuaState);
+      /* Pop the robot state table */
+      lua_pop(m_ptLuaState, 1);
+   }
 
    /****************************************/
    /****************************************/
@@ -207,9 +214,12 @@ namespace argos {
          return "OK";
       }
       else {
-         SInt32 i = 0;
-         while(i < lua_gettop(m_ptLuaState) && lua_type(m_ptLuaState, i) != LUA_TSTRING) ++i;
-         if(i == lua_gettop(m_ptLuaState)) return "Unknown compilation error";
+         SInt32 i = 1;
+         while(i <= lua_gettop(m_ptLuaState) && lua_type(m_ptLuaState, i) != LUA_TSTRING) {
+            CLuaUtility::PrintStack(LOGERR, m_ptLuaState);
+            ++i;
+         }
+         if(i > lua_gettop(m_ptLuaState)) return "Unknown compilation error";
          else return lua_tostring(m_ptLuaState, i);
       }
    }
