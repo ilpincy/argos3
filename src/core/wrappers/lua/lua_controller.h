@@ -35,9 +35,13 @@ namespace argos {
 
       virtual void SetLuaScript(const std::string& str_script);
 
+      virtual void SetLuaScript(const std::string& str_script, TConfigurationNode& t_tree);
+
       virtual void CreateLuaState();
 
       virtual void SensorReadingsToLuaState();
+
+      virtual void ParametersToLuaState(TConfigurationNode& t_tree);
 
       inline bool IsOK() const {
          return m_bIsOK;

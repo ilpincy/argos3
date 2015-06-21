@@ -27,6 +27,8 @@ namespace argos {
    typedef ticpp::Element TConfigurationNode;
    /** The iterator for the ARGoS configuration XML node */
    typedef ticpp::Iterator <ticpp::Element> TConfigurationNodeIterator;
+   /** The iterator for the attributes of ARGoS configuration XML node */
+   typedef ticpp::Iterator <ticpp::Attribute> TConfigurationAttributeIterator;
 
    /****************************************/
    /****************************************/
