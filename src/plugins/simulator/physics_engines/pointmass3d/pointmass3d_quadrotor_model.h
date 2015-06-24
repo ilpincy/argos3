@@ -53,6 +53,8 @@ namespace argos {
       virtual bool CheckIntersectionWithRay(Real& f_t_on_ray,
                                             const CRay3& c_ray) const;
 
+      virtual void UpdateOriginAnchor(SAnchor& s_anchor);
+
    private:
 
       void PositionalControl();

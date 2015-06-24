@@ -47,7 +47,7 @@ namespace argos {
       /**
        * Updates the origin anchor associated to the embodied entity.
        */
-      void UpdateOriginAnchor(SAnchor& s_anchor);
+      virtual void UpdateOriginAnchor(SAnchor& s_anchor);
 
       /**
        * Returns a reference to the physics engine controlling this model.

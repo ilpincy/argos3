@@ -57,6 +57,12 @@ namespace argos {
       m_cMaxForce(c_max_force),
       m_fMaxTorque(f_max_torque) {
       Reset();
+      /* Register the origin anchor update method */
+      RegisterAnchorMethod(GetEmbodiedEntity().GetOriginAnchor(),
+                           &CPointMass3DModel::UpdateOriginAnchor);
+      /* Get initial rotation */
+      CRadians cTmp1, cTmp2;
+      GetEmbodiedEntity().GetOriginAnchor().Orientation.ToEulerAngles(m_cYaw, cTmp1, cTmp2);
    }
 
    /****************************************/
@@ -222,6 +228,14 @@ namespace argos {
          f_k_d * (f_cur_error - f_old_error) / m_cPM3DEngine.GetPhysicsClockTick(); /* derivative term */
       f_old_error = f_cur_error;
       return fOutput;
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CPointMass3DQuadRotorModel::UpdateOriginAnchor(SAnchor& s_anchor) {
+      s_anchor.Position = m_cPosition;
+      s_anchor.Orientation = CQuaternion(m_cYaw, CVector3::Z);
    }
 
    /****************************************/
