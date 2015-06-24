@@ -59,6 +59,20 @@ namespace argos {
 
    void CQTOpenGLSpiri::Draw(CSpiriEntity& c_entity) {
       glCallList(m_unList);
+      /* Save attributes and current matrix */
+      glPushAttrib(GL_LINE_BIT);
+      /* Set line attributes */
+      glEnable(GL_LINE_SMOOTH);
+      glLineWidth(2.0);
+      /* Set color */
+      SetMainBodyMaterial();
+      /* Draw ray */
+      glBegin(GL_LINES);
+      glVertex3f(0,0,0);
+      glVertex3f(DIAGONAL,0,0);
+      glEnd();
+      /* Restore saved stuff */
+      glPopAttrib();
    }
 
    /****************************************/
@@ -107,6 +121,8 @@ namespace argos {
    /****************************************/
 
    void CQTOpenGLSpiri::MakeModel() {
+      glPushMatrix();
+      glRotatef(45.0f, 0.0f, 0.0f, 1.0f);
       /* Main body */
       MakeMainBody();
       /* Front propeller */
@@ -122,6 +138,7 @@ namespace argos {
       glTranslatef(PROP_ARM, -PROP_ARM, 0.0f);
       MakePropeller();
       glTranslatef(0.0f, PROP_ARM, 0.0f);
+      glPopMatrix();
    }
 
    /****************************************/
