@@ -1,0 +1,80 @@
+<?xml version="1.0" ?>
+<argos-configuration>
+
+  <!-- ************************* -->
+  <!-- * General configuration * -->
+  <!-- ************************* -->
+  <framework>
+    <system threads="0" />
+    <experiment length="0" ticks_per_second="10" random_seed="1234" />
+  </framework>
+
+  <!-- *************** -->
+  <!-- * Controllers * -->
+  <!-- *************** -->
+  <controllers>
+
+    <!-- ***************************************************** -->
+    <!-- * This is the Lua controller to associate to robots * -->
+    <!-- ***************************************************** -->
+    <lua_controller id="lua">
+      <!-- Normal actuator/sensor configuration follows -->
+      <actuators>
+        <quadrotor_position implementation="default" />
+      </actuators>
+      <sensors>
+        <range_and_bearing implementation="medium" medium="rab" show_rays="false" />
+        <colored_blob_perspective_camera implementation="default" medium="leds" show_rays="true" />
+      </sensors>
+      <!-- No required configuration -->
+      <!-- <params /> -->
+      <!-- Optionally, you can pass a script as a controller parameter: -->
+      <params script="../../src/testing/experiment/test_spiri_camera.lua" />
+    </lua_controller>
+
+  </controllers>
+
+  <!-- *********************** -->
+  <!-- * Arena configuration * -->
+  <!-- *********************** -->
+  <arena size="10, 10, 5" center="0,0,2.5">
+    <box id="b" size=".1,.1,.1" movable="false">
+      <body position="2,2,0" orientation="0,0,0" />
+      <leds medium="leds">
+        <led offset=" 0, 0, 0.5" anchor="origin" color="red"    />
+        <led offset=" 0, 0, 1.5" anchor="origin" color="green"  />
+        <led offset=" 0, 0, 2.5" anchor="origin" color="blue"   />
+        <led offset=" 0, 0, 3.5" anchor="origin" color="white"  />
+        <led offset=" 0, 0, 4.5" anchor="origin" color="yellow" />
+      </leds>
+    </box>
+    <spiri id="spiri0" camera_range="3" camera_aperture="30">
+      <body position="1,1,0" orientation="45,0,0" />
+      <controller config="lua" />
+    </spiri>
+  </arena>
+
+  <!-- ******************* -->
+  <!-- * Physics engines * -->
+  <!-- ******************* -->
+  <physics_engines>
+    <dynamics2d id="dyn2d" />
+    <pointmass3d id="pm3d" />
+  </physics_engines>
+
+  <!-- ********* -->
+  <!-- * Media * -->
+  <!-- ********* -->
+  <media>
+    <range_and_bearing id="rab" />
+    <led id="leds" />
+  </media>
+
+  <!-- ***************** -->
+  <!-- * Visualization * -->
+  <!-- ***************** -->
+  <visualization>
+    <qt-opengl lua_editor="true" />
+  </visualization>
+
+</argos-configuration>
