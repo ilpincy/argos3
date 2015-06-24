@@ -37,8 +37,8 @@ namespace argos {
    /****************************************/
 
    void CPhysicsModel::UpdateEntityStatus() {
-      CalculateBoundingBox();
       CalculateAnchors();
+      CalculateBoundingBox();
       /*
        * Update entity components
        */
