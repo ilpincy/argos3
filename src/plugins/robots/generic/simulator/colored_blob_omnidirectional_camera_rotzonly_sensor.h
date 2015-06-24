@@ -6,7 +6,7 @@ namespace argos {
    class COmnidirectionalCameraEquippedEntity;
    class CLEDEntity;
    class CControllableEntity;
-   class CLEDCheckOperation;
+   class COmnidirectionalCameraLEDCheckOperation;
 }
 
 #include <argos3/core/utility/math/rng.h>
@@ -41,14 +41,14 @@ namespace argos {
 			
    protected:
 
-      bool                                  m_bEnabled;
-      COmnidirectionalCameraEquippedEntity* m_pcOmnicamEntity;
-      CControllableEntity*                  m_pcControllableEntity;
-      CEmbodiedEntity*                      m_pcEmbodiedEntity;
-      CPositionalIndex<CLEDEntity>*         m_pcLEDIndex;
-      CPositionalIndex<CEmbodiedEntity>*    m_pcEmbodiedIndex;
-      CLEDCheckOperation*                   m_pcOperation;
-      bool                                  m_bShowRays;
+      bool                                     m_bEnabled;
+      COmnidirectionalCameraEquippedEntity*    m_pcOmnicamEntity;
+      CControllableEntity*                     m_pcControllableEntity;
+      CEmbodiedEntity*                         m_pcEmbodiedEntity;
+      CPositionalIndex<CLEDEntity>*            m_pcLEDIndex;
+      CPositionalIndex<CEmbodiedEntity>*       m_pcEmbodiedIndex;
+      COmnidirectionalCameraLEDCheckOperation* m_pcOperation;
+      bool                                     m_bShowRays;
 
    };
 }

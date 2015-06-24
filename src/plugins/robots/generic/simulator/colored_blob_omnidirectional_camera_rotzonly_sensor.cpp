@@ -12,16 +12,17 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   class CLEDCheckOperation : public CPositionalIndex<CLEDEntity>::COperation {
+   class COmnidirectionalCameraLEDCheckOperation : public CPositionalIndex<CLEDEntity>::COperation {
 
    public:
 
-      CLEDCheckOperation(CCI_ColoredBlobOmnidirectionalCameraSensor::TBlobList& t_blobs,
-                         COmnidirectionalCameraEquippedEntity& c_omnicam_entity,
-                         CEmbodiedEntity& c_embodied_entity,
-                         CControllableEntity& c_controllable_entity,
-                         bool b_show_rays,
-                         Real f_noise_std_dev) :
+      COmnidirectionalCameraLEDCheckOperation(
+         CCI_ColoredBlobOmnidirectionalCameraSensor::TBlobList& t_blobs,
+         COmnidirectionalCameraEquippedEntity& c_omnicam_entity,
+         CEmbodiedEntity& c_embodied_entity,
+         CControllableEntity& c_controllable_entity,
+         bool b_show_rays,
+         Real f_noise_std_dev) :
          m_tBlobs(t_blobs),
          m_cOmnicamEntity(c_omnicam_entity),
          m_cEmbodiedEntity(c_embodied_entity),
@@ -34,7 +35,7 @@ namespace argos {
             m_pcRNG = CRandom::CreateRNG("argos");
          }
       }
-      virtual ~CLEDCheckOperation() {
+      virtual ~COmnidirectionalCameraLEDCheckOperation() {
          while(! m_tBlobs.empty()) {
             delete m_tBlobs.back();
             m_tBlobs.pop_back();
@@ -163,12 +164,13 @@ namespace argos {
          GetNodeAttribute(t_tree, "medium", strMedium);
          m_pcLEDIndex = &(CSimulator::GetInstance().GetMedium<CLEDMedium>(strMedium).GetIndex());
          /* Create check operation */
-         m_pcOperation = new CLEDCheckOperation(m_sReadings.BlobList,
-                                                *m_pcOmnicamEntity,
-                                                *m_pcEmbodiedEntity,
-                                                *m_pcControllableEntity,
-                                                m_bShowRays,
-                                                fDistanceNoiseStdDev);
+         m_pcOperation = new COmnidirectionalCameraLEDCheckOperation(
+            m_sReadings.BlobList,
+            *m_pcOmnicamEntity,
+            *m_pcEmbodiedEntity,
+            *m_pcControllableEntity,
+            m_bShowRays,
+            fDistanceNoiseStdDev);
       }
       catch(CARGoSException& ex) {
          THROW_ARGOSEXCEPTION_NESTED("Error initializing the colored blob omnidirectional camera rotzonly sensor", ex);
