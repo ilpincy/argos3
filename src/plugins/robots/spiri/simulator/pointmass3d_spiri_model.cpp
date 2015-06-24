@@ -48,9 +48,11 @@ namespace argos {
                                  VEL_K_D,
                                  ROT_K_P,
                                  ROT_K_D) {
-      /* Register the rab anchor update method */
+      /* Register anchor update methods */
       RegisterAnchorMethod(GetEmbodiedEntity().GetAnchor("rab"),
                            &CPointMass3DSpiriModel::UpdateRABAnchor);
+      RegisterAnchorMethod(GetEmbodiedEntity().GetAnchor("camera"),
+                           &CPointMass3DSpiriModel::UpdateCameraAnchor);
    }
 
    /****************************************/
@@ -58,6 +60,17 @@ namespace argos {
 
    void CPointMass3DSpiriModel::UpdateRABAnchor(SAnchor& s_anchor) {
       s_anchor.Position = s_anchor.OffsetPosition;
+      s_anchor.Position += GetEmbodiedEntity().GetOriginAnchor().Position;
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CPointMass3DSpiriModel::UpdateCameraAnchor(SAnchor& s_anchor) {
+      s_anchor.Orientation = GetEmbodiedEntity().GetOriginAnchor().Orientation;
+      s_anchor.Orientation *= s_anchor.OffsetOrientation;
+      s_anchor.Position = s_anchor.OffsetPosition;
+      s_anchor.Position.Rotate(s_anchor.Orientation);
       s_anchor.Position += GetEmbodiedEntity().GetOriginAnchor().Position;
    }
 

@@ -13,6 +13,7 @@ namespace argos {
    class CSpiriEntity;
    class CQuadRotorEntity;
    class CRABEquippedEntity;
+   class CPerspectiveCameraEquippedEntity;
 }
 
 #include <argos3/core/simulator/entity/composable_entity.h>
@@ -34,7 +35,9 @@ namespace argos {
                    const CVector3& c_position = CVector3(),
                    const CQuaternion& c_orientation = CQuaternion(),
                    Real f_rab_range = 3.0f,
-                   size_t un_rab_data_size = 10);
+                   size_t un_rab_data_size = 10,
+                   const CRadians& c_cam_aperture = ToRadians(CDegrees(30.0f)),
+                   Real f_cam_range = 10.0f);
 
       virtual void Init(TConfigurationNode& t_tree);
       virtual void Reset();
@@ -55,16 +58,21 @@ namespace argos {
          return *m_pcRABEquippedEntity;
       }
 
+      inline CPerspectiveCameraEquippedEntity& GetPerspectiveCameraEquippedEntity() {
+         return *m_pcPerspectiveCameraEquippedEntity;
+      }
+
       virtual std::string GetTypeDescription() const {
          return "spiri";
       }
 
    private:
 
-      CControllableEntity* m_pcControllableEntity;
-      CEmbodiedEntity*     m_pcEmbodiedEntity;
-      CQuadRotorEntity*    m_pcQuadRotorEntity;
-      CRABEquippedEntity*  m_pcRABEquippedEntity;
+      CControllableEntity*              m_pcControllableEntity;
+      CEmbodiedEntity*                  m_pcEmbodiedEntity;
+      CQuadRotorEntity*                 m_pcQuadRotorEntity;
+      CRABEquippedEntity*               m_pcRABEquippedEntity;
+      CPerspectiveCameraEquippedEntity* m_pcPerspectiveCameraEquippedEntity;
    };
 
 }

@@ -11,6 +11,7 @@
 #include <argos3/core/simulator/entity/embodied_entity.h>
 #include <argos3/plugins/simulator/entities/led_equipped_entity.h>
 #include <argos3/plugins/simulator/entities/light_sensor_equipped_entity.h>
+#include <argos3/plugins/simulator/entities/perspective_camera_equipped_entity.h>
 #include <argos3/plugins/simulator/entities/proximity_sensor_equipped_entity.h>
 #include <argos3/plugins/simulator/entities/quadrotor_entity.h>
 #include <argos3/plugins/simulator/entities/rab_equipped_entity.h>
@@ -22,6 +23,9 @@ namespace argos {
 
    static const Real HEIGHT         = 0.090f;
    static const Real BODY_HEIGHT    = HEIGHT * 3.0f / 4.0f;
+   static const Real BODY_SIDE      = 0.470f;
+   static const Real BODY_DIAGONAL  = BODY_SIDE * ::sqrt(2);
+   static const Real BODY_RADIUS    = BODY_DIAGONAL / 2.0f;
    static const Real BODY_ELEVATION = HEIGHT - BODY_HEIGHT;
    static const Real RAB_ELEVATION  = (BODY_ELEVATION + BODY_HEIGHT) / 2.0f;
 
@@ -33,7 +37,8 @@ namespace argos {
       m_pcControllableEntity(NULL),
       m_pcEmbodiedEntity(NULL),
       m_pcQuadRotorEntity(NULL),
-      m_pcRABEquippedEntity(NULL) {
+      m_pcRABEquippedEntity(NULL),
+      m_pcPerspectiveCameraEquippedEntity(NULL) {
    }
 
    /****************************************/
@@ -44,12 +49,15 @@ namespace argos {
                               const CVector3& c_position,
                               const CQuaternion& c_orientation,
                               Real f_rab_range,
-                              size_t un_rab_data_size) :
+                              size_t un_rab_data_size,
+                              const CRadians& c_cam_aperture,
+                              Real f_cam_range) :
       CComposableEntity(NULL, str_id),
       m_pcControllableEntity(NULL),
       m_pcEmbodiedEntity(NULL),
       m_pcQuadRotorEntity(NULL),
-      m_pcRABEquippedEntity(NULL) {
+      m_pcRABEquippedEntity(NULL),
+      m_pcPerspectiveCameraEquippedEntity(NULL) {
       try {
          /*
           * Create and init components
@@ -64,7 +72,9 @@ namespace argos {
          m_pcQuadRotorEntity = new CQuadRotorEntity(this, "quadrotor_0");
          AddComponent(*m_pcQuadRotorEntity);
          /* RAB equipped entity */
-         SAnchor& cRABAnchor = m_pcEmbodiedEntity->AddAnchor("rab", CVector3(0.0f, 0.0f, RAB_ELEVATION));
+         SAnchor& cRABAnchor = m_pcEmbodiedEntity->AddAnchor(
+            "rab",
+            CVector3(0.0f, 0.0f, RAB_ELEVATION));
          m_pcRABEquippedEntity = new CRABEquippedEntity(
             this,
             "rab_0",
@@ -74,6 +84,21 @@ namespace argos {
             *m_pcEmbodiedEntity);
          AddComponent(*m_pcRABEquippedEntity);
          m_pcEmbodiedEntity->EnableAnchor("rab");
+         /* Perspective camera */
+         SAnchor& cCameraAnchor =
+            m_pcEmbodiedEntity->AddAnchor(
+               "camera",
+               CVector3(BODY_RADIUS, 0.0f, 0.0f));
+         m_pcPerspectiveCameraEquippedEntity = new CPerspectiveCameraEquippedEntity(
+            this,
+            "perspective_camera_0",
+            c_cam_aperture,
+            0.035f,
+            f_cam_range,
+            640, 480,
+            cCameraAnchor);
+         AddComponent(*m_pcPerspectiveCameraEquippedEntity);
+         m_pcEmbodiedEntity->EnableAnchor("camera");
          /* Controllable entity
             It must be the last one, for actuators/sensors to link to composing entities correctly */
          m_pcControllableEntity = new CControllableEntity(this, "controller_0");
@@ -110,20 +135,39 @@ namespace argos {
          m_pcQuadRotorEntity = new CQuadRotorEntity(this, "quadrotor_0");
          AddComponent(*m_pcQuadRotorEntity);
          /* RAB equipped entity */
-         Real fRange = 3.0f;
-         GetNodeAttributeOrDefault(t_tree, "rab_range", fRange, fRange);
-         UInt32 unDataSize = 10;
-         GetNodeAttributeOrDefault(t_tree, "rab_data_size", unDataSize, unDataSize);
+         Real fRABRange = 3.0f;
+         GetNodeAttributeOrDefault(t_tree, "rab_range", fRABRange, fRABRange);
+         UInt32 unRABDataSize = 10;
+         GetNodeAttributeOrDefault(t_tree, "rab_data_size", unRABDataSize, unRABDataSize);
          SAnchor& cRABAnchor = m_pcEmbodiedEntity->AddAnchor("rab", CVector3(0.0f, 0.0f, RAB_ELEVATION));
          m_pcRABEquippedEntity = new CRABEquippedEntity(
             this,
             "rab_0",
-            unDataSize,
-            fRange,
+            unRABDataSize,
+            fRABRange,
             cRABAnchor,
             *m_pcEmbodiedEntity);
          AddComponent(*m_pcRABEquippedEntity);
          m_pcEmbodiedEntity->EnableAnchor("rab");
+         /* Perspective camera */
+         CDegrees cCameraAperture(30.0f);
+         GetNodeAttributeOrDefault(t_tree, "camera_aperture", cCameraAperture, cCameraAperture);
+         Real fCameraRange = 10.0f;
+         GetNodeAttributeOrDefault(t_tree, "camera_range", fCameraRange, fCameraRange);
+         SAnchor& cCameraAnchor =
+            m_pcEmbodiedEntity->AddAnchor(
+               "camera",
+               CVector3(BODY_RADIUS, 0.0f, 0.0f));
+         m_pcPerspectiveCameraEquippedEntity = new CPerspectiveCameraEquippedEntity(
+            this,
+            "perspective_camera_0",
+            ToRadians(cCameraAperture),
+            0.035f,
+            fCameraRange,
+            640, 480,
+            cCameraAnchor);
+         AddComponent(*m_pcPerspectiveCameraEquippedEntity);
+         m_pcEmbodiedEntity->EnableAnchor("camera");
          /* Controllable entity
             It must be the last one, for actuators/sensors to link to composing entities correctly */
          m_pcControllableEntity = new CControllableEntity(this);

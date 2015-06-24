@@ -24,10 +24,14 @@ namespace argos {
    public:
       
       CPointMass3DSpiriModel(CPointMass3DEngine& c_engine,
-                              CSpiriEntity& c_spiri);
+                             CSpiriEntity& c_spiri);
       virtual ~CPointMass3DSpiriModel() {}
 
-      virtual void UpdateRABAnchor(SAnchor& s_anchor);
+   private:
+
+      void UpdateRABAnchor(SAnchor& s_anchor);
+      
+      void UpdateCameraAnchor(SAnchor& s_anchor);
       
    };
 
