@@ -84,6 +84,46 @@ namespace argos {
       virtual ~CQTOpenGLUserFunctions();
 
       /**
+       * Called when a key press event occurs.
+       * The focus must be on the QTOpenGL widget.
+       * QTOpenGL reserves the following keys for camera movement:
+       * - arrows
+       * - Q W E A S D
+       * If this function does not manage a keypress, it must end by
+       * calling CQTOpenGLWidget::KeyPressed().
+       * The default implementation calls CQTOpenGLWidget::KeyPressed().
+       * @param pc_event The key press event.
+       * @see QKeyEvent
+       */
+      virtual void KeyPressed(QKeyEvent* pc_event);
+
+      /**
+       * Called when a key release event occurs.
+       * The focus must be on the QTOpenGL widget.
+       * QTOpenGL reserves the following keys for camera movement:
+       * - arrows
+       * - Q W E A S D
+       * If this function does not manage a key release, it must end by
+       * calling CQTOpenGLWidget::KeyReleased().
+       * The default implementation calls CQTOpenGLWidget::KeyReleased().
+       * @param pc_event The key release event.
+       * @see QKeyEvent
+       */
+      virtual void KeyReleased(QKeyEvent* pc_event);
+
+      /**
+       * Called every time an entity is selected.
+       * @param c_entity The selected entity.
+       */
+      virtual void EntitySelected(CEntity& c_entity) {}
+
+      /**
+       * Called every time an entity is deselected.
+       * @param c_entity The deselected entity.
+       */
+      virtual void EntityDeselected(CEntity& c_entity) {}
+
+      /**
        * Drawing hook executed after the floor is drawn.
        */
       virtual void Draw(CFloorEntity& c_entity) {}

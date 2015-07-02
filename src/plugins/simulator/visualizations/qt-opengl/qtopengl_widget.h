@@ -227,9 +227,18 @@ namespace argos {
        */
       void SetCameraFocalLength(double f_length);
 
+      /**
+       * Handles key press events.
+       */
+      void KeyPressed(QKeyEvent* pc_event);
+
+      /**
+       * Handles key release events.
+       */
+      void KeyReleased(QKeyEvent* pc_event);
+
    protected:
 
-      void InitializeArena();
       void DrawArena();
       void DrawAxes();
 

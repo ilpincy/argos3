@@ -54,6 +54,20 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   void CQTOpenGLUserFunctions::KeyPressed(QKeyEvent* pc_event) {
+      m_pcQTOpenGLWidget->KeyPressed(pc_event);
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CQTOpenGLUserFunctions::KeyReleased(QKeyEvent* pc_event) {
+      m_pcQTOpenGLWidget->KeyReleased(pc_event);
+   }
+   
+   /****************************************/
+   /****************************************/
+
    void CQTOpenGLUserFunctions::SetColor(const CColor& c_color) {
       const GLfloat pfColor[]     = {
          c_color.GetRed()   / 255.0f,

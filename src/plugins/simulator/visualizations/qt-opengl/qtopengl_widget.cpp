@@ -311,6 +311,8 @@ namespace argos {
          m_sSelectionInfo.IsSelected = false;
          if(bWasSelected) {
             emit EntityDeselected(m_sSelectionInfo.Index);
+            m_cUserFunctions.EntityDeselected(
+               *m_cSpace.GetRootEntityVector()[m_sSelectionInfo.Index]);
          }
       }
       else {
@@ -338,19 +340,27 @@ namespace argos {
             /* The user clicked on the selected entity, deselect it */
             emit EntityDeselected(m_sSelectionInfo.Index);
             m_sSelectionInfo.IsSelected = false;
+            m_cUserFunctions.EntitySelected(
+               *m_cSpace.GetRootEntityVector()[m_sSelectionInfo.Index]);
          }
          if(bWasSelected &&
             (m_sSelectionInfo.Index != *punName)) {
             /* The user clicked on a different entity from the selected one */
             emit EntityDeselected(m_sSelectionInfo.Index);
+            m_cUserFunctions.EntityDeselected(
+               *m_cSpace.GetRootEntityVector()[m_sSelectionInfo.Index]);
             m_sSelectionInfo.Index = *punName;
             emit EntitySelected(m_sSelectionInfo.Index);
+            m_cUserFunctions.EntitySelected(
+               *m_cSpace.GetRootEntityVector()[m_sSelectionInfo.Index]);
          }
          else {
             /* There was nothing selected, and the user clicked on an entity */
             m_sSelectionInfo.IsSelected = true;
             m_sSelectionInfo.Index = *punName;
             emit EntitySelected(m_sSelectionInfo.Index);
+            m_cUserFunctions.EntitySelected(
+               *m_cSpace.GetRootEntityVector()[m_sSelectionInfo.Index]);
          }
       }
       DrawScene();
@@ -601,7 +611,93 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CQTOpenGLWidget::InitializeArena() {
+   void CQTOpenGLWidget::KeyPressed(QKeyEvent* pc_event) {
+      switch(pc_event->key()) {
+         case Qt::Key_W:
+         case Qt::Key_Up:
+            /* Forwards */
+            m_mapPressedKeys[DIRECTION_FORWARDS] = true;
+            reactToKeyEvent();
+            break;
+         case Qt::Key_S:
+         case Qt::Key_Down:
+            /* Backwards */
+            m_mapPressedKeys[DIRECTION_BACKWARDS] = true;
+            reactToKeyEvent();
+            break;
+         case Qt::Key_A:
+         case Qt::Key_Left:
+            /* Left */
+            m_mapPressedKeys[DIRECTION_LEFT] = true;
+            reactToKeyEvent();
+            break;
+         case Qt::Key_D:
+         case Qt::Key_Right:
+            /* Right */
+            m_mapPressedKeys[DIRECTION_RIGHT] = true;
+            reactToKeyEvent();
+            break;
+         case Qt::Key_E:
+            /* Up */
+            m_mapPressedKeys[DIRECTION_UP] = true;
+            reactToKeyEvent();
+            break;
+         case Qt::Key_Q:
+            /* Up */
+            m_mapPressedKeys[DIRECTION_DOWN] = true;
+            reactToKeyEvent();
+            break;
+         default:
+            /* Unknown key */
+            QGLWidget::keyPressEvent(pc_event);
+            break;
+      }
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CQTOpenGLWidget::KeyReleased(QKeyEvent* pc_event) {
+      switch(pc_event->key()) {
+         case Qt::Key_W:
+         case Qt::Key_Up:
+            /* Forwards */
+            m_mapPressedKeys[DIRECTION_FORWARDS] = false;
+            reactToKeyEvent();
+            break;
+         case Qt::Key_S:
+         case Qt::Key_Down:
+            /* Backwards */
+            m_mapPressedKeys[DIRECTION_BACKWARDS] = false;
+            reactToKeyEvent();
+            break;
+         case Qt::Key_A:
+         case Qt::Key_Left:
+            /* Left */
+            m_mapPressedKeys[DIRECTION_LEFT] = false;
+            reactToKeyEvent();
+            break;
+         case Qt::Key_D:
+         case Qt::Key_Right:
+            /* Right */
+            m_mapPressedKeys[DIRECTION_RIGHT] = false;
+            reactToKeyEvent();
+            break;
+         case Qt::Key_E:
+            /* Up */
+            m_mapPressedKeys[DIRECTION_UP] = false;
+            reactToKeyEvent();
+            break;
+         case Qt::Key_Q:
+            /* Up */
+            m_mapPressedKeys[DIRECTION_DOWN] = false;
+            reactToKeyEvent();
+            break;
+         default:
+            /* Unknown key */
+            QGLWidget::keyPressEvent(pc_event);
+            break;
+      }
    }
 
    /****************************************/
@@ -821,92 +917,14 @@ namespace argos {
    /****************************************/
 
    void CQTOpenGLWidget::keyPressEvent(QKeyEvent* pc_event) {
-      switch(pc_event->key()) {
-         case Qt::Key_W:
-         case Qt::Key_Up:
-            /* Forwards */
-            m_mapPressedKeys[DIRECTION_FORWARDS] = true;
-            reactToKeyEvent();
-            break;
-         case Qt::Key_S:
-         case Qt::Key_Down:
-            /* Backwards */
-            m_mapPressedKeys[DIRECTION_BACKWARDS] = true;
-            reactToKeyEvent();
-            break;
-         case Qt::Key_A:
-         case Qt::Key_Left:
-            /* Left */
-            m_mapPressedKeys[DIRECTION_LEFT] = true;
-            reactToKeyEvent();
-            break;
-         case Qt::Key_D:
-         case Qt::Key_Right:
-            /* Right */
-            m_mapPressedKeys[DIRECTION_RIGHT] = true;
-            reactToKeyEvent();
-            break;
-         case Qt::Key_E:
-            /* Up */
-            m_mapPressedKeys[DIRECTION_UP] = true;
-            reactToKeyEvent();
-            break;
-         case Qt::Key_Q:
-            /* Up */
-            m_mapPressedKeys[DIRECTION_DOWN] = true;
-            reactToKeyEvent();
-            break;
-         default:
-            /* Unknown key */
-            QGLWidget::keyPressEvent(pc_event);
-            break;
-      }
+      m_cUserFunctions.KeyPressed(pc_event);
    }
 
    /****************************************/
    /****************************************/
 
    void CQTOpenGLWidget::keyReleaseEvent(QKeyEvent* pc_event) {
-      switch(pc_event->key()) {
-         case Qt::Key_W:
-         case Qt::Key_Up:
-            /* Forwards */
-            m_mapPressedKeys[DIRECTION_FORWARDS] = false;
-            reactToKeyEvent();
-            break;
-         case Qt::Key_S:
-         case Qt::Key_Down:
-            /* Backwards */
-            m_mapPressedKeys[DIRECTION_BACKWARDS] = false;
-            reactToKeyEvent();
-            break;
-         case Qt::Key_A:
-         case Qt::Key_Left:
-            /* Left */
-            m_mapPressedKeys[DIRECTION_LEFT] = false;
-            reactToKeyEvent();
-            break;
-         case Qt::Key_D:
-         case Qt::Key_Right:
-            /* Right */
-            m_mapPressedKeys[DIRECTION_RIGHT] = false;
-            reactToKeyEvent();
-            break;
-         case Qt::Key_E:
-            /* Up */
-            m_mapPressedKeys[DIRECTION_UP] = false;
-            reactToKeyEvent();
-            break;
-         case Qt::Key_Q:
-            /* Up */
-            m_mapPressedKeys[DIRECTION_DOWN] = false;
-            reactToKeyEvent();
-            break;
-         default:
-            /* Unknown key */
-            QGLWidget::keyPressEvent(pc_event);
-            break;
-      }
+      m_cUserFunctions.KeyReleased(pc_event);
    }
 
    /****************************************/
