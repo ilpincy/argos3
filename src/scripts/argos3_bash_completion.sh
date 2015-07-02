@@ -35,5 +35,4 @@ _argos3() {
     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
 }
 
-echo "here"
 complete -F _argos3 argos3
