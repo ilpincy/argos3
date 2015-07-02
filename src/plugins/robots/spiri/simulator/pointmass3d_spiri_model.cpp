@@ -59,6 +59,7 @@ namespace argos {
    /****************************************/
 
    void CPointMass3DSpiriModel::UpdateRABAnchor(SAnchor& s_anchor) {
+      s_anchor.Orientation = GetEmbodiedEntity().GetOriginAnchor().Orientation;
       s_anchor.Position = s_anchor.OffsetPosition;
       s_anchor.Position += GetEmbodiedEntity().GetOriginAnchor().Position;
    }
