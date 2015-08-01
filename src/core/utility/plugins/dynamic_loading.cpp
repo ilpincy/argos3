@@ -29,27 +29,34 @@ namespace argos {
     * In case of success, it sets t_handle to the handle of the load library, and fixes str_lib to
     * match the extension of the loaded library.
     */
-   static CDynamicLoading::TDLHandle LoadLibraryTryingExtensions(std::string& str_lib) {
+   static CDynamicLoading::TDLHandle LoadLibraryTryingExtensions(std::string& str_lib,
+                                                                 std::string& str_msg) {
       /* Try loading without changes to the given path */
       CDynamicLoading::TDLHandle tHandle = ::dlopen(str_lib.c_str(), RTLD_LAZY);
+      str_msg = str_lib + ": ";
       if(tHandle == NULL) {
+         str_msg += dlerror();
          /* Try adding the shared lib extension to the path */
          std::string strLibWExt = str_lib + "." + ARGOS_SHARED_LIBRARY_EXTENSION;
          tHandle = ::dlopen(strLibWExt.c_str(), RTLD_LAZY);
+         str_msg += "\n" + strLibWExt + ": ";
          if(tHandle != NULL) {
             /* Success */
             str_lib = strLibWExt;
          }
          else {
+            str_msg += dlerror();
             /* Try adding the module lib extension to the path */
             strLibWExt = str_lib + "." + ARGOS_MODULE_LIBRARY_EXTENSION;
             tHandle = ::dlopen(strLibWExt.c_str(), RTLD_LAZY);
+            str_msg += "\n" + strLibWExt + ": ";
             if(tHandle != NULL) {
                /* Success */
                str_lib = strLibWExt;
             }
          }
       }
+      str_msg += "OK";
       return tHandle;
    }
 
@@ -71,7 +78,8 @@ namespace argos {
          }
          /* Not already loaded, load the library and bomb out in case of failure */
          std::string strLoadedLib = str_lib;
-         tHandle = LoadLibraryTryingExtensions(strLoadedLib);
+         std::string strMsg;
+         tHandle = LoadLibraryTryingExtensions(strLoadedLib, strMsg);
          if(tHandle == NULL) {
             THROW_ARGOSEXCEPTION("Can't load library \""
                                  << str_lib
@@ -79,7 +87,9 @@ namespace argos {
                                  << ARGOS_SHARED_LIBRARY_EXTENSION
                                  << ") and module library ("
                                  << ARGOS_MODULE_LIBRARY_EXTENSION
-                                 << ")");
+                                 << "): "
+                                 << std::endl
+                                 << strMsg);
          }
          /* Store the handle to the loaded library */
          m_tOpenLibs[strLoadedLib] = tHandle;
@@ -109,7 +119,7 @@ namespace argos {
           */
          /* Parse the string */
          std::istringstream issPluginPath(strPluginPath);
-         std::string strDir;
+         std::string strDir, strMsg;
          while(std::getline(issPluginPath, strDir, ':')) {
             /* Add '/' to dir if missing */
             if(strDir[strDir.length()-1] != '/') {
@@ -123,7 +133,7 @@ namespace argos {
                return m_tOpenLibs[strLibPath];
             }
             /* Not already loaded, try and load the library */
-            tHandle = LoadLibraryTryingExtensions(strLibPath);
+            tHandle = LoadLibraryTryingExtensions(strLibPath, strMsg);
             if(tHandle != NULL) {
                /* Store the handle to the loaded library */
                m_tOpenLibs[strLibPath] = tHandle;
@@ -139,7 +149,9 @@ namespace argos {
                               << ARGOS_SHARED_LIBRARY_EXTENSION
                               << ") and module library ("
                               << ARGOS_MODULE_LIBRARY_EXTENSION
-                              << ")");
+                              << "): "
+                              << std::endl
+                              << strMsg);
       }
    }
 
