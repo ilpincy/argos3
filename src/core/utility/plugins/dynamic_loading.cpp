@@ -32,13 +32,13 @@ namespace argos {
    static CDynamicLoading::TDLHandle LoadLibraryTryingExtensions(std::string& str_lib,
                                                                  std::string& str_msg) {
       /* Try loading without changes to the given path */
-      CDynamicLoading::TDLHandle tHandle = ::dlopen(str_lib.c_str(), RTLD_LAZY);
+      CDynamicLoading::TDLHandle tHandle = ::dlopen(str_lib.c_str(), RTLD_GLOBAL | RTLD_LAZY);
       str_msg = str_lib + ": ";
       if(tHandle == NULL) {
          str_msg += dlerror();
          /* Try adding the shared lib extension to the path */
          std::string strLibWExt = str_lib + "." + ARGOS_SHARED_LIBRARY_EXTENSION;
-         tHandle = ::dlopen(strLibWExt.c_str(), RTLD_LAZY);
+         tHandle = ::dlopen(strLibWExt.c_str(), RTLD_GLOBAL | RTLD_LAZY);
          str_msg += "\n" + strLibWExt + ": ";
          if(tHandle != NULL) {
             /* Success */
@@ -48,7 +48,7 @@ namespace argos {
             str_msg += dlerror();
             /* Try adding the module lib extension to the path */
             strLibWExt = str_lib + "." + ARGOS_MODULE_LIBRARY_EXTENSION;
-            tHandle = ::dlopen(strLibWExt.c_str(), RTLD_LAZY);
+            tHandle = ::dlopen(strLibWExt.c_str(), RTLD_GLOBAL | RTLD_LAZY);
             str_msg += "\n" + strLibWExt + ": ";
             if(tHandle != NULL) {
                /* Success */
