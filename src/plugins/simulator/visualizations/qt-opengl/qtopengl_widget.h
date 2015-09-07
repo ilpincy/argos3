@@ -102,6 +102,10 @@ namespace argos {
 
       void DrawScene();
 
+      CEntity* GetSelectedEntity();
+      void SelectEntity(CEntity& c_entity);
+      void DeselectEntity();
+
       void SelectInScene(UInt32 un_x,
                          UInt32 un_y);
 

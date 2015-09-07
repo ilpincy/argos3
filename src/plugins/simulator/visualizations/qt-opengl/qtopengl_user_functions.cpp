@@ -68,6 +68,27 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   CEntity* CQTOpenGLUserFunctions::GetSelectedEntity() {
+      return m_pcQTOpenGLWidget->GetSelectedEntity();
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CQTOpenGLUserFunctions::SelectEntity(CEntity& c_entity) {
+      m_pcQTOpenGLWidget->SelectEntity(c_entity);
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CQTOpenGLUserFunctions::DeselectEntity() {
+      m_pcQTOpenGLWidget->DeselectEntity();
+   }
+
+   /****************************************/
+   /****************************************/
+
    void CQTOpenGLUserFunctions::SetColor(const CColor& c_color) {
       const GLfloat pfColor[]     = {
          c_color.GetRed()   / 255.0f,

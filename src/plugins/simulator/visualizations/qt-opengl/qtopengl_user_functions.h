@@ -124,6 +124,29 @@ namespace argos {
       virtual void EntityDeselected(CEntity& c_entity) {}
 
       /**
+       * Returns the currently selected entity, or NULL.
+       */
+      CEntity* GetSelectedEntity();
+
+      /**
+       * Selects the specified entity.
+       * - If no entity was previously selected, the specified entity
+       *   is selected and EntitySelected() is called.
+       * - If an entity was previously selected, EntityDeselected() is
+       *   called for that entity; then, the specified entity is
+       *   selected and EntitySelected() is called.
+       */
+      virtual void SelectEntity(CEntity& c_entity);
+
+      /**
+       * Deselects the currently selected entity.
+       * - If no entity was selected, nothing is done.
+       * - If an entity was previously selected, EntityDeselected() is
+       *   called for that entity.
+       */
+      virtual void DeselectEntity();
+
+      /**
        * Drawing hook executed after the floor is drawn.
        */
       virtual void Draw(CFloorEntity& c_entity) {}

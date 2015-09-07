@@ -267,6 +267,59 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   CEntity* CQTOpenGLWidget::GetSelectedEntity() {
+      return (m_sSelectionInfo.IsSelected ?
+              m_cSpace.GetRootEntityVector()[m_sSelectionInfo.Index] :
+              NULL);
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CQTOpenGLWidget::SelectEntity(CEntity& c_entity) {
+      /* Look for the idx corresponding to the entity */
+      size_t unIdx = 0;
+      while(m_cSpace.GetRootEntityVector()[unIdx] != &c_entity)
+         ++unIdx;
+      /* Check whether an entity had previously been selected */
+      if(m_sSelectionInfo.IsSelected) {
+         /* An entity had previously been selected */
+         /* Is that entity already selected? */
+         if(m_sSelectionInfo.Index == unIdx) return;
+         /* Deselect the previous one */
+         emit EntityDeselected(m_sSelectionInfo.Index);
+         m_cUserFunctions.EntityDeselected(
+            *m_cSpace.GetRootEntityVector()[m_sSelectionInfo.Index]);
+      }
+      else {
+         /* No entity had previously been selected */
+         m_sSelectionInfo.IsSelected = true;
+      }
+      /* Select the new entity */
+      m_sSelectionInfo.Index = unIdx;
+      emit EntitySelected(unIdx);
+      m_cUserFunctions.EntitySelected(
+         *m_cSpace.GetRootEntityVector()[unIdx]);
+      DrawScene();
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CQTOpenGLWidget::DeselectEntity() {
+      /* If no entity was selected, nothing to do */
+      if(!m_sSelectionInfo.IsSelected) return;
+      /* Deselect the entity */
+      emit EntityDeselected(m_sSelectionInfo.Index);
+      m_cUserFunctions.EntityDeselected(
+         *m_cSpace.GetRootEntityVector()[m_sSelectionInfo.Index]);
+      m_sSelectionInfo.IsSelected = false;
+      DrawScene();
+   }
+
+   /****************************************/
+   /****************************************/
+
    void CQTOpenGLWidget::SelectInScene(UInt32 un_x,
                                        UInt32 un_y) {
       /* Used to store the viewport size */
