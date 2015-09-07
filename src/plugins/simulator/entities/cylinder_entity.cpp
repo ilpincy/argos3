@@ -192,7 +192,7 @@ namespace argos {
                    "    <cylinder id=\"cyl1\" radius=\"0.8\" height=\"0.5\"\n"
                    "              movable=\"true\" mass=\"2.5\">\n"
                    "      <body position=\"0.4,2.3,0\" orientation=\"45,0,0\" />\n"
-                   "      <leds>\n"
+                   "      <leds medium=\"id_of_led_medium\">\n"
                    "        <led offset=\" 0.15, 0.15,0.15\" anchor=\"origin\" color=\"white\" />\n"
                    "        <led offset=\"-0.15, 0.15,0\"    anchor=\"origin\" color=\"red\"   />\n"
                    "        <led offset=\" 0.15, 0.15,0\"    anchor=\"origin\" color=\"blue\"  />\n"
