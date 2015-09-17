@@ -44,6 +44,7 @@ set(ARGOS3_HEADERS_UTILITY_PROFILER
 # argos3/core/utility/math
 set(ARGOS3_HEADERS_UTILITY_MATH
   utility/math/angles.h
+  utility/math/box.h
   utility/math/cylinder.h
   utility/math/general.h
   utility/math/plane.h
@@ -140,6 +141,7 @@ set(ARGOS3_SOURCES_CORE
   ${ARGOS3_HEADERS_UTILITY_MATH}
   ${ARGOS3_HEADERS_UTILITY_MATH_MATRIX}
   utility/math/angles.cpp
+  utility/math/box.cpp
   utility/math/cylinder.cpp
   utility/math/vector2.cpp
   utility/math/vector3.cpp
