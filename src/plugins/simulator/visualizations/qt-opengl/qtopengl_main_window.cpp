@@ -158,6 +158,12 @@ namespace argos {
       CreateConnections();
       /* Set experiment state */
       m_eExperimentState = EXPERIMENT_INITIALIZED;
+      /* Should we play instantly? */
+      bool bAutoPlay = false;
+      GetNodeAttributeOrDefault(t_tree, "autoplay", bAutoPlay, bAutoPlay);
+      if(bAutoPlay) {
+         PlayExperiment();
+      }
    }
 
    /****************************************/
