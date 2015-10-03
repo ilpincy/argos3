@@ -46,6 +46,18 @@ namespace argos {
          return *m_pcOpenGLWidget;
       }
 
+      inline const CQTOpenGLWidget& GetOpenGLWidget() const {
+         return *m_pcOpenGLWidget;
+      }
+
+      inline CQTOpenGLUserFunctions& GetUserFunctions() {
+         return *m_pcUserFunctions;
+      }
+
+      inline const CQTOpenGLUserFunctions& GetUserFunctions() const {
+         return *m_pcUserFunctions;
+      }
+
       inline const QString& GetIconDir() const {
          return m_strIconDir;
       }
