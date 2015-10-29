@@ -186,9 +186,9 @@ namespace argos {
        * @param c_position The wanted position.
        * @param c_orientation The wanted orientation.
        */
-      void MoveEntity(CPositionalEntity& c_entity,
-                      const CVector3& c_position,
-                      const CQuaternion& c_orientation);
+      virtual void MoveEntity(CPositionalEntity& c_entity,
+                              const CVector3& c_position,
+                              const CQuaternion& c_orientation);
 
       /**
        * Moves the entity to the wanted position and orientation.
@@ -200,10 +200,10 @@ namespace argos {
        * @param b_check_only If <tt>false</tt>, the movement is executed; otherwise, the object is not actually moved.
        * @return <tt>true</tt> if no collisions were detected, <tt>false</tt> otherwise.
        */
-      bool MoveEntity(CEmbodiedEntity& c_entity,
-                      const CVector3& c_position,
-                      const CQuaternion& c_orientation,
-                      bool b_check_only = false);
+      virtual bool MoveEntity(CEmbodiedEntity& c_entity,
+                              const CVector3& c_position,
+                              const CQuaternion& c_orientation,
+                              bool b_check_only = false);
 
       /**
        * Adds the passed entity to the simulation.
@@ -213,20 +213,20 @@ namespace argos {
        * @param c_entity A reference to the entity to add.
        * @throws CARGoSException if an error occurs.
        */
-      void AddEntity(CEntity& c_entity);
+      virtual void AddEntity(CEntity& c_entity);
 
       /**
        * Removes an entity from the simulation.
        * @param str_entity_id The id of the entity to remove.
        * @throws CARGoSException If an entity with the specified id was not found.
        */
-      void RemoveEntity(const std::string& str_entity_id);
+      virtual void RemoveEntity(const std::string& str_entity_id);
 
       /**
        * Removes an entity from the simulation.
        * @param c_entity A reference to the entity to remove.
        */
-      void RemoveEntity(CEntity& c_entity);
+      virtual void RemoveEntity(CEntity& c_entity);
 
    private:
 
