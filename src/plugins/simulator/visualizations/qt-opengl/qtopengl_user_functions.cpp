@@ -140,7 +140,7 @@ namespace argos {
 	    glDisable(GL_CULL_FACE);
       /* Set polygon attributes */
 	    glEnable(GL_POLYGON_SMOOTH);
-      glPolygonMode(GL_FRONT_AND_BACK, b_fill ? GL_FILL : GL_LINES);
+      glPolygonMode(GL_FRONT_AND_BACK, b_fill ? GL_FILL : GL_LINE);
       /* Set position/orientation */
       Rototranslate(c_position, c_orientation);
       /*  Draw */
@@ -175,7 +175,7 @@ namespace argos {
 	    glDisable(GL_CULL_FACE);
       /* Set polygon attributes */
 	    glEnable(GL_POLYGON_SMOOTH);
-      glPolygonMode(GL_FRONT_AND_BACK, b_fill ? GL_FILL : GL_LINES);
+      glPolygonMode(GL_FRONT_AND_BACK, b_fill ? GL_FILL : GL_LINE);
       /* Set position/orientation */
       Rototranslate(c_position, c_orientation);
       /*  Draw */
@@ -206,7 +206,7 @@ namespace argos {
 	    glDisable(GL_CULL_FACE);
       /* Set polygon attributes */
 	    glEnable(GL_POLYGON_SMOOTH);
-      glPolygonMode(GL_FRONT_AND_BACK, b_fill ? GL_FILL : GL_LINES);
+      glPolygonMode(GL_FRONT_AND_BACK, b_fill ? GL_FILL : GL_LINE);
       /* Set position/orientation */
       Rototranslate(c_position, c_orientation);
       /*  Draw */
