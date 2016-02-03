@@ -123,6 +123,10 @@ namespace argos {
          return m_cStream;
       }
 
+      inline void RedirectToFile(const std::string& str_fname) {
+         m_cStream.rdbuf(std::ofstream(str_fname, std::ios::out | std::ios::trunc).rdbuf());
+      }
+
 #ifdef ARGOS_THREADSAFE_LOG
       inline void Flush() {
          pthread_mutex_lock(&m_tMutex);
