@@ -53,9 +53,6 @@ namespace argos {
 
    protected:
 
-      /** Reference to embodied entity associated to this sensor */
-      CEmbodiedEntity* m_pcEmbodiedEntity;
-
       /** Reference to light sensor equipped entity associated to this sensor */
       CLightSensorEquippedEntity* m_pcLightEntity;
 

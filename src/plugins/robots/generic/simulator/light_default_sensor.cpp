@@ -23,7 +23,6 @@ namespace argos {
    /****************************************/
 
    CLightDefaultSensor::CLightDefaultSensor() :
-      m_pcEmbodiedEntity(NULL),
       m_bShowRays(false),
       m_pcRNG(NULL),
       m_bAddNoise(false),
@@ -34,7 +33,6 @@ namespace argos {
 
    void CLightDefaultSensor::SetRobot(CComposableEntity& c_entity) {
       try {
-         m_pcEmbodiedEntity = &(c_entity.GetComponent<CEmbodiedEntity>("body"));
          m_pcControllableEntity = &(c_entity.GetComponent<CControllableEntity>("controller"));
          m_pcLightEntity = &(c_entity.GetComponent<CLightSensorEquippedEntity>("light_sensors"));
          m_pcLightEntity->Enable();
@@ -90,8 +88,8 @@ namespace argos {
          for(UInt32 i = 0; i < m_tReadings.size(); ++i) {
             /* Set ray start */
             cRayStart = m_pcLightEntity->GetSensor(i).Position;
-            cRayStart.Rotate(m_pcEmbodiedEntity->GetOriginAnchor().Orientation);
-            cRayStart += m_pcEmbodiedEntity->GetOriginAnchor().Position;
+            cRayStart.Rotate(m_pcLightEntity->GetSensor(i).Anchor.Orientation);
+            cRayStart += m_pcLightEntity->GetSensor(i).Anchor.Position;
             /* Go through all the light entities */
             for(CSpace::TMapPerType::iterator it = mapLights.begin();
                 it != mapLights.end();
