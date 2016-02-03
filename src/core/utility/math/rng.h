@@ -320,7 +320,7 @@ namespace argos {
        * Creates a new category.
        * @param str_category the id of the category.
        * @param un_seed the base seed of the category.
-       * @return <tt>true</tt> if the category was created; <tt>false</tt> if a category with the passed if exists already.
+       * @return <tt>true</tt> if the category was created; <tt>false</tt> if a category with the passed id exists already.
        */
       static bool CreateCategory(const std::string& str_category,
                                  UInt32 un_seed);
