@@ -36,6 +36,8 @@ namespace argos {
     * An anchor is always initially disabled. To use it, you must first enable it.
     */
    struct SAnchor {
+      /** The embodied entity that owns this anchor */
+      CEmbodiedEntity& Body;
       /** The id of the anchor */
       std::string Id;
       /** The index of the anchor assigned by the embodied entity.
@@ -62,12 +64,21 @@ namespace argos {
        * @see CEmbodiedEntity::EnableAnchor
        * @see CEmbodiedEntity::DisableAnchor
        */
-      SAnchor(const std::string& str_id,
+      SAnchor(CEmbodiedEntity& c_body,
+              const std::string& str_id,
               UInt32 un_index,
               const CVector3& c_offset_position,
               const CQuaternion& c_offset_orientation,
               const CVector3& c_position,
               const CQuaternion& c_orientation);
+      /**
+       * Enables this anchor.
+       */
+      void Enable();
+      /**
+       * Disables this anchor.
+       */
+      void Disable();
    };
 
    /****************************************/

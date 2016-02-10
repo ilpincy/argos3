@@ -56,13 +56,17 @@ namespace argos {
                                        Real f_range,
                                        SInt32 n_width,
                                        SInt32 n_height,
-                                       const SAnchor& s_anchor);
+                                       SAnchor& s_anchor);
 
       /**
        * Initializes the state of the entity from the XML configuration tree.
        * @throws CARGoSException if a parse error occurs
        */
       virtual void Init(TConfigurationNode& t_tree);
+
+      virtual void Enable();
+
+      virtual void Disable();
 
       /**
        * Returns the aperture of the visibility cone of the camera.
@@ -124,7 +128,7 @@ namespace argos {
        * Sets the anchor to which the camera is attached.
        * @param s_anchor anchor to which the camera is attached.
        */
-      inline void SetAnchor(const SAnchor& s_anchor) {
+      inline void SetAnchor(SAnchor& s_anchor) {
          m_psAnchor = &s_anchor;
       }
 
@@ -182,8 +186,6 @@ namespace argos {
          return "perspective_camera";
       }
 
-      SBoundingBox DebugBox;
-
    private:
 
       /** The aperture of the visibility cone */
@@ -208,7 +210,7 @@ namespace argos {
       Real m_fImageMtHeight;
 
       /** The anchor to which the camera is attached */
-      const SAnchor* m_psAnchor;
+      SAnchor* m_psAnchor;
 
    };
 }

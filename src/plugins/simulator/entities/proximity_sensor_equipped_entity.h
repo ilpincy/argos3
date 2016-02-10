@@ -29,12 +29,12 @@ namespace argos {
 
          CVector3 Offset;
          CVector3 Direction;
-         const SAnchor& Anchor;
+         SAnchor& Anchor;
 
          SSensor(const CVector3& c_offset,
                  const CVector3& c_direction,
                  Real f_range,
-                 const SAnchor& s_anchor);
+                 SAnchor& s_anchor);
       };
 
    public:
@@ -52,6 +52,10 @@ namespace argos {
          return "proximity_sensors";
       }
 
+      virtual void Enable();
+
+      virtual void Disable();
+
       inline size_t GetNumSensors() const {
          return m_tSensors.size();
       }
@@ -67,14 +71,14 @@ namespace argos {
       void AddSensor(const CVector3& c_offset,
                      const CVector3& c_direction,
                      Real f_range,
-                     const SAnchor& s_anchor);
+                     SAnchor& s_anchor);
 
       void AddSensorRing(const CVector3& c_center,
                          Real f_radius,
                          const CRadians& c_start_angle,
                          Real f_range,
                          UInt32 un_num_sensors,
-                         const SAnchor& s_anchor);
+                         SAnchor& s_anchor);
 
    protected:
 

@@ -20,14 +20,14 @@ namespace argos {
          /* Get pointer to body */
          cpBody* ptBody = m_vecBodies.back().Body;
          /* Remove all of its shapes */
-	 cpShape* ptCurShape = ptBody->shapeList;
-	 cpShape* ptNextShape;
-	 while(ptCurShape) {
-	   ptNextShape = ptCurShape->next;
-	   cpSpaceRemoveShape(GetDynamics2DEngine().GetPhysicsSpace(), ptCurShape);
-	   cpShapeFree(ptCurShape);
-	   ptCurShape = ptNextShape;
-	 }
+         cpShape* ptCurShape = ptBody->shapeList;
+         cpShape* ptNextShape;
+         while(ptCurShape) {
+            ptNextShape = ptCurShape->next;
+            cpSpaceRemoveShape(GetDynamics2DEngine().GetPhysicsSpace(), ptCurShape);
+            cpShapeFree(ptCurShape);
+            ptCurShape = ptNextShape;
+         }
          /* Dispose of body */
          cpSpaceRemoveBody(GetDynamics2DEngine().GetPhysicsSpace(), ptBody);
          cpBodyFree(ptBody);

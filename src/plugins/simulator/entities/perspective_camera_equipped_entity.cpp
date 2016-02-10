@@ -27,7 +27,7 @@ namespace argos {
                                                                       Real f_range,
                                                                       SInt32 n_width,
                                                                       SInt32 n_height,
-                                                                      const SAnchor& s_anchor) :
+                                                                      SAnchor& s_anchor) :
       CEntity(pc_parent, str_id),
       m_cAperture(c_aperture),
       m_fFocalLength(f_focal_length),
@@ -67,6 +67,20 @@ namespace argos {
       catch(CARGoSException& ex) {
          THROW_ARGOSEXCEPTION_NESTED("Error initializing the perspective camera equipped entity \"" << GetId() << "\"", ex);
       }
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CPerspectiveCameraEquippedEntity::Enable() {
+      m_psAnchor->Enable();
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CPerspectiveCameraEquippedEntity::Disable() {
+      m_psAnchor->Disable();
    }
 
    /****************************************/

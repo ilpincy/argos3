@@ -16,7 +16,7 @@ namespace argos {
    CLightSensorEquippedEntity::SSensor::SSensor(const CVector3& c_position,
                                                 const CVector3& c_direction,
                                                 Real f_range,
-                                                const SAnchor& s_anchor) :
+                                                SAnchor& s_anchor) :
       Position(c_position),
       Direction(c_direction),
       Anchor(s_anchor) {
@@ -36,7 +36,7 @@ namespace argos {
    /****************************************/
 
    CLightSensorEquippedEntity::CLightSensorEquippedEntity(CComposableEntity* pc_parent,
-                                                                  const std::string& str_id) :
+                                                          const std::string& str_id) :
       CEntity(pc_parent, str_id) {
       Disable();
    }
@@ -121,10 +121,30 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   void CLightSensorEquippedEntity::Enable() {
+      CEntity::Enable();
+      for(size_t i = 0; i < m_tSensors.size(); ++i) {
+         m_tSensors[i]->Anchor.Enable();
+      }
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CLightSensorEquippedEntity::Disable() {
+      CEntity::Disable();
+      for(size_t i = 0; i < m_tSensors.size(); ++i) {
+         m_tSensors[i]->Anchor.Disable();
+      }
+   }
+
+   /****************************************/
+   /****************************************/
+
    void CLightSensorEquippedEntity::AddSensor(const CVector3& c_position,
                                               const CVector3& c_direction,
                                               Real f_range,
-                                              const SAnchor& s_anchor) {
+                                              SAnchor& s_anchor) {
       m_tSensors.push_back(new SSensor(c_position, c_direction, f_range, s_anchor));
    }
 
@@ -136,7 +156,7 @@ namespace argos {
                                                   const CRadians& c_start_angle,
                                                   Real f_range,
                                                   UInt32 un_num_sensors,
-                                                  const SAnchor& s_anchor) {
+                                                  SAnchor& s_anchor) {
       CRadians cSensorSpacing = CRadians::TWO_PI / un_num_sensors;
       CRadians cAngle;
       CVector3 cPos, cDir;

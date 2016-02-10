@@ -39,7 +39,7 @@ namespace argos {
                          const std::string& str_id,
                          size_t un_msg_size,
                          Real f_range,
-                         const SAnchor& s_anchor,
+                         SAnchor& s_anchor,
                          CEmbodiedEntity& c_entity_body,
                          const CVector3& c_position = CVector3(),
                          const CQuaternion& c_orientation = CQuaternion());
@@ -49,6 +49,10 @@ namespace argos {
       virtual ~CRABEquippedEntity() {}
 
       virtual void Reset();
+
+      virtual void Enable();
+
+      virtual void Disable();
 
       virtual void Update();
 
@@ -86,7 +90,7 @@ namespace argos {
 
    protected:
 
-      const SAnchor* m_psAnchor;
+      SAnchor* m_psAnchor;
       CVector3 m_cPosOffset;
       CQuaternion m_cRotOffset;
       CByteArray m_cData;

@@ -7,12 +7,14 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   SAnchor::SAnchor(const std::string& str_id,
+   SAnchor::SAnchor(CEmbodiedEntity& c_body,
+                    const std::string& str_id,
                     UInt32 un_index,
                     const CVector3& c_offset_position,
                     const CQuaternion& c_offset_orientation,
                     const CVector3& c_position,
                     const CQuaternion& c_orientation) :
+      Body(c_body),
       Id(str_id),
       Index(un_index),
       OffsetPosition(c_offset_position),
@@ -20,6 +22,20 @@ namespace argos {
       Position(c_position),
       Orientation(c_orientation),
       InUseCount(0) {
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void SAnchor::Enable() {
+      Body.EnableAnchor(Id);
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void SAnchor::Disable() {
+      Body.DisableAnchor(Id);
    }
 
    /****************************************/

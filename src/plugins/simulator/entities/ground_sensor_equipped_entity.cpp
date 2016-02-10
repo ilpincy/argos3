@@ -107,9 +107,29 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   void CGroundSensorEquippedEntity::Enable() {
+      CEntity::Enable();
+      for(size_t i = 0; i < m_tSensors.size(); ++i) {
+         m_tSensors[i]->Anchor.Enable();
+      }
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CGroundSensorEquippedEntity::Disable() {
+      CEntity::Disable();
+      for(size_t i = 0; i < m_tSensors.size(); ++i) {
+         m_tSensors[i]->Anchor.Disable();
+      }
+   }
+
+   /****************************************/
+   /****************************************/
+
    void CGroundSensorEquippedEntity::AddSensor(const CVector2& c_offset,
                                                ESensorType e_type,
-                                               const SAnchor& s_anchor) {
+                                               SAnchor& s_anchor) {
       m_tSensors.push_back(new SSensor(c_offset, e_type, s_anchor));
    }
 
@@ -121,7 +141,7 @@ namespace argos {
                                                       const CRadians& c_start_angle,
                                                       ESensorType e_type,
                                                       UInt32 un_num_sensors,
-                                                      const SAnchor& s_anchor) {
+                                                      SAnchor& s_anchor) {
       CRadians cSensorSpacing = CRadians::TWO_PI / un_num_sensors;
       CRadians cAngle;
       CVector2 cOffset;

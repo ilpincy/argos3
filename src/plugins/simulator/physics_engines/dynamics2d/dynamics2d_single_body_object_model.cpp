@@ -21,10 +21,10 @@ namespace argos {
       cpShape* ptCurShape = m_ptBody->shapeList;
       cpShape* ptNextShape;
       while(ptCurShape) {
-	ptNextShape = ptCurShape->next;
-	cpSpaceRemoveShape(GetDynamics2DEngine().GetPhysicsSpace(), ptCurShape);
-	cpShapeFree(ptCurShape);
-	ptCurShape = ptNextShape;
+         ptNextShape = ptCurShape->next;
+         cpSpaceRemoveShape(GetDynamics2DEngine().GetPhysicsSpace(), ptCurShape);
+         cpShapeFree(ptCurShape);
+         ptCurShape = ptNextShape;
       }
       /* Dispose of body */
       if(! bIsStatic)

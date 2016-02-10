@@ -33,7 +33,8 @@ namespace argos {
       CEntity(pc_parent, str_id),
       m_bMovable(b_movable),
       m_sBoundingBox(NULL),
-      m_psOriginAnchor(new SAnchor("origin",
+      m_psOriginAnchor(new SAnchor(*this,
+                                   "origin",
                                    0,
                                    CVector3(),
                                    CQuaternion(),
@@ -73,7 +74,8 @@ namespace argos {
          /* Get the orientation of the entity */
          GetNodeAttributeOrDefault(t_tree, "orientation", m_cInitOriginOrientation, CQuaternion());
          /* Create origin anchor */
-         m_psOriginAnchor = new SAnchor("origin",
+         m_psOriginAnchor = new SAnchor(*this,
+                                        "origin",
                                         0,
                                         CVector3(),
                                         CQuaternion(),
@@ -130,7 +132,8 @@ namespace argos {
       /* Calculate anchor orientation */
       CQuaternion cOrient = m_psOriginAnchor->Orientation * c_offset_orientation;
       /* Create anchor */
-      SAnchor* psAnchor = new SAnchor(str_id,
+      SAnchor* psAnchor = new SAnchor(*this,
+                                      str_id,
                                       m_mapAnchors.size(),
                                       c_offset_position,
                                       c_offset_orientation,

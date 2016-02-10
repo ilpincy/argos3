@@ -34,11 +34,11 @@ namespace argos {
 
          CVector2 Offset;
          ESensorType Type;
-         const SAnchor& Anchor;
+         SAnchor& Anchor;
  
          SSensor(const CVector2& c_position,
                  ESensorType e_type,
-                 const SAnchor& s_anchor) :
+                 SAnchor& s_anchor) :
             Offset(c_position),
             Type(e_type),
             Anchor(s_anchor) {}
@@ -59,6 +59,10 @@ namespace argos {
          return "ground_sensors";
       }
 
+      virtual void Enable();
+
+      virtual void Disable();
+
       inline size_t GetNumSensors() const {
          return m_tSensors.size();
       }
@@ -73,14 +77,14 @@ namespace argos {
 
       void AddSensor(const CVector2& c_offset,
                      ESensorType e_type,
-                     const SAnchor& s_anchor);
+                     SAnchor& s_anchor);
 
       void AddSensorRing(const CVector2& c_center,
                          Real f_radius,
                          const CRadians& c_start_angle,
                          ESensorType e_type,
                          UInt32 un_num_sensors,
-                         const SAnchor& s_anchor);
+                         SAnchor& s_anchor);
 
    protected:
       

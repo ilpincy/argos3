@@ -16,7 +16,7 @@ namespace argos {
    CProximitySensorEquippedEntity::SSensor::SSensor(const CVector3& c_offset,
                                                     const CVector3& c_direction,
                                                     Real f_range,
-                                                    const SAnchor& s_anchor) :
+                                                    SAnchor& s_anchor) :
       Offset(c_offset),
       Direction(c_direction),
       Anchor(s_anchor) {
@@ -121,10 +121,30 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   void CProximitySensorEquippedEntity::Enable() {
+      CEntity::Enable();
+      for(size_t i = 0; i < m_tSensors.size(); ++i) {
+         m_tSensors[i]->Anchor.Enable();
+      }
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CProximitySensorEquippedEntity::Disable() {
+      CEntity::Disable();
+      for(size_t i = 0; i < m_tSensors.size(); ++i) {
+         m_tSensors[i]->Anchor.Disable();
+      }
+   }
+
+   /****************************************/
+   /****************************************/
+
    void CProximitySensorEquippedEntity::AddSensor(const CVector3& c_offset,
                                                   const CVector3& c_direction,
                                                   Real f_range,
-                                                  const SAnchor& s_anchor) {
+                                                  SAnchor& s_anchor) {
       m_tSensors.push_back(new SSensor(c_offset, c_direction, f_range, s_anchor));
    }
 
@@ -136,7 +156,7 @@ namespace argos {
                                                       const CRadians& c_start_angle,
                                                       Real f_range,
                                                       UInt32 un_num_sensors,
-                                                      const SAnchor& s_anchor) {
+                                                      SAnchor& s_anchor) {
       CRadians cSensorSpacing = CRadians::TWO_PI / un_num_sensors;
       CRadians cAngle;
       CVector3 cOff, cDir;

@@ -31,7 +31,7 @@ namespace argos {
                                           const std::string& str_id,
                                           size_t un_msg_size,
                                           Real f_range,
-                                          const SAnchor& s_anchor,
+                                          SAnchor& s_anchor,
                                           CEmbodiedEntity& c_entity_body,
                                           const CVector3& c_pos_offset,
                                           const CQuaternion& c_rot_offset) :
@@ -121,6 +121,20 @@ namespace argos {
 
    void CRABEquippedEntity::Reset() {
       m_cData.Zero();
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CRABEquippedEntity::Enable() {
+      m_psAnchor->Enable();
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CRABEquippedEntity::Disable() {
+      m_psAnchor->Disable();
    }
 
    /****************************************/

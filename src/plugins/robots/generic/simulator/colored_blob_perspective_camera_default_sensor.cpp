@@ -199,14 +199,6 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-#define CORNER_TO_BB(SX,SY,SZ)                                    \
-   cCorner.Set(SX fHalfRange, SY fHalfSide, SZ fHalfSide);        \
-   cCorner.Rotate(m_pcCamEntity->GetAnchor().Orientation);        \
-   cHalfSize.Set(                                                 \
-      Max(cHalfSize.GetX(), Abs(cCorner.GetX())),                 \
-      Max(cHalfSize.GetY(), Abs(cCorner.GetY())),                 \
-      Max(cHalfSize.GetZ(), Abs(cCorner.GetZ())));
-
    void CColoredBlobPerspectiveCameraDefaultSensor::Update() {
       if(m_bEnabled) {
          /* Increase data counter */
@@ -227,15 +219,6 @@ namespace argos {
             Abs(cCorner.GetX()),
             Abs(cCorner.GetY()),
             Abs(cCorner.GetZ()));
-         CORNER_TO_BB(+,+,-);
-         CORNER_TO_BB(+,-,+);
-         CORNER_TO_BB(+,-,-);
-         CORNER_TO_BB(-,+,+);
-         CORNER_TO_BB(-,+,-);
-         CORNER_TO_BB(-,-,+);
-         CORNER_TO_BB(-,-,-);
-         m_pcCamEntity->DebugBox.MinCorner = cCenter - cHalfSize;
-         m_pcCamEntity->DebugBox.MaxCorner = cCenter + cHalfSize;
          /* Go through LED entities in box range */
          m_pcLEDIndex->ForEntitiesInBoxRange(
             cCenter, cHalfSize, *m_pcOperation);

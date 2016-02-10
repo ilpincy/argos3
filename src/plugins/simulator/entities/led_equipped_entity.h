@@ -48,11 +48,13 @@ namespace argos {
 
          CLEDEntity& LED;
          CVector3 Offset;
-         const SAnchor& Anchor;
+         SAnchor& Anchor;
 
          SActuator(CLEDEntity& c_led,
                    const CVector3& c_offset,
-                   const SAnchor& s_anchor);
+                   SAnchor& s_anchor);
+         void Enable();
+         void Disable();
       };
 
    public:
@@ -80,6 +82,10 @@ namespace argos {
 
       virtual void Reset();
 
+      virtual void Enable();
+
+      virtual void Disable();
+
       /**
        * Adds an LED to this entity.
        * @param c_offset The position of the LED wrt the anchor.
@@ -87,7 +93,7 @@ namespace argos {
        * @param c_color The color of the LED.
        */
       void AddLED(const CVector3& c_offset,
-                  const SAnchor& s_anchor,
+                  SAnchor& s_anchor,
                   const CColor& c_color = CColor::BLACK);
 
       /**
@@ -103,7 +109,7 @@ namespace argos {
                       Real f_radius,
                       const CRadians& c_start_angle,
                       UInt32 un_num_leds,
-                      const SAnchor& s_anchor,
+                      SAnchor& s_anchor,
                       const CColor& c_color = CColor::BLACK);
 
       /**

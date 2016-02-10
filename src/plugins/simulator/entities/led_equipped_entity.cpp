@@ -16,7 +16,7 @@ namespace argos {
 
    CLEDEquippedEntity::SActuator::SActuator(CLEDEntity& c_led,
                                             const CVector3& c_offset,
-                                            const SAnchor& s_anchor) :
+                                            SAnchor& s_anchor) :
       LED(c_led),
       Offset(c_offset),
       Anchor(s_anchor) {}
@@ -105,8 +105,28 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   void CLEDEquippedEntity::Enable() {
+      CEntity::Enable();
+      for(size_t i = 0; i < m_tLEDs.size(); ++i) {
+         m_tLEDs[i]->Anchor.Enable();
+      }
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CLEDEquippedEntity::Disable() {
+      CEntity::Disable();
+      for(size_t i = 0; i < m_tLEDs.size(); ++i) {
+         m_tLEDs[i]->Anchor.Disable();
+      }
+   }
+
+   /****************************************/
+   /****************************************/
+
    void CLEDEquippedEntity::AddLED(const CVector3& c_offset,
-                                   const SAnchor& s_anchor,
+                                   SAnchor& s_anchor,
                                    const CColor& c_color) {
       CLEDEntity* pcLED =
          new CLEDEntity(
@@ -125,7 +145,7 @@ namespace argos {
                                        Real f_radius,
                                        const CRadians& c_start_angle,
                                        UInt32 un_num_leds,
-                                       const SAnchor& s_anchor,
+                                       SAnchor& s_anchor,
                                        const CColor& c_color) {
       CRadians cLEDSpacing = CRadians::TWO_PI / un_num_leds;
       CRadians cAngle;
