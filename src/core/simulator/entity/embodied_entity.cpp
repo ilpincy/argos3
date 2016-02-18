@@ -172,9 +172,7 @@ namespace argos {
                                                      m_vecEnabledAnchors.end(),
                                                      str_id);
       /* Found? */
-      if(it == m_vecEnabledAnchors.end()) {
-         THROW_ARGOSEXCEPTION("Embodied entity \"" << GetContext() + GetId() << "\" has no enabled anchor with id " << str_id);
-      }
+      if(it == m_vecEnabledAnchors.end()) return;
       /* Now *it points to the requested anchor */
       /* Decrease the in-use count */
       --((*it)->InUseCount);
