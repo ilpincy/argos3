@@ -124,7 +124,7 @@ namespace argos {
       }
 
       inline void RedirectToFile(const std::string& str_fname) {
-         m_cStream.rdbuf(std::ofstream(str_fname, std::ios::out | std::ios::trunc).rdbuf());
+         m_cStream.rdbuf(std::ofstream(str_fname.c_str(), std::ios::out | std::ios::trunc).rdbuf());
       }
 
 #ifdef ARGOS_THREADSAFE_LOG
