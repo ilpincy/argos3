@@ -40,6 +40,8 @@ namespace argos {
 
       void UpdateTurretAnchor(SAnchor& s_anchor);
 
+      void UpdatePerspectiveCameraAnchor(SAnchor& s_anchor);
+
    private:
 
       void TurretPassiveToActive();

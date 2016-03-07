@@ -13,6 +13,7 @@ namespace argos {
    class CEyeBotEntity;
    class CLEDEquippedEntity;
    class CLightSensorEquippedEntity;
+   class CPerspectiveCameraEquippedEntity;
    class CProximitySensorEquippedEntity;
    class CQuadRotorEntity;
    class CRABEquippedEntity;
@@ -37,7 +38,10 @@ namespace argos {
                     const CVector3& c_position = CVector3(),
                     const CQuaternion& c_orientation = CQuaternion(),
                     Real f_rab_range = 3.0f,
-                    size_t un_rab_data_size = 10);
+                    size_t un_rab_data_size = 10,
+                    const CRadians& c_perspcam_aperture = ToRadians(CDegrees(30.0f)),
+                    Real f_perspcam_focal_length = 0.035,
+                    Real f_perspcam_range = 2.0);
 
       virtual void Init(TConfigurationNode& t_tree);
       virtual void Reset();
@@ -78,13 +82,14 @@ namespace argos {
 
    private:
 
-      CControllableEntity*            m_pcControllableEntity;
-      CEmbodiedEntity*                m_pcEmbodiedEntity;
-      CLEDEquippedEntity*             m_pcLEDEquippedEntity;
-      CLightSensorEquippedEntity*     m_pcLightSensorEquippedEntity;
-      CProximitySensorEquippedEntity* m_pcProximitySensorEquippedEntity;
-      CQuadRotorEntity*               m_pcQuadRotorEntity;
-      CRABEquippedEntity*             m_pcRABEquippedEntity;
+      CControllableEntity*              m_pcControllableEntity;
+      CEmbodiedEntity*                  m_pcEmbodiedEntity;
+      CLEDEquippedEntity*               m_pcLEDEquippedEntity;
+      CLightSensorEquippedEntity*       m_pcLightSensorEquippedEntity;
+      CPerspectiveCameraEquippedEntity* m_pcPerspectiveCameraEquippedEntity;
+      CProximitySensorEquippedEntity*   m_pcProximitySensorEquippedEntity;
+      CQuadRotorEntity*                 m_pcQuadRotorEntity;
+      CRABEquippedEntity*               m_pcRABEquippedEntity;
    };
 
 }

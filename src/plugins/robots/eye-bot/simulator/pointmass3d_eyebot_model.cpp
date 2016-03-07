@@ -45,7 +45,18 @@ namespace argos {
                                  VEL_K_P,
                                  VEL_K_D,
                                  ROT_K_P,
-                                 ROT_K_D) {}
+                                 ROT_K_D) {
+      RegisterAnchorMethod<CPointMass3DEyeBotModel>(
+         GetEmbodiedEntity().GetAnchor("perspective_camera"),
+         &CPointMass3DEyeBotModel::UpdatePerspectiveCameraAnchor);
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CPointMass3DEyeBotModel::UpdatePerspectiveCameraAnchor(SAnchor& s_anchor) {
+      s_anchor.Position = m_cPosition;
+   }
 
    /****************************************/
    /****************************************/

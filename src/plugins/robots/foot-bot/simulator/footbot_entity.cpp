@@ -16,6 +16,7 @@
 #include <argos3/plugins/simulator/entities/led_equipped_entity.h>
 #include <argos3/plugins/simulator/entities/light_sensor_equipped_entity.h>
 #include <argos3/plugins/simulator/entities/omnidirectional_camera_equipped_entity.h>
+#include <argos3/plugins/simulator/entities/perspective_camera_equipped_entity.h>
 #include <argos3/plugins/simulator/entities/proximity_sensor_equipped_entity.h>
 #include <argos3/plugins/simulator/entities/wifi_equipped_entity.h>
 #include "footbot_distance_scanner_equipped_entity.h"
@@ -64,6 +65,8 @@ namespace argos {
       m_pcGroundSensorEquippedEntity(NULL),
       m_pcLEDEquippedEntity(NULL),
       m_pcLightSensorEquippedEntity(NULL),
+      m_pcOmnidirectionalCameraEquippedEntity(NULL),
+      m_pcPerspectiveCameraEquippedEntity(NULL),
       m_pcProximitySensorEquippedEntity(NULL),
       m_pcRABEquippedEntity(NULL),
       m_pcWheeledEntity(NULL),
@@ -79,7 +82,11 @@ namespace argos {
                                   const CQuaternion& c_orientation,
                                   Real f_rab_range,
                                   size_t un_rab_data_size,
-                                  const CRadians& c_aperture) :
+                                  const CRadians& c_omnicam_aperture,
+                                  bool b_perspcam_front,
+                                  const CRadians& c_perspcam_aperture,
+                                  Real f_perspcam_focal_length,
+                                  Real f_perspcam_range) :
       CComposableEntity(NULL, str_id),
       m_pcControllableEntity(NULL),
       m_pcDistanceScannerEquippedEntity(NULL),
@@ -89,6 +96,8 @@ namespace argos {
       m_pcGroundSensorEquippedEntity(NULL),
       m_pcLEDEquippedEntity(NULL),
       m_pcLightSensorEquippedEntity(NULL),
+      m_pcOmnidirectionalCameraEquippedEntity(NULL),
+      m_pcPerspectiveCameraEquippedEntity(NULL),
       m_pcProximitySensorEquippedEntity(NULL),
       m_pcRABEquippedEntity(NULL),
       m_pcWheeledEntity(NULL),
@@ -103,6 +112,11 @@ namespace argos {
           */
          m_pcEmbodiedEntity = new CEmbodiedEntity(this, "body_0", c_position, c_orientation);
          SAnchor& cTurretAnchor = m_pcEmbodiedEntity->AddAnchor("turret");
+         CQuaternion cPerspCamOrient(b_perspcam_front ? CRadians::ZERO : -CRadians::PI_OVER_TWO,
+                                     CVector3::Y);
+         SAnchor& cPerspCamAnchor = m_pcEmbodiedEntity->AddAnchor("perspective_camera",
+                                                                  CVector3(BODY_RADIUS, 0.0, BEACON_ELEVATION),
+                                                                  cPerspCamOrient);
          AddComponent(*m_pcEmbodiedEntity);
          /* Wheeled entity and wheel positions (left, right) */
          m_pcWheeledEntity = new CWheeledEntity(this, "wheels_0", 2);
@@ -210,9 +224,18 @@ namespace argos {
          /* Omnidirectional camera equipped entity */
          m_pcOmnidirectionalCameraEquippedEntity = new COmnidirectionalCameraEquippedEntity(this,
                                                                                             "omnidirectional_camera_0",
-                                                                                            c_aperture,
+                                                                                            c_omnicam_aperture,
                                                                                             CVector3(0.0f, 0.0f, OMNIDIRECTIONAL_CAMERA_ELEVATION));
-         AddComponent(*m_pcOmnidirectionalCameraEquippedEntity);         
+         AddComponent(*m_pcOmnidirectionalCameraEquippedEntity);
+         /* Perspective camera equipped entity */
+         m_pcPerspectiveCameraEquippedEntity = new CPerspectiveCameraEquippedEntity(this,
+                                                                                    "perspective_camera_0",
+                                                                                    c_perspcam_aperture,
+                                                                                    f_perspcam_focal_length,
+                                                                                    f_perspcam_range,
+                                                                                    640, 480,
+                                                                                    cPerspCamAnchor);
+         AddComponent(*m_pcPerspectiveCameraEquippedEntity);
          /* Turret equipped entity */
          m_pcTurretEntity = new CFootBotTurretEntity(this, "turret_0");
          AddComponent(*m_pcTurretEntity);
@@ -364,7 +387,29 @@ namespace argos {
                                                                                             "omnidirectional_camera_0",
                                                                                             ToRadians(cAperture),
                                                                                             CVector3(0.0f, 0.0f, OMNIDIRECTIONAL_CAMERA_ELEVATION));
-         AddComponent(*m_pcOmnidirectionalCameraEquippedEntity);         
+         AddComponent(*m_pcOmnidirectionalCameraEquippedEntity);
+         /* Perspective camera equipped entity */
+         bool bPerspCamFront = true;
+         GetNodeAttributeOrDefault(t_tree, "perspective_camera_front", bPerspCamFront, bPerspCamFront);
+         Real fPerspCamFocalLength = 0.035;
+         GetNodeAttributeOrDefault(t_tree, "perspective_camera_focal_length", fPerspCamFocalLength, fPerspCamFocalLength);
+         Real fPerspCamRange = 2.0;
+         GetNodeAttributeOrDefault(t_tree, "perspective_camera_range", fPerspCamRange, fPerspCamRange);
+         cAperture.SetValue(30.0f);
+         GetNodeAttributeOrDefault(t_tree, "perspective_camera_aperture", cAperture, cAperture);
+         CQuaternion cPerspCamOrient(bPerspCamFront ? CRadians::ZERO : -CRadians::PI_OVER_TWO,
+                                     CVector3::Y);
+         SAnchor& cPerspCamAnchor = m_pcEmbodiedEntity->AddAnchor("perspective_camera",
+                                                                  CVector3(BODY_RADIUS, 0.0, BEACON_ELEVATION),
+                                                                  cPerspCamOrient);
+         m_pcPerspectiveCameraEquippedEntity = new CPerspectiveCameraEquippedEntity(this,
+                                                                                    "perspective_camera_0",
+                                                                                    ToRadians(cAperture),
+                                                                                    fPerspCamFocalLength,
+                                                                                    fPerspCamRange,
+                                                                                    640, 480,
+                                                                                    cPerspCamAnchor);
+         AddComponent(*m_pcPerspectiveCameraEquippedEntity);
          /* Turret equipped entity */
          m_pcTurretEntity = new CFootBotTurretEntity(this, "turret_0");
          AddComponent(*m_pcTurretEntity);
@@ -410,7 +455,7 @@ namespace argos {
 
    /****************************************/
    /****************************************/
-   
+
    REGISTER_ENTITY(CFootBotEntity,
                    "foot-bot",
                    "Carlo Pinciroli [ilpincy@gmail.com]",
@@ -478,6 +523,26 @@ namespace argos {
                    "  <arena ...>\n"
                    "    ...\n"
                    "    <foot-bot id=\"fb0\" omnidirectional_camera_aperture=\"80\">\n"
+                   "      <body position=\"0.4,2.3,0.25\" orientation=\"45,0,0\" />\n"
+                   "      <controller config=\"mycntrl\" />\n"
+                   "    </foot-bot>\n"
+                   "    ...\n"
+                   "  </arena>\n\n"
+                   "Finally, you can change the parameters of the perspective camera. You can set\n"
+                   "its direction, aperture, focal length, and range with the attributes\n"
+                   "'perspective_camera_front', 'perspective_camera_aperture',\n"
+                   "'perspective_camera_focal_length', and 'perspective_camera_range', respectively.\n"
+                   "The default values are: 'true' for front direction, 30 degrees for aperture,\n"
+                   "0.035 for focal length, and 2 meters for range. When the direction is set to\n"
+                   "'false', the camera looks up. This can be useful to see the eye-bot LEDs. Check\n"
+                   "the following example:\n\n"
+                   "  <arena ...>\n"
+                   "    ...\n"
+                   "    <foot-bot id=\"fb0\"\n"
+                   "              perspective_camera_front=\"false\"\n"
+                   "              perspective_camera_aperture=\"45\"\n"
+                   "              perspective_camera_focal_length=\"0.07\"\n"
+                   "              perspective_camera_range=\"10\">\n"
                    "      <body position=\"0.4,2.3,0.25\" orientation=\"45,0,0\" />\n"
                    "      <controller config=\"mycntrl\" />\n"
                    "    </foot-bot>\n"

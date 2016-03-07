@@ -61,6 +61,9 @@ namespace argos {
       RegisterAnchorMethod<CDynamics2DFootBotModel>(
          GetEmbodiedEntity().GetAnchor("turret"),
          &CDynamics2DFootBotModel::UpdateTurretAnchor);
+      RegisterAnchorMethod<CDynamics2DFootBotModel>(
+         GetEmbodiedEntity().GetAnchor("perspective_camera"),
+         &CDynamics2DFootBotModel::UpdatePerspectiveCameraAnchor);
       /* Create the actual body with initial position and orientation */
       m_ptActualBaseBody =
          cpSpaceAddBody(GetDynamics2DEngine().GetPhysicsSpace(),
@@ -337,6 +340,7 @@ namespace argos {
       s_anchor.Position.SetY(m_ptActualBaseBody->p.y);
       s_anchor.Orientation.FromAngleAxis(CRadians(m_ptActualBaseBody->a), CVector3::Z);
    }
+
    /****************************************/
    /****************************************/
 
@@ -344,6 +348,17 @@ namespace argos {
       s_anchor.Position.SetX(m_ptActualGripperBody->p.x);
       s_anchor.Position.SetY(m_ptActualGripperBody->p.y);
       s_anchor.Orientation.FromAngleAxis(CRadians(m_ptActualGripperBody->a), CVector3::Z);
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CDynamics2DFootBotModel::UpdatePerspectiveCameraAnchor(SAnchor& s_anchor) {
+      s_anchor.Position.SetX(m_ptActualBaseBody->p.x + s_anchor.OffsetPosition.GetX());
+      s_anchor.Position.SetY(m_ptActualBaseBody->p.y + s_anchor.OffsetPosition.GetY());
+      s_anchor.Orientation =
+         s_anchor.OffsetOrientation *
+         CQuaternion(CRadians(m_ptActualBaseBody->a), CVector3::Z);
    }
 
    /****************************************/

@@ -26,6 +26,8 @@ namespace argos {
       CPointMass3DEyeBotModel(CPointMass3DEngine& c_engine,
                               CEyeBotEntity& c_eyebot);
       virtual ~CPointMass3DEyeBotModel() {}
+
+      void UpdatePerspectiveCameraAnchor(SAnchor& s_anchor);
       
    };
 

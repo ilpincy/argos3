@@ -11,6 +11,7 @@
 #include <argos3/core/simulator/entity/embodied_entity.h>
 #include <argos3/plugins/simulator/entities/led_equipped_entity.h>
 #include <argos3/plugins/simulator/entities/light_sensor_equipped_entity.h>
+#include <argos3/plugins/simulator/entities/perspective_camera_equipped_entity.h>
 #include <argos3/plugins/simulator/entities/proximity_sensor_equipped_entity.h>
 #include <argos3/plugins/simulator/entities/quadrotor_entity.h>
 #include <argos3/plugins/simulator/entities/rab_equipped_entity.h>
@@ -41,6 +42,7 @@ namespace argos {
       m_pcEmbodiedEntity(NULL),
       m_pcLEDEquippedEntity(NULL),
       m_pcLightSensorEquippedEntity(NULL),
+      m_pcPerspectiveCameraEquippedEntity(NULL),
       m_pcProximitySensorEquippedEntity(NULL),
       m_pcQuadRotorEntity(NULL),
       m_pcRABEquippedEntity(NULL) {
@@ -54,12 +56,16 @@ namespace argos {
                                 const CVector3& c_position,
                                 const CQuaternion& c_orientation,
                                 Real f_rab_range,
-                                size_t un_rab_data_size) :
+                                size_t un_rab_data_size,
+                                const CRadians& c_perspcam_aperture,
+                                Real f_perspcam_focal_length,
+                                Real f_perspcam_range) :
       CComposableEntity(NULL, str_id),
       m_pcControllableEntity(NULL),
       m_pcEmbodiedEntity(NULL),
       m_pcLEDEquippedEntity(NULL),
       m_pcLightSensorEquippedEntity(NULL),
+      m_pcPerspectiveCameraEquippedEntity(NULL),
       m_pcProximitySensorEquippedEntity(NULL),
       m_pcQuadRotorEntity(NULL),
       m_pcRABEquippedEntity(NULL) {
@@ -131,6 +137,20 @@ namespace argos {
             m_pcEmbodiedEntity->GetOriginAnchor(),
             *m_pcEmbodiedEntity);
          AddComponent(*m_pcRABEquippedEntity);
+         /* Perspective camera equipped entity */
+         CQuaternion cPerspCamOrient(CRadians::PI_OVER_TWO, CVector3::Y);
+         SAnchor& cPerspCamAnchor = m_pcEmbodiedEntity->AddAnchor("perspective_camera",
+                                                                  CVector3(0.0, 0.0, 0.0),
+                                                                  cPerspCamOrient);
+         m_pcPerspectiveCameraEquippedEntity =
+            new CPerspectiveCameraEquippedEntity(this,
+                                                 "perspective_camera_0",
+                                                 c_perspcam_aperture,
+                                                 f_perspcam_focal_length,
+                                                 f_perspcam_range,
+                                                 640, 480,
+                                                 cPerspCamAnchor);
+         AddComponent(*m_pcPerspectiveCameraEquippedEntity);
          /* Controllable entity
             It must be the last one, for actuators/sensors to link to composing entities correctly */
          m_pcControllableEntity = new CControllableEntity(this, "controller_0");
@@ -225,6 +245,28 @@ namespace argos {
             m_pcEmbodiedEntity->GetOriginAnchor(),
             *m_pcEmbodiedEntity);
          AddComponent(*m_pcRABEquippedEntity);
+         /* Perspective camera equipped entity */
+         bool bPerspCamFront = true;
+         GetNodeAttributeOrDefault(t_tree, "camera_front", bPerspCamFront, bPerspCamFront);
+         Real fPerspCamFocalLength = 0.035;
+         GetNodeAttributeOrDefault(t_tree, "camera_focal_length", fPerspCamFocalLength, fPerspCamFocalLength);
+         Real fPerspCamRange = 2.0;
+         GetNodeAttributeOrDefault(t_tree, "camera_range", fPerspCamRange, fPerspCamRange);
+         CDegrees cAperture(30.0f);
+         GetNodeAttributeOrDefault(t_tree, "camera_aperture", cAperture, cAperture);
+         CQuaternion cPerspCamOrient(CRadians::PI_OVER_TWO, CVector3::Y);
+         SAnchor& cPerspCamAnchor = m_pcEmbodiedEntity->AddAnchor("perspective_camera",
+                                                                  CVector3(0.0, 0.0, 0.0),
+                                                                  cPerspCamOrient);
+         m_pcPerspectiveCameraEquippedEntity =
+            new CPerspectiveCameraEquippedEntity(this,
+                                                 "perspective_camera_0",
+                                                 ToRadians(cAperture),
+                                                 fPerspCamFocalLength,
+                                                 fPerspCamRange,
+                                                 640, 480,
+                                                 cPerspCamAnchor);
+         AddComponent(*m_pcPerspectiveCameraEquippedEntity);
          /* Controllable entity
             It must be the last one, for actuators/sensors to link to composing entities correctly */
          m_pcControllableEntity = new CControllableEntity(this);
@@ -309,8 +351,8 @@ namespace argos {
                    "    </eye-bot>\n"
                    "    ...\n"
                    "  </arena>\n\n"
-                   "You can also set the data sent at each time step through the range-and-bearing"
-                   "system. By default, a message sent by a eye-bot is 10 bytes long. By using the"
+                   "You can also set the data sent at each time step through the range-and-bearing\n"
+                   "system. By default, a message sent by a eye-bot is 10 bytes long. By using the\n"
                    "'rab_data_size' attribute, you can change it to, i.e., 20 bytes as follows:\n\n"
                    "  <arena ...>\n"
                    "    ...\n"
@@ -320,8 +362,24 @@ namespace argos {
                    "    </eye-bot>\n"
                    "    ...\n"
                    "  </arena>\n\n"
+                   "Finally, you can change the parameters of the camera. You can set its aperture,\n"
+                   "focal length, and range with the attributes 'camera_aperture',\n"
+                   "'camera_focal_length', and 'camera_range', respectively. The default values are:\n"
+                   "30 degrees for aperture, 0.035 for focal length, and 2 meters for range. Check\n"
+                   "the following example:\n\n"
+                   "  <arena ...>\n"
+                   "    ...\n"
+                   "    <eye-bot id=\"eb0\"\n"
+                   "             camera_aperture=\"45\"\n"
+                   "             camera_focal_length=\"0.07\"\n"
+                   "             camera_range=\"10\">\n"
+                   "      <body position=\"0.4,2.3,0.25\" orientation=\"45,0,0\" />\n"
+                   "      <controller config=\"mycntrl\" />\n"
+                   "    </eye-bot>\n"
+                   "    ...\n"
+                   "  </arena>\n\n"
                    ,
-                   "Under development"
+                   "Usable"
       );
 
    /****************************************/

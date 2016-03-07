@@ -18,6 +18,7 @@ namespace argos {
    class CLEDEquippedEntity;
    class CLightSensorEquippedEntity;
    class COmnidirectionalCameraEquippedEntity;
+   class CPerspectiveCameraEquippedEntity;
    class CProximitySensorEquippedEntity;
    class CRABEquippedEntity;
    class CWiFiEquippedEntity;
@@ -44,7 +45,11 @@ namespace argos {
                      const CQuaternion& c_orientation = CQuaternion(),
                      Real f_rab_range = 3.0f,
                      size_t un_rab_data_size = 10,
-                     const CRadians& c_aperture = ToRadians(CDegrees(70.0f)));
+                     const CRadians& c_omnicam_aperture = ToRadians(CDegrees(70.0f)),
+                     bool b_perspcam_front = true,
+                     const CRadians& c_perspcam_aperture = ToRadians(CDegrees(30.0f)),
+                     Real f_perspcam_focal_length = 0.035,
+                     Real f_perspcam_range = 2.0);
 
       virtual void Init(TConfigurationNode& t_tree);
       virtual void Reset();
@@ -86,6 +91,10 @@ namespace argos {
          return *m_pcOmnidirectionalCameraEquippedEntity;
       }
 
+      inline CPerspectiveCameraEquippedEntity& GetPerspectiveCameraEquippedEntity() {
+         return *m_pcPerspectiveCameraEquippedEntity;
+      }
+
       inline CProximitySensorEquippedEntity& GetProximitySensorEquippedEntity() {
          return *m_pcProximitySensorEquippedEntity;
       }
@@ -117,6 +126,7 @@ namespace argos {
       CLEDEquippedEntity*                    m_pcLEDEquippedEntity;
       CLightSensorEquippedEntity*            m_pcLightSensorEquippedEntity;
       COmnidirectionalCameraEquippedEntity*  m_pcOmnidirectionalCameraEquippedEntity;
+      CPerspectiveCameraEquippedEntity*      m_pcPerspectiveCameraEquippedEntity;
       CProximitySensorEquippedEntity*        m_pcProximitySensorEquippedEntity;
       CRABEquippedEntity*                    m_pcRABEquippedEntity;
       CWheeledEntity*                        m_pcWheeledEntity;
