@@ -319,27 +319,47 @@ namespace argos {
    bool CEmbodiedEntity::MoveTo(const CVector3& c_position,
                                 const CQuaternion& c_orientation,
                                 bool b_check_only) {
-      /* Can't move a static entity or an entity with no model associated */
-      if(! m_bMovable || GetPhysicsModelsNum() == 0) return false;
-      /* If we are here it's because the entity is movable,
-       * and it has one associated model */
+      /* Can't move an entity with no model associated */
+      if(GetPhysicsModelsNum() == 0) return false;
       /* Save current position and orientation */
       CVector3    cOriginalPosition    = m_psOriginAnchor->Position;
       CQuaternion cOriginalOrientation = m_psOriginAnchor->Orientation;
-      /* Move entity and check for collisions */
-      m_tPhysicsModelVector[0]->MoveTo(c_position, c_orientation);
-      bool bNoCollision = ! m_tPhysicsModelVector[0]->IsCollidingWithSomething();
-      /* Depending on the presence of collisions... */
-      if(bNoCollision && !b_check_only) {
-         /* No collision and not a simple check -> update parent */
-         /* Tell the caller that we managed to move the entity */
-         return true;
+      /* Treat specially the case of movable entity */
+      if(m_bMovable) {
+         /* Move entity and check for collisions */
+         m_tPhysicsModelVector[0]->MoveTo(c_position, c_orientation);
+         bool bNoCollision = ! m_tPhysicsModelVector[0]->IsCollidingWithSomething();
+         /* Depending on the presence of collisions... */
+         if(bNoCollision && !b_check_only) {
+            /* No collision and not a simple check */
+            /* Tell the caller that we managed to move the entity */
+            return true;
+         }
+         else {
+            /* No collision or just a check, undo changes */
+            m_tPhysicsModelVector[0]->MoveTo(cOriginalPosition, cOriginalOrientation);
+            /* Tell the caller about collisions */
+            return bNoCollision;
+         }
       }
       else {
-         /* No Collision or just a check, undo changes */
-         m_tPhysicsModelVector[0]->MoveTo(cOriginalPosition, cOriginalOrientation);
-         /* Tell the caller about collisions */
-         return bNoCollision;
+         /* The entity is not movable, go through all the models */
+         size_t i;
+         bool bNoCollision = false;
+         for(i = 0; i < m_tPhysicsModelVector.size() && bNoCollision; ++i)
+            bNoCollision = !m_tPhysicsModelVector[i]->IsCollidingWithSomething();
+         if(bNoCollision && !b_check_only) {
+            /* No collision and not a simple check */
+            /* Tell the caller that we managed to move the entity */
+            return true;
+         }
+         else {
+            /* No collision or just a check, undo changes */
+            for(size_t j = 0; j < i; ++j)
+               m_tPhysicsModelVector[j]->MoveTo(cOriginalPosition, cOriginalOrientation);
+            /* Tell the caller about collisions */
+            return bNoCollision;
+         }
       }
    }
 
