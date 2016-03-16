@@ -17,7 +17,9 @@ namespace argos {
 #include <argos3/core/simulator/physics_engine/physics_engine.h>
 
 /* Necessary to fix compilation problems with PhySX headers */
+#ifndef NDEBUG
 #define NDEBUG
+#endif
 using namespace std;
 
 #include <argos3/plugins/simulator/physics_engines/physx/physx_dist/include/PxPhysicsAPI.h>
@@ -74,9 +76,9 @@ namespace argos {
 
       virtual size_t GetNumPhysicsModels();
 
-      virtual void AddEntity(CEntity& c_entity);
+      virtual bool AddEntity(CEntity& c_entity);
 
-      virtual void RemoveEntity(CEntity& c_entity);
+      virtual bool RemoveEntity(CEntity& c_entity);
 
       virtual bool IsEntityTransferNeeded() const;
 
@@ -337,7 +339,7 @@ namespace argos {
    /****************************************/
 
    template <typename ACTION>
-   class CPhysXOperation : public CEntityOperation<ACTION, CPhysXEngine, void> {
+   class CPhysXOperation : public CEntityOperation<ACTION, CPhysXEngine, SOperationOutcome> {
    public:
       virtual ~CPhysXOperation() {}
    };
@@ -353,22 +355,23 @@ namespace argos {
    };
 
 #define REGISTER_PHYSX_OPERATION(ACTION, OPERATION, ENTITY)             \
-   REGISTER_ENTITY_OPERATION(ACTION, CPhysXEngine, OPERATION, void, ENTITY);
+   REGISTER_ENTITY_OPERATION(ACTION, CPhysXEngine, OPERATION, SOperationOutcome, ENTITY);
 
-#define REGISTER_STANDARD_PHYSX_OPERATION_ADD_ENTITY(SPACE_ENTITY, DYN2D_MODEL) \
+#define REGISTER_STANDARD_PHYSX_OPERATION_ADD_ENTITY(SPACE_ENTITY, PHYSX_MODEL) \
    class CPhysXOperationAdd ## SPACE_ENTITY : public CPhysXOperationAddEntity { \
    public:                                                              \
    CPhysXOperationAdd ## SPACE_ENTITY() {}                              \
    virtual ~CPhysXOperationAdd ## SPACE_ENTITY() {}                     \
-   void ApplyTo(CPhysXEngine& c_engine,                                 \
-                SPACE_ENTITY& c_entity) {                               \
-      DYN2D_MODEL* pcPhysModel = new DYN2D_MODEL(c_engine,              \
+   SOperationOutcome ApplyTo(CPhysXEngine& c_engine,                    \
+                             SPACE_ENTITY& c_entity) {                  \
+      PHYSX_MODEL* pcPhysModel = new PHYSX_MODEL(c_engine,              \
                                                  c_entity);             \
       c_engine.AddPhysicsModel(c_entity.GetId(),                        \
                                *pcPhysModel);                           \
       c_entity.                                                         \
          GetComponent<CEmbodiedEntity>("body").                         \
          AddPhysicsModel(c_engine.GetId(), *pcPhysModel);               \
+      return SOperationOutcome(true);                                   \
    }                                                                    \
    };                                                                   \
    REGISTER_PHYSX_OPERATION(CPhysXOperationAddEntity,                   \
@@ -377,23 +380,24 @@ namespace argos {
 
 #define REGISTER_STANDARD_PHYSX_OPERATION_REMOVE_ENTITY(SPACE_ENTITY)   \
    class CPhysXOperationRemove ## SPACE_ENTITY : public CPhysXOperationRemoveEntity { \
-public:                                                                 \
-CPhysXOperationRemove ## SPACE_ENTITY() {}                              \
-virtual ~CPhysXOperationRemove ## SPACE_ENTITY() {}                     \
-void ApplyTo(CPhysXEngine& c_engine,                                    \
-      SPACE_ENTITY& c_entity) {                                         \
-   c_engine.RemovePhysicsModel(c_entity.GetId());                       \
-   c_entity.                                                            \
-   GetComponent<CEmbodiedEntity>("body").                               \
-   RemovePhysicsModel(c_engine.GetId());                                \
-}                                                                       \
-};                                                                      \
+   public:                                                              \
+   CPhysXOperationRemove ## SPACE_ENTITY() {}                           \
+   virtual ~CPhysXOperationRemove ## SPACE_ENTITY() {}                  \
+   SOperationOutcome ApplyTo(CPhysXEngine& c_engine,                    \
+                             SPACE_ENTITY& c_entity) {                  \
+      c_engine.RemovePhysicsModel(c_entity.GetId());                    \
+      c_entity.                                                         \
+         GetComponent<CEmbodiedEntity>("body").                         \
+         RemovePhysicsModel(c_engine.GetId());                          \
+      return SOperationOutcome(true);                                   \
+   }                                                                    \
+   };                                                                   \
    REGISTER_PHYSX_OPERATION(CPhysXOperationRemoveEntity,                \
-      CPhysXOperationRemove ## SPACE_ENTITY,                            \
-      SPACE_ENTITY);
+                            CPhysXOperationRemove ## SPACE_ENTITY,      \
+                            SPACE_ENTITY);
 
-#define REGISTER_STANDARD_PHYSX_OPERATIONS_ON_ENTITY(SPACE_ENTITY, DYN2D_ENTITY) \
-   REGISTER_STANDARD_PHYSX_OPERATION_ADD_ENTITY(SPACE_ENTITY, DYN2D_ENTITY) \
+#define REGISTER_STANDARD_PHYSX_OPERATIONS_ON_ENTITY(SPACE_ENTITY, PHYSX_ENTITY) \
+   REGISTER_STANDARD_PHYSX_OPERATION_ADD_ENTITY(SPACE_ENTITY, PHYSX_ENTITY) \
    REGISTER_STANDARD_PHYSX_OPERATION_REMOVE_ENTITY(SPACE_ENTITY)
 
 /****************************************/

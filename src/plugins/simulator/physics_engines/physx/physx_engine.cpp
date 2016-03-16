@@ -356,15 +356,21 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CPhysXEngine::AddEntity(CEntity& c_entity) {
-      CallEntityOperation<CPhysXOperationAddEntity, CPhysXEngine, void>(*this, c_entity);
+   bool CPhysXEngine::AddEntity(CEntity& c_entity) {
+      SOperationOutcome sOutcome =
+         CallEntityOperation<CPhysXOperationAddEntity, CPhysXEngine, SOperationOutcome>
+         (*this, c_entity);
+      return sOutcome.Value;
    }
 
    /****************************************/
    /****************************************/
 
-   void CPhysXEngine::RemoveEntity(CEntity& c_entity) {
-      CallEntityOperation<CPhysXOperationRemoveEntity, CPhysXEngine, void>(*this, c_entity);
+   bool CPhysXEngine::RemoveEntity(CEntity& c_entity) {
+      SOperationOutcome sOutcome =
+         CallEntityOperation<CPhysXOperationRemoveEntity, CPhysXEngine, SOperationOutcome>
+         (*this, c_entity);
+      return sOutcome.Value;
    }
 
    /****************************************/
@@ -505,22 +511,24 @@ namespace argos {
    class CPhysXOperationAddBaseEntity : public CPhysXOperationAddEntity {
    public:
       virtual ~CPhysXOperationAddBaseEntity() {}
-      void ApplyTo(CPhysXEngine&, CEntity& c_entity) {
+      SOperationOutcome ApplyTo(CPhysXEngine&, CEntity& c_entity) {
          LOGERR << "Entity type \""
                 << c_entity.GetTypeDescription()
                 << "\" not supported by the PhysX engine."
                 << std::endl;
+         return SOperationOutcome(false);
       }
    };
 
    class CPhysXOperationRemoveBaseEntity : public CPhysXOperationRemoveEntity {
    public:
       virtual ~CPhysXOperationRemoveBaseEntity() {}
-      void ApplyTo(CPhysXEngine&, CEntity& c_entity) {
+      SOperationOutcome ApplyTo(CPhysXEngine&, CEntity& c_entity) {
          LOGERR << "Entity type \""
                 << c_entity.GetTypeDescription()
                 << "\" not supported by the PhysX engine."
                 << std::endl;
+         return SOperationOutcome(false);
       }
    };
 
