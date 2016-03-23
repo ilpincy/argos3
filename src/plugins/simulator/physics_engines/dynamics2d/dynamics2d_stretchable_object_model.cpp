@@ -34,8 +34,10 @@ namespace argos {
 
    void CDynamics2DStretchableObjectModel::MoveTo(const CVector3& c_position,
                                                   const CQuaternion& c_orientation) {
-      /* Object moved, release all gripped entities */
-      m_pcGrippable->ReleaseAll();
+      if(m_pcGrippable != NULL) {
+         /* Release all attached entities */
+         m_pcGrippable->ReleaseAll();
+      }
       CDynamics2DSingleBodyObjectModel::MoveTo(c_position, c_orientation);
    }
    

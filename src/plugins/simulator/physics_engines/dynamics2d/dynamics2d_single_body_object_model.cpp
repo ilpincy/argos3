@@ -45,9 +45,16 @@ namespace argos {
       c_orientation.ToEulerAngles(cZAngle, cYAngle, cXAngle);
       cpBodySetAngle(m_ptBody, cZAngle.GetValue());
       /* Update shape index */
-      cpSpaceReindexShapesForBody(GetDynamics2DEngine().GetPhysicsSpace(), m_ptBody);
+      if(cpBodyIsStatic(m_ptBody)) {
+         cpBB tBoundingBox = cpShapeGetBB(m_ptBody->shapeList);
+         cpSpaceReindexStatic(GetDynamics2DEngine().GetPhysicsSpace());
+         tBoundingBox = cpShapeGetBB(m_ptBody->shapeList);
+      }
+      else {
+         cpSpaceReindexShapesForBody(GetDynamics2DEngine().GetPhysicsSpace(), m_ptBody);
+      }
       /* Update ARGoS entity state */
-      UpdateEntityStatus();
+      CDynamics2DModel::UpdateEntityStatus();
    }
 
    /****************************************/

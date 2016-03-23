@@ -20,6 +20,8 @@ namespace argos {
       Real fRadius = c_entity.GetRadius();
       /* Create a circle object in the physics space */
       const CVector3& cPosition = GetEmbodiedEntity().GetOriginAnchor().Position;
+      CRadians cXAngle, cYAngle, cZAngle;
+      GetEmbodiedEntity().GetOriginAnchor().Orientation.ToEulerAngles(cZAngle, cYAngle, cXAngle);
       /*
        * Create body and shapes
        */
@@ -35,8 +37,6 @@ namespace argos {
                                                              fRadius + fRadius,
                                                              cpvzero)));
          ptBody->p = cpv(cPosition.GetX(), cPosition.GetY());
-         CRadians cXAngle, cYAngle, cZAngle;
-         GetEmbodiedEntity().GetOriginAnchor().Orientation.ToEulerAngles(cZAngle, cYAngle, cXAngle);
          cpBodySetAngle(ptBody, cZAngle.GetValue());
          /* Create the shape */
          cpShape* ptShape = cpSpaceAddShape(GetDynamics2DEngine().GetPhysicsSpace(),
@@ -56,13 +56,14 @@ namespace argos {
          /* The cylinder is not movable */
          /* Create a static body */
          ptBody = cpBodyNewStatic();
+         ptBody->p = cpv(cPosition.GetX(), cPosition.GetY());
+         cpBodySetAngle(ptBody, cZAngle.GetValue());
          /* Create the shape */
          cpShape* ptShape = cpSpaceAddShape(
             GetDynamics2DEngine().GetPhysicsSpace(),
             cpCircleShapeNew(ptBody,
                              fRadius,
-                             cpv(cPosition.GetX(),
-                                 cPosition.GetY())));
+                             cpvzero));
          ptShape->e = 0.0; // No elasticity
          ptShape->u = 0.1; // Little contact friction to help sliding away
          /* This shape is normal (not grippable, not gripper) */

@@ -336,7 +336,7 @@ namespace argos {
             return true;
          }
          else {
-            /* No collision or just a check, undo changes */
+            /* Collision or just a check, undo changes */
             m_tPhysicsModelVector[0]->MoveTo(cOriginalPosition, cOriginalOrientation);
             /* Tell the caller about collisions */
             return bNoCollision;
@@ -345,18 +345,22 @@ namespace argos {
       else {
          /* The entity is not movable, go through all the models */
          size_t i;
-         bool bNoCollision = false;
-         for(i = 0; i < m_tPhysicsModelVector.size() && bNoCollision; ++i)
+         bool bNoCollision = true;
+         for(i = 0; i < m_tPhysicsModelVector.size() && bNoCollision; ++i) {
+            m_tPhysicsModelVector[i]->MoveTo(c_position, c_orientation);
             bNoCollision = !m_tPhysicsModelVector[i]->IsCollidingWithSomething();
+         }
          if(bNoCollision && !b_check_only) {
             /* No collision and not a simple check */
+            CalculateBoundingBox();
             /* Tell the caller that we managed to move the entity */
             return true;
          }
          else {
             /* No collision or just a check, undo changes */
-            for(size_t j = 0; j < i; ++j)
+            for(size_t j = 0; j < i; ++j) {
                m_tPhysicsModelVector[j]->MoveTo(cOriginalPosition, cOriginalOrientation);
+            }
             /* Tell the caller about collisions */
             return bNoCollision;
          }

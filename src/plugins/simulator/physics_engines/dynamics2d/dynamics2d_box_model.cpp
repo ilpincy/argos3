@@ -70,20 +70,15 @@ namespace argos {
          /* The box is not movable */
          /* Create a static body */
          ptBody = cpBodyNewStatic();
-         /* Manually rotate the vertices */
-         cpVect tRot = cpvforangle(cZAngle.GetValue());
-         tVertices[0] = cpvrotate(tVertices[0], tRot);
-         tVertices[1] = cpvrotate(tVertices[1], tRot);
-         tVertices[2] = cpvrotate(tVertices[2], tRot);
-         tVertices[3] = cpvrotate(tVertices[3], tRot);
+         ptBody->p = cpv(cPosition.GetX(), cPosition.GetY());
+         cpBodySetAngle(ptBody, cZAngle.GetValue());
          /* Create the shape */
          cpShape* ptShape =
             cpSpaceAddShape(GetDynamics2DEngine().GetPhysicsSpace(),
                             cpPolyShapeNew(ptBody,
                                            4,
                                            tVertices,
-                                           cpv(cPosition.GetX(), cPosition.GetY())));
-         
+                                           cpvzero));
          ptShape->e = 0.0; // No elasticity
          ptShape->u = 0.1; // Little contact friction to help sliding away
          /* This shape is normal (not grippable, not gripper) */
