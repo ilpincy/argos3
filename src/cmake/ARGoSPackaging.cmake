@@ -48,8 +48,8 @@ set(CPACK_PACKAGE_NAME "argos3_${ARGOS_BUILD_FOR}")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "A fast, parallel, multi-physics, and multi-robot simulator")
 set(CPACK_PACKAGE_VERSION "${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}")
 set(CPACK_PACKAGING_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX})
-set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/../doc/ARGoS_LICENSE.txt")
-set(CPACK_RESOURCE_FILE_README "${CMAKE_SOURCE_DIR}/../README.txt")
+set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/../doc/ARGoS_LICENSE.txt")
+set(CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/../README.txt")
 set(CPACK_STRIP_FILES ON)
 set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${ARGOS_PROCESSOR_ARCH}-${CPACK_PACKAGE_RELEASE}")
 
@@ -99,23 +99,23 @@ endif(APPLE)
 # Creation of SlackBuild script
 #
 configure_file(
-  ${CMAKE_SOURCE_DIR}/scripts/slackware/argos.SlackBuild.in
+  ${CMAKE_CURRENT_SOURCE_DIR}/scripts/slackware/argos.SlackBuild.in
   ${CMAKE_BINARY_DIR}/argos.SlackBuild
   @ONLY)
 configure_file(
-  ${CMAKE_SOURCE_DIR}/scripts/slackware/slack-desc.in
+  ${CMAKE_CURRENT_SOURCE_DIR}/scripts/slackware/slack-desc.in
   ${CMAKE_BINARY_DIR}/slack-desc
   @ONLY)
 configure_file(
-  ${CMAKE_SOURCE_DIR}/scripts/slackware/doinst.sh.in
+  ${CMAKE_CURRENT_SOURCE_DIR}/scripts/slackware/doinst.sh.in
   ${CMAKE_BINARY_DIR}/doinst.sh
   @ONLY)
 configure_file(
-  ${CMAKE_SOURCE_DIR}/scripts/argos_post_install.sh.in
+  ${CMAKE_CURRENT_SOURCE_DIR}/scripts/argos_post_install.sh.in
   ${CMAKE_BINARY_DIR}/argos_post_install.sh
   @ONLY)
 configure_file(
-  ${CMAKE_SOURCE_DIR}/scripts/argos_post_install.sh.in
+  ${CMAKE_CURRENT_SOURCE_DIR}/scripts/argos_post_install.sh.in
   ${CMAKE_BINARY_DIR}/postinst
   @ONLY)
 

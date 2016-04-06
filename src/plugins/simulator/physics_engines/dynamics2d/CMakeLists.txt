@@ -99,7 +99,7 @@ set(ARGOS3_SOURCES_PLUGINS_SIMULATOR_PHYSICS_ENGINES_DYNAMICS2D
 # Create dynamics2d engine plugin library
 #
 # Add Chipmunk include path
-include_directories(${CMAKE_SOURCE_DIR}/plugins/simulator/physics_engines/dynamics2d/chipmunk-physics/include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/chipmunk-physics/include)
 # Set the C99 standard for all C files
 set_source_files_properties(${ARGOS3_SOURCES_PLUGINS_SIMULATOR_PHYSICS_ENGINES_DYNAMICS2D_CHIPMUNK}
   PROPERTIES

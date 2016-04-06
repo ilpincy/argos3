@@ -289,7 +289,7 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
   #
   if(NOT APPLE)
     configure_file(
-      ${CMAKE_SOURCE_DIR}/scripts/argos3.desktop.in
+      ${CMAKE_CURRENT_SOURCE_DIR}/../scripts/argos3.desktop.in
       ${CMAKE_BINARY_DIR}/argos3.desktop
       @ONLY)
     install(FILES ${CMAKE_BINARY_DIR}/argos3.desktop DESTINATION share/applications)
