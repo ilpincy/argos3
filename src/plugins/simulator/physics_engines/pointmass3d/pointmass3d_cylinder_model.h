@@ -1,5 +1,5 @@
 /**
- * @file <argos3/plugins/robots/foot-bot/simulator/pointmass3d_eyebot_model.h>
+ * @file <argos3/plugins/simulator/physics_engines/pointmass3d/pointmass3d_cylinder_model.h>
  *
  * @author Carlo Pinciroli - <cpinciro@ulb.ac.be>
  */
