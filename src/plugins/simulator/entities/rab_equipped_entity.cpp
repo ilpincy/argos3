@@ -134,7 +134,7 @@ namespace argos {
    /****************************************/
 
    void CRABEquippedEntity::Disable() {
-      m_psAnchor->Disable();
+      // m_psAnchor->Disable();
    }
 
    /****************************************/
