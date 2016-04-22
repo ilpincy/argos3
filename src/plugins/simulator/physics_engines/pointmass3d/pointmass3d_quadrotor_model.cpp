@@ -1,5 +1,5 @@
 /**
- * @file <argos3/plugins/rorotors/foot-rotor/simulator/pointmass3d_quadrotor_model.h>
+ * @file <argos3/plugins/simulator/physics_engines/pointmass3d/pointmass3d_quadrotor_model.cpp>
  *
  * @author Carlo Pinciroli - <cpinciro@ulb.ac.be>
  */
