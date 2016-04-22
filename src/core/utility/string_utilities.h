@@ -86,7 +86,7 @@ namespace argos {
       else {
          THROW_ARGOSEXCEPTION("Parse error: expected " << un_num_fields
                               << " values, but " << i << " have been found in \""
-                              << str_input << "\"");
+                              << str_input.rdbuf() << "\"");
       }
    }
 
