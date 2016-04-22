@@ -170,6 +170,7 @@ namespace argos {
    /****************************************/
 
    void CQTOpenGLWidget::DrawScene() {
+      m_fFps = 1e9/m_cTimer.nsecsElapsed();
       makeCurrent();
       resizeGL(width(), height());
       glShadeModel(GL_SMOOTH);
@@ -247,6 +248,7 @@ namespace argos {
          cPainter.setRenderHint(QPainter::TextAntialiasing);
       }
       m_cUserFunctions.DrawOverlay(cPainter);
+      cPainter.drawText(rect(), QString("%1 FPS").arg(m_fFps, 0, 'f', 0));
       cPainter.end();
       /* Grab frame, if necessary */
       if(m_sFrameGrabData.Grabbing) {
@@ -262,6 +264,7 @@ namespace argos {
                0,
                m_sFrameGrabData.Quality);
       }
+      m_cTimer.restart();
    }
 
    /****************************************/

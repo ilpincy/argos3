@@ -27,6 +27,7 @@ namespace argos {
 #include <argos3/core/simulator/entity/entity.h>
 #include <argos3/core/utility/datatypes/datatypes.h>
 #include <QGLWidget>
+#include <QElapsedTimer>
 
 #ifdef __APPLE__
 #include <glu.h>
@@ -295,6 +296,8 @@ namespace argos {
 #endif
       CQTOpenGLCamera m_cCamera;
       SFrameGrabData m_sFrameGrabData;
+      QElapsedTimer m_cTimer;
+      qreal m_fFps;
 
       enum EDirection {
          DIRECTION_UP = 1,

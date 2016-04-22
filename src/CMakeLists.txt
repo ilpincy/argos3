@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 2.8.12)
 #
 # Set the path additional cmake files must be searched for
 #
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
 #
 # Set CMake policies to select wanted behaviors
@@ -20,7 +20,7 @@ endif(POLICY CMP0042)
 #
 # Include path points to the base source dir
 #
-include_directories(${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_BINARY_DIR})
 
 #
 # Make sure we are under Unix
@@ -32,31 +32,31 @@ endif(NOT UNIX)
 #
 # Set build options
 #
-include(${CMAKE_SOURCE_DIR}/cmake/ARGoSBuildOptions.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/ARGoSBuildOptions.cmake)
 
 #
 # Set compiler flags
 #
-include(${CMAKE_SOURCE_DIR}/cmake/ARGoSBuildFlags.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/ARGoSBuildFlags.cmake)
 
 #
 # Check for libraries
 #
-include(${CMAKE_SOURCE_DIR}/cmake/ARGoSBuildChecks.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/ARGoSBuildChecks.cmake)
 
 #
 # Set up CPack for later use
 #
-include(${CMAKE_SOURCE_DIR}/cmake/ARGoSPackaging.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/ARGoSPackaging.cmake)
 
 #
 # Create config file with settings that must be accessed from C++
 #
 configure_file(
-  ${CMAKE_SOURCE_DIR}/core/config.h.in
-  ${CMAKE_BINARY_DIR}/core/config.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/core/config.h.in
+  ${CMAKE_BINARY_DIR}/argos3/core/config.h
   @ONLY)
-install(FILES ${CMAKE_BINARY_DIR}/core/config.h DESTINATION include/argos3/core)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/core/config.h DESTINATION include/argos3/core)
 
 #
 # Create a soft link 'argos3' pointing to the build directory
@@ -78,14 +78,14 @@ add_subdirectory(testing)
 #
 # Create documentation
 #
-include(${CMAKE_SOURCE_DIR}/cmake/ARGoSCreateDocs.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/ARGoSCreateDocs.cmake)
 
 #
 # Create .gdbinit file for GDB support
 # It is placed in the same directory as the argos3 executable
 #
 configure_file(
-  ${CMAKE_SOURCE_DIR}/scripts/gdbinit.in
+  ${CMAKE_CURRENT_SOURCE_DIR}/scripts/gdbinit.in
   ${CMAKE_BINARY_DIR}/core/.gdbinit
   @ONLY)
 
@@ -94,7 +94,7 @@ configure_file(
 # It is placed in the base build directory
 #
 configure_file(
-  ${CMAKE_SOURCE_DIR}/scripts/setup_env.sh.in
+  ${CMAKE_CURRENT_SOURCE_DIR}/scripts/setup_env.sh.in
   ${CMAKE_BINARY_DIR}/setup_env.sh
   @ONLY)
 
@@ -104,16 +104,16 @@ configure_file(
 if(ARGOS_INSTALL_LDSOCONF)
   # Configuration file for /etc/ld.so.conf.d/
   configure_file(
-    ${CMAKE_SOURCE_DIR}/scripts/argos3.conf.in
+    ${CMAKE_CURRENT_SOURCE_DIR}/scripts/argos3.conf.in
     ${CMAKE_BINARY_DIR}/argos3.conf
     @ONLY)
   install(FILES ${CMAKE_BINARY_DIR}/argos3.conf DESTINATION /etc/ld.so.conf.d)
 endif(ARGOS_INSTALL_LDSOCONF)
 # Configuration file for pkg-config
 configure_file(
-  ${CMAKE_SOURCE_DIR}/scripts/argos3.pc.in
+  ${CMAKE_CURRENT_SOURCE_DIR}/scripts/argos3.pc.in
   ${CMAKE_BINARY_DIR}/argos3_${ARGOS_BUILD_FOR}.pc
   @ONLY)
 install(FILES ${CMAKE_BINARY_DIR}/argos3_${ARGOS_BUILD_FOR}.pc DESTINATION lib/pkgconfig)
 # Bash completion file
-install(FILES ${CMAKE_SOURCE_DIR}/scripts/argos3_bash_completion.sh DESTINATION share/argos3)
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/scripts/argos3_bash_completion.sh DESTINATION share/argos3)
