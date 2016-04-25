@@ -34,8 +34,8 @@ namespace argos {
             m_pfValues[i] = 0;
       }
       
-      CMatrix(const Real* f_values) {
-         Set(f_values);
+      CMatrix(const Real* pf_values) {
+         Set(pf_values);
       }
       
       CMatrix(const CMatrix<ROWS,COLS>& c_matrix) {
@@ -188,7 +188,7 @@ namespace argos {
       }
 
       friend std::ostream& operator<<(std::ostream& c_os,
-                                      const CMatrix c_matrix) {
+                                      const CMatrix& c_matrix) {
          
          std::ios_base::fmtflags unInitalFlags = c_os.flags();
          std::streamsize nInitalPrec = c_os.precision();

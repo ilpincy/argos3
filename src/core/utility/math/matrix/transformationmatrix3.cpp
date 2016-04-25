@@ -111,9 +111,9 @@ namespace argos {
    /****************************************/   
 
    CVector3 CTransformationMatrix3::operator*(const CVector3& c_vector) const {
-      return CVector3(m_pfValues[0]*c_vector.m_fX + m_pfValues[1]*c_vector.m_fY + m_pfValues[2]*c_vector.m_fZ + c_vector.m_fX,
-	                   m_pfValues[3]*c_vector.m_fX + m_pfValues[4]*c_vector.m_fY + m_pfValues[5]*c_vector.m_fZ + c_vector.m_fY,
-	                   m_pfValues[6]*c_vector.m_fX + m_pfValues[7]*c_vector.m_fY + m_pfValues[8]*c_vector.m_fZ + c_vector.m_fZ);
+      return CVector3(m_pfValues[0]*c_vector.m_fX + m_pfValues[1]*c_vector.m_fY + m_pfValues[2]*c_vector.m_fZ + m_pfValues[3],
+	                   m_pfValues[4]*c_vector.m_fX + m_pfValues[5]*c_vector.m_fY + m_pfValues[6]*c_vector.m_fZ + m_pfValues[7],
+	                   m_pfValues[8]*c_vector.m_fX + m_pfValues[9]*c_vector.m_fY + m_pfValues[10]*c_vector.m_fZ + m_pfValues[11]);
    }
 
    /****************************************/
