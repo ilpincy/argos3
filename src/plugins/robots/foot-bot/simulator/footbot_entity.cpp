@@ -111,21 +111,20 @@ namespace argos {
           * Better to put this first, because many other entities need this one
           */
          m_pcEmbodiedEntity = new CEmbodiedEntity(this, "body_0", c_position, c_orientation);
+         AddComponent(*m_pcEmbodiedEntity);
          SAnchor& cTurretAnchor = m_pcEmbodiedEntity->AddAnchor("turret");
          CQuaternion cPerspCamOrient(b_perspcam_front ? CRadians::ZERO : -CRadians::PI_OVER_TWO,
                                      CVector3::Y);
          SAnchor& cPerspCamAnchor = m_pcEmbodiedEntity->AddAnchor("perspective_camera",
                                                                   CVector3(BODY_RADIUS, 0.0, BEACON_ELEVATION),
                                                                   cPerspCamOrient);
-         AddComponent(*m_pcEmbodiedEntity);
          /* Wheeled entity and wheel positions (left, right) */
          m_pcWheeledEntity = new CWheeledEntity(this, "wheels_0", 2);
          AddComponent(*m_pcWheeledEntity);
          m_pcWheeledEntity->SetWheel(0, CVector3(0.0f,  HALF_INTERWHEEL_DISTANCE, 0.0f), WHEEL_RADIUS);
          m_pcWheeledEntity->SetWheel(1, CVector3(0.0f, -HALF_INTERWHEEL_DISTANCE, 0.0f), WHEEL_RADIUS);
          /* LED equipped entity, with LEDs [0-11] and beacon [12] */
-         m_pcLEDEquippedEntity = new CLEDEquippedEntity(this,
-                                                        "leds_0");
+         m_pcLEDEquippedEntity = new CLEDEquippedEntity(this, "leds_0");
          AddComponent(*m_pcLEDEquippedEntity);
          m_pcLEDEquippedEntity->AddLEDRing(
             CVector3(0.0f, 0.0f, LED_RING_ELEVATION),
@@ -138,8 +137,7 @@ namespace argos {
             cTurretAnchor);
          /* Proximity sensor equipped entity */
          m_pcProximitySensorEquippedEntity =
-            new CProximitySensorEquippedEntity(this,
-                                               "proximity_0");
+            new CProximitySensorEquippedEntity(this, "proximity_0");
          AddComponent(*m_pcProximitySensorEquippedEntity);
          m_pcProximitySensorEquippedEntity->AddSensorRing(
             CVector3(0.0f, 0.0f, PROXIMITY_SENSOR_RING_ELEVATION),
@@ -150,8 +148,7 @@ namespace argos {
             m_pcEmbodiedEntity->GetOriginAnchor());
          /* Light sensor equipped entity */
          m_pcLightSensorEquippedEntity =
-            new CLightSensorEquippedEntity(this,
-                                           "light_0");
+            new CLightSensorEquippedEntity(this, "light_0");
          AddComponent(*m_pcLightSensorEquippedEntity);
          m_pcLightSensorEquippedEntity->AddSensorRing(
             CVector3(0.0f, 0.0f, PROXIMITY_SENSOR_RING_ELEVATION),
@@ -169,8 +166,7 @@ namespace argos {
          AddComponent(*m_pcGripperEquippedEntity);
          /* Ground sensor equipped entity */
          m_pcGroundSensorEquippedEntity =
-            new CGroundSensorEquippedEntity(this,
-                                            "ground_0");
+            new CGroundSensorEquippedEntity(this, "ground_0");
          AddComponent(*m_pcGroundSensorEquippedEntity);
          m_pcGroundSensorEquippedEntity->AddSensor(CVector2(0.063, 0.0116),
                                                    CGroundSensorEquippedEntity::TYPE_GRAYSCALE,
@@ -209,35 +205,40 @@ namespace argos {
                                                    CGroundSensorEquippedEntity::TYPE_BLACK_WHITE,
                                                    m_pcEmbodiedEntity->GetOriginAnchor());
          /* Distance scanner */
-         m_pcDistanceScannerEquippedEntity = new CFootBotDistanceScannerEquippedEntity(this,
-                                                                                       "distance_scanner_0");
+         m_pcDistanceScannerEquippedEntity =
+            new CFootBotDistanceScannerEquippedEntity(this, "distance_scanner_0");
          AddComponent(*m_pcDistanceScannerEquippedEntity);
          /* RAB equipped entity */
-         m_pcRABEquippedEntity = new CRABEquippedEntity(this,
-                                                        "rab_0",
-                                                        un_rab_data_size,
-                                                        f_rab_range,
-                                                        m_pcEmbodiedEntity->GetOriginAnchor(),
-                                                        *m_pcEmbodiedEntity,
-                                                        CVector3(0.0f, 0.0f, RAB_ELEVATION));
+         m_pcRABEquippedEntity =
+            new CRABEquippedEntity(this,
+                                   "rab_0",
+                                   un_rab_data_size,
+                                   f_rab_range,
+                                   m_pcEmbodiedEntity->GetOriginAnchor(),
+                                   *m_pcEmbodiedEntity,
+                                   CVector3(0.0f, 0.0f, RAB_ELEVATION));
          AddComponent(*m_pcRABEquippedEntity);
          /* Omnidirectional camera equipped entity */
-         m_pcOmnidirectionalCameraEquippedEntity = new COmnidirectionalCameraEquippedEntity(this,
-                                                                                            "omnidirectional_camera_0",
-                                                                                            c_omnicam_aperture,
-                                                                                            CVector3(0.0f, 0.0f, OMNIDIRECTIONAL_CAMERA_ELEVATION));
+         m_pcOmnidirectionalCameraEquippedEntity =
+            new COmnidirectionalCameraEquippedEntity(this,
+                                                     "omnidirectional_camera_0",
+                                                     c_omnicam_aperture,
+                                                     CVector3(0.0f,
+                                                              0.0f,
+                                                              OMNIDIRECTIONAL_CAMERA_ELEVATION));
          AddComponent(*m_pcOmnidirectionalCameraEquippedEntity);
          /* Perspective camera equipped entity */
-         m_pcPerspectiveCameraEquippedEntity = new CPerspectiveCameraEquippedEntity(this,
-                                                                                    "perspective_camera_0",
-                                                                                    c_perspcam_aperture,
-                                                                                    f_perspcam_focal_length,
-                                                                                    f_perspcam_range,
-                                                                                    640, 480,
-                                                                                    cPerspCamAnchor);
+         m_pcPerspectiveCameraEquippedEntity =
+            new CPerspectiveCameraEquippedEntity(this,
+                                                 "perspective_camera_0",
+                                                 c_perspcam_aperture,
+                                                 f_perspcam_focal_length,
+                                                 f_perspcam_range,
+                                                 640, 480,
+                                                 cPerspCamAnchor);
          AddComponent(*m_pcPerspectiveCameraEquippedEntity);
          /* Turret equipped entity */
-         m_pcTurretEntity = new CFootBotTurretEntity(this, "turret_0");
+         m_pcTurretEntity = new CFootBotTurretEntity(this, "turret_0", cTurretAnchor);
          AddComponent(*m_pcTurretEntity);
          /* WiFi equipped entity */
          m_pcWiFiEquippedEntity = new CWiFiEquippedEntity(this, "wifi_0");
@@ -274,6 +275,7 @@ namespace argos {
          m_pcEmbodiedEntity = new CEmbodiedEntity(this);
          AddComponent(*m_pcEmbodiedEntity);
          m_pcEmbodiedEntity->Init(GetNode(t_tree, "body"));
+         SAnchor& cTurretAnchor = m_pcEmbodiedEntity->AddAnchor("turret");
          /* Wheeled entity and wheel positions (left, right) */
          m_pcWheeledEntity = new CWheeledEntity(this, "wheels_0", 2);
          AddComponent(*m_pcWheeledEntity);
@@ -287,14 +289,13 @@ namespace argos {
             LED_RING_RADIUS,
             HALF_LED_ANGLE_SLICE,
             12,
-            m_pcEmbodiedEntity->GetOriginAnchor());
+            cTurretAnchor);
          m_pcLEDEquippedEntity->AddLED(
             CVector3(0.0f, 0.0f, BEACON_ELEVATION),
-            m_pcEmbodiedEntity->GetOriginAnchor());
+            cTurretAnchor);
          /* Proximity sensor equipped entity */
          m_pcProximitySensorEquippedEntity =
-            new CProximitySensorEquippedEntity(this,
-                                               "proximity_0");
+            new CProximitySensorEquippedEntity(this, "proximity_0");
          AddComponent(*m_pcProximitySensorEquippedEntity);
          m_pcProximitySensorEquippedEntity->AddSensorRing(
             CVector3(0.0f, 0.0f, PROXIMITY_SENSOR_RING_ELEVATION),
@@ -305,8 +306,7 @@ namespace argos {
             m_pcEmbodiedEntity->GetOriginAnchor());
          /* Light sensor equipped entity */
          m_pcLightSensorEquippedEntity =
-            new CLightSensorEquippedEntity(this,
-                                           "light_0");
+            new CLightSensorEquippedEntity(this, "light_0");
          AddComponent(*m_pcLightSensorEquippedEntity);
          m_pcLightSensorEquippedEntity->AddSensorRing(
             CVector3(0.0f, 0.0f, PROXIMITY_SENSOR_RING_ELEVATION),
@@ -324,8 +324,7 @@ namespace argos {
          AddComponent(*m_pcGripperEquippedEntity);
          /* Ground sensor equipped entity */
          m_pcGroundSensorEquippedEntity =
-            new CGroundSensorEquippedEntity(this,
-                                            "ground_0");
+            new CGroundSensorEquippedEntity(this, "ground_0");
          AddComponent(*m_pcGroundSensorEquippedEntity);
          m_pcGroundSensorEquippedEntity->AddSensor(CVector2(0.063, 0.0116),
                                                    CGroundSensorEquippedEntity::TYPE_GRAYSCALE,
@@ -364,29 +363,33 @@ namespace argos {
                                                    CGroundSensorEquippedEntity::TYPE_BLACK_WHITE,
                                                    m_pcEmbodiedEntity->GetOriginAnchor());
          /* Distance scanner */
-         m_pcDistanceScannerEquippedEntity = new CFootBotDistanceScannerEquippedEntity(this,
-                                                                                       "distance_scanner_0");
+         m_pcDistanceScannerEquippedEntity =
+            new CFootBotDistanceScannerEquippedEntity(this, "distance_scanner_0");
          AddComponent(*m_pcDistanceScannerEquippedEntity);
          /* RAB equipped entity */
          Real fRange = 3.0f;
          GetNodeAttributeOrDefault(t_tree, "rab_range", fRange, fRange);
          UInt32 unDataSize = 10;
          GetNodeAttributeOrDefault(t_tree, "rab_data_size", unDataSize, unDataSize);
-         m_pcRABEquippedEntity = new CRABEquippedEntity(this,
-                                                        "rab_0",
-                                                        unDataSize,
-                                                        fRange,
-                                                        m_pcEmbodiedEntity->GetOriginAnchor(),
-                                                        *m_pcEmbodiedEntity,
-                                                        CVector3(0.0f, 0.0f, RAB_ELEVATION));
+         m_pcRABEquippedEntity =
+            new CRABEquippedEntity(this,
+                                   "rab_0",
+                                   unDataSize,
+                                   fRange,
+                                   m_pcEmbodiedEntity->GetOriginAnchor(),
+                                   *m_pcEmbodiedEntity,
+                                   CVector3(0.0f, 0.0f, RAB_ELEVATION));
          AddComponent(*m_pcRABEquippedEntity);
          /* Omnidirectional camera equipped entity */
          CDegrees cAperture(70.0f);
          GetNodeAttributeOrDefault(t_tree, "omnidirectional_camera_aperture", cAperture, cAperture);
-         m_pcOmnidirectionalCameraEquippedEntity = new COmnidirectionalCameraEquippedEntity(this,
-                                                                                            "omnidirectional_camera_0",
-                                                                                            ToRadians(cAperture),
-                                                                                            CVector3(0.0f, 0.0f, OMNIDIRECTIONAL_CAMERA_ELEVATION));
+         m_pcOmnidirectionalCameraEquippedEntity =
+            new COmnidirectionalCameraEquippedEntity(this,
+                                                     "omnidirectional_camera_0",
+                                                     ToRadians(cAperture),
+                                                     CVector3(0.0f,
+                                                              0.0f,
+                                                              OMNIDIRECTIONAL_CAMERA_ELEVATION));
          AddComponent(*m_pcOmnidirectionalCameraEquippedEntity);
          /* Perspective camera equipped entity */
          bool bPerspCamFront = true;
@@ -402,18 +405,18 @@ namespace argos {
          SAnchor& cPerspCamAnchor = m_pcEmbodiedEntity->AddAnchor("perspective_camera",
                                                                   CVector3(BODY_RADIUS, 0.0, BEACON_ELEVATION),
                                                                   cPerspCamOrient);
-         m_pcPerspectiveCameraEquippedEntity = new CPerspectiveCameraEquippedEntity(this,
-                                                                                    "perspective_camera_0",
-                                                                                    ToRadians(cAperture),
-                                                                                    fPerspCamFocalLength,
-                                                                                    fPerspCamRange,
-                                                                                    640, 480,
-                                                                                    cPerspCamAnchor);
+         m_pcPerspectiveCameraEquippedEntity =
+            new CPerspectiveCameraEquippedEntity(this,
+                                                 "perspective_camera_0",
+                                                 ToRadians(cAperture),
+                                                 fPerspCamFocalLength,
+                                                 fPerspCamRange,
+                                                 640, 480,
+                                                 cPerspCamAnchor);
          AddComponent(*m_pcPerspectiveCameraEquippedEntity);
          /* Turret equipped entity */
-         m_pcTurretEntity = new CFootBotTurretEntity(this, "turret_0");
+         m_pcTurretEntity = new CFootBotTurretEntity(this, "turret_0", cTurretAnchor);
          AddComponent(*m_pcTurretEntity);
-         m_pcEmbodiedEntity->AddAnchor("turret", CVector3(0.0f, 0.0f, GRIPPER_ELEVATION));
          /* WiFi equipped entity */
          m_pcWiFiEquippedEntity = new CWiFiEquippedEntity(this, "wifi_0");
          AddComponent(*m_pcWiFiEquippedEntity);
@@ -446,6 +449,7 @@ namespace argos {
 #define UPDATE(COMPONENT) if(COMPONENT->IsEnabled()) COMPONENT->Update();
 
    void CFootBotEntity::UpdateComponents() {
+      /* Update only the components that might change */
       UPDATE(m_pcDistanceScannerEquippedEntity);
       UPDATE(m_pcTurretEntity);
       UPDATE(m_pcGripperEquippedEntity);

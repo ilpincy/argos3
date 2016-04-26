@@ -42,7 +42,7 @@ namespace argos {
       CLightSensorEquippedEntity(CComposableEntity* pc_parent);
 
       CLightSensorEquippedEntity(CComposableEntity* pc_parent,
-                                     const std::string& str_id);
+                                 const std::string& str_id);
 
       virtual ~CLightSensorEquippedEntity();
 

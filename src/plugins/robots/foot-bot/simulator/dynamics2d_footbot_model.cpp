@@ -23,7 +23,7 @@ namespace argos {
    static const Real FOOTBOT_HEIGHT                   = 0.146899733f;
 
    static const Real FOOTBOT_MAX_FORCE                = 15.f;
-   static const Real FOOTBOT_MAX_TORQUE               = 15.f;
+   static const Real FOOTBOT_MAX_TORQUE               = 150.f;
 
    enum FOOTBOT_WHEELS {
       FOOTBOT_LEFT_WHEEL = 0,
@@ -265,7 +265,7 @@ namespace argos {
          /* Position control mode is implemented using a PD controller */
          case MODE_POSITION_CONTROL: {
             Real fCurRotErr = NormalizedDifference(
-               m_cFootBotEntity.GetTurretEntity().GetRotation(),
+               m_cFootBotEntity.GetTurretEntity().GetDesiredRotation(),
                NormalizedDifference(
                   CRadians(m_ptActualGripperBody->a),
                   CRadians(m_ptActualBaseBody->a))).GetValue();
@@ -279,7 +279,7 @@ namespace argos {
          case MODE_SPEED_CONTROL:
             m_ptControlGripperBody->w =
                m_cDiffSteering.GetAngularVelocity() +
-               m_cFootBotEntity.GetTurretEntity().GetRotationSpeed();
+               m_cFootBotEntity.GetTurretEntity().GetDesiredRotationSpeed();
             break;
          case MODE_OFF:
          case MODE_PASSIVE:
@@ -348,6 +348,11 @@ namespace argos {
       s_anchor.Position.SetX(m_ptActualGripperBody->p.x);
       s_anchor.Position.SetY(m_ptActualGripperBody->p.y);
       s_anchor.Orientation.FromAngleAxis(CRadians(m_ptActualGripperBody->a), CVector3::Z);
+      s_anchor.OffsetOrientation.FromAngleAxis(
+         NormalizedDifference(
+            CRadians(m_ptActualGripperBody->a),
+            CRadians(m_ptActualBaseBody->a)),
+         CVector3::Z);
    }
 
    /****************************************/

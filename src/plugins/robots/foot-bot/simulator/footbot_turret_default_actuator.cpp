@@ -14,7 +14,7 @@ namespace argos {
    /****************************************/
 
    CFootBotTurretDefaultActuator::CFootBotTurretDefaultActuator() :
-      m_fDesiredRotationSpeed(0.0f),
+      m_pcTurretEntity(NULL),
       m_unDesiredMode(CFootBotTurretEntity::MODE_OFF) {}
 
    /****************************************/
@@ -29,14 +29,14 @@ namespace argos {
    /****************************************/
 
    void CFootBotTurretDefaultActuator::SetRotation(const CRadians& c_angle) {
-      m_cDesiredRotation = c_angle;
+      m_pcTurretEntity->SetDesiredRotation(c_angle);
    }
 
    /****************************************/
    /****************************************/
 
    void CFootBotTurretDefaultActuator::SetRotationSpeed(SInt32 n_speed_pulses) {
-      m_fDesiredRotationSpeed = RPM_TO_RADIANS_PER_SEC * n_speed_pulses;
+      m_pcTurretEntity->SetDesiredRotationSpeed(RPM_TO_RADIANS_PER_SEC * n_speed_pulses);
    }
 
    /****************************************/
@@ -51,20 +51,12 @@ namespace argos {
 
    void CFootBotTurretDefaultActuator::Update() {
       m_pcTurretEntity->SetMode(m_unDesiredMode);
-      if(m_unDesiredMode == CFootBotTurretEntity::MODE_POSITION_CONTROL) {
-         m_pcTurretEntity->SetRotation(m_cDesiredRotation);
-      }
-      else if(m_unDesiredMode == CFootBotTurretEntity::MODE_SPEED_CONTROL) {
-         m_pcTurretEntity->SetRotationSpeed(m_fDesiredRotationSpeed);
-      }
    }
 
    /****************************************/
    /****************************************/
 
    void CFootBotTurretDefaultActuator::Reset() {
-      m_cDesiredRotation = CRadians::ZERO;
-      m_fDesiredRotationSpeed = 0.0f;
       m_unDesiredMode = CFootBotTurretEntity::MODE_OFF;
    }
 

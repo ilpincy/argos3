@@ -41,10 +41,7 @@ namespace argos {
    private:
 
       CFootBotTurretEntity* m_pcTurretEntity;
-
-      CRadians m_cDesiredRotation;
-      Real     m_fDesiredRotationSpeed;
-      UInt8    m_unDesiredMode;
+      UInt32 m_unDesiredMode;
 
    };
 
