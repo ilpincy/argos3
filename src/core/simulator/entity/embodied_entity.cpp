@@ -167,6 +167,8 @@ namespace argos {
    /****************************************/
 
    void CEmbodiedEntity::DisableAnchor(const std::string& str_id) {
+      /* Cannot disable the origin anchor */
+      if(str_id == "origin") return;
       /* Lookup the anchor id */
       std::vector<SAnchor*>::iterator it = std::find(m_vecEnabledAnchors.begin(),
                                                      m_vecEnabledAnchors.end(),
