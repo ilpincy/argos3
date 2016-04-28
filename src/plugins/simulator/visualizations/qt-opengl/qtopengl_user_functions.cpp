@@ -89,6 +89,27 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   CQTOpenGLMainWindow& CQTOpenGLUserFunctions::GetMainWindow() {
+      return *m_pcQTOpenGLMainWindow;
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CQTOpenGLUserFunctions::SetMainWindow(CQTOpenGLMainWindow& c_main_win) {
+      m_pcQTOpenGLMainWindow = &c_main_win;
+   }
+
+   /****************************************/
+   /****************************************/
+
+   CQTOpenGLWidget& CQTOpenGLUserFunctions::GetQTOpenGLWidget() {
+      return m_pcQTOpenGLMainWindow->GetOpenGLWidget();
+   }
+
+   /****************************************/
+   /****************************************/
+
    void CQTOpenGLUserFunctions::SetColor(const CColor& c_color) {
       const GLfloat pfColor[]     = {
          c_color.GetRed()   / 255.0f,

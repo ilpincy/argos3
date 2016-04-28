@@ -177,17 +177,19 @@ namespace argos {
        * Returns the QTOpenGL main window.
        * @return The QTOpenGL main window.
        */
-      inline CQTOpenGLMainWindow& GetMainWindow() {
-         return *m_pcQTOpenGLMainWindow;
-      }
+      CQTOpenGLMainWindow& GetMainWindow();
 
       /**
        * Sets the QTOpenGL main window for these user functions.
        * @param c_widget The QTOpenGL main window.
        */
-      inline void SetMainWindow(CQTOpenGLMainWindow& c_main_win) {
-         m_pcQTOpenGLMainWindow = &c_main_win;
-      }
+      void SetMainWindow(CQTOpenGLMainWindow& c_main_win);
+
+      /**
+       * Returns the QTOpenGLWidget.
+       * @return The QTOpenGLWidget.
+       */
+      CQTOpenGLWidget& GetQTOpenGLWidget();
 
       /**
        * Sets the current drawing color.
