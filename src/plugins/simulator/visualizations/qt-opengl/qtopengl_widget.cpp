@@ -58,7 +58,6 @@ namespace argos {
       , m_cJoystick(this)
 #endif
    {
-      m_cUserFunctions.SetOpenGLWidget(*this);
       setAutoFillBackground(false);
       QSizePolicy cSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
       cSizePolicy.setHeightForWidth(true);

@@ -140,6 +140,8 @@ namespace argos {
       CreateCameraActions();
       // CreatePOVRayActions();
       CreateHelpActions();
+      /* Create user functions */
+      CreateUserFunctions(t_tree);
       /* Create the central widget */
       CreateOpenGLWidget(t_tree);
       /* Create menus */
@@ -460,8 +462,6 @@ namespace argos {
    /****************************************/
 
    void CQTOpenGLMainWindow::CreateOpenGLWidget(TConfigurationNode& t_tree) {
-      /* Create user functions */
-      m_pcUserFunctions = CreateUserFunctions(t_tree);
       /* Initialize OpenGL settings */
       QGLFormat cGLFormat;
       cGLFormat.setSampleBuffers(true);
@@ -500,6 +500,13 @@ namespace argos {
       pcQTOpenGLLayout->addWidget(m_pcOpenGLWidget);
       pcPlaceHolder->setLayout(pcQTOpenGLLayout);
       setCentralWidget(pcPlaceHolder);
+      /* Initialize the user functions */
+      if(NodeExists(t_tree, "user_functions")) {
+         /* Use the passed user functions */
+         /* Get data from XML */
+         TConfigurationNode tNode = GetNode(t_tree, "user_functions");
+         m_pcUserFunctions->Init(tNode);
+      }
    }
 
    /****************************************/
@@ -616,7 +623,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   CQTOpenGLUserFunctions* CQTOpenGLMainWindow::CreateUserFunctions(TConfigurationNode& t_tree) {
+   void CQTOpenGLMainWindow::CreateUserFunctions(TConfigurationNode& t_tree) {
       /* Parse XML for user functions */
       if(NodeExists(t_tree, "user_functions")) {
          /* Use the passed user functions */
@@ -631,7 +638,8 @@ namespace argos {
                CDynamicLoading::LoadLibrary(strLibrary);
             }
             /* Create the user functions */
-            return CFactory<CQTOpenGLUserFunctions>::New(strLabel);
+            m_pcUserFunctions = CFactory<CQTOpenGLUserFunctions>::New(strLabel);
+            m_pcUserFunctions->SetMainWindow(*this);
          }
          catch(CARGoSException& ex) {
             THROW_ARGOSEXCEPTION_NESTED("Failed opening QTOpenGL user function library", ex);
@@ -639,7 +647,8 @@ namespace argos {
       }
       else {
          /* Use standard (empty) user functions */
-         return new CQTOpenGLUserFunctions;
+         m_pcUserFunctions = new CQTOpenGLUserFunctions;
+         m_pcUserFunctions->SetMainWindow(*this);
       }
    }
 
@@ -647,6 +656,7 @@ namespace argos {
    /****************************************/
 
    void CQTOpenGLMainWindow::closeEvent(QCloseEvent* pc_event) {
+      m_pcUserFunctions->Destroy();
       WriteSettings();
       pc_event->accept();
    }
@@ -838,6 +848,7 @@ namespace argos {
       m_pcDockLogErrBuffer->setHtml("<b>[t=0]</b> LogErr restarted.");
       /* Call OpenGL widget */
       m_pcOpenGLWidget->ResetExperiment();
+      m_pcUserFunctions->Reset();
       /* Change state and emit signal */
       m_eExperimentState = EXPERIMENT_INITIALIZED;
       emit ExperimentReset();

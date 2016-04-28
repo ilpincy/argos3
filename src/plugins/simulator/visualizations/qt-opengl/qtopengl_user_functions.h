@@ -14,6 +14,8 @@ namespace argos {
 
 class QPainter;
 
+#include <argos3/core/utility/configuration/base_configurable_resource.h>
+#include <argos3/plugins/simulator/visualizations/qt-opengl/qtopengl_main_window.h>
 #include <argos3/plugins/simulator/visualizations/qt-opengl/qtopengl_widget.h>
 #include <argos3/core/utility/datatypes/color.h>
 #include <argos3/core/utility/math/quaternion.h>
@@ -69,7 +71,7 @@ namespace argos {
     * usually its base.
     * </p>
     */
-   class CQTOpenGLUserFunctions {
+   class CQTOpenGLUserFunctions : public CBaseConfigurableResource {
 
    public:
 
@@ -82,6 +84,10 @@ namespace argos {
        * Class destructor.
        */
       virtual ~CQTOpenGLUserFunctions();
+
+      virtual void Init(TConfigurationNode& t_tree) {}
+      virtual void Reset() {}
+      virtual void Destroy() {}
 
       /**
        * Called when a key press event occurs.
@@ -168,19 +174,19 @@ namespace argos {
       virtual void DrawOverlay(QPainter& c_painter) {}
 
       /**
-       * Returns the QTOpenGL widget.
-       * @return The QTOpenGL widget.
+       * Returns the QTOpenGL main window.
+       * @return The QTOpenGL main window.
        */
-      inline CQTOpenGLWidget& GetOpenGLWidget() {
-         return *m_pcQTOpenGLWidget;
+      inline CQTOpenGLMainWindow& GetMainWindow() {
+         return *m_pcQTOpenGLMainWindow;
       }
 
       /**
-       * Sets the QTOpenGL widget for these user functions.
-       * @param c_widget The QTOpenGL widget.
+       * Sets the QTOpenGL main window for these user functions.
+       * @param c_widget The QTOpenGL main window.
        */
-      inline void SetOpenGLWidget(CQTOpenGLWidget& c_widget) {
-         m_pcQTOpenGLWidget = &c_widget;
+      inline void SetMainWindow(CQTOpenGLMainWindow& c_main_win) {
+         m_pcQTOpenGLMainWindow = &c_main_win;
       }
 
       /**
@@ -379,9 +385,9 @@ namespace argos {
    private:
 
       /**
-       * A pointer to the CQTOpenGLWidget.
+       * A pointer to the CQTOpenGLMainWindow.
        */
-      CQTOpenGLWidget* m_pcQTOpenGLWidget;
+      CQTOpenGLMainWindow* m_pcQTOpenGLMainWindow;
 
    };
 

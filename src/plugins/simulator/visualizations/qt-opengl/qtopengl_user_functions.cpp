@@ -37,7 +37,7 @@ namespace argos {
 
    CQTOpenGLUserFunctions::CQTOpenGLUserFunctions() :
       m_vecFunctionHolders(1),
-      m_pcQTOpenGLWidget(NULL) {
+      m_pcQTOpenGLMainWindow(NULL) {
       m_cThunks.Add<CEntity>((TThunk)NULL);
    }
 
@@ -55,35 +55,35 @@ namespace argos {
    /****************************************/
 
    void CQTOpenGLUserFunctions::KeyPressed(QKeyEvent* pc_event) {
-      m_pcQTOpenGLWidget->KeyPressed(pc_event);
+      m_pcQTOpenGLMainWindow->GetOpenGLWidget().KeyPressed(pc_event);
    }
 
    /****************************************/
    /****************************************/
 
    void CQTOpenGLUserFunctions::KeyReleased(QKeyEvent* pc_event) {
-      m_pcQTOpenGLWidget->KeyReleased(pc_event);
+      m_pcQTOpenGLMainWindow->GetOpenGLWidget().KeyReleased(pc_event);
    }
    
    /****************************************/
    /****************************************/
 
    CEntity* CQTOpenGLUserFunctions::GetSelectedEntity() {
-      return m_pcQTOpenGLWidget->GetSelectedEntity();
+      return m_pcQTOpenGLMainWindow->GetOpenGLWidget().GetSelectedEntity();
    }
 
    /****************************************/
    /****************************************/
 
    void CQTOpenGLUserFunctions::SelectEntity(CEntity& c_entity) {
-      m_pcQTOpenGLWidget->SelectEntity(c_entity);
+      m_pcQTOpenGLMainWindow->GetOpenGLWidget().SelectEntity(c_entity);
    }
 
    /****************************************/
    /****************************************/
 
    void CQTOpenGLUserFunctions::DeselectEntity() {
-      m_pcQTOpenGLWidget->DeselectEntity();
+      m_pcQTOpenGLMainWindow->GetOpenGLWidget().DeselectEntity();
    }
 
    /****************************************/
@@ -371,10 +371,12 @@ namespace argos {
       glColor3ub(c_color.GetRed(),
                  c_color.GetGreen(),
                  c_color.GetBlue());
-      GetOpenGLWidget().renderText(c_position.GetX(),
-                                   c_position.GetY(),
-                                   c_position.GetZ(),
-                                   str_text.c_str());
+      GetMainWindow().
+         GetOpenGLWidget().
+         renderText(c_position.GetX(),
+                    c_position.GetY(),
+                    c_position.GetZ(),
+                    str_text.c_str());
       /* Restore saved attributes */
       glPopAttrib();
    }

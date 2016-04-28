@@ -88,7 +88,7 @@ namespace argos {
       void CreateLogMessageDock();
       void CreateConnections();
 
-      CQTOpenGLUserFunctions* CreateUserFunctions(TConfigurationNode& t_tree);
+      void CreateUserFunctions(TConfigurationNode& t_tree);
 
       virtual void closeEvent(QCloseEvent* pc_event);
 
