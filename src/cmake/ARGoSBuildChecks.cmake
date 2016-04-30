@@ -11,14 +11,6 @@ macro(CHECK_GCC MIN_VERSION)
   endif(GCC_VERSION VERSION_GREATER ${MIN_VERSION} OR GCC_VERSION VERSION_EQUAL ${MIN_VERSION})
 endmacro(CHECK_GCC)
 
-if(APPLE)
-  # On Apple it must be >= 4.2.1
-  check_gcc(4.2.1)
-else(APPLE)
-  # On Linux it must be >= 4.3
-  check_gcc(4.3)
-endif(APPLE)
-
 #
 # Set variables depending on current compiler
 #
@@ -30,6 +22,14 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
   # using GCC
   set(ARGOS_START_LIB_GROUP -Wl,--start-group)
   set(ARGOS_END_LIB_GROUP -Wl,--end-group)
+
+  if(APPLE)
+    # On Apple it must be >= 4.2.1
+    check_gcc(4.2.1)
+  else(APPLE)
+    # On Linux it must be >= 4.3
+    check_gcc(4.3)
+  endif(APPLE)
 endif()
 
 #
@@ -37,7 +37,7 @@ endif()
 #
 if(ARGOS_DYNAMIC_LIBRARY_LOADING)
   find_package(DLFCN)
-  if(NOT DLFCN_FOUND)  
+  if(NOT DLFCN_FOUND)
     message(FATAL_ERROR "Required library dl not found.")
   endif(NOT DLFCN_FOUND)
   include_directories(${DLFCN_INCLUDE_DIR})
@@ -49,7 +49,7 @@ endif(ARGOS_DYNAMIC_LIBRARY_LOADING)
 #
 if(ARGOS_BUILD_FOR_SIMULATOR)
   find_package(Pthreads)
-  if(NOT PTHREADS_FOUND)  
+  if(NOT PTHREADS_FOUND)
     message(FATAL_ERROR "Required library pthreads not found.")
   endif(NOT PTHREADS_FOUND)
   add_definitions(${PTHREADS_DEFINITIONS})
