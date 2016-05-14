@@ -58,6 +58,12 @@ namespace argos {
          m_cEnd = c_end;
       }
 
+      inline void SetLength(Real f_length) {
+          CVector3 c_direction;
+          GetDirection(c_direction);
+          Set(m_cStart, c_direction, f_length);
+      }
+
       inline void Set(const CVector3& c_start, const CVector3& c_end) {
          m_cStart = c_start;
          m_cEnd = c_end;
