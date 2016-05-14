@@ -25,6 +25,16 @@
 
 namespace argos {
 
+   /**
+   Custom adaptation to C++11 standard
+   */
+#if __cplusplus >= 201103L
+   template <typename T>
+   using auto_ptr = std::unique_ptr<T>;
+#else
+   using std::auto_ptr;
+#endif
+
    /****************************************/
    /****************************************/
 
@@ -75,7 +85,7 @@ namespace argos {
    /****************************************/
 
    CSimulator& CSimulator::GetInstance() {
-      static std::auto_ptr<CSimulator> pcSimulatorInstance(new CSimulator());
+      static auto_ptr<CSimulator> pcSimulatorInstance(new CSimulator());
       return *(pcSimulatorInstance.get());
    }
 
