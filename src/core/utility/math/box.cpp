@@ -19,6 +19,16 @@ namespace argos {
       cRayStart -= cBoxCenter;
       CVector3 cRayEnd = c_ray.GetEnd();
       cRayEnd -= cBoxCenter;
+      /* Direction of the ray */
+      CVector3 cRayDir;
+      c_ray.GetDirection(cRayDir);
+      /* Vector between the ray origin and box center */
+      CVector3 cRayOrig2BoxCenter = cBoxCenter - cRayStart;
+      /* Scalar distance between the ray origin and point in box
+       * No intersection if the ray intersects in the opposite direction */
+      if( cRayOrig2BoxCenter.DotProduct(cRayDir) < 0.0f ){
+         return false;
+      }
       /* Calculate inverse of ray direction */
       CVector3 cRayInvDir = cRayEnd;
       cRayInvDir -= cRayStart;
