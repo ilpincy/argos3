@@ -964,8 +964,9 @@ namespace argos {
          const CQTOpenGLCamera::SSettings& sSettings = cCamera.GetSetting(i);
          const CVector3& cPos = sSettings.Position;
          const CVector3& cLookAt = sSettings.Target;
+         const CVector3& cUp = sSettings.Up;
          strResult.append(
-            QString("   <placement idx=\"%1\" position=\"%2,%3,%4\" look_at=\"%5,%6,%7\" lens_focal_length=\"%8\" />\n")
+            QString("   <placement idx=\"%1\" position=\"%2,%3,%4\" look_at=\"%5,%6,%7\" up=\"%8,%9,%10\" lens_focal_length=\"%11\" />\n")
             .arg(i)
             .arg(cPos.GetX())
             .arg(cPos.GetY())
@@ -973,6 +974,9 @@ namespace argos {
             .arg(cLookAt.GetX())
             .arg(cLookAt.GetY())
             .arg(cLookAt.GetZ())
+            .arg(cUp.GetX())
+            .arg(cUp.GetY())
+            .arg(cUp.GetZ())
             .arg(sSettings.LensFocalLength * 1000.0f));
       }
       strResult.append("</camera>\n");

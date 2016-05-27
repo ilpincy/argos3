@@ -51,22 +51,38 @@ namespace argos {
       GetNodeAttribute(t_tree, "look_at", Target);
       /* Calculate the Forward vector */
       Forward = (Target - Position).Normalize();
-      /* Calculate the Left vector
-         It is located on a plane parallel to XY
-         It is perpendicular to the projection of Forward on that plane
-      */
-      if(Forward.GetX() != 0 && Forward.GetY() != 0) {
-         CVector2 cLeftXY(Forward.GetX(), Forward.GetY());
-         cLeftXY.Perpendicularize();
-         Left.Set(cLeftXY.GetX(), cLeftXY.GetY(), 0.0f);
-         Left.Normalize();
+      /* Was the up vector specified? */
+      if(!NodeAttributeExists(t_tree, "up")) {
+         /* Calculate the Left vector
+            It is located on a plane parallel to XY
+            It is perpendicular to the projection of Forward on that plane
+         */
+         if(Forward.GetX() != 0 || Forward.GetY() != 0) {
+            CVector2 cLeftXY(Forward.GetX(), Forward.GetY());
+            cLeftXY.Perpendicularize();
+            Left.Set(cLeftXY.GetX(), cLeftXY.GetY(), 0.0f);
+            Left.Normalize();
+         }
+         else {
+            LOGERR << "[WARNING] The given camera position is ambiguous, "
+                   << "and a standard attitude has been used to calculate it. "
+                   << "Consider specifying the \"up\" vector in the .argos file "
+                   << "for more precise placement."
+                   << std::endl;
+            Left.Set(0.0f, 1.0f, 0.0f);
+         }
+         /* Calculate the Up vector with a cross product */
+         Up = Forward;
+         Up.CrossProduct(Left).Normalize();
       }
       else {
-         Left.Set(0.0f, 1.0f, 0.0f);
+         /* Get Up vector */
+         GetNodeAttribute(t_tree, "up", Up);
+         Up.Normalize();
+         /* Calculate the Left vector with a cross product */
+         Left = Up;
+         Left.CrossProduct(Forward).Normalize();
       }
-      /* Calculate the Up vector with a cross product */
-      Up = Forward;
-      Up.CrossProduct(Left).Normalize();
       /* Get optional optics parameters */
       Real fValue;
       GetNodeAttributeOrDefault<Real>(t_tree, "lens_focal_length", fValue, 20.0f);
