@@ -57,22 +57,6 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
 endif(ARGOS_BUILD_FOR_SIMULATOR)
 
 #
-# Check for GSL
-# It is required only when compiling the simulator
-#
-find_package(GSL)
-if(GSL_FOUND)
-  set(ARGOS_WITH_GSL ON)
-  add_definitions(${CMAKE_GSL_CXX_FLAGS})
-  include_directories(${GSL_INCLUDE_DIR})
-  link_directories(${GSL_LINK_DIRECTORIES})
-else(GSL_FOUND)
-  if(ARGOS_BUILD_FOR_SIMULATOR)
-    message(FATAL_ERROR "When compiling the ARGoS simulator, GSL is required")
-  endif(ARGOS_BUILD_FOR_SIMULATOR)
-endif(GSL_FOUND)
-
-#
 # Check for FreeImage
 # It is required only when compiling the simulator
 #

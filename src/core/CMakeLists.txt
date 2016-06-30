@@ -208,10 +208,6 @@ endif(ARGOS_DYNAMIC_LIBRARY_LOADING)
 if(PTHREADS_FOUND)
   target_link_libraries(argos3core_${ARGOS_BUILD_FOR} ${PTHREADS_LIBRARY})
 endif(PTHREADS_FOUND)
-# Link GSL library if necessary
-if(GSL_FOUND)
-  target_link_libraries(argos3core_${ARGOS_BUILD_FOR} ${GSL_LIBRARIES})
-endif(GSL_FOUND)
 # Link FreeImage library if necessary
 if(FREEIMAGE_FOUND)
   target_link_libraries(argos3core_${ARGOS_BUILD_FOR} ${FREEIMAGE_LIBRARIES})
@@ -280,7 +276,6 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
   install(
     FILES
     ${CMAKE_SOURCE_DIR}/cmake/ARGoSCheckQTOpenGL.cmake
-    ${CMAKE_SOURCE_DIR}/cmake/FindGSL.cmake
     ${CMAKE_SOURCE_DIR}/cmake/FindLua52.cmake
     DESTINATION
     share/argos3/cmake)

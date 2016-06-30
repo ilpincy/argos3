@@ -15,14 +15,7 @@ namespace argos {
 
 #include <argos3/core/utility/math/angles.h>
 #include <argos3/core/utility/math/range.h>
-
 #include <map>
-
-#ifdef ARGOS_WITH_GSL
-#   include <gsl/gsl_rng.h>
-#else
-#   include <cstdlib>
-#endif
 
 namespace argos {
 
@@ -104,8 +97,7 @@ namespace argos {
           * @param un_seed the seed of the RNG.
           * @param str_type the type of RNG to use. By default, Mersenne Twister is used. For a list of available RNG types, see GetRNGTypes().
           */
-         CRNG(UInt32 un_seed,
-              const std::string& str_type = "mt19937");
+         CRNG(UInt32 un_seed);
 
          /**
           * Class copy constructor.
@@ -137,22 +129,6 @@ namespace argos {
          }
 
          /**
-          * Returns the type of this RNG.
-          * @return the type of this RNG.
-          */
-         inline std::string GetType() const throw() {
-            return m_strType;
-         }
-
-         /**
-          * Sets the type of this RNG.
-          * @param str_type the new type for this RNG.
-          */
-         inline void SetType(const std::string& str_type) {
-            m_strType = str_type;
-         }
-
-         /**
           * Reset the RNG.
           * Reset the RNG to the current seed value.
           */
@@ -164,36 +140,42 @@ namespace argos {
           * @returns a random value from a Bernoulli distribution (<tt>true</tt>/<tt>false</tt>).
           */
          bool Bernoulli(Real f_true = 0.5);
+         
          /**
           * Returns a random value from a uniform distribution.
           * @param c_range the range of values to draw one from.
           * @return a random value from the range [min,max).
           */
          CRadians Uniform(const CRange<CRadians>& c_range);
+         
          /**
           * Returns a random value from a uniform distribution.
           * @param c_range the range of values to draw one from.
           * @return a random value from the range [min,max).
           */
          Real Uniform(const CRange<Real>& c_range);
+         
          /**
           * Returns a random value from a uniform distribution.
           * @param c_range the range of values to draw one from.
           * @return a random value from the range [min,max).
           */
          SInt32 Uniform(const CRange<SInt32>& c_range);
+         
          /**
           * Returns a random value from a uniform distribution.
           * @param c_range the range of values to draw one from.
           * @return a random value from the range [min,max).
           */
          UInt32 Uniform(const CRange<UInt32>& c_range);
+         
          /**
           * Returns a random value from an exponential distribution.
           * @param f_mean the mean of the exponential distribution.
           * @return a random value from an exponential distribution.
           */
          Real Exponential(Real f_mean);
+         
          /**
           * Returns a random value from a Gaussian distribution.
           * @param f_std_dev the standard deviation of the Gaussian distribution.
@@ -201,6 +183,7 @@ namespace argos {
           * @return a random value from the Gaussian distribution.
           */
          Real Gaussian(Real f_std_dev, Real f_mean = 0.0f);
+         
          /**
           * Returns a random value from a Rayleigh distribution.
           * @param f_sigma parameter sigma of the distribution
@@ -218,20 +201,17 @@ namespace argos {
 
       private:
 
-         void CreateRNG();
-         void DisposeRNG();
+         /*
+          * Generates a random 32bit unsigned integer.
+          * Used internally by all other functions.
+          */
+         UInt32 Uniform32bit();
 
       private:
 
          UInt32 m_unSeed;
-         std::string m_strType;
-#ifdef ARGOS_WITH_GSL
-         gsl_rng* m_ptRNG;
-#else
-         random_data* m_ptRNG;
-         char* m_pchRNGState;
-#endif
-         CRange<UInt32>* m_pcIntegerRNGRange;
+         UInt32* m_punState;
+         SInt32 m_nIndex;
 
       };
 
@@ -288,10 +268,9 @@ namespace argos {
 
          /**
           * Creates a new RNG inside this category.
-          * @param str_type the type of RNG to use. By default, Mersenne Twister is used. For a list of available RNG types, see GetRNGTypes().
           * @return the pointer to a new RNG inside this category.
           */
-         CRNG* CreateRNG(const std::string& str_type = "mt19937");
+         CRNG* CreateRNG();
 
          /**
           * Resets the RNGs in this category.
@@ -347,11 +326,9 @@ namespace argos {
       /**
        * Creates a new RNG inside the given category.
        * @param str_category the id of the category.
-       * @param str_type the type of RNG to use. By default, Mersenne Twister is used. For a list of available RNG types, see GetRNGTypes().
        * @return the pointer to a new RNG inside this category.
        */
-      static CRNG* CreateRNG(const std::string& str_category,
-                             const std::string& str_type = "mt19937");
+      static CRNG* CreateRNG(const std::string& str_category);
 
       /**
        * Returns the seed of the wanted category.
@@ -375,25 +352,9 @@ namespace argos {
        */
       static void Reset();
 
-      /**
-       * Returns the list of available RNG types.
-       * Internally, GSL is used to manage random numbers, so the available types
-       * correspond to those available in your installed version of GSL.
-       * @return the list of available RNG types.       
-       */
-#ifdef ARGOS_WITH_GSL
-      inline static const gsl_rng_type** GetRNGTypes() {
-         return m_pptRNGTypes;
-      }
-#endif
-
    private:
 
       static std::map<std::string, CCategory*> m_mapCategories;
-#ifdef ARGOS_WITH_GSL
-      static const gsl_rng_type** m_pptRNGTypes;
-#endif
-
    };
 
 }

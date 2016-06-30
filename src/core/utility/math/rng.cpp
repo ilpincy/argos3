@@ -13,21 +13,20 @@
 #include <limits>
 #include <cmath>
 
-#ifdef ARGOS_WITH_GSL
-#   include <gsl/gsl_randist.h>
-#endif
-
 namespace argos {
 
    /****************************************/
    /****************************************/
 
-   std::map<std::string, CRandom::CCategory*> CRandom::m_mapCategories;
+   /* Period parameters */
+   static const UInt32 N = 624;
+   static const UInt32 M = 397;
+   static const UInt32 MATRIX_A = 0x9908b0dfUL;   /* constant vector a */
+   static const UInt32 UPPER_MASK = 0x80000000UL; /* most significant w-r bits */
+   static const UInt32 LOWER_MASK = 0x7fffffffUL; /* least significant r bits */
+   static const CRange<UInt32> INT_RANGE = CRange<UInt32>(0, 0xFFFFFFFFUL);
 
-#ifdef ARGOS_WITH_GSL
-   /* Creates an array of all the available generator types, terminated by a null pointer */
-   const gsl_rng_type** CRandom::m_pptRNGTypes = gsl_rng_types_setup();
-#endif
+   std::map<std::string, CRandom::CCategory*> CRandom::m_mapCategories;
 
    /* Checks that a category exists. It internally creates an iterator that points to the category, if found.  */
 #define CHECK_CATEGORY(category)                                        \
@@ -39,16 +38,11 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   CRandom::CRNG::CRNG(UInt32 un_seed,
-                       const std::string& str_type) :
+   CRandom::CRNG::CRNG(UInt32 un_seed) :
       m_unSeed(un_seed),
-      m_strType(str_type),
-      m_ptRNG(NULL),
-#ifndef ARGOS_WITH_GSL
-      m_pchRNGState(NULL),
-#endif
-      m_pcIntegerRNGRange(NULL) {
-      CreateRNG();
+      m_punState(new UInt32[N]),
+      m_nIndex(N+1) {
+      Reset();
    }
    
    /****************************************/
@@ -56,140 +50,53 @@ namespace argos {
    
    CRandom::CRNG::CRNG(const CRNG& c_rng) :
       m_unSeed(c_rng.m_unSeed),
-      m_strType(c_rng.m_strType),
-      m_ptRNG(NULL),
-#ifndef ARGOS_WITH_GSL
-      m_pchRNGState(NULL),
-#endif
-      m_pcIntegerRNGRange(new CRange<UInt32>(*c_rng.m_pcIntegerRNGRange)) {
-      /* Clone RNG of original */
-#ifdef ARGOS_WITH_GSL
-      m_ptRNG = gsl_rng_clone(c_rng.m_ptRNG);
-#else
-      m_ptRNG = new random_data;
-      ::memset(m_ptRNG, 0, sizeof(random_data));
-      m_pchRNGState = new char[256];
-      SInt32 nError = initstate_r(m_unSeed, m_pchRNGState, 256, m_ptRNG);
-      if(nError != 0) {
-         THROW_ARGOSEXCEPTION("Unable to create random number generator (initstate_r returned " << nError << ").");
-      }
-      ::memcpy(m_pchRNGState, c_rng.m_pchRNGState, 256);
-      setstate_r(m_pchRNGState, m_ptRNG);
-#endif
+      m_punState(new UInt32[N]),
+      m_nIndex(c_rng.m_nIndex) {
+      ::memcpy(m_punState, c_rng.m_punState, N * sizeof(UInt32));
    }
 
    /****************************************/
    /****************************************/
 
    CRandom::CRNG::~CRNG() {
-      DisposeRNG();
-   }
-
-   /****************************************/
-   /****************************************/
-
-   void CRandom::CRNG::CreateRNG() {
-#ifdef ARGOS_WITH_GSL
-      /* Look for RNG type in the RNG type list */
-      bool bFound = false;
-      const gsl_rng_type** pptRNGType = GetRNGTypes();
-      while((!bFound) && (pptRNGType != NULL)) {
-         if(m_strType == (*pptRNGType)->name) {
-            bFound = true;
-         }
-         else {
-            ++pptRNGType;
-         }
-      }
-      if(!bFound) {
-         /* RNG type not found, error! */
-         THROW_ARGOSEXCEPTION("Unknown random number generator type '" << m_strType << "'.");
-      }
-      /* We found the wanted RNG type, create the actual RNG */
-      m_ptRNG = gsl_rng_alloc(*pptRNGType);
-      gsl_rng_set(m_ptRNG, m_unSeed);
-      /* Initialize RNG range */
-      m_pcIntegerRNGRange = new CRange<UInt32>(gsl_rng_min(m_ptRNG),
-                                               gsl_rng_max(m_ptRNG));
-#else
-      /* Initialize RNG */
-      m_ptRNG = new random_data;
-      ::memset(m_ptRNG, 0, sizeof(random_data));
-      m_pchRNGState = new char[256];
-      SInt32 nError = initstate_r(m_unSeed, m_pchRNGState, 256, m_ptRNG);
-      if(nError != 0) {
-         THROW_ARGOSEXCEPTION("Unable to create random number generator (initstate_r returned " << nError << ").");
-      }
-      /* Initialize RNG range */
-      m_pcIntegerRNGRange = new CRange<UInt32>(0, RAND_MAX);
-#endif
-   }
-
-   /****************************************/
-   /****************************************/
-
-   void CRandom::CRNG::DisposeRNG() {
-#ifdef ARGOS_WITH_GSL
-      gsl_rng_free(m_ptRNG);
-#else
-      delete m_ptRNG;
-      delete[] m_pchRNGState;
-#endif
-      delete m_pcIntegerRNGRange;
+      delete[] m_punState;
    }
 
    /****************************************/
    /****************************************/
 
    void CRandom::CRNG::Reset() {
-#ifdef ARGOS_WITH_GSL
-      gsl_rng_set(m_ptRNG, m_unSeed);
-#else
-      initstate_r(m_unSeed, m_pchRNGState, 256, m_ptRNG);
-#endif
+      m_punState[0]= m_unSeed & 0xffffffffUL;
+      for (m_nIndex = 1; m_nIndex < N; ++m_nIndex) {
+         m_punState[m_nIndex] = 
+            (1812433253UL * (m_punState[m_nIndex-1] ^ (m_punState[m_nIndex-1] >> 30)) + m_nIndex); 
+         m_punState[m_nIndex] &= 0xffffffffUL;
+      }
    }
    
    /****************************************/
    /****************************************/
 
    bool CRandom::CRNG::Bernoulli(Real f_true) {
-#ifdef ARGOS_WITH_GSL
-      return gsl_rng_uniform(m_ptRNG) < f_true;
-#else
-      UInt32 unNumber;
-      random_r(m_ptRNG, reinterpret_cast<int32_t*>(&unNumber));
-      return m_pcIntegerRNGRange->NormalizeValue(unNumber) < f_true;
-#endif
+      return Uniform32bit() < f_true * INT_RANGE.GetMax();
    }
 
    /****************************************/
    /****************************************/
 
    CRadians CRandom::CRNG::Uniform(const CRange<CRadians>& c_range) {
-#ifdef ARGOS_WITH_GSL
-      return c_range.GetMin() + gsl_rng_uniform(m_ptRNG) * c_range.GetSpan();
-#else
-      UInt32 unNumber;
-      random_r(m_ptRNG, reinterpret_cast<int32_t*>(&unNumber));
       CRadians cRetVal;
-      m_pcIntegerRNGRange->MapValueIntoRange(cRetVal, unNumber, c_range);
+      INT_RANGE.MapValueIntoRange(cRetVal, Uniform32bit(), c_range);
       return cRetVal;
-#endif
    }
    
    /****************************************/
    /****************************************/
 
    Real CRandom::CRNG::Uniform(const CRange<Real>& c_range) {
-#ifdef ARGOS_WITH_GSL
-      return c_range.GetMin() + gsl_rng_uniform(m_ptRNG) * c_range.GetSpan();
-#else
-      UInt32 unNumber;
-      random_r(m_ptRNG, reinterpret_cast<int32_t*>(&unNumber));
       Real fRetVal;
-      m_pcIntegerRNGRange->MapValueIntoRange(fRetVal, unNumber, c_range);
+      INT_RANGE.MapValueIntoRange(fRetVal, Uniform32bit(), c_range);
       return fRetVal;
-#endif
    }
    
    /****************************************/
@@ -197,19 +104,8 @@ namespace argos {
 
    SInt32 CRandom::CRNG::Uniform(const CRange<SInt32>& c_range) {
       SInt32 nRetVal;
-#ifdef ARGOS_WITH_GSL
-      do {
-         m_pcIntegerRNGRange->MapValueIntoRange(nRetVal, gsl_rng_get(m_ptRNG), c_range);
-      } while(nRetVal == c_range.GetMax());
+      INT_RANGE.MapValueIntoRange(nRetVal, Uniform32bit(), c_range);
       return nRetVal;
-#else
-      UInt32 unNumber;
-      random_r(m_ptRNG, reinterpret_cast<int32_t*>(&unNumber));
-      do {
-         m_pcIntegerRNGRange->MapValueIntoRange(nRetVal, unNumber, c_range);
-      } while(nRetVal == c_range.GetMax());
-      return nRetVal;
-#endif
    }
    
    /****************************************/
@@ -217,31 +113,16 @@ namespace argos {
 
    UInt32 CRandom::CRNG::Uniform(const CRange<UInt32>& c_range) {
       UInt32 unRetVal;
-#ifdef ARGOS_WITH_GSL
-      do {
-         m_pcIntegerRNGRange->MapValueIntoRange(unRetVal, gsl_rng_get(m_ptRNG), c_range);
-      } while(unRetVal == c_range.GetMax());
+      INT_RANGE.MapValueIntoRange(unRetVal, Uniform32bit(), c_range);
       return unRetVal;
-#else
-      UInt32 unNumber;
-      random_r(m_ptRNG, reinterpret_cast<int32_t*>(&unNumber));
-      do {
-         m_pcIntegerRNGRange->MapValueIntoRange(unRetVal, unNumber, c_range);
-      } while(unRetVal == c_range.GetMax());
-      return unRetVal;
-#endif
    }
    
    /****************************************/
    /****************************************/
 
    Real CRandom::CRNG::Exponential(Real f_mean) {
-#ifdef ARGOS_WITH_GSL
-      return gsl_ran_exponential(m_ptRNG, f_mean);
-#else      
-      CRange<Real> fRange(0.0f, 1.0f);
-      return -log(Uniform(fRange)) * f_mean;
-#endif
+      static CRange<Real> fRange(0.0f, 1.0f);
+      return -Log(Uniform(fRange)) * f_mean;
    }
    
    /****************************************/
@@ -249,13 +130,10 @@ namespace argos {
 
    Real CRandom::CRNG::Gaussian(Real f_std_dev,
                                 Real f_mean) {
-#ifdef ARGOS_WITH_GSL
-      return f_mean + gsl_ran_gaussian(m_ptRNG, f_std_dev);
-#else
       /* This is the Box-Muller method in its cartesian variant
          see http://www.dspguru.com/dsp/howtos/how-to-generate-white-gaussian-noise
       */
-      CRange<Real> fRange(-1.0f, 1.0f);
+      static CRange<Real> fRange(-1.0f, 1.0f);
       Real fNum1, fNum2;
       Real fSquare;
       do {
@@ -264,19 +142,15 @@ namespace argos {
          fSquare = fNum1 * fNum1 + fNum2 * fNum2;
       } while(fSquare >= 1);
       return f_mean + f_std_dev * fNum1;
-#endif
    }
 
    /****************************************/
    /****************************************/
 
    Real CRandom::CRNG::Rayleigh(Real f_sigma) {
-#ifdef ARGOS_WITH_GSL
-      return gsl_ran_rayleigh(m_ptRNG, f_sigma);
-#else
       /* Draw a number uniformly from (0,1) --- bounds excluded */
+      static CRange<Real> cUnitRange(0.0f, 1.0f);
       Real fValue;
-      CRange<Real> cUnitRange(0.0f, 1.0f);
       do {
          fValue = Uniform(cUnitRange);
       }
@@ -285,16 +159,12 @@ namespace argos {
        * http://en.wikipedia.org/wiki/Rayleigh_distribution#Generating_Rayleigh-distributed_random_variates
        */
       return f_sigma * Sqrt(-2.0f * Log(fValue));
-#endif
    }
 
 /****************************************/
    /****************************************/
 
    Real CRandom::CRNG::Lognormal(Real f_sigma, Real f_mu) {
-#ifdef ARGOS_WITH_GSL
-      return gsl_ran_lognormal(m_ptRNG, f_mu, f_sigma);
-#else
       /* Draw a number uniformly from (0,1) */
       Real fValue;
       fValue = Gaussian(1,0);
@@ -302,7 +172,41 @@ namespace argos {
        * http://en.wikipedia.org/wiki/Log-normal_distribution#Generating_log-normally_distributed_random_variates
        */
       return std::exp(f_mu + f_sigma * fValue);
-#endif
+   }
+   
+   /****************************************/
+   /****************************************/
+
+   UInt32 CRandom::CRNG::Uniform32bit() {
+      UInt32 y;
+      static UInt32 mag01[2] = { 0x0UL, MATRIX_A };
+      /* mag01[x] = x * MATRIX_A  for x=0,1 */
+      
+      if (m_nIndex >= N) { /* generate N words at one time */
+         SInt32 kk;
+         for (kk = 0; kk < N - M; ++kk) {
+            y = (m_punState[kk] & UPPER_MASK) | (m_punState[kk+1] & LOWER_MASK);
+            m_punState[kk] = m_punState[kk+M] ^ (y >> 1) ^ mag01[y & 0x1UL];
+         }
+         for (; kk < N - 1; ++kk) {
+            y = (m_punState[kk] & UPPER_MASK) | (m_punState[kk+1] & LOWER_MASK);
+            m_punState[kk] = m_punState[kk+(M-N)] ^ (y >> 1) ^ mag01[y & 0x1UL];
+         }
+         y = (m_punState[N-1] & UPPER_MASK) | (m_punState[0] & LOWER_MASK);
+         m_punState[N-1] = m_punState[M-1] ^ (y >> 1) ^ mag01[y & 0x1UL];
+         
+         m_nIndex = 0;
+      }
+      
+      y = m_punState[m_nIndex++];
+      
+      /* Tempering */
+      y ^= (y >> 11);
+      y ^= (y << 7) & 0x9d2c5680UL;
+      y ^= (y << 15) & 0xefc60000UL;
+      y ^= (y >> 18);
+      
+      return y;
    }
    
    /****************************************/
@@ -336,11 +240,11 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   CRandom::CRNG* CRandom::CCategory::CreateRNG(const std::string& str_type) {
+   CRandom::CRNG* CRandom::CCategory::CreateRNG() {
       /* Get seed from internal RNG */
       UInt32 unSeed = m_cSeeder.Uniform(m_cSeedRange);
       /* Create new RNG */
-      m_vecRNGList.push_back(new CRNG(unSeed, str_type));
+      m_vecRNGList.push_back(new CRNG(unSeed));
       return m_vecRNGList.back();
    }
 
@@ -419,10 +323,9 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   CRandom::CRNG* CRandom::CreateRNG(const std::string& str_category,
-                                     const std::string& str_type) {
+   CRandom::CRNG* CRandom::CreateRNG(const std::string& str_category) {
       CHECK_CATEGORY(str_category);
-      return itCategory->second->CreateRNG(str_type);
+      return itCategory->second->CreateRNG();
    }
    
    /****************************************/
