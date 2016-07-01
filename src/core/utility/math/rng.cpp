@@ -141,7 +141,7 @@ namespace argos {
          fNum2 = Uniform(fRange);
          fSquare = fNum1 * fNum1 + fNum2 * fNum2;
       } while(fSquare >= 1);
-      return f_mean + f_std_dev * fNum1;
+      return f_mean + f_std_dev * fNum1 * Sqrt(-2.0f * Log(fSquare) / fSquare);
    }
 
    /****************************************/
