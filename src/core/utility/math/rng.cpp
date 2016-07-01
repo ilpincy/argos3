@@ -19,8 +19,8 @@ namespace argos {
    /****************************************/
 
    /* Period parameters */
-   static const UInt32 N = 624;
-   static const UInt32 M = 397;
+   static const SInt32 N = 624;
+   static const SInt32 M = 397;
    static const UInt32 MATRIX_A = 0x9908b0dfUL;   /* constant vector a */
    static const UInt32 UPPER_MASK = 0x80000000UL; /* most significant w-r bits */
    static const UInt32 LOWER_MASK = 0x7fffffffUL; /* least significant r bits */
