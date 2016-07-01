@@ -44,7 +44,6 @@ If you downloaded the sources of ARGoS and want to compile its code, you need:
 
 If you want to compile the simulator, you need:
 
-* _gsl_ >= 1.15
 * _FreeImage_ >= 3.15
 
 The OpenGL-based graphical visualization is compiled only if the following
@@ -73,7 +72,7 @@ Debian
 On Debian, you can install all of the necessary requirements
 with the following command:
 
- $ sudo apt-get install libgsl0-dev libfreeimage-dev libqt4-dev \
+ $ sudo apt-get install libfreeimage-dev libqt4-dev \
    freeglut3-dev libxi-dev libxmu-dev liblua5.2-dev lua5.2 \
    doxygen graphviz-dev asciidoc
 
@@ -89,7 +88,7 @@ with the following commands:
 
  $ sudo zypper refresh
 
- $ sudo zypper install git cmake gcc gcc-c++ gsl-devel freeimage-devel \
+ $ sudo zypper install git cmake gcc gcc-c++ freeimage-devel \
    doxygen graphviz asciidoc lua-devel libqt4-devel freeglut-devel \
    rpmbuild
 
@@ -100,7 +99,7 @@ On Mac, you can install all of the necessary requirements using
 http://http://brew.sh/[HomeBrew]. On the command line, type the
 following command:
 
- $ brew install pkg-config cmake gsl libpng freeimage lua qt \
+ $ brew install pkg-config cmake libpng freeimage lua qt \
    docbook asciidoc graphviz doxygen
 
 Compiling the code
