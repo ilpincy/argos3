@@ -7,6 +7,7 @@
 #include <argos3/core/utility/math/rng.h>
 #include <argos3/core/utility/string_utilities.h>
 
+#include <cstdlib>
 #include <iostream>
 #include <fstream>
 

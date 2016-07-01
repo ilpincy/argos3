@@ -1,6 +1,8 @@
 #include <argos3/core/utility/math/rng.h>
 #include <fstream>
 #include <sstream>
+#include <cerrno>
+#include <cstring>
 
 using namespace argos;
 
