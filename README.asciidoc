@@ -72,9 +72,9 @@ Debian
 On Debian, you can install all of the necessary requirements
 with the following command:
 
- $ sudo apt-get install libfreeimage-dev libqt4-dev \
+ $ sudo apt-get install libfreeimage-dev libfreeimageplus-dev libqt4-dev \
    freeglut3-dev libxi-dev libxmu-dev liblua5.2-dev lua5.2 \
-   doxygen graphviz-dev asciidoc
+   doxygen graphviz graphviz-dev asciidoc
 
 OpenSuse
 ^^^^^^^^

@@ -33,6 +33,7 @@ ELSE (WIN32)
     NAMES FreeImage freeimage
     PATHS
     /usr/lib64
+    /usr/lib/x86_64-linux-gnu
     /usr/lib
     /usr/local/lib64
     /usr/local/lib
@@ -43,6 +44,7 @@ ELSE (WIN32)
     NAMES FreeImagePlus freeimageplus
     PATHS
     /usr/lib64
+    /usr/lib/x86_64-linux-gnu
     /usr/lib
     /usr/local/lib64
     /usr/local/lib
