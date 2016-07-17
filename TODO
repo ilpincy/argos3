@@ -9,3 +9,7 @@
 - Multifile editing is broken; when an error occurs, the line that is displayed in the editor is correct, but not the file
 - When the Lua script has an error, and the editor is not displayed, there's no error displayed
 - See test_objectoriented.lua; when you have self-references, the lua state model gets into an infinite recursion and the everything blows up.
+
+[UNM]
+- Render to texture for floor entity
+- Possibility to not draw the floor at all
