@@ -191,6 +191,15 @@ namespace argos {
       }
 
       /**
+       * Returns the cross product between this vector and the passed one.
+       * @param c_vector3 The other vector.
+       * @return The cross product between this vector and the passed one.
+       */
+      inline Real CrossProduct(const CVector2& c_vector2) const {
+         return m_fX * c_vector2.m_fY + m_fY * c_vector2.m_fX;
+      }
+
+      /**
        * Scales the vector by the wanted values.
        * This method scales the vector by the wanted values. In practice, this
        * means that it multiplies the <em>x</em> coordinate by f_scale_x and the
