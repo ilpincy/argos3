@@ -247,7 +247,7 @@ namespace argos {
          cPainter.setRenderHint(QPainter::TextAntialiasing);
       }
       m_cUserFunctions.DrawOverlay(cPainter);
-      cPainter.drawText(rect(), QString("%1 FPS").arg(m_fFPS, 0, 'f', 0));
+      // cPainter.drawText(rect(), QString("%1 FPS").arg(m_fFPS, 0, 'f', 0));
       cPainter.end();
       /* Grab frame, if necessary */
       if(m_sFrameGrabData.Grabbing) {
