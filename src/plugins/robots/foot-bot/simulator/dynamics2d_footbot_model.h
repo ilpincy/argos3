@@ -42,6 +42,22 @@ namespace argos {
 
       void UpdatePerspectiveCameraAnchor(SAnchor& s_anchor);
 
+      inline cpBody* GetActualBaseBody() {
+         return m_ptActualBaseBody;
+      }
+
+      inline const cpBody* GetActualBaseBody() const {
+         return m_ptActualBaseBody;
+      }
+
+      inline cpBody* GetActualGripperBody() {
+         return m_ptActualGripperBody;
+      }
+
+      inline const cpBody* GetActualGripperBody() const {
+         return m_ptActualGripperBody;
+      }
+
    private:
 
       void TurretPassiveToActive();

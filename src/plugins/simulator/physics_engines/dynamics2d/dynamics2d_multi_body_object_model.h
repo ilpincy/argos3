@@ -45,6 +45,19 @@ namespace argos {
 
    public:
 
+      struct SBody {
+         cpBody* Body;
+         cpVect  OffsetPos;
+         cpFloat OffsetOrient;
+         Real    Height;
+         SBody(cpBody* pt_body,
+               const cpVect& t_offset_pos,
+               cpFloat t_offset_orient,
+               Real f_height);
+      };
+
+   public:
+
       /**
        * Class constructor.
        * @param c_engine The dynamics 2D engine that manages this model.
@@ -76,6 +89,22 @@ namespace argos {
          return m_cEntity;
       }
 
+      /**
+       * Returns the i-th body associated to the model.
+       * @return The i-th body associated to the model.
+       */
+      inline SBody& GetBody(size_t i) {
+         return m_vecBodies[i];
+      }
+      
+      /**
+       * Returns the i-th body associated to the model.
+       * @return The i-th body associated to the model.
+       */
+      inline const SBody& GetBody(size_t i) const {
+         return m_vecBodies[i];
+      }
+      
       virtual void Reset();
 
       virtual void MoveTo(const CVector3& c_position,
@@ -115,19 +144,6 @@ namespace argos {
                            const cpVect& t_offset_pos,
                            cpFloat t_offset_orient,
                            Real f_height);
-      
-   private:
-
-      struct SBody {
-         cpBody* Body;
-         cpVect  OffsetPos;
-         cpFloat OffsetOrient;
-         Real    Height;
-         SBody(cpBody* pt_body,
-               const cpVect& t_offset_pos,
-               cpFloat t_offset_orient,
-               Real f_height);
-      };
 
    private:
 
