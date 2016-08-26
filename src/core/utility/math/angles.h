@@ -531,8 +531,10 @@ namespace argos {
 
 #undef ARGOS_SINCOS
 #ifdef ARGOS_USE_DOUBLE
-#  ifdef _GNU_SOURCE
+#  ifndef __APPLE__
 #    define ARGOS_SINCOS ::sincos
+#  else
+#    define ARGOS_SINCOS ::__sincos
 #  endif
 #  define ARGOS_SIN    ::sin
 #  define ARGOS_ASIN   ::asin
@@ -541,8 +543,10 @@ namespace argos {
 #  define ARGOS_TAN    ::tan
 #  define ARGOS_ATAN2  ::atan2
 #else
-#  ifdef _GNU_SOURCE
+#  ifndef __APPLE__
 #    define ARGOS_SINCOS ::sincosf
+#  else
+#    define ARGOS_SINCOS ::__sincosf
 #  endif
 #  define ARGOS_SIN    ::sinf
 #  define ARGOS_ASIN   ::asinf
