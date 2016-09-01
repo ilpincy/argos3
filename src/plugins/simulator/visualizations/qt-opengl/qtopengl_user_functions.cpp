@@ -206,6 +206,8 @@ namespace argos {
          glVertex3f(vec_points[i].GetX(), vec_points[i].GetY(), 0.0f);
       }
       glEnd();
+      /* Reset translation */
+      glTranslatef(-c_position.GetX(), -c_position.GetY(), -c_position.GetZ());
       /* Restore saved stuff */
       glPopAttrib();
    }

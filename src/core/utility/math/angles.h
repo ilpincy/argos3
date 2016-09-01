@@ -324,6 +324,14 @@ namespace argos {
       }
 
       /**
+      * Returns the absolute value in degrees
+      * @return the absolute value in degrees
+      */
+      inline Real GetAbsoluteValue() const {
+       return Abs(m_fValue);
+      }
+
+      /**
        * Sets the value in degrees
        * @param f_value the wanted value in degrees
        */

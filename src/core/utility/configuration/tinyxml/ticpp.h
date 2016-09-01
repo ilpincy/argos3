@@ -60,6 +60,16 @@ any of TinyXML.
 */
 namespace ticpp
 {
+	/**
+	Custom adaptation to C++11 standard
+	 */
+#if __cplusplus >= 201103L
+	template <typename T>
+	using auto_ptr = std::unique_ptr<T>;
+#else
+	using std::auto_ptr;
+#endif
+	
     /**
 	This is a ticpp exception class
 	*/
@@ -971,7 +981,7 @@ namespace ticpp
 		ticpp::Document doc( "C:\\Test.xml" );
 		ticpp::Node* sectionToClone;
 		sectionToClone = doc.FirstChild( "settings" );
-		std::auto_ptr< ticpp::Node > clonedNode = sectionToClone->Clone();
+		auto_ptr< ticpp::Node > clonedNode = sectionToClone->Clone();
 		// Now you can use the clone.
 		ticpp::Node* node2 = clonedNode->FirstChildElement()->FirstChild();
 		...
@@ -979,7 +989,7 @@ namespace ticpp
 		@endcode
 		@return Pointer the duplicate node.
 		*/
-		std::auto_ptr< Node > Clone() const;
+		auto_ptr< Node > Clone() const;
 
 		/**
 		Accept a hierchical visit the nodes in the TinyXML DOM.
