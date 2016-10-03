@@ -95,6 +95,35 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   /**
+    * Query the plug-ins and get the results in a vector.
+    * Clears the vector.
+    * @param str_query The query.
+    * @param vec_plugins The vector to which the results will be added.
+    */
+   void GetPlugins(const std::string& str_query, 
+      std::vector<std::string>& vec_plugins);
+
+   /****************************************/
+   /****************************************/
+
+   /**
+    * Get the type map for the class in a vector.
+    * @param vec_queries The vector to which the type map will be added.
+    */
+   template <class TYPE>
+   void GetQueryList(std::vector<std::string>& vec_queries) {      
+      typename CFactory<TYPE>::TTypeMap& tTypeMap = CFactory<TYPE>::GetTypeMap();
+      for(typename CFactory<TYPE>::TTypeMap::iterator it = tTypeMap.begin();
+          it != tTypeMap.end();
+          ++it) {
+         vec_queries.push_back(it->first);
+      }
+   }
+
+   /****************************************/
+   /****************************************/
+
 }
 
 #endif

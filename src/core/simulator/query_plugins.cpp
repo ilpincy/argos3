@@ -84,4 +84,42 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   /**
+    * Get the plug-ins for a certain query in the vector.
+    * Clears the vector.
+    * @param str_query The given query to be searched.
+    * @param vec_plugins The vector in which the results will be added.
+    */
+   void GetPlugins(const std::string& str_query, std::vector<std::string>& vec_plugins) 
+   {
+      /* Clear contents of vector */
+      vec_plugins.clear();
+      /* Add all plug-ins to the vector */
+      if(str_query == "actuators") {
+         GetQueryList<CSimulatedActuator>(vec_plugins);
+      } else if(str_query == "sensors") {
+         GetQueryList<CSimulatedSensor>(vec_plugins);
+      } else if(str_query == "physics_engines") {
+         GetQueryList<CPhysicsEngine>(vec_plugins);
+      } else if(str_query == "media") {
+         GetQueryList<CMedium>(vec_plugins);
+      } else if(str_query == "visualizations") {
+         GetQueryList<CVisualization>(vec_plugins);
+      } else if(str_query == "entities") {
+         GetQueryList<CEntity>(vec_plugins);
+      } else if(str_query == "all") {
+         GetQueryList<CSimulatedActuator>(vec_plugins);
+         GetQueryList<CSimulatedSensor>  (vec_plugins);
+         GetQueryList<CPhysicsEngine>    (vec_plugins);
+         GetQueryList<CMedium>           (vec_plugins);
+         GetQueryList<CVisualization>    (vec_plugins);
+         GetQueryList<CEntity>           (vec_plugins);
+      } else {
+         QueryShowPluginDescription(str_query);
+      }
+   }
+
+   /****************************************/
+   /****************************************/
+
 }

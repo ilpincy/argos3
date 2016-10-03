@@ -37,6 +37,8 @@
 #include <QMenuBar>
 #include <QSettings>
 
+#include <argos3/plugins/simulator/visualizations/qt-opengl/dialogs/qtopengl_add_entity_dialog.h>
+
 namespace argos {
 
    /****************************************/
@@ -136,6 +138,7 @@ namespace argos {
       m_pcStatusbar = new QStatusBar(this);
       setStatusBar(m_pcStatusbar);
       /* Create actions */
+      CreateArenaActions();
       CreateExperimentActions();
       CreateCameraActions();
       // CreatePOVRayActions();
@@ -145,11 +148,13 @@ namespace argos {
       /* Create the central widget */
       CreateOpenGLWidget(t_tree);
       /* Create menus */
+      CreateArenaMenu();
       CreateExperimentMenu();
       CreateCameraMenu();
       // CreatePOVRayMenu();
       CreateHelpMenu();
       /* Create toolbars */
+      CreateArenaToolBar();
       CreateExperimentToolBar();
       CreateCameraToolBar();
       /* Create the message dock window */
@@ -235,6 +240,21 @@ namespace argos {
       cSettings.setValue("icon_dir", m_strIconDir);
       cSettings.setValue("texture_dir", m_strTextureDir);
       cSettings.endGroup();
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CQTOpenGLMainWindow::CreateArenaActions() {
+      // add icon: Icon made by http://www.flaticon.com/authors/icomoon from www.flaticon.com
+
+      /* Add the add entity action */
+      QIcon cAddIcon;
+      cAddIcon.addPixmap(QPixmap(m_strIconDir + "/cross.png"));
+      m_pcAddEntityAction = new QAction(cAddIcon, tr("&Add entity"), this);
+      m_pcAddEntityAction->setShortcut(Qt::Key_I);
+      m_pcAddEntityAction->setToolTip(tr("Add a new entity"));
+      m_pcAddEntityAction->setStatusTip(tr("Add a new entity to the experiment"));
    }
 
    /****************************************/
@@ -356,6 +376,19 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   void CQTOpenGLMainWindow::CreateArenaToolBar() {
+      /* Configure the toolbar */
+      m_pcArenaToolBar = addToolBar(tr("Arena"));
+      m_pcArenaToolBar->setObjectName("ArenaToolBar");
+      m_pcArenaToolBar->setIconSize(QSize(32, 32));
+      /* Add the actions to the toolbar */
+      m_pcArenaToolBar->addAction(m_pcAddEntityAction);
+      addToolBar(Qt::LeftToolBarArea, m_pcArenaToolBar);
+   }
+
+   /****************************************/
+   /****************************************/
+
    void CQTOpenGLMainWindow::CreateExperimentToolBar() {
       m_pcExperimentToolBar = addToolBar(tr("Experiment"));
       m_pcExperimentToolBar->setObjectName("ExperimentToolBar");
@@ -385,6 +418,16 @@ namespace argos {
       m_pcExperimentToolBar->addAction(m_pcResetAction);
       m_pcExperimentToolBar->addSeparator();
       m_pcExperimentToolBar->addAction(m_pcCaptureAction);
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CQTOpenGLMainWindow::CreateArenaMenu() {
+      /* Configure the menu */
+      m_pcArenaMenu = menuBar()->addMenu(tr("&Arena"));
+      /* Add the actions to the menu */
+      m_pcArenaMenu->addAction(m_pcAddEntityAction);
    }
 
    /****************************************/
@@ -560,6 +603,9 @@ namespace argos {
    /****************************************/
 
    void CQTOpenGLMainWindow::CreateConnections() {
+      /* Add entity button pressed */
+      connect(m_pcAddEntityAction, SIGNAL(triggered()),
+              this, SLOT(AddEntity()));
       /* Play button pressed */
       connect(m_pcPlayAction, SIGNAL(triggered()),
               this, SLOT(PlayExperiment()));
@@ -659,6 +705,15 @@ namespace argos {
       m_pcUserFunctions->Destroy();
       WriteSettings();
       pc_event->accept();
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CQTOpenGLMainWindow::AddEntity() {
+      CQTOpenGLAddEntityDialog* cAddEntityDlg =
+         new CQTOpenGLAddEntityDialog(this, m_pcOpenGLWidget);
+      cAddEntityDlg->exec();
    }
 
    /****************************************/
