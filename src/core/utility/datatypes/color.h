@@ -55,10 +55,10 @@ namespace argos {
       /**
        * Class constructor.
        */
-      explicit CColor(const UInt8 un_red,
-                      const UInt8 un_green,
-                      const UInt8 un_blue,
-                      const UInt8 un_alpha = 255) throw() :
+      explicit CColor(UInt8 un_red,
+                      UInt8 un_green,
+                      UInt8 un_blue,
+                      UInt8 un_alpha = 255) throw() :
          m_tChannels(un_red, un_green, un_blue, un_alpha) {}
 
       /**
@@ -81,7 +81,7 @@ namespace argos {
        * Sets the red channel of the color.
        * @param un_red the red channel of the color.
        */
-      inline void SetRed(const UInt8 un_red) throw() { m_tChannels.m_unRed = un_red; }
+      inline void SetRed(UInt8 un_red) throw() { m_tChannels.m_unRed = un_red; }
 
       /**
        * Returns the green channel of the color.
@@ -92,7 +92,7 @@ namespace argos {
        * Sets the green channel of the color.
        * @param un_green the green channel of the color.
        */
-      inline void SetGreen(const UInt8 un_green) throw() { m_tChannels.m_unGreen = un_green; }
+      inline void SetGreen(UInt8 un_green) throw() { m_tChannels.m_unGreen = un_green; }
 
       /**
        * Returns the blue channel of the color.
@@ -103,7 +103,7 @@ namespace argos {
        * Sets the blue channel of the color.
        * @param un_blue the blue channel of the color.
        */
-      inline void SetBlue(const UInt8 un_blue) throw() { m_tChannels.m_unBlue = un_blue; }
+      inline void SetBlue(UInt8 un_blue) throw() { m_tChannels.m_unBlue = un_blue; }
 
       /**
        * Returns the alpha channel of the color.
@@ -114,7 +114,7 @@ namespace argos {
        * Sets the alpha channel of the color.
        * @param un_alpha the alpha channel of the color.
        */
-      inline void SetAlpha(const UInt8 un_alpha) throw() { m_tChannels.m_unAlpha = un_alpha; }
+      inline void SetAlpha(UInt8 un_alpha) throw() { m_tChannels.m_unAlpha = un_alpha; }
 
       /**
        * Sets the RGBA values of the color.
@@ -123,10 +123,10 @@ namespace argos {
        * @param un_blue the blue channel of the color.
        * @param un_alpha the alpha channel of the color.
        */
-      inline void Set(const UInt8 un_red,
-                      const UInt8 un_green,
-                      const UInt8 un_blue,
-                      const UInt8 un_alpha = 255) throw() {
+      inline void Set(UInt8 un_red,
+                      UInt8 un_green,
+                      UInt8 un_blue,
+                      UInt8 un_alpha = 255) throw() {
          SetRed(un_red);
          SetGreen(un_green);
          SetBlue(un_blue);
@@ -163,8 +163,13 @@ namespace argos {
             else if (str_color == "gray80")  *this = CColor::GRAY80;
             else if (str_color == "gray90")  *this = CColor::GRAY90;
             else {
-               UInt8 unValues[4];
-               ParseValues<UInt8>(str_color, 4, unValues, ',');
+               UInt16 unValues[4];
+               ParseValues<UInt16>(str_color, 4, unValues, ',');
+               for(UInt16 i = 0; i < 4; ++i) {
+                  if(unValues[i] > 255) {
+                     THROW_ARGOSEXCEPTION("Color value " << unValues[i] << " is larger than 255.");
+                  }
+               }
                Set(unValues[0], unValues[1], unValues[2], unValues[3]);
             }
          }
