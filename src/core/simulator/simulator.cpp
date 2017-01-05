@@ -341,10 +341,11 @@ namespace argos {
          tExperiment = GetNode(t_tree, "experiment");
          /* Parse random seed */
          /* Buffer to hold the random seed */
-         GetNodeAttributeOrDefault(tExperiment,
-                                   "random_seed",
-                                   m_unRandomSeed,
-                                   static_cast<UInt32>(0));
+         if(!m_bWasRandomSeedSet)
+            GetNodeAttributeOrDefault(tExperiment,
+                                      "random_seed",
+                                      m_unRandomSeed,
+                                      static_cast<UInt32>(0));
          /* if random seed is 0 or is not specified, init with the current timeval */
          if(m_unRandomSeed != 0) {
             CRandom::CreateCategory("argos", m_unRandomSeed);
