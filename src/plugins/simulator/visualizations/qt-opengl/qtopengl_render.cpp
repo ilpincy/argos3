@@ -36,8 +36,8 @@ namespace argos {
       /* Set some data about the application */
       m_pcApplication->setApplicationName("ARGoS");
       m_pcApplication->setApplicationVersion("3.0");
-      m_pcApplication->setOrganizationName("Iridia-ULB");
-      m_pcApplication->setOrganizationDomain("iridia.ulb.ac.be");
+      m_pcApplication->setOrganizationName("ARGoS");
+      m_pcApplication->setOrganizationDomain("argos-sim.info");
       /* Draw the main window */
       m_pcMainWindow = new CQTOpenGLMainWindow(m_tConfTree);
 #ifdef ARGOS_WITH_LUA

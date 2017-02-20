@@ -305,14 +305,15 @@ namespace argos {
       /**
        * Draws a string of text.
        * By default the text is black and aligned left.
-       * @param str_text text to display
        * @param c_position The text position.
-       * @param c_color The text color.
+       * @param str_text The text to display
+       * @param c_color The text color
+       * @param c_font A Qt font configuration
        */
       void DrawText(const CVector3& c_position,
                     const std::string& str_text,
-                    const CColor& c_color = CColor::BLACK);
-
+                    const CColor& c_color = CColor::BLACK,
+                    const QFont& c_font = QFont());
 
    private:
 

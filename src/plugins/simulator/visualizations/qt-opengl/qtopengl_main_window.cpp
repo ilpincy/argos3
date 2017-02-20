@@ -16,16 +16,16 @@
 #include <argos3/core/simulator/loop_functions.h>
 
 #include <QtCore/QVariant>
-#include <QtGui/QAction>
-#include <QtGui/QApplication>
-#include <QtGui/QDockWidget>
-#include <QtGui/QHeaderView>
-#include <QtGui/QLCDNumber>
-#include <QtGui/QPushButton>
-#include <QtGui/QSpinBox>
-#include <QtGui/QDoubleSpinBox>
-#include <QtGui/QStatusBar>
-#include <QtGui/QWidget>
+#include <QtWidgets/QAction>
+#include <QtWidgets/QApplication>
+#include <QtWidgets/QDockWidget>
+#include <QtWidgets/QHeaderView>
+#include <QtWidgets/QLCDNumber>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QSpinBox>
+#include <QtWidgets/QDoubleSpinBox>
+#include <QtWidgets/QStatusBar>
+#include <QtWidgets/QWidget>
 #include <QLabel>
 #include <QCloseEvent>
 #include <QMessageBox>
@@ -231,7 +231,6 @@ namespace argos {
       cSettings.setValue("docks", saveState());
       cSettings.setValue("size", size());
       cSettings.setValue("position", pos());
-      cSettings.setValue("anti-aliasing", m_pcToggleAntiAliasingAction->isChecked());
       cSettings.setValue("icon_dir", m_strIconDir);
       cSettings.setValue("texture_dir", m_strTextureDir);
       cSettings.endGroup();
@@ -310,19 +309,15 @@ namespace argos {
       QIcon cCameraIcon;
       cCameraIcon.addPixmap(QPixmap(m_strIconDir + "/camera.png"));
       for(UInt32 i = 0; i < 12; ++i) {
-         QAction* pcAction = new QAction(cCameraIcon, tr(QString("Camera %1").arg(i+1).toAscii().data()), m_pcSwitchCameraActionGroup);
-         pcAction->setToolTip(tr(QString("Switch to camera %1").arg(i+1).toAscii().data()));
-         pcAction->setStatusTip(tr(QString("Switch to camera %1").arg(i+1).toAscii().data()));
+         QAction* pcAction = new QAction(cCameraIcon, tr(QString("Camera %1").arg(i+1).toLatin1().data()), m_pcSwitchCameraActionGroup);
+         pcAction->setToolTip(tr(QString("Switch to camera %1").arg(i+1).toLatin1().data()));
+         pcAction->setStatusTip(tr(QString("Switch to camera %1").arg(i+1).toLatin1().data()));
          pcAction->setCheckable(true);
          pcAction->setShortcut(Qt::Key_F1 + i);
          pcAction->setData(i);
          m_pcSwitchCameraActions.push_back(pcAction);
       }
       m_pcSwitchCameraActions.first()->setChecked(true);
-      /* Add the toogle anti-aliasing button */
-      m_pcToggleAntiAliasingAction = new QAction(tr("&Anti-alias"), this);
-      m_pcToggleAntiAliasingAction->setStatusTip(tr("Toogle anti-aliasing in OpenGL rendering"));
-      m_pcToggleAntiAliasingAction->setCheckable(true);
       /* Add the show camera XML button */
       m_pcShowCameraXMLAction = new QAction(tr("&Show XML..."), this);
       m_pcShowCameraXMLAction->setStatusTip(tr("Show XML configuration for all cameras"));
@@ -362,7 +357,7 @@ namespace argos {
       m_pcExperimentToolBar->setIconSize(QSize(32,32));
       m_pcCurrentStepLCD = new QLCDNumber(m_pcExperimentToolBar);
       m_pcCurrentStepLCD->setToolTip(tr("Current step"));
-      m_pcCurrentStepLCD->setNumDigits(6);
+      m_pcCurrentStepLCD->setDigitCount(6);
       m_pcCurrentStepLCD->setSegmentStyle(QLCDNumber::Flat);
       m_pcExperimentToolBar->addWidget(m_pcCurrentStepLCD);
       m_pcExperimentToolBar->addSeparator();
@@ -437,8 +432,6 @@ namespace argos {
       m_pcCameraMenu = menuBar()->addMenu(tr("&Camera"));
       m_pcCameraMenu->addActions(m_pcSwitchCameraActions);
       m_pcCameraMenu->addAction(m_pcShowCameraXMLAction);
-      m_pcCameraMenu->addSeparator();
-      m_pcCameraMenu->addAction(m_pcToggleAntiAliasingAction);
    }
 
    /****************************************/
@@ -462,35 +455,17 @@ namespace argos {
    /****************************************/
 
    void CQTOpenGLMainWindow::CreateOpenGLWidget(TConfigurationNode& t_tree) {
-      /* Initialize OpenGL settings */
-      QGLFormat cGLFormat;
-      cGLFormat.setSampleBuffers(true);
+      /* Create the surface format */
+      QSurfaceFormat cFormat = QSurfaceFormat::defaultFormat();
+      cFormat.setSamples(4);
+      cFormat.setDepthBufferSize(24);
       /* Create the widget */
       QWidget* pcPlaceHolder = new QWidget(this);
-      m_pcOpenGLWidget = new CQTOpenGLWidget(cGLFormat, pcPlaceHolder, this, *m_pcUserFunctions);
+      m_pcOpenGLWidget = new CQTOpenGLWidget(pcPlaceHolder, *this, *m_pcUserFunctions);
+      m_pcOpenGLWidget->setFormat(cFormat);
       m_pcOpenGLWidget->setCursor(QCursor(Qt::OpenHandCursor));
       m_pcOpenGLWidget->GetCamera().Init(t_tree);
       m_pcOpenGLWidget->GetFrameGrabData().Init(t_tree);
-      if(cGLFormat.sampleBuffers()) {
-         /* Get OpenGL settings */
-         QSettings cSettings;
-         bool bAntiAliasing;
-         cSettings.beginGroup("MainWindow");
-         if(cSettings.contains("anti-aliasing")) {
-            bAntiAliasing = cSettings.value("anti-aliasing").toBool();
-         }
-         else {
-            bAntiAliasing = true;
-         }
-         cSettings.endGroup();
-         m_pcToggleAntiAliasingAction->setChecked(bAntiAliasing);
-         m_pcOpenGLWidget->SetAntiAliasing(bAntiAliasing);
-      }
-      else {
-         m_pcToggleAntiAliasingAction->setChecked(false);
-         m_pcToggleAntiAliasingAction->setEnabled(false);
-      }
-      m_pcOpenGLWidget->initializeGL();
       /* Invert mouse controls? */
       bool bInvertMouse;
       GetNodeAttributeOrDefault(t_tree, "invert_mouse", bInvertMouse, false);
@@ -598,9 +573,6 @@ namespace argos {
       /* Capture button toggled */
       connect(m_pcCaptureAction, SIGNAL(triggered(bool)),
               m_pcOpenGLWidget, SLOT(SetGrabFrame(bool)));
-      /* Toggle antialiasing */
-      connect(m_pcToggleAntiAliasingAction, SIGNAL(triggered(bool)),
-              m_pcOpenGLWidget, SLOT(SetAntiAliasing(bool)));
       /* Quit the simulator */
       connect(m_pcQuitAction, SIGNAL(triggered()),
               qApp, SLOT(quit()));
