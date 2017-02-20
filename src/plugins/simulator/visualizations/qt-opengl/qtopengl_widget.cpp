@@ -125,20 +125,6 @@ namespace argos {
       glLightfv(GL_LIGHT0, GL_DIFFUSE,  pfLightDiffuse);
       glLightfv(GL_LIGHT0, GL_POSITION, pfLightPosition);
       glEnable(GL_LIGHT0);
-      /* Resizing */
-      resizeGL(width(), height());
-   }
-
-   /****************************************/
-   /****************************************/
-
-   void CQTOpenGLWidget::resizeGL(int n_width,
-                                  int n_height) {
-      glViewport(0,
-                 0,
-                 n_width * devicePixelRatio(),
-                 n_height * devicePixelRatio());
-      update();
    }
 
    /****************************************/
@@ -955,6 +941,9 @@ namespace argos {
    /****************************************/
 
    void CQTOpenGLWidget::resizeEvent(QResizeEvent* pc_event) {
+      /* Call parent's resize event handler */
+      QOpenGLWidget::resizeEvent(pc_event);
+      /* Show new window size */
       QToolTip::showText(pos() + geometry().center(), QString("Size: %1 x %2").arg(pc_event->size().width()).arg(pc_event->size().height()));
    }
 

@@ -115,14 +115,6 @@ namespace argos {
       virtual void initializeGL();
 
       /**
-       * Called when this widget is resized.
-       * @param n_width New width.
-       * @param n_height New height.
-       */
-      virtual void resizeGL(int n_width,
-                            int n_height);
-
-      /**
        * Logic for scene drawing.
        */
       virtual void paintGL();
