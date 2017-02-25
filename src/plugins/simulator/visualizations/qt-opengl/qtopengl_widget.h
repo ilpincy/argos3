@@ -83,8 +83,8 @@ namespace argos {
        * Data arelated to robot selection
        */
       struct SSelectionInfo {
-         bool IsSelected; // true when a robot is selected
-         size_t Index;    // the index of the selected robot
+         bool IsSelected;         // true when a robot is selected
+         size_t Index;            // the index of the selected robot
 
          SSelectionInfo() :
             IsSelected(false),
@@ -118,6 +118,19 @@ namespace argos {
        * Logic for scene drawing.
        */
       virtual void paintGL();
+
+      /**
+       * Casts a ray from the given window coordinate.
+       * The ray goes from the near clipping plane to the far one.
+       */
+      CRay3 RayFromWindowCoord(int n_x,
+                               int n_y);
+
+      /**
+       * Returns the position in the world corresponding to the given window coordinate.
+       */
+      CVector3 GetWindowCoordInWorld(int n_x,
+                                     int n_y);
 
       /**
        * Returns the currently selected entity, or NULL if none is selected.
@@ -393,6 +406,8 @@ namespace argos {
 
       /** Mapping between keys and motion direction */
       QMap<EDirection, int> m_mapPressedKeys;
+
+      CRay3 m_cSelectionRay;
    };
 
 }

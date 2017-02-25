@@ -107,12 +107,6 @@ namespace argos {
          return m_sSettings[m_unActiveSettings].LensFocalLength;
       }
 
-      CVector3 GetMousePosInWorld(SInt32 n_x,
-                                  SInt32 n_y) const;
-
-      CRay3 ProjectRayFromMousePosIntoWorld(SInt32 n_x,
-                                            SInt32 n_y) const;
-      
       void Rotate(const QPoint& c_delta);
 
       void Move(SInt32 n_forwards_backwards,
@@ -120,6 +114,10 @@ namespace argos {
                 SInt32 n_up_down);
 
       inline SSettings& GetActiveSettings() {
+         return m_sSettings[m_unActiveSettings];
+      }
+
+      inline const SSettings& GetActiveSettings() const {
          return m_sSettings[m_unActiveSettings];
       }
 

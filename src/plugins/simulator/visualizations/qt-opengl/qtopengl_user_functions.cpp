@@ -418,13 +418,13 @@ namespace argos {
                                          const QFont& c_font) {
       /* Get current modelview matrix */
       GLdouble pf_mv[16];
-      glGetDoublev(GL_MODELVIEW_MATRIX, &pf_mv[0]);
+      glGetDoublev(GL_MODELVIEW_MATRIX, pf_mv);
       /* Get current projection matrix */
       GLdouble pf_proj[16];
-      glGetDoublev(GL_PROJECTION_MATRIX, &pf_proj[0]);
+      glGetDoublev(GL_PROJECTION_MATRIX, pf_proj);
       /* Get current viewport */
       GLint pn_vp[4];
-      glGetIntegerv(GL_VIEWPORT, &pn_vp[0]);
+      glGetIntegerv(GL_VIEWPORT, pn_vp);
       /* Buffers for projection calculations */
       GLdouble pf_v1[4], pf_v2[4];
       /* Transform original position with modelview matrix  */

@@ -178,6 +178,17 @@ namespace argos {
       glPopMatrix();
       /* Draw axes */
       DrawAxes();
+      /* Draw selection ray for debug */
+      glDisable(GL_LIGHTING);
+      glLineWidth(1.0f);
+      glBegin(GL_LINES);
+      glColor3f(1.0, 0.0, 0.0);
+      const CVector3& cStart = m_cSelectionRay.GetStart();
+      const CVector3& cEnd = m_cSelectionRay.GetEnd();
+      glVertex3f(cStart.GetX(), cStart.GetY(), cStart.GetZ());
+      glVertex3f(cEnd.GetX(), cEnd.GetY(), cEnd.GetZ());
+      glEnd();
+      glEnable(GL_LIGHTING);
       /* Execute overlay drawing */
       glShadeModel(GL_FLAT);
       glDisable(GL_LIGHTING);
@@ -204,6 +215,94 @@ namespace argos {
                0,
                m_sFrameGrabData.Quality);
       }
+   }
+
+   /****************************************/
+   /****************************************/
+
+   CRay3 CQTOpenGLWidget::RayFromWindowCoord(int n_x,
+                                             int n_y) {
+      /* Make sure OpenGL context is correct */
+      makeCurrent();
+      /* Rescale coordinates by devicePixelRatio */
+      n_x *= devicePixelRatio();
+      n_y *= devicePixelRatio();
+      /* Get current viewport */
+      GLint nViewport[4];
+      glGetIntegerv(GL_VIEWPORT, nViewport);
+      /* Get OpenGL matrices */
+      GLdouble fModelViewMatrix[16];
+      GLdouble fProjectionMatrix[16];
+      glGetDoublev(GL_MODELVIEW_MATRIX, fModelViewMatrix);
+      glGetDoublev(GL_PROJECTION_MATRIX, fProjectionMatrix);
+      /*
+       * Convert mouse position in window into OpenGL representation
+       */
+      /* The x coordinate stays the same */
+      GLfloat fWinX = n_x;
+      /* The y coordinate of the window is top-left; in OpenGL is bottom-left */
+      GLfloat fWinY = nViewport[3] - n_y;
+      /*
+       * Get the position of the ray start in the world
+       * The ray starts at the near clipping plane (depth = 0.0f)
+       */
+      GLdouble fRayStartX, fRayStartY, fRayStartZ;
+      gluUnProject(fWinX, fWinY, 0.0f,
+                   fModelViewMatrix, fProjectionMatrix, nViewport,
+                   &fRayStartX, &fRayStartY, &fRayStartZ);
+      /*
+       * Get the position of the ray end in the world
+       * The ray starts at the far clipping plane (depth = 1.0f)
+       */
+      GLdouble fRayEndX, fRayEndY, fRayEndZ;
+      gluUnProject(fWinX, fWinY, 1.0f,
+                   fModelViewMatrix, fProjectionMatrix, nViewport,
+                   &fRayEndX, &fRayEndY, &fRayEndZ);
+      doneCurrent();
+      return CRay3(CVector3(fRayStartX, fRayStartY, fRayStartZ),
+                   CVector3(fRayEndX, fRayEndY, fRayEndZ));
+   }
+
+   /****************************************/
+   /****************************************/
+
+   CVector3 CQTOpenGLWidget::GetWindowCoordInWorld(int n_x,
+                                                   int n_y) {
+      /* Make sure OpenGL context is correct */
+      makeCurrent();
+      /* Rescale coordinates by devicePixelRatio */
+      n_x *= devicePixelRatio();
+      n_y *= devicePixelRatio();
+      /* Get current viewport */
+      GLint nViewport[4];
+      glGetIntegerv(GL_VIEWPORT, nViewport);
+      /* Get OpenGL matrices */
+      GLdouble fModelViewMatrix[16];
+      GLdouble fProjectionMatrix[16];
+      glGetDoublev(GL_MODELVIEW_MATRIX, fModelViewMatrix);
+      glGetDoublev(GL_PROJECTION_MATRIX, fProjectionMatrix);
+      /*
+       * Convert mouse position in window into a 3D representation
+       */
+      /* The x coordinate stays the same */
+      GLfloat fWinX = n_x;
+      /* The y coordinate of the window is top-left; in OpenGL is bottom-left */
+      GLfloat fWinY = nViewport[3] - n_y;
+      /* Read the z coordinate from the depth buffer in the back buffer */
+      GLfloat fWinZ;
+      glReadBuffer(GL_BACK);
+      glReadPixels(n_x, (GLint)fWinY, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &fWinZ);
+      /* Get the actual position in the world */
+      GLdouble fWorldX, fWorldY, fWorldZ;
+      gluUnProject(fWinX, fWinY, fWinZ,
+                   fModelViewMatrix, fProjectionMatrix, nViewport,
+                   &fWorldX, &fWorldY, &fWorldZ);
+      /*
+       * Swap coordinates when creating the ray
+       * In ARGoS, the up vector is the Z-axis, while in OpenGL it is the Y-axis
+       */
+      doneCurrent();
+      return CVector3(fWorldX, fWorldZ, fWorldY);
    }
 
    /****************************************/
@@ -264,6 +363,10 @@ namespace argos {
 
    void CQTOpenGLWidget::SelectInScene(UInt32 un_x,
                                        UInt32 un_y) {
+      /* Make sure OpenGL context is correct */
+      makeCurrent();
+      un_x *= devicePixelRatio();
+      un_y *= devicePixelRatio();
       /* Used to store the viewport size */
       GLint nViewport[4];
       /* Set the selection buffer */
@@ -272,7 +375,6 @@ namespace argos {
       glRenderMode(GL_SELECT);
       /* Set the projection matrix */
       glMatrixMode(GL_PROJECTION);
-      glPushMatrix();
       glLoadIdentity();
       /* Set the viewport */
       glGetIntegerv(GL_VIEWPORT, nViewport);
@@ -284,6 +386,8 @@ namespace argos {
                      ASPECT_RATIO,
                      0.1f, 1000.0f);
       glMatrixMode(GL_MODELVIEW);
+      glLoadIdentity();
+      m_cCamera.Look();
       /* Prepare name stack */
       glInitNames();
       /* Draw the objects */
@@ -295,10 +399,6 @@ namespace argos {
          glPopMatrix();
          glPopName();
       }
-      /* Restore the original projection matrix */
-      glMatrixMode(GL_PROJECTION);
-      glPopMatrix();
-      glMatrixMode(GL_MODELVIEW);
       glFlush();
       /* Return to normal rendering mode and get hit count */
       bool bWasSelected = m_sSelectionInfo.IsSelected;
@@ -360,6 +460,8 @@ namespace argos {
                *m_cSpace.GetRootEntityVector()[m_sSelectionInfo.Index]);
          }
       }
+      doneCurrent();
+      /* Redraw */
       update();
    }
 
@@ -702,6 +804,7 @@ namespace argos {
          if(m_cSpace.GetFloorEntity().HasChanged()) {
             /* Create an image to use as texture */
             m_pcFloorTexture->destroy();
+            m_pcFloorTexture->create();
             m_pcFloorTexture->setData(QImage("/tmp/argos_floor.png"));
             m_pcFloorTexture->setMinMagFilters(QOpenGLTexture::LinearMipMapLinear,
                                                QOpenGLTexture::Linear);
@@ -846,9 +949,9 @@ namespace argos {
          /* Create a plane coincident with the world XY plane, centered at the entity position */
          CPlane cXYPlane(pcEntity->GetOriginAnchor().Position, CVector3::Z);
          /* Create a ray from the image pixel to the world */
-         CRay3 cMouseRay = GetCamera().
-            ProjectRayFromMousePosIntoWorld(pc_event->pos().x(),
-                                            pc_event->pos().y());
+         CRay3 cMouseRay =
+            RayFromWindowCoord(pc_event->pos().x(),
+                               pc_event->pos().y());
          /* Calculate the new entity position as the intersection of the projected mouse position
             with the plane created before */
          CVector3 cNewPos;
