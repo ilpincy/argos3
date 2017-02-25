@@ -50,7 +50,7 @@ if((NOT APPLE) OR ARGOS_BREW_QT_CELLAR)
   find_package(Qt5 COMPONENTS Widgets Gui)
   if(Qt5Widgets_FOUND AND Qt5Gui_FOUND)
     # QT5 found, is it the minimum required version?
-    if(Qt5_VERSION VERSION_GREATER_EQUAL 5.7)
+    if(Qt5_VERSION VERSION_GREATER 5.4)
       # QT is OK, now check for OpenGL
       find_package(OpenGL)
       if(OPENGL_FOUND)
@@ -81,9 +81,9 @@ if((NOT APPLE) OR ARGOS_BREW_QT_CELLAR)
         message(STATUS "OpenGL not found. Skipping compilation of QT-OpenGL visualization.")
       endif(OPENGL_FOUND)
 
-    else(Qt5_VERSION VERSION_GREATER_EQUAL 5.7)
-      message(STATUS "Minimum required version for Qt (>= 5.7) not found. Skipping compilation of QT-OpenGL visualization.")
-    endif(Qt5_VERSION VERSION_GREATER_EQUAL 5.7)
+    else(Qt5_VERSION VERSION_GREATER 5.4)
+      message(STATUS "Minimum required version for Qt (>= 5.5) not found. Skipping compilation of QT-OpenGL visualization.")
+    endif(Qt5_VERSION VERSION_GREATER 5.4)
     
   else(Qt5Widgets_FOUND AND Qt5Gui_FOUND)
     if(NOT Qt5Widgets_FOUND)

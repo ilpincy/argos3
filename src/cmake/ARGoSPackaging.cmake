@@ -56,7 +56,7 @@ set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${AR
 #
 # Configuration for the Debian generator
 #
-set(CPACK_DEBIAN_PACKAGE_DEPENDS "gcc (>= 4.2), g++ (>= 4.2), cmake (>= 2.6), freeglut3-dev (>= 2.6.0), libqt4-opengl-dev (>= 4.5), libxi-dev, libxmu-dev, libfreeimage-dev (>= 3.15), libfreeimageplus-dev (>= 3.15), liblua5.2-dev, lua5.2")
+set(CPACK_DEBIAN_PACKAGE_DEPENDS "gcc (>= 4.2), g++ (>= 4.2), cmake (>= 2.6), freeglut3-dev (>= 2.6.0), qt5-default (>= 5.5.1), libxi-dev, libxmu-dev, libfreeimage-dev (>= 3.15), libfreeimageplus-dev (>= 3.15), liblua5.2-dev, lua5.2")
 set(CPACK_DEBIAN_PACKAGE_DESCRIPTION ${CPACK_PACKAGE_DESCRIPTION})
 set(CPACK_DEBIAN_PACKAGE_HOMEPAGE ${CPACK_PACKAGE_HOMEPAGE})
 set(CPACK_DEBIAN_PACKAGE_MAINTAINER ${CPACK_PACKAGE_MAINTAINER})
