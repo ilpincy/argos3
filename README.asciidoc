@@ -89,7 +89,7 @@ with the following commands:
  $ sudo zypper refresh
 
  $ sudo zypper install git cmake gcc gcc-c++ freeimage-devel \
-   doxygen graphviz asciidoc lua-devel libqt4-devel freeglut-devel \
+   doxygen graphviz asciidoc lua-devel libqt5-qtbase freeglut-devel \
    rpmbuild
 
 Mac OSX
