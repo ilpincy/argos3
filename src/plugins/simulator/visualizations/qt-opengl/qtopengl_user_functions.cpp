@@ -364,12 +364,15 @@ namespace argos {
                                         const CColor& c_color,
                                         Real f_width) {
       /* Save attributes and current matrix */
-      glPushAttrib(GL_LINE_BIT);
+      glPushAttrib(GL_LINE_BIT | GL_ENABLE_BIT);
       /* Set line attributes */
       glEnable(GL_LINE_SMOOTH);
       glLineWidth(f_width);
+      /* Unset lighting */
+      glDisable(GL_LIGHTING);
+      glDisable(GL_COLOR_MATERIAL);
       /* Set color */
-      SetColor(c_color);
+      glColor3ub(c_color.GetRed(), c_color.GetGreen(), c_color.GetBlue());
       /* Draw ray */
       glBegin(GL_LINES);
       glVertex3f(c_ray.GetStart().GetX(), c_ray.GetStart().GetY(), c_ray.GetStart().GetZ());
@@ -453,6 +456,7 @@ namespace argos {
       glPushAttrib(GL_ENABLE_BIT);
       /* Disable lighting to make text color unaffected by light */
       glDisable(GL_LIGHTING);
+      glDisable(GL_COLOR_MATERIAL);
       /* Disable culling to make text visibile from any angle */
       glDisable(GL_CULL_FACE);
       /* Initialize Qt screen painter */
