@@ -805,6 +805,7 @@ namespace argos {
             /* Create an image to use as texture */
             m_pcFloorTexture->destroy();
             m_pcFloorTexture->create();
+            m_cSpace.GetFloorEntity().SaveAsImage("/tmp/argos_floor.png");
             m_pcFloorTexture->setData(QImage("/tmp/argos_floor.png"));
             m_pcFloorTexture->setMinMagFilters(QOpenGLTexture::LinearMipMapLinear,
                                                QOpenGLTexture::Linear);
