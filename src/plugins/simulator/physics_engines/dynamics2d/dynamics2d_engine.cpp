@@ -9,6 +9,7 @@
 #include "dynamics2d_gripping.h"
 
 #include <argos3/core/simulator/simulator.h>
+#include <argos3/core/simulator/entity/embodied_entity.h>
 
 #include <cmath>
 
@@ -156,14 +157,13 @@ namespace argos {
    /****************************************/
 
    struct SDynamics2DSegmentHitData {
+      TEmbodiedEntityIntersectionData& Intersections;
       const CRay3& Ray;
-      Real T;
-      CEmbodiedEntity* Body;
 
-      SDynamics2DSegmentHitData(const CRay3& c_ray) :
-         Ray(c_ray),
-         T(2.0f),
-         Body(NULL) {}
+      SDynamics2DSegmentHitData(TEmbodiedEntityIntersectionData& t_data,
+                                const CRay3& c_ray) :
+         Intersections(t_data),
+         Ray(c_ray) {}
    };
 
    static void Dynamics2DSegmentQueryFunc(cpShape* pt_shape, cpFloat f_t, cpVect, void* pt_data) {
@@ -176,18 +176,17 @@ namespace argos {
       if((cIntersectionPoint.GetZ() >= cModel.GetBoundingBox().MinCorner.GetZ()) &&
          (cIntersectionPoint.GetZ() <= cModel.GetBoundingBox().MaxCorner.GetZ()) ) {
          /* Yes, a real hit */
-         if(f_t < sData.T) {
-            /* Also the closest so far */
-            sData.T = f_t;
-            sData.Body = &cModel.GetEmbodiedEntity();
-         }
+         sData.Intersections.push_back(
+            SEmbodiedEntityIntersectionItem(
+               &cModel.GetEmbodiedEntity(),
+               f_t));
       }
    }
    
-   CEmbodiedEntity* CDynamics2DEngine::CheckIntersectionWithRay(Real& f_t_on_ray,
-                                                                const CRay3& c_ray) const {
+   void CDynamics2DEngine::CheckIntersectionWithRay(TEmbodiedEntityIntersectionData& t_data,
+                                                    const CRay3& c_ray) const {
       /* Query all hits along the ray */
-      SDynamics2DSegmentHitData sHitData(c_ray);
+      SDynamics2DSegmentHitData sHitData(t_data, c_ray);
       cpSpaceSegmentQuery(
          m_ptSpace,
          cpv(c_ray.GetStart().GetX(), c_ray.GetStart().GetY()),
@@ -196,11 +195,6 @@ namespace argos {
          CP_NO_GROUP,
          Dynamics2DSegmentQueryFunc,
          &sHitData);
-      /* Check whether we have a hit */
-      if(sHitData.Body != NULL) {
-         f_t_on_ray = sHitData.T;
-      }
-      return sHitData.Body;
    }
 
    /****************************************/

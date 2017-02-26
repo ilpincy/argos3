@@ -15,6 +15,72 @@
 
 namespace argos {
 
+   /****************************************/
+   /****************************************/
+
+   bool GetEmbodiedEntitiesIntersectedByRay(TEmbodiedEntityIntersectionData& t_data,
+                                            const CRay3& c_ray) {
+      /* This variable is instantiated at the first call of this function, once and forever */
+      static CSimulator& cSimulator = CSimulator::GetInstance();
+      /* Clear data */
+      t_data.clear();
+      /* Create a reference to the vector of physics engines */
+      CPhysicsEngine::TVector& vecEngines = cSimulator.GetPhysicsEngines();
+      /* Ask each engine to perform the ray query */
+      for(size_t i = 0; i < vecEngines.size(); ++i)
+         vecEngines[i]->CheckIntersectionWithRay(t_data, c_ray);
+      /* Remove duplicates */
+      // TODO
+      /* Return true if an intersection was found */
+      return !t_data.empty();
+   }
+
+   /****************************************/
+   /****************************************/
+
+   bool GetClosestEmbodiedEntityIntersectedByRay(SEmbodiedEntityIntersectionItem& s_item,
+                                                 const CRay3& c_ray) {
+      /* Initialize s_item */
+      s_item.IntersectedEntity = NULL;
+      s_item.TOnRay = 1.0f;
+      /* Perform full ray query */
+      TEmbodiedEntityIntersectionData tData;
+      GetEmbodiedEntitiesIntersectedByRay(tData, c_ray);
+      /* Go through intersections and find the closest */
+      for(size_t i = 0; i < tData.size(); ++i) {
+         if(s_item.TOnRay > tData[i].TOnRay)
+            s_item = tData[i];
+      }
+      /* Return true if an intersection was found */
+      return (s_item.IntersectedEntity != NULL);
+   }
+
+   /****************************************/
+   /****************************************/
+
+   bool GetClosestEmbodiedEntityIntersectedByRay(SEmbodiedEntityIntersectionItem& s_item,
+                                                 const CRay3& c_ray,
+                                                 CEmbodiedEntity& c_entity) {
+      /* Initialize s_item */
+      s_item.IntersectedEntity = NULL;
+      s_item.TOnRay = 1.0f;
+      /* Perform full ray query */
+      TEmbodiedEntityIntersectionData tData;
+      GetEmbodiedEntitiesIntersectedByRay(tData, c_ray);
+      /* Go through intersections and find the closest */
+      for(size_t i = 0; i < tData.size(); ++i) {
+         if(s_item.TOnRay > tData[i].TOnRay &&
+            s_item.IntersectedEntity != &c_entity) {
+            s_item = tData[i];
+         }
+      }
+      /* Return true if an intersection was found */
+      return (s_item.IntersectedEntity != NULL);
+   }
+
+   /****************************************/
+   /****************************************/
+
    /* The default value of the simulation clock tick */
    Real CPhysicsEngine::m_fSimulationClockTick = 0.1f;
    Real CPhysicsEngine::m_fInverseSimulationClockTick = 1.0f / CPhysicsEngine::m_fSimulationClockTick;

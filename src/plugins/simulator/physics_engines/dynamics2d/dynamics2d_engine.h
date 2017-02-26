@@ -67,8 +67,8 @@ namespace argos {
       virtual bool AddEntity(CEntity& c_entity);
       virtual bool RemoveEntity(CEntity& c_entity);
 
-      virtual CEmbodiedEntity* CheckIntersectionWithRay(Real& f_t_on_ray,
-                                                        const CRay3& c_ray) const;
+      virtual void CheckIntersectionWithRay(TEmbodiedEntityIntersectionData& t_data,
+                                            const CRay3& c_ray) const;
 
       inline cpSpace* GetPhysicsSpace() {
          return m_ptSpace;

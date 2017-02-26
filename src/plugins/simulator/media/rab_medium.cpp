@@ -184,12 +184,12 @@ namespace argos {
                            /* cOtherRAB receives cRAB's message */
                            m_tRoutingTable[&cOtherRAB].insert(&cRAB);
                         }
-                     }
-                  }
-               }
-            }
-         }
-      }
+                     } // occlusion found?
+                  } // is msg size the same?
+               } // is check necessary?
+            } // are entities the same?
+         } // for entities in range
+      } // for routing table
    }
 
    /****************************************/
