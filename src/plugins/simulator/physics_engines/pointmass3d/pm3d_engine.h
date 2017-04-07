@@ -1,15 +1,15 @@
 /**
- * @file <argos3/plugins/simulator/physics_engines/pointmass3d/pointmass3d_engine.h>
+ * @file <argos3/plugins/simulator/physics_engines/pointmass3d/pm3d_engine.h>
  *
  * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */
 
-#ifndef POINTMASS3D_ENGINE_H
-#define POINTMASS3D_ENGINE_H
+#ifndef PM3D_ENGINE_H
+#define PM3D_ENGINE_H
 
 namespace argos {
-   class CPointMass3DEngine;
-   class CPointMass3DModel;
+   class CPM3DEngine;
+   class CPM3DModel;
    class CEmbodiedEntity;
 }
 
@@ -19,12 +19,12 @@ namespace argos {
 
 namespace argos {
 
-   class CPointMass3DEngine : public CPhysicsEngine {
+   class CPM3DEngine : public CPhysicsEngine {
 
    public:
 
-      CPointMass3DEngine();
-      virtual ~CPointMass3DEngine();
+      CPM3DEngine();
+      virtual ~CPM3DEngine();
 
       virtual void Init(TConfigurationNode& t_tree);
       virtual void Reset();
@@ -46,14 +46,14 @@ namespace argos {
                                             const CRay3& c_ray) const;
 
       void AddPhysicsModel(const std::string& str_id,
-                           CPointMass3DModel& c_model);
+                           CPM3DModel& c_model);
       void RemovePhysicsModel(const std::string& str_id);
 
-      std::map<std::string, CPointMass3DModel*>& GetPhysicsModels() {
+      std::map<std::string, CPM3DModel*>& GetPhysicsModels() {
          return m_tPhysicsModels;
       }
 
-      const std::map<std::string, CPointMass3DModel*>& GetPhysicsModels() const {
+      const std::map<std::string, CPM3DModel*>& GetPhysicsModels() const {
          return m_tPhysicsModels;
       }
 
@@ -64,7 +64,7 @@ namespace argos {
    private:
 
       CControllableEntity::TMap m_tControllableEntities;
-      std::map<std::string, CPointMass3DModel*> m_tPhysicsModels;
+      std::map<std::string, CPM3DModel*> m_tPhysicsModels;
       Real m_fGravity;
 
    };
@@ -73,30 +73,30 @@ namespace argos {
    /****************************************/
 
    template <typename ACTION>
-   class CPointMass3DOperation : public CEntityOperation<ACTION, CPointMass3DEngine, SOperationOutcome> {
+   class CPM3DOperation : public CEntityOperation<ACTION, CPM3DEngine, SOperationOutcome> {
    public:
-      virtual ~CPointMass3DOperation() {}
+      virtual ~CPM3DOperation() {}
    };
 
-   class CPointMass3DOperationAddEntity : public CPointMass3DOperation<CPointMass3DOperationAddEntity> {
+   class CPM3DOperationAddEntity : public CPM3DOperation<CPM3DOperationAddEntity> {
    public:
-      virtual ~CPointMass3DOperationAddEntity() {}
+      virtual ~CPM3DOperationAddEntity() {}
    };
 
-   class CPointMass3DOperationRemoveEntity : public CPointMass3DOperation<CPointMass3DOperationRemoveEntity> {
+   class CPM3DOperationRemoveEntity : public CPM3DOperation<CPM3DOperationRemoveEntity> {
    public:
-      virtual ~CPointMass3DOperationRemoveEntity() {}
+      virtual ~CPM3DOperationRemoveEntity() {}
    };
 
-#define REGISTER_POINTMASS3D_OPERATION(ACTION, OPERATION, ENTITY)       \
-   REGISTER_ENTITY_OPERATION(ACTION, CPointMass3DEngine, OPERATION, SOperationOutcome, ENTITY);
+#define REGISTER_PM3D_OPERATION(ACTION, OPERATION, ENTITY)       \
+   REGISTER_ENTITY_OPERATION(ACTION, CPM3DEngine, OPERATION, SOperationOutcome, ENTITY);
 
-#define REGISTER_STANDARD_POINTMASS3D_OPERATION_ADD_ENTITY(SPACE_ENTITY, PM3D_MODEL) \
-   class CPointMass3DOperationAdd ## SPACE_ENTITY : public CPointMass3DOperationAddEntity { \
+#define REGISTER_STANDARD_PM3D_OPERATION_ADD_ENTITY(SPACE_ENTITY, PM3D_MODEL) \
+   class CPM3DOperationAdd ## SPACE_ENTITY : public CPM3DOperationAddEntity { \
    public:                                                              \
-   CPointMass3DOperationAdd ## SPACE_ENTITY() {}                        \
-   virtual ~CPointMass3DOperationAdd ## SPACE_ENTITY() {}               \
-   SOperationOutcome ApplyTo(CPointMass3DEngine& c_engine,              \
+   CPM3DOperationAdd ## SPACE_ENTITY() {}                        \
+   virtual ~CPM3DOperationAdd ## SPACE_ENTITY() {}               \
+   SOperationOutcome ApplyTo(CPM3DEngine& c_engine,              \
                              SPACE_ENTITY& c_entity) {                  \
       PM3D_MODEL* pcPhysModel = new PM3D_MODEL(c_engine,                \
                                                c_entity);               \
@@ -108,16 +108,16 @@ namespace argos {
       return SOperationOutcome(true);                                   \
    }                                                                    \
    };                                                                   \
-   REGISTER_POINTMASS3D_OPERATION(CPointMass3DOperationAddEntity,       \
-                                  CPointMass3DOperationAdd ## SPACE_ENTITY, \
+   REGISTER_PM3D_OPERATION(CPM3DOperationAddEntity,       \
+                                  CPM3DOperationAdd ## SPACE_ENTITY, \
                                   SPACE_ENTITY);
 
-#define REGISTER_STANDARD_POINTMASS3D_OPERATION_REMOVE_ENTITY(SPACE_ENTITY) \
-   class CPointMass3DOperationRemove ## SPACE_ENTITY : public CPointMass3DOperationRemoveEntity { \
+#define REGISTER_STANDARD_PM3D_OPERATION_REMOVE_ENTITY(SPACE_ENTITY) \
+   class CPM3DOperationRemove ## SPACE_ENTITY : public CPM3DOperationRemoveEntity { \
    public:                                                              \
-   CPointMass3DOperationRemove ## SPACE_ENTITY() {}                     \
-   virtual ~CPointMass3DOperationRemove ## SPACE_ENTITY() {}            \
-   SOperationOutcome ApplyTo(CPointMass3DEngine& c_engine,              \
+   CPM3DOperationRemove ## SPACE_ENTITY() {}                     \
+   virtual ~CPM3DOperationRemove ## SPACE_ENTITY() {}            \
+   SOperationOutcome ApplyTo(CPM3DEngine& c_engine,              \
                 SPACE_ENTITY& c_entity) {                               \
       c_engine.RemovePhysicsModel(c_entity.GetId());                    \
       c_entity.                                                         \
@@ -126,13 +126,13 @@ namespace argos {
       return SOperationOutcome(true);                                   \
    }                                                                    \
    };                                                                   \
-   REGISTER_POINTMASS3D_OPERATION(CPointMass3DOperationRemoveEntity,    \
-                                  CPointMass3DOperationRemove ## SPACE_ENTITY, \
+   REGISTER_PM3D_OPERATION(CPM3DOperationRemoveEntity,    \
+                                  CPM3DOperationRemove ## SPACE_ENTITY, \
                                   SPACE_ENTITY);
 
-#define REGISTER_STANDARD_POINTMASS3D_OPERATIONS_ON_ENTITY(SPACE_ENTITY, PM3D_ENTITY) \
-   REGISTER_STANDARD_POINTMASS3D_OPERATION_ADD_ENTITY(SPACE_ENTITY, PM3D_ENTITY) \
-   REGISTER_STANDARD_POINTMASS3D_OPERATION_REMOVE_ENTITY(SPACE_ENTITY)
+#define REGISTER_STANDARD_PM3D_OPERATIONS_ON_ENTITY(SPACE_ENTITY, PM3D_ENTITY) \
+   REGISTER_STANDARD_PM3D_OPERATION_ADD_ENTITY(SPACE_ENTITY, PM3D_ENTITY) \
+   REGISTER_STANDARD_PM3D_OPERATION_REMOVE_ENTITY(SPACE_ENTITY)
 
    /****************************************/
    /****************************************/

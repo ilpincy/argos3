@@ -1,11 +1,11 @@
 /**
- * @file <argos3/plugins/simulator/physics_engines/pointmass3d/pointmass3d_engine.cpp>
+ * @file <argos3/plugins/simulator/physics_engines/pointmass3d/pm3d_engine.cpp>
  *
  * @author Carlo Pinciroli - <cpinciro@ulb.ac.be>
  */
 
-#include "pointmass3d_engine.h"
-#include "pointmass3d_model.h"
+#include "pm3d_engine.h"
+#include "pm3d_model.h"
 #include <argos3/core/utility/logging/argos_log.h>
 #include <argos3/core/utility/configuration/argos_configuration.h>
 
@@ -14,20 +14,20 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   CPointMass3DEngine::CPointMass3DEngine() :
+   CPM3DEngine::CPM3DEngine() :
       m_fGravity(-9.81f) {
    }
 
    /****************************************/
    /****************************************/
 
-   CPointMass3DEngine::~CPointMass3DEngine() {
+   CPM3DEngine::~CPM3DEngine() {
    }
 
    /****************************************/
    /****************************************/
 
-   void CPointMass3DEngine::Init(TConfigurationNode& t_tree) {
+   void CPM3DEngine::Init(TConfigurationNode& t_tree) {
       /* Init parent */
       CPhysicsEngine::Init(t_tree);
       /* Set gravity */
@@ -37,8 +37,8 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CPointMass3DEngine::Reset() {
-      for(CPointMass3DModel::TMap::iterator it = m_tPhysicsModels.begin();
+   void CPM3DEngine::Reset() {
+      for(CPM3DModel::TMap::iterator it = m_tPhysicsModels.begin();
           it != m_tPhysicsModels.end(); ++it) {
          it->second->Reset();
       }
@@ -47,9 +47,9 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CPointMass3DEngine::Destroy() {
+   void CPM3DEngine::Destroy() {
       /* Empty the physics entity map */
-      for(CPointMass3DModel::TMap::iterator it = m_tPhysicsModels.begin();
+      for(CPM3DModel::TMap::iterator it = m_tPhysicsModels.begin();
           it != m_tPhysicsModels.end(); ++it) {
          delete it->second;
       }
@@ -59,21 +59,21 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CPointMass3DEngine::Update() {
+   void CPM3DEngine::Update() {
       /* Update the physics state from the entities */
-      for(CPointMass3DModel::TMap::iterator it = m_tPhysicsModels.begin();
+      for(CPM3DModel::TMap::iterator it = m_tPhysicsModels.begin();
           it != m_tPhysicsModels.end(); ++it) {
          it->second->UpdateFromEntityStatus();
       }
       for(size_t i = 0; i < GetIterations(); ++i) {
          /* Perform the step */
-         for(CPointMass3DModel::TMap::iterator it = m_tPhysicsModels.begin();
+         for(CPM3DModel::TMap::iterator it = m_tPhysicsModels.begin();
              it != m_tPhysicsModels.end(); ++it) {
             it->second->Step();
          }
       }
       /* Update the simulated space */
-      for(CPointMass3DModel::TMap::iterator it = m_tPhysicsModels.begin();
+      for(CPM3DModel::TMap::iterator it = m_tPhysicsModels.begin();
           it != m_tPhysicsModels.end(); ++it) {
          it->second->UpdateEntityStatus();
       }
@@ -82,16 +82,16 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   size_t CPointMass3DEngine::GetNumPhysicsModels() {
+   size_t CPM3DEngine::GetNumPhysicsModels() {
       return m_tPhysicsModels.size();
    }
 
    /****************************************/
    /****************************************/
 
-   bool CPointMass3DEngine::AddEntity(CEntity& c_entity) {
+   bool CPM3DEngine::AddEntity(CEntity& c_entity) {
       SOperationOutcome cOutcome =
-         CallEntityOperation<CPointMass3DOperationAddEntity, CPointMass3DEngine, SOperationOutcome>
+         CallEntityOperation<CPM3DOperationAddEntity, CPM3DEngine, SOperationOutcome>
          (*this, c_entity);
       return cOutcome.Value;
    }
@@ -99,9 +99,9 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   bool CPointMass3DEngine::RemoveEntity(CEntity& c_entity) {
+   bool CPM3DEngine::RemoveEntity(CEntity& c_entity) {
       SOperationOutcome cOutcome =
-         CallEntityOperation<CPointMass3DOperationRemoveEntity, CPointMass3DEngine, SOperationOutcome>
+         CallEntityOperation<CPM3DOperationRemoveEntity, CPM3DEngine, SOperationOutcome>
          (*this, c_entity);
       return cOutcome.Value;
    }
@@ -109,30 +109,30 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   bool CPointMass3DEngine::IsPointContained(const CVector3& c_point) {
+   bool CPM3DEngine::IsPointContained(const CVector3& c_point) {
       return true;
    }
 
    /****************************************/
    /****************************************/
 
-   bool CPointMass3DEngine::IsEntityTransferNeeded() const {
+   bool CPM3DEngine::IsEntityTransferNeeded() const {
       return false;
    }
 
    /****************************************/
    /****************************************/
 
-   void CPointMass3DEngine::TransferEntities() {
+   void CPM3DEngine::TransferEntities() {
    }
 
    /****************************************/
    /****************************************/
 
-   void CPointMass3DEngine::CheckIntersectionWithRay(TEmbodiedEntityIntersectionData& t_data,
+   void CPM3DEngine::CheckIntersectionWithRay(TEmbodiedEntityIntersectionData& t_data,
                                                      const CRay3& c_ray) const {
       Real fTOnRay;
-      for(CPointMass3DModel::TMap::const_iterator it = m_tPhysicsModels.begin();
+      for(CPM3DModel::TMap::const_iterator it = m_tPhysicsModels.begin();
           it != m_tPhysicsModels.end();
           ++it) {
          if(it->second->CheckIntersectionWithRay(fTOnRay, c_ray)) {
@@ -147,29 +147,29 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CPointMass3DEngine::AddPhysicsModel(const std::string& str_id,
-                                            CPointMass3DModel& c_model) {
+   void CPM3DEngine::AddPhysicsModel(const std::string& str_id,
+                                            CPM3DModel& c_model) {
       m_tPhysicsModels[str_id] = &c_model;
    }
 
    /****************************************/
    /****************************************/
 
-   void CPointMass3DEngine::RemovePhysicsModel(const std::string& str_id) {
-      CPointMass3DModel::TMap::iterator it = m_tPhysicsModels.find(str_id);
+   void CPM3DEngine::RemovePhysicsModel(const std::string& str_id) {
+      CPM3DModel::TMap::iterator it = m_tPhysicsModels.find(str_id);
       if(it != m_tPhysicsModels.end()) {
          delete it->second;
          m_tPhysicsModels.erase(it);
       }
       else {
-         THROW_ARGOSEXCEPTION("PointMass3D model id \"" << str_id << "\" not found in point-mass 3D engine \"" << GetId() << "\"");
+         THROW_ARGOSEXCEPTION("PM3D model id \"" << str_id << "\" not found in point-mass 3D engine \"" << GetId() << "\"");
       }
    }
 
    /****************************************/
    /****************************************/
 
-   REGISTER_PHYSICS_ENGINE(CPointMass3DEngine,
+   REGISTER_PHYSICS_ENGINE(CPM3DEngine,
                            "pointmass3d",
                            "Carlo Pinciroli [ilpincy@gmail.com]",
                            "1.0",
@@ -184,8 +184,16 @@ namespace argos {
                            "The 'id' attribute is necessary and must be unique among the physics engines.\n"
                            "If two engines share the same id, initialization aborts.\n\n"
                            "OPTIONAL XML CONFIGURATION\n\n"
-                           "None for the time being.\n\n"
-                           ,
+                           "You can set the intensity of gravity in this engine. Gravity won't affect every\n"
+                           "entity, though - only the entities that use it internally, such as quad-rotors.\n\n"
+                           "Gravity acts along the Z axis. A positive value pushes entities up; a negative\n"
+                           "value pushes entities down. The default value of the gravity intensity is -9.81.\n"
+                           "To set the gravity intensity, use the 'gravity' attribute:\n\n"
+                           "  <physics_engines>\n"
+                           "    ...\n"
+                           "    <pointmass3d id=\"pm3d\" gravity=\"-9.81\"/>\n"
+                           "    ...\n"
+                           "  </physics_engines>\n\n",
                            "Under development"
       );
 

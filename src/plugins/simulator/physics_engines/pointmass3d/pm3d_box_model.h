@@ -1,31 +1,31 @@
 /**
- * @file <argos3/plugins/simulator/physics_engines/pointmass3d/pointmass3d_box_model.h>
+ * @file <argos3/plugins/simulator/physics_engines/pointmass3d/pm3d_box_model.h>
  *
  * @author Carlo Pinciroli - <cpinciro@ulb.ac.be>
  */
 
-#ifndef POINTMASS3D_BOX_H
-#define POINTMASS3D_BOX_H
+#ifndef PM3D_BOX_H
+#define PM3D_BOX_H
 
 namespace argos {
-   class CPointMass3DEngine;
-   class CPointMass3DBoxModel;
+   class CPM3DEngine;
+   class CPM3DBoxModel;
    class CQuadRotorEntity;
 }
 
-#include <argos3/plugins/simulator/physics_engines/pointmass3d/pointmass3d_model.h>
+#include <argos3/plugins/simulator/physics_engines/pointmass3d/pm3d_model.h>
 #include <argos3/plugins/simulator/entities/quadrotor_entity.h>
 #include <argos3/plugins/simulator/entities/box_entity.h>
 
 namespace argos {
 
-   class CPointMass3DBoxModel : public CPointMass3DModel {
+   class CPM3DBoxModel : public CPM3DModel {
 
    public:
       
-      CPointMass3DBoxModel(CPointMass3DEngine& c_engine,
+      CPM3DBoxModel(CPM3DEngine& c_engine,
                            CBoxEntity& c_box);
-      virtual ~CPointMass3DBoxModel() {}
+      virtual ~CPM3DBoxModel() {}
       
       virtual void UpdateFromEntityStatus() {}
       virtual void Step() {}

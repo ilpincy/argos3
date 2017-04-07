@@ -1,15 +1,15 @@
 /**
- * @file <argos3/plugins/simulator/physics_engines/pointmass3d/pointmass3d_quadrotor_model.cpp>
+ * @file <argos3/plugins/simulator/physics_engines/pointmass3d/pm3d_quadrotor_model.cpp>
  *
  * @author Carlo Pinciroli - <cpinciro@ulb.ac.be>
  */
 
-#include "pointmass3d_quadrotor_model.h"
+#include "pm3d_quadrotor_model.h"
 #include <argos3/core/utility/logging/argos_log.h>
 #include <argos3/core/utility/math/cylinder.h>
 #include <argos3/core/simulator/simulator.h>
 #include <argos3/core/simulator/space/space.h>
-#include <argos3/plugins/simulator/physics_engines/pointmass3d/pointmass3d_engine.h>
+#include <argos3/plugins/simulator/physics_engines/pointmass3d/pm3d_engine.h>
 
 namespace argos {
 
@@ -23,7 +23,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   CPointMass3DQuadRotorModel::CPointMass3DQuadRotorModel(CPointMass3DEngine& c_engine,
+   CPM3DQuadRotorModel::CPM3DQuadRotorModel(CPM3DEngine& c_engine,
                                                           CEmbodiedEntity& c_body,
                                                           CQuadRotorEntity& c_quadrotor,
                                                           Real f_body_height,
@@ -40,7 +40,7 @@ namespace argos {
                                                           Real f_rot_kd,
                                                           const CVector3& c_max_force,
                                                           Real f_max_torque) :
-      CPointMass3DModel(c_engine, c_body),
+      CPM3DDynamicModel(c_engine, c_body),
       m_cQuadRotorEntity(c_quadrotor),
       m_fBodyHeight(f_body_height),
       m_fArmLength(f_arm_length),
@@ -57,19 +57,13 @@ namespace argos {
       m_cMaxForce(c_max_force),
       m_fMaxTorque(f_max_torque) {
       Reset();
-      /* Register the origin anchor update method */
-      RegisterAnchorMethod(GetEmbodiedEntity().GetOriginAnchor(),
-                           &CPointMass3DModel::UpdateOriginAnchor);
-      /* Get initial rotation */
-      CRadians cTmp1, cTmp2;
-      GetEmbodiedEntity().GetOriginAnchor().Orientation.ToEulerAngles(m_cYaw, cTmp1, cTmp2);
    }
 
    /****************************************/
    /****************************************/
 
-   void CPointMass3DQuadRotorModel::Reset() {
-      CPointMass3DModel::Reset();
+   void CPM3DQuadRotorModel::Reset() {
+      CPM3DModel::Reset();
       m_pfLinearError[0] = 0.0f;
       m_pfLinearError[1] = 0.0f;
       m_pfLinearError[2] = 0.0f;
@@ -79,20 +73,19 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CPointMass3DQuadRotorModel::UpdateFromEntityStatus() {
+   void CPM3DQuadRotorModel::UpdateFromEntityStatus() {
       m_sDesiredPositionData = m_cQuadRotorEntity.GetPositionControlData();
    }
 
    /****************************************/
    /****************************************/
 
-   void CPointMass3DQuadRotorModel::Step() {
+   void CPM3DQuadRotorModel::Step() {
       /*
        * Update positional information
        */
-      /* Integration step */
-      m_cPosition += m_cVelocity * m_cPM3DEngine.GetPhysicsClockTick();
-      m_cYaw      += m_cRotSpeed * m_cPM3DEngine.GetPhysicsClockTick();
+      /* Use old settings to step */
+      CPM3DKinematicModel::Step();
       /* Limit the quad-rotor position within the arena limits */
       const CRange<CVector3>& cLimits = CSimulator::GetInstance().GetSpace().GetArenaLimits();
       m_cPosition.SetX(
@@ -107,13 +100,11 @@ namespace argos {
          Min(Max(m_cPosition.GetZ(),
                  cLimits.GetMin().GetZ()),
              cLimits.GetMax().GetZ() - m_fBodyHeight));
-      /* Normalize the yaw */
-      m_cYaw.UnsignedNormalize();
       /*
        * Update velocity information
        */
-      m_cVelocity += (m_cPM3DEngine.GetPhysicsClockTick() / m_fBodyMass)    * m_cAcceleration;
-      m_cRotSpeed += (m_cPM3DEngine.GetPhysicsClockTick() / m_fBodyInertia) * m_cTorque;
+      m_cLinearVelocity += (m_cPM3DEngine.GetPhysicsClockTick() / m_fBodyMass)    * m_cAcceleration;
+      m_cAngularVelocity += (m_cPM3DEngine.GetPhysicsClockTick() / m_fBodyInertia) * m_cTorque;
       /*
        * Update control information
        */
@@ -127,13 +118,13 @@ namespace argos {
       m_cAcceleration.SetX(m_cLinearControl.GetX());
       m_cAcceleration.SetY(m_cLinearControl.GetY());
       m_cAcceleration.SetZ(m_cLinearControl.GetZ() + m_fBodyMass * m_cPM3DEngine.GetGravity());
-      m_cTorque.SetValue(m_fRotationalControl);
+      m_cTorque.SetZ(m_fRotationalControl);
    }
 
    /****************************************/
    /****************************************/
 
-   void CPointMass3DQuadRotorModel::CalculateBoundingBox() {
+   void CPM3DQuadRotorModel::CalculateBoundingBox() {
       GetBoundingBox().MinCorner.Set(
          GetEmbodiedEntity().GetOriginAnchor().Position.GetX() - m_fArmLength,
          GetEmbodiedEntity().GetOriginAnchor().Position.GetY() - m_fArmLength,
@@ -147,7 +138,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   bool CPointMass3DQuadRotorModel::CheckIntersectionWithRay(Real& f_t_on_ray,
+   bool CPM3DQuadRotorModel::CheckIntersectionWithRay(Real& f_t_on_ray,
                                                              const CRay3& c_ray) const {
       CCylinder m_cShape(m_fArmLength,
                          m_fBodyHeight,
@@ -159,7 +150,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CPointMass3DQuadRotorModel::PositionalControl() {
+   void CPM3DQuadRotorModel::PositionalControl() {
       /* Linear control */
       m_cLinearControl.Set(
          SymmetricClamp(m_cMaxForce.GetX(), PDControl(
@@ -189,21 +180,21 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CPointMass3DQuadRotorModel::SpeedControl() {
+   void CPM3DQuadRotorModel::SpeedControl() {
       /* Linear control */
       m_cLinearControl.Set(
          SymmetricClamp(m_cMaxForce.GetX(), PDControl(
-                           m_sDesiredSpeedData.Velocity.GetX() - m_cVelocity.GetX(),
+                           m_sDesiredSpeedData.Velocity.GetX() - m_cLinearVelocity.GetX(),
                            m_cVelKP.GetX(),
                            m_cVelKD.GetX(),
                            m_pfLinearError[0])),
          SymmetricClamp(m_cMaxForce.GetY(), PDControl(
-                           m_sDesiredSpeedData.Velocity.GetY() - m_cVelocity.GetY(),
+                           m_sDesiredSpeedData.Velocity.GetY() - m_cLinearVelocity.GetY(),
                            m_cVelKP.GetY(),
                            m_cVelKD.GetY(),
                            m_pfLinearError[1])),
          SymmetricClamp(m_cMaxForce.GetZ(), PDControl(
-                           m_sDesiredSpeedData.Velocity.GetZ() - m_cVelocity.GetZ(),
+                           m_sDesiredSpeedData.Velocity.GetZ() - m_cLinearVelocity.GetZ(),
                            m_cVelKP.GetZ(),
                            m_cVelKD.GetZ(),
                            m_pfLinearError[2]) - m_fBodyMass * m_cPM3DEngine.GetGravity()));
@@ -219,7 +210,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   Real CPointMass3DQuadRotorModel::PDControl(Real f_cur_error,
+   Real CPM3DQuadRotorModel::PDControl(Real f_cur_error,
                                               Real f_k_p,
                                               Real f_k_d,
                                               Real& f_old_error) {
@@ -228,14 +219,6 @@ namespace argos {
          f_k_d * (f_cur_error - f_old_error) / m_cPM3DEngine.GetPhysicsClockTick(); /* derivative term */
       f_old_error = f_cur_error;
       return fOutput;
-   }
-
-   /****************************************/
-   /****************************************/
-
-   void CPointMass3DQuadRotorModel::UpdateOriginAnchor(SAnchor& s_anchor) {
-      s_anchor.Position = m_cPosition;
-      s_anchor.Orientation = CQuaternion(m_cYaw, CVector3::Z);
    }
 
    /****************************************/

@@ -1,31 +1,31 @@
 /**
- * @file <argos3/plugins/simulator/physics_engines/pointmass3d/pointmass3d_cylinder_model.h>
+ * @file <argos3/plugins/simulator/physics_engines/pointmass3d/pm3d_cylinder_model.h>
  *
  * @author Carlo Pinciroli - <cpinciro@ulb.ac.be>
  */
 
-#ifndef POINTMASS3D_CYLINDER_H
-#define POINTMASS3D_CYLINDER_H
+#ifndef PM3D_CYLINDER_H
+#define PM3D_CYLINDER_H
 
 namespace argos {
-   class CPointMass3DEngine;
-   class CPointMass3DCylinderModel;
+   class CPM3DEngine;
+   class CPM3DCylinderModel;
    class CQuadRotorEntity;
 }
 
-#include <argos3/plugins/simulator/physics_engines/pointmass3d/pointmass3d_model.h>
+#include <argos3/plugins/simulator/physics_engines/pointmass3d/pm3d_model.h>
 #include <argos3/plugins/simulator/entities/quadrotor_entity.h>
 #include <argos3/plugins/simulator/entities/cylinder_entity.h>
 
 namespace argos {
 
-   class CPointMass3DCylinderModel : public CPointMass3DModel {
+   class CPM3DCylinderModel : public CPM3DModel {
 
    public:
       
-      CPointMass3DCylinderModel(CPointMass3DEngine& c_engine,
+      CPM3DCylinderModel(CPM3DEngine& c_engine,
                                 CCylinderEntity& c_cylinder);
-      virtual ~CPointMass3DCylinderModel() {}
+      virtual ~CPM3DCylinderModel() {}
       
       virtual void UpdateFromEntityStatus() {}
       virtual void Step() {}
