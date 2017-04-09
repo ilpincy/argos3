@@ -29,7 +29,6 @@ namespace argos {
       
       virtual void UpdateFromEntityStatus() {}
       virtual void Step() {}
-      virtual void UpdateEntityStatus() {}
 
       virtual void CalculateBoundingBox();
 

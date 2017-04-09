@@ -67,7 +67,7 @@ namespace argos {
 
    void CFootBotProximityDefaultSensor::Update() {
       m_pcProximityImpl->Update();
-      for(size_t i = 0; i < 24; ++i) {
+      for(size_t i = 0; i < m_pcProximityImpl->GetReadings().size(); ++i) {
          m_tReadings[i].Value = m_pcProximityImpl->GetReadings()[i];
       }
    }
