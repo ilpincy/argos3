@@ -10,80 +10,36 @@ namespace argos {
                          const CRay3& c_ray) {
       /* Transform the ray so the origin is the axis-aligned box base */
       CVector3 cRayStart = c_ray.GetStart();
-      CVector3 cRayDir;
-      c_ray.GetDirection(cRayDir);
+      CVector3 cInvRayDir;
+      c_ray.GetDirection(cInvRayDir);
       cRayStart -= m_cBasePos;
       cRayStart.Rotate(m_cOrientation.Inverse());
-      cRayDir.Rotate(m_cOrientation.Inverse());
-      /* Buffer for the solutions found */
-      Real pfSolutions[6];
-      UInt32 unSolutionCount = 0;
-      CVector3 cTest;
-      if(Abs(cRayDir.GetZ()) > 1e-6) {
-         /* Bottom intersection (z axis) */
-         pfSolutions[0] = -cRayStart.GetZ() / cRayDir.GetZ();
-         if(pfSolutions[0] > 0.0) {
-            cTest = cRayStart + pfSolutions[0] * cRayDir;
-            if(m_cXBounds.WithinMinBoundIncludedMaxBoundIncluded(cTest.GetX()) &&
-               m_cYBounds.WithinMinBoundIncludedMaxBoundIncluded(cTest.GetY()))
-               ++unSolutionCount;
-         }
-         /* Top intersection (z axis) */
-         pfSolutions[unSolutionCount] = -(cRayStart.GetZ() - m_cZBounds.GetMax()) / cRayDir.GetZ();
-         if(pfSolutions[unSolutionCount] > 0.0) {
-            cTest = cRayStart + pfSolutions[unSolutionCount] * cRayDir;
-            if(m_cXBounds.WithinMinBoundIncludedMaxBoundIncluded(cTest.GetX()) &&
-               m_cYBounds.WithinMinBoundIncludedMaxBoundIncluded(cTest.GetY()))
-               ++unSolutionCount;
-         }
-      }
-      if(Abs(cRayDir.GetX()) > 1e-6) {
-         /* North intersection (x axis) */
-         pfSolutions[unSolutionCount] = -(cRayStart.GetX() - m_cXBounds.GetMax()) / cRayDir.GetX();
-         if(pfSolutions[unSolutionCount] > 0.0) {
-            cTest = cRayStart + pfSolutions[unSolutionCount] * cRayDir;
-            if(m_cZBounds.WithinMinBoundIncludedMaxBoundIncluded(cTest.GetZ()) &&
-               m_cYBounds.WithinMinBoundIncludedMaxBoundIncluded(cTest.GetY()))
-               ++unSolutionCount;
-         }
-         /* South intersection (x axis) */
-         pfSolutions[unSolutionCount] = -(cRayStart.GetX() - m_cXBounds.GetMin()) / cRayDir.GetX();
-         if(pfSolutions[unSolutionCount] > 0.0) {
-            cTest = cRayStart + pfSolutions[unSolutionCount] * cRayDir;
-            if(m_cZBounds.WithinMinBoundIncludedMaxBoundIncluded(cTest.GetZ()) &&
-               m_cYBounds.WithinMinBoundIncludedMaxBoundIncluded(cTest.GetY()))
-               ++unSolutionCount;
-         }
-      }
-      if(Abs(cRayDir.GetY()) > 1e-6) {
-         /* West intersection (y axis) */
-         pfSolutions[unSolutionCount] = -(cRayStart.GetY() - m_cYBounds.GetMax()) / cRayDir.GetY();
-         if(pfSolutions[unSolutionCount] > 0.0) {
-            cTest = cRayStart + pfSolutions[unSolutionCount] * cRayDir;
-            if(m_cZBounds.WithinMinBoundIncludedMaxBoundIncluded(cTest.GetZ()) &&
-               m_cXBounds.WithinMinBoundIncludedMaxBoundIncluded(cTest.GetX()))
-               ++unSolutionCount;
-         }
-         /* East intersection (y axis) */
-         pfSolutions[unSolutionCount] = -(cRayStart.GetY() - m_cYBounds.GetMin()) / cRayDir.GetY();
-         if(pfSolutions[unSolutionCount] > 0.0) {
-            cTest = cRayStart + pfSolutions[unSolutionCount] * cRayDir;
-            if(m_cZBounds.WithinMinBoundIncludedMaxBoundIncluded(cTest.GetZ()) &&
-               m_cXBounds.WithinMinBoundIncludedMaxBoundIncluded(cTest.GetX()))
-               ++unSolutionCount;
-         }
-      }
-      /* All possible solutions have been found, take the closest */
-      if(unSolutionCount == 0) {
-         return false;
-      }
-      f_t_on_ray = pfSolutions[0];
-      for(UInt32 i = 1; i < unSolutionCount; ++i) {
-         if(pfSolutions[i] < f_t_on_ray) {
-            f_t_on_ray = pfSolutions[i];
-         }
-      }
-      f_t_on_ray /= c_ray.GetLength();
+      cInvRayDir.Rotate(m_cOrientation.Inverse());
+      /* Calculate the inverse direction */
+      cInvRayDir.Set(1.0 / cInvRayDir.GetX(),
+                     1.0 / cInvRayDir.GetY(),
+                     1.0 / cInvRayDir.GetZ());
+      /* X plane */
+      Real fT1 = (m_cXBounds.GetMin() - cRayStart.GetX()) * cInvRayDir.GetX();
+      Real fT2 = (m_cXBounds.GetMax() - cRayStart.GetX()) * cInvRayDir.GetX();
+      Real fTmin = Min(fT1, fT2);
+      Real fTmax = Max(fT1, fT2);
+      /* Y plane */
+      fT1 = (m_cYBounds.GetMin() - cRayStart.GetY()) * cInvRayDir.GetY();
+      fT2 = (m_cYBounds.GetMax() - cRayStart.GetY()) * cInvRayDir.GetY();
+      fTmin = Max(fTmin, Min(fT1, fT2));
+      fTmax = Min(fTmax, Max(fT1, fT2));
+      if(fTmin > fTmax) return false;
+      /* Z plane */
+      fT1 = (m_cZBounds.GetMin() - cRayStart.GetZ()) * cInvRayDir.GetZ();
+      fT2 = (m_cZBounds.GetMax() - cRayStart.GetZ()) * cInvRayDir.GetZ();
+      fTmin = Max(fTmin, Min(fT1, fT2));
+      fTmax = Min(fTmax, Max(fT1, fT2));
+      if(fTmin > fTmax) return false;
+      /* The t we search for is the smallest non-negative */
+      if(fTmin >= 0) f_t_on_ray = fTmin / c_ray.GetLength();
+      else if(fTmax >= 0) f_t_on_ray = fTmax / c_ray.GetLength();
+      else return false;
       return true;
    }
 
