@@ -73,14 +73,18 @@ namespace argos {
    /****************************************/
 
    void CPerspectiveCameraEquippedEntity::Enable() {
-      m_psAnchor->Enable();
+      if (m_psAnchor) {
+         m_psAnchor->Enable();
+      }
    }
 
    /****************************************/
    /****************************************/
 
    void CPerspectiveCameraEquippedEntity::Disable() {
-      m_psAnchor->Disable();
+      if (m_psAnchor) {
+         m_psAnchor->Disable();
+      }
    }
 
    /****************************************/
