@@ -102,7 +102,7 @@ namespace argos {
             cVectorRobotToMessage = cRABEntity.GetPosition();
             cVectorRobotToMessage -= m_pcRangeAndBearingEquippedEntity->GetPosition();
             /* If noise was setup, add it */
-            if(m_fDistanceNoiseStdDev > 0.0f) {
+            if(m_pcRNG && m_fDistanceNoiseStdDev > 0.0f) {
                cVectorRobotToMessage += CVector3(
                   m_pcRNG->Gaussian(m_fDistanceNoiseStdDev),
                   m_pcRNG->Uniform(INCLINATION_RANGE),
