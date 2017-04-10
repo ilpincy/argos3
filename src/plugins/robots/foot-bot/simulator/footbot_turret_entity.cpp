@@ -48,7 +48,9 @@ namespace argos {
       m_cOldRot = CRadians::ZERO;
       m_fDesRotSpeed = 0.0;
       m_fCurRotSpeed = 0.0;
-      m_psAnchor->OffsetOrientation = CQuaternion();
+      if (m_psAnchor) {
+         m_psAnchor->OffsetOrientation = CQuaternion();
+      }
    }
 
    /****************************************/
