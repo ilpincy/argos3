@@ -161,18 +161,19 @@ namespace argos {
    void CDynamicLoading::UnloadLibrary(const std::string& str_lib) {
       TDLHandleMap::iterator it = m_tOpenLibs.find(str_lib);
       if(it != m_tOpenLibs.end()) {
-         if(::dlclose(it->second) != 0) {
+         bool closed = ::dlclose(it->second) == 0;
+         /* test if the library is still resident */
+         CDynamicLoading::TDLHandle tHandle = ::dlopen(str_lib.c_str(), RTLD_NOLOAD);
+         closed = closed && (tHandle == NULL);
+         free(tHandle);
+
+         if(!closed) {
             LOGERR << "[WARNING] Can't unload library \""
                    << str_lib
                    << "\": "
                    << dlerror()
                    << std::endl;
-         }
-         if(::dlopen(str_lib.c_str(), RTLD_NOLOAD)) {
-            LOGERR << "[WARNING] Can't unload library \""
-                   << str_lib
-                   << "\""
-                   << std::endl;
+            LOGERR.Flush();
          }
       }
       else {
