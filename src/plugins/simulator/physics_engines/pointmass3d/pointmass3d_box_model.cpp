@@ -40,7 +40,7 @@ namespace argos {
                                                        const CRay3& c_ray) const {
       CBox m_cShape(m_cBoxEntity.GetSize(),
                     GetEmbodiedEntity().GetOriginAnchor().Position,
-                    CVector3::Z);
+                    GetEmbodiedEntity().GetOriginAnchor().Orientation);
       return m_cShape.Intersects(f_t_on_ray, c_ray);
    }
    

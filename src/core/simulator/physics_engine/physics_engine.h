@@ -26,6 +26,67 @@ namespace argos {
 
 namespace argos {
 
+   /****************************************/
+   /****************************************/
+
+   struct SEmbodiedEntityIntersectionItem {
+      CEmbodiedEntity* IntersectedEntity;
+      Real TOnRay;
+
+      SEmbodiedEntityIntersectionItem() :
+         IntersectedEntity(NULL),
+         TOnRay(1.0f) {}
+
+      SEmbodiedEntityIntersectionItem(CEmbodiedEntity* pc_entity,
+                                      Real f_t_on_ray) :
+         IntersectedEntity(pc_entity),
+         TOnRay(f_t_on_ray) {}
+
+      SEmbodiedEntityIntersectionItem(const SEmbodiedEntityIntersectionItem& s_item) :
+         IntersectedEntity(s_item.IntersectedEntity),
+         TOnRay(s_item.TOnRay) {}
+
+      inline bool operator<(const SEmbodiedEntityIntersectionItem& s_item) {
+         return TOnRay < s_item.TOnRay;
+      }
+   };
+
+   typedef std::vector<SEmbodiedEntityIntersectionItem> TEmbodiedEntityIntersectionData;
+
+   /**
+    * Checks whether the given ray intersects any entity.
+    * The t_data parameter is cleared.
+    * @param t_data The list of intersections found.
+    * @param c_ray The ray to test for intersections.
+    * @return <tt>true</tt> if at least one intersection is found
+    */
+   extern bool GetEmbodiedEntitiesIntersectedByRay(TEmbodiedEntityIntersectionData& t_data,
+                                                   const CRay3& c_ray);
+
+   /**
+    * Returns the closest intersection with an embodied entity to the ray start.
+    * @param t_data The data of the intersection, if any.
+    * @param c_ray The ray to test for intersections.
+    * @return <tt>true</tt> if an intersection is found
+    */
+   extern bool GetClosestEmbodiedEntityIntersectedByRay(SEmbodiedEntityIntersectionItem& s_item,
+                                                        const CRay3& c_ray);
+
+   /**
+    * Returns the closest intersection with an embodied entity to the ray start.
+    * This function allows you to exclude one entity from the list of intersections.
+    * @param t_data The data of the intersection, if any.
+    * @param c_ray The ray to test for intersections.
+    * @param c_entity The entity to exclude from the intersection check.
+    * @return <tt>true</tt> if an intersection is found
+    */
+   extern bool GetClosestEmbodiedEntityIntersectedByRay(SEmbodiedEntityIntersectionItem& s_item,
+                                                        const CRay3& c_ray,
+                                                        CEmbodiedEntity& c_entity);
+
+   /****************************************/
+   /****************************************/
+
    class CPhysicsEngine : public CBaseConfigurableResource {
 
    public:
@@ -159,13 +220,12 @@ namespace argos {
       }
 
       /**
-       * Check whether an object in this engine intersects the given ray.
-       * @param f_t_on_ray In the parametric definition of <em>ray</em> = <em>starting_point</em> + <em>t</em> * <em>direction</em>, this parameter is <em>t</em>. A value between 0 and 1 means that the intersection point lies within the given ray; values outside this range mean that the intersection point is outside the ray extrema.
+       * Check which objects in this engine intersect the given ray.
+       * @param t_data The list of entities that intersect the ray.
        * @param c_ray The test ray.
-       * @returns A pointer to the embodied entity intersecting the ray, or <tt>NULL</tt> if no intersection occurred.
        */
-      virtual CEmbodiedEntity* CheckIntersectionWithRay(Real& f_t_on_ray,
-                                                        const CRay3& c_ray) const = 0;
+      virtual void CheckIntersectionWithRay(TEmbodiedEntityIntersectionData& t_data,
+                                            const CRay3& c_ray) const = 0;
 
       /**
        * Returns the simulation clock tick.

@@ -8,143 +8,96 @@ namespace argos {
 
    bool CCylinder::Intersects(Real& f_t_on_ray,
                               const CRay3& c_ray) {
+      /* Solution candidates */
+      UInt32 unSolutionCount = 0;
+      Real pfSolutions[4];
+      /* Position of top cap relative to bottom one */
+      CVector3 cRelTopCap = m_fHeight * m_cAxis;
       /*
-       * This algorithm was adapted from
-       * http://www.realtimerendering.com/resources/GraphicsGems/gemsiv/ray_cyl.c
+       * Check intersection with cylinder
        */
-      /* Vector from cylinder base to ray start */
-      CVector3 cCylBase2RayStart(c_ray.GetStart());
-      cCylBase2RayStart -= m_cBasePos;
-      /* Ray direction and length */
+      CVector3 cPRA = c_ray.GetStart() - m_cBasePos;
+      CVector3 cBeta = cPRA - m_cAxis.DotProduct(cPRA) * m_cAxis;
       CVector3 cRayDir;
       c_ray.GetDirection(cRayDir);
-      Real fRayLen = c_ray.GetLength();
-      /* Vector normal to cylinder axis and ray direction */
-      CVector3 cNormal(cRayDir);
-      cNormal.CrossProduct(m_cAxis);
-      Real fNormalLen = cNormal.Length();
-      /* Are cylinder axis and ray parallel? */
-      if(fNormalLen > 0) {
-         /* No, they aren't parallel */
-         /* Make normal have length 1 */
-         cNormal /= fNormalLen;
-         /* Calculate shortest distance between axis and ray
-          * by projecting cCylBase2RayStart onto cNormal */
-         Real fDist = Abs(cCylBase2RayStart.DotProduct(cNormal));
-         /* Is fDist smaller than the cylinder radius? */
-         if(fDist > m_fRadius) {
-            /* No, it's not, so there can't be any intersection */
-            return false;
-         }
-         /* If we get here, it's because the ray intersects the infinite cylinder */
-         /* Create a buffer for the 4 potential intersection points
-            (two on the sides, two on the bases) */
-         Real fPotentialT[4];
-         /* First, calculate the intersection points with the sides */
-         /* Calculate the midpoint between the two intersection points */
-         CVector3 cVec(cCylBase2RayStart);
-         cVec.CrossProduct(m_cAxis);
-         Real fMidPointDist = -cVec.DotProduct(cNormal) / fNormalLen;
-         /* Calculate the distance between the midpoint and the potential t's */
-         cVec = cNormal;
-         cVec.CrossProduct(m_cAxis);
-         cVec.Normalize();
-         Real fDeltaToMidPoint = Abs(Sqrt(Square(m_fRadius) - Square(fDist)) / cRayDir.DotProduct(cVec));
-         /* Calculate the potential t's on the infinite surface */
-         fPotentialT[0] = (fMidPointDist - fDeltaToMidPoint) / fRayLen;
-         fPotentialT[1] = (fMidPointDist + fDeltaToMidPoint) / fRayLen;
-         /* Make sure these t's correspond to points within the cylinder bases */
-         CVector3 cPoint;
-         c_ray.GetPoint(cPoint, fPotentialT[0]);
-         if((cPoint - m_cBasePos).DotProduct(m_cAxis) < 0 ||
-            (cPoint - (m_cBasePos + m_fHeight * m_cAxis)).DotProduct(m_cAxis) > 0) {
-            fPotentialT[0] = -1;
-         }
-         c_ray.GetPoint(cPoint, fPotentialT[1]);
-         if((cPoint - m_cBasePos).DotProduct(m_cAxis) < 0 ||
-            (cPoint - (m_cBasePos + m_fHeight * m_cAxis)).DotProduct(m_cAxis) > 0) {
-            fPotentialT[1] = -1;
-         }
-         /* Check whether the ray is contained within the cylinder bases */
-         Real fDenominator = cRayDir.DotProduct(m_cAxis);
-         /* Is ray parallel to plane? */
-         if(Abs(fDenominator) > 1e-6) {
-            /* No, it's not parallel */
-            fDenominator *= fRayLen;
-            /* Bottom base */
-            fPotentialT[2] =
-               (m_cBasePos - c_ray.GetStart()).DotProduct(m_cAxis) / fDenominator;
-            /* Top base */
-            fPotentialT[3] =
-               (m_cBasePos + m_fHeight * m_cAxis - c_ray.GetStart()).DotProduct(m_cAxis) / fDenominator;
-            /* Make sure these t's are within the cylinder surface */
-            c_ray.GetPoint(cPoint, fPotentialT[2]);
-            CVector3 cDiff = cPoint - m_cBasePos;
-            if((cDiff - cDiff.DotProduct(m_cAxis) * m_cAxis).SquareLength() > Square(m_fRadius))
-               fPotentialT[2] = -1;
-            c_ray.GetPoint(cPoint, fPotentialT[3]);
-            cDiff = cPoint - m_cBasePos;
-            if((cDiff - cDiff.DotProduct(m_cAxis) * m_cAxis).SquareLength() > Square(m_fRadius))
-               fPotentialT[3] = -1;
-         }
-         else {
-            /* Yes, it's parallel - discard the intersections */
-            fPotentialT[2] = -1.0;
-            fPotentialT[3] = -1.0;
-         }
-         /* Go through all the potential t's and get the best */
-         f_t_on_ray = 2.0;
-         for(UInt32 i = 0; i < 4; ++i) {
-            if(fPotentialT[i] > 0.0f) {
-               f_t_on_ray = Min(f_t_on_ray, fPotentialT[i]);
+      Real fDRA = m_cAxis.DotProduct(cRayDir);
+      CVector3 cAlpha = cRayDir - fDRA * m_cAxis;
+      Real fA = cAlpha.SquareLength();
+      Real fB = 2.0 * cAlpha.DotProduct(cBeta);
+      Real fC = cBeta.SquareLength() - Square(m_fRadius);
+      Real fDelta = Square(fB) - 4.0 * fA * fC;
+      if(fDelta == 0) {
+         /* One candidate solution, is it within the cylinder caps? */
+         pfSolutions[0] = -fB / (2.0 * fA);
+         if(pfSolutions[0] > 0.0) {
+            CVector3 cTest = cPRA + pfSolutions[0] * cRayDir;
+            if(m_cAxis.DotProduct(cTest) > 0) {
+               cTest -= cRelTopCap;
+               if(m_cAxis.DotProduct(cTest) < 0) {
+                  ++unSolutionCount;
+               }
             }
          }
-         /* Return true only if the intersection point is within the ray limits */
-         return (f_t_on_ray < 1.0f);
       }
-      else {
-         /* Yes, ray and axis are parallel */
-         /* Projection of cCylBase2RayStart onto the axis */
-         Real fProj = cCylBase2RayStart.DotProduct(m_cAxis);
-         /* Radial vector */
-         CVector3 cRadial(cCylBase2RayStart);
-         cRadial -= fProj * m_cAxis;
-         Real fDist = cRadial.Length();
-         /* Is ray within the cylinder radius? */
-         if(fDist > m_fRadius) {
-            /* No, it's not */
-            return false;
-         }
-         /* If we get here, it's because the ray might intersect the cylinder bases */
-         Real fDenominator = cRayDir.DotProduct(m_cAxis) * fRayLen;
-         /* Create a buffer for the 2 potential intersection points */
-         Real fPotentialT[2];
-         /* Bottom base */
-         fPotentialT[0] =
-            (m_cBasePos-c_ray.GetStart()).DotProduct(m_cAxis) / fDenominator;
-         /* Top base */
-         fPotentialT[1] =
-            (m_cBasePos + m_fHeight * m_cAxis - c_ray.GetStart()).DotProduct(m_cAxis) / fDenominator;
-         /* Make sure these t's are within the cylinder surface */
-         CVector3 cPoint;
-         c_ray.GetPoint(cPoint, fPotentialT[0]);
-         CVector3 cDiff = cPoint - m_cBasePos;
-         if((cDiff - cDiff.DotProduct(m_cAxis) * m_cAxis).SquareLength() > Square(m_fRadius))
-            fPotentialT[0] = -1;
-         c_ray.GetPoint(cPoint, fPotentialT[1]);
-         cDiff = cPoint - m_cBasePos;
-         if((cDiff - cDiff.DotProduct(m_cAxis) * m_cAxis).SquareLength() > Square(m_fRadius))
-            fPotentialT[1] = -1;
-         /* Go through all the potential t's and get the best */
-         f_t_on_ray = 2.0;
-         for(UInt32 i = 0; i < 2; ++i) {
-            if(fPotentialT[i] > 0.0f) {
-               f_t_on_ray = Min(f_t_on_ray, fPotentialT[i]);
+      else if(fDelta > 0) {
+         /* Two candidate solutions, are they within the cylinder caps? */
+         CVector3 cTest;
+         /* Test first solution */
+         pfSolutions[0] = (-fB + fDelta) / (2.0 * fA);
+         if(pfSolutions[0] > 0.0) {
+            cTest = cPRA + pfSolutions[0] * cRayDir;
+            if(m_cAxis.DotProduct(cTest) > 0) {
+               cTest -= cRelTopCap;
+               if(m_cAxis.DotProduct(cTest) < 0) {
+                  ++unSolutionCount;
+               }
             }
          }
-         /* Return true only if the intersection point is within the ray limits */
-         return (f_t_on_ray < 1.0f);
+         /* Test second solution */
+         pfSolutions[unSolutionCount] = (-fB - fDelta) / (2.0 * fA);
+         if(pfSolutions[unSolutionCount] > 0.0) {
+            cTest = cPRA + pfSolutions[unSolutionCount] * cRayDir;
+            if(m_cAxis.DotProduct(cTest) > 0) {
+               cTest -= cRelTopCap;
+               if(m_cAxis.DotProduct(cTest) < 0) {
+                  ++unSolutionCount;
+               }
+            }
+         }
       }
+      /*
+       * Check intersection with bottom and top caps
+       */
+      /* If the directions of the cylinder axis and the ray are parallel,
+       * nothing to do */
+      if(fDRA > 10e-6) {
+         Real fPPRA = m_cAxis.DotProduct(cPRA);
+         /* Bottom cap */
+         pfSolutions[unSolutionCount] = -fPPRA / fDRA;
+         if(pfSolutions[unSolutionCount] > 0.0 &&
+            (cPRA + pfSolutions[unSolutionCount] * cRayDir).SquareLength() < Square(m_fRadius)) {
+            ++unSolutionCount;
+         }
+         /* Top cap */
+         pfSolutions[unSolutionCount] = -(fPPRA - m_fHeight) / fDRA;
+         if(pfSolutions[unSolutionCount] > 0.0 &&
+            (cPRA - cRelTopCap + pfSolutions[unSolutionCount] * cRayDir).SquareLength() < Square(m_fRadius)) {
+            ++unSolutionCount;
+         }
+      }
+      /*
+       * All possible solutions have been found, take the closest
+       */
+      if(unSolutionCount == 0) {
+         return false;
+      }
+      f_t_on_ray = pfSolutions[0];
+      for(UInt32 i = 1; i < unSolutionCount; ++i) {
+         if(pfSolutions[i] < f_t_on_ray)
+            f_t_on_ray = pfSolutions[i];
+      }
+      f_t_on_ray /= c_ray.GetLength();
+      return true;
    }
 
    /****************************************/

@@ -129,21 +129,19 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   CEmbodiedEntity* CPointMass3DEngine::CheckIntersectionWithRay(Real& f_t_on_ray,
-                                                                 const CRay3& c_ray) const {
-      CEmbodiedEntity* pcClosest = NULL;
+   void CPointMass3DEngine::CheckIntersectionWithRay(TEmbodiedEntityIntersectionData& t_data,
+                                                     const CRay3& c_ray) const {
       Real fTOnRay;
-      f_t_on_ray = 2.0f;
       for(CPointMass3DModel::TMap::const_iterator it = m_tPhysicsModels.begin();
           it != m_tPhysicsModels.end();
           ++it) {
-         if(it->second->CheckIntersectionWithRay(fTOnRay, c_ray) &&
-            fTOnRay < f_t_on_ray) {
-            pcClosest = &it->second->GetEmbodiedEntity();
-            f_t_on_ray = fTOnRay;
+         if(it->second->CheckIntersectionWithRay(fTOnRay, c_ray)) {
+            t_data.push_back(
+               SEmbodiedEntityIntersectionItem(
+                  &it->second->GetEmbodiedEntity(),
+                  fTOnRay));
          }
       }
-      return pcClosest;
    }
 
    /****************************************/

@@ -42,8 +42,8 @@ namespace argos {
 
       virtual void TransferEntities();
 
-      virtual CEmbodiedEntity* CheckIntersectionWithRay(Real& f_t_on_ray,
-                                                        const CRay3& c_ray) const;
+      virtual void CheckIntersectionWithRay(TEmbodiedEntityIntersectionData& t_data,
+                                            const CRay3& c_ray) const;
 
       void AddPhysicsModel(const std::string& str_id,
                            CPointMass3DModel& c_model);

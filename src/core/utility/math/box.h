@@ -13,6 +13,7 @@ namespace argos {
 }
 
 #include <argos3/core/utility/math/vector3.h>
+#include <argos3/core/utility/math/quaternion.h>
 
 namespace argos {
 
@@ -22,9 +23,9 @@ namespace argos {
 
       CBox(const CVector3& c_size,
            const CVector3& c_base_pos = CVector3(),
-           const CVector3& c_axis = CVector3::Z) :
+           const CQuaternion& c_orient = CQuaternion()) :
          m_cBasePos(c_base_pos),
-         m_cAxis(c_axis) {
+         m_cOrientation(c_orient) {
          SetSize(c_size);
       }
 
@@ -34,8 +35,9 @@ namespace argos {
 
       inline void SetSize(const CVector3& c_size) {
          m_cSize = c_size;
-         m_cBounds[1] = 0.5f * m_cSize;
-         m_cBounds[0] = -m_cBounds[1];
+         m_cXBounds.Set(-m_cSize.GetX() * 0.5, m_cSize.GetX() * 0.5);
+         m_cYBounds.Set(-m_cSize.GetY() * 0.5, m_cSize.GetY() * 0.5);
+         m_cZBounds.Set(0.0, m_cSize.GetZ());
       }
 
       inline const CVector3& GetBasePosition() const {
@@ -46,12 +48,12 @@ namespace argos {
          m_cBasePos = c_base_pos;
       }
 
-      inline const CVector3& GetAxis() const {
-         return m_cBasePos;
+      inline const CQuaternion& GetOrientation() const {
+         return m_cOrientation;
       }
 
-      inline void SetAxis(const CVector3& c_axis) {
-         m_cAxis = c_axis;
+      inline void SetOrientation(const CQuaternion& c_orient) {
+         m_cOrientation = c_orient;
       }
 
       bool Intersects(Real& f_t_on_ray,
@@ -60,9 +62,11 @@ namespace argos {
    private:
 
       CVector3 m_cSize;
-      CVector3 m_cBounds[2];
       CVector3 m_cBasePos;
-      CVector3 m_cAxis;
+      CQuaternion m_cOrientation;
+      CRange<Real> m_cXBounds;
+      CRange<Real> m_cYBounds;
+      CRange<Real> m_cZBounds;
 
    };
 }

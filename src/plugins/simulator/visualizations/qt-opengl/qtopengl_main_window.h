@@ -255,7 +255,6 @@ namespace argos {
       QToolBar* m_pcExperimentToolBar;
       QMenu* m_pcExperimentMenu;
 
-      QAction* m_pcToggleAntiAliasingAction;
       QAction* m_pcShowCameraXMLAction;
       QList<QAction*> m_pcSwitchCameraActions;
       QActionGroup* m_pcSwitchCameraActionGroup;

@@ -11,7 +11,7 @@ namespace argos {
    class CQTOpenGLApplication;
 }
 
-#include <QApplication>
+#include <QtWidgets/QApplication>
 
 namespace argos {
 

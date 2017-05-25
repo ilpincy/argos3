@@ -390,46 +390,6 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   struct SEmbodiedEntityIntersectionItem {
-      CEmbodiedEntity* IntersectedEntity;
-      Real TOnRay;
-
-      SEmbodiedEntityIntersectionItem() :
-         IntersectedEntity(NULL),
-         TOnRay(1.0f) {}
-
-      SEmbodiedEntityIntersectionItem(CEmbodiedEntity* pc_entity,
-                                      Real f_t_on_ray) :
-         IntersectedEntity(pc_entity),
-         TOnRay(f_t_on_ray) {}
-
-      inline bool operator<(const SEmbodiedEntityIntersectionItem& s_item) {
-         return TOnRay < s_item.TOnRay;
-      }
-   };
-
-   struct SEmbodiedEntityIntersectionData {
-      bool Intersection;
-      std::vector<SEmbodiedEntityIntersectionItem*> IntersectedEntities;
-
-      SEmbodiedEntityIntersectionData() :
-         Intersection(false) {}
-
-      SEmbodiedEntityIntersectionData(std::vector<SEmbodiedEntityIntersectionItem*>& c_entities) :
-         Intersection(c_entities.size() > 0),
-         IntersectedEntities(c_entities) {}
-   };
-
-   extern bool GetClosestEmbodiedEntityIntersectedByRay(SEmbodiedEntityIntersectionItem& s_item,
-                                                        const CRay3& c_ray);
-
-   extern bool GetClosestEmbodiedEntityIntersectedByRay(SEmbodiedEntityIntersectionItem& s_item,
-                                                        const CRay3& c_ray,
-                                                        CEmbodiedEntity& c_entity);
-
-   /****************************************/
-   /****************************************/
-
 }
 
 #endif

@@ -24,7 +24,6 @@ namespace argos {
    /****************************************/
 
    void CDefaultVisualization::Init(TConfigurationNode& t_tree) {
-      fprintf(stderr, "[DEBUG] Init() - START\n");
       /* Get visualization id from the XML */
       //GetNodeAttribute(t_tree, "id", m_strId);
       /* Set the pointer to the step function */
@@ -32,7 +31,6 @@ namespace argos {
          /* Use real-time clock and set time structures */
          m_tStepFunction = &CDefaultVisualization::RealTimeStep;
          timerclear(&m_tStepClockTime);
-         fprintf(stderr, "[DEBUG] CPhysicsEngine::GetSimulationClockTick() = %f\n", CPhysicsEngine::GetSimulationClockTick());
          m_tStepClockTime.tv_usec = 1e6 * CPhysicsEngine::GetSimulationClockTick();
          ::gettimeofday(&m_tStepStartTime, NULL);
       }
@@ -40,7 +38,6 @@ namespace argos {
          /* Use normal clock */
          m_tStepFunction = &CDefaultVisualization::NormalStep;
       }
-      fprintf(stderr, "[DEBUG] Init() - END\n");
    }
 
    /****************************************/
@@ -48,11 +45,9 @@ namespace argos {
 
    void CDefaultVisualization::Execute() {
       /* Main cycle */
-      fprintf(stderr, "[DEBUG] Execute() - START\n");
       while(!m_cSimulator.IsExperimentFinished()) {
          (this->*m_tStepFunction)();
       }
-      fprintf(stderr, "[DEBUG] Execute() - END\n");
    }
 
    /****************************************/
@@ -66,10 +61,8 @@ namespace argos {
    /****************************************/
 
    void CDefaultVisualization::RealTimeStep() {
-      fprintf(stderr, "[DEBUG] RealTimeStep() - START\n");
       /* m_tStepStartTime has already been set */
       m_cSimulator.UpdateSpace();
-      fprintf(stderr, "[DEBUG] RealTimeStep() - UpdateSpace() done\n");
       /* Take the time now */
       ::gettimeofday(&m_tStepEndTime, NULL);
       /* Calculate the elapsed time */
@@ -78,10 +71,6 @@ namespace argos {
       if(!timercmp(&m_tStepElapsedTime, &m_tStepClockTime, >)) {
          /* Calculate the waiting time */
          timersub(&m_tStepClockTime, &m_tStepElapsedTime, &m_tStepWaitTime);
-         fprintf(stderr, "[DEBUG] m_tStepElapsedTime.tv_sec = %llu\n", m_tStepElapsedTime.tv_sec);
-         fprintf(stderr, "[DEBUG] m_tStepElapsedTime.tv_usec = %llu\n", m_tStepElapsedTime.tv_usec);
-         fprintf(stderr, "[DEBUG] m_tStepWaitTime.tv_sec = %llu\n", m_tStepWaitTime.tv_sec);
-         fprintf(stderr, "[DEBUG] m_tStepWaitTime.tv_usec = %llu\n", m_tStepWaitTime.tv_usec);
          /* Wait */
          ::usleep(m_tStepWaitTime.tv_sec * 1e6 + m_tStepWaitTime.tv_usec);
          /* Get the new step end */
@@ -98,7 +87,6 @@ namespace argos {
       /* Set the step start time to whatever the step end time is */
       m_tStepStartTime.tv_sec = m_tStepEndTime.tv_sec;
       m_tStepStartTime.tv_usec = m_tStepEndTime.tv_usec;
-      fprintf(stderr, "[DEBUG] RealTimeStep() - END\n\n");
    }
 
    /****************************************/

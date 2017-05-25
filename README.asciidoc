@@ -49,7 +49,7 @@ If you want to compile the simulator, you need:
 The OpenGL-based graphical visualization is compiled only if the following
 libraries are found:
 
-* _Qt_ >= 4.6
+* _Qt_ >= 5.5
 * _freeglut_ >= 2.6.0
 * _libxi-dev_ (on Ubuntu and other Debian-based systems)
 * _libxmu-dev_ (on Ubuntu and other Debian-based systems)
@@ -72,9 +72,9 @@ Debian
 On Debian, you can install all of the necessary requirements
 with the following command:
 
- $ sudo apt-get install libfreeimage-dev libfreeimageplus-dev libqt4-dev \
-   freeglut3-dev libxi-dev libxmu-dev liblua5.2-dev lua5.2 \
-   doxygen graphviz graphviz-dev asciidoc
+ $ sudo apt-get install libfreeimage-dev libfreeimageplus-dev \
+   qt5-default freeglut3-dev libxi-dev libxmu-dev liblua5.2-dev \
+   lua5.2 doxygen graphviz graphviz-dev asciidoc
 
 OpenSuse
 ^^^^^^^^
@@ -89,7 +89,7 @@ with the following commands:
  $ sudo zypper refresh
 
  $ sudo zypper install git cmake gcc gcc-c++ freeimage-devel \
-   doxygen graphviz asciidoc lua-devel libqt4-devel freeglut-devel \
+   doxygen graphviz asciidoc lua-devel libqt5-qtbase freeglut-devel \
    rpmbuild
 
 Mac OSX

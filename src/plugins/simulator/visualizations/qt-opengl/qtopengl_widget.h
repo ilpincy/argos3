@@ -19,15 +19,12 @@ namespace argos {
    class CEmbodiedEntity;
 }
 
-#ifdef QTOPENGL_WITH_SDL
-#   include <argos3/plugins/simulator/visualizations/qt-opengl/qtopengl_joystick.h>
-#endif
-
 #include <argos3/plugins/simulator/visualizations/qt-opengl/qtopengl_camera.h>
 #include <argos3/core/simulator/entity/entity.h>
 #include <argos3/core/utility/datatypes/datatypes.h>
-#include <QGLWidget>
-#include <QElapsedTimer>
+#include <QOpenGLWidget>
+#include <QOpenGLFunctions>
+#include <QOpenGLTexture>
 
 #ifdef __APPLE__
 #include <glu.h>
@@ -56,18 +53,21 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   class CQTOpenGLWidget : public QGLWidget {
+   class CQTOpenGLWidget : public QOpenGLWidget, protected QOpenGLFunctions {
 
       Q_OBJECT
 
     public:
 
+      /**
+       * Data regarding frame grabbing
+       */
       struct SFrameGrabData {
-         bool Grabbing;
-         QString Directory;
-         QString BaseName;
-         QString Format;
-         SInt32 Quality;
+         bool Grabbing;     // true when grabbing
+         QString Directory; // output directory
+         QString BaseName;  // frame file basename
+         QString Format;    // output file format
+         SInt32 Quality;    // output quality [0-100]
 
          SFrameGrabData() :
             Grabbing(false),
@@ -79,9 +79,12 @@ namespace argos {
          void Init(TConfigurationNode& t_tree);
       };
 
+      /**
+       * Data arelated to robot selection
+       */
       struct SSelectionInfo {
-         bool IsSelected;
-         size_t Index;
+         bool IsSelected;         // true when a robot is selected
+         size_t Index;            // the index of the selected robot
 
          SSelectionInfo() :
             IsSelected(false),
@@ -90,57 +93,136 @@ namespace argos {
 
    public:
 
-      CQTOpenGLWidget(const QGLFormat& c_format,
-                      QWidget* pc_parent,
-                      CQTOpenGLMainWindow* pc_main_window,
+      /**
+       * Class constructor.
+       * @param pc_parent The containing widget.
+       * @param pc_main_window A pointer to the main window.
+       * @param c_user_functions A reference to the main window.
+       */
+      CQTOpenGLWidget(QWidget* pc_parent,
+                      CQTOpenGLMainWindow& c_main_window,
                       CQTOpenGLUserFunctions& c_user_functions);
+      /**
+       * Class destructor.
+       */
       virtual ~CQTOpenGLWidget();
 
+      /**
+       * Called when the GL context must be initialized.  This happens
+       * once per runtime, either before the first call to resizeGL()
+       * or to paintGL().
+       */
       virtual void initializeGL();
-      virtual void resizeGL(int n_width,
-                            int n_height);
-      virtual void paintEvent(QPaintEvent*);
 
-      void DrawScene();
+      /**
+       * Logic for scene drawing.
+       */
+      virtual void paintGL();
 
+      /**
+       * Casts a ray from the given window coordinate.
+       * The ray goes from the near clipping plane to the far one.
+       */
+      CRay3 RayFromWindowCoord(int n_x,
+                               int n_y);
+
+      /**
+       * Returns the position in the world corresponding to the given window coordinate.
+       */
+      CVector3 GetWindowCoordInWorld(int n_x,
+                                     int n_y);
+
+      /**
+       * Returns the currently selected entity, or NULL if none is selected.
+       * @return The currently selected entity.
+       */
       CEntity* GetSelectedEntity();
+
+      /**
+       * Selects the passed entity.
+       * @param c_entity The entity to select.
+       */
       void SelectEntity(CEntity& c_entity);
+
+      /**
+       * Deselects the currently selected entity.
+       * If no entity is selected, nothing is done.
+       */
       void DeselectEntity();
 
+      /**
+       * Selects the entity closest to the camera at the given screen coordinates.
+       * @param un_x The screen X coordinate.
+       * @param un_y The screen Y coordinate.
+       */
       void SelectInScene(UInt32 un_x,
                          UInt32 un_y);
 
+      /**
+       * Draws a positional entity.
+       */
       void DrawEntity(CPositionalEntity& c_entity);
+
+      /**
+       * Draws an embodied entity.
+       */
       void DrawEntity(CEmbodiedEntity& c_entity);
 
+      /**
+       * Draws a ray.
+       */
       void DrawRays(CControllableEntity& c_entity);
 
+      /**
+       * Draws the bounding box of an embodied entity.
+       */
       void DrawBoundingBox(CEmbodiedEntity& c_entity);
 
+      /**
+       * Called internally by Qt to set the aspect ratio.
+       */
       inline virtual int heightForWidth(int w) const {
          return (w * 3) / 4;
       }
 
+      /**
+       * Called internally by Qt to know the preferred widget size.
+       */
       inline virtual QSize sizeHint() const {
          return QSize(1024,768);
       }
 
+      /**
+       * Called internally by Qt to know the minimum widget size.
+       */
       inline virtual QSize minimumSize() const {
          return QSize(320,240);
       }
 
+      /**
+       * Returns a reference to the user functions.
+       */
       inline CQTOpenGLUserFunctions& GetUserFunctions() {
          return m_cUserFunctions;
       }
 
+      /**
+       * Returns a reference to the camera.
+       */
       inline CQTOpenGLCamera& GetCamera() {
          return m_cCamera;
       }
 
+      /**
+       * Returns the current frame grabbing data.
+       */
       inline SFrameGrabData& GetFrameGrabData() {
          return m_sFrameGrabData;
       }
 
+      /**
+       * Sets whether the mouse should be inverted when moving.
+       */
       inline void SetInvertMouse(bool b_InvertMouse) {
     	  m_bInvertMouse = b_InvertMouse;
       }
@@ -206,11 +288,6 @@ namespace argos {
       void ResetExperiment();
 
       /**
-       * Toggles OpenGL anti-aliasing.
-       */
-      void SetAntiAliasing(bool b_antialias_on);
-
-      /**
        * When fast-forwarding, sets every how many steps a frame must be drawn. 
        */
       void SetDrawFrameEvery(int n_every);
@@ -244,6 +321,7 @@ namespace argos {
 
    protected:
 
+      void DrawScene();
       void DrawArena();
       void DrawAxes();
 
@@ -258,47 +336,65 @@ namespace argos {
 
    private:
 
-      CQTOpenGLMainWindow* pcMainWindow;
+      /** Reference to the main window */
+      CQTOpenGLMainWindow& m_cMainWindow;
+      /** Reference to the user functions */
       CQTOpenGLUserFunctions& m_cUserFunctions;
 
+      /** Id used for the step timer */
       SInt32 nTimerId;
-      bool m_bAntiAliasing;
+      /** True when fast forwarding */
       bool m_bFastForwarding;
+      /** Counter for how many frames should be simulated between two renderings */
       SInt32 m_nDrawFrameEvery;
+      /** Counter for the current frame */
       SInt32 m_nFrameCounter;
 
+      /** True when the mouse is grabbed by this widget */
       bool m_bMouseGrabbed;
+      /** True when shift is pressed */
       bool m_bShiftPressed;
+      /** Position of the mouse when first clicked */
       QPoint m_cMouseGrabPos;
+      /** Whether to invert the mouse motion */
       bool m_bInvertMouse;
+      /** Data on entity selection */
       SSelectionInfo m_sSelectionInfo;
 
+      /** Reference to the simulator state */
       CSimulator& m_cSimulator;
+      /** Reference to the space state */
       CSpace& m_cSpace;
 
-      bool   m_bUsingFloorTexture;
-      GLuint m_unFloorTexture;
-      GLuint m_unGroundTexture;
-      GLuint m_unCeilingTexture;
-      GLuint m_unBoxTexture;
+      /** True if using a user-defined texture for the floor */
+      bool m_bUsingFloorTexture;
+      /** The user-defined floor texture */
+      QOpenGLTexture* m_pcFloorTexture;
+      /** Default ground texture */
+      QOpenGLTexture* m_pcGroundTexture;
 
+      /** Ambient attribute for light */
       GLfloat* m_pfLightAmbient;
+      /** Diffuse attribute for light */
       GLfloat* m_pfLightDiffuse;
+      /** Position attribute for light 0 */
       GLfloat* m_pfLight0Position;
+      /** Position attribute for light 1 */
       GLfloat* m_pfLight1Position;
 
+      /** Display list for arena elements */
       GLuint m_unArenaList;
+      /** Display list for floor elements */
       GLuint m_unFloorList;
+      /** Index buffer for entity selection */
       GLuint* m_punSelectionBuffer;
 
-#ifdef QTOPENGL_WITH_SDL
-      CQTOpenGLJoystick m_cJoystick;
-#endif
+      /** Current state of the camera */
       CQTOpenGLCamera m_cCamera;
+      /** Data on frame grabbing */
       SFrameGrabData m_sFrameGrabData;
-      QElapsedTimer m_cElapsedTimer;
-      qreal m_fFPS;
 
+      /** Current direction of motion */
       enum EDirection {
          DIRECTION_UP = 1,
          DIRECTION_DOWN,
@@ -308,7 +404,10 @@ namespace argos {
          DIRECTION_BACKWARDS,
       };
 
+      /** Mapping between keys and motion direction */
       QMap<EDirection, int> m_mapPressedKeys;
+
+      CRay3 m_cSelectionRay;
    };
 
 }

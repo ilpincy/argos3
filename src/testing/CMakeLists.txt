@@ -7,6 +7,11 @@ target_link_libraries(test-range argos3core_${ARGOS_BUILD_FOR})
 
 add_executable(test-list unit/test-list.cpp)
 
+add_executable(test-box
+  unit/test-box.cpp)
+target_link_libraries(test-box
+  argos3core_${ARGOS_BUILD_FOR})
+
 add_executable(test-cylinder
   unit/test-cylinder.cpp)
 target_link_libraries(test-cylinder
@@ -69,12 +74,13 @@ if(ARGOS_BUILD_FOR_SIMULATOR AND GOOGLEPERFTOOLS_FOUND)
   target_link_libraries(argos3_prof
     tcmalloc profiler
     argos3core_simulator
-    # argos3plugin_simulator_epuck
-    # argos3plugin_simulator_footbot
-    # argos3plugin_simulator_miniquadrotor
+    argos3plugin_simulator_epuck
+    argos3plugin_simulator_footbot
     argos3plugin_simulator_genericrobot
+    argos3plugin_simulator_media
     argos3plugin_simulator_qtopengl
     argos3plugin_simulator_entities
-    argos3plugin_simulator_dynamics2d)
+    argos3plugin_simulator_dynamics2d
+    argos3plugin_simulator_pointmass3d)
 #    argos3plugin_simulator_physx
 endif(ARGOS_BUILD_FOR_SIMULATOR AND GOOGLEPERFTOOLS_FOUND)

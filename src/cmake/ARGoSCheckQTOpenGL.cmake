@@ -1,8 +1,8 @@
-# Checks whether QT4, OpenGL and GLUT are present and correctly configured
+# Checks whether QT5, OpenGL and GLUT are present and correctly configured
 #
 # Usage:
 #
-#   INCLUDE(CheckQTOpenGL4ARGoS)
+#   INCLUDE(ARGoSCheckQTOpenGL)
 #   IF(ARGOS_COMPILE_QTOPENGL)
 #
 #      your qt-opengl-dependent code here
@@ -11,19 +11,46 @@
 #
 # This module defines this variable:
 #
-#  ARGOS_COMPILE_QTOPENGL - True if QT4, OpenGL and GLUT are present and correctly configured
+#  ARGOS_COMPILE_QTOPENGL  - True if QT5, OpenGL and GLUT are present and correctly configured
+#  ARGOS_COMPILE_LIBRARIES - The list of libraries to link
 #
 # AUTHOR: Carlo Pinciroli <ilpincy@gmail.com>
 
-# Check for QT4
-set(ARGOS_COMPILE_QTOPENGL false) 
-set(QT_USE_QTOPENGL true)
-find_package(Qt4)
-if(QT4_FOUND)
-  # QT4 found, is it the minimum required version?
-  if(QT_VERSION_MAJOR GREATER 3 AND QT_VERSION_MINOR GREATER 5)
-    # Is the QTOpenGL module present?
-    if(QT_QTOPENGL_FOUND)
+#
+# Qt 5.8 is not linked automatically by HomeBrew on MacOSX
+# So we must find where it is
+if(APPLE AND (NOT ARGOS_BREW_QT_CELLAR))
+  # Get Qt cellar path
+  execute_process(
+    COMMAND brew --cellar qt
+    OUTPUT_VARIABLE ARGOS_BREW_QT_CELLAR
+    ERROR_QUIET
+    OUTPUT_STRIP_TRAILING_WHITESPACE)
+  if(NOT ARGOS_BREW_QT_CELLAR STREQUAL "")
+    set(ARGOS_BREW_QT_CELLAR ${ARGOS_BREW_QT_CELLAR} CACHE STRING "HomeBrew cellar for Qt")
+    # Get latest Qt version installed
+    execute_process(
+      COMMAND ls "${ARGOS_BREW_QT_CELLAR}"
+      COMMAND tail -n1
+      OUTPUT_VARIABLE ARGOS_BREW_QT_VERSION
+      ERROR_QUIET
+      OUTPUT_STRIP_TRAILING_WHITESPACE)
+    # Add path to CMAKE_PREFIX_PATH
+    set(CMAKE_PREFIX_PATH
+      ${CMAKE_PREFIX_PATH}
+      "${ARGOS_BREW_QT_CELLAR}/${ARGOS_BREW_QT_VERSION}/lib/cmake")
+  else(NOT ARGOS_BREW_QT_CELLAR STREQUAL "")
+    message(STATUS "Could not find HomeBrew cellar for Qt")
+  endif(NOT ARGOS_BREW_QT_CELLAR STREQUAL "")
+endif(APPLE AND (NOT ARGOS_BREW_QT_CELLAR))
+
+if((NOT APPLE) OR ARGOS_BREW_QT_CELLAR)
+  # Check for QT5
+  set(ARGOS_COMPILE_QTOPENGL false) 
+  find_package(Qt5 COMPONENTS Widgets Gui)
+  if(Qt5Widgets_FOUND AND Qt5Gui_FOUND)
+    # QT5 found, is it the minimum required version?
+    if(Qt5_VERSION VERSION_GREATER 5.4)
       # QT is OK, now check for OpenGL
       find_package(OpenGL)
       if(OPENGL_FOUND)
@@ -34,23 +61,18 @@ if(QT4_FOUND)
           
           # All the required libraries are OK
           set(ARGOS_COMPILE_QTOPENGL ON)
-	  if(APPLE)
-	    include_directories(${OPENGL_INCLUDE_DIR}/Headers)
-	  endif(APPLE)
-	  include(${QT_USE_FILE})
-          
-          # # Now check for SDL (optional)
-          # set(SDL_BUILDING_LIBRARY true)
-          # find_package(SDL)
-          # if(SDL_FOUND)
-          #   # SDL is ok
-          #   set(QTOPENGL_WITH_SDL ON)
-          #   include_directories(${SDL_INCLUDE_DIR})
-          
-          # else(SDL_FOUND)
-          #   message(STATUS "SDL not found. QTOpenGL won't have joystick support.")
-          # endif(SDL_FOUND)
-          
+	        if(APPLE)
+	          include_directories(${OPENGL_INCLUDE_DIR}/Headers)
+	        endif(APPLE)
+          # These are required by Qt5
+          set(CMAKE_AUTOMOC ON)
+          set(CMAKE_CXX_STANDARD 14)
+          set(CMAKE_INCLUDE_CURRENT_DIR ON)
+          # Paths
+          add_definitions(${Qt5Widgets_DEFINITIONS} ${Qt5Gui_DEFINITIONS})
+          include_directories(${Qt5Widgets_INCLUDE_DIRS} ${Qt5Gui_INCLUDE_DIRS})
+          set(ARGOS_QTOPENGL_LIBRARIES ${Qt5Widgets_LIBRARIES} ${Qt5Gui_LIBRARIES} ${GLUT_LIBRARY} ${OPENGL_LIBRARY})
+
         else(GLUT_FOUND)
           message(STATUS "GLUT not found. Skipping compilation of QT-OpenGL visualization.")
         endif(GLUT_FOUND)
@@ -59,14 +81,16 @@ if(QT4_FOUND)
         message(STATUS "OpenGL not found. Skipping compilation of QT-OpenGL visualization.")
       endif(OPENGL_FOUND)
 
-    else(QT_QTOPENGL_FOUND)
-      message(STATUS "QtOpenGL module not found. Skipping compilation of QT-OpenGL visualization.")
-    endif(QT_QTOPENGL_FOUND)
-
-  else(QT_VERSION_MAJOR GREATER 3 AND QT_VERSION_MINOR GREATER 5)
-    message(STATUS "Minimum required version for Qt (>= 4.6) not found. Skipping compilation of QT-OpenGL visualization.")
-  endif(QT_VERSION_MAJOR GREATER 3 AND QT_VERSION_MINOR GREATER 5)
-  
-else(QT4_FOUND)
-  message(STATUS "Qt4 not found, skipping compilation of QT-OpenGL visualization.")
-endif(QT4_FOUND)
+    else(Qt5_VERSION VERSION_GREATER 5.4)
+      message(STATUS "Minimum required version for Qt (>= 5.5) not found. Skipping compilation of QT-OpenGL visualization.")
+    endif(Qt5_VERSION VERSION_GREATER 5.4)
+    
+  else(Qt5Widgets_FOUND AND Qt5Gui_FOUND)
+    if(NOT Qt5Widgets_FOUND)
+      message(STATUS "Qt5Widgets not found, skipping compilation of QT-OpenGL visualization.")
+    endif(NOT Qt5Widgets_FOUND)
+    if(NOT Qt5Gui_FOUND)
+      message(STATUS "Qt5Gui not found, skipping compilation of QT-OpenGL visualization.")
+    endif(NOT Qt5Gui_FOUND)
+  endif(Qt5Widgets_FOUND AND Qt5Gui_FOUND)
+endif((NOT APPLE) OR ARGOS_BREW_QT_CELLAR)

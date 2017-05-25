@@ -4,8 +4,8 @@
  * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */
 
-#ifndef POINTMASS3D_ENTITY_H
-#define POINTMASS3D_ENTITY_H
+#ifndef POINTMASS3D_MODEL_H
+#define POINTMASS3D_MODEL_H
 
 namespace argos {
    class CPointMass3DEngine;
