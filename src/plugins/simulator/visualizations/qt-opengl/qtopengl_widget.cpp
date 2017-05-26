@@ -931,7 +931,7 @@ namespace argos {
             /* Treat selected entity as a composable entity with an embodied component */
             CComposableEntity* pcCompEntity = dynamic_cast<CComposableEntity*>(
                m_cSpace.GetRootEntityVector()[m_sSelectionInfo.Index]);
-            if(pcCompEntity->HasComponent("body")) {
+            if(pcCompEntity != NULL && pcCompEntity->HasComponent("body")) {
                pcEntity = &pcCompEntity->GetComponent<CEmbodiedEntity>("body");
             }
             else {
