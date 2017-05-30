@@ -127,18 +127,14 @@ namespace argos {
    /****************************************/
 
    void CRABEquippedEntity::Enable() {
-      if(m_psAnchor) {
-         m_psAnchor->Enable();
-      }
+      if(m_psAnchor) m_psAnchor->Enable();
    }
 
    /****************************************/
    /****************************************/
 
    void CRABEquippedEntity::Disable() {
-      if(m_psAnchor) {
-         m_psAnchor->Disable();
-      }
+      if(m_psAnchor) m_psAnchor->Disable();
    }
 
    /****************************************/
