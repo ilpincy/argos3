@@ -416,14 +416,11 @@ namespace argos {
          /* There are hits!
           * Process them, keeping the closest hit
           */
-         GLuint unNames;
-         GLuint* punByte;
-         GLuint unMinZ;
-         GLuint* punName;
-         punByte = m_punSelectionBuffer;
-         unMinZ = 0xffffffff;
+         GLuint* punByte = m_punSelectionBuffer;
+         GLuint unMinZ = 0xffffffff;
+         GLuint* punName = NULL;
          for (UInt32 i = 0; i < unHits; i++) {	
-            unNames = *punByte;
+            GLuint unNames = *punByte;
             ++punByte;
             if (*punByte < unMinZ) {
                unMinZ = *punByte;
@@ -934,7 +931,7 @@ namespace argos {
             /* Treat selected entity as a composable entity with an embodied component */
             CComposableEntity* pcCompEntity = dynamic_cast<CComposableEntity*>(
                m_cSpace.GetRootEntityVector()[m_sSelectionInfo.Index]);
-            if(pcCompEntity->HasComponent("body")) {
+            if(pcCompEntity != NULL && pcCompEntity->HasComponent("body")) {
                pcEntity = &pcCompEntity->GetComponent<CEmbodiedEntity>("body");
             }
             else {
