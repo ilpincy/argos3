@@ -97,11 +97,22 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CCI_RangeAndBearingActuator::SetData(size_t un_idx,
-					    UInt8 un_value) {
-     m_cData[un_idx] = un_value;
+   UInt8 CCI_RangeAndBearingActuator::GetData(size_t un_idx) {
+
+        if(un_idx < m_cData.Size())
+            return m_cData[un_idx];
+        else
+            THROW_ARGOSEXCEPTION("CCI_RangeAndBearingActuator::GetData() : index  " << un_idx << " now within data size " << m_cData.Size());
    }
   
+   /****************************************/
+   /****************************************/
+
+   void CCI_RangeAndBearingActuator::SetData(size_t un_idx,
+                        UInt8 un_value) {
+     m_cData[un_idx] = un_value;
+   }
+
    /****************************************/
    /****************************************/
 

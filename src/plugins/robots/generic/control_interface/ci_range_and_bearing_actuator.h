@@ -24,6 +24,8 @@ namespace argos {
 
       size_t GetSize() const;
 
+      UInt8 GetData(size_t un_idx);
+
       void SetData(const CByteArray& c_data);
 
       void SetData(size_t un_idx,

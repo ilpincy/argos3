@@ -28,9 +28,12 @@ namespace argos {
       virtual void ReadingsToLuaState(lua_State* pt_lua_state);
 #endif
 
+      typedef std::vector<Real> TReadings;
+
+
    protected:
 
-      std::vector<Real> m_tReadings;
+      TReadings m_tReadings;
 
    };
 
