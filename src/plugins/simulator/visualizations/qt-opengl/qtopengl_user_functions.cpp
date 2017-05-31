@@ -224,6 +224,7 @@ namespace argos {
                                            GLuint un_vertices) {
       /* Save attributes and current matrix */
       glPushAttrib(GL_POLYGON_BIT);
+      glPushMatrix();
       /* Set color */
       SetColor(c_color);
       /* Disable face culling, to make the triangle visible from any angle */
@@ -245,6 +246,7 @@ namespace argos {
       glEnd();
       /* Restore saved stuff */
       glPopAttrib();
+      glPopMatrix();
    }
 
    /****************************************/
