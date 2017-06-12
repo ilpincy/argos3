@@ -55,7 +55,7 @@ namespace argos {
       }
 
       inline const CVector3& GetAxis() const {
-         return m_cBasePos;
+         return m_cAxis;
       }
 
       inline void SetAxis(const CVector3& c_axis) {
