@@ -144,6 +144,18 @@ namespace argos {
          return(fT2 >= 0.0 && fT2 <= 1.0);
       }
 
+      /**
+       * Serializes the contents of the passed ray onto a stream.
+       * @param c_os The stream.
+       * @param c_ray The ray.
+       * @return The new state of the stream.
+       */
+      inline friend std::ostream& operator<<(std::ostream& c_os,
+                                             const CRay2& c_ray) {
+         c_os << c_ray.GetStart() << " -> " << c_ray.GetEnd();
+         return c_os;
+      }
+
    private:
 
       CVector2 m_cStart;
