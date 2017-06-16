@@ -122,6 +122,8 @@ Compiling the ARGoS simulator
 Compiling ARGoS for a robot
 ++++++++++++++++++++++++++++
 
+DO NOT EXECUTE THESE COMMANDS IF YOU ARE INSTALLING ARGOS ON YOUR LAPTOP. THESE COMMANDS ARE MEANT TO INSTALL ARGOS ON A REAL ROBOT.
+
  $ cd argos3
  $ mkdir build_myrobot
  $ cd build_myrobot
