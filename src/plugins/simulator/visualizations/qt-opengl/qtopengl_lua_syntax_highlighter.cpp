@@ -33,6 +33,11 @@ namespace argos {
          m_vecHighlightingRules.append(sRule);
       }
 
+      m_cQuotationFormat.setForeground(Qt::darkGreen);
+      sRule.Pattern = QRegExp("\".*\"");
+      sRule.Format = m_cQuotationFormat;
+      m_vecHighlightingRules.append(sRule);
+
       m_cSingleLineCommentFormat.setForeground(Qt::darkGray);
       m_cSingleLineCommentFormat.setFontItalic(true);
       sRule.Pattern = QRegExp("--[^[\n]*");
@@ -42,12 +47,7 @@ namespace argos {
       m_cMultiLineCommentFormat.setForeground(Qt::darkGray);
       m_cMultiLineCommentFormat.setFontItalic(true);
       m_cCommentStartExpression = QRegExp("--\\[\\[");
-      m_cCommentEndExpression = QRegExp("\\]\\]");
-      
-      m_cQuotationFormat.setForeground(Qt::darkGreen);
-      sRule.Pattern = QRegExp("\".*\"");
-      sRule.Format = m_cQuotationFormat;
-      m_vecHighlightingRules.append(sRule);
+      m_cCommentEndExpression = QRegExp("\\]\\]");      
    }
 
    /****************************************/
