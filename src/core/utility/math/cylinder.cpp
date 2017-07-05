@@ -43,7 +43,7 @@ namespace argos {
          /* Two candidate solutions, are they within the cylinder caps? */
          CVector3 cTest;
          /* Test first solution */
-         pfSolutions[0] = (-fB + fDelta) / (2.0 * fA);
+         pfSolutions[0] = (-fB + Sqrt(fDelta)) / (2.0 * fA);
          if(pfSolutions[0] > 0.0) {
             cTest = cPRA + pfSolutions[0] * cRayDir;
             if(m_cAxis.DotProduct(cTest) > 0) {
@@ -54,7 +54,7 @@ namespace argos {
             }
          }
          /* Test second solution */
-         pfSolutions[unSolutionCount] = (-fB - fDelta) / (2.0 * fA);
+         pfSolutions[unSolutionCount] = (-fB - Sqrt(fDelta)) / (2.0 * fA);
          if(pfSolutions[unSolutionCount] > 0.0) {
             cTest = cPRA + pfSolutions[unSolutionCount] * cRayDir;
             if(m_cAxis.DotProduct(cTest) > 0) {
