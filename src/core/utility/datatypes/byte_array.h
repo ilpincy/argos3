@@ -212,6 +212,17 @@ namespace argos {
       }
 
       /**
+       * Returns a new byte array that corresponds to a part of this byte array.
+       * The returned array is a copy from the element at position
+       * <tt>un_start</tt> up to the element at position
+       * <tt>un_end-1</tt>.
+       * @param un_start The start index
+       * @param un_end The end index, or -1 to indicate the end of the array
+       */
+      CByteArray* operator()(size_t un_start,
+                             ssize_t un_end = -1);
+
+      /**
        * Appends a 8-bit unsigned integer to the byte array.
        * @param un_value the value of the 8-bit unsigned integer.
        * @return a reference to this byte array.
