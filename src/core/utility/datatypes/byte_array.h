@@ -15,6 +15,7 @@
 #include <argos3/core/utility/configuration/argos_exception.h>
 #include <vector>
 #include <iterator>
+#include <unistd.h>
 
 namespace argos {
 
