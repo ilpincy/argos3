@@ -53,8 +53,6 @@ namespace argos {
          SActuator(CLEDEntity& c_led,
                    const CVector3& c_offset,
                    SAnchor& s_anchor);
-         void Enable();
-         void Disable();
       };
 
    public:
