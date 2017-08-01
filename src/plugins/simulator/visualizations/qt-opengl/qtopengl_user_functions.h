@@ -315,7 +315,7 @@ namespace argos {
                     const CColor& c_color = CColor::BLACK,
                     const QFont& c_font = QFont());
 
-   private:
+   protected:
 
       /**
        * Pointer-to-thunk type definition.
@@ -383,7 +383,7 @@ namespace argos {
        * Calls a user method for the given entity.
        * @param The method to pass as parameter.
        */
-      void Call(CEntity& c_entity);
+      virtual void Call(CEntity& c_entity);
 
    private:
 
