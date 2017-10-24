@@ -87,7 +87,7 @@ namespace argos {
       if(HasMedium()) RemoveFromMedium();
       m_pcMedium = &c_medium;
       c_medium.AddEntity(*this);
-      Enable();
+      SetEnabled(true);
    }
 
    /****************************************/
@@ -138,8 +138,8 @@ namespace argos {
    /****************************************/
 
    bool CLEDEntityGridUpdater::operator()(CLEDEntity& c_entity) {
-      /* Discard LEDs switched off */
-      if(c_entity.GetColor() != CColor::BLACK) {
+      /* Discard disabled and switched off LEDs */
+      if(c_entity.IsEnabled() && c_entity.GetColor() != CColor::BLACK) {
          try {
             /* Calculate the position of the LED in the space hash */
             m_cGrid.PositionToCell(m_nI, m_nJ, m_nK, c_entity.GetPosition());

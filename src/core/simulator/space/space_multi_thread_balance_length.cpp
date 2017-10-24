@@ -272,7 +272,7 @@ namespace argos {
          THREAD_PERFORM_TASK(
             Act,
             m_vecControllableEntities,
-            m_vecControllableEntities[unTaskIndex]->Act();
+            if(m_vecControllableEntities[unTaskIndex]->IsEnabled()) m_vecControllableEntities[unTaskIndex]->Act();
             );
          THREAD_WAIT_FOR_START_OF(Physics);
          THREAD_PERFORM_TASK(
@@ -290,8 +290,10 @@ namespace argos {
          THREAD_PERFORM_TASK(
             SenseControl,
             m_vecControllableEntities,
-            m_vecControllableEntities[unTaskIndex]->Sense();
-            m_vecControllableEntities[unTaskIndex]->ControlStep();
+            if(m_vecControllableEntities[unTaskIndex]->IsEnabled()) {
+               m_vecControllableEntities[unTaskIndex]->Sense();
+               m_vecControllableEntities[unTaskIndex]->ControlStep();
+            }
             );
       }
    }
