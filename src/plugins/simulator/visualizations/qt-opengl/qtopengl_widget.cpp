@@ -901,8 +901,13 @@ namespace argos {
        * Either pure press, or press + CTRL
        */
       if(! (pc_event->modifiers() & Qt::ShiftModifier)) {
-         m_bMouseGrabbed = true;
-         m_cMouseGrabPos = pc_event->pos();
+         if(! (pc_event->modifiers() & Qt::AltModifier)) {
+            m_bMouseGrabbed = true;
+            m_cMouseGrabPos = pc_event->pos();
+         }
+         else {
+            m_cUserFunctions.MouseKeyPressed(pc_event);
+         }
       }
       /*
        * Mouse press with shift
@@ -960,6 +965,9 @@ namespace argos {
             update();
          }
       }
+      else {
+         m_cUserFunctions.MouseKeyReleased(pc_event);
+      }
       /*
        * Mouse was grabbed, button released -> ungrab mouse
        */
@@ -997,6 +1005,9 @@ namespace argos {
                update();
             }
          }
+      }
+      else {
+         m_cUserFunctions.MouseMoved(pc_event);
       }
    }
 

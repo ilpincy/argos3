@@ -118,6 +118,46 @@ namespace argos {
       virtual void KeyReleased(QKeyEvent* pc_event);
 
       /**
+       * Called when a mouse key is pressed.
+       *
+       * The focus must be on the QTOpenGL widget.
+       *
+       * QTOpenGL reserves the following events:
+       * - mouse pressed with no key modifier
+       * - mouse pressed while shift is pressed
+       * - mouse pressed while ctrl is pressed
+       *
+       * Other combinations, e.g., mouse pressed while alt is pressed,
+       * are available.
+       */
+      virtual void MouseKeyPressed(QMouseEvent* pc_event) {}
+
+      /**
+       * Called when a mouse key is released.
+       *
+       * The focus must be on the QTOpenGL widget.
+       *
+       * QTOpenGL reserves the following events:
+       * - mouse released with no key modifier
+       * - mouse released while shift is pressed
+       * - mouse released while ctrl is pressed
+       *
+       * Other combinations, e.g., mouse released while alt is
+       * pressed, are available.
+       */
+      virtual void MouseKeyReleased(QMouseEvent* pc_event) {}
+
+      /**
+       * Called when the mouse is moved.
+       *
+       * The focus must be on the QTOpenGL widget.
+       *
+       * QTOpenGL reserves the following events:
+       * - mouse moved while mouse is grabbed. This happens when the camera is being moved.
+       */
+      virtual void MouseMoved(QMouseEvent* pc_event) {}
+
+      /**
        * Called every time an entity is selected.
        * @param c_entity The selected entity.
        */
