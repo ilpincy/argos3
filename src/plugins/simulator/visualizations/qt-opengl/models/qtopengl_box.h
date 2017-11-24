@@ -29,6 +29,7 @@ namespace argos {
       virtual ~CQTOpenGLBox();
 
       virtual void DrawLEDs(CBoxEntity& c_entity);
+      virtual void DrawSilhouette(const CBoxEntity& c_entity);
       virtual void Draw(const CBoxEntity& c_entity);
 
    private:

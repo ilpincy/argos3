@@ -102,6 +102,17 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   void CQTOpenGLBox::DrawSilhouette(const CBoxEntity& c_entity) {
+      /* Draw the body */
+      glPushMatrix();
+      glScalef(c_entity.GetSize().GetX(), c_entity.GetSize().GetY(), c_entity.GetSize().GetZ());
+      glCallList(m_unBodyList);
+      glPopMatrix();
+   }
+
+   /****************************************/
+   /****************************************/
+
    void CQTOpenGLBox::MakeBody() {
 	     /* Since this shape can be stretched,
 	         make sure the normal vectors are unit-long */
@@ -212,6 +223,16 @@ namespace argos {
       }
    };
 
+   class CQTOpenGLOperationDrawBoxSilhouette : public CQTOpenGLOperationDrawSilhouette {
+   public:
+      void ApplyTo(CQTOpenGLWidget& c_visualization,
+                   CBoxEntity& c_entity) {
+         static CQTOpenGLBox m_cModel;
+         c_visualization.DrawEntity(c_entity.GetEmbodiedEntity());
+         m_cModel.DrawSilhouette(c_entity);
+      }
+   };
+
    class CQTOpenGLOperationDrawBoxSelected : public CQTOpenGLOperationDrawSelected {
    public:
       void ApplyTo(CQTOpenGLWidget& c_visualization,
@@ -221,6 +242,8 @@ namespace argos {
    };
 
    REGISTER_QTOPENGL_ENTITY_OPERATION(CQTOpenGLOperationDrawNormal, CQTOpenGLOperationDrawBoxNormal, CBoxEntity);
+
+   REGISTER_QTOPENGL_ENTITY_OPERATION(CQTOpenGLOperationDrawSilhouette, CQTOpenGLOperationDrawBoxSilhouette, CBoxEntity);
 
    REGISTER_QTOPENGL_ENTITY_OPERATION(CQTOpenGLOperationDrawSelected, CQTOpenGLOperationDrawBoxSelected, CBoxEntity);
 

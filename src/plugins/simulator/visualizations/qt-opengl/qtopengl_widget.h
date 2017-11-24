@@ -42,6 +42,11 @@ namespace argos {
       virtual ~CQTOpenGLOperationDrawNormal() {}
    };
 
+   class CQTOpenGLOperationDrawSilhouette : public CEntityOperation<CQTOpenGLOperationDrawSilhouette, CQTOpenGLWidget, void> {
+   public:
+      virtual ~CQTOpenGLOperationDrawSilhouette() {}
+   };
+
    class CQTOpenGLOperationDrawSelected : public CEntityOperation<CQTOpenGLOperationDrawSelected, CQTOpenGLWidget, void> {
    public:
       virtual ~CQTOpenGLOperationDrawSelected() {}
@@ -386,8 +391,6 @@ namespace argos {
       GLuint m_unArenaList;
       /** Display list for floor elements */
       GLuint m_unFloorList;
-      /** Index buffer for entity selection */
-      GLuint* m_punSelectionBuffer;
 
       /** Current state of the camera */
       CQTOpenGLCamera m_cCamera;
