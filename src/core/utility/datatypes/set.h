@@ -92,11 +92,12 @@ namespace argos {
     * differently from standard containers. In fact, it only stores pointers to
     * objects, and never copies them like STL containers do. The pointers are used
     * to decide whether an element is already present in the list or not. Internally,
-    * The list is ordered by pointer.
+    * the list is ordered using the comparator C. By default, the comparator uses the
+    * pointer values.
     * @see SSetElement
     * @see CSetIterator
     */
-   template <class T>
+   template <class T, class C = std::less<T> >
    class CSet {
 
    public:
@@ -232,7 +233,7 @@ namespace argos {
        * The element is inserted only if not already present in the list.
        * @param t_element The element to insert.
        */
-      void insert(const T& t_element) {
+      void insert(const T& t_element, C comp = C()) {
          /* Is the list empty? */
          if(m_unSize == 0) {
             /* Yes, the first and last element coincide */
@@ -246,7 +247,7 @@ namespace argos {
                of the element to add */
             SSetElement<T>* psNextElem = m_psFirst;
             while(psNextElem != NULL &&
-                  psNextElem->Data < t_element) {
+                  comp(psNextElem->Data, t_element)) {
                psNextElem = psNextElem->Next;
             }
             /* Did we get to the end of the list? */
@@ -407,13 +408,13 @@ namespace argos {
 
    private:
 
-      SSetElement<T>* find_impl(const T& t_element) const {
+      SSetElement<T>* find_impl(const T& t_element, C comp = C()) const {
          if(m_psFirst == NULL) {
             return NULL;
          }
          SSetElement<T>* psElem = m_psFirst;
          while(psElem != NULL &&
-               psElem->Data < t_element) {
+               comp(psElem->Data, t_element)) {
             psElem = psElem->Next;
          }
          if(psElem == NULL) {

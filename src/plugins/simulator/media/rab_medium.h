@@ -61,9 +61,6 @@ namespace argos {
       /** The routing table, that associates each RAB with the RABs that can communicate with it */
       TRoutingTable m_tRoutingTable;
 
-      /** A vector to maintain the ordering of inserted RABs (ensures determinism) */
-      std::vector<CRABEquippedEntity*> m_vecRABs;
-
       /** A positional index for the RAB entities */
       CPositionalIndex<CRABEquippedEntity>* m_pcRABEquippedEntityIndex;
 

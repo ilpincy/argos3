@@ -221,6 +221,27 @@ namespace argos {
       virtual void Update() {}
 
       /**
+       * Returns the entity index.
+       * The entity index is used to order entities globally when
+       * necessary to ensure determinism.
+       * @return The entity index.
+       */
+      size_t GetIndex() const {
+         return m_unIndex;
+      }
+
+      /**
+       * Sets the entity index.
+       * The entity index is used to order entities globally when
+       * necessary to ensure determinism.
+       * Never call this function in your code.
+       * @param un_idx The entity index.
+       */
+      void SetIndex(size_t un_idx) {
+         m_unIndex = un_idx;
+      }
+
+      /**
        * Returns <tt>true</tt> if the entity is enabled.
        * @return <tt>true</tt> if the entity is enabled.
        * @see m_bEnabled
@@ -266,9 +287,24 @@ namespace argos {
       /** The id of this entity */
       std::string m_strId;
 
+      /** The position of this entity in the global entity vector */
+      size_t m_unIndex;
+
       /** When <tt>true</tt>, this entity is updated; when <tt>false</tt>, this entity is not updated */
       bool m_bEnabled;
 
+   };
+
+   /**
+    * A generic entity comparator, used in containers that must be ordered deterministically.
+    */
+   struct SEntityComparator {
+      bool operator()(const CEntity* pc_a, const CEntity* pc_b) const {
+         return pc_a->GetIndex() < pc_b->GetIndex();
+      }
+      bool operator()(const CEntity& c_a, const CEntity& c_b) const {
+         return c_a.GetIndex() < c_b.GetIndex();
+      }
    };
 
    /**

@@ -124,15 +124,17 @@ namespace argos {
       /* The ray to use for occlusion checking */
       CRay3 cOcclusionCheckRay;
       /* Buffer for the communicating entities */
-      CSet<CRABEquippedEntity*> cOtherRABs;
+      CSet<CRABEquippedEntity*,SEntityComparator> cOtherRABs;
       /* Buffer to store the intersection data */
       SEmbodiedEntityIntersectionItem sIntersectionItem;
       /* The distance between two RABs in line of sight */
       Real fDistance;
       /* Go through the RAB entities */
-      for(size_t i = 0; i < m_vecRABs.size(); ++i) {
+      for(TRoutingTable::iterator it = m_tRoutingTable.begin();
+          it != m_tRoutingTable.end();
+          ++it) {
          /* Get a reference to the current RAB entity */
-         CRABEquippedEntity& cRAB = *(m_vecRABs[i]);
+         CRABEquippedEntity& cRAB = *(it->first);
          /* Initialize the occlusion check ray start to the position of the robot */
          cOcclusionCheckRay.SetStart(cRAB.GetPosition());
          /* For each RAB entity, get the list of RAB entities in range */
@@ -194,7 +196,6 @@ namespace argos {
    /****************************************/
 
    void CRABMedium::AddEntity(CRABEquippedEntity& c_entity) {
-      m_vecRABs.push_back(&c_entity);
       m_tRoutingTable.insert(
          std::make_pair<CRABEquippedEntity*, CSet<CRABEquippedEntity*> >(
             &c_entity, CSet<CRABEquippedEntity*>()));
@@ -209,7 +210,6 @@ namespace argos {
       if(it != m_tRoutingTable.end()) {
          m_pcRABEquippedEntityIndex->RemoveEntity(c_entity);
          m_tRoutingTable.erase(it);
-         m_vecRABs.erase(std::find(m_vecRABs.begin(), m_vecRABs.end(), &c_entity));
       }
       else {
          THROW_ARGOSEXCEPTION("Can't erase entity \"" << c_entity.GetId() << "\" from RAB medium \"" << GetId() << "\"");

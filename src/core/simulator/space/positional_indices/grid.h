@@ -16,7 +16,7 @@ namespace argos {
       typedef typename CPositionalIndex<ENTITY>::COperation CEntityOperation;
 
       struct SCell {
-         CSet<ENTITY*> Entities;
+         CSet<ENTITY*,SEntityComparator> Entities;
          size_t Timestamp;
 
          SCell() : Timestamp(0) {}
@@ -55,7 +55,7 @@ namespace argos {
 
       virtual void Update();
 
-      virtual void GetEntitiesAt(CSet<ENTITY*>& c_entities,
+      virtual void GetEntitiesAt(CSet<ENTITY*,SEntityComparator>& c_entities,
                                  const CVector3& c_position) const;
 
       virtual void ForAllEntities(CEntityOperation& c_operation);
@@ -158,7 +158,7 @@ namespace argos {
       CVector3 m_cInvCellSize;
       SCell* m_psCells;
       size_t m_unCurTimestamp;
-      CSet<ENTITY*> m_cEntities;
+      CSet<ENTITY*,SEntityComparator> m_cEntities;
       CEntityOperation* m_pcUpdateEntityOperation;
 
    };
