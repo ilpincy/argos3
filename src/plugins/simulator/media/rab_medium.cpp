@@ -98,10 +98,10 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   static UInt64 HashRABPair(const std::pair<CRABEquippedEntity*, CRABEquippedEntity*>& c_pair) {
-      UInt64 unA = *reinterpret_cast<unsigned long long*>(c_pair.first) & 0xFFFFFFFF;
-      UInt64 unB = *reinterpret_cast<unsigned long long*>(c_pair.second) & 0xFFFFFFFF;
-      return (unA << 32) | unB;
+   static size_t HashRABPair(const std::pair<CRABEquippedEntity*, CRABEquippedEntity*>& c_pair) {
+      return
+         reinterpret_cast<size_t>(c_pair.first) ^
+         reinterpret_cast<size_t>(c_pair.second);
    }
 
    void CRABMedium::Update() {
@@ -114,9 +114,9 @@ namespace argos {
          it->second.clear();
       }
       /* This map contains the pairs that have already been checked */
-      std::map<UInt64, std::pair<CRABEquippedEntity*, CRABEquippedEntity*> > mapPairsAlreadyChecked;
+      std::unordered_map<size_t, std::pair<CRABEquippedEntity*, CRABEquippedEntity*> > mapPairsAlreadyChecked;
       /* Iterator for the above structure */
-      std::map<UInt64, std::pair<CRABEquippedEntity*, CRABEquippedEntity*> >::iterator itPair;
+      std::unordered_map<size_t, std::pair<CRABEquippedEntity*, CRABEquippedEntity*> >::iterator itPair;
       /* Used as test key */
       std::pair<CRABEquippedEntity*, CRABEquippedEntity*> cTestKey;
       /* Used as hash for the test key */
@@ -130,11 +130,9 @@ namespace argos {
       /* The distance between two RABs in line of sight */
       Real fDistance;
       /* Go through the RAB entities */
-      for(TRoutingTable::iterator it = m_tRoutingTable.begin();
-          it != m_tRoutingTable.end();
-          ++it) {
+      for(size_t i = 0; i < m_vecRABs.size(); ++i) {
          /* Get a reference to the current RAB entity */
-         CRABEquippedEntity& cRAB = *(it->first);
+         CRABEquippedEntity& cRAB = *(m_vecRABs[i]);
          /* Initialize the occlusion check ray start to the position of the robot */
          cOcclusionCheckRay.SetStart(cRAB.GetPosition());
          /* For each RAB entity, get the list of RAB entities in range */
@@ -178,7 +176,7 @@ namespace argos {
                         fDistance = cOcclusionCheckRay.GetLength();
                         if(fDistance < cOtherRAB.GetRange()) {
                            /* cRAB receives cOtherRAB's message */
-                           it->second.insert(&cOtherRAB);
+                           m_tRoutingTable[&cRAB].insert(&cOtherRAB);
                         }
                         if(fDistance < cRAB.GetRange()) {
                            /* cOtherRAB receives cRAB's message */
@@ -196,6 +194,7 @@ namespace argos {
    /****************************************/
 
    void CRABMedium::AddEntity(CRABEquippedEntity& c_entity) {
+      m_vecRABs.push_back(&c_entity);
       m_tRoutingTable.insert(
          std::make_pair<CRABEquippedEntity*, CSet<CRABEquippedEntity*> >(
             &c_entity, CSet<CRABEquippedEntity*>()));
@@ -210,6 +209,7 @@ namespace argos {
       if(it != m_tRoutingTable.end()) {
          m_pcRABEquippedEntityIndex->RemoveEntity(c_entity);
          m_tRoutingTable.erase(it);
+         m_vecRABs.erase(std::find(m_vecRABs.begin(), m_vecRABs.end(), &c_entity));
       }
       else {
          THROW_ARGOSEXCEPTION("Can't erase entity \"" << c_entity.GetId() << "\" from RAB medium \"" << GetId() << "\"");
