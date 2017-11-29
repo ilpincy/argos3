@@ -77,7 +77,7 @@ namespace argos {
       /* Delete old readings */
       m_tReadings.clear();
       /* Get list of communicating RABs */
-      const CSet<CRABEquippedEntity*>& setRABs = m_pcRangeAndBearingMedium->GetRABsCommunicatingWith(*m_pcRangeAndBearingEquippedEntity);
+      const CSet<CRABEquippedEntity*,SEntityComparator>& setRABs = m_pcRangeAndBearingMedium->GetRABsCommunicatingWith(*m_pcRangeAndBearingEquippedEntity);
       /* Buffer for calculating the message--robot distance */
       CVector3 cVectorRobotToMessage;
       /* Buffer for the received packet */

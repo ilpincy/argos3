@@ -197,8 +197,8 @@ namespace argos {
 
    void CRABMedium::AddEntity(CRABEquippedEntity& c_entity) {
       m_tRoutingTable.insert(
-         std::make_pair<CRABEquippedEntity*, CSet<CRABEquippedEntity*> >(
-            &c_entity, CSet<CRABEquippedEntity*>()));
+         std::make_pair<CRABEquippedEntity*, CSet<CRABEquippedEntity*,SEntityComparator> >(
+            &c_entity, CSet<CRABEquippedEntity*,SEntityComparator>()));
       m_pcRABEquippedEntityIndex->AddEntity(c_entity);
    }
 
@@ -219,7 +219,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   const CSet<CRABEquippedEntity*>& CRABMedium::GetRABsCommunicatingWith(CRABEquippedEntity& c_entity) const {
+   const CSet<CRABEquippedEntity*,SEntityComparator>& CRABMedium::GetRABsCommunicatingWith(CRABEquippedEntity& c_entity) const {
       TRoutingTable::const_iterator it = m_tRoutingTable.find(&c_entity);
       if(it != m_tRoutingTable.end()) {
          return it->second;
