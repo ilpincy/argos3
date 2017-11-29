@@ -4,6 +4,7 @@
 # argos3/plugins/robots/generic/control_interface
 set(ARGOS3_HEADERS_PLUGINS_ROBOTS_GENERIC_CONTROLINTERFACE
   control_interface/ci_altitude_sensor.h
+  control_interface/ci_battery_sensor.h
   control_interface/ci_colored_blob_omnidirectional_camera_sensor.h
   control_interface/ci_colored_blob_perspective_camera_sensor.h
   control_interface/ci_differential_steering_actuator.h
@@ -23,6 +24,7 @@ set(ARGOS3_HEADERS_PLUGINS_ROBOTS_GENERIC_CONTROLINTERFACE
 if(ARGOS_BUILD_FOR_SIMULATOR)
   # argos3/plugins/robots/generic/simulator
   set(ARGOS3_HEADERS_PLUGINS_ROBOTS_GENERIC_SIMULATOR
+    simulator/battery_default_sensor.h
     simulator/colored_blob_omnidirectional_camera_rotzonly_sensor.h
     simulator/colored_blob_perspective_camera_default_sensor.h
     simulator/differential_steering_default_actuator.h
@@ -45,6 +47,7 @@ endif(ARGOS_BUILD_FOR_SIMULATOR)
 set(ARGOS3_SOURCES_PLUGINS_ROBOTS_GENERIC
   ${ARGOS3_HEADERS_PLUGINS_ROBOTS_GENERIC_CONTROLINTERFACE}
   control_interface/ci_altitude_sensor.cpp
+  control_interface/ci_battery_sensor.cpp
   control_interface/ci_colored_blob_omnidirectional_camera_sensor.cpp
   control_interface/ci_colored_blob_perspective_camera_sensor.cpp
   control_interface/ci_differential_steering_actuator.cpp
@@ -64,6 +67,7 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
   set(ARGOS3_SOURCES_PLUGINS_ROBOTS_GENERIC
     ${ARGOS3_SOURCES_PLUGINS_ROBOTS_GENERIC}
     ${ARGOS3_HEADERS_PLUGINS_ROBOTS_GENERIC_SIMULATOR}
+    simulator/battery_default_sensor.cpp
     simulator/colored_blob_omnidirectional_camera_rotzonly_sensor.cpp
     simulator/colored_blob_perspective_camera_default_sensor.cpp
     simulator/differential_steering_default_actuator.cpp
