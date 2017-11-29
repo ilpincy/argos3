@@ -72,18 +72,27 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   bool SortCRABEquippedEntities(CRABEquippedEntity* a, CRABEquippedEntity* b) {
+      return a->GetRootEntity().GetId() < b->GetRootEntity().GetId();
+   }
+
    void CRangeAndBearingMediumSensor::Update() {
       /** TODO: there's a more efficient way to implement this */
       /* Delete old readings */
       m_tReadings.clear();
       /* Get list of communicating RABs */
-      const CSet<CRABEquippedEntity*>& setRABs = m_pcRangeAndBearingMedium->GetRABsCommunicatingWith(*m_pcRangeAndBearingEquippedEntity);
+      const CSet<CRABEquippedEntity*>& setRABsUnsorted = m_pcRangeAndBearingMedium->GetRABsCommunicatingWith(*m_pcRangeAndBearingEquippedEntity);
+      /* Sort them by robot ID*/
+      std::vector<CRABEquippedEntity*> setRABs;
+      for(CSet<CRABEquippedEntity*>::iterator it = setRABsUnsorted.begin(); it != setRABsUnsorted.end(); ++it)
+         setRABs.push_back(*it);
+      std::sort(setRABs.begin(), setRABs.end(), SortCRABEquippedEntities);
       /* Buffer for calculating the message--robot distance */
       CVector3 cVectorRobotToMessage;
       /* Buffer for the received packet */
       CCI_RangeAndBearingSensor::SPacket sPacket;
       /* Go through communicating RABs and create packets */
-      for(CSet<CRABEquippedEntity*>::iterator it = setRABs.begin();
+      for(std::vector<CRABEquippedEntity*>::iterator it = setRABs.begin();
           it != setRABs.end(); ++it) {
          /* Should we drop this packet? */
          if(m_pcRNG == NULL || /* No noise to apply */
