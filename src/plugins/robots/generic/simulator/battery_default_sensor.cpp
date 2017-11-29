@@ -46,7 +46,6 @@ namespace argos {
             m_bAddNoise = true;
             m_pcRNG = CRandom::CreateRNG("argos");
          }
-         std::cout<<" Initial level "<<m_sReading.Level;
       }
       catch(CARGoSException& ex) {
          THROW_ARGOSEXCEPTION_NESTED("Initialization error in default battery sensor", ex);
@@ -60,12 +59,10 @@ namespace argos {
       m_sReading.Level -= m_fDischarge;//todo
       if(m_bAddNoise) {
          m_sReading.Level += m_pcRNG->Uniform(m_cLevelNoiseRange);
+         /* To avoid battery level above 1 */
+         m_sReading.Level = (m_sReading.Level>1.0)?1.0:m_sReading.Level;
       }
-      std::cout<<" BL: "<<m_sReading.Level<< std::endl;
-      if(m_sReading.Level <= 0.0) {
-          std::cout<<"Disabling..";
-          m_pcEmbodiedEntity->Disable();
-      }
+//      std::cout<<" ABL: "<<m_sReading.Level<< std::endl;
    }
 
    /****************************************/
