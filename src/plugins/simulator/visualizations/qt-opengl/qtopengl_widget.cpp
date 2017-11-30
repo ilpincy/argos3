@@ -391,10 +391,10 @@ namespace argos {
       CEntity::TVector& vecEntities = m_cSpace.GetRootEntityVector();
       for(size_t i = 0; i < vecEntities.size(); ++i) {
          /* convert index to color value */
-         GLfloat fRed   = (((i + 1) & 0xFF000000) >> 24) / 255.0;
-         GLfloat fGreen = (((i + 1) & 0x00FF0000) >> 16) / 255.0;
-         GLfloat fBlue  = (((i + 1) & 0x0000FF00) >> 8) / 255.0;
-         GLfloat fAlpha = (((i + 1) & 0x000000FF) >> 0) / 255.0;
+         GLfloat fAlpha = (((i + 1) & 0xFF000000) >> 24) / 255.0;
+         GLfloat fRed   = (((i + 1) & 0x00FF0000) >> 16) / 255.0;
+         GLfloat fGreen = (((i + 1) & 0x0000FF00) >> 8) / 255.0;
+         GLfloat fBlue  = (((i + 1) & 0x000000FF) >> 0) / 255.0;
          /* draw the entity */
          glPushMatrix();
          glColor4f(fRed, fGreen, fBlue, fAlpha);
@@ -413,12 +413,8 @@ namespace argos {
       /* Restore background color */
       glClearColor(0, .5, .5, 255); // dark cyan
       /* create an image from the buffer and extract the color at the mouse coordinates */
-      QColor cSelectedPixel = cSelectFrameBuffer.toImage().pixelColor(un_x,un_y);
-      UInt32 unIndex =
-         (cSelectedPixel.red() << 24) +
-         (cSelectedPixel.green() << 16) +
-         (cSelectedPixel.blue() << 8) +
-         (cSelectedPixel.alpha() << 0);
+      QRgb cSelectedPixel = cSelectFrameBuffer.toImage().pixel(un_x,un_y);
+      UInt32 unIndex = static_cast<UInt32>(cSelectedPixel);
       bool bWasSelected = m_sSelectionInfo.IsSelected;
       if (unIndex == 0) {
          /* Background, deselect what was selected */
