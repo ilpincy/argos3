@@ -44,9 +44,17 @@ namespace argos {
 
        virtual void Disable();
 
+       inline const UInt16 GetFullCapacity() const {
+           return m_unFullCapacity;
+       }
+
+       inline void SetFullCapacity(UInt16 un_full_capacity) {
+           m_unFullCapacity = un_full_capacity;
+       }
+
    protected:
 
-       SInt16 m_nCapacity;
+       UInt16 m_unFullCapacity;
 
    };
 

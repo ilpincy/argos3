@@ -24,6 +24,7 @@ namespace argos {
 
 #ifdef ARGOS_WITH_LUA
    void CCI_BatterySensor::CreateLuaState(lua_State* pt_lua_state) {
+       /** TODO */
    }
 #endif
 
@@ -32,10 +33,19 @@ namespace argos {
 
 #ifdef ARGOS_WITH_LUA
    void CCI_BatterySensor::ReadingsToLuaState(lua_State* pt_lua_state) {
+       /** TODO */
    }
 #endif
 
    /****************************************/
    /****************************************/
 
+   void CCI_BatterySensor::SetReading(Real f_bat_level, SInt16 n_bat_avail_capacity, Real f_time_rem) {
+       m_sReading.Level = f_bat_level;
+       m_sReading.AvailCapacity = n_bat_avail_capacity;
+       m_sReading.TimeRemaining = f_time_rem;
+   }
+
+   /****************************************/
+   /****************************************/
 }

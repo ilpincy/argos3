@@ -7,6 +7,7 @@
 #include <argos3/core/simulator/simulator.h>
 #include <argos3/core/simulator/entity/embodied_entity.h>
 #include <argos3/core/simulator/entity/composable_entity.h>
+#include <argos3/plugins/simulator/entities/battery_sensor_equipped_entity.h>
 
 #include "battery_default_sensor.h"
 
@@ -15,8 +16,14 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   static CRange<Real> UNIT(0.0f, 1.0f);
+
+   /****************************************/
+   /****************************************/
+
    CBatteryDefaultSensor::CBatteryDefaultSensor() :
       m_pcEmbodiedEntity(NULL),
+      m_pcBatteryEntity(NULL),
       m_pcRNG(NULL),
       m_bAddNoise(false) {}
 
@@ -24,9 +31,15 @@ namespace argos {
    /****************************************/
 
    void CBatteryDefaultSensor::SetRobot(CComposableEntity& c_entity) {
-      m_pcEmbodiedEntity = &(c_entity.GetComponent<CEmbodiedEntity>("body"));
-      m_sReading.Level = 1;  //todo
-//      m_sReading.Orientation = m_pcEmbodiedEntity->GetOriginAnchor().Orientation;
+      try {
+          m_pcEmbodiedEntity = &(c_entity.GetComponent<CEmbodiedEntity>("body"));
+          m_pcBatteryEntity = &(c_entity.GetComponent<CBatterySensorEquippedEntity>("battery_sensors"));
+          m_pcBatteryEntity->Enable();
+          SetReading(1.0f,0,0); //todo
+      }
+      catch(CARGoSException&  ex) {
+          THROW_ARGOSEXCEPTION_NESTED("Can't set robot for the battery default sensor", ex);
+      }
    }
 
    /****************************************/
@@ -34,13 +47,13 @@ namespace argos {
 
    void CBatteryDefaultSensor::Init(TConfigurationNode& t_tree) {
       try {
-           std::cout<<"Battery loaded";
+         std::cout<<"Battery loaded";
          CCI_BatterySensor::Init(t_tree);
          /* Parse noise range */
          GetNodeAttributeOrDefault(t_tree, "level_noise_range", m_cLevelNoiseRange, m_cLevelNoiseRange);
          /* Parse discharge rate */
-         Real discharge=0;
-         GetNodeAttributeOrDefault(t_tree, "discharge", discharge, discharge);
+         Real discharge = 0.0f;
+         GetNodeAttributeOrDefault(t_tree, "discharge_rate", discharge, discharge);
          m_fDischarge = discharge;
          if(m_cLevelNoiseRange.GetSpan() != 0 ) {
             m_bAddNoise = true;
@@ -56,12 +69,18 @@ namespace argos {
    /****************************************/
    
    void CBatteryDefaultSensor::Update() {
-      m_sReading.Level -= m_fDischarge;//todo
+      /** For now  the battery losses energy at a constant rate */
+      m_sReading.Level -= m_fDischarge; //todo
       if(m_bAddNoise) {
          m_sReading.Level += m_pcRNG->Uniform(m_cLevelNoiseRange);
-         /* To avoid battery level above 1 */
-         m_sReading.Level = (m_sReading.Level>1.0)?1.0:m_sReading.Level;
+         /* To trunc battery level between 0 and 1 */
+         UNIT.TruncValue(m_sReading.Level);
       }
+      // for now hard coded
+      UInt8 tick_per_second = 10;  //Real CPhysicsEngine::GetInverseSimulationClockTick()
+      UInt16 FullCapacity = 34000;
+      m_sReading.TimeRemaining = m_sReading.Level/(tick_per_second*m_fDischarge);
+      m_sReading.AvailCapacity = m_sReading.Level*FullCapacity;
 //      std::cout<<" ABL: "<<m_sReading.Level<< std::endl;
    }
 
@@ -69,8 +88,7 @@ namespace argos {
    /****************************************/
 
    void CBatteryDefaultSensor::Reset() {
-      m_sReading.Level = 1;
-//      m_sReading.Orientation = m_pcEmbodiedEntity->GetOriginAnchor().Orientation;
+      SetReading(1.0f,0,0); //todo
    }
 
    /****************************************/
@@ -80,10 +98,10 @@ namespace argos {
                    "battery", "default",
                    "Carlo Pinciroli [ilpincy@gmail.com]",
                    "1.0",
-                   "A generic positioning sensor.",
-                   "This sensor returns the current position and orientation of a robot. This sensor\n"
+                   "A generic battery level sensor.",
+                   "This sensor returns the current battery level of a robot. This sensor\n"
                    "can be used with any robot, since it accesses only the body component. In\n"
-                   "controllers, you must include the ci_positioning_sensor.h header.\n\n"
+                   "controllers, you must include the ci_battery_sensor.h header.\n\n"
                    "REQUIRED XML CONFIGURATION\n\n"
                    "  <controllers>\n"
                    "    ...\n"
@@ -101,12 +119,11 @@ namespace argos {
                    "OPTIONAL XML CONFIGURATION\n\n"
                    "It is possible to add uniform noise to the sensor, thus matching the\n"
                    "characteristics of a real robot better. You can add noise through the\n"
-                   "attributes 'pos_noise_range', 'angle_noise_range', and 'axis_noise_range'.\n"
-                   "Attribute 'pos_noise_range' regulates the noise range on the position returned\n"
-                   "by the sensor. Attribute 'angle_noise_range' sets the noise range on the angle\n"
-                   "(values expressed in degrees). Attribute 'axis_noise_range' sets the noise for\n"
-                   "the rotation axis. Angle and axis are used to calculate a quaternion, which is\n"
-                   "the actual returned value for rotation.\n\n"
+                   "attribute 'level_noise_range'. You can add dicharge rate through the\n"
+                   "attribute 'discharge'.\n"
+                   "Attribute 'level_noise_range' regulates the noise range on the battery level\n"
+                   "returned by the sensor. Attribute 'discharge' sets the rate at which battery\n"
+                   "is discharged.\n\n"
                    "  <controllers>\n"
                    "    ...\n"
                    "    <my_controller ...>\n"
@@ -115,7 +132,7 @@ namespace argos {
                    "        ...\n"
                    "        <battery implementation=\"default\"\n"
                    "                 level_noise_range=\"-0.3:0.4\"\n"
-                   "                 discharge=\"0.01\" />\n"
+                   "                 discharge_rate=\"0.01\" />\n"
                    "        ...\n"
                    "      </sensors>\n"
                    "      ...\n"

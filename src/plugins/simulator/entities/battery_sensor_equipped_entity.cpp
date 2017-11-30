@@ -39,7 +39,7 @@ namespace argos {
     void CBatterySensorEquippedEntity::Init(TConfigurationNode& t_tree) {
        try {
           CEntity::Init(t_tree);
-          std::string strCapacity;
+          std::string strCapacity("test");
           GetNodeAttribute(t_tree, "capacity", strCapacity);
           std::cout<<"capacity"<<strCapacity;
        }

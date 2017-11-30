@@ -12,8 +12,8 @@
 
 namespace argos {
    class CBatteryDefaultSensor;
-   class CEmbodiedEntity;
    class CBatterySensorEquippedEntity;
+   class CPhysicsEngine;
 }
 
 #include <argos3/plugins/robots/generic/control_interface/ci_battery_sensor.h>
@@ -45,6 +45,9 @@ namespace argos {
 
       /** Reference to embodied entity associated to this sensor */
       CEmbodiedEntity* m_pcEmbodiedEntity;
+
+      /** Reference to battery sensor equipped entity associated to this sensor */
+      CBatterySensorEquippedEntity* m_pcBatteryEntity;
 
       /** Random number generator */
       CRandom::CRNG* m_pcRNG;

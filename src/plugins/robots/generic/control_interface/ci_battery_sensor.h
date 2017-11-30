@@ -3,6 +3,7 @@
  *
  * @author Carlo Pinciroli <ilpincy@gmail.com>
  */
+
 #ifndef CCI_BATTERY_SENSOR_H
 #define CCI_BATTERY_SENSOR_H
 
@@ -19,7 +20,12 @@ namespace argos {
    public:
 
       struct SReading {
+         /** Available battery level is always between 0 and 1 */
          Real Level;
+         /** Available capacity in mAh*/
+         UInt16 AvailCapacity;
+         /** Time remaining in seconds */
+         UInt16 TimeRemaining;
       };
 
    public:
@@ -37,6 +43,9 @@ namespace argos {
    protected:
 
       SReading m_sReading;
+
+      void SetReading(Real f_bat_level, SInt16 n_bat_avail_capacity, Real f_time_rem);
+
    };
 
 }
