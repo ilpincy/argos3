@@ -42,11 +42,6 @@ namespace argos {
       virtual ~CQTOpenGLOperationDrawNormal() {}
    };
 
-   class CQTOpenGLOperationDrawSilhouette : public CEntityOperation<CQTOpenGLOperationDrawSilhouette, CQTOpenGLWidget, void> {
-   public:
-      virtual ~CQTOpenGLOperationDrawSilhouette() {}
-   };
-
    class CQTOpenGLOperationDrawSelected : public CEntityOperation<CQTOpenGLOperationDrawSelected, CQTOpenGLWidget, void> {
    public:
       virtual ~CQTOpenGLOperationDrawSelected() {}

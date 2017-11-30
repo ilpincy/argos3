@@ -398,7 +398,7 @@ namespace argos {
          /* draw the entity */
          glPushMatrix();
          glColor4f(fRed, fGreen, fBlue, fAlpha);
-         CallEntityOperation<CQTOpenGLOperationDrawSilhouette, CQTOpenGLWidget, void>(*this, *vecEntities[i]);
+         CallEntityOperation<CQTOpenGLOperationDrawNormal, CQTOpenGLWidget, void>(*this, *vecEntities[i]);
          glPopMatrix();
       }
       /* make sure we have finished drawing before releasing the frame buffer */
