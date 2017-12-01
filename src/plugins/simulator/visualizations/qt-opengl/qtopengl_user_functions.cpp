@@ -115,7 +115,8 @@ namespace argos {
       const GLfloat pfColor[]     = {
          c_color.GetRed()   / 255.0f,
          c_color.GetGreen() / 255.0f,
-         c_color.GetBlue()  / 255.0f
+         c_color.GetBlue()  / 255.0f,
+         1.0f
       };
       glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, DEFAULT_SPECULAR);
       glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, DEFAULT_SHININESS);
