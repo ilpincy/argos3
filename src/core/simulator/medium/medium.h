@@ -9,6 +9,7 @@
 
 namespace argos {
    class CMedium;
+   class CSpace;
 }
 
 #include <argos3/core/utility/configuration/base_configurable_resource.h>
@@ -84,10 +85,21 @@ namespace argos {
          m_strId = str_id;
       }
 
+      /**
+       * Returns a reference to the ARGoS space.
+       * @return A reference to the ARGoS space.
+       */
+      CSpace& GetSpace() {
+         return *m_pcSpace;
+      }
+
    private:
                
       /** The medium's id. */
       std::string m_strId;
+
+      /** Pointer to the ARGoS space */
+      CSpace* m_pcSpace;
 
    };
 

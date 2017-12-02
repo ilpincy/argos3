@@ -114,9 +114,9 @@ namespace argos {
          it->second.clear();
       }
       /* This map contains the pairs that have already been checked */
-      std::unordered_map<size_t, std::pair<CRABEquippedEntity*, CRABEquippedEntity*> > mapPairsAlreadyChecked;
+      std::unordered_map<ssize_t, std::pair<CRABEquippedEntity*, CRABEquippedEntity*> > mapPairsAlreadyChecked;
       /* Iterator for the above structure */
-      std::unordered_map<size_t, std::pair<CRABEquippedEntity*, CRABEquippedEntity*> >::iterator itPair;
+      std::unordered_map<ssize_t, std::pair<CRABEquippedEntity*, CRABEquippedEntity*> >::iterator itPair;
       /* Used as test key */
       std::pair<CRABEquippedEntity*, CRABEquippedEntity*> cTestKey;
       /* Used as hash for the test key */
@@ -134,7 +134,7 @@ namespace argos {
           it != m_tRoutingTable.end();
           ++it) {
          /* Get a reference to the current RAB entity */
-         CRABEquippedEntity& cRAB = *(it->first);
+         CRABEquippedEntity& cRAB = *reinterpret_cast<CRABEquippedEntity*>(GetSpace().GetEntityVector()[it->first]);
          /* Initialize the occlusion check ray start to the position of the robot */
          cOcclusionCheckRay.SetStart(cRAB.GetPosition());
          /* For each RAB entity, get the list of RAB entities in range */
@@ -178,11 +178,11 @@ namespace argos {
                         fDistance = cOcclusionCheckRay.GetLength();
                         if(fDistance < cOtherRAB.GetRange()) {
                            /* cRAB receives cOtherRAB's message */
-                           m_tRoutingTable[&cRAB].insert(&cOtherRAB);
+                           m_tRoutingTable[cRAB.GetIndex()].insert(&cOtherRAB);
                         }
                         if(fDistance < cRAB.GetRange()) {
                            /* cOtherRAB receives cRAB's message */
-                           m_tRoutingTable[&cOtherRAB].insert(&cRAB);
+                           m_tRoutingTable[cOtherRAB.GetIndex()].insert(&cRAB);
                         }
                      } // occlusion found?
                   } // is msg size the same?
@@ -196,36 +196,34 @@ namespace argos {
    /****************************************/
 
    void CRABMedium::AddEntity(CRABEquippedEntity& c_entity) {
-      m_tRoutingTable.insert(
-         std::make_pair<CRABEquippedEntity*, CSet<CRABEquippedEntity*,SEntityComparator> >(
-            &c_entity, CSet<CRABEquippedEntity*,SEntityComparator>()));
-      m_pcRABEquippedEntityIndex->AddEntity(c_entity);
+      if(c_entity.GetIndex() >= 0) {
+         m_tRoutingTable.insert(
+            std::make_pair<ssize_t, CSet<CRABEquippedEntity*,SEntityComparator> >(
+               c_entity.GetIndex(), CSet<CRABEquippedEntity*,SEntityComparator>()));
+         m_pcRABEquippedEntityIndex->AddEntity(c_entity);
+      }
    }
 
    /****************************************/
    /****************************************/
 
    void CRABMedium::RemoveEntity(CRABEquippedEntity& c_entity) {
-      TRoutingTable::iterator it = m_tRoutingTable.find(&c_entity);
-      if(it != m_tRoutingTable.end()) {
-         m_pcRABEquippedEntityIndex->RemoveEntity(c_entity);
+      m_pcRABEquippedEntityIndex->RemoveEntity(c_entity);
+      TRoutingTable::iterator it = m_tRoutingTable.find(c_entity.GetIndex());
+      if(it != m_tRoutingTable.end())
          m_tRoutingTable.erase(it);
-      }
-      else {
-         THROW_ARGOSEXCEPTION("Can't erase entity \"" << c_entity.GetId() << "\" from RAB medium \"" << GetId() << "\"");
-      }
    }
 
    /****************************************/
    /****************************************/
 
    const CSet<CRABEquippedEntity*,SEntityComparator>& CRABMedium::GetRABsCommunicatingWith(CRABEquippedEntity& c_entity) const {
-      TRoutingTable::const_iterator it = m_tRoutingTable.find(&c_entity);
+      TRoutingTable::const_iterator it = m_tRoutingTable.find(c_entity.GetIndex());
       if(it != m_tRoutingTable.end()) {
          return it->second;
       }
       else {
-         THROW_ARGOSEXCEPTION("RAB entity \"" << c_entity.GetId() << "\" is not managed by the RAB medium \"" << GetId() << "\"");
+         THROW_ARGOSEXCEPTION("RAB entity \"" << c_entity.GetContext() << c_entity.GetId() << "\" is not managed by the RAB medium \"" << GetId() << "\"");
       }
    }
 

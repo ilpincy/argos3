@@ -35,8 +35,6 @@ namespace argos {
    void CRangeAndBearingMediumSensor::SetRobot(CComposableEntity& c_entity) {
       /* Assign RAB equipped entity to this sensor */
       m_pcRangeAndBearingEquippedEntity = &c_entity.GetComponent<CRABEquippedEntity>("rab");
-      /* Enable the RAB equipped entity */
-      m_pcRangeAndBearingEquippedEntity->Enable();
       /* Get reference to controllable entity */
       m_pcControllableEntity = &c_entity.GetComponent<CControllableEntity>("controller");
    }
@@ -62,7 +60,9 @@ namespace argos {
          GetNodeAttribute(t_tree, "medium", strMedium);
          m_pcRangeAndBearingMedium = &(CSimulator::GetInstance().GetMedium<CRABMedium>(strMedium));
          /* Assign RAB entity to the medium */
-         m_pcRangeAndBearingMedium->AddEntity(*m_pcRangeAndBearingEquippedEntity);
+         m_pcRangeAndBearingEquippedEntity->SetMedium(*m_pcRangeAndBearingMedium);
+         /* Enable the RAB equipped entity */
+         m_pcRangeAndBearingEquippedEntity->Enable();
       }
       catch(CARGoSException& ex) {
          THROW_ARGOSEXCEPTION_NESTED("Error initializing the range and bearing medium sensor", ex);

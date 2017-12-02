@@ -5,6 +5,7 @@
  */
 
 #include "medium.h"
+#include <argos3/core/simulator/simulator.h>
 #include <argos3/core/simulator/space/space.h>
 
 namespace argos {
@@ -14,6 +15,8 @@ namespace argos {
 
    void CMedium::Init(TConfigurationNode& t_tree) {
       try {
+         /* Initialize space */
+         m_pcSpace = &CSimulator::GetInstance().GetSpace();
          /* Get id from the XML */
          GetNodeAttribute(t_tree, "id", m_strId);
       }

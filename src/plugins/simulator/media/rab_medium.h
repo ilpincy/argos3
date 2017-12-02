@@ -56,7 +56,7 @@ namespace argos {
    private:
 
       /** Defines the routing table */
-      typedef std::unordered_map<CRABEquippedEntity*, CSet<CRABEquippedEntity*,SEntityComparator> > TRoutingTable;
+      typedef std::unordered_map<ssize_t, CSet<CRABEquippedEntity*,SEntityComparator> > TRoutingTable;
 
       /** The routing table, that associates each RAB with the RABs that can communicate with it */
       TRoutingTable m_tRoutingTable;

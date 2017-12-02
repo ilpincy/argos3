@@ -9,6 +9,7 @@
 
 namespace argos {
    class CRABEquippedEntity;
+   class CRABMedium;
    class CEmbodiedEntity;
    struct SAnchor;
 }
@@ -50,11 +51,9 @@ namespace argos {
 
       virtual void Reset();
 
-      virtual void Enable();
-
-      virtual void Disable();
-
       virtual void Update();
+
+      virtual void SetEnabled(bool b_enabled);
 
       inline CEmbodiedEntity& GetEntityBody() {
          return *m_pcEntityBody;
@@ -88,6 +87,14 @@ namespace argos {
          return "rab";
       }
 
+      inline CRABMedium& GetMedium() {
+         return *m_pcMedium;
+      }
+
+      inline void SetMedium(CRABMedium& c_medium) {
+         m_pcMedium = &c_medium;
+      }
+
    protected:
 
       SAnchor* m_psAnchor;
@@ -96,6 +103,7 @@ namespace argos {
       CByteArray m_cData;
       Real m_fRange;
       CEmbodiedEntity* m_pcEntityBody;
+      CRABMedium* m_pcMedium;
 
    };
 

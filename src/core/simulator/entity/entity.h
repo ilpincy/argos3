@@ -222,12 +222,17 @@ namespace argos {
 
       /**
        * Returns the entity index.
+       * 
        * The entity index is used to order entities globally when
        * necessary to ensure determinism.
+       *
+       * When an entity index is <0, the index is considered unset and
+       * it should not be used.
+       *
        * @return The entity index.
        */
-      size_t GetIndex() const {
-         return m_unIndex;
+      ssize_t GetIndex() const {
+         return m_nIndex;
       }
 
       /**
@@ -237,8 +242,8 @@ namespace argos {
        * Never call this function in your code.
        * @param un_idx The entity index.
        */
-      void SetIndex(size_t un_idx) {
-         m_unIndex = un_idx;
+      void SetIndex(ssize_t n_idx) {
+         m_nIndex = n_idx;
       }
 
       /**
@@ -287,8 +292,8 @@ namespace argos {
       /** The id of this entity */
       std::string m_strId;
 
-      /** The position of this entity in the global entity vector */
-      size_t m_unIndex;
+      /** The unique index of this entity, used for deterministic ordering */
+      ssize_t m_nIndex;
 
       /** When <tt>true</tt>, this entity is updated; when <tt>false</tt>, this entity is not updated */
       bool m_bEnabled;
