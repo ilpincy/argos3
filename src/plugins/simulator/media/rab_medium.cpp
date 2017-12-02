@@ -114,9 +114,9 @@ namespace argos {
          it->second.clear();
       }
       /* This map contains the pairs that have already been checked */
-      std::unordered_map<ssize_t, std::pair<CRABEquippedEntity*, CRABEquippedEntity*> > mapPairsAlreadyChecked;
+      unordered_map<ssize_t, std::pair<CRABEquippedEntity*, CRABEquippedEntity*> > mapPairsAlreadyChecked;
       /* Iterator for the above structure */
-      std::unordered_map<ssize_t, std::pair<CRABEquippedEntity*, CRABEquippedEntity*> >::iterator itPair;
+      unordered_map<ssize_t, std::pair<CRABEquippedEntity*, CRABEquippedEntity*> >::iterator itPair;
       /* Used as test key */
       std::pair<CRABEquippedEntity*, CRABEquippedEntity*> cTestKey;
       /* Used as hash for the test key */
