@@ -106,7 +106,9 @@ namespace argos {
    /****************************************/
 
    void CLEDEquippedEntity::Enable() {
-      CEntity::Enable();
+      /* Perform generic enable behavior */
+      CComposableEntity::Enable();
+      /* Enable anchors */
       for(size_t i = 0; i < m_tLEDs.size(); ++i) {
          m_tLEDs[i]->Anchor.Enable();
       }
@@ -116,7 +118,9 @@ namespace argos {
    /****************************************/
 
    void CLEDEquippedEntity::Disable() {
-      CEntity::Disable();
+      /* Perform generic disable behavior */
+      CComposableEntity::Disable();
+      /* Disable anchors */
       for(size_t i = 0; i < m_tLEDs.size(); ++i) {
          m_tLEDs[i]->Anchor.Disable();
       }
@@ -253,21 +257,10 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CLEDEquippedEntity::AddToMedium(CLEDMedium& c_medium) {
+   void CLEDEquippedEntity::SetMedium(CLEDMedium& c_medium) {
       for(UInt32 i = 0; i < m_tLEDs.size(); ++i) {
-         m_tLEDs[i]->LED.AddToMedium(c_medium);
+         m_tLEDs[i]->LED.SetMedium(c_medium);
       }
-      Enable();
-   }
-
-   /****************************************/
-   /****************************************/
-
-   void CLEDEquippedEntity::RemoveFromMedium() {
-      for(UInt32 i = 0; i < m_tLEDs.size(); ++i) {
-         m_tLEDs[i]->LED.RemoveFromMedium();
-      }
-      Disable();
    }
 
    /****************************************/

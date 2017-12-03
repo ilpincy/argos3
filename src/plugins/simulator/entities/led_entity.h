@@ -93,24 +93,6 @@ namespace argos {
       }
 
       /**
-       * Adds the LEDs to the wanted LED medium.
-       * If this LED has already been added to a medium, the LED is
-       * removed from that medium and then added to the passed one.
-       * This behavior is to enforce that, at any time, an LED is
-       * under the control of (at most) a single medium.
-       * @param c_medium The LED medium.
-       * @see CLEDMedium
-       */
-      void AddToMedium(CLEDMedium& c_medium);
-
-      /**
-       * Removes the LEDs from the wanted LED medium.
-       * @param c_medium The LED medium.
-       * @see CLEDMedium
-       */
-      void RemoveFromMedium();
-
-      /**
        * Returns <tt>true</tt> if this LED is associated to a medium.
        * @return <tt>true</tt> if this LED is associated to a medium.
        * @see CLEDMedium
@@ -125,6 +107,13 @@ namespace argos {
        * @see CLEDMedium
        */
       CLEDMedium& GetMedium() const;
+
+      /**
+       * Sets the medium associated to this entity.
+       * @param c_medium The medium to associate to this entity.
+       * @see CLEDMedium
+       */
+      void SetMedium(CLEDMedium& c_medium);
 
    protected:
 

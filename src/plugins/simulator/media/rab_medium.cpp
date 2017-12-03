@@ -196,12 +196,10 @@ namespace argos {
    /****************************************/
 
    void CRABMedium::AddEntity(CRABEquippedEntity& c_entity) {
-      if(c_entity.GetIndex() >= 0) {
-         m_tRoutingTable.insert(
-            std::make_pair<ssize_t, CSet<CRABEquippedEntity*,SEntityComparator> >(
-               c_entity.GetIndex(), CSet<CRABEquippedEntity*,SEntityComparator>()));
-         m_pcRABEquippedEntityIndex->AddEntity(c_entity);
-      }
+      m_tRoutingTable.insert(
+         std::make_pair<ssize_t, CSet<CRABEquippedEntity*,SEntityComparator> >(
+            c_entity.GetIndex(), CSet<CRABEquippedEntity*,SEntityComparator>()));
+      m_pcRABEquippedEntityIndex->AddEntity(c_entity);
    }
 
    /****************************************/

@@ -138,7 +138,7 @@ namespace argos {
          if(m_psAnchor)
             m_psAnchor->Enable();
          /* Enable entity in medium */
-         if(m_pcMedium)
+         if(m_pcMedium && GetIndex() >= 0)
             m_pcMedium->AddEntity(*this);
       }
       else {

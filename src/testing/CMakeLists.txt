@@ -41,6 +41,11 @@ target_link_libraries(test-rng
 # target_link_libraries(test-reset argos3core_${ARGOS_BUILD_FOR})
 
 if(ARGOS_BUILD_FOR_SIMULATOR OR ARGOS_BUILD_FOR STREQUAL "foot-bot")
+  add_library(test_media_enabledisable MODULE
+    experiment/test_media_enabledisable_controller.h
+    experiment/test_media_enabledisable_controller.cpp
+    experiment/test_media_enabledisable_loopfunctions.h
+    experiment/test_media_enabledisable_loopfunctions.cpp)
   add_library(test_footbot_controller MODULE
     experiment/test_footbot_controller.h
     experiment/test_footbot_controller.cpp)

@@ -17,7 +17,8 @@ namespace argos {
 
    CEntity::CEntity(CComposableEntity* pc_parent) :
       m_pcParent(pc_parent),
-      m_bEnabled(true) {
+      m_bEnabled(true),
+      m_nIndex(-1) {
    }
 
    /****************************************/
@@ -27,7 +28,8 @@ namespace argos {
                     const std::string& str_id) :
       m_pcParent(pc_parent),
       m_strId(str_id),
-      m_bEnabled(true) {
+      m_bEnabled(true),
+      m_nIndex(-1) {
    }
 
    /****************************************/
