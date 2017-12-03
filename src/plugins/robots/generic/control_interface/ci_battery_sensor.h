@@ -1,7 +1,7 @@
 /**
  * @file <argos3/plugins/robots/generic/control_interface/ci_battery_sensor.h>
  *
- * @author Carlo Pinciroli <ilpincy@gmail.com>
+ * @author Adhavan Jayabalan <jadhu94@gmail.com>
  */
 
 #ifndef CCI_BATTERY_SENSOR_H

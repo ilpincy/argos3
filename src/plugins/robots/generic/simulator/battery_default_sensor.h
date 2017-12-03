@@ -1,7 +1,7 @@
 /**
  * @file <argos3/plugins/simulator/sensors/battery_default_sensor.h>
  *
- * @author Carlo Pinciroli - <ilpincy@gmail.com>
+ * @author Adhavan Jayabalan <jadhu94@gmail.com>
  */
 
 #ifndef BATTERY_DEFAULT_SENSOR_H
@@ -12,7 +12,7 @@
 
 namespace argos {
    class CBatteryDefaultSensor;
-   class CBatterySensorEquippedEntity;
+   class CBatteryEquippedEntity;
    class CPhysicsEngine;
 }
 
@@ -47,7 +47,7 @@ namespace argos {
       CEmbodiedEntity* m_pcEmbodiedEntity;
 
       /** Reference to battery sensor equipped entity associated to this sensor */
-      CBatterySensorEquippedEntity* m_pcBatteryEntity;
+      CBatteryEquippedEntity* m_pcBatteryEntity;
 
       /** Random number generator */
       CRandom::CRNG* m_pcRNG;
@@ -58,8 +58,9 @@ namespace argos {
       /** Noise range on battery level */
       CRange<Real> m_cLevelNoiseRange;
 
-      /** Discharge rate */
-      Real m_fDischarge;
+      /** Stores ticks per second of the simulator */
+      UInt8 m_unTicksPerSecond;
+
    };
 
 }
