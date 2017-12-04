@@ -406,6 +406,8 @@ namespace argos {
       QMap<EDirection, int> m_mapPressedKeys;
 
       CRay3 m_cSelectionRay;
+
+      bool m_bDisableRays;
    };
 
 }

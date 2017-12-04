@@ -52,7 +52,8 @@ namespace argos {
       m_cSpace(m_cSimulator.GetSpace()),
       m_bUsingFloorTexture(false),
       m_pcFloorTexture(NULL),
-      m_pcGroundTexture(NULL)
+      m_pcGroundTexture(NULL),
+      m_bDisableRays(false)
    {
       /* Set the widget's size policy */
       QSizePolicy cSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
@@ -363,6 +364,8 @@ namespace argos {
                                        UInt32 un_y) {
       /* Make sure OpenGL context is correct */
       makeCurrent();
+      /* Disable the drawing of rays from the controllers */
+      m_bDisableRays = true;
       /* Set the background color to black */
       glClearColor(0, 0, 0, 0);
       /* create a new frame buffer for the selection */
@@ -412,6 +415,8 @@ namespace argos {
       glDisable(GL_DEPTH_TEST);
       /* Restore background color */
       glClearColor(0, .5, .5, 255); // dark cyan
+      /* Reenable the drawing of rays from the controllers */
+      m_bDisableRays = false;
       /* create an image from the buffer and extract the color at the mouse coordinates */
       QRgb cSelectedPixel = cSelectFrameBuffer.toImage().pixel(un_x,un_y);
       UInt32 unIndex = static_cast<UInt32>(cSelectedPixel);
@@ -499,7 +504,7 @@ namespace argos {
    /****************************************/
 
    void CQTOpenGLWidget::DrawRays(CControllableEntity& c_entity) {
-      if(! c_entity.GetCheckedRays().empty()) {
+      if(! c_entity.GetCheckedRays().empty() && ! m_bDisableRays) {
          glDisable(GL_LIGHTING);
          glLineWidth(1.0f);
          glBegin(GL_LINES);
