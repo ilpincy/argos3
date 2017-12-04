@@ -76,7 +76,6 @@ namespace argos {
 
         m_fPrevPosition = m_pcEmbodiedEntity->GetOriginAnchor().Position ;
 //        m_fPrevOrientation = m_pcEmbodiedEntity->GetOriginAnchor().Orientation;
-        LOG<<"Act: "<<m_fLevel;
     }
 
     /****************************************/

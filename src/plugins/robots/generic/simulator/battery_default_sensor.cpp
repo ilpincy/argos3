@@ -33,7 +33,6 @@ namespace argos {
    void CBatteryDefaultSensor::SetRobot(CComposableEntity& c_entity) {
       try {
           m_pcEmbodiedEntity = &(c_entity.GetComponent<CEmbodiedEntity>("body"));
-          // todo
           m_pcBatteryEntity = &(c_entity.GetComponent<CBatteryEquippedEntity>("battery"));
           m_pcBatteryEntity->Enable();
           SetReading(m_pcBatteryEntity->GetBatLevel(),0,0);
