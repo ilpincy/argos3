@@ -10,6 +10,7 @@
 
 namespace argos {
 
+     static CRange<Real> UNIT(0.0f, 1.0f);
     /****************************************/
     /****************************************/
 
@@ -71,6 +72,8 @@ namespace argos {
 
         Real discharge = (m_fIdealDischarge + (m_fMovingDischarge*PosDisplacement.Length()));
         m_fLevel -= discharge;
+        /** Keeping battery level between 0 and 1 */
+        UNIT.TruncValue(m_fLevel);
         m_unAvailCapacity = m_fLevel * m_unFullCapacity;
         m_unTimeRemaining = m_fLevel/(CPhysicsEngine::GetInverseSimulationClockTick()*discharge);
 

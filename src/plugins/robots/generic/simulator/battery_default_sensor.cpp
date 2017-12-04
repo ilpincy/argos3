@@ -80,7 +80,7 @@ namespace argos {
       Real Discharge = Abs(PrevLevel - m_sReading.Level);
 
       /* If discharge is zero or close to zero, don't change other battery parameter */
-      if (Discharge < 1e-10) {
+      if (Discharge > 1e-10) {
           m_sReading.TimeRemaining = (UInt16)(m_sReading.Level/(m_unTicksPerSecond*Discharge));
           m_sReading.AvailCapacity = (UInt16)(m_sReading.Level*FullCapacity);
           PrevLevel = m_sReading.Level;
