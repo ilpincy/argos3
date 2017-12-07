@@ -64,7 +64,7 @@ namespace argos {
        }
 
        inline const UInt16 GetTimeRemaining() const {
-           return m_unFullCapacity;
+           return m_unTimeRemaining;
        }
 
        inline void SetFullCapacity(UInt16 un_full_capacity) {
