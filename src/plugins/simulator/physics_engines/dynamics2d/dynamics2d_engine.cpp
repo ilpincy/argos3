@@ -23,6 +23,10 @@ namespace argos {
       m_fActiveHashCellSize(2.0f * 0.085036758f),
       m_nStaticHashCells(1000),
       m_nActiveHashCells(1000),
+      m_fBoxLinearFriction(1.49),
+      m_fBoxAngularFriction(1.49),
+      m_fCylinderLinearFriction(1.49),
+      m_fCylinderAngularFriction(1.49),
       m_ptSpace(NULL),
       m_ptGroundBody(NULL),
       m_fElevation(0.0f) {
@@ -36,11 +40,15 @@ namespace argos {
          /* Init parent */
          CPhysicsEngine::Init(t_tree);
          /* Parse XML */
-         GetNodeAttributeOrDefault(t_tree, "static_cell_size", m_fStaticHashCellSize, m_fStaticHashCellSize);
-         GetNodeAttributeOrDefault(t_tree, "active_cell_size", m_fActiveHashCellSize, m_fActiveHashCellSize);
-         GetNodeAttributeOrDefault(t_tree, "static_cells",     m_nStaticHashCells,    m_nStaticHashCells);
-         GetNodeAttributeOrDefault(t_tree, "active_cells",     m_nActiveHashCells,    m_nActiveHashCells);
-         GetNodeAttributeOrDefault(t_tree, "elevation",        m_fElevation,          m_fElevation);
+         GetNodeAttributeOrDefault(t_tree, "static_cell_size",          m_fStaticHashCellSize,      m_fStaticHashCellSize);
+         GetNodeAttributeOrDefault(t_tree, "active_cell_size",          m_fActiveHashCellSize,      m_fActiveHashCellSize);
+         GetNodeAttributeOrDefault(t_tree, "static_cells",              m_nStaticHashCells,         m_nStaticHashCells);
+         GetNodeAttributeOrDefault(t_tree, "active_cells",              m_nActiveHashCells,         m_nActiveHashCells);
+         GetNodeAttributeOrDefault(t_tree, "elevation",                 m_fElevation,               m_fElevation);
+         GetNodeAttributeOrDefault(t_tree, "box_linear_friction",       m_fBoxLinearFriction,       m_fBoxLinearFriction);
+         GetNodeAttributeOrDefault(t_tree, "box_angular_friction",      m_fBoxAngularFriction,      m_fBoxAngularFriction);
+         GetNodeAttributeOrDefault(t_tree, "cylinder_linear_friction",  m_fCylinderLinearFriction,  m_fCylinderLinearFriction);
+         GetNodeAttributeOrDefault(t_tree, "cylinder_angular_friction", m_fCylinderAngularFriction, m_fCylinderAngularFriction);
          /* Override volume top and bottom with the value of m_fElevation */
          if(!GetVolume().TopFace)    GetVolume().TopFace    = new SHorizontalFace;
          if(!GetVolume().BottomFace) GetVolume().BottomFace = new SHorizontalFace;
@@ -268,8 +276,21 @@ namespace argos {
                            "    ...\n"
                            "  </physics_engines>\n\n"
                            "When not specified, the elevation is zero, which means that the plane\n"
-                           "corresponds to the XY plane.\n",
-                           "Under development"
+                           "corresponds to the XY plane.\n\n"
+                           "The friction parameters between the ground and movable boxes and cylinders can\n"
+                           "be overridden. You can set both the linear and angular friction parameters.\n"
+                           "The default value is 1.49 for each of them. To override the values, use these\n"
+                           "parameters:\n\n"
+                           "  <physics_engines>\n"
+                           "    ...\n"
+                           "    <dynamics2d id=\"dyn2d\"\n"
+                           "                box_linear_friction=\"1.0\"\n"
+                           "                box_angular_friction=\"2.0\"\n"
+                           "                cylinder_linear_friction=\"3.0\"\n"
+                           "                cylinder_angular_friction=\"4.0\" />\n"
+                           "    ...\n"
+                           "  </physics_engines>\n\n",
+                           "Usable"
       );
 
 }

@@ -49,8 +49,8 @@ namespace argos {
          /* Set the body so that the default methods work as expected */
          SetBody(ptBody, c_entity.GetHeight());
          /* Friction with ground */
-         SetLinearFriction(0.0f, 1.49f);
-         SetAngularFriction(0.0f, 1.49f);
+         SetLinearFriction(0.0f, c_engine.GetCylinderLinearFriction());
+         SetAngularFriction(0.0f, c_engine.GetCylinderAngularFriction());
       }
       else {
          /* The cylinder is not movable */
