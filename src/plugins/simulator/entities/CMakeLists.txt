@@ -3,6 +3,7 @@
 #
 # argos3/plugins/simulator/entities/
 set(ARGOS3_HEADERS_PLUGINS_SIMULATOR_ENTITIES
+  battery_equipped_entity.h
   box_entity.h
   cylinder_entity.h
   gripper_equipped_entity.h
@@ -25,6 +26,7 @@ set(ARGOS3_HEADERS_PLUGINS_SIMULATOR_ENTITIES
 #
 set(ARGOS3_SOURCES_PLUGINS_SIMULATOR_ENTITIES
   ${ARGOS3_HEADERS_PLUGINS_SIMULATOR_ENTITIES}
+  battery_equipped_entity.cpp
   box_entity.cpp
   cylinder_entity.cpp
   gripper_equipped_entity.cpp
