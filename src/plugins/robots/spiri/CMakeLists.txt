@@ -18,7 +18,6 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
     simulator/spiri_entity.cpp
     simulator/pointmass3d_spiri_model.cpp)
   # Compile the graphical visualization only if the necessary libraries have been found
-  include(ARGoSCheckQTOpenGL)
   if(ARGOS_COMPILE_QTOPENGL)
     set(ARGOS3_HEADERS_PLUGINS_ROBOTS_SPIRI_SIMULATOR
       ${ARGOS3_HEADERS_PLUGINS_ROBOTS_SPIRI_SIMULATOR}
