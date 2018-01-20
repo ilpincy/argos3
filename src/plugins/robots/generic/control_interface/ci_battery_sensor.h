@@ -20,12 +20,10 @@ namespace argos {
    public:
 
       struct SReading {
-         /** Available battery level is always between 0 and 1 */
-         Real Level;
-         /** Available capacity in mAh*/
-         UInt16 AvailCapacity;
-         /** Time remaining in seconds */
-         UInt16 TimeRemaining;
+         /** Available charge, between 0 and 1 */
+         Real AvailableCharge;
+         /** Time left in seconds */
+         Real TimeLeft;
       };
 
    public:
@@ -43,9 +41,6 @@ namespace argos {
    protected:
 
       SReading m_sReading;
-
-      void SetReading(Real f_bat_level, SInt16 n_bat_avail_capacity, Real f_time_rem);
-
    };
 
 }

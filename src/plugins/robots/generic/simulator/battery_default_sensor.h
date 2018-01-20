@@ -56,11 +56,7 @@ namespace argos {
       bool m_bAddNoise;
 
       /** Noise range on battery level */
-      CRange<Real> m_cLevelNoiseRange;
-
-      /** Stores ticks per second of the simulator */
-      UInt8 m_unTicksPerSecond;
-
+      CRange<Real> m_cNoiseRange;
    };
 
 }

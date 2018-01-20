@@ -37,11 +37,9 @@ namespace argos {
                    const CQuaternion& c_orientation = CQuaternion(),
                    Real f_rab_range = 3.0f,
                    size_t un_rab_data_size = 10,
+                   const std::string& str_bat_model = "",
                    const CRadians& c_cam_aperture = ToRadians(CDegrees(30.0f)),
-                   Real f_cam_range = 10.0f,
-                   UInt16 un_bat_full_capacity = 3400,
-                   Real f_bat_ideal_discharge = 0,
-                   Real f_bat_moving_discharge = 0);
+                   Real f_cam_range = 10.0f);
 
       virtual void Init(TConfigurationNode& t_tree);
       virtual void Reset();

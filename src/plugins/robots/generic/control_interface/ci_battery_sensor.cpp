@@ -24,7 +24,10 @@ namespace argos {
 
 #ifdef ARGOS_WITH_LUA
    void CCI_BatterySensor::CreateLuaState(lua_State* pt_lua_state) {
-       /** TODO */
+      CLuaUtility::StartTable(pt_lua_state, "battery");
+      CLuaUtility::AddToTable(pt_lua_state, "available_charge", m_sReading.AvailableCharge);
+      CLuaUtility::AddToTable(pt_lua_state, "time_left",        m_sReading.TimeLeft);
+      CLuaUtility::EndTable(pt_lua_state);
    }
 #endif
 
@@ -33,19 +36,16 @@ namespace argos {
 
 #ifdef ARGOS_WITH_LUA
    void CCI_BatterySensor::ReadingsToLuaState(lua_State* pt_lua_state) {
-       /** TODO */
+      lua_getfield(pt_lua_state, -1, "battery");
+      lua_pushnumber(pt_lua_state, m_sReading.AvailableCharge);
+      lua_setfield(pt_lua_state, -2, "available_charge");
+      lua_pushnumber(pt_lua_state, m_sReading.TimeLeft);
+      lua_setfield(pt_lua_state, -2, "time_left");
+      lua_pop(pt_lua_state, 1);
    }
 #endif
 
    /****************************************/
    /****************************************/
 
-   void CCI_BatterySensor::SetReading(Real f_bat_level, SInt16 n_bat_avail_capacity, Real f_time_rem) {
-       m_sReading.Level = f_bat_level;
-       m_sReading.AvailCapacity = n_bat_avail_capacity;
-       m_sReading.TimeRemaining = f_time_rem;
-   }
-
-   /****************************************/
-   /****************************************/
 }

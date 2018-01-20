@@ -64,9 +64,7 @@ namespace argos {
                               const CQuaternion& c_orientation,
                               Real f_rab_range,
                               size_t un_rab_data_size,
-                              UInt16 un_bat_full_capacity,
-                              Real f_bat_ideal_discharge,
-                              Real f_bat_moving_discharge) :
+                              const std::string& str_bat_model) :
       CComposableEntity(NULL, str_id),
       m_pcControllableEntity(NULL),
       m_pcEmbodiedEntity(NULL),
@@ -145,11 +143,8 @@ namespace argos {
                                                         *m_pcEmbodiedEntity,
                                                         CVector3(0.0f, 0.0f, RAB_ELEVATION));
          AddComponent(*m_pcRABEquippedEntity);
-         /* Battery senesor equipped entity */
-         m_pcBatteryEquippedEntity = new CBatteryEquippedEntity(this,"battery",
-                                                                     un_bat_full_capacity,
-                                                                     f_bat_ideal_discharge,
-                                                                     f_bat_moving_discharge);
+         /* Battery equipped entity */
+         m_pcBatteryEquippedEntity = new CBatteryEquippedEntity(this, "battery_0", str_bat_model);
          AddComponent(*m_pcBatteryEquippedEntity);
          /* Controllable entity
             It must be the last one, for actuators/sensors to link to composing entities correctly */
@@ -245,18 +240,10 @@ namespace argos {
                                                         *m_pcEmbodiedEntity,
                                                         CVector3(0.0f, 0.0f, RAB_ELEVATION));
          AddComponent(*m_pcRABEquippedEntity);
-         /* Battery sensor equipped entity */
-         UInt16 unFullCapacity = 3400;
-         GetNodeAttributeOrDefault(t_tree, "bat_full_capacity", unFullCapacity, unFullCapacity);
-         /* Parse discharge parameters */
-         Real fIdealDischarge = 0.0f;
-         Real fMovingDischarge= 0.0f;
-         GetNodeAttributeOrDefault(t_tree, "bat_ideal_discharge", fIdealDischarge, fIdealDischarge);
-         GetNodeAttributeOrDefault(t_tree, "bat_moving_discharge", fMovingDischarge, fMovingDischarge);
-
-         m_pcBatteryEquippedEntity = new CBatteryEquippedEntity(this,"battery",unFullCapacity,fIdealDischarge,fMovingDischarge);
+         /* Battery equipped entity */
+         m_pcBatteryEquippedEntity = new CBatteryEquippedEntity(this, "battery_0");
+         m_pcBatteryEquippedEntity->Init(GetNode(t_tree, "battery"));
          AddComponent(*m_pcBatteryEquippedEntity);
-
          /* Controllable entity
             It must be the last one, for actuators/sensors to link to composing entities correctly */
          m_pcControllableEntity = new CControllableEntity(this);

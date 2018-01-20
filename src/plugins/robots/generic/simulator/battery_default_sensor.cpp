@@ -35,7 +35,6 @@ namespace argos {
           m_pcEmbodiedEntity = &(c_entity.GetComponent<CEmbodiedEntity>("body"));
           m_pcBatteryEntity = &(c_entity.GetComponent<CBatteryEquippedEntity>("battery"));
           m_pcBatteryEntity->Enable();
-          SetReading(m_pcBatteryEntity->GetBatLevel(),0,0);
       }
       catch(CARGoSException&  ex) {
           THROW_ARGOSEXCEPTION_NESTED("Can't set robot for the battery default sensor", ex);
@@ -47,16 +46,14 @@ namespace argos {
 
    void CBatteryDefaultSensor::Init(TConfigurationNode& t_tree) {
       try {
+         /* Execute standard logic */
          CCI_BatterySensor::Init(t_tree);
          /* Parse noise range */
-         GetNodeAttributeOrDefault(t_tree, "level_noise_range", m_cLevelNoiseRange, m_cLevelNoiseRange);
-
-         if(m_cLevelNoiseRange.GetSpan() != 0 ) {
+         GetNodeAttributeOrDefault(t_tree, "noise_range", m_cNoiseRange, m_cNoiseRange);
+         if(m_cNoiseRange.GetSpan() != 0) {
             m_bAddNoise = true;
             m_pcRNG = CRandom::CreateRNG("argos");
          }
-
-         m_unTicksPerSecond = (UInt8)CPhysicsEngine::GetInverseSimulationClockTick();
       }
       catch(CARGoSException& ex) {
          THROW_ARGOSEXCEPTION_NESTED("Initialization error in default battery sensor", ex);
@@ -67,23 +64,28 @@ namespace argos {
    /****************************************/
    
    void CBatteryDefaultSensor::Update() {
-
-      static UInt16 FullCapacity = m_pcBatteryEntity->GetFullCapacity();
-      static Real PrevLevel = m_sReading.Level;
-      /** For now  the battery losses energy at a constant rate */
-      m_sReading.Level = m_pcBatteryEntity->GetBatLevel();
+      /* Save old charge value (used later for time left estimation) */
+      Real fOldCharge = m_sReading.AvailableCharge;
+      /* Update available charge as seen by the robot */
+      m_sReading.AvailableCharge =
+         m_pcBatteryEntity->GetAvailableCharge() /
+         m_pcBatteryEntity->GetFullCharge();
+      /* Add noise */
       if(m_bAddNoise) {
-         m_sReading.Level += m_pcRNG->Uniform(m_cLevelNoiseRange);
+         m_sReading.AvailableCharge += m_pcRNG->Uniform(m_cNoiseRange);
          /* To trunc battery level between 0 and 1 */
-         UNIT.TruncValue(m_sReading.Level);
+         UNIT.TruncValue(m_sReading.AvailableCharge);
       }
-      Real Discharge = Abs(PrevLevel - m_sReading.Level);
-
-      /* If discharge is zero or close to zero, don't change other battery parameter */
-      if (Discharge > 1e-10) {
-          m_sReading.TimeRemaining = (UInt16)(m_sReading.Level/(m_unTicksPerSecond*Discharge));
-          m_sReading.AvailCapacity = (UInt16)(m_sReading.Level*FullCapacity);
-          PrevLevel = m_sReading.Level;
+      /* Update time left */
+      Real fDiff = fOldCharge - m_sReading.AvailableCharge;
+      if(Abs(fDiff) > 1e-6) {
+         m_sReading.TimeLeft =
+            fOldCharge *
+            CPhysicsEngine::GetSimulationClockTick() /
+            fDiff;
+      }
+      else {
+         m_sReading.TimeLeft = std::numeric_limits<Real>::infinity();
       }
    }
 
@@ -91,7 +93,7 @@ namespace argos {
    /****************************************/
 
    void CBatteryDefaultSensor::Reset() {
-      SetReading(1.0f,0,0); //todo
+      /* TODO */
    }
 
    /****************************************/
