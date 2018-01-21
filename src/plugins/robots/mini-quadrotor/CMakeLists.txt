@@ -12,7 +12,6 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
     simulator/physx_miniquadrotor_model.h
     simulator/miniquadrotor_rotor_default_actuator.h
     )
-  include(ARGoSCheckQTOpenGL)
   if(ARGOS_COMPILE_QTOPENGL)
     set(ARGOS3_HEADERS_PLUGINS_ROBOTS_MINIQUADROTOR_SIMULATOR
       ${ARGOS3_HEADERS_PLUGINS_ROBOTS_MINIQUADROTOR_SIMULATOR}

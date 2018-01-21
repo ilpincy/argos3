@@ -34,6 +34,11 @@
 #cmakedefine ARGOS_WITH_LUA
 
 /*
+ * Whether ARGoS was compiled with Qt-OpenGL support
+ */
+#cmakedefine ARGOS_COMPILE_QTOPENGL
+
+/*
  * Whether ARGoS was compiled with GSL support
  */
 #cmakedefine ARGOS_WITH_GSL

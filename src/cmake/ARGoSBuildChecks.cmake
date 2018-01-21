@@ -131,3 +131,10 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
   endif(CMAKE_SIZEOF_VOID_P EQUAL 4)
   link_directories(${CMAKE_SOURCE_DIR}/plugins/simulator/physics_engines/physx/physx_dist/lib/${PHYSX_ARCH})
 endif(ARGOS_BUILD_FOR_SIMULATOR)
+
+#
+# Check whether Qt and OpenGL are installed
+#
+if(ARGOS_BUILD_FOR_SIMULATOR)
+  include(ARGoSCheckQTOpenGL)
+endif(ARGOS_BUILD_FOR_SIMULATOR)
