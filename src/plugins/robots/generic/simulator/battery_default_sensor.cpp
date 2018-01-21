@@ -66,14 +66,10 @@ namespace argos {
    void CBatteryDefaultSensor::Update() {
       /* Save old charge value (used later for time left estimation) */
       Real fOldCharge = m_sReading.AvailableCharge;
-      DEBUG("fOldCharge = %f\n",
-            fOldCharge);
       /* Update available charge as seen by the robot */
       m_sReading.AvailableCharge =
          m_pcBatteryEntity->GetAvailableCharge() /
          m_pcBatteryEntity->GetFullCharge();
-      DEBUG("m_sReading.AvailableCharge = %f\n",
-            m_sReading.AvailableCharge);
       /* Add noise */
       if(m_bAddNoise) {
          m_sReading.AvailableCharge += m_pcRNG->Uniform(m_cNoiseRange);
@@ -82,8 +78,6 @@ namespace argos {
       }
       /* Update time left */
       Real fDiff = fOldCharge - m_sReading.AvailableCharge;
-      DEBUG("fDiff = %f\n",
-            fDiff);
       if(Abs(fDiff) > 1e-6) {
          m_sReading.TimeLeft =
             fOldCharge *
@@ -93,8 +87,6 @@ namespace argos {
       else {
          m_sReading.TimeLeft = std::numeric_limits<Real>::infinity();
       }
-      DEBUG("m_sReading.TimeLeft = %f\n", m_sReading.TimeLeft);
-      DEBUG("\n");
    }
 
    /****************************************/
@@ -132,9 +124,7 @@ namespace argos {
                    "OPTIONAL XML CONFIGURATION\n\n"
                    "It is possible to add uniform noise to the sensor, thus matching the\n"
                    "characteristics of a real robot better. You can add noise through the\n"
-                   "attribute 'level_noise_range'.\n"
-                   "Attribute 'level_noise_range' regulates the noise range on the battery level\n"
-                   "returned by the sensor.\n\n"
+                   "attribute 'noise_range' as follows:\n\n"
                    "  <controllers>\n"
                    "    ...\n"
                    "    <my_controller ...>\n"
@@ -142,7 +132,7 @@ namespace argos {
                    "      <sensors>\n"
                    "        ...\n"
                    "        <battery implementation=\"default\"\n"
-                   "                 level_noise_range=\"-0.3:0.4\" />\n"
+                   "                 noise_range=\"-0.3:0.4\" />\n"
                    "        ...\n"
                    "      </sensors>\n"
                    "      ...\n"
