@@ -155,7 +155,9 @@ namespace argos {
    public:
 
       CBatteryDischargeModelTime() :
-         m_fDelta(1e-3) {}
+         m_fDelta(1e-5) {}
+
+      virtual void Init(TConfigurationNode& t_tree);
       
       void SetDelta(Real f_delta) {
          m_fDelta = f_delta;
@@ -188,7 +190,9 @@ namespace argos {
          m_psAnchor(NULL),
          m_fPosFactor(1e-3),
          m_fOrientFactor(1e-3) {}
-      
+
+      virtual void Init(TConfigurationNode& t_tree);
+
       void SetPosFactor(Real f_factor) {
          m_fPosFactor = f_factor;
       }
@@ -226,8 +230,11 @@ namespace argos {
       
       CBatteryDischargeModelTimeMotion() :
          m_psAnchor(NULL),
+         m_fDelta(1e-5),
          m_fPosFactor(1e-3),
          m_fOrientFactor(1e-3) {}
+
+      virtual void Init(TConfigurationNode& t_tree);
       
       void SetDelta(Real f_delta) {
          m_fDelta = f_delta;

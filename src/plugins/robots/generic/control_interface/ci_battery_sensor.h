@@ -24,6 +24,10 @@ namespace argos {
          Real AvailableCharge;
          /** Time left in seconds */
          Real TimeLeft;
+
+         SReading() :
+            AvailableCharge(1.0),
+            TimeLeft(std::numeric_limits<Real>::infinity()) {}
       };
 
    public:

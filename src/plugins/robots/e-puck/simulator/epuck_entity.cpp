@@ -242,7 +242,8 @@ namespace argos {
          AddComponent(*m_pcRABEquippedEntity);
          /* Battery equipped entity */
          m_pcBatteryEquippedEntity = new CBatteryEquippedEntity(this, "battery_0");
-         m_pcBatteryEquippedEntity->Init(GetNode(t_tree, "battery"));
+         if(NodeExists(t_tree, "battery"))
+            m_pcBatteryEquippedEntity->Init(GetNode(t_tree, "battery"));
          AddComponent(*m_pcBatteryEquippedEntity);
          /* Controllable entity
             It must be the last one, for actuators/sensors to link to composing entities correctly */
@@ -336,14 +337,51 @@ namespace argos {
                    "    </e-puck>\n"
                    "    ...\n"
                    "  </arena>\n\n"
-                   "You can also set the data sent at each time step through the range-and-bearing"
-                   "system. By default, a message sent by an e-puck is 2 bytes long. By using the"
+                   "You can also set the data sent at each time step through the range-and-bearing\n"
+                   "system. By default, a message sent by an e-puck is 2 bytes long. By using the\n"
                    "'rab_data_size' attribute, you can change it to, i.e., 20 bytes as follows:\n\n"
                    "  <arena ...>\n"
                    "    ...\n"
                    "    <e-puck id=\"eb0\" rab_data_size=\"20\">\n"
                    "      <body position=\"0.4,2.3,0.25\" orientation=\"45,90,0\" />\n"
                    "      <controller config=\"mycntrl\" />\n"
+                   "    </e-puck>\n"
+                   "    ...\n"
+                   "  </arena>\n\n"
+                   "You can also configure the battery of the robot. By default, the battery never\n"
+                   "depletes. You can choose among several battery discharge models, such as\n"
+                   "- time: the battery depletes by a fixed amount at each time step\n"
+                   "- motion: the battery depletes according to how the robot moves\n"
+                   "- time_motion: a combination of the above models.\n"
+                   "You can define your own models too. Follow the examples in the file\n"
+                   "argos3/src/plugins/simulator/entities/battery_equipped_entity.cpp.\n\n"
+                   "  <arena ...>\n"
+                   "    ...\n"
+                   "    <e-puck id=\"eb0\"\n"
+                   "      <body position=\"0.4,2.3,0.25\" orientation=\"45,0,0\" />\n"
+                   "      <controller config=\"mycntrl\" />\n"
+                   "      <battery model=\"time\" factor=\"1e-5\"/>\n"
+                   "    </e-puck>\n"
+                   "    ...\n"
+                   "  </arena>\n\n"
+                   "  <arena ...>\n"
+                   "    ...\n"
+                   "    <e-puck id=\"eb0\"\n"
+                   "      <body position=\"0.4,2.3,0.25\" orientation=\"45,0,0\" />\n"
+                   "      <controller config=\"mycntrl\" />\n"
+                   "      <battery model=\"motion\" pos_factor=\"1e-3\"\n"
+                   "                              orient_factor=\"1e-3\"/>\n"
+                   "    </e-puck>\n"
+                   "    ...\n"
+                   "  </arena>\n\n"
+                   "  <arena ...>\n"
+                   "    ...\n"
+                   "    <e-puck id=\"eb0\"\n"
+                   "      <body position=\"0.4,2.3,0.25\" orientation=\"45,0,0\" />\n"
+                   "      <controller config=\"mycntrl\" />\n"
+                   "      <battery model=\"time_motion\" time_factor=\"1e-5\"\n"
+                   "                                   pos_factor=\"1e-3\"\n"
+                   "                                   orient_factor=\"1e-3\"/>\n"
                    "    </e-puck>\n"
                    "    ...\n"
                    "  </arena>\n\n",

@@ -86,8 +86,9 @@ namespace argos {
    /****************************************/
 
    void CBatteryEquippedEntity::Update() {
-      /* Call the discharge model */
-      (*m_pcDischargeModel)();
+      if(m_pcDischargeModel)
+         /* Call the discharge model */
+         (*m_pcDischargeModel)();
    }
 
    /****************************************/
@@ -134,12 +135,27 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   void CBatteryDischargeModelTime::Init(TConfigurationNode& t_tree) {
+      GetNodeAttributeOrDefault(t_tree, "factor", m_fDelta, m_fDelta);
+   }
+
+   /****************************************/
+   /****************************************/
+
    void CBatteryDischargeModelTime::operator()() {
       if(m_pcBattery->GetAvailableCharge() > 0.0) {
          m_pcBattery->SetAvailableCharge(
             Max<Real>(0.0,
                       m_pcBattery->GetAvailableCharge() - m_fDelta));
       }
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CBatteryDischargeModelMotion::Init(TConfigurationNode& t_tree) {
+      GetNodeAttributeOrDefault(t_tree, "pos_factor", m_fPosFactor, m_fPosFactor);
+      GetNodeAttributeOrDefault(t_tree, "orient_factor", m_fOrientFactor, m_fOrientFactor);
    }
 
    /****************************************/
@@ -195,6 +211,15 @@ namespace argos {
       }
    }
    
+   /****************************************/
+   /****************************************/
+
+   void CBatteryDischargeModelTimeMotion::Init(TConfigurationNode& t_tree) {
+      GetNodeAttributeOrDefault(t_tree, "time_factor", m_fDelta, m_fDelta);
+      GetNodeAttributeOrDefault(t_tree, "pos_factor", m_fPosFactor, m_fPosFactor);
+      GetNodeAttributeOrDefault(t_tree, "orient_factor", m_fOrientFactor, m_fOrientFactor);
+   }
+
    /****************************************/
    /****************************************/
 
