@@ -244,7 +244,10 @@ namespace argos {
                    "REQUIRED XML CONFIGURATION\n\n"
                    "<range_and_bearing id=\"rab\" />\n\n"
                    "OPTIONAL XML CONFIGURATION\n\n"
-                   "None for the time being\n",
+                   "By default, the RAB medium requires two robots to be in direct line-of-sight in\n"
+                   "order to be able to exchange messages. You can toggle this behavior on or off\n"
+                   "through the 'check_occlusions' attribute:\n\n"
+                   "<range_and_bearing id=\"rab\" check_occlusions=\"false\" />\n\n",
                    "Under development"
       );
 
