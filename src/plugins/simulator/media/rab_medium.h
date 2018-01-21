@@ -67,6 +67,9 @@ namespace argos {
       /** The update operation for the grid positional index */
       CRABEquippedEntityGridEntityUpdater* m_pcRABEquippedEntityGridUpdateOperation;
 
+      /* Whether occlusions should be considered or not */
+      bool m_bCheckOcclusions;
+
    };
 
 }

@@ -11,7 +11,8 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   CRABMedium::CRABMedium() {
+   CRABMedium::CRABMedium() :
+      m_bCheckOcclusions(true) {
    }
 
    /****************************************/
@@ -26,6 +27,8 @@ namespace argos {
    void CRABMedium::Init(TConfigurationNode& t_tree) {
       try {
          CMedium::Init(t_tree);
+         /* Check occlusions? */
+         GetNodeAttributeOrDefault(t_tree, "check_occlusions", m_bCheckOcclusions, m_bCheckOcclusions);
          /* Get the positional index method */
          std::string strPosIndexMethod("grid");
          GetNodeAttributeOrDefault(t_tree, "index", strPosIndexMethod, strPosIndexMethod);
@@ -168,7 +171,8 @@ namespace argos {
                   if(cRAB.GetMsgSize() == cOtherRAB.GetMsgSize()) {
                      /* Proceed if the two entities are not obstructed by another object */
                      cOcclusionCheckRay.SetEnd(cOtherRAB.GetPosition());
-                     if((!GetClosestEmbodiedEntityIntersectedByRay(sIntersectionItem,
+                     if((!m_bCheckOcclusions) ||
+                        (!GetClosestEmbodiedEntityIntersectedByRay(sIntersectionItem,
                                                                    cOcclusionCheckRay,
                                                                    cRAB.GetEntityBody())) ||
                         (&cOtherRAB.GetEntityBody() == sIntersectionItem.IntersectedEntity)) {
