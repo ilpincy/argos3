@@ -12,6 +12,7 @@ namespace argos {
 }
 
 #include <argos3/core/control_interface/ci_sensor.h>
+#include <limits>
 
 namespace argos {
 
