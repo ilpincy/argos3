@@ -11,8 +11,8 @@
 #
 # This module defines this variable:
 #
-#  ARGOS_COMPILE_QTOPENGL  - True if QT5, OpenGL and GLUT are present and correctly configured
-#  ARGOS_COMPILE_LIBRARIES - The list of libraries to link
+#  ARGOS_COMPILE_QTOPENGL   - True if QT5, OpenGL and GLUT are present and correctly configured
+#  ARGOS_QTOPENGL_LIBRARIES - The list of libraries to link
 #
 # AUTHOR: Carlo Pinciroli <ilpincy@gmail.com>
 
