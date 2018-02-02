@@ -386,8 +386,6 @@ namespace argos {
       GLuint m_unArenaList;
       /** Display list for floor elements */
       GLuint m_unFloorList;
-      /** Index buffer for entity selection */
-      GLuint* m_punSelectionBuffer;
 
       /** Current state of the camera */
       CQTOpenGLCamera m_cCamera;
@@ -408,6 +406,8 @@ namespace argos {
       QMap<EDirection, int> m_mapPressedKeys;
 
       CRay3 m_cSelectionRay;
+
+      bool m_bDisableRays;
    };
 
 }

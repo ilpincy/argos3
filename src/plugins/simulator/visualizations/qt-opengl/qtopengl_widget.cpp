@@ -22,6 +22,7 @@
 #include <QTimerEvent>
 #include <QMouseEvent>
 #include <QPainter>
+#include <QOpenGLFramebufferObject>
 
 #ifndef GL_MULTISAMPLE
 #define GL_MULTISAMPLE 0x809D
@@ -30,7 +31,6 @@
 namespace argos {
 
    static const Real ASPECT_RATIO         = 4.0f / 3.0f;
-   static const UInt32 SELECT_BUFFER_SIZE = 128;
    
    /****************************************/
    /****************************************/
@@ -53,7 +53,7 @@ namespace argos {
       m_bUsingFloorTexture(false),
       m_pcFloorTexture(NULL),
       m_pcGroundTexture(NULL),
-      m_punSelectionBuffer(new GLuint[SELECT_BUFFER_SIZE])
+      m_bDisableRays(false)
    {
       /* Set the widget's size policy */
       QSizePolicy cSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
@@ -83,7 +83,6 @@ namespace argos {
          delete m_pcFloorTexture;
          glDeleteLists(1, m_unFloorList);
       }
-      delete[] m_punSelectionBuffer;
       doneCurrent();
    }
 
@@ -365,46 +364,65 @@ namespace argos {
                                        UInt32 un_y) {
       /* Make sure OpenGL context is correct */
       makeCurrent();
-      un_x *= devicePixelRatio();
-      un_y *= devicePixelRatio();
-      /* Used to store the viewport size */
-      GLint nViewport[4];
-      /* Set the selection buffer */
-      glSelectBuffer(SELECT_BUFFER_SIZE, m_punSelectionBuffer);
-      /* Switch to select mode */
-      glRenderMode(GL_SELECT);
+      /* Disable the drawing of rays from the controllers */
+      m_bDisableRays = true;
+      /* Set the background color to black */
+      glClearColor(0, 0, 0, 0);
+      /* create a new frame buffer for the selection */
+      QOpenGLFramebufferObject cSelectFrameBuffer(size());
+      /* bind the frame buffer for drawing */
+      cSelectFrameBuffer.bind();
+      /* Clear accumulator buffer */
+      glClearAccum(0.0, 0.0, 0.0, 0.0);
+      /* Clear color buffer and depth buffer */
+      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+      /* Enable depth testing */
+      glEnable(GL_DEPTH_TEST);
+      /* Enable face culling */
+      glEnable(GL_CULL_FACE);
       /* Set the projection matrix */
       glMatrixMode(GL_PROJECTION);
       glLoadIdentity();
-      /* Set the viewport */
-      glGetIntegerv(GL_VIEWPORT, nViewport);
-      gluPickMatrix(un_x,
-                    nViewport[3]-un_y,
-                    5, 5,
-                    nViewport);
       gluPerspective(m_cCamera.GetActiveSettings().YFieldOfView.GetValue(),
                      ASPECT_RATIO,
                      0.1f, 1000.0f);
+      /* Place the camera */
       glMatrixMode(GL_MODELVIEW);
       glLoadIdentity();
       m_cCamera.Look();
-      /* Prepare name stack */
-      glInitNames();
       /* Draw the objects */
       CEntity::TVector& vecEntities = m_cSpace.GetRootEntityVector();
       for(size_t i = 0; i < vecEntities.size(); ++i) {
-         glPushName(i);
+         /* convert index to color value */
+         GLfloat fAlpha = (((i + 1) & 0xFF000000) >> 24) / 255.0;
+         GLfloat fRed   = (((i + 1) & 0x00FF0000) >> 16) / 255.0;
+         GLfloat fGreen = (((i + 1) & 0x0000FF00) >> 8) / 255.0;
+         GLfloat fBlue  = (((i + 1) & 0x000000FF) >> 0) / 255.0;
+         /* draw the entity */
          glPushMatrix();
+         glColor4f(fRed, fGreen, fBlue, fAlpha);
          CallEntityOperation<CQTOpenGLOperationDrawNormal, CQTOpenGLWidget, void>(*this, *vecEntities[i]);
          glPopMatrix();
-         glPopName();
       }
+      /* make sure we have finished drawing before releasing the frame buffer */
+      glFinish();
       glFlush();
-      /* Return to normal rendering mode and get hit count */
+      /* Release the frame buffer (restores the default frame buffer) */
+      cSelectFrameBuffer.release();
+      /* Disable face culling */
+      glDisable(GL_CULL_FACE);
+      /* Disable depth testing */
+      glDisable(GL_DEPTH_TEST);
+      /* Restore background color */
+      glClearColor(0, .5, .5, 255); // dark cyan
+      /* Reenable the drawing of rays from the controllers */
+      m_bDisableRays = false;
+      /* create an image from the buffer and extract the color at the mouse coordinates */
+      QRgb cSelectedPixel = cSelectFrameBuffer.toImage().pixel(un_x,un_y);
+      UInt32 unIndex = static_cast<UInt32>(cSelectedPixel);
       bool bWasSelected = m_sSelectionInfo.IsSelected;
-      UInt32 unHits = glRenderMode(GL_RENDER);
-      if (unHits == 0) {
-         /* No hits, deselect what was selected */
+      if (unIndex == 0) {
+         /* Background, deselect what was selected */
          m_sSelectionInfo.IsSelected = false;
          if(bWasSelected) {
             emit EntityDeselected(m_sSelectionInfo.Index);
@@ -413,37 +431,21 @@ namespace argos {
          }
       }
       else {
-         /* There are hits!
-          * Process them, keeping the closest hit
-          */
-         GLuint* punByte = m_punSelectionBuffer;
-         GLuint unMinZ = 0xffffffff;
-         GLuint* punName = NULL;
-         for (UInt32 i = 0; i < unHits; i++) {	
-            GLuint unNames = *punByte;
-            ++punByte;
-            if (*punByte < unMinZ) {
-               unMinZ = *punByte;
-               punName = punByte+2;
-            }
-            punByte += unNames+2;
-         }
-         /* Now *punName contains the closest hit */
          if(bWasSelected &&
-            (m_sSelectionInfo.Index == *punName)) {
+            (m_sSelectionInfo.Index == (unIndex - 1))) {
             /* The user clicked on the selected entity, deselect it */
             emit EntityDeselected(m_sSelectionInfo.Index);
             m_sSelectionInfo.IsSelected = false;
             m_cUserFunctions.EntitySelected(
                *m_cSpace.GetRootEntityVector()[m_sSelectionInfo.Index]);
          }
-         if(bWasSelected &&
-            (m_sSelectionInfo.Index != *punName)) {
+         else if(bWasSelected &&
+            (m_sSelectionInfo.Index != (unIndex - 1))) {
             /* The user clicked on a different entity from the selected one */
             emit EntityDeselected(m_sSelectionInfo.Index);
             m_cUserFunctions.EntityDeselected(
                *m_cSpace.GetRootEntityVector()[m_sSelectionInfo.Index]);
-            m_sSelectionInfo.Index = *punName;
+            m_sSelectionInfo.Index = (unIndex - 1);
             emit EntitySelected(m_sSelectionInfo.Index);
             m_cUserFunctions.EntitySelected(
                *m_cSpace.GetRootEntityVector()[m_sSelectionInfo.Index]);
@@ -451,7 +453,7 @@ namespace argos {
          else {
             /* There was nothing selected, and the user clicked on an entity */
             m_sSelectionInfo.IsSelected = true;
-            m_sSelectionInfo.Index = *punName;
+            m_sSelectionInfo.Index = (unIndex - 1);
             emit EntitySelected(m_sSelectionInfo.Index);
             m_cUserFunctions.EntitySelected(
                *m_cSpace.GetRootEntityVector()[m_sSelectionInfo.Index]);
@@ -502,7 +504,7 @@ namespace argos {
    /****************************************/
 
    void CQTOpenGLWidget::DrawRays(CControllableEntity& c_entity) {
-      if(! c_entity.GetCheckedRays().empty()) {
+      if(! c_entity.GetCheckedRays().empty() && ! m_bDisableRays) {
          glDisable(GL_LIGHTING);
          glLineWidth(1.0f);
          glBegin(GL_LINES);
