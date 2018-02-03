@@ -52,9 +52,7 @@ namespace argos {
       m_cSpace(m_cSimulator.GetSpace()),
       m_bUsingFloorTexture(false),
       m_pcFloorTexture(NULL),
-      m_pcGroundTexture(NULL),
-      m_bDisableRays(false)
-   {
+      m_pcGroundTexture(NULL) {
       /* Set the widget's size policy */
       QSizePolicy cSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
       cSizePolicy.setHeightForWidth(true);
@@ -394,7 +392,7 @@ namespace argos {
    /****************************************/
 
    void CQTOpenGLWidget::DrawRays(CControllableEntity& c_entity) {
-      if(! c_entity.GetCheckedRays().empty() && ! m_bDisableRays) {
+      if(! c_entity.GetCheckedRays().empty()) {
          glDisable(GL_LIGHTING);
          glLineWidth(1.0f);
          glBegin(GL_LINES);
@@ -730,7 +728,7 @@ namespace argos {
       glDisable(GL_TEXTURE_2D);
       /* Draw walls */
       glDisable(GL_CULL_FACE);
-      glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+      //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
       glLineWidth(10.0f);
       glColor3f(0.0f, 0.0f, 0.0f);
       /* This part covers the top and bottom faces (parallel to XY) */
