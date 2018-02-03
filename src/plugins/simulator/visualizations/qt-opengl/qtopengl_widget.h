@@ -404,10 +404,6 @@ namespace argos {
 
       /** Mapping between keys and motion direction */
       QMap<EDirection, int> m_mapPressedKeys;
-
-      CRay3 m_cSelectionRay;
-
-      bool m_bDisableRays;
    };
 
 }
