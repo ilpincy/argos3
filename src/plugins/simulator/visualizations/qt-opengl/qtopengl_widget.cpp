@@ -168,7 +168,7 @@ namespace argos {
       /* Draw the selected object, if necessary */
       if(m_sSelectionInfo.IsSelected) {
          glPushMatrix();
-         CallEntityOperation<CQTOpenGLOperationDrawSelected, CQTOpenGLWidget, void>(*this, *vecEntities[m_sSelectionInfo.Index]);
+         CallEntityOperation<CQTOpenGLOperationDrawSelected, CQTOpenGLWidget, void>(*this, *m_sSelectionInfo.Entity);
          glPopMatrix();
       }
       /* Draw in world */
@@ -177,17 +177,6 @@ namespace argos {
       glPopMatrix();
       /* Draw axes */
       DrawAxes();
-      /* Draw selection ray for debug */
-      glDisable(GL_LIGHTING);
-      glLineWidth(1.0f);
-      glBegin(GL_LINES);
-      glColor3f(1.0, 0.0, 0.0);
-      const CVector3& cStart = m_cSelectionRay.GetStart();
-      const CVector3& cEnd = m_cSelectionRay.GetEnd();
-      glVertex3f(cStart.GetX(), cStart.GetY(), cStart.GetZ());
-      glVertex3f(cEnd.GetX(), cEnd.GetY(), cEnd.GetZ());
-      glEnd();
-      glEnable(GL_LIGHTING);
       /* Execute overlay drawing */
       glShadeModel(GL_FLAT);
       glDisable(GL_LIGHTING);
@@ -309,7 +298,7 @@ namespace argos {
 
    CEntity* CQTOpenGLWidget::GetSelectedEntity() {
       return (m_sSelectionInfo.IsSelected ?
-              m_cSpace.GetRootEntityVector()[m_sSelectionInfo.Index] :
+              m_sSelectionInfo.Entity :
               NULL);
    }
 
@@ -317,29 +306,24 @@ namespace argos {
    /****************************************/
 
    void CQTOpenGLWidget::SelectEntity(CEntity& c_entity) {
-      /* Look for the idx corresponding to the entity */
-      size_t unIdx = 0;
-      while(m_cSpace.GetRootEntityVector()[unIdx] != &c_entity)
-         ++unIdx;
       /* Check whether an entity had previously been selected */
       if(m_sSelectionInfo.IsSelected) {
          /* An entity had previously been selected */
          /* Is that entity already selected? */
-         if(m_sSelectionInfo.Index == unIdx) return;
+         if(m_sSelectionInfo.Entity == &c_entity) return;
          /* Deselect the previous one */
-         emit EntityDeselected(m_sSelectionInfo.Index);
+         emit EntityDeselected(m_sSelectionInfo.Entity);
          m_cUserFunctions.EntityDeselected(
-            *m_cSpace.GetRootEntityVector()[m_sSelectionInfo.Index]);
+            *m_sSelectionInfo.Entity);
       }
       else {
          /* No entity had previously been selected */
          m_sSelectionInfo.IsSelected = true;
       }
       /* Select the new entity */
-      m_sSelectionInfo.Index = unIdx;
-      emit EntitySelected(unIdx);
-      m_cUserFunctions.EntitySelected(
-         *m_cSpace.GetRootEntityVector()[unIdx]);
+      m_sSelectionInfo.Entity = &c_entity;
+      emit EntitySelected(&c_entity);
+      m_cUserFunctions.EntitySelected(c_entity);
       update();
    }
 
@@ -350,9 +334,9 @@ namespace argos {
       /* If no entity was selected, nothing to do */
       if(!m_sSelectionInfo.IsSelected) return;
       /* Deselect the entity */
-      emit EntityDeselected(m_sSelectionInfo.Index);
+      emit EntityDeselected(m_sSelectionInfo.Entity);
       m_cUserFunctions.EntityDeselected(
-         *m_cSpace.GetRootEntityVector()[m_sSelectionInfo.Index]);
+         *m_sSelectionInfo.Entity);
       m_sSelectionInfo.IsSelected = false;
       update();
    }
@@ -362,106 +346,12 @@ namespace argos {
 
    void CQTOpenGLWidget::SelectInScene(UInt32 un_x,
                                        UInt32 un_y) {
-      /* Make sure OpenGL context is correct */
-      makeCurrent();
-      /* Disable the drawing of rays from the controllers */
-      m_bDisableRays = true;
-      /* Set the background color to black */
-      glClearColor(0, 0, 0, 0);
-      /* create a new frame buffer for the selection */
-      QOpenGLFramebufferObject cSelectFrameBuffer(size());
-      /* bind the frame buffer for drawing */
-      cSelectFrameBuffer.bind();
-      /* Clear accumulator buffer */
-      glClearAccum(0.0, 0.0, 0.0, 0.0);
-      /* Clear color buffer and depth buffer */
-      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-      /* Enable depth testing */
-      glEnable(GL_DEPTH_TEST);
-      /* Enable face culling */
-      glEnable(GL_CULL_FACE);
-      /* Set the projection matrix */
-      glMatrixMode(GL_PROJECTION);
-      glLoadIdentity();
-      gluPerspective(m_cCamera.GetActiveSettings().YFieldOfView.GetValue(),
-                     ASPECT_RATIO,
-                     0.1f, 1000.0f);
-      /* Place the camera */
-      glMatrixMode(GL_MODELVIEW);
-      glLoadIdentity();
-      m_cCamera.Look();
-      /* Draw the objects */
-      CEntity::TVector& vecEntities = m_cSpace.GetRootEntityVector();
-      for(size_t i = 0; i < vecEntities.size(); ++i) {
-         /* convert index to color value */
-         GLfloat fAlpha = (((i + 1) & 0xFF000000) >> 24) / 255.0;
-         GLfloat fRed   = (((i + 1) & 0x00FF0000) >> 16) / 255.0;
-         GLfloat fGreen = (((i + 1) & 0x0000FF00) >> 8) / 255.0;
-         GLfloat fBlue  = (((i + 1) & 0x000000FF) >> 0) / 255.0;
-         /* draw the entity */
-         glPushMatrix();
-         glColor4f(fRed, fGreen, fBlue, fAlpha);
-         CallEntityOperation<CQTOpenGLOperationDrawNormal, CQTOpenGLWidget, void>(*this, *vecEntities[i]);
-         glPopMatrix();
-      }
-      /* make sure we have finished drawing before releasing the frame buffer */
-      glFinish();
-      glFlush();
-      /* Release the frame buffer (restores the default frame buffer) */
-      cSelectFrameBuffer.release();
-      /* Disable face culling */
-      glDisable(GL_CULL_FACE);
-      /* Disable depth testing */
-      glDisable(GL_DEPTH_TEST);
-      /* Restore background color */
-      glClearColor(0, .5, .5, 255); // dark cyan
-      /* Reenable the drawing of rays from the controllers */
-      m_bDisableRays = false;
-      /* create an image from the buffer and extract the color at the mouse coordinates */
-      QRgb cSelectedPixel = cSelectFrameBuffer.toImage().pixel(un_x,un_y);
-      UInt32 unIndex = static_cast<UInt32>(cSelectedPixel);
-      bool bWasSelected = m_sSelectionInfo.IsSelected;
-      if (unIndex == 0) {
-         /* Background, deselect what was selected */
-         m_sSelectionInfo.IsSelected = false;
-         if(bWasSelected) {
-            emit EntityDeselected(m_sSelectionInfo.Index);
-            m_cUserFunctions.EntityDeselected(
-               *m_cSpace.GetRootEntityVector()[m_sSelectionInfo.Index]);
-         }
-      }
-      else {
-         if(bWasSelected &&
-            (m_sSelectionInfo.Index == (unIndex - 1))) {
-            /* The user clicked on the selected entity, deselect it */
-            emit EntityDeselected(m_sSelectionInfo.Index);
-            m_sSelectionInfo.IsSelected = false;
-            m_cUserFunctions.EntitySelected(
-               *m_cSpace.GetRootEntityVector()[m_sSelectionInfo.Index]);
-         }
-         else if(bWasSelected &&
-            (m_sSelectionInfo.Index != (unIndex - 1))) {
-            /* The user clicked on a different entity from the selected one */
-            emit EntityDeselected(m_sSelectionInfo.Index);
-            m_cUserFunctions.EntityDeselected(
-               *m_cSpace.GetRootEntityVector()[m_sSelectionInfo.Index]);
-            m_sSelectionInfo.Index = (unIndex - 1);
-            emit EntitySelected(m_sSelectionInfo.Index);
-            m_cUserFunctions.EntitySelected(
-               *m_cSpace.GetRootEntityVector()[m_sSelectionInfo.Index]);
-         }
-         else {
-            /* There was nothing selected, and the user clicked on an entity */
-            m_sSelectionInfo.IsSelected = true;
-            m_sSelectionInfo.Index = (unIndex - 1);
-            emit EntitySelected(m_sSelectionInfo.Index);
-            m_cUserFunctions.EntitySelected(
-               *m_cSpace.GetRootEntityVector()[m_sSelectionInfo.Index]);
-         }
-      }
-      doneCurrent();
-      /* Redraw */
-      update();
+      CRay3 cRay = RayFromWindowCoord(un_x, un_y);
+      SEmbodiedEntityIntersectionItem sItem;
+      if(GetClosestEmbodiedEntityIntersectedByRay(sItem, cRay))
+         SelectEntity(sItem.IntersectedEntity->GetRootEntity());
+      else
+         DeselectEntity();
    }
 
    /****************************************/
@@ -932,12 +822,10 @@ namespace argos {
          m_sSelectionInfo.IsSelected &&
          (pc_event->modifiers() & Qt::ControlModifier)) {
          /* Treat selected entity as an embodied entity */
-         CEmbodiedEntity* pcEntity = dynamic_cast<CEmbodiedEntity*>(
-            m_cSpace.GetRootEntityVector()[m_sSelectionInfo.Index]);
+         CEmbodiedEntity* pcEntity = dynamic_cast<CEmbodiedEntity*>(m_sSelectionInfo.Entity);
          if(pcEntity == NULL) {
             /* Treat selected entity as a composable entity with an embodied component */
-            CComposableEntity* pcCompEntity = dynamic_cast<CComposableEntity*>(
-               m_cSpace.GetRootEntityVector()[m_sSelectionInfo.Index]);
+            CComposableEntity* pcCompEntity = dynamic_cast<CComposableEntity*>(m_sSelectionInfo.Entity);
             if(pcCompEntity != NULL && pcCompEntity->HasComponent("body")) {
                pcEntity = &pcCompEntity->GetComponent<CEmbodiedEntity>("body");
             }
