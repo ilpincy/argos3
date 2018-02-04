@@ -728,7 +728,7 @@ namespace argos {
       glDisable(GL_TEXTURE_2D);
       /* Draw walls */
       glDisable(GL_CULL_FACE);
-      //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+      glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
       glLineWidth(10.0f);
       glColor3f(0.0f, 0.0f, 0.0f);
       /* This part covers the top and bottom faces (parallel to XY) */
