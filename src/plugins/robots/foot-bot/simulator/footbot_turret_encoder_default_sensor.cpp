@@ -55,7 +55,7 @@ namespace argos {
                    "      ...\n"
                    "      <sensors>\n"
                    "        ...\n"
-                   "        <footbot_turret implementation=\"default\" />\n"
+                   "        <footbot_turret_encoder implementation=\"default\" />\n"
                    "        ...\n"
                    "      </sensors>\n"
                    "      ...\n"
