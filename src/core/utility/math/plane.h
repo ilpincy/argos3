@@ -28,6 +28,12 @@ namespace argos {
          m_cPosition(c_position),
          m_cNormal(c_normal) {}
 
+      CPlane(const CVector3& c_point_1,
+             const CVector3& c_point_2,
+             const CVector3& c_point_3) {
+         SetFromThreePoints(c_point_1, c_point_2, c_point_3);
+      }
+
       ~CPlane() {}
 
       inline const CVector3& GetPosition() const {
@@ -45,6 +51,10 @@ namespace argos {
       inline void SetNormal(const CVector3& c_normal) {
          m_cNormal = c_normal;
       }
+
+      void SetFromThreePoints(const CVector3& c_point_1,
+                              const CVector3& c_point_2,
+                              const CVector3& c_point_3);
 
       bool Intersects(Real& f_t_on_ray,
                       const CRay3& c_ray);

@@ -1,9 +1,9 @@
  /**
  * @file <argos3/core/utility/math/matrix/matrix.h>
  *
- * @brief Contains the definition of a MxN templated matrix
+ * @brief Contains the definition of a NxM matrix
  *
- * @author Michael Allwright <michael.allwright@upb.de>
+ * @author Michael Allwright <allsey87@gmail.com>
  */
 
 #ifndef MATRIX_H
@@ -30,8 +30,7 @@ namespace argos {
       
    public:
       CMatrix() {
-         for(UInt32 i = 0; i < ROWS * COLS; i++)
-            m_pfValues[i] = 0;
+         SetZero();
       }
       
       CMatrix(const Real* pf_values) {
@@ -87,8 +86,13 @@ namespace argos {
          for(UInt32 i = 0; i < ROWS * COLS; i++)
             m_pfValues[i] = f_values[i];
       }
+
+      void SetZero() {
+         for(UInt32 i = 0; i < ROWS * COLS; i++)
+            m_pfValues[i] = 0.0;
+      }
       
-      CMatrix<COLS, ROWS> GetTransposed() {
+      CMatrix<COLS, ROWS> GetTransposed() const {
          Real fNewValues[COLS * ROWS];
          for(UInt32 i = 0; i < ROWS; i++)
             for(UInt32 j = 0; j < COLS; j++)
@@ -98,9 +102,9 @@ namespace argos {
       }
       
       template <UInt32 SMROWS, UInt32 SMCOLS>
-      CMatrix<SMROWS, SMCOLS>& GetSubmatrix(CMatrix<SMROWS, SMCOLS>& c_matrix,
+      void GetSubMatrix(CMatrix<SMROWS, SMCOLS>& c_sub_matrix,
                                             UInt32 un_offset_row, 
-                                            UInt32 un_offset_col) {
+                                            UInt32 un_offset_col) const {
          ARGOS_ASSERT((SMROWS - 1 + un_offset_row) < ROWS &&
                       (SMCOLS - 1 + un_offset_col) < COLS,
                       "Submatrix range is out of bounds: cannot extract a " <<
@@ -113,9 +117,7 @@ namespace argos {
                       
          for(UInt32 i = 0; i < SMROWS; i++)
             for(UInt32 j = 0; j < SMCOLS; j++)
-               c_matrix.m_pfValues[i * SMCOLS + j] = m_pfValues[(i + un_offset_row) * COLS + (j + un_offset_col)];
-         
-         return c_matrix;
+               c_sub_matrix.m_pfValues[i * SMCOLS + j] = m_pfValues[(i + un_offset_row) * COLS + (j + un_offset_col)];
       }
       
       bool operator==(const CMatrix<ROWS, COLS>& c_matrix) const {
@@ -158,6 +160,12 @@ namespace argos {
          cResult -= c_matrix;
          return cResult;
       }
+
+      CMatrix<ROWS, COLS> operator-() const {
+         CMatrix<ROWS, COLS> cResult;
+         cResult -= (*this);
+         return cResult;
+      }
       
       CMatrix<ROWS, COLS>& operator*=(const CMatrix<COLS, COLS>& c_matrix) {
          Real fNewValues[ROWS * COLS];
@@ -194,7 +202,7 @@ namespace argos {
          std::streamsize nInitalPrec = c_os.precision();
          
          c_os.setf(std::ios::fixed);
-         c_os.precision(1);
+         c_os.precision(2);
          
          for(UInt32 i = 0; i < ROWS; i++) {
             c_os << "| ";

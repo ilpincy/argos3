@@ -6,6 +6,18 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   void CPlane::SetFromThreePoints(const CVector3& c_point_1,
+                                   const CVector3& c_point_2,
+                                   const CVector3& c_point_3) {
+      m_cNormal = CVector3(c_point_3 - c_point_2);
+      m_cNormal.CrossProduct(c_point_1 - c_point_2);
+      m_cNormal.Normalize();
+      m_cPosition = c_point_2;
+   }
+
+   /****************************************/
+   /****************************************/
+
    bool CPlane::Intersects(Real& f_t_on_ray,
                            const CRay3& c_ray) {
       /* Ray direction */

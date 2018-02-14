@@ -1,13 +1,14 @@
  /**
  * @file <argos3/core/utility/math/matrix/transformationmatrix3.cpp>
  *
- * @brief Contains the implementation of a 3D transformation matrix (4x4)
+ * @brief Contains the implementation of a 4x4 matrix for 3D transformations
  *
- * @author Michael Allwright <michael.allwright@upb.de>
+ * @author Michael Allwright <allsey87@gmail.com>
  */
 
 #include "transformationmatrix3.h"
-#include "rotationmatrix3.h"
+
+#include <argos3/core/utility/math/matrix/rotationmatrix3.h>
 #include <argos3/core/utility/math/vector3.h>
 
 namespace argos {
@@ -18,10 +19,8 @@ namespace argos {
    void CTransformationMatrix3::SetFromComponents(const CRotationMatrix3& c_rotation, const CVector3& c_translation) {
       /* Set the rotation elements */
       SetRotationMatrix(c_rotation);
-      
       /* Set the translation elements */
       SetTranslationVector(c_translation);
-      
       /* Set the bottom row elements */
       m_pfValues[12] = 0.0f; m_pfValues[13] = 0.0f; m_pfValues[14] = 0.0f; m_pfValues[15] = 1.0f;
    }
@@ -85,7 +84,7 @@ namespace argos {
    /****************************************/
    /****************************************/   
 
-   const CRotationMatrix3 CTransformationMatrix3::GetRotationMatrix() const {
+   CRotationMatrix3 CTransformationMatrix3::GetRotationMatrix() const {
       return CRotationMatrix3(m_pfValues[0], m_pfValues[1], m_pfValues[2],
                               m_pfValues[4], m_pfValues[5], m_pfValues[6],
                               m_pfValues[8], m_pfValues[9], m_pfValues[10]);
@@ -103,7 +102,7 @@ namespace argos {
    /****************************************/
    /****************************************/   
 
-   const CVector3 CTransformationMatrix3::GetTranslationVector() const {
+   CVector3 CTransformationMatrix3::GetTranslationVector() const {
       return CVector3(m_pfValues[3], m_pfValues[7], m_pfValues[11]);
    }
 
@@ -114,6 +113,13 @@ namespace argos {
       return CVector3(m_pfValues[0]*c_vector.m_fX + m_pfValues[1]*c_vector.m_fY + m_pfValues[2]*c_vector.m_fZ + m_pfValues[3],
 	                   m_pfValues[4]*c_vector.m_fX + m_pfValues[5]*c_vector.m_fY + m_pfValues[6]*c_vector.m_fZ + m_pfValues[7],
 	                   m_pfValues[8]*c_vector.m_fX + m_pfValues[9]*c_vector.m_fY + m_pfValues[10]*c_vector.m_fZ + m_pfValues[11]);
+   }
+
+   /****************************************/
+   /****************************************/
+
+   CTransformationMatrix3 CTransformationMatrix3::operator*(const CTransformationMatrix3& c_matrix) const {
+      return CTransformationMatrix3(CMatrix<4,4>::operator*(c_matrix));
    }
 
    /****************************************/
