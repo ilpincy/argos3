@@ -1,9 +1,9 @@
  /**
  * @file <argos3/core/utility/math/matrix/transformationmatrix3.h>
  *
- * @brief Contains the definition of a 3D transformation matrix (4x4)
+ * @brief Contains the definition of a 4x4 matrix for 3D transformations
  *
- * @author Michael Allwright <michael.allwright@upb.de>
+ * @author Michael Allwright <allsey87@gmail.com>
  */
 
 #ifndef TRANSFORMATION_MATRIX3_H
@@ -14,7 +14,7 @@ namespace argos {
    class CRotationMatrix3;
 }
 
-#include "squarematrix.h"
+#include <argos3/core/utility/math/matrix/squarematrix.h>
 
 namespace argos {
 
@@ -55,13 +55,15 @@ namespace argos {
       
       void SetRotationMatrix(const CRotationMatrix3& c_rotation);
       
-      const CRotationMatrix3 GetRotationMatrix() const;
+      CRotationMatrix3 GetRotationMatrix() const;
       
       void SetTranslationVector(const CVector3& c_translation);
       
-      const CVector3 GetTranslationVector() const;
+      CVector3 GetTranslationVector() const;
       
       CVector3 operator*(const CVector3& c_vector) const;
+
+      CTransformationMatrix3 operator*(const CTransformationMatrix3& c_matrix) const;
    };
 }
 

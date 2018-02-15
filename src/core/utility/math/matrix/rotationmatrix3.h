@@ -3,7 +3,7 @@
  *
  * @brief Contains the definition of a 3x3 rotation matrix
  *
- * @author Michael Allwright <michael.allwright@upb.de>
+ * @author Michael Allwright <allsey87@gmail.com>
  */
 
 #ifndef ROTATION_MATRIX3_H
@@ -14,7 +14,7 @@ namespace argos {
    class CVector3;
 }
 
-#include "squarematrix.h"
+#include <argos3/core/utility/math/matrix/squarematrix.h>
 
 namespace argos {
 
@@ -30,11 +30,7 @@ namespace argos {
       CRotationMatrix3(const CMatrix<3,3>& c_matrix) : CSquareMatrix<3>() {
          SetFromMatrix(c_matrix);
       }
-      
-      CRotationMatrix3(const CQuaternion& c_quaternion) : CSquareMatrix<3>() {
-         SetFromQuaternion(c_quaternion);
-      }
-      
+           
       CRotationMatrix3(const CRadians& c_z_angle, const CRadians& c_y_angle, const CRadians& c_x_angle) : CSquareMatrix<3>() {
          SetFromAngles(c_z_angle, c_y_angle, c_x_angle);
       }
@@ -49,16 +45,17 @@ namespace argos {
       
       void SetFromMatrix(const CMatrix<3,3>& c_matrix);
       
-      void SetFromQuaternion(const CQuaternion& c_quaternion);
-      
       void SetFromAngles(const CRadians& c_x_angle, const CRadians& c_y_angle, const CRadians& c_z_angle);
       
       void SetFromValues(Real f_value0, Real f_value1, Real f_value2,
                          Real f_value3, Real f_value4, Real f_value5,
                          Real f_value6, Real f_value7, Real f_value8);
       
-      CQuaternion ToQuaternion() const;
-      
+      /**
+       * Implict conversion to quaternion
+       */
+      operator CQuaternion() const;
+
       CVector3 operator*(const CVector3& c_vector) const;
    };
 }

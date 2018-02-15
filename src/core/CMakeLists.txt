@@ -148,6 +148,7 @@ set(ARGOS3_SOURCES_CORE
   utility/math/plane.cpp
   utility/math/ray3.cpp
   utility/math/rng.cpp
+  utility/math/matrix/squarematrix.cpp
   utility/math/matrix/rotationmatrix3.cpp
   utility/math/matrix/rotationmatrix2.cpp
   utility/math/matrix/transformationmatrix3.cpp

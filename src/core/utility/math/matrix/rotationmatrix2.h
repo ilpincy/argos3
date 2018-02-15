@@ -3,7 +3,7 @@
  *
  * @brief Contains the definition of a 2x2 rotation matrix
  *
- * @author Michael Allwright <michael.allwright@upb.de>
+ * @author Michael Allwright <allsey87@gmail.com>
  */
  
 #ifndef ROTATION_MATRIX2_H
@@ -13,7 +13,7 @@ namespace argos {
    class CRadians;
 }
 
-#include "squarematrix.h"
+#include <argos3/core/utility/math/matrix/squarematrix.h>
 #include <argos3/core/utility/math/vector2.h>
 
 namespace argos {
