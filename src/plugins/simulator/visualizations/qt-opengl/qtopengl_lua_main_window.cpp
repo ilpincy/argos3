@@ -404,10 +404,10 @@ namespace argos {
       addDockWidget(Qt::LeftDockWidgetArea, m_pcLuaFunctionDock);
       m_pcLuaFunctionDock->hide();
       /* Connect stuff */
-      connect(&(m_pcMainWindow->GetOpenGLWidget()), SIGNAL(EntitySelected(size_t)),
-              this, SLOT(HandleEntitySelection(size_t)));
-      connect(&(m_pcMainWindow->GetOpenGLWidget()), SIGNAL(EntityDeselected(size_t)),
-              this, SLOT(HandleEntityDeselection(size_t)));
+      connect(&(m_pcMainWindow->GetOpenGLWidget()), SIGNAL(EntitySelected(CEntity*)),
+              this, SLOT(HandleEntitySelection(CEntity*)));
+      connect(&(m_pcMainWindow->GetOpenGLWidget()), SIGNAL(EntityDeselected(CEntity*)),
+              this, SLOT(HandleEntityDeselection(CEntity*)));
    }
 
    /****************************************/
@@ -691,8 +691,8 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CQTOpenGLLuaMainWindow::HandleEntitySelection(size_t un_index) {
-      CComposableEntity* pcSelectedEntity = dynamic_cast<CComposableEntity*>(CSimulator::GetInstance().GetSpace().GetRootEntityVector()[un_index]);
+   void CQTOpenGLLuaMainWindow::HandleEntitySelection(CEntity* pc_entity) {
+      CComposableEntity* pcSelectedEntity = dynamic_cast<CComposableEntity*>(pc_entity);
       if(pcSelectedEntity != NULL) {
          bool bFound = false;
          m_unSelectedRobot = 0;
@@ -745,7 +745,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CQTOpenGLLuaMainWindow::HandleEntityDeselection(size_t) {
+   void CQTOpenGLLuaMainWindow::HandleEntityDeselection(CEntity* pc_entity) {
       disconnect(&(m_pcMainWindow->GetOpenGLWidget()), SIGNAL(StepDone(int)),
                  m_pcLuaVariableTree->model(), SLOT(Refresh(int)));
       disconnect(m_pcMainWindow, SIGNAL(ExperimentReset()),
