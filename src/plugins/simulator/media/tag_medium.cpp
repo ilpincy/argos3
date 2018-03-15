@@ -109,7 +109,7 @@ namespace argos {
                    "tag",
                    "Michael Allwright [allsey87@gmail.com]",
                    "1.0",
-                   "Manages tags.",
+                   "Manages tag entities.",
                    "This medium is required to manage the tag entities, so that the\n"
                    "associated camera sensors can find them. If you use a camera sensor, you\n"
                    "must add this medium the sensors XML configuration.\n\n"

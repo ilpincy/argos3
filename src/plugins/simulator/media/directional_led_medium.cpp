@@ -109,7 +109,7 @@ namespace argos {
                    "directional_led",
                    "Michael Allwright [allsey87@gmail.com]",
                    "1.0",
-                   "Manages directional LEDs.",
+                   "Manages directional LED entities.",
                    "This medium is required to manage the directional LED entities, so that\n"
                    "the associated camera sensors can find them. If you use a camera sensor,\n"
                    "you must add this medium the sensors XML configuration.\n\n"

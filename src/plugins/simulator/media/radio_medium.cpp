@@ -112,7 +112,7 @@ namespace argos {
                    "1.0",
                    "Enables communication between a radio actuator and radio sensor.",
                    "This medium indexes the radio entities in the space and allows\n"
-                   "transmitting radios to write data into nearby receiving radios\n\n"
+                   "transmitting radios to find nearby receiving radios.\n\n"
                    "REQUIRED XML CONFIGURATION\n\n"
                    "<radio id=\"radios\" />\n\n"
                    "OPTIONAL XML CONFIGURATION\n\n"

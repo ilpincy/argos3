@@ -123,11 +123,33 @@ namespace argos {
                      "Michael Allwright [allsey87@gmail.com]",
                      "1.0",
                      "A generic radio actuator to send messages to nearby radios.",
-                     "This radio actuator implementation allows an arbitary number of\n"
-                     "messages containing an arbitary number of bytes to be sent to\n" 
-                     "nearby radios. The implementation is very simple and any concepts\n"
-                     "such as throughput, addressing, or formatting of a message's\n"
-                     "contents is beyond the scope of this implementation\n",
-                     "Under development"
+                     "This radio actuator implementation allows an arbitary number of messages\n"
+                     "containing an arbitary number of bytes to be sent to nearby radios. The\n" 
+                     "implementation of this actuator is very basic and any concepts such as\n"
+                     "throughput, addressing, or formatting of a message's contents is beyond the\n"
+                     "scope of this actuator's implementation.\n\n"
+                     "REQUIRED XML CONFIGURATION\n\n"
+                     "  <controllers>\n"
+                     "    ...\n"
+                     "    <my_controller ...>\n"
+                     "      ...\n"
+                     "      <actuators>\n"
+                     "        ...\n"
+                     "        <radios implementation=\"default\" medium=\"radios\" />\n"
+                     "        ...\n"
+                     "      </actuators>\n"
+                     "      ...\n"
+                     "    </my_controller>\n"
+                     "    ...\n"
+                     "  </controllers>\n\n"
+                     "The 'medium' attribute sets the id of the radio medium declared in the <media>\n"
+                     "XML section.\n\n"
+                     "OPTIONAL XML CONFIGURATION\n\n"
+                     "None.\n",
+                     "Usable"
    );
+
+   /****************************************/
+   /****************************************/
+
 }

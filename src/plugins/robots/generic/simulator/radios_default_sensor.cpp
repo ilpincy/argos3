@@ -94,12 +94,30 @@ namespace argos {
                    "Michael Allwright [allsey87@gmail.com]",
                    "1.0",
                    "A generic radio sensor to receive messages from nearby radios.",
-                   "This radio sensor implementation allows an arbitary number of\n"
-                   "messages containing an arbitary number of bytes to be received\n" 
-                   "from nearby robots. The implementation is very simple and any\n"
-                   "concepts such as throughput, addressing, or formatting of a\n"
-                   "message's contents is beyond the scope of this implementation\n",
-                   "Under development"
+                   "This radio sensor implementation allows an arbitary number of messages\n"
+                   "containing an arbitary number of bytes to be received from nearby robots. The\n"
+                   "implementation is very basic and any concepts such as throughput, addressing,\n"
+                   "or formatting of a message's contents is beyond the scope of this sensor's\n"
+                   "implementation\n\n"
+                   "REQUIRED XML CONFIGURATION\n\n"
+                   "  <controllers>\n"
+                   "    ...\n"
+                   "    <my_controller ...>\n"
+                   "      ...\n"
+                   "      <sensors>\n"
+                   "        ...\n"
+                   "        <radios implementation=\"default\" medium=\"radios\" />\n"
+                   "        ...\n"
+                   "      </sensors>\n"
+                   "      ...\n"
+                   "    </my_controller>\n"
+                   "    ...\n"
+                   "  </controllers>\n\n"
+                   "The 'medium' attribute sets the id of the radio medium declared in the <media>\n"
+                   "XML section.\n\n"
+                   "OPTIONAL XML CONFIGURATION\n\n"
+                   "None.\n",
+                   "Usable"
    );
 
 }
