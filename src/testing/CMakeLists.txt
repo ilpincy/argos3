@@ -42,6 +42,8 @@ if(ARGOS_BUILD_FOR_SIMULATOR OR ARGOS_BUILD_FOR STREQUAL "foot-bot")
     experiment/test_media_enabledisable_controller.cpp
     experiment/test_media_enabledisable_loopfunctions.h
     experiment/test_media_enabledisable_loopfunctions.cpp)
+  target_link_libraries(test_media_enabledisable
+    argos3plugin_${ARGOS_BUILD_FOR}_footbot)
   add_library(test_footbot_controller MODULE
     experiment/test_footbot_controller.h
     experiment/test_footbot_controller.cpp)
