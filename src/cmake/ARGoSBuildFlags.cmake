@@ -7,6 +7,13 @@ execute_process(
   OUTPUT_VARIABLE ARGOS_PROCESSOR_ARCH)
 
 #
+# Select ISO C++14
+#
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+#
 # General compilation flags
 #
 set(CMAKE_C_FLAGS                  "-Wall")
