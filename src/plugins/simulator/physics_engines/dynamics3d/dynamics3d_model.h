@@ -35,6 +35,10 @@ namespace argos {
 
    public:
 
+         using TVector = std::vector<CAbstractBody*>;
+
+         using TVectorIterator = std::vector<CAbstractBody*>::iterator;
+
          struct SData {
             /* Constructor */
             SData(const btTransform& c_start_transform,
