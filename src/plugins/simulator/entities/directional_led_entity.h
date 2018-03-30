@@ -103,24 +103,6 @@ namespace argos {
       }
 
       /**
-       * Adds the directional LEDs to the wanted directional LED medium.
-       * If this LED has already been added to a medium, the LED is
-       * removed from that medium and then added to the passed one.
-       * This behavior is to enforce that, at any time, an LED is
-       * under the control of (at most) a single medium.
-       * @param c_medium The LED medium.
-       * @see CDirectionalLEDMedium
-       */
-      void AddToMedium(CDirectionalLEDMedium& c_medium);
-
-      /**
-       * Removes the directional LEDs from the specified directional LED medium.
-       * @param c_medium The LED medium.
-       * @see CDirectionalLEDMedium
-       */
-      void RemoveFromMedium();
-
-      /**
        * Returns <tt>true</tt> if this directional LED is associated to a medium.
        * @return <tt>true</tt> if this directional LED is associated to a medium.
        * @see CDirectionalLEDMedium
@@ -130,11 +112,18 @@ namespace argos {
       }
 
       /**
-       * Returns the medium associated to this LED.
-       * @return The medium associated to this LED.
+       * Returns the medium associated to this directional LED.
+       * @return The medium associated to this directional LED.
        * @see CDirectionalLEDMedium
        */
       CDirectionalLEDMedium& GetMedium() const;
+
+      /**
+       * Sets the medium associated to this entity.
+       * @param c_medium The medium to associate to this entity.
+       * @see CDirectionalLEDMedium
+       */
+      void SetMedium(CDirectionalLEDMedium& c_medium);
 
    protected:
 

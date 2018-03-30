@@ -124,17 +124,11 @@ namespace argos {
       void SetLEDColors(const std::vector<CColor>& vec_colors);
 
       /**
-       * Adds the LEDs to the wanted LED medium.
-       * @param c_medium The LED medium.
+       * Sets the medium associated to this entity.
+       * @param c_medium The medium to associate to this entity.
        * @see CDirectionalLEDMedium
        */
-      void AddToMedium(CDirectionalLEDMedium& c_medium);
-
-      /**
-       * Removes the LEDs from the associated LED medium.
-       * @see CDirectionalLEDMedium
-       */
-      void RemoveFromMedium();
+      void SetMedium(CDirectionalLEDMedium& c_medium);
 
       virtual std::string GetTypeDescription() const {
          return "directional_leds";

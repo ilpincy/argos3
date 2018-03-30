@@ -92,7 +92,9 @@ namespace argos {
    /****************************************/
 
    void CRadioEquippedEntity::Enable() {
-      CEntity::Enable();
+      /* Perform generic enable behavior */
+      CComposableEntity::Enable();
+      /* Enable anchors */
       for(SInstance& s_instance : m_vecInstances) {
          s_instance.Anchor.Enable();
       }
@@ -102,7 +104,9 @@ namespace argos {
    /****************************************/
 
    void CRadioEquippedEntity::Disable() {
-      CEntity::Disable();
+      /* Perform generic disable behavior */
+      CComposableEntity::Disable();
+      /* Disable anchors */
       for(SInstance& s_instance : m_vecInstances) {
          s_instance.Anchor.Disable();
       }
@@ -140,21 +144,10 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CRadioEquippedEntity::AddToMedium(CRadioMedium& c_medium) {
+   void CRadioEquippedEntity::SetMedium(CRadioMedium& c_medium) {
       for(SInstance& s_instance : m_vecInstances) {
-         s_instance.Radio.AddToMedium(c_medium);
+         s_instance.Radio.SetMedium(c_medium);
       }
-      Enable();
-   }
-
-   /****************************************/
-   /****************************************/
-
-   void CRadioEquippedEntity::RemoveFromMedium() {
-      for(SInstance& s_instance : m_vecInstances) {
-         s_instance.Radio.RemoveFromMedium();
-      }
-      Disable();
    }
 
    /****************************************/

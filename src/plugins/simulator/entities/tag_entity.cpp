@@ -71,16 +71,25 @@ namespace argos {
    /****************************************/
 
    void CTagEntity::Destroy() {
-      if(HasMedium()) {
-         RemoveFromMedium();
-      }
+      Disable();
    }
 
    /****************************************/
    /****************************************/
 
    void CTagEntity::SetEnabled(bool b_enabled) {
-      CEntity::SetEnabled(m_strPayload.length() > 0);
+      /* Perform generic enable behavior */
+      CEntity::SetEnabled(b_enabled);
+      if(b_enabled) {
+         /* Enable entity in medium */
+         if(m_pcMedium && GetIndex() >= 0)
+            m_pcMedium->AddEntity(*this);
+      }
+      else {
+         /* Disable entity in medium */
+         if(m_pcMedium)
+            m_pcMedium->RemoveEntity(*this);
+      }
    }
 
    /****************************************/
@@ -93,36 +102,22 @@ namespace argos {
 
    /****************************************/
    /****************************************/
-
-   void CTagEntity::AddToMedium(CTagMedium& c_medium) {
-      if(HasMedium()) RemoveFromMedium();
-      m_pcMedium = &c_medium;
-      c_medium.AddEntity(*this);
-      Enable();
-   }
-
-   /****************************************/
-   /****************************************/
-
-   void CTagEntity::RemoveFromMedium() {
-      try {
-         GetMedium().RemoveEntity(*this);
-         m_pcMedium = nullptr;
-         Disable();
-      }
-      catch(CARGoSException& ex) {
-         THROW_ARGOSEXCEPTION_NESTED("Can't remove tag entity \"" << GetContext() + GetId() << "\" from medium.", ex);
-      }
-   }
-
-   /****************************************/
-   /****************************************/
       
    CTagMedium& CTagEntity::GetMedium() const {
       if(m_pcMedium == nullptr) {
-         THROW_ARGOSEXCEPTION("Tag entity \"" << GetContext() + GetId() << "\" has no medium associated.");
+         THROW_ARGOSEXCEPTION("Tag entity \"" << GetContext() + GetId() <<
+                              "\" has no medium associated.");
       }
       return *m_pcMedium;
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CTagEntity::SetMedium(CTagMedium& c_medium) {
+      if(m_pcMedium != NULL && m_pcMedium != &c_medium)
+         m_pcMedium->RemoveEntity(*this);
+      m_pcMedium = &c_medium;
    }
 
    /****************************************/
@@ -169,7 +164,35 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   REGISTER_STANDARD_SPACE_OPERATIONS_ON_ENTITY(CTagEntity);
+   class CSpaceOperationAddCTagEntity : public CSpaceOperationAddEntity {
+   public:
+      void ApplyTo(CSpace& c_space, CTagEntity& c_entity) {
+         /* Add entity to space - this ensures that the tag entity
+          * gets an id before being added to the tag medium */
+         c_space.AddEntity(c_entity);
+         /* Enable the tag entity, if it's enabled - this ensures that
+          * the entity gets added to the tag if it's enabled */
+         c_entity.SetEnabled(c_entity.IsEnabled());
+      }
+   };
+
+   class CSpaceOperationRemoveCTagEntity : public CSpaceOperationRemoveEntity {
+   public:
+      void ApplyTo(CSpace& c_space, CTagEntity& c_entity) {
+         /* Disable the entity - this ensures that the entity is
+          * removed from the tag medium */
+         c_entity.Disable();
+         /* Remove the tag entity from space */
+         c_space.RemoveEntity(c_entity);
+      }
+   };
+
+   REGISTER_SPACE_OPERATION(CSpaceOperationAddEntity,
+                            CSpaceOperationAddCTagEntity,
+                            CTagEntity);
+   REGISTER_SPACE_OPERATION(CSpaceOperationRemoveEntity,
+                            CSpaceOperationRemoveCTagEntity,
+                            CTagEntity);
 
    /****************************************/
    /****************************************/
