@@ -35,7 +35,7 @@
         <differential_steering implementation="default" />
       </sensors>
       <!--params script="../../src/testing/examples/footbot_camera_example.lua"/-->
-      <params script="src/testing/examples/footbot_camera_example.lua"/>
+      <params script="src/testing/examples/footbot_camera_box_example.lua"/>
     </lua_controller>
   </controllers>
 
@@ -79,15 +79,24 @@
   <visualization>
     <qt-opengl lua_editor="true">
       <camera>
-        <placement idx="0" position=" 0,  -0.5,0.25" look_at="0,0,0.125" lens_focal_length="15" />
-        <placement idx="1" position=" 0.5,-0.5,0.25" look_at="0,0,0.125" lens_focal_length="22.5" />
-        <placement idx="2" position=" 0.5, 0,  0.25" look_at="0,0,0.125" lens_focal_length="15" />
-        <placement idx="3" position=" 0.5, 0.5,0.25" look_at="0,0,0.125" lens_focal_length="22.5" />
-        <placement idx="4" position=" 0,   0.5,0.25" look_at="0,0,0.125" lens_focal_length="15" />
-        <placement idx="5" position="-0.5, 0.5,0.25" look_at="0,0,0.125" lens_focal_length="22.5" />
-        <placement idx="6" position="-0.5, 0,  0.25" look_at="0,0,0.125" lens_focal_length="15" />
-        <placement idx="7" position="-0.5,-0.5,0.25" look_at="0,0,0.125" lens_focal_length="22.5" />
-        <placement idx="8" position="0,0,0.5" look_at="0.0,0.0,0.125" up="1,0,0" lens_focal_length="15" />
+        <placement idx="0" position=" 0,  -0.5,0.25" look_at="0,0,0.125"
+                   lens_focal_length="15" />
+        <placement idx="1" position=" 0.5,-0.5,0.25" look_at="0,0,0.125"
+                   lens_focal_length="22.5" />
+        <placement idx="2" position=" 0.5, 0,  0.25" look_at="0,0,0.125"
+                   lens_focal_length="15" />
+        <placement idx="3" position=" 0.5, 0.5,0.25" look_at="0,0,0.125"
+                   lens_focal_length="22.5" />
+        <placement idx="4" position=" 0,   0.5,0.25" look_at="0,0,0.125"
+                   lens_focal_length="15" />
+        <placement idx="5" position="-0.5, 0.5,0.25" look_at="0,0,0.125"
+                   lens_focal_length="22.5" />
+        <placement idx="6" position="-0.5, 0,  0.25" look_at="0,0,0.125"
+                   lens_focal_length="15" />
+        <placement idx="7" position="-0.5,-0.5,0.25" look_at="0,0,0.125"
+                   lens_focal_length="22.5" />
+        <placement idx="8" position="0,0,0.5" look_at="0.0,0.0,0.125" up="1,0,0"
+                   lens_focal_length="15" />
       </camera>
     </qt-opengl>
   </visualization>

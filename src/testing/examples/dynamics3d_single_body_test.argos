@@ -16,7 +16,6 @@
   <!-- *********************** -->
   <!-- * Arena configuration * -->
   <!-- *********************** -->
-  <!-- Note: rotations are specified and performed in ZYX order (opposite of ARGoS1) -->
   <arena size="1, 1, 0.5" center="0, 0, 0.25">
     <box id="bn" size="0.025,0.975,0.05" movable="false" mass="10">
       <body position="0.4875,0.0125,0"  orientation="0,0,0" />
@@ -67,15 +66,24 @@
   <visualization>
     <qt-opengl lua_editor="false">
       <camera>
-        <placement idx="0" position=" 0,   -0.75,0.75" look_at="0,    -0.15, 0.15" lens_focal_length="25" />
-        <placement idx="1" position=" 0.75,-0.75,0.75" look_at="0.15, -0.15, 0.15" lens_focal_length="30" />
-        <placement idx="2" position=" 0.75, 0,   0.75" look_at="0.15,  0,    0.15" lens_focal_length="25" />
-        <placement idx="3" position=" 0.75, 0.75,0.75" look_at="0.15,  0.15, 0.15" lens_focal_length="30" />
-        <placement idx="4" position=" 0,    0.75,0.75" look_at="0,     0.15, 0.15" lens_focal_length="25" />
-        <placement idx="5" position="-0.75, 0.75,0.75" look_at="-0.15, 0.15, 0.15" lens_focal_length="30" />
-        <placement idx="6" position="-0.75, 0,   0.75" look_at="-0.15, 0,    0.15" lens_focal_length="25" />
-        <placement idx="7" position="-0.75,-0.75,0.75" look_at="-0.15,-0.15, 0.15" lens_focal_length="30" />
-        <placement idx="8" position="0,0,1.75" look_at="0.0,0.0,0.75" up="1,0,0" lens_focal_length="30" />
+        <placement idx="0" position=" 0,-0.75,0.75" look_at="0,-0.15,0.15"
+                   lens_focal_length="25" />
+        <placement idx="1" position=" 0.75,-0.75,0.75" look_at="0.15,-0.15,0.15"
+                   lens_focal_length="30" />
+        <placement idx="2" position=" 0.75,0,0.75" look_at="0.15,0,0.15"
+                   lens_focal_length="25" />
+        <placement idx="3" position=" 0.75,0.75,0.75" look_at="0.15,0.15,0.15"
+                   lens_focal_length="30" />
+        <placement idx="4" position=" 0,0.75,0.75" look_at="0,0.15,0.15"
+                   lens_focal_length="25" />
+        <placement idx="5" position="-0.75,0.75,0.75" look_at="-0.15,0.15,0.15"
+                   lens_focal_length="30" />
+        <placement idx="6" position="-0.75,0,0.75" look_at="-0.15,0,0.15"
+                   lens_focal_length="25" />
+        <placement idx="7" position="-0.75,-0.75,0.75" look_at="-0.15,-0.15,0.15"
+                   lens_focal_length="30" />
+        <placement idx="8" position="0,0,1.75" look_at="0.0,0.0,0.75" up="1,0,0"
+                   lens_focal_length="30" />
       </camera>
     </qt-opengl>
   </visualization>

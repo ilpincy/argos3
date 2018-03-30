@@ -22,14 +22,10 @@ end
      It must contain the logic of your controller ]]
 function step()
 	if #robot.cameras.turret_camera.tag_detector > 0 then
-		log("tag 1: " .. robot.cameras.turret_camera.tag_detector[1].payload)
-      --for index,corner in ipairs(robot.cameras.turret_camera.tag_detector[1].corners) do
-		--   log("corner " .. index .. ": x = " .. corner.x .. ", y = " .. corner.y)
-      --end
+		log("turret_camera detects tags")
 	end
 	if #robot.cameras.turret_camera.led_detector > 0 then
-		log("led 1:")
-	   --log("center: x = " .. robot.cameras.turret_camera.led_detector[1].center.x .. ", y = " .. robot.cameras.turret_camera.led_detector[1].center.y)
+		log("turret_camera detects LEDs")
 	end
 
 end
