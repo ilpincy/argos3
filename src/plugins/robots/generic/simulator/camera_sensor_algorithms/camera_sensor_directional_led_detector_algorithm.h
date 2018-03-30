@@ -18,7 +18,7 @@ namespace argos {
 
 #include <argos3/plugins/simulator/entities/directional_led_entity.h>
 #include <argos3/plugins/robots/generic/simulator/camera_sensor_algorithm.h>
-#include <argos3/plugins/robots/generic/control_interface/ci_camera_sensor_algorithms/ci_camera_sensor_led_detector_algorithm.h>
+#include <argos3/plugins/robots/generic/control_interface/ci_camera_sensor_algorithms/ci_camera_sensor_directional_led_detector_algorithm.h>
 
 namespace argos {
    
@@ -28,7 +28,7 @@ namespace argos {
     * acquired by the simulated or by the physical camera.
     */
    class CCameraSensorDirectionalLEDDetectorAlgorithm : public CCameraSensorSimulatedAlgorithm,
-                                                        public CCI_CameraSensorLEDDetectorAlgorithm {
+                                                        public CCI_CameraSensorDirectionalLEDDetectorAlgorithm {
       
    public:
       class CUpdateOperation : public CBaseUpdateOperation,

@@ -15,14 +15,14 @@ namespace argos {
    class CDirectionalLEDMedium;
 }
 
-#include <argos3/plugins/robots/generic/control_interface/ci_leds_actuator.h>
+#include <argos3/plugins/robots/generic/control_interface/ci_directional_leds_actuator.h>
 #include <argos3/plugins/simulator/entities/directional_led_equipped_entity.h>
 #include <argos3/core/simulator/actuator.h>
 
 namespace argos {
 
    class CDirectionalLEDsDefaultActuator : public CSimulatedActuator,
-                                           public CCI_LEDsActuator {
+                                           public CCI_DirectionalLEDsActuator {
 
    public:
 
@@ -33,14 +33,14 @@ namespace argos {
       virtual void SetRobot(CComposableEntity& c_entity);
 
       virtual void Init(TConfigurationNode& t_tree);
+
       virtual void Update();
+
       virtual void Reset();
-      virtual void Destroy();
 
    private:
 
       CDirectionalLEDEquippedEntity* m_pcDirectionalLEDEquippedEntity;
-      CDirectionalLEDMedium*         m_pcDirectionalLEDMedium;
 
    };
 
