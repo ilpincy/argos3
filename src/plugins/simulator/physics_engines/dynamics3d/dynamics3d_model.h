@@ -64,7 +64,7 @@ namespace argos {
                        SAnchor& s_anchor,
                        const SData& s_data);
 
-         virtual ~CAbstractBody();
+         virtual ~CAbstractBody() {}
 
          CDynamics3DModel& GetModel();
 

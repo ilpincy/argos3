@@ -40,18 +40,7 @@ namespace argos {
                                                   const SData& s_data) :
       m_cModel(c_model),
       m_sAnchor(s_anchor),
-      m_sData(s_data) {
-      /* Enable the anchor */
-      m_sAnchor.Enable();
-   }
-
-   /****************************************/
-   /****************************************/
-
-   CDynamics3DModel::CAbstractBody::~CAbstractBody() {
-      /* Disable the anchor */
-      m_sAnchor.Disable();
-   }
+      m_sData(s_data) {}
 
    /****************************************/
    /****************************************/
