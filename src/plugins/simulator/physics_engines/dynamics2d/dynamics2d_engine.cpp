@@ -289,7 +289,26 @@ namespace argos {
                            "                cylinder_linear_friction=\"3.0\"\n"
                            "                cylinder_angular_friction=\"4.0\" />\n"
                            "    ...\n"
-                           "  </physics_engines>\n\n",
+                           "  </physics_engines>\n\n"
+                           "For the the robots that use velocity-based control, such as ground robots with\n"
+                           "the differential_steering actuator (e.g. the foot-bot and the e-puck), it is\n"
+                           "possible to customize robot-specific attributes that set the maximum force and\n"
+                           "torque the robot has. The syntax is as follows, taking a foot-bot as example:\n\n"
+                           "  <arena ...>\n"
+                           "    ...\n"
+                           "    <foot-bot id=\"fb0\">\n"
+                           "      <body position=\"0.4,2.3,0.25\" orientation=\"45,0,0\" />\n"
+                           "      <controller config=\"mycntrl\" />\n"
+                           "      <!-- Specify new value for max_force and max_torque -->\n"
+                           "      <dynamics2d>\n"
+                           "        <differential_steering max_force=\"0.1\" max_torque=\"0.1\"/>\n"
+                           "      </dynamics2d>\n"
+                           "    </foot-bot>\n"
+                           "    ...\n"
+                           "  </arena>\n\n"
+                           "The attributes 'max_force' and 'max_torque' are both optional, and they take the\n"
+                           "robot-specific default if not set. Check the code of the dynamics2d model of the\n"
+                           "robot you're using to know the default values.\n",
                            "Usable"
       );
 
