@@ -14,8 +14,9 @@ namespace argos {
    CDynamics2DDifferentialSteeringControl::CDynamics2DDifferentialSteeringControl(CDynamics2DEngine& c_engine,
                                                                                   Real f_max_force,
                                                                                   Real f_max_torque,
-                                                                                  Real f_interwheel_distance) :
-      CDynamics2DVelocityControl(c_engine, f_max_force, f_max_torque), 
+                                                                                  Real f_interwheel_distance,
+                                                                                  TConfigurationNode* t_node) :
+      CDynamics2DVelocityControl(c_engine, f_max_force, f_max_torque, t_node), 
       m_fInterwheelDistance(f_interwheel_distance) {}
 
    /****************************************/

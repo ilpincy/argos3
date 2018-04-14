@@ -12,6 +12,7 @@ namespace argos {
 }
 
 #include <argos3/plugins/simulator/physics_engines/dynamics2d/chipmunk-physics/include/chipmunk.h>
+#include <argos3/core/utility/configuration/argos_configuration.h>
 #include <argos3/core/utility/math/vector2.h>
 
 namespace argos {
@@ -21,8 +22,9 @@ namespace argos {
    public:
       
       CDynamics2DVelocityControl(CDynamics2DEngine& c_engine,
-                             Real f_max_force,
-                             Real f_max_torque);
+                                 Real f_max_force,
+                                 Real f_max_torque,
+                                 TConfigurationNode* t_node = NULL);
 
       virtual ~CDynamics2DVelocityControl();
 

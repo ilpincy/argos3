@@ -18,7 +18,8 @@ namespace argos {
    CEntity::CEntity(CComposableEntity* pc_parent) :
       m_pcParent(pc_parent),
       m_nIndex(-1),
-      m_bEnabled(true) {
+      m_bEnabled(true),
+      m_ptConfNode(NULL) {
    }
 
    /****************************************/
@@ -29,7 +30,8 @@ namespace argos {
       m_pcParent(pc_parent),
       m_strId(str_id),
       m_nIndex(-1),
-      m_bEnabled(true) {
+      m_bEnabled(true),
+      m_ptConfNode(NULL) {
    }
 
    /****************************************/
@@ -37,6 +39,10 @@ namespace argos {
 
    void CEntity::Init(TConfigurationNode& t_tree) {
       try {
+         /*
+          * Set the configuration node
+          */
+         m_ptConfNode = &t_tree;
          /*
           * Set the id of the entity from XML or type description
           */

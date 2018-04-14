@@ -284,6 +284,15 @@ namespace argos {
        */
       virtual void SetEnabled(bool b_enabled);
 
+      /**
+       * Returns a pointer to the configuration node that was used to create this entity.
+       * The pointer is NULL if no configuration node was used.
+       * @return A pointer to the configuration node that was used to create this entity.
+       */
+      TConfigurationNode* GetConfigurationNode() {
+         return m_ptConfNode;
+      }
+
    private:
 
       /** The parent of this entity */
@@ -297,6 +306,9 @@ namespace argos {
 
       /** When <tt>true</tt>, this entity is updated; when <tt>false</tt>, this entity is not updated */
       bool m_bEnabled;
+
+      /** The XML tag used to configure this entity, if any */
+      TConfigurationNode* m_ptConfNode;
 
    };
 
