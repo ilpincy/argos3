@@ -33,7 +33,6 @@ namespace argos {
             GetNodeAttributeOrDefault(tDiffSteer, "max_torque", m_fMaxTorque, m_fMaxTorque);
          }
       }
-      DEBUG("Using max_force = %f, max_torque = %f\n", m_fMaxForce, m_fMaxTorque);
    }
 
    /****************************************/
