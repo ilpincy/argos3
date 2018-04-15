@@ -131,10 +131,6 @@ namespace argos {
 
    private:
 
-      cpFloat m_fStaticHashCellSize;
-      cpFloat m_fActiveHashCellSize;
-      SInt32 m_nStaticHashCells;
-      SInt32 m_nActiveHashCells;
       cpFloat m_fBoxLinearFriction;
       cpFloat m_fBoxAngularFriction;
       cpFloat m_fCylinderLinearFriction;
