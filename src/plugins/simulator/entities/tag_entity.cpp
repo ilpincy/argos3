@@ -124,7 +124,7 @@ namespace argos {
 
    void CTagEntitySpaceHashUpdater::operator()(CAbstractSpaceHash<CTagEntity>& c_space_hash,
                                                CTagEntity& c_element) {
-      /* Calculate the position of the LED in the space hash */
+      /* Calculate the position of the tag in the space hash */
       c_space_hash.SpaceToHashTable(m_nI, m_nJ, m_nK, c_element.GetPosition());
       /* Update the corresponding cell */
       c_space_hash.UpdateCell(m_nI, m_nJ, m_nK, c_element);
