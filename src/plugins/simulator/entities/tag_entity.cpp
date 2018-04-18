@@ -48,7 +48,7 @@ namespace argos {
       try {
          /* Parse XML */
          CPositionalEntity::Init(t_tree);
-         GetNodeAttribute(t_tree, "payload", m_strInitPayload);
+         GetNodeAttributeOrDefault(t_tree, "payload", m_strInitPayload, m_strInitPayload);
          m_strPayload = m_strInitPayload;
          CDegrees cObservableAngle;
          GetNodeAttribute(t_tree, "observable_angle", cObservableAngle);
@@ -97,7 +97,6 @@ namespace argos {
 
    void CTagEntity::SetPayload(const std::string& str_payload) {
       m_strPayload = str_payload;
-      SetEnabled(m_strPayload.length() > 0);
    }
 
    /****************************************/
@@ -125,13 +124,10 @@ namespace argos {
 
    void CTagEntitySpaceHashUpdater::operator()(CAbstractSpaceHash<CTagEntity>& c_space_hash,
                                                CTagEntity& c_element) {
-      /* Discard tags without a payload */
-      if(c_element.GetPayload().length() > 0) {
-         /* Calculate the position of the LED in the space hash */
-         c_space_hash.SpaceToHashTable(m_nI, m_nJ, m_nK, c_element.GetPosition());
-         /* Update the corresponding cell */
-         c_space_hash.UpdateCell(m_nI, m_nJ, m_nK, c_element);
-      }
+      /* Calculate the position of the LED in the space hash */
+      c_space_hash.SpaceToHashTable(m_nI, m_nJ, m_nK, c_element.GetPosition());
+      /* Update the corresponding cell */
+      c_space_hash.UpdateCell(m_nI, m_nJ, m_nK, c_element);
    }
 
    /****************************************/
@@ -144,18 +140,15 @@ namespace argos {
    /****************************************/
 
    bool CTagEntityGridUpdater::operator()(CTagEntity& c_entity) {
-      /* Discard tags without a payload */
-      if(c_entity.GetPayload().length() > 0) {
-         try {
-            /* Calculate the position of the tag in the space hash */
-            m_cGrid.PositionToCell(m_nI, m_nJ, m_nK, c_entity.GetPosition());
-            /* Update the corresponding cell */
-            m_cGrid.UpdateCell(m_nI, m_nJ, m_nK, c_entity);
-         }
-         catch(CARGoSException& ex) {
-            THROW_ARGOSEXCEPTION_NESTED("While updating the tag grid for tag \"" <<
-                                        c_entity.GetContext() + c_entity.GetId() << "\"", ex);
-         }
+      try {
+         /* Calculate the position of the tag in the space hash */
+         m_cGrid.PositionToCell(m_nI, m_nJ, m_nK, c_entity.GetPosition());
+         /* Update the corresponding cell */
+         m_cGrid.UpdateCell(m_nI, m_nJ, m_nK, c_entity);
+      }
+      catch(CARGoSException& ex) {
+         THROW_ARGOSEXCEPTION_NESTED("While updating the tag grid for tag \"" <<
+                                     c_entity.GetContext() + c_entity.GetId() << "\"", ex);
       }
       /* Continue with the other entities */
       return true;
