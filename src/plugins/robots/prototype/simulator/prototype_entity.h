@@ -16,6 +16,7 @@ namespace argos {
    class CRadioEquippedEntity;
    class CMagnetEquippedEntity;
    class CCameraEquippedEntity;
+   class CProximitySensorEquippedEntity; 
    class CDirectionalLEDEquippedEntity;
    class CLEDEquippedEntity;
    class CPrototypeEntity;
@@ -123,6 +124,18 @@ namespace argos {
          return *m_pcMagnetEquippedEntity;
       }
 
+      inline bool HasProximitySensorEquippedEntity() const {
+         return (m_pcProximitySensorEquippedEntity != nullptr);
+      }
+
+      inline CProximitySensorEquippedEntity& GetProximitySensorEquippedEntity() {
+         ARGOS_ASSERT(m_pcProximitySensorEquippedEntity != nullptr,
+                      "CPrototypeEntity::GetProximitySensorEquippedEntity(), id=\"" <<
+                      GetId() + GetContext() <<
+                      "\": was not initialized with a proximity sensor equipped entity");
+         return *m_pcProximitySensorEquippedEntity;
+      }
+
       virtual std::string GetTypeDescription() const {
          return "prototype";
       }
@@ -138,6 +151,8 @@ namespace argos {
       CTagEquippedEntity*              m_pcTagEquippedEntity;
       CRadioEquippedEntity*            m_pcRadioEquippedEntity;
       CMagnetEquippedEntity*           m_pcMagnetEquippedEntity;
+      CProximitySensorEquippedEntity*  m_pcProximitySensorEquippedEntity;
+
    };
 
 }

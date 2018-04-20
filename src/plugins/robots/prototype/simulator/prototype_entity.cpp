@@ -10,6 +10,7 @@
 #include <argos3/core/simulator/simulator.h>
 #include <argos3/plugins/robots/prototype/simulator/prototype_link_equipped_entity.h>
 #include <argos3/plugins/robots/prototype/simulator/prototype_joint_equipped_entity.h>
+#include <argos3/plugins/simulator/entities/proximity_sensor_equipped_entity.h>
 #include <argos3/plugins/simulator/entities/directional_led_equipped_entity.h>
 #include <argos3/plugins/simulator/entities/led_equipped_entity.h>
 #include <argos3/plugins/simulator/entities/magnet_equipped_entity.h>
@@ -94,6 +95,11 @@ namespace argos {
                      CSimulator::GetInstance().GetMedium<CLEDMedium>(strMedium);
                   m_pcLEDEquippedEntity->SetMedium(cLEDMedium);
                   m_pcLEDEquippedEntity->Enable();
+               }
+               else if(itDevice->Value() == "proximity_sensors") {
+                  m_pcProximitySensorEquippedEntity = new CProximitySensorEquippedEntity(this);
+                  m_pcProximitySensorEquippedEntity->Init(*itDevice);
+                  AddComponent(*m_pcProximitySensorEquippedEntity);
                }
                else if(itDevice->Value() == "tags" ) {
                   m_pcTagEquippedEntity = new CTagEquippedEntity(this);
