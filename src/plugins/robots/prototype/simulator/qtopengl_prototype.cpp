@@ -234,6 +234,7 @@ namespace argos {
             glPopMatrix();
          }
       }
+#ifndef NDEBUG
       /* Draw the magnetic poles */
       if(c_entity.HasMagnetEquippedEntity()) {
          CMagnetEquippedEntity& cMagnetEquippedEntity = 
@@ -264,6 +265,7 @@ namespace argos {
             glPopMatrix();
          }
       }
+#endif
    }
 
    /****************************************/
