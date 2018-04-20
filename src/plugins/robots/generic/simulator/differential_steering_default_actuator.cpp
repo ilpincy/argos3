@@ -18,14 +18,14 @@ namespace argos {
       m_pcRNG(NULL) {
       m_fCurrentVelocity[LEFT_WHEEL] = 0.0;
       m_fCurrentVelocity[RIGHT_WHEEL] = 0.0;
-      m_fNoiseBiasAvg[LEFT_WHEEL] = 0.0;
-      m_fNoiseBiasAvg[RIGHT_WHEEL] = 0.0;
-      m_fNoiseBiasStdDev[LEFT_WHEEL] = 1.0;
-      m_fNoiseBiasStdDev[RIGHT_WHEEL] = 1.0;
-      m_fNoiseFactorAvg[LEFT_WHEEL] = 0.0;
-      m_fNoiseFactorAvg[RIGHT_WHEEL] = 0.0;
-      m_fNoiseFactorStdDev[LEFT_WHEEL] = 1.0;
-      m_fNoiseFactorStdDev[RIGHT_WHEEL] = 1.0;
+      m_fNoiseBiasAvg[LEFT_WHEEL] = 1.0;
+      m_fNoiseBiasAvg[RIGHT_WHEEL] = 1.0;
+      m_fNoiseBiasStdDev[LEFT_WHEEL] = 0.0;
+      m_fNoiseBiasStdDev[RIGHT_WHEEL] = 0.0;
+      m_fNoiseFactorAvg[LEFT_WHEEL] = 1.0;
+      m_fNoiseFactorAvg[RIGHT_WHEEL] = 1.0;
+      m_fNoiseFactorStdDev[LEFT_WHEEL] = 0.0;
+      m_fNoiseFactorStdDev[RIGHT_WHEEL] = 0.0;
    }
    
    /****************************************/
@@ -84,14 +84,18 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+#define ADD_GAUSSIAN(LRW, WHICH)                                  \
+   (m_fNoise ## WHICH ## StdDev[LRW ## _WHEEL] > 0.0 ?            \
+    m_pcRNG->Gaussian(m_fNoise ## WHICH ## StdDev[LRW ## _WHEEL], \
+                      m_fNoise ## WHICH ## Avg[LRW ## _WHEEL]) :  \
+    m_fNoise ## WHICH ## Avg[LRW ## _WHEEL])
+
 #define ADD_NOISE(LRW)                                                  \
    m_fCurrentVelocity[LRW ## _WHEEL] =                                  \
-     m_pcRNG->Gaussian(m_fNoiseFactorAvg[LRW ## _WHEEL],                \
-                       m_fNoiseFactorStdDev[LRW ## _WHEEL])             \
-     *                                                                  \
-     (m_fCurrentVelocity[LRW ## _WHEEL] +                               \
-      m_pcRNG->Gaussian(m_fNoiseBiasAvg[LRW ## _WHEEL],                 \
-                        m_fNoiseBiasStdDev[LRW ## _WHEEL]));
+      ADD_GAUSSIAN(LRW, Factor)                                         \
+      *                                                                 \
+      (m_fCurrentVelocity[LRW ## _WHEEL] +                              \
+       ADD_GAUSSIAN(LRW, Bias));
    
    void CDifferentialSteeringDefaultActuator::SetLinearVelocity(Real f_left_velocity,
                                                                 Real f_right_velocity) {
@@ -157,11 +161,11 @@ REGISTER_ACTUATOR(CDifferentialSteeringDefaultActuator,
                   "a = f * (w + b)\n\n"
                   "You can configure the average and stddev of both the bias and the factor. This\n"
                   "can be done with the optional attributes: 'bias_avg', 'bias_stddev',\n"
-                  "'factor_avg', and 'factor_stddev'. Bias attributes are expressed in cm/s, while\n"
+                  "'factor_avg', and 'factor_stddev'. Bias attributes are expressed in m/s, while\n"
                   "factor attributes are dimensionless. If none of these attributed is specified,\n"
                   "no noise is added. If at least one of these attributed is specified, noise is\n"
-                  "added and, for the non-specified attributes, the default value of 0 is used for\n"
-                  "the '*_avg' attributes, while 1 is used for '*_stddev' attributes. Examples:\n\n" 
+                  "added and, for the non-specified attributes, the default value of 1 is used for\n"
+                  "the '*_avg' attributes, while 0 is used for '*_stddev' attributes. Examples:\n\n" 
                   "  <controllers>\n"
                   "    ...\n"
                   "    <my_controller ...>\n"
