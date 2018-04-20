@@ -24,8 +24,6 @@ function step()
 		 string.format("%.2f", robot.joints.base_wheel_fl.encoder) .. ", " ..
 		 string.format("%.2f", robot.joints.base_wheel_br.encoder) .. ", " ..
 		 string.format("%.2f", robot.joints.base_wheel_fr.encoder))
-	log("platform position: " ..
-		 string.format("%.3f", robot.joints.base_platform.encoder))
 end
 
 
@@ -40,7 +38,6 @@ function reset()
 	robot.joints.base_wheel_fl.set_target(1)
 	robot.joints.base_wheel_br.set_target(1)
 	robot.joints.base_wheel_fr.set_target(1)
-	robot.joints.base_platform.set_target(0.0125)
 end
 
 
