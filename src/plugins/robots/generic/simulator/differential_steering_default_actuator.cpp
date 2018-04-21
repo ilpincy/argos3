@@ -18,10 +18,8 @@ namespace argos {
       m_pcRNG(NULL) {
       m_fCurrentVelocity[LEFT_WHEEL] = 0.0;
       m_fCurrentVelocity[RIGHT_WHEEL] = 0.0;
-      m_fNoiseBiasAvg[LEFT_WHEEL] = 1.0;
-      m_fNoiseBiasAvg[RIGHT_WHEEL] = 1.0;
-      m_fNoiseBiasStdDev[LEFT_WHEEL] = 0.0;
-      m_fNoiseBiasStdDev[RIGHT_WHEEL] = 0.0;
+      m_fNoiseBias[LEFT_WHEEL] = 1.0;
+      m_fNoiseBias[RIGHT_WHEEL] = 1.0;
       m_fNoiseFactorAvg[LEFT_WHEEL] = 1.0;
       m_fNoiseFactorAvg[RIGHT_WHEEL] = 1.0;
       m_fNoiseFactorStdDev[LEFT_WHEEL] = 0.0;
@@ -58,6 +56,8 @@ namespace argos {
    GetNodeAttributeOrDefault<Real>(t_tree, ATTR "_left", VAR[LEFT_WHEEL], VAR[LEFT_WHEEL]); \
    GetNodeAttributeOrDefault<Real>(t_tree, ATTR "_right", VAR[RIGHT_WHEEL], VAR[RIGHT_WHEEL]);
 
+#define PICK_BIAS(LRW) m_fNoiseBias[LRW ## _WHEEL] = m_pcRNG->Gaussian(fNoiseBiasStdDev[LRW ## _WHEEL], fNoiseBiasAvg[LRW ## _WHEEL])
+   
    void CDifferentialSteeringDefaultActuator::Init(TConfigurationNode& t_tree) {
       try {
          CCI_DifferentialSteeringActuator::Init(t_tree);
@@ -69,11 +69,18 @@ namespace argos {
             CHECK_ATTRIBUTE("factor_stddev");
          /* Handle noise attributes, if any */
          if(bNoise) {
+            /* Create RNG */
             m_pcRNG = CRandom::CreateRNG("argos");
-            PARSE_ATTRIBUTES("bias_avg", m_fNoiseBiasAvg);
-            PARSE_ATTRIBUTES("bias_stddev", m_fNoiseBiasStdDev);
+            /* Parse noise attributes */
+            Real fNoiseBiasAvg[2];
+            Real fNoiseBiasStdDev[2];
+            PARSE_ATTRIBUTES("bias_avg", fNoiseBiasAvg);
+            PARSE_ATTRIBUTES("bias_stddev", fNoiseBiasStdDev);
             PARSE_ATTRIBUTES("factor_avg", m_fNoiseFactorAvg);
             PARSE_ATTRIBUTES("factor_stddev", m_fNoiseFactorStdDev);
+            /* Choose robot bias */
+            PICK_BIAS(LEFT);
+            PICK_BIAS(RIGHT);
          }
       }
       catch(CARGoSException& ex) {
@@ -84,18 +91,18 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-#define ADD_GAUSSIAN(LRW, WHICH)                                  \
-   (m_fNoise ## WHICH ## StdDev[LRW ## _WHEEL] > 0.0 ?            \
-    m_pcRNG->Gaussian(m_fNoise ## WHICH ## StdDev[LRW ## _WHEEL], \
-                      m_fNoise ## WHICH ## Avg[LRW ## _WHEEL]) :  \
-    m_fNoise ## WHICH ## Avg[LRW ## _WHEEL])
+#define ADD_GAUSSIAN(LRW)                                  \
+   (m_fNoiseFactorStdDev[LRW ## _WHEEL] > 0.0 ?            \
+    m_pcRNG->Gaussian(m_fNoiseFactorStdDev[LRW ## _WHEEL], \
+                      m_fNoiseFactorAvg[LRW ## _WHEEL]) :  \
+    m_fNoiseFactorAvg[LRW ## _WHEEL])
 
-#define ADD_NOISE(LRW)                                                  \
-   m_fCurrentVelocity[LRW ## _WHEEL] =                                  \
-      ADD_GAUSSIAN(LRW, Factor)                                         \
-      *                                                                 \
-      (m_fCurrentVelocity[LRW ## _WHEEL] +                              \
-       ADD_GAUSSIAN(LRW, Bias));
+#define ADD_NOISE(LRW)                                     \
+   m_fCurrentVelocity[LRW ## _WHEEL] =                     \
+      ADD_GAUSSIAN(LRW)                                    \
+      *                                                    \
+      (m_fCurrentVelocity[LRW ## _WHEEL] +                 \
+       m_fNoiseBias[LRW ## _WHEEL]);
    
    void CDifferentialSteeringDefaultActuator::SetLinearVelocity(Real f_left_velocity,
                                                                 Real f_right_velocity) {
@@ -120,8 +127,15 @@ namespace argos {
    /****************************************/
    
    void CDifferentialSteeringDefaultActuator::Reset() {
+      /* Zero the speeds */
       m_fCurrentVelocity[LEFT_WHEEL]  = 0.0;
       m_fCurrentVelocity[RIGHT_WHEEL] = 0.0;
+      /*
+       * Throw away two RNG Gaussian calls to make sure the RNG sequence is the same after resetting
+       * These two calls were used to pick the bias in Init()
+       */
+      m_pcRNG->Gaussian(1.0, 0.0);
+      m_pcRNG->Gaussian(1.0, 0.0);
    }
    
    /****************************************/

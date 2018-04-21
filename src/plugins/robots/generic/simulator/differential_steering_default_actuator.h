@@ -69,12 +69,9 @@ namespace argos {
       /** Random number generator */
       CRandom::CRNG* m_pcRNG;
 
-      /** Noise bias average (Gaussian model) for each wheel */
-      Real m_fNoiseBiasAvg[2];
+      /** Noise bias for each wheel */
+      Real m_fNoiseBias[2];
       
-      /** Noise bias stddev (Gaussian model) for each wheel  */
-      Real m_fNoiseBiasStdDev[2];
-
       /** Noise factor average (Gaussian model) for each wheel  */
       Real m_fNoiseFactorAvg[2];
 
