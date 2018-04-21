@@ -18,7 +18,6 @@ namespace argos {
 
 #include <argos3/core/utility/datatypes/any.h>
 #include <argos3/core/simulator/medium/medium.h>
-#include <argos3/core/simulator/space/positional_indices/positional_index.h>
 #include <argos3/core/simulator/entity/embodied_entity.h>
 #include <argos3/core/simulator/entity/controllable_entity.h>
 
