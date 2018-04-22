@@ -299,6 +299,13 @@ namespace argos {
       TConfigurationNode& GetConfigForController(const std::string& str_id);
 
       /**
+       * Loads the TinyXML Document. This should have the same structure as an ARGoS file
+       * The variable m_tConfigurationRoot is set here.
+       */
+      void Load(ticpp::Document config);
+
+
+      /**
        * Loads the XML configuration file.
        * The XML configuration file is parsed by this function.
        * The variable m_tConfigurationRoot is set here.
@@ -355,13 +362,13 @@ namespace argos {
        * <li> the simulation clock exceeds the maximum value set in the XML;
        * <li> when CLoopFunctions::IsExperimentFinished() returns <tt>true</tt>.
        * </ul>
-       * @return <tt>true</tt> if the experiment has finished.       
+       * @return <tt>true</tt> if the experiment has finished.
        * @see GetMaxSimulationClock()
        * @see Terminate()
        * @see CLoopFunctions::IsExperimentFinished()
        */
       bool IsExperimentFinished() const;
-      
+
    private:
 
       void InitFramework(TConfigurationNode& t_tree);
