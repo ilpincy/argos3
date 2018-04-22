@@ -303,7 +303,7 @@ namespace argos {
        * The tree should have the same structure as an ARGoS file.
        * The variable m_tConfigurationRoot is set here.
        */
-      void Load(TConfigurationNode& t_tree);
+      void Load(ticpp::Document& t_tree);
 
 
       /**
