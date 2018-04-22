@@ -103,6 +103,19 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   void CSimulator::Load(TConfigurationNode& t_tree) {
+      /* Build configuration tree */
+      m_tConfiguration = t_tree;
+      m_tConfigurationRoot = *m_tConfiguration.FirstChildElement();
+      /* Init the experiment */
+      Init();
+      LOG.Flush();
+      LOGERR.Flush();
+   }
+
+   /****************************************/
+   /****************************************/
+
    void CSimulator::LoadExperiment() {
       /* Build configuration tree */
       m_tConfiguration.LoadFile(m_strExperimentConfigFileName);
