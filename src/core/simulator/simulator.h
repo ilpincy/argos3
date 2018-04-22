@@ -299,10 +299,11 @@ namespace argos {
       TConfigurationNode& GetConfigForController(const std::string& str_id);
 
       /**
-       * Loads the TinyXML Document. This should have the same structure as an ARGoS file
+       * Loads an already-parsed XML configuration tree.
+       * The tree should have the same structure as an ARGoS file.
        * The variable m_tConfigurationRoot is set here.
        */
-      void Load(ticpp::Document config);
+      void Load(TConfigurationNode& t_tree);
 
 
       /**
