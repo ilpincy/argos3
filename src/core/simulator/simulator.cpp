@@ -103,9 +103,9 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CSimulator::Load(ticpp::Document config) {
+   void CSimulator::Load(TConfigurationNode& t_tree) {
       /* Build configuration tree */
-      m_tConfiguration = config;
+      m_tConfiguration = t_tree;
       m_tConfigurationRoot = *m_tConfiguration.FirstChildElement();
       /* Init the experiment */
       Init();
