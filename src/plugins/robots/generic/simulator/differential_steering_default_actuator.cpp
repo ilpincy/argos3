@@ -134,8 +134,10 @@ namespace argos {
        * Throw away two RNG Gaussian calls to make sure the RNG sequence is the same after resetting
        * These two calls were used to pick the bias in Init()
        */
-      m_pcRNG->Gaussian(1.0, 0.0);
-      m_pcRNG->Gaussian(1.0, 0.0);
+      if(m_pcRNG) {
+         m_pcRNG->Gaussian(1.0, 0.0);
+         m_pcRNG->Gaussian(1.0, 0.0);
+      }
    }
    
    /****************************************/
