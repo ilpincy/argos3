@@ -12,6 +12,7 @@ set(ARGOS3_HEADERS_PLUGINS_SIMULATOR_ENTITIES
   ground_sensor_equipped_entity.h
   led_entity.h
   led_equipped_entity.h
+  lidar_sensor_equipped_entity.h
   light_entity.h
   light_sensor_equipped_entity.h
   magnet_entity.h
@@ -43,6 +44,7 @@ set(ARGOS3_SOURCES_PLUGINS_SIMULATOR_ENTITIES
   ground_sensor_equipped_entity.cpp
   led_entity.cpp
   led_equipped_entity.cpp
+  lidar_sensor_equipped_entity.cpp
   light_entity.cpp
   light_sensor_equipped_entity.cpp
   magnet_entity.cpp

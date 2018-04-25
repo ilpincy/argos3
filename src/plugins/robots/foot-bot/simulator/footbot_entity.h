@@ -17,6 +17,7 @@ namespace argos {
    class CGripperEquippedEntity;
    class CGroundSensorEquippedEntity;
    class CLEDEquippedEntity;
+   class CLidarSensorEquippedEntity;
    class CLightSensorEquippedEntity;
    class COmnidirectionalCameraEquippedEntity;
    class CPerspectiveCameraEquippedEntity;
@@ -85,6 +86,10 @@ namespace argos {
          return *m_pcLEDEquippedEntity;
       }
 
+      inline CLidarSensorEquippedEntity& GetLidarSensorEquippedEntity() {
+        return *m_pcLidarSensorEquippedEntity;
+      }
+
       inline CLightSensorEquippedEntity& GetLightSensorEquippedEntity() {
          return *m_pcLightSensorEquippedEntity;
       }
@@ -130,6 +135,7 @@ namespace argos {
       CGripperEquippedEntity*                m_pcGripperEquippedEntity;
       CGroundSensorEquippedEntity*           m_pcGroundSensorEquippedEntity;
       CLEDEquippedEntity*                    m_pcLEDEquippedEntity;
+      CLidarSensorEquippedEntity*            m_pcLidarSensorEquippedEntity;
       CLightSensorEquippedEntity*            m_pcLightSensorEquippedEntity;
       COmnidirectionalCameraEquippedEntity*  m_pcOmnidirectionalCameraEquippedEntity;
       CPerspectiveCameraEquippedEntity*      m_pcPerspectiveCameraEquippedEntity;

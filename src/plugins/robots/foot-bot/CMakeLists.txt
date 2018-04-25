@@ -8,6 +8,7 @@ set(ARGOS3_HEADERS_PLUGINS_ROBOTS_FOOTBOT_CONTROLINTERFACE
   control_interface/ci_footbot_distance_scanner_sensor.h
   control_interface/ci_footbot_encoder_sensor.h
   control_interface/ci_footbot_gripper_actuator.h
+  control_interface/ci_footbot_lidar_sensor.h
   control_interface/ci_footbot_light_sensor.h
   control_interface/ci_footbot_motor_ground_sensor.h
   control_interface/ci_footbot_proximity_sensor.h
@@ -25,6 +26,7 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
     simulator/footbot_distance_scanner_rotzonly_sensor.h
     simulator/footbot_entity.h
     simulator/footbot_gripper_default_actuator.h
+    simulator/footbot_lidar_default_sensor.h
     simulator/footbot_light_rotzonly_sensor.h
     simulator/footbot_motor_ground_rotzonly_sensor.h
     simulator/footbot_proximity_default_sensor.h
@@ -43,6 +45,7 @@ set(ARGOS3_SOURCES_PLUGINS_ROBOTS_FOOTBOT
   control_interface/ci_footbot_distance_scanner_sensor.cpp
   control_interface/ci_footbot_encoder_sensor.cpp
   control_interface/ci_footbot_gripper_actuator.cpp
+  control_interface/ci_footbot_lidar_sensor.cpp
   control_interface/ci_footbot_light_sensor.cpp
   control_interface/ci_footbot_motor_ground_sensor.cpp
   control_interface/ci_footbot_proximity_sensor.cpp
@@ -62,6 +65,7 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
     simulator/footbot_distance_scanner_rotzonly_sensor.cpp
     simulator/footbot_entity.cpp
     simulator/footbot_gripper_default_actuator.cpp
+    simulator/footbot_lidar_default_sensor.cpp
     simulator/footbot_light_rotzonly_sensor.cpp
     simulator/footbot_motor_ground_rotzonly_sensor.cpp
     simulator/footbot_proximity_default_sensor.cpp
