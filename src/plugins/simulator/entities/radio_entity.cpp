@@ -15,7 +15,8 @@ namespace argos {
    /****************************************/
 
    CRadioEntity::CRadioEntity(CComposableEntity* pc_parent) :
-      CPositionalEntity(pc_parent) {}
+      CPositionalEntity(pc_parent),
+      m_pcMedium(nullptr) {}
 
    /****************************************/
    /****************************************/
@@ -24,7 +25,8 @@ namespace argos {
                               const std::string& str_id,
                               Real f_range) :
       CPositionalEntity(pc_parent, str_id, CVector3(), CQuaternion()),
-      m_fRange(f_range) {}
+      m_fRange(f_range),
+      m_pcMedium(nullptr) {}
 
    /****************************************/
    /****************************************/
