@@ -35,7 +35,9 @@ namespace argos {
       m_pcDirectionalLEDEquippedEntity(nullptr),
       m_pcLEDEquippedEntity(nullptr),
       m_pcTagEquippedEntity(nullptr),
-      m_pcRadioEquippedEntity(nullptr) {}
+      m_pcRadioEquippedEntity(nullptr),
+      m_pcMagnetEquippedEntity(nullptr),
+      m_pcProximitySensorEquippedEntity(nullptr) {}
 
    /****************************************/
    /****************************************/
