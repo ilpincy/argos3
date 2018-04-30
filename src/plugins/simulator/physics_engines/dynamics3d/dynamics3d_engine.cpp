@@ -30,7 +30,8 @@ namespace argos {
                &m_cBroadphase,
                &m_cSolver,
                &m_cConfiguration),
-      m_unIterations(10) {}
+      m_unIterations(10),
+      m_fDeltaT(0) {}
 
    /****************************************/
    /****************************************/
