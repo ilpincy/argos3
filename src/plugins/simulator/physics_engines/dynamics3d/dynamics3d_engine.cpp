@@ -140,13 +140,30 @@ namespace argos {
    /****************************************/
 
    void CDynamics3DEngine::Destroy() {
-      /* Empty the physics entity map */
-      for(CDynamics3DModel::TMap::iterator it = m_tPhysicsModels.begin();
-          it != std::end(m_tPhysicsModels);
-          ++it) {
-         delete it->second;
+      /* Destroy all physics models */
+      for(CDynamics3DModel::TMap::iterator itModel = std::begin(m_tPhysicsModels);
+          itModel != std::end(m_tPhysicsModels);
+          ++itModel) {
+         /* Remove model from the plugins first */
+         for(CDynamics3DPlugin::TMap::iterator itPlugin = std::begin(m_tPhysicsPlugins);
+             itPlugin != std::end(m_tPhysicsPlugins);
+             ++itPlugin) {
+            itPlugin->second->UnregisterModel(*itModel->second);
+         }
+         /* Destroy the model */
+         itModel->second->RemoveFromWorld(m_cWorld);
+         delete itModel->second;
       }
-      m_tPhysicsModels.clear();      
+      /* Destroy all plug-ins */
+      for(CDynamics3DPlugin::TMap::iterator itPlugin = std::begin(m_tPhysicsPlugins);
+          itPlugin != std::end(m_tPhysicsPlugins);
+          ++itPlugin) {
+         itPlugin->second->Destroy();
+         delete itPlugin->second;
+      }
+      /* Empty the maps */
+      m_tPhysicsPlugins.clear();
+      m_tPhysicsModels.clear();
    }
 
    /****************************************/

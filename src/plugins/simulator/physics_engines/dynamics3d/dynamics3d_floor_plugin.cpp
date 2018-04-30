@@ -12,25 +12,48 @@ namespace argos {
    /****************************************/
    
    void CDynamics3DFloorPlugin::Init(TConfigurationNode& t_tree) {
-      GetNodeAttributeOrDefault(t_tree, "height", m_fHeight, m_fHeight);
-      /* Get the arena center and size */
+      /* Get the floor height */
+      Real fHeight = 0.0f;
+      GetNodeAttributeOrDefault(t_tree, "height", fHeight, fHeight);
+      /* Get the arena center and size from the arena node */
+      CVector3 cArenaCenter(0.0f, 0.0f, 0.0f);
+      CVector3 cArenaSize(0.0f, 0.0f, 0.0f);
       TConfigurationNode& tArena = GetNode(CSimulator::GetInstance().GetConfigurationRoot(), "arena");
-      GetNodeAttribute(tArena, "size", m_cArenaSize);
-      GetNodeAttributeOrDefault(tArena, "center", m_cArenaCenter, m_cArenaCenter);
+      GetNodeAttribute(tArena, "size", cArenaSize);
+      GetNodeAttributeOrDefault(tArena, "center", cArenaCenter, cArenaCenter);
+      /* Configure the floor */
+      m_cFloorExtents = btVector3(cArenaSize.GetX(), fHeight, cArenaSize.GetY());
+      m_cFloorOrigin = btVector3(cArenaCenter.GetX(), -fHeight * 0.5f, -cArenaCenter.GetY());
+      /* Create the floor */
+      new (&m_cFloorShape) btBoxShape(m_cFloorExtents * 0.5f);
+      new (&m_cFloor) btRigidBody(0, nullptr, &m_cFloorShape);
+      m_cFloor.setUserPointer(nullptr);
+      m_cFloor.getWorldTransform().setOrigin(m_cFloorOrigin);
+      /* Add floor to world */
+      m_pcEngine->GetWorld().addRigidBody(&m_cFloor);
    } 
 
    /****************************************/
    /****************************************/
 
    void CDynamics3DFloorPlugin::Reset() {
-      /* Create the floor */
-      btVector3 cFloorExtents(m_cArenaSize.GetX(), m_fHeight, m_cArenaSize.GetY());
-      btVector3 cFloorOrigin(m_cArenaCenter.GetX(), -m_fHeight * 0.5f, -m_cArenaCenter.GetY());
-      new (&m_cFloorShape) btBoxShape(cFloorExtents * 0.5f);
+      /* Remove floor from world */
+      m_pcEngine->GetWorld().removeRigidBody(&m_cFloor);
+      /* Recreate the floor */
+      new (&m_cFloorShape) btBoxShape(m_cFloorExtents * 0.5f);
       new (&m_cFloor) btRigidBody(0, nullptr, &m_cFloorShape);
       m_cFloor.setUserPointer(nullptr);
-      m_cFloor.getWorldTransform().setOrigin(cFloorOrigin);
+      m_cFloor.getWorldTransform().setOrigin(m_cFloorOrigin);
+      /* Readd floor to world */
       m_pcEngine->GetWorld().addRigidBody(&m_cFloor);
+   }
+   
+   /****************************************/
+   /****************************************/
+
+   void CDynamics3DFloorPlugin::Destroy() {
+      /* Remove floor from world */
+      m_pcEngine->GetWorld().removeRigidBody(&m_cFloor);
    }
    
    /****************************************/

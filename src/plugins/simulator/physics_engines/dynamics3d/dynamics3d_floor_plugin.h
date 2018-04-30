@@ -19,9 +19,8 @@ namespace argos {
    class CDynamics3DFloorPlugin : public CDynamics3DPlugin {
    public:
       CDynamics3DFloorPlugin() :
-         m_cArenaCenter(0.0f, 0.0f, 0.0f),
-         m_cArenaSize(0.0f, 0.0f, 0.0f),
-         m_fHeight(0.0f),
+         m_cFloorExtents(0.0f, 0.0f, 0.0f),
+         m_cFloorOrigin(0.0f, 0.0f, 0.0f),
          m_cFloorShape(btVector3(0.0f, 0.0f, 0.0f)),
          m_cFloor(0.0f, nullptr, nullptr) {}
       
@@ -31,7 +30,7 @@ namespace argos {
       
       virtual void Reset();
 
-      virtual void Destroy() {}
+      virtual void Destroy();
 
       virtual void RegisterModel(CDynamics3DModel& c_model) {}
 
@@ -41,12 +40,10 @@ namespace argos {
 
    private:
 
-      CVector3 m_cArenaCenter;
-      CVector3 m_cArenaSize;
-      Real m_fHeight;
+      btVector3 m_cFloorExtents;
+      btVector3 m_cFloorOrigin;
       btBoxShape m_cFloorShape;
       btRigidBody m_cFloor;
-      
    };
    
    /****************************************/
