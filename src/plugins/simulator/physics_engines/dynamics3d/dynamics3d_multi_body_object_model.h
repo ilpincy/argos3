@@ -29,6 +29,7 @@ namespace argos {
          CLink(CDynamics3DMultiBodyObjectModel& c_model,
                UInt32 un_link_index,
                SAnchor& s_anchor,
+               std::shared_ptr<btCollisionShape>& ptr_shape,
                const SData& s_data);
 
          virtual ~CLink() {}
@@ -63,6 +64,7 @@ namespace argos {
 
          CBase(CDynamics3DMultiBodyObjectModel& c_model,
                SAnchor& s_anchor,
+               std::shared_ptr<btCollisionShape>& ptr_shape,
                const SData& s_data);
 
          virtual ~CBase() {}

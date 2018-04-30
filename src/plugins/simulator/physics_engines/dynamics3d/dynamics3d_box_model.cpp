@@ -18,12 +18,14 @@ namespace argos {
 
    CDynamics3DBoxModel::CDynamics3DBoxModel(CDynamics3DEngine& c_engine,
                                             CBoxEntity& c_box) :
-      CDynamics3DSingleBodyObjectModel(c_engine, c_box) {
+      CDynamics3DSingleBodyObjectModel(c_engine, c_box),
+      m_pcBody(nullptr) {
       /* Fetch a collision shape for this model */
-      m_pcShape = CDynamics3DShapeManager::RequestBox(
-         btVector3(c_box.GetSize().GetX() * 0.5f,
-                   c_box.GetSize().GetZ() * 0.5f, 
-                   c_box.GetSize().GetY() * 0.5f));
+      std::shared_ptr<btCollisionShape> ptrShape = 
+         CDynamics3DShapeManager::RequestBox(
+            btVector3(c_box.GetSize().GetX() * 0.5f,
+                      c_box.GetSize().GetZ() * 0.5f, 
+                      c_box.GetSize().GetY() * 0.5f));
       /* Get the origin anchor */
       SAnchor& sAnchor = c_box.GetEmbodiedEntity().GetOriginAnchor();
       const CQuaternion& cOrientation = sAnchor.Orientation;
@@ -47,21 +49,21 @@ namespace argos {
       /* If the box is movable calculate its mass and inertia */
       if(c_box.GetEmbodiedEntity().IsMovable()) {
          fMass = c_box.GetMass();
-         m_pcShape->calculateLocalInertia(fMass, cInertia);
+         ptrShape->calculateLocalInertia(fMass, cInertia);
       }
       /* Use the default friction */
       btScalar fFriction = GetEngine().GetDefaultFriction();
       /* Set up the body */
-      CBody* pcBody = new CBody(*this,
-                                sAnchor,
-                                CBody::SData(cStartTransform,
-                                             cCenterOfMassOffset,
-                                             cInertia,
-                                             fMass,
-                                             fFriction,
-                                             *m_pcShape));
+      CBody* m_pcBody = new CBody(*this,
+                                  sAnchor,
+                                  ptrShape,
+                                  CBody::SData(cStartTransform,
+                                               cCenterOfMassOffset,
+                                               cInertia,
+                                               fMass,
+                                               fFriction));
       /* Transfer the body to the base class */
-      m_vecBodies.push_back(pcBody);
+      m_vecBodies.push_back(m_pcBody);
       /* Synchronize with the entity in the space */
       UpdateEntityStatus();
    }
@@ -70,7 +72,8 @@ namespace argos {
    /****************************************/
    
    CDynamics3DBoxModel::~CDynamics3DBoxModel() {
-      CDynamics3DShapeManager::ReleaseBox(m_pcShape);
+      /* Delete the body */
+      delete m_pcBody;
    }
    
    /****************************************/

@@ -41,7 +41,7 @@ namespace argos {
 
       CAbstractBody::SData CreateBodyData(const CPrototypeLinkEntity& c_link_entity);
 
-      btCollisionShape& RequestShape(const CPrototypeLinkEntity& c_link_entity);
+      std::shared_ptr<btCollisionShape> RequestShape(const CPrototypeLinkEntity& c_link_entity);
 
    private:
 

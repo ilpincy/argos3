@@ -17,11 +17,11 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   btCollisionShape& CDynamics3DPrototypeModel::RequestShape(const CPrototypeLinkEntity& c_link_entity) {
+   std::shared_ptr<btCollisionShape> CDynamics3DPrototypeModel::RequestShape(const CPrototypeLinkEntity& c_link_entity) {
       btVector3 cHalfExtents(c_link_entity.GetExtents().GetX() * 0.5f,
                              c_link_entity.GetExtents().GetZ() * 0.5f,
                              c_link_entity.GetExtents().GetY() * 0.5f);
-      btCollisionShape* pcShape = nullptr;
+      std::shared_ptr<btCollisionShape> pcShape;
       switch(c_link_entity.GetGeometry()) {
       case CPrototypeLinkEntity::EGeometry::BOX:
          pcShape = CDynamics3DShapeManager::RequestBox(cHalfExtents);
@@ -36,7 +36,7 @@ namespace argos {
          THROW_ARGOSEXCEPTION("Collision shape geometry not implemented");
          break;
       }
-      return *pcShape;
+      return pcShape;
    }
 
    /****************************************/
@@ -44,15 +44,13 @@ namespace argos {
 
    CDynamics3DMultiBodyObjectModel::CAbstractBody::SData
       CDynamics3DPrototypeModel::CreateBodyData(const CPrototypeLinkEntity& c_link_entity) {
-      /* retreive a collision shape */
-      btCollisionShape& cCollisionShape = RequestShape(c_link_entity);
-      /* get friction */
+      /* Get friction */
       btScalar fFriction = GetEngine().GetDefaultFriction();
-      /* calculate inertia */
+      /* Calculate inertia */
       btScalar fMass = c_link_entity.GetMass();
       btVector3 cInertia;
-      cCollisionShape.calculateLocalInertia(fMass, cInertia);
-      /* calculate start transform */
+      RequestShape(c_link_entity)->calculateLocalInertia(fMass, cInertia);
+      /* Calculate start transform */
       const CVector3& cPosition = c_link_entity.GetAnchor().Position;
       const CQuaternion& cOrientation = c_link_entity.GetAnchor().Orientation;
       btTransform cStartTransform(btQuaternion(cOrientation.GetX(),
@@ -62,11 +60,11 @@ namespace argos {
                                   btVector3(cPosition.GetX(),
                                             cPosition.GetZ(),
                                            -cPosition.GetY()));
-      /* calculate center of mass offset */
+      /* Calculate center of mass offset */
       btTransform cCenterOfMassOffset(btQuaternion(0.0f, 0.0f, 0.0f, 1.0f),
                                       btVector3(0.0f, -c_link_entity.GetExtents().GetZ() * 0.5f, 0.0f));
-      /* return link data */
-      return CAbstractBody::SData(cStartTransform, cCenterOfMassOffset, cInertia, fMass, fFriction, cCollisionShape);
+      /* Return link data */
+      return CAbstractBody::SData(cStartTransform, cCenterOfMassOffset, cInertia, fMass, fFriction);
    }
 
    /****************************************/
@@ -80,54 +78,61 @@ namespace argos {
                                       !c_entity.GetEmbodiedEntity().IsMovable()),
       m_cEntity(c_entity),
       m_cJointEquippedEntity(c_entity.GetJointEquippedEntity()) {
-      /* use the reference link as the base of the robot */
+      /* Use the reference link as the base of the robot */
       CPrototypeLinkEntity& cBaseLink = c_entity.GetLinkEquippedEntity().GetReferenceLink();
-      /* create the data for the link */
-      const CAbstractBody::SData& sBaseLinkData =
-         CreateBodyData(cBaseLink);
-      /* set up the base link body */
-      CBase* pcBase = new CBase(*this, cBaseLink.GetAnchor(), sBaseLinkData);
-      /* add to collection */
+      /* Get the collision shape */
+      std::shared_ptr<btCollisionShape> ptrBaseLinkShape = RequestShape(cBaseLink);
+      /* Set up the base link body */
+      CBase* pcBase = 
+         new CBase(*this,
+                   cBaseLink.GetAnchor(),
+                   ptrBaseLinkShape,
+                   CreateBodyData(cBaseLink));
+      /* Add to collection */
       m_vecBodies.push_back(pcBase);
-      /* counter for enumerating the links inside the btMultiBody */
+      /* Counter for enumerating the links inside the btMultiBody */
       UInt32 unLinkIndex = 0;
-      /* copy all joints pointers into a temporary vector */
+      /* Copy all joints pointers into a temporary vector */
       CPrototypeJointEntity::TVector vecJointsToAdd =
          m_cJointEquippedEntity.GetJoints();
-      /* while there are joints to be added */
+      /* While there are joints to be added */
       while(! vecJointsToAdd.empty()) {
          size_t unRemainingJoints = vecJointsToAdd.size();
          for(CPrototypeJointEntity::TVectorIterator it_joint = std::begin(vecJointsToAdd);
              it_joint != std::end(vecJointsToAdd);
              ++it_joint) {
-            /* get a reference to the joint */
+            /* Get a reference to the joint */
             CPrototypeJointEntity& cJoint = (**it_joint);
-            /* get a reference to the parent link entity */
+            /* Get a reference to the parent link entity */
             const CPrototypeLinkEntity& cParentLink = cJoint.GetParentLink();
-            /* check if the parent link has been added */
+            /* Check if the parent link has been added */
             CAbstractBody::TVectorIterator itParentLinkBody =
                std::find_if(std::begin(m_vecBodies),
                             std::end(m_vecBodies),
                             [&cParentLink] (CAbstractBody* pc_body) {
                return (cParentLink.GetAnchor().Index == pc_body->GetAnchor().Index);
             });
-            /* if the parent link hasn't been added yet, try the next joint */
+            /* If the parent link hasn't been added yet, try the next joint */
             if(itParentLinkBody == std::end(m_vecBodies)) {
                continue;
             }
-            /* there should be no need to check the result of this cast */
+            /* There should be no need to check the result of this cast */
             CLink* pcParentLinkBody = dynamic_cast<CLink*>(*itParentLinkBody);
-            /* setup child link */
-            const CAbstractBody::SData& sChildLinkData =
-               CreateBodyData(cJoint.GetChildLink());
-            /* set up the child link body */
-            CLink* pcChildLinkBody = new CLink(*this,
-                                               unLinkIndex++,
-                                               cJoint.GetChildLink().GetAnchor(),
-                                               sChildLinkData);
-            /* add to collection */
+            /* Get a reference to the child link */
+            CPrototypeLinkEntity& cChildLink = cJoint.GetChildLink();
+            /* Get the collision shape */
+            std::shared_ptr<btCollisionShape> ptrChildLinkShape =
+               RequestShape(cChildLink);
+            /* Set up the child link body */
+            CLink* pcChildLinkBody = 
+               new CLink(*this,
+                         unLinkIndex++,
+                         cChildLink.GetAnchor(),
+                         ptrChildLinkShape,
+                         CreateBodyData(cChildLink));
+            /* Add to collection */
             m_vecBodies.push_back(pcChildLinkBody);
-            /* calculate joint parameters for parent link */
+            /* Calculate joint parameters for parent link */
             const CVector3& cParentOffsetPosition = cJoint.GetParentLinkJointPosition();
             const CQuaternion& cParentOffsetOrientation = cJoint.GetParentLinkJointOrientation();
             btTransform cParentOffsetTransform =
@@ -139,7 +144,7 @@ namespace argos {
                                      cParentOffsetPosition.GetZ(),
                                     -cParentOffsetPosition.GetY()));
             cParentOffsetTransform = pcParentLinkBody->GetData().CenterOfMassOffset * cParentOffsetTransform;
-            /* calculate joint parameters for child link */
+            /* Calculate joint parameters for child link */
             const CVector3& cChildOffsetPosition = cJoint.GetChildLinkJointPosition();
             const CQuaternion& cChildOffsetOrientation = cJoint.GetChildLinkJointOrientation();
             btTransform cChildOffsetTransform =
@@ -151,11 +156,11 @@ namespace argos {
                                      cChildOffsetPosition.GetZ(),
                                     -cChildOffsetPosition.GetY()));
             cChildOffsetTransform = pcChildLinkBody->GetData().CenterOfMassOffset * cChildOffsetTransform;
-            /* calculate the joint axis */
+            /* Calculate the joint axis */
             btVector3 cJointAxis(cJoint.GetJointAxis().GetX(),
                                  cJoint.GetJointAxis().GetZ(),
                                 -cJoint.GetJointAxis().GetY());
-            /* calculate the parent to child joint rotation */
+            /* Calculate the parent to child joint rotation */
             /*
             // From testing, these both the of following solutions seem correct although one may be wrong
             btQuaternion cParentToChildRotation = cParentOffsetTransform.inverse().getRotation() *
@@ -163,7 +168,7 @@ namespace argos {
             */
             btQuaternion cParentToChildRotation = cChildOffsetTransform.getRotation() * 
                cParentOffsetTransform.inverse().getRotation();
-            /* store joint configuration for reset */
+            /* Store joint configuration for reset */
             m_vecJoints.emplace_back(cJoint.GetType(),
                                      *pcParentLinkBody,
                                      *pcChildLinkBody,
@@ -172,21 +177,21 @@ namespace argos {
                                      cParentToChildRotation,
                                      cJointAxis,
                                      cJoint.GetDisableCollision());
-            /* sensor and actuator configuration for revolute and prismatic joints */
+            /* Sensor and actuator configuration for revolute and prismatic joints */
             if(cJoint.GetType() == CPrototypeJointEntity::EType::REVOLUTE ||
                cJoint.GetType() == CPrototypeJointEntity::EType::PRISMATIC) {
-               /* if the joint actuator isn't disabled */
+               /* If the joint actuator isn't disabled */
                CPrototypeJointEntity::SActuator& sActuator = cJoint.GetActuator();
                   if(sActuator.Mode != CPrototypeJointEntity::SActuator::EMode::DISABLED) {
                   m_vecActuators.emplace_back(*this, sActuator, pcChildLinkBody->GetIndex());
                }
-               /* and if the joint sensor isn't disabled */
+               /* And if the joint sensor isn't disabled */
                CPrototypeJointEntity::SSensor& sSensor = cJoint.GetSensor();
                if(sSensor.Mode != CPrototypeJointEntity::SSensor::EMode::DISABLED) {
                   m_vecSensors.emplace_back(*this, sSensor, pcChildLinkBody->GetIndex());
                }
             }
-            /* joint limits */
+            /* Joint limits */
             if(cJoint.HasLimit()) {
                if(cJoint.GetType() == CPrototypeJointEntity::EType::REVOLUTE) {
                   const CRange<CRadians>& cLimit = cJoint.GetLimit().Revolute;
@@ -203,7 +208,7 @@ namespace argos {
                                            pcChildLinkBody->GetIndex());
                }
             }
-            /* now that the joint and link has been added we remove it from the vector
+            /* Now that the joint and link has been added we remove it from the vector
                and restart the loop */
             vecJointsToAdd.erase(it_joint);
             break;
@@ -228,7 +233,7 @@ namespace argos {
 
          }
       }
-      /* with this call to reset, the multi-body model is configured and ready to be added */
+      /* With this call to reset, the multi-body model is configured and ready to be added */
       Reset();
    }
 
@@ -236,13 +241,13 @@ namespace argos {
    /****************************************/
 
    void CDynamics3DPrototypeModel::AddToWorld(btMultiBodyDynamicsWorld& c_world) {
-      /* call CDynamics3DMultiBodyObjectModel::AddToWorld to add all bodies to the world */
+      /* Call CDynamics3DMultiBodyObjectModel::AddToWorld to add all bodies to the world */
       CDynamics3DMultiBodyObjectModel::AddToWorld(c_world);
-      /* add the actuators (btMultiBodyJointMotors) constraints to the world */
+      /* Add the actuators (btMultiBodyJointMotors) constraints to the world */
       for(SActuator& s_actuator : m_vecActuators) {
          c_world.addMultiBodyConstraint(&s_actuator.Motor);
       }
-      /* add the joint limits to the world */
+      /* Add the joint limits to the world */
       for(SLimit& s_limit : m_vecLimits) {
          c_world.addMultiBodyConstraint(&s_limit.Constraint);
       }
@@ -252,15 +257,15 @@ namespace argos {
    /****************************************/
 
    void CDynamics3DPrototypeModel::RemoveFromWorld(btMultiBodyDynamicsWorld& c_world) {
-      /* remove the joint limits to the world */
+      /* Remove the joint limits to the world */
       for(SLimit& s_limit : m_vecLimits) {
          c_world.removeMultiBodyConstraint(&s_limit.Constraint);
       }
-      /* remove the actuators (btMultiBodyJointMotors) constraints to the world */
+      /* Remove the actuators (btMultiBodyJointMotors) constraints to the world */
       for(SActuator& s_actuator : m_vecActuators) {
          c_world.removeMultiBodyConstraint(&s_actuator.Motor);
       }
-      /* call CDynamics3DMultiBodyObjectModel::RemoveFromWorld to remove all bodies to the world */
+      /* Call CDynamics3DMultiBodyObjectModel::RemoveFromWorld to remove all bodies to the world */
       CDynamics3DMultiBodyObjectModel::RemoveFromWorld(c_world);
    }
 
@@ -268,9 +273,9 @@ namespace argos {
    /****************************************/
 
    void CDynamics3DPrototypeModel::Reset() {
-      /* reset the base class (recreates the btMultiBody and calls reset on the bodies) */
+      /* Reset the base class (recreates the btMultiBody and calls reset on the bodies) */
       CDynamics3DMultiBodyObjectModel::Reset();
-      /* add setup the links and joints */
+      /* Add setup the links and joints */
       for(SJoint& s_joint : m_vecJoints) {
          switch(s_joint.Type) {
          case CPrototypeJointEntity::EType::FIXED:
@@ -318,11 +323,11 @@ namespace argos {
             break;
          }
       }
-      /* reset the actuators */
+      /* Reset the actuators */
       for(SActuator& s_actuator : m_vecActuators) {
          s_actuator.Reset();
       }
-      /* reset the joint limits */
+      /* Reset the joint limits */
       for(SLimit& s_limit : m_vecLimits) {
          s_limit.Reset();
       }
@@ -336,11 +341,11 @@ namespace argos {
    /****************************************/
 
    void CDynamics3DPrototypeModel::UpdateEntityStatus() {
-      /* write back sensor data to the joints */
+      /* Write back sensor data to the joints */
       for(SSensor& s_sensor : m_vecSensors) {
          s_sensor.Update();
       }
-      /* update anchors using the base class method */
+      /* Update anchors using the base class method */
       CDynamics3DMultiBodyObjectModel::UpdateEntityStatus();
    }
 
@@ -348,7 +353,7 @@ namespace argos {
    /****************************************/
 
    void CDynamics3DPrototypeModel::UpdateFromEntityStatus() {
-      /* read in actuator data from the joints */
+      /* Read in actuator data from the joints */
       for(SActuator& s_actuator : m_vecActuators) {
          s_actuator.Update();
       }

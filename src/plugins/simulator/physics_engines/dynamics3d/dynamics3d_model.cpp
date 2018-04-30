@@ -21,25 +21,25 @@ namespace argos {
                                                  const btTransform& c_center_of_mass_offset,
                                                  const btVector3& c_inertia,
                                                  btScalar f_mass,
-                                                 btScalar f_friction,
-                                                 btCollisionShape& c_shape) :
+                                                 btScalar f_friction) :
       StartTransform(c_start_transform),
       InverseStartTransform(c_start_transform.inverse()),
       CenterOfMassOffset(c_center_of_mass_offset),
       InverseCenterOfMassOffset(c_center_of_mass_offset.inverse()),
       Inertia(c_inertia),
       Mass(f_mass),
-      Friction(f_friction),
-      Shape(c_shape) {}
+      Friction(f_friction) {}
 
    /****************************************/
    /****************************************/
 
    CDynamics3DModel::CAbstractBody::CAbstractBody(CDynamics3DModel& c_model,
                                                   SAnchor& s_anchor,
+                                                  std::shared_ptr<btCollisionShape>& ptr_shape,
                                                   const SData& s_data) :
       m_cModel(c_model),
       m_sAnchor(s_anchor),
+      m_ptrShape(ptr_shape),
       m_sData(s_data) {}
 
    /****************************************/
@@ -54,6 +54,13 @@ namespace argos {
 
    SAnchor& CDynamics3DModel::CAbstractBody::GetAnchor() {
       return m_sAnchor;
+   }
+
+   /****************************************/
+   /****************************************/
+
+   btCollisionShape& CDynamics3DModel::CAbstractBody::GetShape() {
+      return *(m_ptrShape.get());
    }
 
    /****************************************/

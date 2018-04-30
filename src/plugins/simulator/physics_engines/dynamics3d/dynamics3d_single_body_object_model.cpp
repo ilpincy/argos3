@@ -53,7 +53,7 @@ namespace argos {
 
    void CDynamics3DSingleBodyObjectModel::CalculateBoundingBox() {
       CAbstractBody* pcBody = m_vecBodies[0];
-      btCollisionShape& cShape = pcBody->GetData().Shape;
+      btCollisionShape& cShape = pcBody->GetShape();
       btVector3 cAabbMin;
       btVector3 cAabbMax;
       /* Get the axis aligned bounding box for the current body */
@@ -83,7 +83,7 @@ namespace argos {
    void CDynamics3DSingleBodyObjectModel::CBody::Reset() {
       btRigidBody::btRigidBodyConstructionInfo cInfo(m_sData.Mass, 
                                                      nullptr,
-                                                     &m_sData.Shape,
+                                                     &GetShape(),
                                                      m_sData.Inertia);
       cInfo.m_friction = m_sData.Friction;
       cInfo.m_startWorldTransform = m_sData.StartTransform *
@@ -100,8 +100,9 @@ namespace argos {
 
    CDynamics3DSingleBodyObjectModel::CBody::CBody(CDynamics3DModel& c_model,
                                                   SAnchor& s_anchor,
+                                                  std::shared_ptr<btCollisionShape>& ptr_shape,
                                                   const SData& s_data) :
-      CAbstractBody(c_model, s_anchor, s_data),
+      CAbstractBody(c_model, s_anchor, ptr_shape, s_data),
       m_cRigidBody(0.0f, nullptr, nullptr) {}
 
    /****************************************/

@@ -28,7 +28,7 @@ namespace argos {
 
    private:
 
-      btBoxShape* m_pcShape;
+      CBody* m_pcBody;
 
    };
 }

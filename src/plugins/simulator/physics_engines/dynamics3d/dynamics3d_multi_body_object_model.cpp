@@ -79,11 +79,11 @@ namespace argos {
       btVector3 cModelAabbMin, cModelAabbMax, cBodyAabbMin, cBodyAabbMax;
       /* Initialize the bounding box with the base's AABB */
       CAbstractBody* pcBase = m_vecBodies[0];
-      pcBase->GetData().Shape.getAabb(pcBase->GetTransform(), cModelAabbMin, cModelAabbMax);
+      pcBase->GetShape().getAabb(pcBase->GetTransform(), cModelAabbMin, cModelAabbMax);
       /* Extend AABB to include other bodies */
       for(CAbstractBody* pc_body : m_vecBodies) {
          /* Get the axis aligned bounding box for the current body */
-         pc_body->GetData().Shape.getAabb(pc_body->GetTransform(), cBodyAabbMin, cBodyAabbMax);
+         pc_body->GetShape().getAabb(pc_body->GetTransform(), cBodyAabbMin, cBodyAabbMax);
          /* Update minimum corner */
          cModelAabbMin.setX(cModelAabbMin.getX() < cBodyAabbMin.getX() ? cModelAabbMin.getX() : cBodyAabbMin.getX());
          cModelAabbMin.setY(cModelAabbMin.getY() < cBodyAabbMin.getY() ? cModelAabbMin.getY() : cBodyAabbMin.getY());
@@ -157,8 +157,9 @@ namespace argos {
    CDynamics3DMultiBodyObjectModel::CLink::CLink(CDynamics3DMultiBodyObjectModel& c_model,
                                                  UInt32 un_link_index,
                                                  SAnchor& s_anchor,
+                                                 std::shared_ptr<btCollisionShape>& ptr_shape,
                                                  const SData& s_data) :
-      CAbstractBody(c_model, s_anchor, s_data),
+      CAbstractBody(c_model, s_anchor, ptr_shape, s_data),
       m_cModel(c_model),
       m_unLinkIndex(un_link_index),
       m_cMultiBodyLink(nullptr, 0) {}
@@ -173,7 +174,7 @@ namespace argos {
       btMultiBody& cMultiBody = m_cModel.GetMultiBody();
       new (&m_cMultiBodyLink) btMultiBodyLinkCollider(&cMultiBody, m_unLinkIndex);
       /* Set up the btMultiBodyLinkCollider */
-      m_cMultiBodyLink.setCollisionShape(&m_sData.Shape);
+      m_cMultiBodyLink.setCollisionShape(m_ptrShape.get());
       m_cMultiBodyLink.setWorldTransform(m_sData.StartTransform * 
          m_sData.InverseCenterOfMassOffset);
       m_cMultiBodyLink.setFriction(m_sData.Friction);
@@ -242,8 +243,9 @@ namespace argos {
 
    CDynamics3DMultiBodyObjectModel::CBase::CBase(CDynamics3DMultiBodyObjectModel& c_model,
                                                  SAnchor& s_anchor,
+                                                 std::shared_ptr<btCollisionShape>& ptr_shape,
                                                  const SData& s_data) :
-      CLink(c_model, -1, s_anchor, s_data) {}
+      CLink(c_model, -1, s_anchor, ptr_shape, s_data) {}
 
    /****************************************/
    /****************************************/
@@ -255,7 +257,7 @@ namespace argos {
       btMultiBody& cMultiBody = m_cModel.GetMultiBody();
       new (&m_cMultiBodyLink) btMultiBodyLinkCollider(&cMultiBody, -1);
       /* Set up the btMultiBodyLinkCollider */
-      m_cMultiBodyLink.setCollisionShape(&m_sData.Shape);
+      m_cMultiBodyLink.setCollisionShape(m_ptrShape.get());
       m_cMultiBodyLink.setWorldTransform(m_sData.StartTransform * 
          m_sData.InverseCenterOfMassOffset);
       m_cMultiBodyLink.setFriction(m_sData.Friction);

@@ -45,8 +45,7 @@ namespace argos {
                   const btTransform& c_center_of_mass_offset,
                   const btVector3& c_inertia,
                   btScalar f_mass,
-                  btScalar f_friction,
-                  btCollisionShape& c_shape);
+                  btScalar f_friction);
             /* Data */
             btTransform StartTransform;
             btTransform InverseStartTransform;
@@ -55,13 +54,13 @@ namespace argos {
             btVector3 Inertia;
             btScalar Mass;
             btScalar Friction;
-            btCollisionShape& Shape;
          };
 
       public:
 
          CAbstractBody(CDynamics3DModel& c_model,
                        SAnchor& s_anchor,
+                       std::shared_ptr<btCollisionShape>& ptr_shape,
                        const SData& s_data);
 
          virtual ~CAbstractBody() {}
@@ -69,6 +68,8 @@ namespace argos {
          CDynamics3DModel& GetModel();
 
          SAnchor& GetAnchor();
+
+         btCollisionShape& GetShape();
 
          const SData& GetData();
 
@@ -93,6 +94,8 @@ namespace argos {
          CDynamics3DModel& m_cModel;
          /* Link to the anchor */
          SAnchor& m_sAnchor;
+         /* Link to the collision shape */
+         std::shared_ptr<btCollisionShape> m_ptrShape;
          /* Data for setting up the body */
          SData m_sData;
       };
