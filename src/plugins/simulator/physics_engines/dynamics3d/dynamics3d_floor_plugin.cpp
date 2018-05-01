@@ -24,7 +24,10 @@ namespace argos {
       /* Configure the floor */
       m_cFloorExtents = btVector3(cArenaSize.GetX(), fHeight, cArenaSize.GetY());
       m_cFloorOrigin = btVector3(cArenaCenter.GetX(), -fHeight * 0.5f, -cArenaCenter.GetY());
-      /* Create the floor */
+      /* Call the destructors for the floor components */ 
+      m_cFloor.~btRigidBody();
+      m_cFloorShape.~btBoxShape();
+      /* Call the constructors for the floor components */
       new (&m_cFloorShape) btBoxShape(m_cFloorExtents * 0.5f);
       new (&m_cFloor) btRigidBody(0, nullptr, &m_cFloorShape);
       m_cFloor.setUserPointer(nullptr);
@@ -39,12 +42,15 @@ namespace argos {
    void CDynamics3DFloorPlugin::Reset() {
       /* Remove floor from world */
       m_pcEngine->GetWorld().removeRigidBody(&m_cFloor);
-      /* Recreate the floor */
+      /* Call the destructors for the floor components */ 
+      m_cFloor.~btRigidBody();
+      m_cFloorShape.~btBoxShape();
+      /* Call the constructors for the floor components */
       new (&m_cFloorShape) btBoxShape(m_cFloorExtents * 0.5f);
       new (&m_cFloor) btRigidBody(0, nullptr, &m_cFloorShape);
       m_cFloor.setUserPointer(nullptr);
       m_cFloor.getWorldTransform().setOrigin(m_cFloorOrigin);
-      /* Readd floor to world */
+      /* Add floor to world */
       m_pcEngine->GetWorld().addRigidBody(&m_cFloor);
    }
    

@@ -24,7 +24,8 @@ namespace argos {
       using TMap = std::map<std::string, CDynamics3DPlugin*>;
 
    public:
-      CDynamics3DPlugin() {}
+      CDynamics3DPlugin() :
+         m_pcEngine(nullptr) {}
 
       virtual ~CDynamics3DPlugin() {}
       

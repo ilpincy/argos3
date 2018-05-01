@@ -32,7 +32,6 @@ namespace argos {
 
    CQTOpenGLPrototype::CQTOpenGLPrototype() :
       m_unVertices(20) {
-      
       /* Reserve the needed display lists */
       m_unBaseList = glGenLists(6);
       /* References to the display lists */

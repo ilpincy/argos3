@@ -12,7 +12,7 @@ namespace argos {
    /****************************************/
 
    CPrototypeJointsDefaultSensor::CPrototypeJointsDefaultSensor() :
-      m_pcJointEquippedEntity(NULL) {
+      m_pcJointEquippedEntity(nullptr) {
    }
 
    /****************************************/

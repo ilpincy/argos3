@@ -12,7 +12,7 @@ namespace argos {
    /****************************************/
 
    CPrototypeJointsDefaultActuator::CPrototypeJointsDefaultActuator() :
-      m_pcJointEquippedEntity(NULL) {
+      m_pcJointEquippedEntity(nullptr) {
    }
 
    /****************************************/
