@@ -25,7 +25,9 @@ namespace argos {
       /**
        * Class constructor.
        */
-      CDirectionalLEDMedium() {}
+      CDirectionalLEDMedium() :
+         m_pcDirectionalLEDEntityIndex(nullptr),
+         m_pcDirectionalLEDEntityGridUpdateOperation(nullptr) {}
 
       /**
        * Class destructor.
