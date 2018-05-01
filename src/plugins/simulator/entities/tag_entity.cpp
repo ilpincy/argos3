@@ -38,7 +38,7 @@ namespace argos {
       m_strPayload(str_payload),
       m_strInitPayload(str_payload),
       m_pcMedium(nullptr) {
-      SetPayload(str_payload);
+      Disable();
    }
 
    /****************************************/
@@ -114,7 +114,7 @@ namespace argos {
    /****************************************/
 
    void CTagEntity::SetMedium(CTagMedium& c_medium) {
-      if(m_pcMedium != NULL && m_pcMedium != &c_medium)
+      if(m_pcMedium != nullptr && m_pcMedium != &c_medium)
          m_pcMedium->RemoveEntity(*this);
       m_pcMedium = &c_medium;
    }

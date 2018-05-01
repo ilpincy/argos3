@@ -68,9 +68,6 @@ namespace argos {
 
       CPrototypeJointEntity(CComposableEntity* pc_parent);
 
-      CPrototypeJointEntity(CComposableEntity* pc_parent,
-                            const std::string& str_id);
-
       virtual ~CPrototypeJointEntity() {}
 
       virtual void Init(TConfigurationNode& t_tree);

@@ -102,6 +102,7 @@ namespace argos {
                   m_pcProximitySensorEquippedEntity = new CProximitySensorEquippedEntity(this);
                   m_pcProximitySensorEquippedEntity->Init(*itDevice);
                   AddComponent(*m_pcProximitySensorEquippedEntity);
+                  m_pcProximitySensorEquippedEntity->Enable();
                }
                else if(itDevice->Value() == "tags" ) {
                   m_pcTagEquippedEntity = new CTagEquippedEntity(this);
@@ -132,6 +133,7 @@ namespace argos {
                   m_pcMagnetEquippedEntity = new CMagnetEquippedEntity(this);
                   m_pcMagnetEquippedEntity->Init(*itDevice);
                   AddComponent(*m_pcMagnetEquippedEntity);
+                  m_pcMagnetEquippedEntity->Enable();
                }
                else {
                   THROW_ARGOSEXCEPTION("Device type \"" << itDevice->Value() << "\" not implemented");
@@ -168,7 +170,7 @@ namespace argos {
                    "joints are provided. Since each link defines an anchor in the embodied entity,\n"
                    "it is also possible to attach the following entities to any link in the model:\n"
                    "the directional LED entity, the LED entity, the magnet entity, the tag entity,\n"
-                   "the radio entity.\n\n"
+                   "the radio entity, and the proximity sensor equipped entity.\n\n"
                    "REQUIRED XML CONFIGURATION\n\n"
                    "  <arena ...>\n"
                    "    ...\n"

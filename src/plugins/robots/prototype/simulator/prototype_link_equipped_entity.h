@@ -28,9 +28,6 @@ namespace argos {
 
       CPrototypeLinkEquippedEntity(CComposableEntity* pc_parent);
 
-      CPrototypeLinkEquippedEntity(CComposableEntity* pc_parent,
-                          const std::string& str_id);
-
       virtual ~CPrototypeLinkEquippedEntity() {}
 
       virtual void Init(TConfigurationNode& t_tree);

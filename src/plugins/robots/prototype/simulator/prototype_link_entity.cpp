@@ -15,7 +15,10 @@ namespace argos {
 
    CPrototypeLinkEntity::CPrototypeLinkEntity(CComposableEntity* pc_parent) :
       CEntity(pc_parent),
-      m_fMass(0.0f) {}
+		m_eGeometry(EGeometry::BOX),
+		m_cExtents(0.0f, 0.0f, 0.0f),
+		m_fMass(0.0f),
+      m_psAnchor(nullptr) {}
 
    /****************************************/
    /****************************************/

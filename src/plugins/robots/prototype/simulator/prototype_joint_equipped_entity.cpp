@@ -17,13 +17,6 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   CPrototypeJointEquippedEntity::CPrototypeJointEquippedEntity(CComposableEntity* pc_parent,
-                                          const std::string& str_id) :
-      CComposableEntity(pc_parent, str_id) {}
-
-   /****************************************/
-   /****************************************/
-
    void CPrototypeJointEquippedEntity::Init(TConfigurationNode& t_tree) {
       try {
          /* Init parent */

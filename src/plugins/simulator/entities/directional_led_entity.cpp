@@ -27,17 +27,17 @@ namespace argos {
    /****************************************/
 
    CDirectionalLEDEntity::CDirectionalLEDEntity(CComposableEntity* pc_parent,
-                          const std::string& str_id,
-                          const CVector3& c_position,
-                          const CQuaternion& c_orientation,
-                          const CRadians& c_observable_angle,
-                          const CColor& c_color) :
+                                                const std::string& str_id,
+                                                const CVector3& c_position,
+                                                const CQuaternion& c_orientation,
+                                                const CRadians& c_observable_angle,
+                                                const CColor& c_color) :
       CPositionalEntity(pc_parent, str_id, c_position, c_orientation),
       m_cObservableAngle(c_observable_angle),
       m_cColor(c_color),
       m_cInitColor(c_color),
       m_pcMedium(nullptr) {
-      SetColor(c_color);
+      Disable();
    }
 
    /****************************************/
@@ -47,7 +47,7 @@ namespace argos {
       try {
          /* Parse XML */
          CPositionalEntity::Init(t_tree);
-         GetNodeAttribute(t_tree, "color", m_cInitColor);
+         GetNodeAttributeOrDefault(t_tree, "color", m_cInitColor, m_cInitColor);
          m_cColor = m_cInitColor;
          CDegrees cObservableAngle;
          GetNodeAttribute(t_tree, "observable_angle", cObservableAngle);
@@ -95,7 +95,6 @@ namespace argos {
 
    void CDirectionalLEDEntity::SetColor(const CColor& c_color) {
       m_cColor = c_color;
-      SetEnabled(c_color != CColor::BLACK);
    }
 
    /****************************************/
@@ -123,13 +122,10 @@ namespace argos {
 
    void CDirectionalLEDEntitySpaceHashUpdater::operator()(CAbstractSpaceHash<CDirectionalLEDEntity>& c_space_hash,
                                                           CDirectionalLEDEntity& c_element) {
-      /* Discard LEDs switched off */
-      if(c_element.GetColor() != CColor::BLACK) {
-         /* Calculate the position of the LED in the space hash */
-         c_space_hash.SpaceToHashTable(m_nI, m_nJ, m_nK, c_element.GetPosition());
-         /* Update the corresponding cell */
-         c_space_hash.UpdateCell(m_nI, m_nJ, m_nK, c_element);
-      }
+      /* Calculate the position of the LED in the space hash */
+      c_space_hash.SpaceToHashTable(m_nI, m_nJ, m_nK, c_element.GetPosition());
+      /* Update the corresponding cell */
+      c_space_hash.UpdateCell(m_nI, m_nJ, m_nK, c_element);
    }
 
    /****************************************/
@@ -142,18 +138,15 @@ namespace argos {
    /****************************************/
 
    bool CDirectionalLEDEntityGridUpdater::operator()(CDirectionalLEDEntity& c_entity) {
-      /* Discard LEDs switched off */
-      if(c_entity.GetColor() != CColor::BLACK) {
-         try {
-            /* Calculate the position of the LED in the space hash */
-            m_cGrid.PositionToCell(m_nI, m_nJ, m_nK, c_entity.GetPosition());
-            /* Update the corresponding cell */
-            m_cGrid.UpdateCell(m_nI, m_nJ, m_nK, c_entity);
-         }
-         catch(CARGoSException& ex) {
-            THROW_ARGOSEXCEPTION_NESTED("While updating the directional LED grid for LED \"" <<
-                                        c_entity.GetContext() + c_entity.GetId() << "\"", ex);
-         }
+      try {
+         /* Calculate the position of the LED in the space hash */
+         m_cGrid.PositionToCell(m_nI, m_nJ, m_nK, c_entity.GetPosition());
+         /* Update the corresponding cell */
+         m_cGrid.UpdateCell(m_nI, m_nJ, m_nK, c_entity);
+      }
+      catch(CARGoSException& ex) {
+         THROW_ARGOSEXCEPTION_NESTED("While updating the directional LED grid for LED \"" <<
+                                     c_entity.GetContext() + c_entity.GetId() << "\"", ex);
       }
       /* Continue with the other entities */
       return true;

@@ -16,6 +16,7 @@ namespace argos {
 
    CRadioEntity::CRadioEntity(CComposableEntity* pc_parent) :
       CPositionalEntity(pc_parent),
+      m_fRange(0.0f),
       m_pcMedium(nullptr) {}
 
    /****************************************/

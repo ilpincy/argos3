@@ -17,13 +17,6 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   CPrototypeLinkEquippedEntity::CPrototypeLinkEquippedEntity(CComposableEntity* pc_parent,
-                                            const std::string& str_id) :
-      CComposableEntity(pc_parent, str_id) {}
-
-   /****************************************/
-   /****************************************/
-
    void CPrototypeLinkEquippedEntity::Init(TConfigurationNode& t_tree) {
       try {
          /* Initialize the parent */
@@ -42,11 +35,11 @@ namespace argos {
          std::string strReferenceLink;
          GetNodeAttribute(t_tree, "ref", strReferenceLink);
          CPrototypeLinkEntity::TVectorIterator itReferenceLink =
-                  std::find_if(std::begin(m_vecLinks),
-                               std::end(m_vecLinks),
-                               [strReferenceLink] (const CPrototypeLinkEntity* pc_link) {
-                                  return (pc_link->GetId() == strReferenceLink);
-                               });
+            std::find_if(std::begin(m_vecLinks),
+                         std::end(m_vecLinks),
+                         [strReferenceLink] (const CPrototypeLinkEntity* pc_link) {
+                            return (pc_link->GetId() == strReferenceLink);
+                         });
          /* Move the reference link to the front of the vector */
          if(itReferenceLink == std::end(m_vecLinks)) {
             THROW_ARGOSEXCEPTION("The reference link \"" << strReferenceLink << "\" not found.");

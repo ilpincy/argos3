@@ -82,15 +82,6 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CRadioEquippedEntity::Reset() {
-      for(SInstance& s_instance : m_vecInstances) {
-         s_instance.Radio.Reset();
-      }
-   }
-
-   /****************************************/
-   /****************************************/
-
    void CRadioEquippedEntity::Enable() {
       /* Perform generic enable behavior */
       CComposableEntity::Enable();

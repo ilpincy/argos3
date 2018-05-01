@@ -89,15 +89,6 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CTagEquippedEntity::Reset() {
-      for(SInstance& s_instance : m_vecInstances) {
-         s_instance.Tag.Reset();
-      }
-   }
-
-   /****************************************/
-   /****************************************/
-
    void CTagEquippedEntity::Enable() {
       /* Perform generic enable behavior */
       CComposableEntity::Enable();

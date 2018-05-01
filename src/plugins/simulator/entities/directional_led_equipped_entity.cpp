@@ -90,15 +90,6 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CDirectionalLEDEquippedEntity::Reset() {
-      for(SInstance& s_instance : m_vecInstances) {
-         s_instance.LED.Reset();
-      }
-   }
-
-   /****************************************/
-   /****************************************/
-
    void CDirectionalLEDEquippedEntity::Enable() {
       /* Perform generic enable behavior */
       CComposableEntity::Enable();

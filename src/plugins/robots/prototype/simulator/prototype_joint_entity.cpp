@@ -15,21 +15,14 @@ namespace argos {
    CPrototypeJointEntity::CPrototypeJointEntity(CComposableEntity* pc_parent) :
       CComposableEntity(pc_parent),
       m_pcParentLink(nullptr),
+      m_cParentLinkJointPosition(CVector3::ZERO),
+      m_cParentLinkJointOrientation(CRadians::ZERO, CVector3::Z),
       m_pcChildLink(nullptr),
+      m_cChildLinkJointPosition(CVector3::ZERO),
+      m_cChildLinkJointOrientation(CRadians::ZERO, CVector3::Z),
       m_bDisableCollision(true),
       m_eType(EType::FIXED),
-      m_bHasLimit(false) {}
-
-   /****************************************/
-   /****************************************/
-   
-   CPrototypeJointEntity::CPrototypeJointEntity(CComposableEntity* pc_parent,
-                                                const std::string& str_id) :
-      CComposableEntity(pc_parent, str_id),
-      m_pcParentLink(nullptr),
-      m_pcChildLink(nullptr),
-      m_bDisableCollision(true),
-      m_eType(EType::FIXED),
+      m_cJointAxis(CVector3::Z),
       m_bHasLimit(false) {}
 
    /****************************************/
