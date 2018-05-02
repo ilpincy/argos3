@@ -699,6 +699,7 @@ RECURSIVE              = YES
 
 EXCLUDE                = @CMAKE_SOURCE_DIR@/core/utility/configuration/tinyxml/                            \
                          @CMAKE_SOURCE_DIR@/plugins/simulator/physics_engines/dynamics2d/chipmunk-physics/ \
+                         @CMAKE_SOURCE_DIR@/plugins/simulator/physics_engines/dynamics3d/bullet/ \
                          @CMAKE_SOURCE_DIR@/plugins/simulator/physics_engines/physx \
                          @CMAKE_SOURCE_DIR@/testing/
 
