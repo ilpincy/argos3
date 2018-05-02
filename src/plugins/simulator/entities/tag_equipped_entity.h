@@ -67,8 +67,6 @@ namespace argos {
 
       virtual void Init(TConfigurationNode& t_tree);
 
-      virtual void Reset();
-
       virtual void Enable();
 
       virtual void Disable();
@@ -124,17 +122,11 @@ namespace argos {
       void SetTagPayloads(const std::vector<std::string>& vec_payloads);
 
       /**
-       * Adds the tags to the specified tag medium.
-       * @param c_medium The tag medium.
+       * Sets the medium associated to this entity.
+       * @param c_medium The medium to associate to this entity.
        * @see CTagMedium
        */
-      void AddToMedium(CTagMedium& c_medium);
-
-      /**
-       * Removes the tags from the associated tag medium.
-       * @see CTagMedium
-       */
-      void RemoveFromMedium();
+      void SetMedium(CTagMedium& c_medium);
 
       virtual std::string GetTypeDescription() const {
          return "tags";

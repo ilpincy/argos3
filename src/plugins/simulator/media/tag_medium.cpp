@@ -76,7 +76,7 @@ namespace argos {
 
    void CTagMedium::Destroy() {
       delete m_pcTagEntityIndex;
-      if(m_pcTagEntityGridUpdateOperation != NULL) {
+      if(m_pcTagEntityGridUpdateOperation != nullptr) {
          delete m_pcTagEntityGridUpdateOperation;
       }
    }

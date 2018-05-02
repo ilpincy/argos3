@@ -70,7 +70,8 @@ namespace argos {
              * 3. the "body" is an embodied entity
              * If any of the above is false, this line will bomb out.
              */
-            CEmbodiedEntity& cBody = GetParent().GetComponent<CEmbodiedEntity>("body");
+            CEmbodiedEntity& cBody =
+               GetParent().GetComponent<CEmbodiedEntity>("body");
             /* Add the LED to this container */
             m_vecInstances.emplace_back(*pcLED,
                                         cBody.GetAnchor(strAnchorId),
@@ -89,17 +90,10 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CDirectionalLEDEquippedEntity::Reset() {
-      for(SInstance& s_instance : m_vecInstances) {
-         s_instance.LED.Reset();
-      }
-   }
-
-   /****************************************/
-   /****************************************/
-
    void CDirectionalLEDEquippedEntity::Enable() {
-      CEntity::Enable();
+      /* Perform generic enable behavior */
+      CComposableEntity::Enable();
+      /* Enable anchors */
       for(SInstance& s_instance : m_vecInstances) {
          s_instance.Anchor.Enable();
       }
@@ -109,7 +103,9 @@ namespace argos {
    /****************************************/
 
    void CDirectionalLEDEquippedEntity::Disable() {
-      CEntity::Disable();
+      /* Perform generic disable behavior */
+      CComposableEntity::Disable();
+      /* Disable anchors */
       for(SInstance& s_instance : m_vecInstances) {
          s_instance.Anchor.Disable();
       }
@@ -196,21 +192,10 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CDirectionalLEDEquippedEntity::AddToMedium(CDirectionalLEDMedium& c_medium) {
+   void CDirectionalLEDEquippedEntity::SetMedium(CDirectionalLEDMedium& c_medium) {
       for(SInstance& s_instance : m_vecInstances) {
-         s_instance.LED.AddToMedium(c_medium);
+         s_instance.LED.SetMedium(c_medium);
       }
-      Enable();
-   }
-
-   /****************************************/
-   /****************************************/
-
-   void CDirectionalLEDEquippedEntity::RemoveFromMedium() {
-      for(SInstance& s_instance : m_vecInstances) {
-         s_instance.LED.RemoveFromMedium();
-      }
-      Disable();
    }
 
    /****************************************/

@@ -76,7 +76,7 @@ namespace argos {
 
    void CDirectionalLEDMedium::Destroy() {
       delete m_pcDirectionalLEDEntityIndex;
-      if(m_pcDirectionalLEDEntityGridUpdateOperation != NULL) {
+      if(m_pcDirectionalLEDEntityGridUpdateOperation != nullptr) {
          delete m_pcDirectionalLEDEntityGridUpdateOperation;
       }
    }

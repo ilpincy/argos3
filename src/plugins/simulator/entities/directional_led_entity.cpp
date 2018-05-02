@@ -27,17 +27,17 @@ namespace argos {
    /****************************************/
 
    CDirectionalLEDEntity::CDirectionalLEDEntity(CComposableEntity* pc_parent,
-                          const std::string& str_id,
-                          const CVector3& c_position,
-                          const CQuaternion& c_orientation,
-                          const CRadians& c_observable_angle,
-                          const CColor& c_color) :
+                                                const std::string& str_id,
+                                                const CVector3& c_position,
+                                                const CQuaternion& c_orientation,
+                                                const CRadians& c_observable_angle,
+                                                const CColor& c_color) :
       CPositionalEntity(pc_parent, str_id, c_position, c_orientation),
       m_cObservableAngle(c_observable_angle),
       m_cColor(c_color),
       m_cInitColor(c_color),
       m_pcMedium(nullptr) {
-      SetColor(c_color);
+      Disable();
    }
 
    /****************************************/
@@ -47,7 +47,7 @@ namespace argos {
       try {
          /* Parse XML */
          CPositionalEntity::Init(t_tree);
-         GetNodeAttribute(t_tree, "color", m_cInitColor);
+         GetNodeAttributeOrDefault(t_tree, "color", m_cInitColor, m_cInitColor);
          m_cColor = m_cInitColor;
          CDegrees cObservableAngle;
          GetNodeAttribute(t_tree, "observable_angle", cObservableAngle);
@@ -69,16 +69,25 @@ namespace argos {
    /****************************************/
 
    void CDirectionalLEDEntity::Destroy() {
-      if(HasMedium()) {
-         RemoveFromMedium();
-      }
+      Disable();
    }
 
    /****************************************/
    /****************************************/
 
    void CDirectionalLEDEntity::SetEnabled(bool b_enabled) {
-      CEntity::SetEnabled(m_cColor != CColor::BLACK);
+      /* Perform generic enable behavior */
+      CEntity::SetEnabled(b_enabled);
+      if(b_enabled) {
+         /* Enable entity in medium */
+         if(m_pcMedium && GetIndex() >= 0)
+            m_pcMedium->AddEntity(*this);
+      }
+      else {
+         /* Disable entity in medium */
+         if(m_pcMedium)
+            m_pcMedium->RemoveEntity(*this);
+      }
    }
 
    /****************************************/
@@ -86,39 +95,15 @@ namespace argos {
 
    void CDirectionalLEDEntity::SetColor(const CColor& c_color) {
       m_cColor = c_color;
-      SetEnabled(c_color != CColor::BLACK);
    }
 
    /****************************************/
    /****************************************/
 
-   void CDirectionalLEDEntity::AddToMedium(CDirectionalLEDMedium& c_medium) {
-      if(HasMedium()) RemoveFromMedium();
-      m_pcMedium = &c_medium;
-      c_medium.AddEntity(*this);
-      Enable();
-   }
-
-   /****************************************/
-   /****************************************/
-
-   void CDirectionalLEDEntity::RemoveFromMedium() {
-      try {
-         GetMedium().RemoveEntity(*this);
-         m_pcMedium = nullptr;
-         Disable();
-      }
-      catch(CARGoSException& ex) {
-         THROW_ARGOSEXCEPTION_NESTED("Can't remove directional LED entity \"" << GetContext() + GetId() << "\" from medium.", ex);
-      }
-   }
-
-   /****************************************/
-   /****************************************/
-      
    CDirectionalLEDMedium& CDirectionalLEDEntity::GetMedium() const {
       if(m_pcMedium == nullptr) {
-         THROW_ARGOSEXCEPTION("Directional LED entity \"" << GetContext() + GetId() << "\" has no medium associated.");
+         THROW_ARGOSEXCEPTION("directional LED entity \"" << GetContext() << 
+                              GetId() << "\" has no associated medium.");
       }
       return *m_pcMedium;
    }
@@ -126,15 +111,21 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   void CDirectionalLEDEntity::SetMedium(CDirectionalLEDMedium& c_medium) {
+      if(m_pcMedium != nullptr && m_pcMedium != &c_medium)
+         m_pcMedium->RemoveEntity(*this);
+      m_pcMedium = &c_medium;
+   }
+
+   /****************************************/
+   /****************************************/
+
    void CDirectionalLEDEntitySpaceHashUpdater::operator()(CAbstractSpaceHash<CDirectionalLEDEntity>& c_space_hash,
                                                           CDirectionalLEDEntity& c_element) {
-      /* Discard LEDs switched off */
-      if(c_element.GetColor() != CColor::BLACK) {
-         /* Calculate the position of the LED in the space hash */
-         c_space_hash.SpaceToHashTable(m_nI, m_nJ, m_nK, c_element.GetPosition());
-         /* Update the corresponding cell */
-         c_space_hash.UpdateCell(m_nI, m_nJ, m_nK, c_element);
-      }
+      /* Calculate the position of the LED in the space hash */
+      c_space_hash.SpaceToHashTable(m_nI, m_nJ, m_nK, c_element.GetPosition());
+      /* Update the corresponding cell */
+      c_space_hash.UpdateCell(m_nI, m_nJ, m_nK, c_element);
    }
 
    /****************************************/
@@ -147,18 +138,15 @@ namespace argos {
    /****************************************/
 
    bool CDirectionalLEDEntityGridUpdater::operator()(CDirectionalLEDEntity& c_entity) {
-      /* Discard LEDs switched off */
-      if(c_entity.GetColor() != CColor::BLACK) {
-         try {
-            /* Calculate the position of the LED in the space hash */
-            m_cGrid.PositionToCell(m_nI, m_nJ, m_nK, c_entity.GetPosition());
-            /* Update the corresponding cell */
-            m_cGrid.UpdateCell(m_nI, m_nJ, m_nK, c_entity);
-         }
-         catch(CARGoSException& ex) {
-            THROW_ARGOSEXCEPTION_NESTED("While updating the directional LED grid for LED \"" <<
-                                        c_entity.GetContext() + c_entity.GetId() << "\"", ex);
-         }
+      try {
+         /* Calculate the position of the LED in the space hash */
+         m_cGrid.PositionToCell(m_nI, m_nJ, m_nK, c_entity.GetPosition());
+         /* Update the corresponding cell */
+         m_cGrid.UpdateCell(m_nI, m_nJ, m_nK, c_entity);
+      }
+      catch(CARGoSException& ex) {
+         THROW_ARGOSEXCEPTION_NESTED("While updating the directional LED grid for LED \"" <<
+                                     c_entity.GetContext() + c_entity.GetId() << "\"", ex);
       }
       /* Continue with the other entities */
       return true;
@@ -167,7 +155,35 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   REGISTER_STANDARD_SPACE_OPERATIONS_ON_ENTITY(CDirectionalLEDEntity);
+   class CSpaceOperationAddCDirectionalLEDEntity : public CSpaceOperationAddEntity {
+   public:
+      void ApplyTo(CSpace& c_space, CDirectionalLEDEntity& c_entity) {
+         /* Add entity to space - this ensures that the directional LED entity
+          * gets an id before being added to the directional LED medium */
+         c_space.AddEntity(c_entity);
+         /* Enable the directional LED entity, if it's enabled - this ensures that
+          * the entity gets added to the directional LED medium if it's enabled */
+         c_entity.SetEnabled(c_entity.IsEnabled());
+      }
+   };
+
+   class CSpaceOperationRemoveCDirectionalLEDEntity : public CSpaceOperationRemoveEntity {
+   public:
+      void ApplyTo(CSpace& c_space, CDirectionalLEDEntity& c_entity) {
+         /* Disable the entity - this ensures that the entity is
+          * removed from the directional LED medium */
+         c_entity.Disable();
+         /* Remove the directional LED entity from space */
+         c_space.RemoveEntity(c_entity);
+      }
+   };
+
+   REGISTER_SPACE_OPERATION(CSpaceOperationAddEntity, 
+                            CSpaceOperationAddCDirectionalLEDEntity,
+                            CDirectionalLEDEntity);
+   REGISTER_SPACE_OPERATION(CSpaceOperationRemoveEntity,
+                            CSpaceOperationRemoveCDirectionalLEDEntity,
+                            CDirectionalLEDEntity);
 
    /****************************************/
    /****************************************/

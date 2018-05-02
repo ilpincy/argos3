@@ -80,17 +80,8 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CMagnetEquippedEntity::Reset() {
-      for(SInstance& s_instance : m_vecInstances) {
-         s_instance.Magnet.Reset();
-      }
-   }
-
-   /****************************************/
-   /****************************************/
-
    void CMagnetEquippedEntity::Enable() {
-      CEntity::Enable();
+      CComposableEntity::Enable();
       for(SInstance& s_instance : m_vecInstances) {
          s_instance.Magnet.Enable();
       }
@@ -100,7 +91,7 @@ namespace argos {
    /****************************************/
 
    void CMagnetEquippedEntity::Disable() {
-      CEntity::Disable();
+      CComposableEntity::Disable();
       for(SInstance& s_instance : m_vecInstances) {
          s_instance.Magnet.Disable();
       }

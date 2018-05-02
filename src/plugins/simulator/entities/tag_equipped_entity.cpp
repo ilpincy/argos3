@@ -89,17 +89,10 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CTagEquippedEntity::Reset() {
-      for(SInstance& s_instance : m_vecInstances) {
-         s_instance.Tag.Reset();
-      }
-   }
-
-   /****************************************/
-   /****************************************/
-
    void CTagEquippedEntity::Enable() {
-      CEntity::Enable();
+      /* Perform generic enable behavior */
+      CComposableEntity::Enable();
+      /* Enable anchors */
       for(SInstance& s_instance : m_vecInstances) {
          s_instance.Anchor.Enable();
       }
@@ -109,7 +102,9 @@ namespace argos {
    /****************************************/
 
    void CTagEquippedEntity::Disable() {
-      CEntity::Disable();
+      /* Perform generic disable behavior */
+      CComposableEntity::Disable();
+      /* Disable anchors */
       for(SInstance& s_instance : m_vecInstances) {
          s_instance.Anchor.Disable();
       }
@@ -121,7 +116,7 @@ namespace argos {
    CTagEntity& CTagEquippedEntity::GetTag(UInt32 un_index) {
       ARGOS_ASSERT(un_index < m_vecInstances.size(),
                    "CTagEquippedEntity::GetTag(), id=\"" <<
-                   GetContext() + GetId() <<
+                   GetContext() << GetId() <<
                    "\": index out of bounds: un_index = " <<
                    un_index <<
                    ", m_vecInstances.size() = " <<
@@ -136,7 +131,7 @@ namespace argos {
                                           const std::string& str_payload) {
       ARGOS_ASSERT(un_index < m_vecInstances.size(),
                    "CTagEquippedEntity::SetTagPayload(), id=\"" <<
-                   GetContext() + GetId() <<
+                   GetContext() << GetId() <<
                    "\": index out of bounds: un_index = " <<
                    un_index <<
                    ", m_vecInstances.size() = " <<
@@ -165,7 +160,7 @@ namespace argos {
       else {
          THROW_ARGOSEXCEPTION(
             "CTagEquippedEntity::SetTagPayloads(), id=\"" <<
-            GetContext() + GetId() <<
+            GetContext() << GetId() <<
             "\": number of tags (" <<
             m_vecInstances.size() <<
             ") does not equal the passed payload vector size (" <<
@@ -196,21 +191,10 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CTagEquippedEntity::AddToMedium(CTagMedium& c_medium) {
+   void CTagEquippedEntity::SetMedium(CTagMedium& c_medium) {
       for(SInstance& s_instance : m_vecInstances) {
-         s_instance.Tag.AddToMedium(c_medium);
+         s_instance.Tag.SetMedium(c_medium);
       }
-      Enable();
-   }
-
-   /****************************************/
-   /****************************************/
-
-   void CTagEquippedEntity::RemoveFromMedium() {
-      for(SInstance& s_instance : m_vecInstances) {
-         s_instance.Tag.RemoveFromMedium();
-      }
-      Disable();
    }
 
    /****************************************/

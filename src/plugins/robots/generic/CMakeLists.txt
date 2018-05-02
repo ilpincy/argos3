@@ -7,12 +7,14 @@ set(ARGOS3_HEADERS_PLUGINS_ROBOTS_GENERIC_CONTROLINTERFACE
   control_interface/ci_battery_sensor.h
   control_interface/ci_camera_sensor.h
   control_interface/ci_camera_sensor_algorithm.h
+  control_interface/ci_camera_sensor_algorithms/ci_camera_sensor_directional_led_detector_algorithm.h
   control_interface/ci_camera_sensor_algorithms/ci_camera_sensor_led_detector_algorithm.h
   control_interface/ci_camera_sensor_algorithms/ci_camera_sensor_tag_detector_algorithm.h
   control_interface/ci_colored_blob_omnidirectional_camera_sensor.h
   control_interface/ci_colored_blob_perspective_camera_sensor.h
   control_interface/ci_differential_steering_actuator.h
   control_interface/ci_differential_steering_sensor.h
+  control_interface/ci_directional_leds_actuator.h
   control_interface/ci_gripper_actuator.h
   control_interface/ci_ground_sensor.h
   control_interface/ci_leds_actuator.h
@@ -65,12 +67,14 @@ set(ARGOS3_SOURCES_PLUGINS_ROBOTS_GENERIC
   control_interface/ci_altitude_sensor.cpp
   control_interface/ci_battery_sensor.cpp
   control_interface/ci_camera_sensor.cpp
+  control_interface/ci_camera_sensor_algorithms/ci_camera_sensor_directional_led_detector_algorithm.cpp
   control_interface/ci_camera_sensor_algorithms/ci_camera_sensor_led_detector_algorithm.cpp
   control_interface/ci_camera_sensor_algorithms/ci_camera_sensor_tag_detector_algorithm.cpp
   control_interface/ci_colored_blob_omnidirectional_camera_sensor.cpp
   control_interface/ci_colored_blob_perspective_camera_sensor.cpp
   control_interface/ci_differential_steering_actuator.cpp
   control_interface/ci_differential_steering_sensor.cpp
+  control_interface/ci_directional_leds_actuator.cpp
   control_interface/ci_gripper_actuator.cpp
   control_interface/ci_ground_sensor.cpp
   control_interface/ci_leds_actuator.cpp

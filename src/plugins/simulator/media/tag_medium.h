@@ -25,7 +25,9 @@ namespace argos {
       /**
        * Class constructor.
        */
-      CTagMedium() {}
+      CTagMedium() :
+         m_pcTagEntityIndex(nullptr),
+         m_pcTagEntityGridUpdateOperation(nullptr) {}
 
       /**
        * Class destructor.

@@ -88,7 +88,7 @@ namespace argos {
    void CDynamics2DMultiBodyObjectModel::CalculateBoundingBox() {
       if(m_vecBodies.empty()) return;
       cpBB tBoundingBox;
-      Real fMaxHeight;
+      Real fMaxHeight = 0.0f;
       for(size_t i = 0; i < m_vecBodies.size(); ++i) {
          tBoundingBox = cpShapeGetBB(m_vecBodies[i].Body->shapeList);
          for(cpShape* pt_shape = m_vecBodies[i].Body->shapeList->next;

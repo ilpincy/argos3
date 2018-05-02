@@ -65,8 +65,6 @@ namespace argos {
 
       virtual void Init(TConfigurationNode& t_tree);
 
-      virtual void Reset();
-
       virtual void Enable();
 
       virtual void Disable();
@@ -100,17 +98,11 @@ namespace argos {
       }
 
       /**
-       * Adds the radios to the specified radio medium.
-       * @param c_medium The radio medium.
+       * Sets the medium associated to this entity.
+       * @param c_medium The medium to associate to this entity.
        * @see CRadioMedium
        */
-      void AddToMedium(CRadioMedium& c_medium);
-
-      /**
-       * Removes the radios from the associated radio medium.
-       * @see CRadioMedium
-       */
-      void RemoveFromMedium();
+      void SetMedium(CRadioMedium& c_medium);
 
       virtual std::string GetTypeDescription() const {
          return "radios";

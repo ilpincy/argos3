@@ -43,7 +43,11 @@ namespace argos {
 
       virtual void Init(TConfigurationNode& t_tree);
 
-      virtual void Reset() {}
+      virtual void Reset();
+
+      virtual void Destroy();
+
+      virtual void SetEnabled(bool b_enabled);
 
       /**
        * Returns a constant reference to the received data.
@@ -105,24 +109,6 @@ namespace argos {
       }
 
       /**
-       * Adds the radios to the specified radio medium.
-       * If this radio has already been added to a medium, the radio is
-       * first removed from that medium and then added to the passed one.
-       * This behavior is to enforce that, at any time, a radio is
-       * under the control of (at most) a single medium.
-       * @param c_medium The radio medium.
-       * @see CRadioMedium
-       */
-      void AddToMedium(CRadioMedium& c_medium);
-
-      /**
-       * Removes the radios from the specified radio medium.
-       * @param c_medium The radio medium.
-       * @see CRadioMedium
-       */
-      void RemoveFromMedium();
-
-      /**
        * Returns <tt>true</tt> if this radio is associated to a medium.
        * @return <tt>true</tt> if this radio is associated to a medium.
        * @see CRadioMedium
@@ -137,6 +123,13 @@ namespace argos {
        * @see CRadioMedium
        */
       CRadioMedium& GetMedium() const;
+
+      /**
+       * Sets the medium associated to this entity.
+       * @param c_medium The medium to associate to this entity.
+       * @see CRadioMedium
+       */
+      void SetMedium(CRadioMedium& c_medium);
 
    protected:
 

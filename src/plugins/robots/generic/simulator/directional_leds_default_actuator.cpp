@@ -20,7 +20,8 @@ namespace argos {
    /****************************************/
 
    void CDirectionalLEDsDefaultActuator::SetRobot(CComposableEntity& c_entity) {
-      m_pcDirectionalLEDEquippedEntity = &(c_entity.GetComponent<CDirectionalLEDEquippedEntity>("directional_leds"));
+      m_pcDirectionalLEDEquippedEntity = 
+         &(c_entity.GetComponent<CDirectionalLEDEquippedEntity>("directional_leds"));
       m_tSettings.resize(m_pcDirectionalLEDEquippedEntity->GetInstances().size());
    }
 
@@ -29,11 +30,7 @@ namespace argos {
 
    void CDirectionalLEDsDefaultActuator::Init(TConfigurationNode& t_tree) {
       try {
-         CCI_LEDsActuator::Init(t_tree);
-         std::string strMedium;
-         GetNodeAttribute(t_tree, "medium", strMedium);
-         m_pcDirectionalLEDMedium = &CSimulator::GetInstance().GetMedium<CDirectionalLEDMedium>(strMedium);
-         m_pcDirectionalLEDEquippedEntity->AddToMedium(*m_pcDirectionalLEDMedium);
+         CCI_DirectionalLEDsActuator::Init(t_tree);
       }
       catch(CARGoSException& ex) {
          THROW_ARGOSEXCEPTION_NESTED("Error initializing the directional LEDs default actuator", ex);
@@ -57,13 +54,6 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CDirectionalLEDsDefaultActuator::Destroy() {
-      m_pcDirectionalLEDEquippedEntity->RemoveFromMedium();
-   }
-
-   /****************************************/
-   /****************************************/
-
    REGISTER_ACTUATOR(CDirectionalLEDsDefaultActuator,
                      "directional_leds", "default",
                      "Michael Allwright [allsey87@gmail.com]",
@@ -78,8 +68,7 @@ namespace argos {
                      "      ...\n"
                      "      <actuators>\n"
                      "        ...\n"
-                     "        <leds implementation=\"default\"\n"
-                     "              medium=\"leds\" />\n"
+                     "        <leds implementation=\"default\" />\n"
                      "        ...\n"
                      "      </actuators>\n"
                      "      ...\n"

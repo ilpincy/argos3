@@ -25,7 +25,9 @@ namespace argos {
       /**
        * Class constructor.
        */
-      CRadioMedium() {}
+      CRadioMedium() :
+         m_pcRadioEntityIndex(nullptr),
+         m_pcRadioEntityGridUpdateOperation(nullptr) {}
 
       /**
        * Class destructor.

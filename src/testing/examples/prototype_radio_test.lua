@@ -3,35 +3,21 @@
 
 -- Use Ctrl + Click (Cmd + Click on Mac) to move a selected robot to a different location
 
-
-
 -- Put your global variables here
-
-
 
 --[[ This function is executed every time you press the 'execute' button ]]
 function init()
-	robot.turret.set_speed_control_mode()
-	robot.turret.set_rotation_speed(1)
-	robot.wheels.set_velocity(0.125,-0.125)
+   reset()
 end
-
-
 
 --[[ This function is executed at each time step
      It must contain the logic of your controller ]]
 function step()
-	if #robot.cameras.turret_camera.tag_detector > 0 then
-		log("tag 1: " .. robot.cameras.turret_camera.tag_detector[1].payload)
-      --for index,corner in ipairs(robot.cameras.turret_camera.tag_detector[1].corners) do
-		--   log("corner " .. index .. ": x = " .. corner.x .. ", y = " .. corner.y)
-      --end
-	end
-	if #robot.cameras.turret_camera.led_detector > 0 then
-		log("led 1:")
-	   --log("center: x = " .. robot.cameras.turret_camera.led_detector[1].center.x .. ", y = " .. robot.cameras.turret_camera.led_detector[1].center.y)
-	end
-
+   robot.leds.set_all_colors(0,0,0)
+   if #robot.radios.radio_rx.rx_data > 0 then
+      robot.leds.set_all_colors(255,0,0)
+      robot.radios.radio_tx.tx_data({robot.radios.radio_rx.rx_data[1][1] + 1})
+   end
 end
 
 
@@ -42,7 +28,9 @@ end
      called. The state of sensors and actuators is reset
      automatically by ARGoS. ]]
 function reset()
-   -- put your code here
+   if robot.id == "repeater0" then
+      robot.radios.radio_tx.tx_data({0})
+   end
 end
 
 

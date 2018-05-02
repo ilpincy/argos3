@@ -111,30 +111,12 @@ namespace argos {
       }
 
       /**
-       * Adds the tags to the specified tag medium.
-       * If this tag has already been added to a medium, the tag is
-       * removed from that medium and then added to the passed one.
-       * This behavior is to enforce that, at any time, a tag is
-       * under the control of (at most) a single medium.
-       * @param c_medium The tag medium.
-       * @see CTagMedium
-       */
-      void AddToMedium(CTagMedium& c_medium);
-
-      /**
-       * Removes the tags from the specified tag medium.
-       * @param c_medium The tag medium.
-       * @see CTagMedium
-       */
-      void RemoveFromMedium();
-
-      /**
        * Returns <tt>true</tt> if this tag is associated to a medium.
        * @return <tt>true</tt> if this tag is associated to a medium.
        * @see CTagMedium
        */
       inline bool HasMedium() const {
-         return m_pcMedium != NULL;
+         return m_pcMedium != nullptr;
       }
 
       /**
@@ -143,6 +125,14 @@ namespace argos {
        * @see CTagMedium
        */
       CTagMedium& GetMedium() const;
+
+      /**
+       * Sets the medium associated to this entity.
+       * @param c_medium The medium to associate to this entity.
+       * @see CTagMedium
+       */
+      void SetMedium(CTagMedium& c_medium);
+
 
    protected:
 

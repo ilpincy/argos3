@@ -15,7 +15,9 @@ namespace argos {
    /****************************************/
 
    CRadioEntity::CRadioEntity(CComposableEntity* pc_parent) :
-      CPositionalEntity(pc_parent) {}
+      CPositionalEntity(pc_parent),
+      m_fRange(0.0f),
+      m_pcMedium(nullptr) {}
 
    /****************************************/
    /****************************************/
@@ -24,7 +26,8 @@ namespace argos {
                               const std::string& str_id,
                               Real f_range) :
       CPositionalEntity(pc_parent, str_id, CVector3(), CQuaternion()),
-      m_fRange(f_range) {}
+      m_fRange(f_range),
+      m_pcMedium(nullptr) {}
 
    /****************************************/
    /****************************************/
@@ -43,35 +46,54 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CRadioEntity::AddToMedium(CRadioMedium& c_medium) {
-      if(HasMedium()) RemoveFromMedium();
-      m_pcMedium = &c_medium;
-      c_medium.AddEntity(*this);
-      Enable();
+   void CRadioEntity::Reset() {
+      /* Erase received messages */
+      m_vecData.clear();
    }
 
    /****************************************/
    /****************************************/
 
-   void CRadioEntity::RemoveFromMedium() {
-      try {
-         GetMedium().RemoveEntity(*this);
-         m_pcMedium = nullptr;
-         Disable();
+   void CRadioEntity::Destroy() {
+      Disable();
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CRadioEntity::SetEnabled(bool b_enabled) {
+      /* Perform generic enable behavior */
+      CEntity::SetEnabled(b_enabled);
+      if(b_enabled) {
+         /* Enable entity in medium */
+         if(m_pcMedium && GetIndex() >= 0)
+            m_pcMedium->AddEntity(*this);
       }
-      catch(CARGoSException& ex) {
-         THROW_ARGOSEXCEPTION_NESTED("Can't remove radio entity \"" << GetContext() + GetId() << "\" from medium.", ex);
+      else {
+         /* Disable entity in medium */
+         if(m_pcMedium)
+            m_pcMedium->RemoveEntity(*this);
       }
    }
 
    /****************************************/
    /****************************************/
-      
+
    CRadioMedium& CRadioEntity::GetMedium() const {
       if(m_pcMedium == nullptr) {
-         THROW_ARGOSEXCEPTION("Radio entity \"" << GetContext() + GetId() << "\" has no medium associated.");
+         THROW_ARGOSEXCEPTION("radio entity \"" << GetContext() << GetId() <<
+                              "\" has no associated medium.");
       }
       return *m_pcMedium;
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CRadioEntity::SetMedium(CRadioMedium& c_medium) {
+      if(m_pcMedium != nullptr && m_pcMedium != &c_medium)
+         m_pcMedium->RemoveEntity(*this);
+      m_pcMedium = &c_medium;
    }
 
    /****************************************/
@@ -112,7 +134,35 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   REGISTER_STANDARD_SPACE_OPERATIONS_ON_ENTITY(CRadioEntity);
+   class CSpaceOperationAddCRadioEntity : public CSpaceOperationAddEntity {
+   public:
+      void ApplyTo(CSpace& c_space, CRadioEntity& c_entity) {
+         /* Add entity to space - this ensures that the radio entity
+          * gets an id before being added to the radio medium */
+         c_space.AddEntity(c_entity);
+         /* Enable the radio entity, if it's enabled - this ensures that
+          * the entity gets added to the radio if it's enabled */
+         c_entity.SetEnabled(c_entity.IsEnabled());
+      }
+   };
+
+   class CSpaceOperationRemoveCRadioEntity : public CSpaceOperationRemoveEntity {
+   public:
+      void ApplyTo(CSpace& c_space, CRadioEntity& c_entity) {
+         /* Disable the entity - this ensures that the entity is
+          * removed from the radio medium */
+         c_entity.Disable();
+         /* Remove the radio entity from space */
+         c_space.RemoveEntity(c_entity);
+      }
+   };
+
+   REGISTER_SPACE_OPERATION(CSpaceOperationAddEntity,
+                            CSpaceOperationAddCRadioEntity,
+                            CRadioEntity);
+   REGISTER_SPACE_OPERATION(CSpaceOperationRemoveEntity,
+                            CSpaceOperationRemoveCRadioEntity,
+                            CRadioEntity);
 
    /****************************************/
    /****************************************/
