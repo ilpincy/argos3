@@ -15,11 +15,11 @@
     <lua_controller id="ar_controller">
       <actuators>
         <joints implementation="default">
-          <joint id="lower_chassis_wheel_fr" mode="velocity" max_impulse="0.005f"/>
-          <joint id="lower_chassis_wheel_fl" mode="velocity" max_impulse="0.005f"/>
-          <joint id="lower_chassis_wheel_br" mode="velocity" max_impulse="0.005f"/>
-          <joint id="lower_chassis_wheel_bl" mode="velocity" max_impulse="0.005f"/>
-          <joint id="lift_fixture_vertical_link" mode="velocity" max_impulse="0.005f"/>
+          <joint id="lower_chassis_wheel_fr" mode="velocity" max_impulse="0.005"/>
+          <joint id="lower_chassis_wheel_fl" mode="velocity" max_impulse="0.005"/>
+          <joint id="lower_chassis_wheel_br" mode="velocity" max_impulse="0.005"/>
+          <joint id="lower_chassis_wheel_bl" mode="velocity" max_impulse="0.005"/>
+          <joint id="lift_fixture_vertical_link" mode="velocity" max_impulse="0.005"/>
         </joints>
         <magnets implementation="default"/>
         <radios implementation="default"/>

@@ -15,10 +15,10 @@
     <lua_controller id="my_controller">
       <actuators>
         <joints implementation="default">
-          <joint id="base_wheel_fr" mode="velocity" max_impulse="0.005f"/>
-          <joint id="base_wheel_fl" mode="velocity" max_impulse="0.005f"/>
-          <joint id="base_wheel_br" mode="velocity" max_impulse="0.005f"/>
-          <joint id="base_wheel_bl" mode="velocity" max_impulse="0.005f"/>
+          <joint id="base_wheel_fr" mode="velocity" max_impulse="0.005"/>
+          <joint id="base_wheel_fl" mode="velocity" max_impulse="0.005"/>
+          <joint id="base_wheel_br" mode="velocity" max_impulse="0.005"/>
+          <joint id="base_wheel_bl" mode="velocity" max_impulse="0.005"/>
         </joints>
       </actuators>
       <sensors>
