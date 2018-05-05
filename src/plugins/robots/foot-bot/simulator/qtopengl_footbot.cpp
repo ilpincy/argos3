@@ -360,7 +360,7 @@ namespace argos {
    /****************************************/
 
    void CQTOpenGLFootBot::SetLEDMaterial(GLfloat f_red, GLfloat f_green, GLfloat f_blue) {
-      const GLfloat fEmissionFactor = 10.0f;
+      const GLfloat fEmissionFactor = 1.0f;
       const GLfloat pfColor[]     = {                    f_red,                   f_green,                   f_blue, 1.0f };
       const GLfloat pfSpecular[]  = {                     0.0f,                      0.0f,                     0.0f, 1.0f };
       const GLfloat pfShininess[] = {                     0.0f                                                            };
