@@ -27,7 +27,7 @@ namespace argos {
             Algorithms(vec_algorithms) {}
          std::string Id;
          std::vector<CCI_CameraSensorAlgorithm*> Algorithms;
-         using TVector = std::vector<SInterface>;
+         typedef std::vector<SInterface> TVector;
       };
       
    public:
