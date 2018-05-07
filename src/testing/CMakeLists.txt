@@ -28,6 +28,11 @@ add_executable(test-client
 target_link_libraries(test-client
   argos3core_${ARGOS_BUILD_FOR})
 
+add_executable(test-rate
+  unit/test-rate.cpp)
+target_link_libraries(test-rate
+  argos3core_${ARGOS_BUILD_FOR})
+
 add_executable(test-rng
   unit/test-rng.cpp)
 target_link_libraries(test-rng
