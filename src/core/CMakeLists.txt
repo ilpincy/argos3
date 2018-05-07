@@ -112,6 +112,9 @@ set(ARGOS3_HEADERS_SIMULATOR_SPACE
 set(ARGOS3_HEADERS_WRAPPERS_LUA
   wrappers/lua/lua_controller.h
   wrappers/lua/lua_utility.h)
+# argos3/core/real_robot
+set(ARGOS3_HEADERS_REALROBOT
+  real_robot/real_robot.h)
 
 #
 # Source files
@@ -188,6 +191,12 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
     simulator/space/space_multi_thread_balance_length.cpp
     simulator/space/space_multi_thread_balance_quantity.cpp
     simulator/space/space_no_threads.cpp)
+else(ARGOS_BUILD_FOR_SIMULATOR)
+  # Real-robot only code
+  set(ARGOS3_SOURCES_CORE
+    ${ARGOS3_SOURCES_CORE}
+    ${ARGOS3_HEADERS_REALROBOT}
+    real_robot/real_robot.cpp)
 endif(ARGOS_BUILD_FOR_SIMULATOR)
 # Compile Lua wrapper only if Lua was found
 if(ARGOS_WITH_LUA)
@@ -242,6 +251,8 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
   install(FILES ${ARGOS3_HEADERS_SIMULATOR_VISUALIZATION}     DESTINATION include/argos3/core/simulator/visualization)
   install(FILES ${ARGOS3_HEADERS_SIMULATOR_SPACE_POSITIONAL_INDICES} DESTINATION include/argos3/core/simulator/space/positional_indices)
   install(FILES ${ARGOS3_HEADERS_SIMULATOR_SPACE}             DESTINATION include/argos3/core/simulator/space)
+else(ARGOS_BUILD_FOR_SIMULATOR)
+  install(FILES ${ARGOS3_HEADERS_REALROBOT}                   DESTINATION include/argos3/core/real_robot)
 endif(ARGOS_BUILD_FOR_SIMULATOR)
 if(ARGOS_WITH_LUA)
   install(FILES ${ARGOS3_HEADERS_WRAPPERS_LUA}                DESTINATION include/argos3/core/wrappers/lua)
