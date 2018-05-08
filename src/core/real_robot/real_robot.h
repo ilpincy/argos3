@@ -51,7 +51,7 @@ namespace argos {
       /**
        * Execute the robot controller.
        */
-      virtual void Control() = 0;
+      virtual void Control();
       
       /**
        * Send data to the actuators.

@@ -62,6 +62,13 @@ CRealRobot::~CRealRobot() {
 /****************************************/
 /****************************************/
 
+void CRealRobot::Control() {
+   m_pcController->ControlStep();
+}
+
+/****************************************/
+/****************************************/
+
 void CRealRobot::Execute() {
    /* Initialize the controller */
    InitController();
