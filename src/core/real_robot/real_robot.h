@@ -13,8 +13,7 @@ namespace argos {
       /**
        * Class constructor.
        */
-      CRealRobot(const std::string& str_conf_fname,
-                 const std::string& str_controller_id);
+      CRealRobot();
       
       /**
        * Class destructor.
@@ -22,9 +21,16 @@ namespace argos {
       virtual ~CRealRobot();
 
       /**
+       * Initializes the robot and the controller.
+       * Internally calls InitRobot() and InitController() in this order.
+       */
+      virtual void Init(const std::string& str_conf_fname,
+                        const std::string& str_controller_id);
+
+      /**
        * Put your robot initialization code here.
        */
-      virtual void Init() = 0;
+      virtual void InitRobot() = 0;
 
       /**
        * Put your robot cleanup code here.
@@ -59,16 +65,14 @@ namespace argos {
       virtual void Act() = 0;
 
       /**
-       * Perform the main loop.
+       * Performs the main loop.
        */
       virtual void Execute();
 
-   protected:
-
       /**
-       * Initializes the controller
+       * Cleanup function called when the controller is stopped.
        */
-      virtual void InitController();
+      static void Cleanup(int);
 
    protected:
 
@@ -77,6 +81,7 @@ namespace argos {
       TConfigurationNode m_tConfRoot;
       TConfigurationNode* m_ptControllerConfRoot;
       Real m_fRate;
+      static CRealRobot* m_pcInstance;
       
    };
    
