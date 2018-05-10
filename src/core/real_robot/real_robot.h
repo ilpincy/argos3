@@ -73,6 +73,7 @@ namespace argos {
    protected:
 
       CCI_Controller* m_pcController;
+      ticpp::Document m_tConfiguration;
       TConfigurationNode m_tConfRoot;
       TConfigurationNode* m_ptControllerConfRoot;
       Real m_fRate;

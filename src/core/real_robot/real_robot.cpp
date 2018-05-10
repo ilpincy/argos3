@@ -13,9 +13,8 @@ CRealRobot::CRealRobot(const std::string& str_conf_fname,
                        const std::string& str_controller_id) :
    m_pcController(NULL) {
    /* Parse the .argos file */
-   ticpp::Document tConfiguration;
-   tConfiguration.LoadFile(str_conf_fname);
-   m_tConfRoot = *tConfiguration.FirstChildElement();
+   m_tConfiguration.LoadFile(str_conf_fname);
+   m_tConfRoot = *m_tConfiguration.FirstChildElement();
    try {
       /*
        * Get the control rate
@@ -45,6 +44,7 @@ CRealRobot::CRealRobot(const std::string& str_conf_fname,
       }
       /* Create the controller */
       m_pcController = ControllerMaker(strControllerTag);
+      LOG << "[INFO] Controller type '" << strControllerTag << "', id '" << str_controller_id << "' created" << std::endl;
    }
    catch(CARGoSException& ex) {
       LOGERR << ex.what() << std::endl;
@@ -71,10 +71,14 @@ void CRealRobot::Control() {
 
 void CRealRobot::Execute() {
    /* Initialize the controller */
+   LOG << "[INFO] Robot initialization start" << std::endl;
+   Init();
    InitController();
+   LOG << "[INFO] Robot initialization done" << std::endl;
    /* Enforce the control rate */
    CRate cRate(m_fRate);
    /* Main loop */
+   LOG << "[INFO] Control loop running" << std::endl;
    while(1) {
       /* Do useful work */
       Sense();
@@ -91,7 +95,8 @@ void CRealRobot::Execute() {
 void CRealRobot::InitController() {
    /* Set the controller id using the machine hostname */
    char pchHostname[256];
-   ::gethostname(pchHostname, 256);
+   pchHostname[255] = '\0';
+   ::gethostname(pchHostname, 255);
    m_pcController->SetId(pchHostname);
    /* Go through actuators */
    TConfigurationNode& tActuators = GetNode(*m_ptControllerConfRoot, "actuators");
@@ -122,7 +127,7 @@ void CRealRobot::InitController() {
       m_pcController->AddSensor(itSens->Value(), pcCISens);
    }
    /* Configure the controller */
-   m_pcController->Init(*m_ptControllerConfRoot);
+   m_pcController->Init(GetNode(*m_ptControllerConfRoot, "params"));
 }
 
 /****************************************/
