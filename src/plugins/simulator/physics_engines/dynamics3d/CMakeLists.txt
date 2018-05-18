@@ -467,7 +467,9 @@ if(ARGOS_USE_DOUBLE)
    target_compile_definitions(argos3plugin_${ARGOS_BUILD_FOR}_dynamics3d PUBLIC BT_USE_DOUBLE_PRECISION)
 endif(ARGOS_USE_DOUBLE)
 
-target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_dynamics3d)
+target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_dynamics3d
+  argos3core_${ARGOS_BUILD_FOR}
+  argos3plugin_${ARGOS_BUILD_FOR}_entities)
 install(
   FILES
   ${ARGOS3_HEADERS_PLUGINS_SIMULATOR_PHYSICS_ENGINES_DYNAMICS3D_BULLET_BULLETCOLLISION_BROADPHASECOLLISION}
