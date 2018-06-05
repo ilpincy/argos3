@@ -477,6 +477,11 @@ target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_dynamics3d
   argos3plugin_${ARGOS_BUILD_FOR}_entities)
 install(
   FILES
+  bullet/LICENSE.txt
+  DESTINATION
+  include/argos3/plugins/simulator/physics_engines/dynamics3d/bullet)
+install(
+  FILES
   ${ARGOS3_HEADERS_PLUGINS_SIMULATOR_PHYSICS_ENGINES_DYNAMICS3D_BULLET}
   DESTINATION
   include/argos3/plugins/simulator/physics_engines/dynamics3d/bullet)
