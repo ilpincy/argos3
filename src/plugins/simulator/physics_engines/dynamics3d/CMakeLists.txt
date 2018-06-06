@@ -14,10 +14,10 @@ include_directories(
    ${CMAKE_CURRENT_SOURCE_DIR}/bullet/BulletCollision/CollisionShapes
    ${CMAKE_CURRENT_SOURCE_DIR}/bullet/BulletCollision/Gimpact
    ${CMAKE_CURRENT_SOURCE_DIR}/bullet/BulletCollision/NarrowPhaseCollision
+   ${CMAKE_CURRENT_SOURCE_DIR}/bullet/BulletDynamics/Character
    ${CMAKE_CURRENT_SOURCE_DIR}/bullet/BulletDynamics/ConstraintSolver
    ${CMAKE_CURRENT_SOURCE_DIR}/bullet/BulletDynamics/Dynamics
    ${CMAKE_CURRENT_SOURCE_DIR}/bullet/BulletDynamics/Vehicle
-   ${CMAKE_CURRENT_SOURCE_DIR}/bullet/BulletDynamics/Character
    ${CMAKE_CURRENT_SOURCE_DIR}/bullet/LinearMath)
 
 set(ARGOS3_HEADERS_PLUGINS_SIMULATOR_PHYSICS_ENGINES_DYNAMICS3D_BULLET
@@ -46,6 +46,7 @@ set(ARGOS3_HEADERS_PLUGINS_SIMULATOR_PHYSICS_ENGINES_DYNAMICS3D_BULLET_BULLETCOL
    bullet/BulletCollision/CollisionDispatch/btCollisionCreateFunc.h
    bullet/BulletCollision/CollisionDispatch/btCollisionDispatcher.h
    bullet/BulletCollision/CollisionDispatch/btCollisionObject.h
+   bullet/BulletCollision/CollisionDispatch/btCollisionObjectWrapper.h
    bullet/BulletCollision/CollisionDispatch/btCollisionWorld.h
    bullet/BulletCollision/CollisionDispatch/btCollisionWorldImporter.h
    bullet/BulletCollision/CollisionDispatch/btCompoundCollisionAlgorithm.h
@@ -58,6 +59,7 @@ set(ARGOS3_HEADERS_PLUGINS_SIMULATOR_PHYSICS_ENGINES_DYNAMICS3D_BULLET_BULLETCOL
    bullet/BulletCollision/CollisionDispatch/btEmptyCollisionAlgorithm.h
    bullet/BulletCollision/CollisionDispatch/btGhostObject.h
    bullet/BulletCollision/CollisionDispatch/btHashedSimplePairCache.h
+   bullet/BulletCollision/CollisionDispatch/btInternalEdgeUtility.h
    bullet/BulletCollision/CollisionDispatch/btManifoldResult.h
    bullet/BulletCollision/CollisionDispatch/btSimulationIslandManager.h
    bullet/BulletCollision/CollisionDispatch/btSphereBoxCollisionAlgorithm.h
@@ -178,7 +180,7 @@ set(ARGOS3_HEADERS_PLUGINS_SIMULATOR_PHYSICS_ENGINES_DYNAMICS3D_BULLET_BULLETDYN
    bullet/BulletDynamics/ConstraintSolver/btHinge2Constraint.h
    bullet/BulletDynamics/ConstraintSolver/btHingeConstraint.h
    bullet/BulletDynamics/ConstraintSolver/btJacobianEntry.h
-	bullet/BulletDynamics/ConstraintSolver/btNNCGConstraintSolver.h
+   bullet/BulletDynamics/ConstraintSolver/btNNCGConstraintSolver.h
    bullet/BulletDynamics/ConstraintSolver/btPoint2PointConstraint.h
    bullet/BulletDynamics/ConstraintSolver/btSequentialImpulseConstraintSolver.h
    bullet/BulletDynamics/ConstraintSolver/btSliderConstraint.h
@@ -264,6 +266,7 @@ set(ARGOS3_HEADERS_PLUGINS_SIMULATOR_PHYSICS_ENGINES_DYNAMICS3D_BULLET_LINEARMAT
 #
 # Sources of the bullet physics engine
 set(ARGOS3_SOURCES_PLUGINS_SIMULATOR_PHYSICS_ENGINES_DYNAMICS3D_BULLET
+   ${ARGOS3_HEADERS_PLUGINS_SIMULATOR_PHYSICS_ENGINES_DYNAMICS3D_BULLET}
    ${ARGOS3_HEADERS_PLUGINS_SIMULATOR_PHYSICS_ENGINES_DYNAMICS3D_BULLET_BULLETCOLLISION_BROADPHASECOLLISION}
    ${ARGOS3_HEADERS_PLUGINS_SIMULATOR_PHYSICS_ENGINES_DYNAMICS3D_BULLET_BULLETCOLLISION_COLLISIONDISPATCH}   
    ${ARGOS3_HEADERS_PLUGINS_SIMULATOR_PHYSICS_ENGINES_DYNAMICS3D_BULLET_BULLETCOLLISION_COLLISIONSHAPES}   
@@ -389,10 +392,10 @@ set(ARGOS3_SOURCES_PLUGINS_SIMULATOR_PHYSICS_ENGINES_DYNAMICS3D_BULLET
    bullet/BulletDynamics/ConstraintSolver/btTypedConstraint.cpp
    bullet/BulletDynamics/ConstraintSolver/btUniversalConstraint.cpp
    bullet/BulletDynamics/Dynamics/btDiscreteDynamicsWorld.cpp
-	bullet/BulletDynamics/Dynamics/btDiscreteDynamicsWorldMt.cpp
+   bullet/BulletDynamics/Dynamics/btDiscreteDynamicsWorldMt.cpp
    bullet/BulletDynamics/Dynamics/btRigidBody.cpp
    bullet/BulletDynamics/Dynamics/btSimpleDynamicsWorld.cpp
-	bullet/BulletDynamics/Dynamics/btSimulationIslandManagerMt.cpp
+   bullet/BulletDynamics/Dynamics/btSimulationIslandManagerMt.cpp
    bullet/BulletDynamics/Featherstone/btMultiBody.cpp
    bullet/BulletDynamics/Featherstone/btMultiBodyConstraint.cpp
    bullet/BulletDynamics/Featherstone/btMultiBodyConstraintSolver.cpp
@@ -462,14 +465,26 @@ set(ARGOS3_SOURCES_PLUGINS_SIMULATOR_PHYSICS_ENGINES_DYNAMICS3D
 add_library(argos3plugin_${ARGOS_BUILD_FOR}_dynamics3d SHARED
   ${ARGOS3_SOURCES_PLUGINS_SIMULATOR_PHYSICS_ENGINES_DYNAMICS3D_BULLET}
   ${ARGOS3_SOURCES_PLUGINS_SIMULATOR_PHYSICS_ENGINES_DYNAMICS3D})
-
+# Use double precision if ARGoS is using double precision
 if(ARGOS_USE_DOUBLE)
    target_compile_definitions(argos3plugin_${ARGOS_BUILD_FOR}_dynamics3d PUBLIC BT_USE_DOUBLE_PRECISION)
 endif(ARGOS_USE_DOUBLE)
+# Disable Bullet's inbuilt profiler
+target_compile_definitions(argos3plugin_${ARGOS_BUILD_FOR}_dynamics3d PUBLIC BT_NO_PROFILE=1)
 
 target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_dynamics3d
   argos3core_${ARGOS_BUILD_FOR}
   argos3plugin_${ARGOS_BUILD_FOR}_entities)
+install(
+  FILES
+  bullet/LICENSE.txt
+  DESTINATION
+  include/argos3/plugins/simulator/physics_engines/dynamics3d/bullet)
+install(
+  FILES
+  ${ARGOS3_HEADERS_PLUGINS_SIMULATOR_PHYSICS_ENGINES_DYNAMICS3D_BULLET}
+  DESTINATION
+  include/argos3/plugins/simulator/physics_engines/dynamics3d/bullet)
 install(
   FILES
   ${ARGOS3_HEADERS_PLUGINS_SIMULATOR_PHYSICS_ENGINES_DYNAMICS3D_BULLET_BULLETCOLLISION_BROADPHASECOLLISION}
