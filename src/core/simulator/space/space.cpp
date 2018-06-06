@@ -438,65 +438,82 @@ namespace argos {
             do {
                /* Create entity */
                pcEntity = CFactory<CEntity>::New(tEntityTree.Value());
-               /* If the tree does not have a 'body' node, create a new one */
-               if(!NodeExists(tEntityTree, "body")) {
-                  TConfigurationNode tBodyNode("body");
-                  AddChildNode(tEntityTree, tBodyNode);
-               }
-               /* Get 'body' node */
-               TConfigurationNode& tBodyNode = GetNode(tEntityTree, "body");
-               /* Set the position */
-               SetNodeAttribute(tBodyNode, "position", (*pcPositionGenerator)(bRetry));
-               /* Set the orientation */
-               SetNodeAttribute(tBodyNode, "orientation", (*pcOrientationGenerator)(bRetry));
-               /* Init the entity (this also creates the components, if pcEntity is a composable) */
-               pcEntity->Init(tEntityTree);
                /*
-                * Now that you have the entity and its components, check whether the entity is positional or embodied
-                * or has one such component.
-                * In case the entity is positional but not embodied, there's no need to check for collisions
-                * In case the entity is embodied, we must check for collisions
-                * To check for collisions, we add the entity in the place where it's supposed to be,
-                * then we ask the engine if that entity is colliding with something
-                * In case of collision, we remove the entity and try a different position/orientation
+                * Now that you have the entity, check whether the
+                * entity is positional or embodied or has one such
+                * component.
+                *
+                * In case the entity is positional but not embodied,
+                * there's no need to check for collisions.
+                *
+                * In case the entity is embodied, we must check for
+                * collisions.
+                *
+                * To check for collisions, we add the entity in the
+                * place where it's supposed to be, then we ask the
+                * engine if that entity is colliding with something.
+                *
+                * In case of collision, we remove the entity and try a
+                * different position/orientation.
                 */
-               /* Check for embodied */
-               CEmbodiedEntity* pcEmbodiedEntity = GetEmbodiedEntity(pcEntity);
-               if(pcEmbodiedEntity == NULL) {
-                  /* Check failed, then check for positional */
-                  CPositionalEntity* pcPositionalEntity = GetPositionalEntity(pcEntity);
-                  if(pcPositionalEntity == NULL) {
-                     THROW_ARGOSEXCEPTION("Cannot distribute entities that are not positional nor embodied, and \"" << tEntityTree.Value() << "\" is neither.");
-                  }
-                  else {
-                     /* Wherever we want to put the entity, it's OK, add it */
-                     CallEntityOperation<CSpaceOperationAddEntity, CSpace, void>(*this, *pcEntity);
-                  }
+               /* Check whether the entity is positional */
+               CPositionalEntity* pcPositionalEntity = GetPositionalEntity(pcEntity);
+               if(pcPositionalEntity != NULL) {
+                  /* Set the position */
+                  SetNodeAttribute(tEntityTree, "position", (*pcPositionGenerator)(bRetry));
+                  /* Set the orientation */
+                  SetNodeAttribute(tEntityTree, "orientation", (*pcOrientationGenerator)(bRetry));
+                  /* Init the entity (this also creates the components, if pcEntity is a composable) */
+                  pcEntity->Init(tEntityTree);
+                  /* Wherever we want to put the entity, it's OK, add it */
+                  CallEntityOperation<CSpaceOperationAddEntity, CSpace, void>(*this, *pcEntity);
+                  bDone = true;
                }
                else {
-                  /* The entity is embodied */
-                  /* Add it to the space and to the designated physics engine */
-                  CallEntityOperation<CSpaceOperationAddEntity, CSpace, void>(*this, *pcEntity);
-                  /* Check if it's colliding with anything else */
-                  if(pcEmbodiedEntity->IsCollidingWithSomething()) {
-                     /* Set retry to true */
-                     bRetry = true;
-                     /* Get rid of the entity */
-                     CallEntityOperation<CSpaceOperationRemoveEntity, CSpace, void>(*this, *pcEntity);
-                     /* Increase the trial count */
-                     ++unTrials;
-                     /* Too many trials? */
-                     if(unTrials > unMaxTrials) {
-                        /* Yes, bomb out */
-                        THROW_ARGOSEXCEPTION("Exceeded max trials when trying to distribute objects of type " <<
-                                             tEntityTree.Value() << " with base id \"" <<
-                                             strBaseId << "\". I managed to place only " << i << " objects.");
+                  /* Assume the entity is embodied */
+                  /* If the tree does not have a 'body' node, create a new one */
+                  if(!NodeExists(tEntityTree, "body")) {
+                     TConfigurationNode tBodyNode("body");
+                     AddChildNode(tEntityTree, tBodyNode);
+                  }
+                  /* Get 'body' node */
+                  TConfigurationNode& tBodyNode = GetNode(tEntityTree, "body");
+                  /* Set the position */
+                  SetNodeAttribute(tBodyNode, "position", (*pcPositionGenerator)(bRetry));
+                  /* Set the orientation */
+                  SetNodeAttribute(tBodyNode, "orientation", (*pcOrientationGenerator)(bRetry));
+                  /* Init the entity (this also creates the components, if pcEntity is a composable) */
+                  pcEntity->Init(tEntityTree);
+                  /* Check whether the entity is indeed embodied */
+                  CEmbodiedEntity* pcEmbodiedEntity = GetEmbodiedEntity(pcEntity);
+                  if(pcEmbodiedEntity != NULL) {
+                     /* Yes, the entity is embodied */
+                     /* Add it to the space and to the designated physics engine */
+                     CallEntityOperation<CSpaceOperationAddEntity, CSpace, void>(*this, *pcEntity);
+                     /* Check if it's colliding with anything else */
+                     if(pcEmbodiedEntity->IsCollidingWithSomething()) {
+                        /* Set retry to true */
+                        bRetry = true;
+                        /* Get rid of the entity */
+                        CallEntityOperation<CSpaceOperationRemoveEntity, CSpace, void>(*this, *pcEntity);
+                        /* Increase the trial count */
+                        ++unTrials;
+                        /* Too many trials? */
+                        if(unTrials > unMaxTrials) {
+                           /* Yes, bomb out */
+                           THROW_ARGOSEXCEPTION("Exceeded max trials when trying to distribute objects of type " <<
+                                                tEntityTree.Value() << " with base id \"" <<
+                                                strBaseId << "\". I managed to place only " << i << " objects.");
+                        }
+                        /* Retry with a new position */
                      }
-                     /* Retry with a new position */
+                     else {
+                        /* No collision, we're done with this entity */
+                        bDone = true;
+                     }
                   }
                   else {
-                     /* No collision, we're done with this entity */
-                     bDone = true;
+                     THROW_ARGOSEXCEPTION("Cannot distribute entities that are not positional nor embodied, and \"" << tEntityTree.Value() << "\" is neither.");
                   }
                }
             }
