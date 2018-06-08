@@ -107,6 +107,7 @@ namespace argos {
    /****************************************/
 
    void CBoxEntity::EnableLEDs(CLEDMedium& c_medium) {
+      m_pcLEDMedium = &c_medium;
       m_pcLEDEquippedEntity->SetMedium(*m_pcLEDMedium);
       m_pcLEDEquippedEntity->Enable();
    }

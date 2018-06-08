@@ -39,7 +39,7 @@ namespace argos {
        * Enables the LEDs for this entity.
        * Adds the LED equipped entity to the given medium.
        * If you don't call this method, the LEDs added with
-       * CBoxEntity::AddLED() won't be update correctly.
+       * CBoxEntity::AddLED() won't be updated correctly.
        * @param c_medium The medium to which the LEDs must be associated.
        * @see CBoxEntity::AddLED()
        */
