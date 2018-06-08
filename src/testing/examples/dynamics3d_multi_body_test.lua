@@ -12,6 +12,7 @@
 --[[ This function is executed every time you press the 'execute' button ]]
 function init()
 	reset()
+   log("[NOTE] This example demonstrates a four wheeled vehicle. The vehicle appears to slip at the moment and requires some further tuning of internal parameters");
 end
 
 

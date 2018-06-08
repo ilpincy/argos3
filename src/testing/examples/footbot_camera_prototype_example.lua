@@ -57,8 +57,8 @@ end
      automatically by ARGoS. ]]
 function reset()
 	robot.turret.set_speed_control_mode()
-	robot.turret.set_rotation_speed(2)
-	robot.wheels.set_velocity(0.25,-0.25)
+	robot.turret.set_rotation_speed(10)
+	robot.wheels.set_velocity(2,-2)
 end
 
 
