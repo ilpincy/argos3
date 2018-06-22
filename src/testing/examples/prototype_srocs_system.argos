@@ -5,7 +5,7 @@
   <!-- * General configuration * -->
   <!-- ************************* -->
   <framework>
-    <experiment length="0" ticks_per_second="4" random_seed="1"/>
+    <experiment length="1" ticks_per_second="1" random_seed="1"/>
   </framework>
 
   <!-- *************** -->
@@ -71,7 +71,7 @@
     <box id="bw" size="0.975,0.025,0.05" movable="false" mass="10">
       <body position="-0.0125,0.4875,0"  orientation="0,0,0" />
     </box-->
-  <arena size="10, 10, 0.5" center="0, 0, 0.125">
+  <arena size="1, 1, 0.625" center="0, 0, 0.125">
     <!-- ******************************* -->
     <!-- * Autonomous Robot Definition * -->
     <!-- ******************************* -->
@@ -192,10 +192,10 @@
           <sensor anchor="vertical_link"   offset=" 0.002000,-0.01600,0.007100" direction="1,0,0" range="0.2"/>
         </proximity_sensors>
         <magnets>
-          <magnet anchor="electromagnet_q1" passive_field="0,0,100" active_field="0,0,100" offset="0,0,.01175"/>
-          <magnet anchor="electromagnet_q2" passive_field="0,0,100" active_field="0,0,100" offset="0,0,.01175"/>
-          <magnet anchor="electromagnet_q3" passive_field="0,0,100" active_field="0,0,100" offset="0,0,.01175"/>
-          <magnet anchor="electromagnet_q4" passive_field="0,0,100" active_field="0,0,100" offset="0,0,.01175"/>
+          <magnet anchor="electromagnet_q1" passive_field="0,0,50" active_field="0,0,100" offset="0,0,.01175"/>
+          <magnet anchor="electromagnet_q2" passive_field="0,0,50" active_field="0,0,100" offset="0,0,.01175"/>
+          <magnet anchor="electromagnet_q3" passive_field="0,0,50" active_field="0,0,100" offset="0,0,.01175"/>
+          <magnet anchor="electromagnet_q4" passive_field="0,0,50" active_field="0,0,100" offset="0,0,.01175"/>
         </magnets>
         <radios medium="nfc">
           <radio id="radio" anchor="vertical_link" position="0.002000,0,0.0071" range="0.02"/>
@@ -259,14 +259,14 @@
           </joints>
           <devices>
             <magnets>
-              <magnet id="magnet00" passive_field="0,0,65" anchor="magnet00" offset="0,0,.003"/>
-              <magnet id="magnet01" passive_field="0,0,65" anchor="magnet01" offset="0,0,.003"/>
-              <magnet id="magnet02" passive_field="0,0,65" anchor="magnet02" offset="0,0,.003"/>
-              <magnet id="magnet03" passive_field="0,0,65" anchor="magnet03" offset="0,0,.003"/>
-              <magnet id="magnet10" passive_field="0,0,65" anchor="magnet10" offset="0,0,.003"/>
-              <magnet id="magnet11" passive_field="0,0,65" anchor="magnet11" offset="0,0,.003"/>
-              <magnet id="magnet12" passive_field="0,0,65" anchor="magnet12" offset="0,0,.003"/>
-              <magnet id="magnet13" passive_field="0,0,65" anchor="magnet13" offset="0,0,.003"/>
+              <magnet id="magnet00" passive_field="0,0,45" anchor="magnet00" offset="0,0,.003"/>
+              <magnet id="magnet01" passive_field="0,0,45" anchor="magnet01" offset="0,0,.003"/>
+              <magnet id="magnet02" passive_field="0,0,45" anchor="magnet02" offset="0,0,.003"/>
+              <magnet id="magnet03" passive_field="0,0,45" anchor="magnet03" offset="0,0,.003"/>
+              <magnet id="magnet10" passive_field="0,0,45" anchor="magnet10" offset="0,0,.003"/>
+              <magnet id="magnet11" passive_field="0,0,45" anchor="magnet11" offset="0,0,.003"/>
+              <magnet id="magnet12" passive_field="0,0,45" anchor="magnet12" offset="0,0,.003"/>
+              <magnet id="magnet13" passive_field="0,0,45" anchor="magnet13" offset="0,0,.003"/>
             </magnets>
             <tags medium="apriltags">
               <tag anchor="block" observable_angle="75" side_length="0.024"
@@ -350,7 +350,7 @@
   <!-- * Physics engines * -->
   <!-- ******************* -->
   <physics_engines>
-    <dynamics3d id="dyn3d" iterations="25">
+    <dynamics3d id="dyn3d" iterations="20">
       <gravity g="9.8" />
       <floor height="0.01"/>
       <magnetism max_distance="0.04"/>

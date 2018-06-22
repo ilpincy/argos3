@@ -5,7 +5,7 @@
   <!-- * General configuration * -->
   <!-- ************************* -->
   <framework>
-    <experiment length="0" ticks_per_second="5" random_seed="1"/>
+    <experiment length="0" ticks_per_second="25" random_seed="1"/>
   </framework>
 
   <!-- *************** -->
@@ -16,7 +16,7 @@
   <!-- *********************** -->
   <!-- * Arena configuration * -->
   <!-- *********************** -->
-  <arena size="0.5, 0.5, 0.5" center="0, 0, 0.25">
+  <arena size="0.5, 0.5, 1" center="0, 0, 0.5">
     <box id="bn" size="0.025,0.475,0.025" movable="false" mass="10">
       <body position="0.2375,0.0125,0"  orientation="0,0,0" />
     </box>
@@ -30,17 +30,17 @@
       <body position="-0.0125,0.2375,0"  orientation="0,0,0" />
     </box>
     <distribute>
-      <position method="uniform" min="-0.2,-0.2,0.05" max="0.2,0.2,0.25" />
+      <position method="uniform" min="-0.15,-0.15,0.05" max="0.15,0.15,0.9" />
       <orientation method="uniform" min="0,0,0" max="360,360,360" />
-      <entity quantity="50" max_trials="100" base_num="1000">
-        <box id="b0" size="0.01,0.01,0.01" movable="true" mass="0.25"/>
+      <entity quantity="100" max_trials="100" base_num="1000">
+        <box id="b0" size="0.01,0.01,0.01" movable="true" mass="0.05"/>
       </entity>
     </distribute>
     <distribute>
-      <position method="uniform" min="-0.2,-0.2,0.05" max="0.2,0.2,0.25" />
+      <position method="uniform" min="-0.15,-0.15,0.05" max="0.15,0.15,0.9" />
       <orientation method="uniform" min="0,0,0" max="360,360,360" />
-      <entity quantity="50" max_trials="100" base_num="2000">
-        <cylinder id="c0" height="0.01" radius="0.005" movable="true" mass="0.25"/>
+      <entity quantity="100" max_trials="100" base_num="2000">
+        <cylinder id="c0" height="0.01" radius="0.005" movable="true" mass="0.05"/>
       </entity>
     </distribute>
   </arena>

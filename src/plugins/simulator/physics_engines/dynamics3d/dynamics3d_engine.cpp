@@ -29,9 +29,7 @@ namespace argos {
       m_cWorld(&m_cDispatcher,
                &m_cBroadphase,
                &m_cSolver,
-               &m_cConfiguration),
-      m_unIterations(10),
-      m_fDeltaT(0) {}
+               &m_cConfiguration) {}
 
    /****************************************/
    /****************************************/
@@ -41,9 +39,6 @@ namespace argos {
       CPhysicsEngine::Init(t_tree);
       /* Create the random number generator */
       m_pcRNG = CRandom::CreateRNG("argos");
-      /* Parse the iterations attribute */
-      GetNodeAttributeOrDefault(t_tree, "iterations", m_unIterations, m_unIterations);
-      m_fDeltaT = GetPhysicsClockTick() / static_cast<btScalar>(m_unIterations);
       /* Set random seed */
       m_cSolver.setRandSeed(m_pcRNG->Uniform(m_cRandomSeedRange));
       /* Disable gravity by default */
@@ -177,7 +172,9 @@ namespace argos {
          it->second->UpdateFromEntityStatus();
       }
       /* Step the simuation forwards */
-      m_cWorld.stepSimulation(GetPhysicsClockTick(), m_unIterations, m_fDeltaT);
+      m_cWorld.stepSimulation(GetSimulationClockTick(),
+                              GetIterations(),
+                              GetPhysicsClockTick());
       /* Update the simulated space */
       for(CDynamics3DModel::TMap::iterator it = std::begin(m_tPhysicsModels);
           it != std::end(m_tPhysicsModels);

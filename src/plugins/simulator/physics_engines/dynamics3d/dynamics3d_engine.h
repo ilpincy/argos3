@@ -96,9 +96,6 @@ namespace argos {
       btCollisionDispatcher           m_cDispatcher;
       btMultiBodyConstraintSolver     m_cSolver;
       btMultiBodyDynamicsWorld        m_cWorld;
-      /* Iterations per tick and iteration length */
-      UInt32 m_unIterations;
-      btScalar m_fDeltaT;
    };
 
    /****************************************/

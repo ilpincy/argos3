@@ -5,7 +5,7 @@
   <!-- * General configuration * -->
   <!-- ************************* -->
   <framework>
-    <experiment length="0" ticks_per_second="4" random_seed="1"/>
+    <experiment length="0" ticks_per_second="25" random_seed="1"/>
   </framework>
 
   <!-- *************** -->
@@ -117,7 +117,7 @@
   <!-- * Physics engines * -->
   <!-- ******************* -->
   <physics_engines>
-    <dynamics3d id="dyn3d" iterations="25">
+    <dynamics3d id="dyn3d" iterations="20">
       <gravity g="9.8" />
       <floor height="0.01"/>
     </dynamics3d>
