@@ -1,24 +1,32 @@
 #
 # E-puck headers
 #
+# argos3/plugins/robots/e-puck/control_interface
+set(ARGOS3_HEADERS_PLUGINS_ROBOTS_EPUCK_CONTROLINTERFACE
+  control_interface/ci_epuck_proximity_sensor.h)
 # argos3/plugins/robots/e-puck/simulator
 if(ARGOS_BUILD_FOR_SIMULATOR)
   set(ARGOS3_HEADERS_PLUGINS_ROBOTS_EPUCK_SIMULATOR
     simulator/dynamics2d_epuck_model.h
     # simulator/physx_epuck_model.h
-    simulator/epuck_entity.h)
+    simulator/epuck_entity.h
+    simulator/epuck_proximity_default_sensor.h)
 endif(ARGOS_BUILD_FOR_SIMULATOR)
 
 #
 # E-puck sources
 #
+set(ARGOS3_SOURCES_PLUGINS_ROBOTS_EPUCK
+  ${ARGOS3_HEADERS_PLUGINS_ROBOTS_EPUCK_CONTROLINTERFACE}
+  control_interface/ci_epuck_proximity_sensor.cpp)
 if(ARGOS_BUILD_FOR_SIMULATOR)
   set(ARGOS3_SOURCES_PLUGINS_ROBOTS_EPUCK
     ${ARGOS3_SOURCES_PLUGINS_ROBOTS_EPUCK}
     ${ARGOS3_HEADERS_PLUGINS_ROBOTS_EPUCK_SIMULATOR}
     simulator/dynamics2d_epuck_model.cpp
     # simulator/physx_epuck_model.cpp
-    simulator/epuck_entity.cpp)
+    simulator/epuck_entity.cpp
+    simulator/epuck_proximity_default_sensor.cpp)
   # Compile the graphical visualization only if the necessary libraries have been found
   if(ARGOS_COMPILE_QTOPENGL)
     set(ARGOS3_HEADERS_PLUGINS_ROBOTS_EPUCK_SIMULATOR
