@@ -107,6 +107,10 @@ namespace argos {
       }
       /* Perform the step */
       for(size_t i = 0; i < GetIterations(); ++i) {
+         for(CDynamics2DModel::TMap::iterator it = m_tPhysicsModels.begin();
+             it != m_tPhysicsModels.end(); ++it) {
+            it->second->UpdatePhysics();
+         }
          cpSpaceStep(m_ptSpace, GetPhysicsClockTick());
       }
       /* Update the simulated space */
