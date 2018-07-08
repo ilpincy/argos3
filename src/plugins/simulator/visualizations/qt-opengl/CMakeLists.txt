@@ -16,7 +16,8 @@ set(ARGOS3_HEADERS_PLUGINS_SIMULATOR_VISUALIZATIONS_QTOPENGL_DIALOGS_LAYOUTS
   dialogs/layouts/qtopengl_bot_entity_dialog_layout.h
   dialogs/layouts/qtopengl_epuck_entity_dialog_layout.h
   dialogs/layouts/qtopengl_eyebot_entity_dialog_layout.h
-  dialogs/layouts/qtopengl_footbot_entity_dialog_layout.h)
+  dialogs/layouts/qtopengl_footbot_entity_dialog_layout.h
+  dialogs/layouts/qtopengl_spiri_entity_dialog_layout.h)
 # argos3/plugins/simulator/visualizations/qt-opengl/dialogs
 set(ARGOS3_HEADERS_PLUGINS_SIMULATOR_VISUALIZATIONS_QTOPENGL_DIALOGS
   dialogs/qtopengl_add_entity_dialog.h)
@@ -31,6 +32,7 @@ set(ARGOS3_HEADERS_PLUGINS_SIMULATOR_VISUALIZATIONS_QTOPENGL
   dialogs/layouts/qtopengl_epuck_entity_dialog_layout.h
   dialogs/layouts/qtopengl_eyebot_entity_dialog_layout.h
   dialogs/layouts/qtopengl_footbot_entity_dialog_layout.h
+  dialogs/layouts/qtopengl_spiri_entity_dialog_layout.h
   dialogs/qtopengl_add_entity_dialog.h
   qtopengl_application.h
   qtopengl_camera.h
@@ -69,6 +71,7 @@ set(ARGOS3_SOURCES_PLUGINS_SIMULATOR_VISUALIZATIONS_QTOPENGL
   dialogs/layouts/qtopengl_epuck_entity_dialog_layout.cpp
   dialogs/layouts/qtopengl_eyebot_entity_dialog_layout.cpp
   dialogs/layouts/qtopengl_footbot_entity_dialog_layout.cpp
+  dialogs/layouts/qtopengl_spiri_entity_dialog_layout.cpp
   dialogs/qtopengl_add_entity_dialog.cpp
   qtopengl_application.cpp
   qtopengl_camera.cpp
