@@ -17,6 +17,7 @@
 #include <argos3/plugins/simulator/visualizations/qt-opengl/dialogs/layouts/qtopengl_box_entity_dialog_layout.h>
 #include <argos3/plugins/simulator/visualizations/qt-opengl/dialogs/layouts/qtopengl_cylinder_entity_dialog_layout.h>
 #include <argos3/plugins/simulator/visualizations/qt-opengl/dialogs/layouts/qtopengl_light_entity_dialog_layout.h>
+#include <argos3/plugins/simulator/visualizations/qt-opengl/dialogs/layouts/qtopengl_epuck_entity_dialog_layout.h>
 #include <argos3/plugins/simulator/visualizations/qt-opengl/dialogs/layouts/qtopengl_footbot_entity_dialog_layout.h>
 
 namespace argos {
@@ -123,6 +124,9 @@ namespace argos {
         else if(strEntityType == "light") {
             m_pcEntityDialogLayout = new CQTOpenGLLightEntityDialogLayout;
         }
+        else if(strEntityType == "e-puck") {
+            m_pcEntityDialogLayout = new CQTOpenGLEPuckEntityDialogLayout;
+        }
         else if(strEntityType == "foot-bot") {
             m_pcEntityDialogLayout = new CQTOpenGLFootBotEntityDialogLayout;
         }
@@ -149,7 +153,8 @@ namespace argos {
         if(strEntityType != "box" &&
             strEntityType != "cylinder" &&
             strEntityType != "light" &&
-            strEntityType != "foot-bot") {
+            strEntityType != "foot-bot" &&
+            strEntityType != "e-puck") {
             return;
         }
 
