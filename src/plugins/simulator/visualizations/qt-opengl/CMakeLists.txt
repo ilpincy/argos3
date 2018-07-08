@@ -11,7 +11,8 @@ set(ARGOS3_HEADERS_PLUGINS_SIMULATOR_VISUALIZATIONS_QTOPENGL_DIALOGS_LAYOUTS
   dialogs/layouts/qtopengl_entity_dialog_layout.h
   dialogs/layouts/qtopengl_embodied_entity_dialog_layout.h
   dialogs/layouts/qtopengl_box_entity_dialog_layout.h
-  dialogs/layouts/qtopengl_cylinder_entity_dialog_layout.h)
+  dialogs/layouts/qtopengl_cylinder_entity_dialog_layout.h
+  dialogs/layouts/qtopengl_light_entity_dialog_layout.h)
 # argos3/plugins/simulator/visualizations/qt-opengl/dialogs
 set(ARGOS3_HEADERS_PLUGINS_SIMULATOR_VISUALIZATIONS_QTOPENGL_DIALOGS
   dialogs/qtopengl_add_entity_dialog.h)
@@ -21,6 +22,7 @@ set(ARGOS3_HEADERS_PLUGINS_SIMULATOR_VISUALIZATIONS_QTOPENGL
   dialogs/layouts/qtopengl_embodied_entity_dialog_layout.h
   dialogs/layouts/qtopengl_box_entity_dialog_layout.h
   dialogs/layouts/qtopengl_cylinder_entity_dialog_layout.h
+  dialogs/layouts/qtopengl_light_entity_dialog_layout.h
   dialogs/qtopengl_add_entity_dialog.h
   qtopengl_application.h
   qtopengl_camera.h
@@ -54,6 +56,7 @@ set(ARGOS3_SOURCES_PLUGINS_SIMULATOR_VISUALIZATIONS_QTOPENGL
   dialogs/layouts/qtopengl_embodied_entity_dialog_layout.cpp
   dialogs/layouts/qtopengl_box_entity_dialog_layout.cpp
   dialogs/layouts/qtopengl_cylinder_entity_dialog_layout.cpp
+  dialogs/layouts/qtopengl_light_entity_dialog_layout.cpp
   dialogs/qtopengl_add_entity_dialog.cpp
   qtopengl_application.cpp
   qtopengl_camera.cpp

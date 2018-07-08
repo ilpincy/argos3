@@ -16,6 +16,7 @@
 
 #include <argos3/plugins/simulator/visualizations/qt-opengl/dialogs/layouts/qtopengl_box_entity_dialog_layout.h>
 #include <argos3/plugins/simulator/visualizations/qt-opengl/dialogs/layouts/qtopengl_cylinder_entity_dialog_layout.h>
+#include <argos3/plugins/simulator/visualizations/qt-opengl/dialogs/layouts/qtopengl_light_entity_dialog_layout.h>
 
 namespace argos {
 
@@ -113,10 +114,13 @@ namespace argos {
 
         /* Load the specific layout */
         if(strEntityType == "box") {
-            m_pcEntityDialogLayout = new CQTOpenGLBoxEntityDialogLayout; 
+            m_pcEntityDialogLayout = new CQTOpenGLBoxEntityDialogLayout;
         }
         else if(strEntityType == "cylinder") {
-            m_pcEntityDialogLayout = new CQTOpenGLCylinderEntityDialogLayout; 
+            m_pcEntityDialogLayout = new CQTOpenGLCylinderEntityDialogLayout;
+        }
+        else if(strEntityType == "light") {
+            m_pcEntityDialogLayout = new CQTOpenGLLightEntityDialogLayout;
         }
         else {
             bErrorOccured = true;
@@ -139,7 +143,8 @@ namespace argos {
         /* Check the currently supported entities */
         std::string strEntityType = m_pcEntityTypeComboBox->currentText().toStdString();
         if(strEntityType != "box" &&
-            strEntityType != "cylinder") {
+            strEntityType != "cylinder" &&
+            strEntityType != "light") {
             return;
         }
 
