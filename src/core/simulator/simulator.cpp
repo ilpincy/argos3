@@ -99,6 +99,19 @@ namespace argos {
       }
       return *(it->second);
    }
+   
+   /****************************************/
+   /****************************************/
+
+   std::vector<std::string> CSimulator::GetControllerIds() const{
+      std::vector<std::string> vecControllerIds;
+      for(TControllerConfigurationMap::const_iterator it = m_mapControllerConfig.begin();
+          it != m_mapControllerConfig.end();
+          ++it) {
+         vecControllerIds.push_back(it->first);
+      }
+      return vecControllerIds;
+   }
 
    /****************************************/
    /****************************************/

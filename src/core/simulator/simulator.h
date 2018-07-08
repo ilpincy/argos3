@@ -299,6 +299,12 @@ namespace argos {
       TConfigurationNode& GetConfigForController(const std::string& str_id);
 
       /**
+       * Creates and returns a vector of strings containing all the available controller ids.
+       * @return A vector of strings containing all the available controller ids.
+       */
+      std::vector<std::string> GetControllerIds() const;
+
+      /**
        * Loads an already-parsed XML configuration tree.
        * The tree should have the same structure as an ARGoS file.
        * The variable m_tConfigurationRoot is set here.
