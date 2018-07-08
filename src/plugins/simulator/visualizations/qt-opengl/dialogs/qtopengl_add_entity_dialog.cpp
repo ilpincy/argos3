@@ -157,7 +157,7 @@ namespace argos {
             }
 
             /* Draw the scene */
-            m_pcOpenGLWidget->DrawScene();
+            //m_pcOpenGLWidget->DrawScene();
             /* Close the dialog box */
             QDialog::close();
         }
