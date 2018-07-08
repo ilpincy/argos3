@@ -17,6 +17,7 @@ namespace argos {
    class CProximitySensorEquippedEntity;
    class CQuadRotorEntity;
    class CRABEquippedEntity;
+   class CBatteryEquippedEntity;
 }
 
 #include <argos3/core/simulator/entity/composable_entity.h>
@@ -39,6 +40,7 @@ namespace argos {
                     const CQuaternion& c_orientation = CQuaternion(),
                     Real f_rab_range = 3.0f,
                     size_t un_rab_data_size = 10,
+                    const std::string& str_bat_model = "",
                     const CRadians& c_perspcam_aperture = ToRadians(CDegrees(30.0f)),
                     Real f_perspcam_focal_length = 0.035,
                     Real f_perspcam_range = 2.0);
@@ -76,6 +78,10 @@ namespace argos {
          return *m_pcRABEquippedEntity;
       }
 
+      inline CBatteryEquippedEntity& GetBatterySensorEquippedEntity() {
+          return *m_pcBatteryEquippedEntity;
+      }
+
       virtual std::string GetTypeDescription() const {
          return "eye-bot";
       }
@@ -90,6 +96,7 @@ namespace argos {
       CProximitySensorEquippedEntity*   m_pcProximitySensorEquippedEntity;
       CQuadRotorEntity*                 m_pcQuadRotorEntity;
       CRABEquippedEntity*               m_pcRABEquippedEntity;
+      CBatteryEquippedEntity*           m_pcBatteryEquippedEntity;
    };
 
 }

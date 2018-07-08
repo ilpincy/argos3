@@ -3,10 +3,11 @@
  *
  * @brief Contains the implementation of a 2x2 rotation matrix
  *
- * @author Michael Allwright <michael.allwright@upb.de>
+ * @author Michael Allwright <allsey87@gmail.com>
  */
  
 #include "rotationmatrix2.h"
+
 #include <argos3/core/utility/math/angles.h>
 
 namespace argos {
@@ -17,7 +18,6 @@ namespace argos {
    void CRotationMatrix2::SetFromAngle(const CRadians& c_angle) {
       Real cos_angle = Cos(c_angle);
       Real sin_angle = Sin(c_angle);
-
       /* Set values */
       m_pfValues[0] =  cos_angle;
       m_pfValues[1] = -sin_angle;

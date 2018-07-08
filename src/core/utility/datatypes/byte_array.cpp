@@ -126,6 +126,16 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   CByteArray* CByteArray::operator()(size_t un_start,
+                                      ssize_t un_end) {
+      if(un_start >= Size()) THROW_ARGOSEXCEPTION("Attempting to extract from byte array beyond the limits (" << un_start << " requested, " << Size() << " size)");
+      un_end = un_end < 0 ? Size() : Min<ssize_t>(un_end, Size());
+      return new CByteArray(ToCArray() + un_start, un_end - un_start);
+   }
+   
+   /****************************************/
+   /****************************************/
+
    CByteArray& CByteArray::operator<<(UInt8 un_value) {
       m_vecBuffer.push_back(un_value);
       return *this;

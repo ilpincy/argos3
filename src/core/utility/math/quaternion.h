@@ -8,6 +8,7 @@
 #define CQUATERNION_H
 
 #include <argos3/core/utility/math/vector3.h>
+#include <argos3/core/utility/math/matrix/rotationmatrix3.h>
 
 namespace argos {
 
@@ -332,6 +333,21 @@ namespace argos {
          CQuaternion result(*this);
          result *= c_quaternion;
          return result;
+      }
+
+      /**
+       * Implict conversion to rotation matrix. This code is based on the solution used by Bullet
+       */
+      operator CRotationMatrix3() const {
+         Real fS = 2.0f / SquareLength();
+         Real fXS = m_fValues[1] * fS;  Real fYS = m_fValues[2] * fS;  Real fZS = m_fValues[3] * fS;
+         Real fWX = m_fValues[0] * fXS; Real fWY = m_fValues[0] * fYS; Real fWZ = m_fValues[0] * fZS;
+         Real fXX = m_fValues[1] * fXS; Real fXY = m_fValues[1] * fYS; Real fXZ = m_fValues[1] * fZS;
+         Real fYY = m_fValues[2] * fYS; Real fYZ = m_fValues[2] * fZS; Real fZZ = m_fValues[3] * fZS;
+         /* return a new rotation matrix */
+         return CRotationMatrix3(1.0f - (fYY + fZZ), fXY - fWZ, fXZ + fWY,
+                                 fXY + fWZ, 1.0f - (fXX + fZZ), fYZ - fWX,
+                                 fXZ - fWY, fYZ + fWX, 1.0f - (fXX + fYY));
       }
 
       /**

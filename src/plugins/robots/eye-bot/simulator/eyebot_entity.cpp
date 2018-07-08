@@ -15,6 +15,7 @@
 #include <argos3/plugins/simulator/entities/proximity_sensor_equipped_entity.h>
 #include <argos3/plugins/simulator/entities/quadrotor_entity.h>
 #include <argos3/plugins/simulator/entities/rab_equipped_entity.h>
+#include <argos3/plugins/simulator/entities/battery_equipped_entity.h>
 
 namespace argos {
 
@@ -45,7 +46,8 @@ namespace argos {
       m_pcPerspectiveCameraEquippedEntity(NULL),
       m_pcProximitySensorEquippedEntity(NULL),
       m_pcQuadRotorEntity(NULL),
-      m_pcRABEquippedEntity(NULL) {
+      m_pcRABEquippedEntity(NULL),
+      m_pcBatteryEquippedEntity(NULL) {
    }
 
    /****************************************/
@@ -57,6 +59,7 @@ namespace argos {
                                 const CQuaternion& c_orientation,
                                 Real f_rab_range,
                                 size_t un_rab_data_size,
+                                const std::string& str_bat_model,
                                 const CRadians& c_perspcam_aperture,
                                 Real f_perspcam_focal_length,
                                 Real f_perspcam_range) :
@@ -68,7 +71,8 @@ namespace argos {
       m_pcPerspectiveCameraEquippedEntity(NULL),
       m_pcProximitySensorEquippedEntity(NULL),
       m_pcQuadRotorEntity(NULL),
-      m_pcRABEquippedEntity(NULL) {
+      m_pcRABEquippedEntity(NULL),
+      m_pcBatteryEquippedEntity(NULL) {
       try {
          /*
           * Create and init components
@@ -151,6 +155,9 @@ namespace argos {
                                                  640, 480,
                                                  cPerspCamAnchor);
          AddComponent(*m_pcPerspectiveCameraEquippedEntity);
+         /* Battery senesor equipped entity */
+         m_pcBatteryEquippedEntity = new CBatteryEquippedEntity(this, "battery_0", str_bat_model);
+         AddComponent(*m_pcBatteryEquippedEntity);
          /* Controllable entity
             It must be the last one, for actuators/sensors to link to composing entities correctly */
          m_pcControllableEntity = new CControllableEntity(this, "controller_0");
@@ -267,6 +274,11 @@ namespace argos {
                                                  640, 480,
                                                  cPerspCamAnchor);
          AddComponent(*m_pcPerspectiveCameraEquippedEntity);
+         /* Battery equipped entity */
+         m_pcBatteryEquippedEntity = new CBatteryEquippedEntity(this, "battery_0");
+         if(NodeExists(t_tree, "battery"))
+            m_pcBatteryEquippedEntity->Init(GetNode(t_tree, "battery"));
+         AddComponent(*m_pcBatteryEquippedEntity);
          /* Controllable entity
             It must be the last one, for actuators/sensors to link to composing entities correctly */
          m_pcControllableEntity = new CControllableEntity(this);
@@ -298,6 +310,7 @@ namespace argos {
    void CEyeBotEntity::UpdateComponents() {
       UPDATE(m_pcRABEquippedEntity);
       UPDATE(m_pcLEDEquippedEntity);
+      UPDATE(m_pcBatteryEquippedEntity);
    }
 
    /****************************************/
@@ -359,6 +372,43 @@ namespace argos {
                    "    <eye-bot id=\"eb0\" rab_data_size=\"20\">\n"
                    "      <body position=\"0.4,2.3,0.25\" orientation=\"45,0,0\" />\n"
                    "      <controller config=\"mycntrl\" />\n"
+                   "    </eye-bot>\n"
+                   "    ...\n"
+                   "  </arena>\n\n"
+                   "You can also configure the battery of the robot. By default, the battery never\n"
+                   "depletes. You can choose among several battery discharge models, such as\n"
+                   "- time: the battery depletes by a fixed amount at each time step\n"
+                   "- motion: the battery depletes according to how the robot moves\n"
+                   "- time_motion: a combination of the above models.\n"
+                   "You can define your own models too. Follow the examples in the file\n"
+                   "argos3/src/plugins/simulator/entities/battery_equipped_entity.cpp.\n\n"
+                   "  <arena ...>\n"
+                   "    ...\n"
+                   "    <eye-bot id=\"eb0\"\n"
+                   "      <body position=\"0.4,2.3,0.25\" orientation=\"45,0,0\" />\n"
+                   "      <controller config=\"mycntrl\" />\n"
+                   "      <battery model=\"time\" factor=\"1e-5\"/>\n"
+                   "    </eye-bot>\n"
+                   "    ...\n"
+                   "  </arena>\n\n"
+                   "  <arena ...>\n"
+                   "    ...\n"
+                   "    <eye-bot id=\"eb0\"\n"
+                   "      <body position=\"0.4,2.3,0.25\" orientation=\"45,0,0\" />\n"
+                   "      <controller config=\"mycntrl\" />\n"
+                   "      <battery model=\"motion\" pos_factor=\"1e-3\"\n"
+                   "                              orient_factor=\"1e-3\"/>\n"
+                   "    </eye-bot>\n"
+                   "    ...\n"
+                   "  </arena>\n\n"
+                   "  <arena ...>\n"
+                   "    ...\n"
+                   "    <eye-bot id=\"eb0\"\n"
+                   "      <body position=\"0.4,2.3,0.25\" orientation=\"45,0,0\" />\n"
+                   "      <controller config=\"mycntrl\" />\n"
+                   "      <battery model=\"time_motion\" time_factor=\"1e-5\"\n"
+                   "                                   pos_factor=\"1e-3\"\n"
+                   "                                   orient_factor=\"1e-3\"/>\n"
                    "    </eye-bot>\n"
                    "    ...\n"
                    "  </arena>\n\n"

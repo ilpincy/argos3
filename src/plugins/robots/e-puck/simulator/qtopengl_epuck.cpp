@@ -160,11 +160,10 @@ namespace argos {
    void CQTOpenGLEPuck::SetLEDMaterial(GLfloat f_red,
                                        GLfloat f_green,
                                        GLfloat f_blue) {
-      const GLfloat fEmissionFactor = 10.0f;
-      const GLfloat pfColor[]     = {                    f_red,                   f_green,                   f_blue, 1.0f };
-      const GLfloat pfSpecular[]  = {                     0.0f,                      0.0f,                     0.0f, 1.0f };
-      const GLfloat pfShininess[] = {                     0.0f                                                            };
-      const GLfloat pfEmission[]  = {  f_red * fEmissionFactor, f_green * fEmissionFactor, f_blue * fEmissionFactor, 1.0f };
+      const GLfloat pfColor[]     = { f_red, f_green, f_blue, 1.0f };
+      const GLfloat pfSpecular[]  = {  0.0f,    0.0f,   0.0f, 1.0f };
+      const GLfloat pfShininess[] = {  0.0f                        };
+      const GLfloat pfEmission[]  = { f_red, f_green, f_blue, 1.0f };
       glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, pfColor);
       glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR,            pfSpecular);
       glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS,           pfShininess);

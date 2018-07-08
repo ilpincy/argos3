@@ -167,12 +167,7 @@ namespace argos {
                    << "\": "
                    << dlerror()
                    << std::endl;
-         }
-         if(::dlopen(str_lib.c_str(), RTLD_NOLOAD)) {
-            LOGERR << "[WARNING] Can't unload library \""
-                   << str_lib
-                   << "\""
-                   << std::endl;
+            LOGERR.Flush();
          }
       }
       else {

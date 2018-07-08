@@ -70,6 +70,22 @@ namespace argos {
       virtual void CheckIntersectionWithRay(TEmbodiedEntityIntersectionData& t_data,
                                             const CRay3& c_ray) const;
 
+      inline cpFloat GetBoxLinearFriction() const {
+         return m_fBoxLinearFriction;
+      }
+
+      inline cpFloat GetBoxAngularFriction() const {
+         return m_fBoxAngularFriction;
+      }
+
+      inline cpFloat GetCylinderLinearFriction() const {
+         return m_fCylinderLinearFriction;
+      }
+
+      inline cpFloat GetCylinderAngularFriction() const {
+         return m_fCylinderAngularFriction;
+      }
+
       inline cpSpace* GetPhysicsSpace() {
          return m_ptSpace;
       }
@@ -115,10 +131,10 @@ namespace argos {
 
    private:
 
-      cpFloat m_fStaticHashCellSize;
-      cpFloat m_fActiveHashCellSize;
-      SInt32 m_nStaticHashCells;
-      SInt32 m_nActiveHashCells;
+      cpFloat m_fBoxLinearFriction;
+      cpFloat m_fBoxAngularFriction;
+      cpFloat m_fCylinderLinearFriction;
+      cpFloat m_fCylinderAngularFriction;
       cpSpace* m_ptSpace;
       cpBody* m_ptGroundBody;
       Real m_fElevation;

@@ -221,6 +221,32 @@ namespace argos {
       virtual void Update() {}
 
       /**
+       * Returns the entity index.
+       * 
+       * The entity index is used to order entities globally when
+       * necessary to ensure determinism.
+       *
+       * When an entity index is <0, the index is considered unset and
+       * it should not be used.
+       *
+       * @return The entity index.
+       */
+      ssize_t GetIndex() const {
+         return m_nIndex;
+      }
+
+      /**
+       * Sets the entity index.
+       * The entity index is used to order entities globally when
+       * necessary to ensure determinism.
+       * Never call this function in your code.
+       * @param un_idx The entity index.
+       */
+      void SetIndex(ssize_t n_idx) {
+         m_nIndex = n_idx;
+      }
+
+      /**
        * Returns <tt>true</tt> if the entity is enabled.
        * @return <tt>true</tt> if the entity is enabled.
        * @see m_bEnabled
@@ -258,6 +284,15 @@ namespace argos {
        */
       virtual void SetEnabled(bool b_enabled);
 
+      /**
+       * Returns a pointer to the configuration node that was used to create this entity.
+       * The pointer is NULL if no configuration node was used.
+       * @return A pointer to the configuration node that was used to create this entity.
+       */
+      TConfigurationNode* GetConfigurationNode() {
+         return m_ptConfNode;
+      }
+
    private:
 
       /** The parent of this entity */
@@ -266,9 +301,27 @@ namespace argos {
       /** The id of this entity */
       std::string m_strId;
 
+      /** The unique index of this entity, used for deterministic ordering */
+      ssize_t m_nIndex;
+
       /** When <tt>true</tt>, this entity is updated; when <tt>false</tt>, this entity is not updated */
       bool m_bEnabled;
 
+      /** The XML tag used to configure this entity, if any */
+      TConfigurationNode* m_ptConfNode;
+
+   };
+
+   /**
+    * A generic entity comparator, used in containers that must be ordered deterministically.
+    */
+   struct SEntityComparator {
+      bool operator()(const CEntity* pc_a, const CEntity* pc_b) const {
+         return pc_a->GetIndex() < pc_b->GetIndex();
+      }
+      bool operator()(const CEntity& c_a, const CEntity& c_b) const {
+         return c_a.GetIndex() < c_b.GetIndex();
+      }
    };
 
    /**

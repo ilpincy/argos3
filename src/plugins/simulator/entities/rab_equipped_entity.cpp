@@ -10,6 +10,7 @@
 #include <argos3/core/simulator/space/space.h>
 #include <argos3/core/simulator/entity/composable_entity.h>
 #include <argos3/core/simulator/entity/embodied_entity.h>
+#include <argos3/plugins/simulator/media/rab_medium.h>
 
 namespace argos {
 
@@ -20,7 +21,8 @@ namespace argos {
       CPositionalEntity(pc_parent),
       m_psAnchor(NULL),
       m_fRange(0.0f),
-      m_pcEntityBody(NULL) {
+      m_pcEntityBody(NULL),
+      m_pcMedium(NULL) {
       Disable();
    }
 
@@ -42,7 +44,8 @@ namespace argos {
       m_cRotOffset(c_rot_offset),
       m_cData(un_msg_size),
       m_fRange(f_range),
-      m_pcEntityBody(&c_entity_body) {
+      m_pcEntityBody(&c_entity_body),
+      m_pcMedium(NULL) {
       Disable();
       CVector3 cPos = c_pos_offset;
       cPos.Rotate(s_anchor.Orientation);
@@ -126,15 +129,26 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CRABEquippedEntity::Enable() {
-      m_psAnchor->Enable();
-   }
-
-   /****************************************/
-   /****************************************/
-
-   void CRABEquippedEntity::Disable() {
-      m_psAnchor->Disable();
+   void CRABEquippedEntity::SetEnabled(bool b_enabled) {
+      /* Perform generic enable behavior */
+      CEntity::SetEnabled(b_enabled);
+      /* Perform specific enable behavior */
+      if(b_enabled) {
+         /* Enable body anchor */
+         if(m_psAnchor)
+            m_psAnchor->Enable();
+         /* Enable entity in medium */
+         if(m_pcMedium && GetIndex() >= 0)
+            m_pcMedium->AddEntity(*this);
+      }
+      else {
+         /* Disable body anchor */
+         if(m_psAnchor)
+            m_psAnchor->Disable();
+         /* Disable entity in medium */
+         if(m_pcMedium)
+            m_pcMedium->RemoveEntity(*this);
+      }
    }
 
    /****************************************/
@@ -312,7 +326,31 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   REGISTER_STANDARD_SPACE_OPERATIONS_ON_ENTITY(CRABEquippedEntity);
+   class CSpaceOperationAddCRABEquippedEntity : public CSpaceOperationAddEntity {
+   public:
+      void ApplyTo(CSpace& c_space, CRABEquippedEntity& c_entity) {
+         /* Add entity to space - this ensures that the RAB entity
+          * gets an id before being added to the RAB medium */
+         c_space.AddEntity(c_entity);
+         /* Enable the RAB entity, if it's enabled - this ensures that
+          * the entity gets added to the RAB if it's enabled */
+         c_entity.SetEnabled(c_entity.IsEnabled());
+      }
+   };
+
+   class CSpaceOperationRemoveCRABEquippedEntity : public CSpaceOperationRemoveEntity {
+   public:
+      void ApplyTo(CSpace& c_space, CRABEquippedEntity& c_entity) {
+         /* Disable the entity - this ensures that the entity is
+          * removed from the RAB medium */
+         c_entity.Disable();
+         /* Remove the RAB entity from space */
+         c_space.RemoveEntity(c_entity);
+      }
+   };
+
+   REGISTER_SPACE_OPERATION(CSpaceOperationAddEntity, CSpaceOperationAddCRABEquippedEntity, CRABEquippedEntity);
+   REGISTER_SPACE_OPERATION(CSpaceOperationRemoveEntity, CSpaceOperationRemoveCRABEquippedEntity, CRABEquippedEntity);
 
    /****************************************/
    /****************************************/

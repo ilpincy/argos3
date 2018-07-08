@@ -299,7 +299,8 @@ namespace argos {
             /* This thread has entities */
             /* Actuate control choices */
             for(size_t i = cEntityRange.GetMin(); i < cEntityRange.GetMax(); ++i) {
-               m_vecControllableEntities[i]->Act();
+               if(m_vecControllableEntities[i]->IsEnabled())
+                  m_vecControllableEntities[i]->Act();
             }
             pthread_testcancel();
             THREAD_SIGNAL_PHASE_DONE(Act);
@@ -342,8 +343,10 @@ namespace argos {
          if(cEntityRange.GetSpan() > 0) {
             /* This thread has entities */
             for(size_t i = cEntityRange.GetMin(); i < cEntityRange.GetMax(); ++i) {
-               m_vecControllableEntities[i]->Sense();
-               m_vecControllableEntities[i]->ControlStep();
+               if(m_vecControllableEntities[i]->IsEnabled()) {
+                  m_vecControllableEntities[i]->Sense();
+                  m_vecControllableEntities[i]->ControlStep();
+               }
             }
             pthread_testcancel();
             THREAD_SIGNAL_PHASE_DONE(SenseControlStep);

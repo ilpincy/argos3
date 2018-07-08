@@ -63,8 +63,8 @@ namespace argos {
          /* Set the body so that the default methods work as expected */
          SetBody(ptBody, c_entity.GetSize().GetZ());
          /* Friction with ground */
-         SetLinearFriction(0.0f, 1.49f);
-         SetAngularFriction(0.0f, 1.49f);
+         SetLinearFriction(0.0f, c_engine.GetBoxLinearFriction());
+         SetAngularFriction(0.0f, c_engine.GetBoxAngularFriction());
       }
       else {
          /* The box is not movable */

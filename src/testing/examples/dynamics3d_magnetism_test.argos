@@ -1,0 +1,89 @@
+<?xml version="1.0" ?>
+<argos-configuration>
+
+  <!-- ************************* -->
+  <!-- * General configuration * -->
+  <!-- ************************* -->
+  <framework>
+    <experiment length="0" ticks_per_second="25" random_seed="1"/>
+  </framework>
+
+  <!-- *************** -->
+  <!-- * Controllers * -->
+  <!-- *************** -->
+  <controllers />
+
+  <!-- *********************** -->
+  <!-- * Arena configuration * -->
+  <!-- *********************** -->
+  <arena size="0.5, 0.5, 0.5" center="0, 0, 0.25">
+    <box id="bn" size="0.025,0.475,0.025" movable="false">
+      <body position="0.2375,0.0125,0"  orientation="0,0,0" />
+    </box>
+    <box id="be" size="0.475,0.025,0.025" movable="false">
+      <body position="0.0125,-0.2375,0"  orientation="0,0,0" />
+    </box>
+    <box id="bs" size="0.025,0.475,0.025" movable="false">
+      <body position="-0.2375,-0.0125,0"  orientation="0,0,0" />
+    </box>
+    <box id="bw" size="0.475,0.025,0.025" movable="false">
+      <body position="-0.0125,0.2375,0"  orientation="0,0,0" />
+    </box>
+    <distribute>
+      <position method="grid" center="0,0,0" distances="0.05,0.1,0"
+                layout="5,4,1" />
+      <orientation method="grid" center="0,0,0" distances="0,0,0"
+                   layout="5,4,1" />
+      <entity quantity="20" max_trials="20">
+        <prototype id="magnet" movable="true">
+          <links ref="base">
+            <link id="base" geometry="box" size=".03,.03,.03" mass="0.15"
+                  position="0,0,0" orientation="0,0,0" />
+          </links>
+          <devices>
+            <magnets>
+              <magnet id="magnet" passive_field="-1000,0,0" anchor="base" 
+                      offset="0,0,.015"/>
+            </magnets>
+          </devices>
+        </prototype>
+      </entity>
+    </distribute>
+  </arena>
+
+  <!-- ******************* -->
+  <!-- * Physics engines * -->
+  <!-- ******************* -->
+  <physics_engines>
+    <dynamics3d id="dyn3d" iterations="20">
+      <gravity g="9.8" />
+      <floor height="0.01"/>
+      <magnetism max_distance="0.08"/>
+    </dynamics3d>
+  </physics_engines>
+
+  <!-- ********* -->
+  <!-- * Media * -->
+  <!-- ********* -->
+  <media/>
+
+  <!-- ****************** -->
+  <!-- * Visualization * -->
+  <!-- ****************** -->
+  <visualization>
+    <qt-opengl lua_editor="false">
+      <camera>
+        <placement idx="0" position=" 0,   -1.25,0.5" look_at="0,0,0.05" lens_focal_length="78" />
+        <placement idx="1" position=" 1.25,-1.25,0.6" look_at="0,0,0.05" lens_focal_length="92" />
+        <placement idx="2" position=" 1.25, 0,   0.5" look_at="0,0,0.05" lens_focal_length="78" />
+        <placement idx="3" position=" 1.25, 1.25,0.6" look_at="0,0,0.05" lens_focal_length="92" />
+        <placement idx="4" position=" 0,    1.25,0.5" look_at="0,0,0.05" lens_focal_length="78" />
+        <placement idx="5" position="-1.25, 1.25,0.6" look_at="0,0,0.05" lens_focal_length="92" />
+        <placement idx="6" position="-1.25, 0,   0.5" look_at="0,0,0.05" lens_focal_length="78" />
+        <placement idx="7" position="-1.25,-1.25,0.6" look_at="0,0,0.05" lens_focal_length="92" />
+        <placement idx="8" position="0,0,0.5" look_at="0.0,0.0,0.125" up="1,0,0" lens_focal_length="40"/>
+      </camera>
+    </qt-opengl>
+  </visualization>
+
+</argos-configuration>

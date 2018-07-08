@@ -7,6 +7,7 @@
 #include "simulator.h"
 
 #include <iostream>
+#include <memory>
 #include <string>
 #include <sys/time.h>
 #include <argos3/core/utility/logging/argos_log.h>
@@ -24,16 +25,6 @@
 #include <argos3/core/simulator/entity/embodied_entity.h>
 
 namespace argos {
-
-   /**
-   Custom adaptation to C++11 standard
-   */
-#if __cplusplus >= 201103L
-   template <typename T>
-   using auto_ptr = std::unique_ptr<T>;
-#else
-   using std::auto_ptr;
-#endif
 
    /****************************************/
    /****************************************/
@@ -85,7 +76,7 @@ namespace argos {
    /****************************************/
 
    CSimulator& CSimulator::GetInstance() {
-      static auto_ptr<CSimulator> pcSimulatorInstance(new CSimulator());
+      static std::unique_ptr<CSimulator> pcSimulatorInstance(new CSimulator());
       return *(pcSimulatorInstance.get());
    }
 
@@ -107,6 +98,19 @@ namespace argos {
          THROW_ARGOSEXCEPTION("Can't find XML configuration for controller id \"" << str_id << "\"");
       }
       return *(it->second);
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CSimulator::Load(ticpp::Document& t_tree) {
+      /* Build configuration tree */
+      m_tConfiguration = t_tree;
+      m_tConfigurationRoot = *m_tConfiguration.FirstChildElement();
+      /* Init the experiment */
+      Init();
+      LOG.Flush();
+      LOGERR.Flush();
    }
 
    /****************************************/

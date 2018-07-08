@@ -20,7 +20,6 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
     # simulator/physx_epuck_model.cpp
     simulator/epuck_entity.cpp)
   # Compile the graphical visualization only if the necessary libraries have been found
-  include(ARGoSCheckQTOpenGL)
   if(ARGOS_COMPILE_QTOPENGL)
     set(ARGOS3_HEADERS_PLUGINS_ROBOTS_EPUCK_SIMULATOR
       ${ARGOS3_HEADERS_PLUGINS_ROBOTS_EPUCK_SIMULATOR}

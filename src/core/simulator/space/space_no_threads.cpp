@@ -18,7 +18,8 @@ namespace argos {
 
    void CSpaceNoThreads::UpdateControllableEntitiesAct() {
       for(size_t i = 0; i < m_vecControllableEntities.size(); ++i) {
-         m_vecControllableEntities[i]->Act();
+         if(m_vecControllableEntities[i]->IsEnabled())
+            m_vecControllableEntities[i]->Act();
       }
    }
 
@@ -52,8 +53,10 @@ namespace argos {
 
    void CSpaceNoThreads::UpdateControllableEntitiesSenseStep() {
       for(size_t i = 0; i < m_vecControllableEntities.size(); ++i) {
-         m_vecControllableEntities[i]->Sense();
-         m_vecControllableEntities[i]->ControlStep();
+         if(m_vecControllableEntities[i]->IsEnabled()) {
+            m_vecControllableEntities[i]->Sense();
+            m_vecControllableEntities[i]->ControlStep();
+         }
       }
    }
 

@@ -8,6 +8,7 @@
 #define FOOTBOT_ENTITY_H
 
 namespace argos {
+   class CBatteryEquippedEntity;
    class CControllableEntity;
    class CFootBotDistanceScannerEquippedEntity;
    class CEmbodiedEntity;
@@ -45,6 +46,7 @@ namespace argos {
                      const CQuaternion& c_orientation = CQuaternion(),
                      Real f_rab_range = 3.0f,
                      size_t un_rab_data_size = 10,
+                     const std::string& str_bat_model = "",
                      const CRadians& c_omnicam_aperture = ToRadians(CDegrees(70.0f)),
                      bool b_perspcam_front = true,
                      const CRadians& c_perspcam_aperture = ToRadians(CDegrees(30.0f)),
@@ -111,6 +113,10 @@ namespace argos {
          return *m_pcWiFiEquippedEntity;
       }
 
+      inline CBatteryEquippedEntity& GetBatterySensorEquippedEntity() {
+          return *m_pcBatteryEquippedEntity;
+      }
+
       virtual std::string GetTypeDescription() const {
          return "foot-bot";
       }
@@ -131,6 +137,7 @@ namespace argos {
       CRABEquippedEntity*                    m_pcRABEquippedEntity;
       CWheeledEntity*                        m_pcWheeledEntity;
       CWiFiEquippedEntity*                   m_pcWiFiEquippedEntity;
+      CBatteryEquippedEntity*                m_pcBatteryEquippedEntity;
    };
 
 }

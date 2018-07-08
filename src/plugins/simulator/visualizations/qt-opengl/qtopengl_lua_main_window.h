@@ -14,6 +14,7 @@ namespace argos {
    class CQTOpenGLMainWindow;
    class CLuaController;
    class CComposableEntity;
+   class CEntity;
 }
 
 class QAction;
@@ -46,8 +47,8 @@ namespace argos {
       void CodeModified();
       void CheckLuaStatus(int n_step);
       void HandleMsgTableSelection();
-      void HandleEntitySelection(size_t un_index);
-      void HandleEntityDeselection(size_t);
+      void HandleEntitySelection(CEntity* pc_entity);
+      void HandleEntityDeselection(CEntity* pc_entity);
       void VariableTreeChanged();
       void FunctionTreeChanged();
 

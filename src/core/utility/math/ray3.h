@@ -129,6 +129,18 @@ namespace argos {
       bool Intersects(const CPlane& c_plane,
                       CVector3& c_point) const;
 
+      /**
+       * Serializes the contents of the passed ray onto a stream.
+       * @param c_os The stream.
+       * @param c_ray The ray.
+       * @return The new state of the stream.
+       */
+      inline friend std::ostream& operator<<(std::ostream& c_os,
+                                             const CRay3& c_ray) {
+         c_os << c_ray.GetStart() << " -> " << c_ray.GetEnd();
+         return c_os;
+      }
+
    private:
 
       CVector3 m_cStart;

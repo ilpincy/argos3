@@ -70,7 +70,7 @@ namespace argos {
       /* Go through intersections and find the closest */
       for(size_t i = 0; i < tData.size(); ++i) {
          if(s_item.TOnRay > tData[i].TOnRay &&
-            s_item.IntersectedEntity != &c_entity) {
+            &c_entity != tData[i].IntersectedEntity) {
             s_item = tData[i];
          }
       }

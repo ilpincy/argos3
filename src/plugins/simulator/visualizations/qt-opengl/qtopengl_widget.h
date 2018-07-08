@@ -83,12 +83,12 @@ namespace argos {
        * Data arelated to robot selection
        */
       struct SSelectionInfo {
-         bool IsSelected;         // true when a robot is selected
-         size_t Index;            // the index of the selected robot
+         bool IsSelected;         // true when an entity is selected
+         CEntity* Entity;         // the selected entity
 
          SSelectionInfo() :
             IsSelected(false),
-            Index(0) {}
+            Entity(NULL) {}
       };
 
    public:
@@ -244,15 +244,15 @@ namespace argos {
 
       /**
        * Emitted when an entity is selected.
-       * @param The index of the selected entity
+       * @param The selected entity
        */
-      void EntitySelected(size_t un_index);
+      void EntitySelected(CEntity* pc_entity);
 
       /**
        * Emitted when an entity is deselected.
-       * @param The index of the deselected entity
+       * @param The deselected entity
        */
-      void EntityDeselected(size_t un_index);
+      void EntityDeselected(CEntity* pc_entity);
 
    public slots:
 
@@ -386,8 +386,6 @@ namespace argos {
       GLuint m_unArenaList;
       /** Display list for floor elements */
       GLuint m_unFloorList;
-      /** Index buffer for entity selection */
-      GLuint* m_punSelectionBuffer;
 
       /** Current state of the camera */
       CQTOpenGLCamera m_cCamera;
@@ -406,8 +404,6 @@ namespace argos {
 
       /** Mapping between keys and motion direction */
       QMap<EDirection, int> m_mapPressedKeys;
-
-      CRay3 m_cSelectionRay;
    };
 
 }

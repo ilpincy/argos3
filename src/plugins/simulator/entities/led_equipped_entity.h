@@ -53,8 +53,6 @@ namespace argos {
          SActuator(CLEDEntity& c_led,
                    const CVector3& c_offset,
                    SAnchor& s_anchor);
-         void Enable();
-         void Disable();
       };
 
    public:
@@ -178,17 +176,11 @@ namespace argos {
       void SetAllLEDsColors(const std::vector<CColor>& vec_colors);
 
       /**
-       * Adds the LEDs to the wanted LED medium.
-       * @param c_medium The LED medium.
+       * Sets the medium associated to this entity.
+       * @param c_medium The medium to associate to this entity.
        * @see CLEDMedium
        */
-      void AddToMedium(CLEDMedium& c_medium);
-
-      /**
-       * Removes the LEDs from the associated LED medium.
-       * @see CLEDMedium
-       */
-      void RemoveFromMedium();
+      void SetMedium(CLEDMedium& c_medium);
 
       virtual std::string GetTypeDescription() const {
          return "leds";

@@ -1,0 +1,83 @@
+<?xml version="1.0" ?>
+<argos-configuration>
+
+  <!-- ************************* -->
+  <!-- * General configuration * -->
+  <!-- ************************* -->
+  <framework>
+    <system threads="0" />
+    <experiment length="1"
+                ticks_per_second="10"
+                random_seed="124" />
+  </framework>
+
+  <!-- *************** -->
+  <!-- * Controllers * -->
+  <!-- *************** -->
+  <controllers>
+
+    <test_media_enabledisable_controller id="fsc"
+                                         library="build/testing/libtest_media_enabledisable">
+      <actuators>
+        <leds implementation="default" medium="leds" />
+        <range_and_bearing implementation="default" />
+      </actuators>
+      <sensors>
+        <colored_blob_omnidirectional_camera implementation="rot_z_only" medium="leds" show_rays="true" />
+        <range_and_bearing implementation="medium" medium="rab" show_rays="true" />
+        <footbot_light implementation="rot_z_only" show_rays="false" />
+      </sensors>
+      <params />
+    </test_media_enabledisable_controller>
+
+  </controllers>
+
+  <!-- ****************** -->
+  <!-- * Loop functions * -->
+  <!-- ****************** -->
+  <loop_functions library="build/testing/libtest_media_enabledisable"
+                  label="test_media_enabledisable_loopfunctions" />
+
+  <!-- *********************** -->
+  <!-- * Arena configuration * -->
+  <!-- *********************** -->
+  <arena size="3, 3, 2" center="0,0,1">
+
+    <light id="l" position="0,0,1" orientation="0,0,0" color="white" intensity="1" medium="light" />
+
+    <foot-bot id="fb0">
+      <controller config="fsc" />
+      <body position="-1,0,0" orientation="0,0,0" />
+    </foot-bot>
+
+    <foot-bot id="fb1">
+      <controller config="fsc" />
+      <body position="1,0,0" orientation="0,0,0" />
+    </foot-bot>
+
+  </arena>
+
+  <!-- ******************* -->
+  <!-- * Physics engines * -->
+  <!-- ******************* -->
+  <physics_engines>
+    <dynamics2d id="dyn2d" />
+  </physics_engines>
+
+  <!-- ********* -->
+  <!-- * Media * -->
+  <!-- ********* -->
+  <media>
+    <range_and_bearing id="rab" />
+    <led id="leds" />
+    <led id="light" />
+  </media>
+
+  <!-- ****************** -->
+  <!-- * Visualization * -->
+  <!-- ****************** -->
+  <visualization>
+    <!-- <qt-opengl /> -->
+  </visualization>
+
+</argos-configuration>

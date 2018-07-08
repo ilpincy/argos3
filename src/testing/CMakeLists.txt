@@ -1,7 +1,3 @@
-if(ARGOS_BUILD_FOR_SIMULATOR)
-  include(ARGoSCheckQTOpenGL)
-endif(ARGOS_BUILD_FOR_SIMULATOR)
-
 add_executable(test-range unit/test-range.cpp)
 target_link_libraries(test-range argos3core_${ARGOS_BUILD_FOR})
 
@@ -32,6 +28,11 @@ add_executable(test-client
 target_link_libraries(test-client
   argos3core_${ARGOS_BUILD_FOR})
 
+add_executable(test-rate
+  unit/test-rate.cpp)
+target_link_libraries(test-rate
+  argos3core_${ARGOS_BUILD_FOR})
+
 add_executable(test-rng
   unit/test-rng.cpp)
 target_link_libraries(test-rng
@@ -41,6 +42,13 @@ target_link_libraries(test-rng
 # target_link_libraries(test-reset argos3core_${ARGOS_BUILD_FOR})
 
 if(ARGOS_BUILD_FOR_SIMULATOR OR ARGOS_BUILD_FOR STREQUAL "foot-bot")
+  add_library(test_media_enabledisable MODULE
+    experiment/test_media_enabledisable_controller.h
+    experiment/test_media_enabledisable_controller.cpp
+    experiment/test_media_enabledisable_loopfunctions.h
+    experiment/test_media_enabledisable_loopfunctions.cpp)
+  target_link_libraries(test_media_enabledisable
+    argos3plugin_${ARGOS_BUILD_FOR}_footbot)
   add_library(test_footbot_controller MODULE
     experiment/test_footbot_controller.h
     experiment/test_footbot_controller.cpp)

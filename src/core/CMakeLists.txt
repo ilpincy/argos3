@@ -3,6 +3,7 @@
 #
 # argos3/core/utility
 set(ARGOS3_HEADERS_UTILITY
+  utility/rate.h
   utility/signal_processing.h
   utility/string_utilities.h)
 # argos3/core/utility/configuration
@@ -111,6 +112,9 @@ set(ARGOS3_HEADERS_SIMULATOR_SPACE
 set(ARGOS3_HEADERS_WRAPPERS_LUA
   wrappers/lua/lua_controller.h
   wrappers/lua/lua_utility.h)
+# argos3/core/real_robot
+set(ARGOS3_HEADERS_REALROBOT
+  real_robot/real_robot.h)
 
 #
 # Source files
@@ -118,6 +122,7 @@ set(ARGOS3_HEADERS_WRAPPERS_LUA
 # Common for all builds
 set(ARGOS3_SOURCES_CORE
   ${ARGOS3_HEADERS_UTILITY}
+  utility/rate.cpp
   utility/signal_processing.cpp
   utility/string_utilities.cpp
   ${ARGOS3_HEADERS_UTILITY_CONFIGURATION}
@@ -148,6 +153,7 @@ set(ARGOS3_SOURCES_CORE
   utility/math/plane.cpp
   utility/math/ray3.cpp
   utility/math/rng.cpp
+  utility/math/matrix/squarematrix.cpp
   utility/math/matrix/rotationmatrix3.cpp
   utility/math/matrix/rotationmatrix2.cpp
   utility/math/matrix/transformationmatrix3.cpp
@@ -185,6 +191,12 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
     simulator/space/space_multi_thread_balance_length.cpp
     simulator/space/space_multi_thread_balance_quantity.cpp
     simulator/space/space_no_threads.cpp)
+else(ARGOS_BUILD_FOR_SIMULATOR)
+  # Real-robot only code
+  set(ARGOS3_SOURCES_CORE
+    ${ARGOS3_SOURCES_CORE}
+    ${ARGOS3_HEADERS_REALROBOT}
+    real_robot/real_robot.cpp)
 endif(ARGOS_BUILD_FOR_SIMULATOR)
 # Compile Lua wrapper only if Lua was found
 if(ARGOS_WITH_LUA)
@@ -239,6 +251,8 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
   install(FILES ${ARGOS3_HEADERS_SIMULATOR_VISUALIZATION}     DESTINATION include/argos3/core/simulator/visualization)
   install(FILES ${ARGOS3_HEADERS_SIMULATOR_SPACE_POSITIONAL_INDICES} DESTINATION include/argos3/core/simulator/space/positional_indices)
   install(FILES ${ARGOS3_HEADERS_SIMULATOR_SPACE}             DESTINATION include/argos3/core/simulator/space)
+else(ARGOS_BUILD_FOR_SIMULATOR)
+  install(FILES ${ARGOS3_HEADERS_REALROBOT}                   DESTINATION include/argos3/core/real_robot)
 endif(ARGOS_BUILD_FOR_SIMULATOR)
 if(ARGOS_WITH_LUA)
   install(FILES ${ARGOS3_HEADERS_WRAPPERS_LUA}                DESTINATION include/argos3/core/wrappers/lua)

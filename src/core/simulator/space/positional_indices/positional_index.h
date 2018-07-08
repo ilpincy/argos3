@@ -12,6 +12,7 @@ namespace argos {
 #include <argos3/core/utility/datatypes/set.h>
 #include <argos3/core/utility/math/vector2.h>
 #include <argos3/core/utility/math/vector3.h>
+#include <argos3/core/simulator/entity/entity.h>
 
 #include <string>
 
@@ -93,7 +94,7 @@ namespace argos {
        * @param c_entities The entity set to use as buffer.
        * @param c_position The wanted point in the space.
        */
-      virtual void GetEntitiesAt(CSet<ENTITY*>& c_entities,
+      virtual void GetEntitiesAt(CSet<ENTITY*,SEntityComparator>& c_entities,
                                  const CVector3& c_position) const = 0;
 
       /**

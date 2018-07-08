@@ -60,16 +60,25 @@ namespace argos {
    /****************************************/
 
    void CLEDEntity::Destroy() {
-      if(HasMedium()) {
-         RemoveFromMedium();
-      }
+      Disable();
    }
 
    /****************************************/
    /****************************************/
 
    void CLEDEntity::SetEnabled(bool b_enabled) {
-      CEntity::SetEnabled(m_cColor != CColor::BLACK);
+      /* Perform generic enable behavior */
+      CEntity::SetEnabled(b_enabled);
+      if(b_enabled) {
+         /* Enable entity in medium */
+         if(m_pcMedium && GetIndex() >= 0)
+            m_pcMedium->AddEntity(*this);
+      }
+      else {
+         /* Disable entity in medium */
+         if(m_pcMedium)
+            m_pcMedium->RemoveEntity(*this);
+      }
    }
 
    /****************************************/
@@ -77,41 +86,25 @@ namespace argos {
 
    void CLEDEntity::SetColor(const CColor& c_color) {
       m_cColor = c_color;
-      SetEnabled(c_color != CColor::BLACK);
    }
 
    /****************************************/
    /****************************************/
 
-   void CLEDEntity::AddToMedium(CLEDMedium& c_medium) {
-      if(HasMedium()) RemoveFromMedium();
-      m_pcMedium = &c_medium;
-      c_medium.AddEntity(*this);
-      Enable();
-   }
-
-   /****************************************/
-   /****************************************/
-
-   void CLEDEntity::RemoveFromMedium() {
-      try {
-         GetMedium().RemoveEntity(*this);
-         m_pcMedium = NULL;
-         Disable();
-      }
-      catch(CARGoSException& ex) {
-         THROW_ARGOSEXCEPTION_NESTED("Can't remove LED entity \"" << GetId() << "\" from medium.", ex);
-      }
-   }
-
-   /****************************************/
-   /****************************************/
-      
    CLEDMedium& CLEDEntity::GetMedium() const {
       if(m_pcMedium == NULL) {
-         THROW_ARGOSEXCEPTION("LED entity \"" << GetId() << "\" has no medium associated.");
+         THROW_ARGOSEXCEPTION("LED entity \"" << GetContext() << GetId() << "\" has no medium associated.");
       }
       return *m_pcMedium;
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CLEDEntity::SetMedium(CLEDMedium& c_medium) {
+      if(m_pcMedium != NULL && m_pcMedium != &c_medium)
+         m_pcMedium->RemoveEntity(*this);
+      m_pcMedium = &c_medium;
    }
 
    /****************************************/
@@ -138,7 +131,7 @@ namespace argos {
    /****************************************/
 
    bool CLEDEntityGridUpdater::operator()(CLEDEntity& c_entity) {
-      /* Discard LEDs switched off */
+      /* Discard disabled and switched off LEDs */
       if(c_entity.GetColor() != CColor::BLACK) {
          try {
             /* Calculate the position of the LED in the space hash */
@@ -157,7 +150,31 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   REGISTER_STANDARD_SPACE_OPERATIONS_ON_ENTITY(CLEDEntity);
+   class CSpaceOperationAddCLEDEntity : public CSpaceOperationAddEntity {
+   public:
+      void ApplyTo(CSpace& c_space, CLEDEntity& c_entity) {
+         /* Add entity to space - this ensures that the LED entity
+          * gets an id before being added to the LED medium */
+         c_space.AddEntity(c_entity);
+         /* Enable the LED entity, if it's enabled - this ensures that
+          * the entity gets added to the LED if it's enabled */
+         c_entity.SetEnabled(c_entity.IsEnabled());
+      }
+   };
+
+   class CSpaceOperationRemoveCLEDEntity : public CSpaceOperationRemoveEntity {
+   public:
+      void ApplyTo(CSpace& c_space, CLEDEntity& c_entity) {
+         /* Disable the entity - this ensures that the entity is
+          * removed from the LED medium */
+         c_entity.Disable();
+         /* Remove the LED entity from space */
+         c_space.RemoveEntity(c_entity);
+      }
+   };
+
+   REGISTER_SPACE_OPERATION(CSpaceOperationAddEntity, CSpaceOperationAddCLEDEntity, CLEDEntity);
+   REGISTER_SPACE_OPERATION(CSpaceOperationRemoveEntity, CSpaceOperationRemoveCLEDEntity, CLEDEntity);
 
    /****************************************/
    /****************************************/

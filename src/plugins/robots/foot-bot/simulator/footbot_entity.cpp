@@ -10,6 +10,7 @@
 #include <argos3/core/simulator/space/space.h>
 #include <argos3/core/simulator/entity/controllable_entity.h>
 #include <argos3/core/simulator/entity/embodied_entity.h>
+#include <argos3/plugins/simulator/entities/battery_equipped_entity.h>
 #include <argos3/plugins/simulator/entities/rab_equipped_entity.h>
 #include <argos3/plugins/simulator/entities/gripper_equipped_entity.h>
 #include <argos3/plugins/simulator/entities/ground_sensor_equipped_entity.h>
@@ -70,7 +71,8 @@ namespace argos {
       m_pcProximitySensorEquippedEntity(NULL),
       m_pcRABEquippedEntity(NULL),
       m_pcWheeledEntity(NULL),
-      m_pcWiFiEquippedEntity(NULL) {
+      m_pcWiFiEquippedEntity(NULL),
+      m_pcBatteryEquippedEntity(NULL) {
    }
 
    /****************************************/
@@ -82,6 +84,7 @@ namespace argos {
                                   const CQuaternion& c_orientation,
                                   Real f_rab_range,
                                   size_t un_rab_data_size,
+                                  const std::string& str_bat_model,
                                   const CRadians& c_omnicam_aperture,
                                   bool b_perspcam_front,
                                   const CRadians& c_perspcam_aperture,
@@ -101,7 +104,8 @@ namespace argos {
       m_pcProximitySensorEquippedEntity(NULL),
       m_pcRABEquippedEntity(NULL),
       m_pcWheeledEntity(NULL),
-      m_pcWiFiEquippedEntity(NULL) {
+      m_pcWiFiEquippedEntity(NULL),
+      m_pcBatteryEquippedEntity(NULL) {
       try {
          /*
           * Create and init components
@@ -243,6 +247,9 @@ namespace argos {
          /* WiFi equipped entity */
          m_pcWiFiEquippedEntity = new CWiFiEquippedEntity(this, "wifi_0");
          AddComponent(*m_pcWiFiEquippedEntity);
+         /* Battery equipped entity */
+         m_pcBatteryEquippedEntity = new CBatteryEquippedEntity(this, "battery_0", str_bat_model);
+         AddComponent(*m_pcBatteryEquippedEntity);
          /* Controllable entity
             It must be the last one, for actuators/sensors to link to composing entities correctly */
          m_pcControllableEntity = new CControllableEntity(this, "controller_0");
@@ -420,6 +427,11 @@ namespace argos {
          /* WiFi equipped entity */
          m_pcWiFiEquippedEntity = new CWiFiEquippedEntity(this, "wifi_0");
          AddComponent(*m_pcWiFiEquippedEntity);
+         /* Battery equipped entity */
+         m_pcBatteryEquippedEntity = new CBatteryEquippedEntity(this, "battery_0");
+         if(NodeExists(t_tree, "battery"))
+            m_pcBatteryEquippedEntity->Init(GetNode(t_tree, "battery"));
+         AddComponent(*m_pcBatteryEquippedEntity);
          /* Controllable entity
             It must be the last one, for actuators/sensors to link to composing entities correctly */
          m_pcControllableEntity = new CControllableEntity(this);
@@ -455,6 +467,7 @@ namespace argos {
       UPDATE(m_pcGripperEquippedEntity);
       UPDATE(m_pcRABEquippedEntity);
       UPDATE(m_pcLEDEquippedEntity);
+      UPDATE(m_pcBatteryEquippedEntity);
    }
 
    /****************************************/
@@ -508,14 +521,51 @@ namespace argos {
                    "    </foot-bot>\n"
                    "    ...\n"
                    "  </arena>\n\n"
-                   "You can also set the data sent at each time step through the range-and-bearing"
-                   "system. By default, a message sent by a foot-bot is 10 bytes long. By using the"
+                   "You can also set the data sent at each time step through the range-and-bearing\n"
+                   "system. By default, a message sent by a foot-bot is 10 bytes long. By using the\n"
                    "'rab_data_size' attribute, you can change it to, i.e., 20 bytes as follows:\n\n"
                    "  <arena ...>\n"
                    "    ...\n"
                    "    <foot-bot id=\"fb0\" rab_data_size=\"20\">\n"
                    "      <body position=\"0.4,2.3,0.25\" orientation=\"45,0,0\" />\n"
                    "      <controller config=\"mycntrl\" />\n"
+                   "    </foot-bot>\n"
+                   "    ...\n"
+                   "  </arena>\n\n"
+                   "You can also configure the battery of the robot. By default, the battery never\n"
+                   "depletes. You can choose among several battery discharge models, such as\n"
+                   "- time: the battery depletes by a fixed amount at each time step\n"
+                   "- motion: the battery depletes according to how the robot moves\n"
+                   "- time_motion: a combination of the above models.\n"
+                   "You can define your own models too. Follow the examples in the file\n"
+                   "argos3/src/plugins/simulator/entities/battery_equipped_entity.cpp.\n\n"
+                   "  <arena ...>\n"
+                   "    ...\n"
+                   "    <foot-bot id=\"fb0\"\n"
+                   "      <body position=\"0.4,2.3,0.25\" orientation=\"45,0,0\" />\n"
+                   "      <controller config=\"mycntrl\" />\n"
+                   "      <battery model=\"time\" factor=\"1e-5\"/>\n"
+                   "    </foot-bot>\n"
+                   "    ...\n"
+                   "  </arena>\n\n"
+                   "  <arena ...>\n"
+                   "    ...\n"
+                   "    <foot-bot id=\"fb0\"\n"
+                   "      <body position=\"0.4,2.3,0.25\" orientation=\"45,0,0\" />\n"
+                   "      <controller config=\"mycntrl\" />\n"
+                   "      <battery model=\"motion\" pos_factor=\"1e-3\"\n"
+                   "                              orient_factor=\"1e-3\"/>\n"
+                   "    </foot-bot>\n"
+                   "    ...\n"
+                   "  </arena>\n\n"
+                   "  <arena ...>\n"
+                   "    ...\n"
+                   "    <foot-bot id=\"fb0\"\n"
+                   "      <body position=\"0.4,2.3,0.25\" orientation=\"45,0,0\" />\n"
+                   "      <controller config=\"mycntrl\" />\n"
+                   "      <battery model=\"time_motion\" time_factor=\"1e-5\"\n"
+                   "                                   pos_factor=\"1e-3\"\n"
+                   "                                   orient_factor=\"1e-3\"/>\n"
                    "    </foot-bot>\n"
                    "    ...\n"
                    "  </arena>\n\n"

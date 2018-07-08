@@ -27,6 +27,14 @@ namespace argos {
       }
 
       /**
+       * Returns the socket stream.
+       * @return the socket stream.
+       */
+      inline int GetStream() const {
+         return m_nStream;
+      }
+
+      /**
        * Returns a string containing the IPv4 address in dot notation.
        * @return A string containing the IPv4 address in dot notation.
        */

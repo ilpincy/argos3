@@ -1,0 +1,123 @@
+<?xml version="1.0" ?>
+<argos-configuration>
+
+  <!-- ************************* -->
+  <!-- * General configuration * -->
+  <!-- ************************* -->
+  <framework>
+    <experiment length="0" ticks_per_second="25" random_seed="0"/>
+  </framework>
+
+  <!-- *************** -->
+  <!-- * Controllers * -->
+  <!-- *************** -->
+  <controllers>
+    <lua_controller id="my_controller">
+      <actuators>
+        <joints implementation="default">
+          <joint id="base_wheel_fr" mode="velocity" max_impulse="0.005"/>
+          <joint id="base_wheel_fl" mode="velocity" max_impulse="0.005"/>
+          <joint id="base_wheel_br" mode="velocity" max_impulse="0.005"/>
+          <joint id="base_wheel_bl" mode="velocity" max_impulse="0.005"/>
+        </joints>
+      </actuators>
+      <sensors>
+        <joints implementation="default">
+          <joint id="base_wheel_fr" mode="velocity"/>
+          <joint id="base_wheel_fl" mode="velocity"/>
+          <joint id="base_wheel_br" mode="velocity"/>
+          <joint id="base_wheel_bl" mode="velocity"/>
+        </joints>
+      </sensors>
+      <!--params script="../../src/testing/examples/dynamics3d_multi_body_test.lua"/-->
+      <params script="src/testing/examples/dynamics3d_multi_body_test.lua"/>
+    </lua_controller>
+  </controllers>
+
+  <!-- *********************** -->
+  <!-- * Arena configuration * -->
+  <!-- *********************** -->
+  <arena size="0.5, 0.5, 0.5" center="0, 0, 0.25">
+    <box id="bn" size="0.025,0.475,0.025" movable="false" mass="10">
+      <body position="0.2375,0.0125,0"  orientation="0,0,0" />
+    </box>
+    <box id="be" size="0.475,0.025,0.025" movable="false" mass="10">
+      <body position="0.0125,-0.2375,0"  orientation="0,0,0" />
+    </box>
+    <box id="bs" size="0.025,0.475,0.025" movable="false" mass="10">
+      <body position="-0.2375,-0.0125,0"  orientation="0,0,0" />
+    </box>
+    <box id="bw" size="0.475,0.025,0.025" movable="false" mass="10">
+      <body position="-0.0125,0.2375,0"  orientation="0,0,0" />
+    </box>
+    <prototype id="vehicle" movable="true">
+      <body position="0,0,0" orientation="0,0,0" />
+      <controller config="my_controller"/>
+      <links ref="base">
+        <link id="base" geometry="box" size="0.1,0.05,0.02" mass="1"
+              position="0,0,0.01" orientation="0,0,0" />
+        <link id="wheel_fl" geometry="cylinder" radius="0.02" height=".005"
+              mass=".05" position=".025,.025,0.02" orientation="0,0,-90" />
+        <link id="wheel_fr" geometry="cylinder" radius="0.02" height=".005"
+              mass=".05" position=".025,-.025,0.02" orientation="0,0,90" />
+        <link id="wheel_br" geometry="cylinder" radius="0.02" height=".005"
+              mass=".05" position="-.025,-.025,0.02" orientation="0,0,90" />
+        <link id="wheel_bl" geometry="cylinder" radius="0.02" height=".005"
+              mass=".05" position="-.025,.025,0.02" orientation="0,0,-90" />
+      </links>
+      <joints>
+        <joint id="base_wheel_fr" type="revolute" axis="0,0,1">
+          <parent link="base" position=".025,-.025,.01" orientation="0,0,90"/>
+          <child link="wheel_fr" position="0,0,0" orientation="0,0,0"/>
+        </joint>
+        <joint id="base_wheel_fl" type="revolute" axis="0,0,1">
+          <parent link="base" position=".025,.025,.01" orientation="0,0,-90"/>
+          <child link="wheel_fl" position="0,0,0" orientation="0,0,0"/>
+        </joint>
+        <joint id="base_wheel_br" type="revolute" axis="0,0,1">
+          <parent link="base" position="-.025,-.025,.01" orientation="0,0,90"/>
+          <child link="wheel_br" position="0,0,0" orientation="0,0,0"/>
+        </joint>
+        <joint id="base_wheel_bl" type="revolute" axis="0,0,1">
+          <parent link="base" position="-.025,.025,.01" orientation="0,0,-90"/>
+          <child link="wheel_bl" position="0,0,0" orientation="0,0,0"/>
+        </joint>
+      </joints>
+    </prototype>
+  </arena>
+
+  <!-- ******************* -->
+  <!-- * Physics engines * -->
+  <!-- ******************* -->
+  <physics_engines>
+    <dynamics3d id="dyn3d" iterations="20">
+      <floor height="0.01"/>
+      <gravity g="9.8" />
+    </dynamics3d>
+  </physics_engines>
+
+  <!-- ********* -->
+  <!-- * Media * -->
+  <!-- ********* -->
+  <media/>
+
+  <!-- ****************** -->
+  <!-- * Visualization * -->
+  <!-- ****************** -->
+  <visualization>
+    <qt-opengl lua_editor="false">
+      <camera>
+        <placement idx="0" position=" 0,   -1.25,0.5" look_at="0,0,0.05" lens_focal_length="78" />
+        <placement idx="1" position=" 1.25,-1.25,0.6" look_at="0,0,0.05" lens_focal_length="92" />
+        <placement idx="2" position=" 1.25, 0,   0.5" look_at="0,0,0.05" lens_focal_length="78" />
+        <placement idx="3" position=" 1.25, 1.25,0.6" look_at="0,0,0.05" lens_focal_length="92" />
+        <placement idx="4" position=" 0,    1.25,0.5" look_at="0,0,0.05" lens_focal_length="78" />
+        <placement idx="5" position="-1.25, 1.25,0.6" look_at="0,0,0.05" lens_focal_length="92" />
+        <placement idx="6" position="-1.25, 0,   0.5" look_at="0,0,0.05" lens_focal_length="78" />
+        <placement idx="7" position="-1.25,-1.25,0.6" look_at="0,0,0.05" lens_focal_length="92" />
+        <placement idx="8" position="0,0,0.5" look_at="0.0,0.0,0.125" up="1,0,0" lens_focal_length="40"/>
+      </camera>
+    </qt-opengl>
+  </visualization>
+
+</argos-configuration>

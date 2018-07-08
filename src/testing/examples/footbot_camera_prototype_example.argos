@@ -1,0 +1,126 @@
+<?xml version="1.0" ?>
+<argos-configuration>
+
+  <!-- ************************* -->
+  <!-- * General configuration * -->
+  <!-- ************************* -->
+  <framework>
+    <experiment length="0" ticks_per_second="25" random_seed="1"/>
+  </framework>
+
+  <!-- *************** -->
+  <!-- * Controllers * -->
+  <!-- *************** -->
+  <controllers>
+    <lua_controller id="fb">
+      <actuators>
+        <footbot_turret implementation="default"/>
+        <differential_steering implementation="default" />
+      </actuators>
+      <sensors>
+        <cameras implementation="default" show_frustum="true">
+          <camera id="fixed_camera" range="0.025:0.25" resolution="640,360"
+                  anchor="origin" position="-0.05,0,0.125" orientation="90,-90,0"
+                  focal_length="884,884" principle_point="320,180">
+            <led_detector medium="leds" show_rays="true"/>
+            <directional_led_detector medium="directional_leds" show_rays="true"/>
+            <tag_detector medium="tags" show_rays="true"/>
+          </camera>
+          <camera id="turret_camera" range="0.025:0.225" resolution="640,360"
+                  anchor="turret" position="0.08,0,0.1" orientation="-90,112.5,0"
+                  focal_length="884,884" principle_point="320,180">
+            <led_detector medium="leds" show_rays="true"/>
+            <directional_led_detector medium="directional_leds" show_rays="true"/>
+            <tag_detector medium="tags" show_rays="true"/>
+          </camera>
+        </cameras>
+        <differential_steering implementation="default" />
+      </sensors>
+      <params script="src/testing/examples/footbot_camera_prototype_example.lua"/>
+    </lua_controller>
+  </controllers>
+
+
+  <!-- *********************** -->
+  <!-- * Arena configuration * -->
+  <!-- *********************** -->
+  <arena size="1, 1, 0.5" center="0, 0, 0.25">
+    <box id="bn" size="0.025,0.975,0.05" movable="false" mass="10">
+      <body position="0.4875,0.0125,0"  orientation="0,0,0" />
+    </box>
+    <box id="be" size="0.975,0.025,0.05" movable="false" mass="10">
+      <body position="0.0125,-0.4875,0"  orientation="0,0,0" />
+    </box>
+    <box id="bs" size="0.025,0.975,0.05" movable="false" mass="10">
+      <body position="-0.4875,-0.0125,0"  orientation="0,0,0" />
+    </box>
+    <box id="bw" size="0.975,0.025,0.05" movable="false" mass="10">
+      <body position="-0.0125,0.4875,0"  orientation="0,0,0" />
+    </box>
+    <foot-bot id="fb">
+      <body position="0,0,0" orientation="0,0,0"/>
+      <controller config="fb"/>
+    </foot-bot>
+    <prototype id="target" movable="true">
+      <body position="0.25,0,0" orientation="0,0,0"/>
+      <links ref="base">
+         <link id="base" geometry="box" size="0.125,0.125,0.15"
+               mass="0.05" position="0,0,0" orientation="0,0,0" />
+      </links>
+      <devices>
+        <directional_leds medium="directional_leds">
+          <directional_led color="red" observable_angle="180"
+                           anchor="base" position="-0.063,0,0.05" orientation="0,-90,0"/>
+        </directional_leds>
+        <leds medium="leds">
+          <led color="blue" anchor="base" offset="-0.063,0,0.06"/>
+        </leds>
+        <tags medium="tags">
+          <tag payload="0" side_length=".025" observable_angle="180"
+               anchor="base" position="-0.063,0,0.125" orientation="0,-90,0" />
+        </tags>
+      </devices>
+    </prototype>
+  </arena>
+
+  <!-- ******************* -->
+  <!-- * Physics engines * -->
+  <!-- ******************* -->
+  <physics_engines>
+    <dynamics2d id="dyn2d" iterations="20" />
+    <dynamics3d id="dyn3d" iterations="20">
+      <gravity g="9.8" />
+      <floor height="0.01"/>
+    </dynamics3d>
+  </physics_engines>
+
+  <!-- ********* -->
+  <!-- * Media * -->
+  <!-- ********* -->
+  <media>
+    <led id="leds" index="grid" grid_size="20,20,20" />
+    <directional_led id="directional_leds" index="grid"
+                     grid_size="20,20,20" />
+    <tag id="tags" index="grid" grid_size="20,20,20" />
+  </media>
+
+  <!-- ****************** -->
+  <!-- * Visualization * -->
+  <!-- ****************** -->
+  <visualization>
+    <qt-opengl lua_editor="false">
+      <camera>
+        <placement idx="0" position=" 0,  -2.5,1" look_at="0,0,0.05" lens_focal_length="78" />
+        <placement idx="1" position=" 2.5,-2.5,1" look_at="0,0,0.05" lens_focal_length="92" />
+        <placement idx="2" position=" 2.5, 0,  1" look_at="0,0,0.05" lens_focal_length="78" />
+        <placement idx="3" position=" 2.5, 2.5,1" look_at="0,0,0.05" lens_focal_length="92" />
+        <placement idx="4" position=" 0,   2.5,1" look_at="0,0,0.05" lens_focal_length="78" />
+        <placement idx="5" position="-2.5, 2.5,1" look_at="0,0,0.05" lens_focal_length="92" />
+        <placement idx="6" position="-2.5, 0,  1" look_at="0,0,0.05" lens_focal_length="78" />
+        <placement idx="7" position="-2.5,-2.5,1" look_at="0,0,0.05" lens_focal_length="92" />
+        <placement idx="8" position="0,0,0.5" look_at="0.0,0.0,0.125" up="1,0,0" lens_focal_length="40" />
+      </camera>
+    </qt-opengl>
+  </visualization>
+
+</argos-configuration>

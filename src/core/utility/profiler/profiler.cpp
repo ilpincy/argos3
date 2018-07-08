@@ -123,7 +123,7 @@ namespace argos {
          m_cOutFile.open(str_file_name.c_str(),
                          std::ios::app | std::ios::out);
       }
-      LOG << "Opened file \"" << str_file_name << "\" for profiling." << std::endl;
+      LOG << "[INFO] Opened file \"" << str_file_name << "\" for profiling." << std::endl;
       int nError = pthread_mutex_init(&m_tThreadResourceUsageMutex, NULL);
       if(nError) {
          THROW_ARGOSEXCEPTION("Error creating thread profiler mutex " << ::strerror(nError));

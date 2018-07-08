@@ -13,7 +13,7 @@ namespace argos {
       SCell& sCell = GetCellAt((nI), (nJ), (nK));                       \
       if((sCell.Timestamp == m_unCurTimestamp) &&                       \
          (! sCell.Entities.empty())) {                                  \
-         for(typename CSet<ENTITY*>::iterator it = sCell.Entities.begin(); \
+         for(typename CSet<ENTITY*,SEntityComparator>::iterator it = sCell.Entities.begin(); \
              it != sCell.Entities.end();                                \
              ++it) {                                                    \
             if(!c_operation(**it)) return;                              \
@@ -26,7 +26,7 @@ namespace argos {
       SCell& sCell = GetCellAt(nI, nJ, nK);                             \
       if((sCell.Timestamp == m_unCurTimestamp) &&                       \
          (! sCell.Entities.empty())) {                                  \
-         for(typename CSet<ENTITY*>::iterator it = sCell.Entities.begin(); \
+         for(typename CSet<ENTITY*,SEntityComparator>::iterator it = sCell.Entities.begin(); \
              it != sCell.Entities.end();                                \
              ++it) {                                                    \
             if(!c_operation(**it)) return;                              \
@@ -136,7 +136,7 @@ CGrid<ENTITY>::CGrid(const CVector3& c_area_min_corner,
    /****************************************/
 
    template<class ENTITY>
-   void CGrid<ENTITY>::GetEntitiesAt(CSet<ENTITY*>& c_entities,
+   void CGrid<ENTITY>::GetEntitiesAt(CSet<ENTITY*,SEntityComparator>& c_entities,
                                      const CVector3& c_position) const {
       try {
          SInt32 i, j, k;
@@ -159,7 +159,7 @@ CGrid<ENTITY>::CGrid(const CVector3& c_area_min_corner,
 
    template<class ENTITY>
    void CGrid<ENTITY>::ForAllEntities(CEntityOperation& c_operation) {
-      for(typename CSet<ENTITY*>::iterator it = m_cEntities.begin();
+      for(typename CSet<ENTITY*,SEntityComparator>::iterator it = m_cEntities.begin();
           it != m_cEntities.end() && c_operation(**it);
           ++it);
    }

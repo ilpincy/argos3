@@ -64,18 +64,19 @@ namespace argos {
 
    protected:
 
-      /** Adds noise to the steering velocity */
-      virtual void AddGaussianNoise();
-
-   protected:
-
       CWheeledEntity* m_pcWheeledEntity;
       
       /** Random number generator */
       CRandom::CRNG* m_pcRNG;
+
+      /** Noise bias for each wheel */
+      Real m_fNoiseBias[2];
       
-      /** Noise parameters, at the moment noise is Gaussian */
-      Real m_fNoiseStdDeviation;
+      /** Noise factor average (Gaussian model) for each wheel  */
+      Real m_fNoiseFactorAvg[2];
+
+      /** Noise factor stddev (Gaussian model) for each wheel  */
+      Real m_fNoiseFactorStdDev[2];
 
    };
 

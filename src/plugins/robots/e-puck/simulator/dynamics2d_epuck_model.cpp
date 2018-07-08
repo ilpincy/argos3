@@ -38,7 +38,8 @@ namespace argos {
       m_cDiffSteering(c_engine,
                       EPUCK_MAX_FORCE,
                       EPUCK_MAX_TORQUE,
-                      EPUCK_INTERWHEEL_DISTANCE),
+                      EPUCK_INTERWHEEL_DISTANCE,
+                      c_entity.GetConfigurationNode()),
       m_fCurrentWheelVelocity(m_cWheeledEntity.GetWheelVelocities()) {
       /* Create the body with initial position and orientation */
       cpBody* ptBody =

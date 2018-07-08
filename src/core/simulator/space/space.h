@@ -18,7 +18,6 @@ namespace argos {
 
 #include <argos3/core/utility/datatypes/any.h>
 #include <argos3/core/simulator/medium/medium.h>
-#include <argos3/core/simulator/space/positional_indices/positional_index.h>
 #include <argos3/core/simulator/entity/embodied_entity.h>
 #include <argos3/core/simulator/entity/controllable_entity.h>
 
@@ -265,7 +264,15 @@ namespace argos {
          if(!c_entity.HasParent()) {
             m_vecRootEntities.push_back(&c_entity);
          }
+         /* Calculate index of in the global vector */
+         size_t unIdx =
+            !m_vecEntities.empty() ?
+            m_vecEntities.back()->GetIndex() + 1
+            :
+            0;
+         /* Add entity to global vector */
          m_vecEntities.push_back(&c_entity);
+         c_entity.SetIndex(unIdx);
          m_mapEntitiesPerId[strEntityQualifiedName] = &c_entity;
          m_mapEntitiesPerTypePerId[c_entity.GetTypeDescription()][strEntityQualifiedName] = &c_entity;
       }

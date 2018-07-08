@@ -80,6 +80,14 @@ namespace argos {
                          UInt32 un_num_sensors,
                          SAnchor& s_anchor);
 
+      void AddSensorFan(const CVector3& c_center,
+                        Real f_radius,
+                        const CRadians& c_start_angle,
+                        const CRadians& c_end_angle,
+                        Real f_range,
+                        UInt32 un_num_sensors,
+                        SAnchor& s_anchor);
+
    protected:
 
       /** The list of sensors */

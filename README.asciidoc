@@ -72,7 +72,7 @@ Debian
 On Debian, you can install all of the necessary requirements
 with the following command:
 
- $ sudo apt-get install libfreeimage-dev libfreeimageplus-dev \
+ $ sudo apt-get install cmake libfreeimage-dev libfreeimageplus-dev \
    qt5-default freeglut3-dev libxi-dev libxmu-dev liblua5.2-dev \
    lua5.2 doxygen graphviz graphviz-dev asciidoc
 
@@ -121,6 +121,8 @@ Compiling the ARGoS simulator
 
 Compiling ARGoS for a robot
 ++++++++++++++++++++++++++++
+
+DO NOT EXECUTE THESE COMMANDS IF YOU ARE INSTALLING ARGOS ON YOUR LAPTOP. THESE COMMANDS ARE MEANT TO INSTALL ARGOS ON A REAL ROBOT.
 
  $ cd argos3
  $ mkdir build_myrobot

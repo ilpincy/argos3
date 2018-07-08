@@ -19,10 +19,10 @@ namespace argos {
    /****************************************/
 
    CDynamics2DEngine::CDynamics2DEngine() :
-      m_fStaticHashCellSize(0.1f),
-      m_fActiveHashCellSize(2.0f * 0.085036758f),
-      m_nStaticHashCells(1000),
-      m_nActiveHashCells(1000),
+      m_fBoxLinearFriction(1.49),
+      m_fBoxAngularFriction(1.49),
+      m_fCylinderLinearFriction(1.49),
+      m_fCylinderAngularFriction(1.49),
       m_ptSpace(NULL),
       m_ptGroundBody(NULL),
       m_fElevation(0.0f) {
@@ -36,11 +36,14 @@ namespace argos {
          /* Init parent */
          CPhysicsEngine::Init(t_tree);
          /* Parse XML */
-         GetNodeAttributeOrDefault(t_tree, "static_cell_size", m_fStaticHashCellSize, m_fStaticHashCellSize);
-         GetNodeAttributeOrDefault(t_tree, "active_cell_size", m_fActiveHashCellSize, m_fActiveHashCellSize);
-         GetNodeAttributeOrDefault(t_tree, "static_cells",     m_nStaticHashCells,    m_nStaticHashCells);
-         GetNodeAttributeOrDefault(t_tree, "active_cells",     m_nActiveHashCells,    m_nActiveHashCells);
-         GetNodeAttributeOrDefault(t_tree, "elevation",        m_fElevation,          m_fElevation);
+         GetNodeAttributeOrDefault(t_tree, "elevation", m_fElevation, m_fElevation);
+         if(NodeExists(t_tree, "friction")) {
+            TConfigurationNode& tNode = GetNode(t_tree, "friction");
+            GetNodeAttributeOrDefault(tNode, "box_linear_friction",       m_fBoxLinearFriction,       m_fBoxLinearFriction);
+            GetNodeAttributeOrDefault(tNode, "box_angular_friction",      m_fBoxAngularFriction,      m_fBoxAngularFriction);
+            GetNodeAttributeOrDefault(tNode, "cylinder_linear_friction",  m_fCylinderLinearFriction,  m_fCylinderLinearFriction);
+            GetNodeAttributeOrDefault(tNode, "cylinder_angular_friction", m_fCylinderAngularFriction, m_fCylinderAngularFriction);
+         }
          /* Override volume top and bottom with the value of m_fElevation */
          if(!GetVolume().TopFace)    GetVolume().TopFace    = new SHorizontalFace;
          if(!GetVolume().BottomFace) GetVolume().BottomFace = new SHorizontalFace;
@@ -57,12 +60,15 @@ namespace argos {
             The more, the better for precision but the worse for speed
          */
          m_ptSpace->iterations = GetIterations();
-         /* Resize the space hash.
-            This has dramatic effects on performance.
-            TODO: - find optimal parameters automatically (average entity size)
-            cpSpaceReindexStaticHash(m_ptSpace, m_fStaticHashCellSize, m_nStaticHashCells);
-            cpSpaceResizeActiveHash(m_ptSpace, m_fActiveHashCellSize, m_nActiveHashCells);
-         */
+         /* Spatial hash */
+         if(NodeExists(t_tree, "spatial_hash")) {
+            TConfigurationNode& tNode = GetNode(t_tree, "spatial_hash");
+            cpFloat fSize;
+            UInt32 unNum;
+            GetNodeAttribute(tNode, "cell_size", fSize);
+            GetNodeAttribute(tNode, "cell_num",  unNum);
+            cpSpaceUseSpatialHash(m_ptSpace, fSize, unNum);
+         }
          /* Gripper-Gripped callback functions */
          cpSpaceAddCollisionHandler(
             m_ptSpace,
@@ -101,6 +107,10 @@ namespace argos {
       }
       /* Perform the step */
       for(size_t i = 0; i < GetIterations(); ++i) {
+         for(CDynamics2DModel::TMap::iterator it = m_tPhysicsModels.begin();
+             it != m_tPhysicsModels.end(); ++it) {
+            it->second->UpdatePhysics();
+         }
          cpSpaceStep(m_ptSpace, GetPhysicsClockTick());
       }
       /* Update the simulated space */
@@ -247,7 +257,7 @@ namespace argos {
                            "1.0",
                            "A 2D dynamics physics engine.",
                            "This physics engine is a 2D dynamics engine based on the Chipmunk library\n"
-                           "(http://code.google.com/p/chipmunk-physics).\n\n"
+                           "(http://code.google.com/p/chipmunk-physics) version 6.0.1.\n\n"
                            "REQUIRED XML CONFIGURATION\n\n"
                            "  <physics_engines>\n"
                            "    ...\n"
@@ -258,6 +268,20 @@ namespace argos {
                            "It is used in the subsequent section <arena_physics> to assign entities to\n"
                            "physics engines. If two engines share the same id, initialization aborts.\n\n"
                            "OPTIONAL XML CONFIGURATION\n\n"
+                           "It is possible to set how many iterations this physics engine performs between\n"
+                           "each simulation step. By default, this physics engine performs 10 steps every\n"
+                           "two simulation steps. This means that, if the simulation step is 100ms, the\n"
+                           "physics engine step is, by default, 10ms. Sometimes, collisions and joints are\n"
+                           "not simulated with sufficient precision using these parameters. By increasing\n"
+                           "the number of iterations, the temporal granularity of the solver increases and\n"
+                           "with it its accuracy, at the cost of higher computational cost. To change the\n"
+                           "number of iterations per simulation step use this syntax:\n\n"
+                           "  <physics_engines>\n"
+                           "    ...\n"
+                           "    <dynamics2d id=\"dyn2d\"\n"
+                           "                iterations=\"20\" />\n"
+                           "    ...\n"
+                           "  </physics_engines>\n\n"
                            "The plane of the physics engine can be translated on the Z axis, to simulate\n"
                            "for example hovering objects, such as flying robots. To translate the plane\n"
                            "2m up the Z axis, use the 'elevation' attribute as follows:\n\n"
@@ -268,8 +292,61 @@ namespace argos {
                            "    ...\n"
                            "  </physics_engines>\n\n"
                            "When not specified, the elevation is zero, which means that the plane\n"
-                           "corresponds to the XY plane.\n",
-                           "Under development"
+                           "corresponds to the XY plane.\n\n"
+                           "The friction parameters between the ground and movable boxes and cylinders can\n"
+                           "be overridden. You can set both the linear and angular friction parameters.\n"
+                           "The default value is 1.49 for each of them. To override the values, use this\n"
+                           "syntax (all attributes are optional):\n\n"
+                           "  <physics_engines>\n"
+                           "    ...\n"
+                           "    <dynamics2d id=\"dyn2d\"\n"
+                           "      <friction box_linear_friction=\"1.0\"\n"
+                           "                box_angular_friction=\"2.0\"\n"
+                           "                cylinder_linear_friction=\"3.0\"\n"
+                           "                cylinder_angular_friction=\"4.0\" />\n"
+                           "    </dynamics2d>\n"
+                           "    ...\n"
+                           "  </physics_engines>\n\n"
+                           "For the the robots that use velocity-based control, such as ground robots with\n"
+                           "the differential_steering actuator (e.g. the foot-bot and the e-puck), it is\n"
+                           "possible to customize robot-specific attributes that set the maximum force and\n"
+                           "torque the robot has. The syntax is as follows, taking a foot-bot as example:\n\n"
+                           "  <arena ...>\n"
+                           "    ...\n"
+                           "    <foot-bot id=\"fb0\">\n"
+                           "      <body position=\"0.4,2.3,0.25\" orientation=\"45,0,0\" />\n"
+                           "      <controller config=\"mycntrl\" />\n"
+                           "      <!-- Specify new value for max_force and max_torque -->\n"
+                           "      <dynamics2d>\n"
+                           "        <differential_steering max_force=\"0.1\" max_torque=\"0.1\"/>\n"
+                           "      </dynamics2d>\n"
+                           "    </foot-bot>\n"
+                           "    ...\n"
+                           "  </arena>\n\n"
+                           "The attributes 'max_force' and 'max_torque' are both optional, and they take the\n"
+                           "robot-specific default if not set. Check the code of the dynamics2d model of the\n"
+                           "robot you're using to know the default values.\n\n"
+                           "By default, this engine uses the bounding-box tree method for collision shape\n"
+                           "indexing. This method is the default in Chipmunk and it works well most of the\n"
+                           "times. However, if you are running simulations with hundreds or thousands of\n"
+                           "identical robots, a different shape collision indexing is available: the spatial\n"
+                           "hash. The spatial hash is a grid stored in a hashmap. To get the max out of this\n"
+                           "indexing method, you must set two parameters: the cell size and the suggested\n"
+                           "minimum number of cells in the space. According to the documentation of\n"
+                           "Chipmunk, the cell size should correspond to the size of the bounding box of the\n"
+                           "most common object in the simulation; the minimum number of cells should be at\n"
+                           "least 10x the number of objects managed by the physics engine. To use this\n"
+                           "indexing method, use this syntax (all attributes are mandatory):\n\n"
+                           "  <physics_engines>\n"
+                           "    ...\n"
+                           "    <dynamics2d id=\"dyn2d\"\n"
+                           "      <spatial_hash cell_size=\"1.0\"\n"
+                           "                    cell_num=\"2.0\" />\n"
+                           "    </dynamics2d>\n"
+                           "    ...\n"
+                           "  </physics_engines>\n"
+                           ,
+                           "Usable"
       );
 
 }

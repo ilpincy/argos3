@@ -168,6 +168,22 @@ namespace argos {
       virtual void UpdateFromEntityStatus() = 0;
 
       /**
+       * Performs extra work just before the physics update takes place.
+       * <p>
+       * This method is called as many times as the physics update
+       * itself, that is GetIteration() times every control step.
+       * </p>
+       * <p>
+       * You can use this method to implement a PID controller, or to
+       * calculate high-frequency physics effects.
+       * </p>
+       * <p>
+       * By default this method does nothing.
+       * </p>
+       */
+      virtual void UpdatePhysics() {}
+
+      /**
        * <p>
        * Moves the entity to the wanted position and orientation within this engine.
        * When you create a new model, you must implement this method. Don't forget

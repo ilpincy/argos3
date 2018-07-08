@@ -51,12 +51,12 @@ namespace argos {
        * @return An immutable vector of RAB entities that can communicated with the given entity.       
        * @throws CARGoSException If the passed entity is not managed by this medium.
        */
-      const CSet<CRABEquippedEntity*>& GetRABsCommunicatingWith(CRABEquippedEntity& c_entity) const;
+      const CSet<CRABEquippedEntity*,SEntityComparator>& GetRABsCommunicatingWith(CRABEquippedEntity& c_entity) const;
 
    private:
 
       /** Defines the routing table */
-      typedef std::map<CRABEquippedEntity*, CSet<CRABEquippedEntity*> > TRoutingTable;
+      typedef unordered_map<ssize_t, CSet<CRABEquippedEntity*,SEntityComparator> > TRoutingTable;
 
       /** The routing table, that associates each RAB with the RABs that can communicate with it */
       TRoutingTable m_tRoutingTable;
@@ -66,6 +66,9 @@ namespace argos {
 
       /** The update operation for the grid positional index */
       CRABEquippedEntityGridEntityUpdater* m_pcRABEquippedEntityGridUpdateOperation;
+
+      /* Whether occlusions should be considered or not */
+      bool m_bCheckOcclusions;
 
    };
 

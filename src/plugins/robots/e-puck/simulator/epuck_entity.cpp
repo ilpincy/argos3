@@ -15,6 +15,7 @@
 #include <argos3/plugins/simulator/entities/led_equipped_entity.h>
 #include <argos3/plugins/simulator/entities/light_sensor_equipped_entity.h>
 #include <argos3/plugins/simulator/entities/proximity_sensor_equipped_entity.h>
+#include <argos3/plugins/simulator/entities/battery_equipped_entity.h>
 
 namespace argos {
 
@@ -50,7 +51,8 @@ namespace argos {
       m_pcLightSensorEquippedEntity(NULL),
       m_pcProximitySensorEquippedEntity(NULL),
       m_pcRABEquippedEntity(NULL),
-      m_pcWheeledEntity(NULL) {
+      m_pcWheeledEntity(NULL),
+      m_pcBatteryEquippedEntity(NULL) {
    }
 
    /****************************************/
@@ -61,7 +63,8 @@ namespace argos {
                               const CVector3& c_position,
                               const CQuaternion& c_orientation,
                               Real f_rab_range,
-                              size_t un_rab_data_size) :
+                              size_t un_rab_data_size,
+                              const std::string& str_bat_model) :
       CComposableEntity(NULL, str_id),
       m_pcControllableEntity(NULL),
       m_pcEmbodiedEntity(NULL),
@@ -70,7 +73,8 @@ namespace argos {
       m_pcLightSensorEquippedEntity(NULL),
       m_pcProximitySensorEquippedEntity(NULL),
       m_pcRABEquippedEntity(NULL),
-      m_pcWheeledEntity(NULL) {
+      m_pcWheeledEntity(NULL),
+      m_pcBatteryEquippedEntity(NULL) {
       try {
          /*
           * Create and init components
@@ -139,6 +143,9 @@ namespace argos {
                                                         *m_pcEmbodiedEntity,
                                                         CVector3(0.0f, 0.0f, RAB_ELEVATION));
          AddComponent(*m_pcRABEquippedEntity);
+         /* Battery equipped entity */
+         m_pcBatteryEquippedEntity = new CBatteryEquippedEntity(this, "battery_0", str_bat_model);
+         AddComponent(*m_pcBatteryEquippedEntity);
          /* Controllable entity
             It must be the last one, for actuators/sensors to link to composing entities correctly */
          m_pcControllableEntity = new CControllableEntity(this, "controller_0");
@@ -233,6 +240,11 @@ namespace argos {
                                                         *m_pcEmbodiedEntity,
                                                         CVector3(0.0f, 0.0f, RAB_ELEVATION));
          AddComponent(*m_pcRABEquippedEntity);
+         /* Battery equipped entity */
+         m_pcBatteryEquippedEntity = new CBatteryEquippedEntity(this, "battery_0");
+         if(NodeExists(t_tree, "battery"))
+            m_pcBatteryEquippedEntity->Init(GetNode(t_tree, "battery"));
+         AddComponent(*m_pcBatteryEquippedEntity);
          /* Controllable entity
             It must be the last one, for actuators/sensors to link to composing entities correctly */
          m_pcControllableEntity = new CControllableEntity(this);
@@ -271,6 +283,7 @@ namespace argos {
    void CEPuckEntity::UpdateComponents() {
       UPDATE(m_pcRABEquippedEntity);
       UPDATE(m_pcLEDEquippedEntity);
+      UPDATE(m_pcBatteryEquippedEntity);
    }
 
    /****************************************/
@@ -324,14 +337,51 @@ namespace argos {
                    "    </e-puck>\n"
                    "    ...\n"
                    "  </arena>\n\n"
-                   "You can also set the data sent at each time step through the range-and-bearing"
-                   "system. By default, a message sent by an e-puck is 2 bytes long. By using the"
+                   "You can also set the data sent at each time step through the range-and-bearing\n"
+                   "system. By default, a message sent by an e-puck is 2 bytes long. By using the\n"
                    "'rab_data_size' attribute, you can change it to, i.e., 20 bytes as follows:\n\n"
                    "  <arena ...>\n"
                    "    ...\n"
                    "    <e-puck id=\"eb0\" rab_data_size=\"20\">\n"
                    "      <body position=\"0.4,2.3,0.25\" orientation=\"45,90,0\" />\n"
                    "      <controller config=\"mycntrl\" />\n"
+                   "    </e-puck>\n"
+                   "    ...\n"
+                   "  </arena>\n\n"
+                   "You can also configure the battery of the robot. By default, the battery never\n"
+                   "depletes. You can choose among several battery discharge models, such as\n"
+                   "- time: the battery depletes by a fixed amount at each time step\n"
+                   "- motion: the battery depletes according to how the robot moves\n"
+                   "- time_motion: a combination of the above models.\n"
+                   "You can define your own models too. Follow the examples in the file\n"
+                   "argos3/src/plugins/simulator/entities/battery_equipped_entity.cpp.\n\n"
+                   "  <arena ...>\n"
+                   "    ...\n"
+                   "    <e-puck id=\"eb0\"\n"
+                   "      <body position=\"0.4,2.3,0.25\" orientation=\"45,0,0\" />\n"
+                   "      <controller config=\"mycntrl\" />\n"
+                   "      <battery model=\"time\" factor=\"1e-5\"/>\n"
+                   "    </e-puck>\n"
+                   "    ...\n"
+                   "  </arena>\n\n"
+                   "  <arena ...>\n"
+                   "    ...\n"
+                   "    <e-puck id=\"eb0\"\n"
+                   "      <body position=\"0.4,2.3,0.25\" orientation=\"45,0,0\" />\n"
+                   "      <controller config=\"mycntrl\" />\n"
+                   "      <battery model=\"motion\" pos_factor=\"1e-3\"\n"
+                   "                              orient_factor=\"1e-3\"/>\n"
+                   "    </e-puck>\n"
+                   "    ...\n"
+                   "  </arena>\n\n"
+                   "  <arena ...>\n"
+                   "    ...\n"
+                   "    <e-puck id=\"eb0\"\n"
+                   "      <body position=\"0.4,2.3,0.25\" orientation=\"45,0,0\" />\n"
+                   "      <controller config=\"mycntrl\" />\n"
+                   "      <battery model=\"time_motion\" time_factor=\"1e-5\"\n"
+                   "                                   pos_factor=\"1e-3\"\n"
+                   "                                   orient_factor=\"1e-3\"/>\n"
                    "    </e-puck>\n"
                    "    ...\n"
                    "  </arena>\n\n",

@@ -69,7 +69,6 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
     simulator/footbot_turret_encoder_default_sensor.cpp
     simulator/footbot_turret_entity.cpp)
   # Compile the graphical visualization only if the necessary libraries have been found
-  include(ARGoSCheckQTOpenGL)
   if(ARGOS_COMPILE_QTOPENGL)
     set(ARGOS3_HEADERS_PLUGINS_ROBOTS_FOOTBOT_SIMULATOR
       ${ARGOS3_HEADERS_PLUGINS_ROBOTS_FOOTBOT_SIMULATOR}

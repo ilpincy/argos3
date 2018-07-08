@@ -22,6 +22,7 @@
 #include <QTimerEvent>
 #include <QMouseEvent>
 #include <QPainter>
+#include <QOpenGLFramebufferObject>
 
 #ifndef GL_MULTISAMPLE
 #define GL_MULTISAMPLE 0x809D
@@ -30,7 +31,6 @@
 namespace argos {
 
    static const Real ASPECT_RATIO         = 4.0f / 3.0f;
-   static const UInt32 SELECT_BUFFER_SIZE = 128;
    
    /****************************************/
    /****************************************/
@@ -52,9 +52,7 @@ namespace argos {
       m_cSpace(m_cSimulator.GetSpace()),
       m_bUsingFloorTexture(false),
       m_pcFloorTexture(NULL),
-      m_pcGroundTexture(NULL),
-      m_punSelectionBuffer(new GLuint[SELECT_BUFFER_SIZE])
-   {
+      m_pcGroundTexture(NULL) {
       /* Set the widget's size policy */
       QSizePolicy cSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
       cSizePolicy.setHeightForWidth(true);
@@ -83,7 +81,6 @@ namespace argos {
          delete m_pcFloorTexture;
          glDeleteLists(1, m_unFloorList);
       }
-      delete[] m_punSelectionBuffer;
       doneCurrent();
    }
 
@@ -169,7 +166,7 @@ namespace argos {
       /* Draw the selected object, if necessary */
       if(m_sSelectionInfo.IsSelected) {
          glPushMatrix();
-         CallEntityOperation<CQTOpenGLOperationDrawSelected, CQTOpenGLWidget, void>(*this, *vecEntities[m_sSelectionInfo.Index]);
+         CallEntityOperation<CQTOpenGLOperationDrawSelected, CQTOpenGLWidget, void>(*this, *m_sSelectionInfo.Entity);
          glPopMatrix();
       }
       /* Draw in world */
@@ -178,17 +175,6 @@ namespace argos {
       glPopMatrix();
       /* Draw axes */
       DrawAxes();
-      /* Draw selection ray for debug */
-      glDisable(GL_LIGHTING);
-      glLineWidth(1.0f);
-      glBegin(GL_LINES);
-      glColor3f(1.0, 0.0, 0.0);
-      const CVector3& cStart = m_cSelectionRay.GetStart();
-      const CVector3& cEnd = m_cSelectionRay.GetEnd();
-      glVertex3f(cStart.GetX(), cStart.GetY(), cStart.GetZ());
-      glVertex3f(cEnd.GetX(), cEnd.GetY(), cEnd.GetZ());
-      glEnd();
-      glEnable(GL_LIGHTING);
       /* Execute overlay drawing */
       glShadeModel(GL_FLAT);
       glDisable(GL_LIGHTING);
@@ -310,7 +296,7 @@ namespace argos {
 
    CEntity* CQTOpenGLWidget::GetSelectedEntity() {
       return (m_sSelectionInfo.IsSelected ?
-              m_cSpace.GetRootEntityVector()[m_sSelectionInfo.Index] :
+              m_sSelectionInfo.Entity :
               NULL);
    }
 
@@ -318,29 +304,24 @@ namespace argos {
    /****************************************/
 
    void CQTOpenGLWidget::SelectEntity(CEntity& c_entity) {
-      /* Look for the idx corresponding to the entity */
-      size_t unIdx = 0;
-      while(m_cSpace.GetRootEntityVector()[unIdx] != &c_entity)
-         ++unIdx;
       /* Check whether an entity had previously been selected */
       if(m_sSelectionInfo.IsSelected) {
          /* An entity had previously been selected */
          /* Is that entity already selected? */
-         if(m_sSelectionInfo.Index == unIdx) return;
+         if(m_sSelectionInfo.Entity == &c_entity) return;
          /* Deselect the previous one */
-         emit EntityDeselected(m_sSelectionInfo.Index);
+         emit EntityDeselected(m_sSelectionInfo.Entity);
          m_cUserFunctions.EntityDeselected(
-            *m_cSpace.GetRootEntityVector()[m_sSelectionInfo.Index]);
+            *m_sSelectionInfo.Entity);
       }
       else {
          /* No entity had previously been selected */
          m_sSelectionInfo.IsSelected = true;
       }
       /* Select the new entity */
-      m_sSelectionInfo.Index = unIdx;
-      emit EntitySelected(unIdx);
-      m_cUserFunctions.EntitySelected(
-         *m_cSpace.GetRootEntityVector()[unIdx]);
+      m_sSelectionInfo.Entity = &c_entity;
+      emit EntitySelected(&c_entity);
+      m_cUserFunctions.EntitySelected(c_entity);
       update();
    }
 
@@ -351,9 +332,9 @@ namespace argos {
       /* If no entity was selected, nothing to do */
       if(!m_sSelectionInfo.IsSelected) return;
       /* Deselect the entity */
-      emit EntityDeselected(m_sSelectionInfo.Index);
+      emit EntityDeselected(m_sSelectionInfo.Entity);
       m_cUserFunctions.EntityDeselected(
-         *m_cSpace.GetRootEntityVector()[m_sSelectionInfo.Index]);
+         *m_sSelectionInfo.Entity);
       m_sSelectionInfo.IsSelected = false;
       update();
    }
@@ -363,106 +344,12 @@ namespace argos {
 
    void CQTOpenGLWidget::SelectInScene(UInt32 un_x,
                                        UInt32 un_y) {
-      /* Make sure OpenGL context is correct */
-      makeCurrent();
-      un_x *= devicePixelRatio();
-      un_y *= devicePixelRatio();
-      /* Used to store the viewport size */
-      GLint nViewport[4];
-      /* Set the selection buffer */
-      glSelectBuffer(SELECT_BUFFER_SIZE, m_punSelectionBuffer);
-      /* Switch to select mode */
-      glRenderMode(GL_SELECT);
-      /* Set the projection matrix */
-      glMatrixMode(GL_PROJECTION);
-      glLoadIdentity();
-      /* Set the viewport */
-      glGetIntegerv(GL_VIEWPORT, nViewport);
-      gluPickMatrix(un_x,
-                    nViewport[3]-un_y,
-                    5, 5,
-                    nViewport);
-      gluPerspective(m_cCamera.GetActiveSettings().YFieldOfView.GetValue(),
-                     ASPECT_RATIO,
-                     0.1f, 1000.0f);
-      glMatrixMode(GL_MODELVIEW);
-      glLoadIdentity();
-      m_cCamera.Look();
-      /* Prepare name stack */
-      glInitNames();
-      /* Draw the objects */
-      CEntity::TVector& vecEntities = m_cSpace.GetRootEntityVector();
-      for(size_t i = 0; i < vecEntities.size(); ++i) {
-         glPushName(i);
-         glPushMatrix();
-         CallEntityOperation<CQTOpenGLOperationDrawNormal, CQTOpenGLWidget, void>(*this, *vecEntities[i]);
-         glPopMatrix();
-         glPopName();
-      }
-      glFlush();
-      /* Return to normal rendering mode and get hit count */
-      bool bWasSelected = m_sSelectionInfo.IsSelected;
-      UInt32 unHits = glRenderMode(GL_RENDER);
-      if (unHits == 0) {
-         /* No hits, deselect what was selected */
-         m_sSelectionInfo.IsSelected = false;
-         if(bWasSelected) {
-            emit EntityDeselected(m_sSelectionInfo.Index);
-            m_cUserFunctions.EntityDeselected(
-               *m_cSpace.GetRootEntityVector()[m_sSelectionInfo.Index]);
-         }
-      }
-      else {
-         /* There are hits!
-          * Process them, keeping the closest hit
-          */
-         GLuint unNames;
-         GLuint* punByte;
-         GLuint unMinZ;
-         GLuint* punName;
-         punByte = m_punSelectionBuffer;
-         unMinZ = 0xffffffff;
-         for (UInt32 i = 0; i < unHits; i++) {	
-            unNames = *punByte;
-            ++punByte;
-            if (*punByte < unMinZ) {
-               unMinZ = *punByte;
-               punName = punByte+2;
-            }
-            punByte += unNames+2;
-         }
-         /* Now *punName contains the closest hit */
-         if(bWasSelected &&
-            (m_sSelectionInfo.Index == *punName)) {
-            /* The user clicked on the selected entity, deselect it */
-            emit EntityDeselected(m_sSelectionInfo.Index);
-            m_sSelectionInfo.IsSelected = false;
-            m_cUserFunctions.EntitySelected(
-               *m_cSpace.GetRootEntityVector()[m_sSelectionInfo.Index]);
-         }
-         if(bWasSelected &&
-            (m_sSelectionInfo.Index != *punName)) {
-            /* The user clicked on a different entity from the selected one */
-            emit EntityDeselected(m_sSelectionInfo.Index);
-            m_cUserFunctions.EntityDeselected(
-               *m_cSpace.GetRootEntityVector()[m_sSelectionInfo.Index]);
-            m_sSelectionInfo.Index = *punName;
-            emit EntitySelected(m_sSelectionInfo.Index);
-            m_cUserFunctions.EntitySelected(
-               *m_cSpace.GetRootEntityVector()[m_sSelectionInfo.Index]);
-         }
-         else {
-            /* There was nothing selected, and the user clicked on an entity */
-            m_sSelectionInfo.IsSelected = true;
-            m_sSelectionInfo.Index = *punName;
-            emit EntitySelected(m_sSelectionInfo.Index);
-            m_cUserFunctions.EntitySelected(
-               *m_cSpace.GetRootEntityVector()[m_sSelectionInfo.Index]);
-         }
-      }
-      doneCurrent();
-      /* Redraw */
-      update();
+      CRay3 cRay = RayFromWindowCoord(un_x, un_y);
+      SEmbodiedEntityIntersectionItem sItem;
+      if(GetClosestEmbodiedEntityIntersectedByRay(sItem, cRay))
+         SelectEntity(sItem.IntersectedEntity->GetRootEntity());
+      else
+         DeselectEntity();
    }
 
    /****************************************/
@@ -904,8 +791,13 @@ namespace argos {
        * Either pure press, or press + CTRL
        */
       if(! (pc_event->modifiers() & Qt::ShiftModifier)) {
-         m_bMouseGrabbed = true;
-         m_cMouseGrabPos = pc_event->pos();
+         if(! (pc_event->modifiers() & Qt::AltModifier)) {
+            m_bMouseGrabbed = true;
+            m_cMouseGrabPos = pc_event->pos();
+         }
+         else {
+            m_cUserFunctions.MouseKeyPressed(pc_event);
+         }
       }
       /*
        * Mouse press with shift
@@ -928,13 +820,11 @@ namespace argos {
          m_sSelectionInfo.IsSelected &&
          (pc_event->modifiers() & Qt::ControlModifier)) {
          /* Treat selected entity as an embodied entity */
-         CEmbodiedEntity* pcEntity = dynamic_cast<CEmbodiedEntity*>(
-            m_cSpace.GetRootEntityVector()[m_sSelectionInfo.Index]);
+         CEmbodiedEntity* pcEntity = dynamic_cast<CEmbodiedEntity*>(m_sSelectionInfo.Entity);
          if(pcEntity == NULL) {
             /* Treat selected entity as a composable entity with an embodied component */
-            CComposableEntity* pcCompEntity = dynamic_cast<CComposableEntity*>(
-               m_cSpace.GetRootEntityVector()[m_sSelectionInfo.Index]);
-            if(pcCompEntity->HasComponent("body")) {
+            CComposableEntity* pcCompEntity = dynamic_cast<CComposableEntity*>(m_sSelectionInfo.Entity);
+            if(pcCompEntity != NULL && pcCompEntity->HasComponent("body")) {
                pcEntity = &pcCompEntity->GetComponent<CEmbodiedEntity>("body");
             }
             else {
@@ -962,6 +852,9 @@ namespace argos {
             /* Entity moved, redraw */
             update();
          }
+      }
+      else {
+         m_cUserFunctions.MouseKeyReleased(pc_event);
       }
       /*
        * Mouse was grabbed, button released -> ungrab mouse
@@ -1000,6 +893,9 @@ namespace argos {
                update();
             }
          }
+      }
+      else {
+         m_cUserFunctions.MouseMoved(pc_event);
       }
    }
 

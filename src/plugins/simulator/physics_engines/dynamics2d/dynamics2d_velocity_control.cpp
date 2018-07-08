@@ -13,8 +13,9 @@ namespace argos {
    /****************************************/
 
    CDynamics2DVelocityControl::CDynamics2DVelocityControl(CDynamics2DEngine& c_engine,
-                                                  Real f_max_force,
-                                                  Real f_max_torque) :
+                                                          Real f_max_force,
+                                                          Real f_max_torque,
+                                                          TConfigurationNode* t_node) :
       m_cDyn2DEngine(c_engine),
       m_ptControlBody(NULL),
       m_ptControlledBody(NULL),
@@ -23,6 +24,15 @@ namespace argos {
       m_fMaxForce(f_max_force),
       m_fMaxTorque(f_max_torque) {
       m_ptControlBody = cpBodyNew(INFINITY, INFINITY);
+      if(t_node &&
+         NodeExists(*t_node, "dynamics2d")) {
+         TConfigurationNode& tNode = GetNode(*t_node, "dynamics2d");
+         if(NodeExists(tNode, "differential_steering")) {
+            TConfigurationNode& tDiffSteer = GetNode(tNode, "differential_steering");
+            GetNodeAttributeOrDefault(tDiffSteer, "max_force", m_fMaxForce, m_fMaxForce);
+            GetNodeAttributeOrDefault(tDiffSteer, "max_torque", m_fMaxTorque, m_fMaxTorque);
+         }
+      }
    }
 
    /****************************************/
