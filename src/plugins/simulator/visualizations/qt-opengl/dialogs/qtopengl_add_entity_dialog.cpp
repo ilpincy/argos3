@@ -15,6 +15,7 @@
 #include <QString>
 
 #include <argos3/plugins/simulator/visualizations/qt-opengl/dialogs/layouts/qtopengl_box_entity_dialog_layout.h>
+#include <argos3/plugins/simulator/visualizations/qt-opengl/dialogs/layouts/qtopengl_cylinder_entity_dialog_layout.h>
 
 namespace argos {
 
@@ -114,6 +115,9 @@ namespace argos {
         if(strEntityType == "box") {
             m_pcEntityDialogLayout = new CQTOpenGLBoxEntityDialogLayout; 
         }
+        else if(strEntityType == "cylinder") {
+            m_pcEntityDialogLayout = new CQTOpenGLCylinderEntityDialogLayout; 
+        }
         else {
             bErrorOccured = true;
         }
@@ -133,7 +137,9 @@ namespace argos {
 
     void CQTOpenGLAddEntityDialog::Accept(){
         /* Check the currently supported entities */
-        if(m_pcEntityTypeComboBox->currentText().toStdString() != "box") {
+        std::string strEntityType = m_pcEntityTypeComboBox->currentText().toStdString();
+        if(strEntityType != "box" &&
+            strEntityType != "cylinder") {
             return;
         }
 
