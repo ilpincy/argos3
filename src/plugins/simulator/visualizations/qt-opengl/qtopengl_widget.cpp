@@ -76,10 +76,8 @@ namespace argos {
    CQTOpenGLWidget::~CQTOpenGLWidget() {
       makeCurrent();
       delete m_pcGroundTexture;
-      glDeleteLists(1, m_unArenaList);
       if(m_bUsingFloorTexture) {
          delete m_pcFloorTexture;
-         glDeleteLists(1, m_unFloorList);
       }
       doneCurrent();
    }

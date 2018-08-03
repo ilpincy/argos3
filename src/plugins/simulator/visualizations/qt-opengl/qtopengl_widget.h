@@ -383,9 +383,9 @@ namespace argos {
       GLfloat* m_pfLight1Position;
 
       /** Display list for arena elements */
-      GLuint m_unArenaList;
+      //GLuint m_unArenaList;
       /** Display list for floor elements */
-      GLuint m_unFloorList;
+      //GLuint m_unFloorList;
 
       /** Current state of the camera */
       CQTOpenGLCamera m_cCamera;
