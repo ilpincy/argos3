@@ -42,6 +42,7 @@ set(ARGOS3_HEADERS_PLUGINS_SIMULATOR_PHYSICS_ENGINES_DYNAMICS2D
   dynamics2d_engine.h
   dynamics2d_gripping.h
   dynamics2d_single_body_object_model.h
+  dynamics2d_multi_body_object_model.h
   dynamics2d_stretchable_object_model.h
   dynamics2d_velocity_control.h)
 
