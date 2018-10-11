@@ -1,68 +1,69 @@
-state = "begin"
-timer = 0
+-- global variables
+local _state
+local _manipulator_state
+local _manipulator_target
 
 function init()
-   logerr("[NOTE] This example requires recalibration and is disabled")
-	reset()
+	-- set global variables
+	_state = "begin"
+	_manipulator_state = "idle"
+	_manipulator_target = 0.0275
+	set_speed(0,0)
 end
 
 function reset()
-	state = "begin"
-   timer = 0
-   set_speed(0,0)
-   regulate_end_effector_position(0)
+	-- just recall init
+	init()
 end
 
 function step()
-	-- update timer variable
-	if(timer > 0) then
-		timer = timer - 1
-	end
-	-- run finite state machine
-	if state == "begin" then
-		state = 	"move_forwards"
-		set_speed(1,1)
-	elseif state == "move_forwards" then
-		regulate_end_effector_position(0.1)
-		if(robot.proximity[6] > 0.98 and robot.proximity[7] > 0.98) then
-			state = "lower_end_effector"			
+	-- step the manipulator control loop
+	_manipulator_state = step_manipulator()
+	-- step the finite state machine
+	if _state == "begin" then
+		set_speed(3,3)
+		_state = "forwards"
+	elseif _state == "forwards" then
+		if robot.proximity[15] > 0.99 and robot.proximity[16] > 0.99 then			
 			set_speed(0,0)
+			_manipulator_target = 0
+			_state = "lower_manipulator"
 		end
-	elseif state == "lower_end_effector" then
-		regulate_end_effector_position(0.005)
-		if(robot.proximity[14] > 0.99) then
-			state = "pick_up_block"
-			robot.joints.lift_fixture_vertical_link.set_target(0.0)
-   		robot.magnets.magnet_0.set_current(1)
-	   	robot.magnets.magnet_1.set_current(1)
-			robot.magnets.magnet_2.set_current(1)
-			robot.magnets.magnet_3.set_current(1)
-			timer = 20;
+	elseif _state == "lower_manipulator" then
+		if _manipulator_state == "idle" then
+			set_electromagnet_current(1)
+			_state = "attach_block"
 		end
-	elseif state == "pick_up_block" then
-		if(timer == 0) then
-			state = "raise_block"
-   		robot.magnets.magnet_0.set_current(0.5)
-	   	robot.magnets.magnet_1.set_current(0.5)
-			robot.magnets.magnet_2.set_current(0.5)
-			robot.magnets.magnet_3.set_current(0.5)
-		end
-	elseif state == "raise_block" then
-		regulate_end_effector_position(0.0825)
-		if(robot.joints.lift_fixture_vertical_link.encoder > 0.060) then
-			state = "approach_block"
+	elseif _state == "attach_block" then
+		if robot.proximity[14] > 0.999 then
+			set_electromagnet_current(0)
+			_manipulator_target = 0.0825		 
+			_state = "raise_manipulator"
+		end		
+	elseif _state == "raise_manipulator" then
+		if _manipulator_state == "idle" then
+			set_electromagnet_current(0)
+			set_speed(3,3)
 			robot.radios.radio.tx_data({1});
-			set_speed(0.5,0.5)
+			_state = "continue_forwards"
 		end
-	elseif state == "approach_block" then
-		regulate_end_effector_position(0.0825)
-		if(robot.proximity[6] > 0.98 and robot.proximity[7] > 0.98) then
-			state = "release_block"
-   		robot.magnets.magnet_0.set_current(-0.5)
-	   	robot.magnets.magnet_1.set_current(-0.5)
-			robot.magnets.magnet_2.set_current(-0.5)
-			robot.magnets.magnet_3.set_current(-0.5)
+	elseif _state == "continue_forwards" then
+		if robot.proximity[6] > 0.98 and robot.proximity[7] > 0.98 then
+			set_electromagnet_current(-1)
 			set_speed(0,0)
+			_state = "detach_block"
+		end
+	elseif _state == "detach_block" then
+		if robot.proximity[14] < 0.99 then
+			set_electromagnet_current(0)
+			set_speed(-1,-1)
+			_manipulator_target = 0.11
+			_state = "reverse"
+		end		
+	elseif _state == "reverse" then
+		if robot.proximity[6] < 0.90 and robot.proximity[7] < 0.90 then
+			set_speed(-0.125,-0.125)
+			_state = "end"
 		end
 	end
 end
@@ -74,12 +75,31 @@ function set_speed(left, right)
 	robot.joints.lower_chassis_wheel_fr.set_target(-right)
 end
 
-function regulate_end_effector_position(target)
+function set_electromagnet_current(target)
+	robot.magnets.magnet_0.set_current(target)
+	robot.magnets.magnet_1.set_current(target)
+	robot.magnets.magnet_2.set_current(target)
+	robot.magnets.magnet_3.set_current(target)
+end
+
+function step_manipulator()
 	local position = robot.joints.lift_fixture_vertical_link.encoder
 	local set_velocity = robot.joints.lift_fixture_vertical_link.set_target
-	if math.abs(target - position) > 0.005 then
-		set_velocity(target - position)
+	local manipulator_speed = 0.03
+
+	if math.abs(_manipulator_target - position) < 0.01 then
+		manipulator_speed = math.abs(_manipulator_target - position) * 3
+	end
+
+	if math.abs(_manipulator_target - position) > 0.005 then
+		if _manipulator_target > position then
+			set_velocity(manipulator_speed)
+		else
+			set_velocity(-manipulator_speed)
+		end
+		return "active"
 	else
 		set_velocity(0.0)
+		return "idle"
 	end
 end
