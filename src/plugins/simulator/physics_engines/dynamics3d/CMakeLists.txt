@@ -426,7 +426,13 @@ set(ARGOS3_SOURCES_PLUGINS_SIMULATOR_PHYSICS_ENGINES_DYNAMICS3D_BULLET
 set_source_files_properties(
   ${ARGOS3_SOURCES_PLUGINS_SIMULATOR_PHYSICS_ENGINES_DYNAMICS3D_BULLET}
   PROPERTIES
-  COMPILE_FLAGS "-Wno-strict-aliasing -Wno-misleading-indentation -Wno-sign-compare")
+  COMPILE_FLAGS "-Wno-strict-aliasing -Wno-sign-compare")
+if(NOT APPLE)
+  set_source_files_properties(
+    ${ARGOS3_SOURCES_PLUGINS_SIMULATOR_PHYSICS_ENGINES_DYNAMICS3D_BULLET}
+    PROPERTIES
+    COMPILE_FLAGS "-Wno-misleading-indentation")
+endif(NOT APPLE)
 
 #
 # Header files
