@@ -202,7 +202,7 @@ namespace argos {
          }
       }
       catch(CARGoSException& ex) {
-         THROW_ARGOSEXCEPTION("Error initializing a physics engine");
+         THROW_ARGOSEXCEPTION_NESTED("Error initializing a physics engine", ex);
       }
    }
 
