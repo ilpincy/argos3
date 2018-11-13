@@ -426,7 +426,7 @@ namespace argos {
          /* Add the requested entities */
          for(UInt32 i = 0; i < unQuantity; ++i) {
             /* Copy the entity XML tree */
-            TConfigurationNode tEntityTree = *itEntity;
+            TConfigurationNode& tEntityTree = *itEntity;
             /* Set progressive ID */
             SetNodeAttribute(tEntityTree, "id", strBaseId + ToString(i+unBaseNum));
             /* Go on until the entity is placed with no collisions or
