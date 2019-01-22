@@ -1,7 +1,7 @@
 /**
  * @file <argos3/core/utility/math/vector2.h>
  *
- * @author Carlo Pinciroli <ilpincy@gmail.com>
+ * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */
 
 #ifndef VECTOR2_H
@@ -34,6 +34,9 @@ namespace argos {
 
       /** The <em>y</em> axis */
       static const CVector2 Y;
+
+      /** The zero vector (0,0) */
+      static const CVector2 ZERO;
 
       /**
        * Class constructor.
