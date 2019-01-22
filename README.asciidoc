@@ -249,10 +249,15 @@ On Linux, edit the file +$HOME/.config/Iridia-ULB/ARGoS.conf+ as follows:
  # more stuff
  #
 
-On Mac, write the following commands on the terminal window:
+On Mac, write the following commands on the terminal window to fix the paths manually:
 
- $ defaults write be.ac.ulb.Iridia.ARGoS MainWindow.texture_dir -string "/PATH/TO/argos3/src/plugins/simulator/visualizations/qt-opengl/textures/"
- $ defaults write be.ac.ulb.Iridia.ARGoS MainWindow.icon_dir -string "/PATH/TO/argos3/src/plugins/simulator/visualizations/qt-opengl/icons/"
+ $ defaults write info.argos-sim.ARGoS MainWindow.texture_dir -string "/PATH/TO/argos3/src/plugins/simulator/visualizations/qt-opengl/textures/"
+ $ defaults write info.argos-sim.ARGoS MainWindow.icon_dir -string "/PATH/TO/argos3/src/plugins/simulator/visualizations/qt-opengl/icons/"
+ $ killall -u YOURUSERNAME cfprefsd
+
+or use these commands to delete these paths and have ARGoS look for them:
+
+ $ defaults write info.argos-sim.ARGoS
  $ killall -u YOURUSERNAME cfprefsd
 
 Be sure to substitute +/PATH/TO/+ with the correct path that contains the +argos3+
