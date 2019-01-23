@@ -245,6 +245,7 @@ On Linux, edit the file +$HOME/.config/Iridia-ULB/ARGoS.conf+ as follows:
  #
  icon_dir=/PATH/TO/argos3/src/plugins/simulator/visualizations/qt-opengl/icons/
  texture_dir=/PATH/TO/argos3/src/plugins/simulator/visualizations/qt-opengl/textures/
+ model_dir=/PATH/TO/argos3/src/plugins/simulator/visualizations/qt-opengl/models/
  #
  # more stuff
  #
@@ -253,6 +254,7 @@ On Mac, write the following commands on the terminal window:
 
  $ defaults write be.ac.ulb.Iridia.ARGoS MainWindow.texture_dir -string "/PATH/TO/argos3/src/plugins/simulator/visualizations/qt-opengl/textures/"
  $ defaults write be.ac.ulb.Iridia.ARGoS MainWindow.icon_dir -string "/PATH/TO/argos3/src/plugins/simulator/visualizations/qt-opengl/icons/"
+ $ defaults write be.ac.ulb.Iridia.ARGoS MainWindow.model_dir -string "/PATH/TO/argos3/src/plugins/simulator/visualizations/qt-opengl/models/"
  $ killall -u YOURUSERNAME cfprefsd
 
 Be sure to substitute +/PATH/TO/+ with the correct path that contains the +argos3+
