@@ -44,29 +44,27 @@ namespace argos {
          std::array<GLfloat, 1> Shininess = {0.0f};
          /* material transparency */
          GLfloat Alpha = 1.0f;
+         /* convenience typedef for an iterator over a std::map of SMaterial */
          typedef std::map<std::string, SMaterial>::iterator TMapIterator;
       };
 
    public:
 
-      CQTOpenGLObjModel();
+      CQTOpenGLObjModel(const std::string& str_model);
 
-      virtual ~CQTOpenGLObjModel() {}
-
-      void Load(const QString& str_model);
+      SMaterial& GetMaterial(const std::string& str_material);
 
       void Draw() const;
-
-      SMaterial& GetMaterial(const std::string& str_material) {
-         return m_mapMaterials[str_material];
-      }
 
    private:
 
       struct SVertex {
          SVertex(const CVector3& c_position = CVector3::ZERO,
                  const CVector3& c_normal = CVector3::ZERO,
-                 const CVector2& c_texture = CVector2::ZERO);
+                 const CVector2& c_texture = CVector2::ZERO) :
+            Position(c_position),
+            Normal(c_normal),
+            Texture(c_texture) {}
 
          CVector3 Position;
          CVector3 Normal;

@@ -18,8 +18,8 @@ namespace argos {
 
    CQTOpenGLEPuck::CQTOpenGLEPuck() {
       /* create the model */
-      m_pcEPuckModel = new CQTOpenGLObjModel;
-      /* create the led materials *before* we load the OBJ model */
+      m_pcEPuckModel = new CQTOpenGLObjModel("epuck.obj");
+      /* get pointers to the LED materials */
       m_vecLEDs = {
          &m_pcEPuckModel->GetMaterial("led_0"),
          &m_pcEPuckModel->GetMaterial("led_1"),
@@ -30,8 +30,6 @@ namespace argos {
          &m_pcEPuckModel->GetMaterial("led_6"),
          &m_pcEPuckModel->GetMaterial("led_7")
       };
-      /* load OBJ model */
-      m_pcEPuckModel->Load("epuck.obj");
    }
 
    /****************************************/

@@ -20,57 +20,25 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   CQTOpenGLObjModel::SVertex::SVertex(const CVector3& c_position,
-                                       const CVector3& c_normal,
-                                       const CVector2& c_texture) :
-      Position(c_position),
-      Normal(c_normal),
-      Texture(c_texture) {}
-
-   /****************************************/
-   /****************************************/
-
-   const QString& CQTOpenGLObjModel::GetModelDir() const {
-      /* get a reference to the visualization */
-      CVisualization& cVisualization = CSimulator::GetInstance().GetVisualization();
-      CQTOpenGLRender& cQtOpenGLRender = dynamic_cast<CQTOpenGLRender&>(cVisualization);
-      /* return the model directory */
-      return cQtOpenGLRender.GetMainWindow().GetModelDir();
-   }
-
-   /****************************************/
-   /****************************************/
-
-   CQTOpenGLObjModel::CQTOpenGLObjModel() {
+   CQTOpenGLObjModel::CQTOpenGLObjModel(const std::string& str_obj_file) {
       /* create a default material */
       m_mapMaterials["__default_material"];
-   }
-
-   /****************************************/
-   /****************************************/
-
-   void CQTOpenGLObjModel::Load(const QString& str_obj_file) {
-      QFile cGeometryFile(GetModelDir() + str_obj_file);
+      /* load the model */
+      QFile cGeometryFile(GetModelDir() + QString::fromStdString(str_obj_file));
       if(!cGeometryFile.open(QIODevice::ReadOnly)) {
          THROW_ARGOSEXCEPTION("Error loading model \"" <<
                               cGeometryFile.fileName().toStdString() << "\": " <<
                               cGeometryFile.errorString().toStdString());
       }
       QTextStream cGeometryStream(&cGeometryFile);
-      try {
-         ImportGeometry(cGeometryStream);
-      } catch(CARGoSException& ex) {
-         THROW_ARGOSEXCEPTION_NESTED("Error loading model \"" <<
-                                     cGeometryFile.fileName().toStdString() <<
-                                     "\": Geometry import failed", ex);
-      }
+      ImportGeometry(cGeometryStream);
       /* build the meshes */
       BuildMeshes();
       /* check if normals have been provided */
       if (m_vecNormals.empty()) {
          THROW_ARGOSEXCEPTION("Error loading model \"" << 
                               cGeometryFile.fileName().toStdString() <<
-                              "\": Model does not specify normals");
+                              "\": model does not specify normals.")
       }
       /* generate the OpenGL vectors */
       GenerateOpenGLVectors();
@@ -79,77 +47,12 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   GLuint CQTOpenGLObjModel::AddVertex(SInt32 n_key,
-                                       const CVector3& c_position,
-                                       const CVector3& c_normal,
-                                       const CVector2& c_texture) {
-      /* for readability */
-      typedef std::multimap<SInt32, GLuint>::iterator TCacheIterator;
-      typedef std::multimap<SInt32, GLuint>::value_type TCacheEntry;
-      /* find cache entries matching the key */
-      std::pair<TCacheIterator, TCacheIterator> cRange =
-         m_mapVertexCache.equal_range(n_key);
-      /* check if the vertex already exists in the cache */
-      TCacheIterator itVertex =
-         std::find_if(cRange.first,
-                      cRange.second,
-                      [this, &c_position, &c_normal, &c_texture] (const TCacheEntry& c_entry) {
-            return (m_vecVertices[c_entry.second].Position == c_position &&
-                    m_vecVertices[c_entry.second].Normal == c_normal &&
-                    m_vecVertices[c_entry.second].Texture == c_texture);
-      });
-      /* if the vertex doesn't exist create it and put it in the cache */
-      if(itVertex == cRange.second) {
-         m_vecVertices.emplace_back(c_position, c_normal, c_texture);
-         itVertex = m_mapVertexCache.emplace(n_key, m_vecVertices.size() - 1);
+   CQTOpenGLObjModel::SMaterial& CQTOpenGLObjModel::GetMaterial(const std::string& str_material) {
+      SMaterial::TMapIterator tIter = m_mapMaterials.find(str_material);
+      if(tIter == std::end(m_mapMaterials)) {
+         THROW_ARGOSEXCEPTION("Material \"" << str_material << "\" is undefined");
       }
-      return itVertex->second;
-   }
-
-   /****************************************/
-   /****************************************/
-
-   void CQTOpenGLObjModel::BuildMeshes() {
-      SMaterial::TMapIterator itCurrentMaterial = std::end(m_mapMaterials);
-      for(const STriangle& s_triangle : m_vecTriangles) {
-         if(s_triangle.Material != itCurrentMaterial) {
-            /* select the current material */
-            itCurrentMaterial = s_triangle.Material;
-            /* create a new mesh */
-            m_vecMeshes.emplace_back(itCurrentMaterial);
-         }
-         m_vecMeshes.back().Triangles.push_back(s_triangle.Indices[0]);
-         m_vecMeshes.back().Triangles.push_back(s_triangle.Indices[1]);
-         m_vecMeshes.back().Triangles.push_back(s_triangle.Indices[2]);
-      }
-      /* sort the meshes based on their material's alpha. Fully opaque meshes towards the
-         front and fully transparent towards the back. */
-      std::sort(m_vecMeshes.begin(),
-                m_vecMeshes.end(),
-                [] (const SMesh& s_left,
-                    const SMesh& s_right) {
-         return (s_left.Material->second.Alpha > s_right.Material->second.Alpha);
-      });
-   }
-
-   /****************************************/
-   /****************************************/
-
-   void CQTOpenGLObjModel::GenerateOpenGLVectors() {
-      /* reserve memory */
-      m_vecOpenGLPositions.reserve(m_vecVertices.size() * 3);
-      m_vecOpenGLNormals.reserve(m_vecVertices.size() * 3);
-      /* copy data */
-      for(const SVertex& s_vertex : m_vecVertices) {
-         /* positions */
-         m_vecOpenGLPositions.push_back(s_vertex.Position.GetX());
-         m_vecOpenGLPositions.push_back(s_vertex.Position.GetY());
-         m_vecOpenGLPositions.push_back(s_vertex.Position.GetZ());
-         /* normals */
-         m_vecOpenGLNormals.push_back(s_vertex.Normal.GetX());
-         m_vecOpenGLNormals.push_back(s_vertex.Normal.GetY());
-         m_vecOpenGLNormals.push_back(s_vertex.Normal.GetZ());
-      }
+      return tIter->second;
    }
 
    /****************************************/
@@ -187,6 +90,17 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   const QString& CQTOpenGLObjModel::GetModelDir() const {
+      /* get a reference to the visualization */
+      CVisualization& cVisualization = CSimulator::GetInstance().GetVisualization();
+      CQTOpenGLRender& cQtOpenGLRender = dynamic_cast<CQTOpenGLRender&>(cVisualization);
+      /* return the model directory */
+      return cQtOpenGLRender.GetMainWindow().GetModelDir();
+   }
+
+   /****************************************/
+   /****************************************/
+
    void CQTOpenGLObjModel::ImportGeometry(QTextStream& c_text_stream) {
       /* select the default material */
       SMaterial::TMapIterator itSelectedMaterial =
@@ -209,11 +123,7 @@ namespace argos {
          }
          else if(cLineBufferSplit[0] == "mtllib") {
             QFile cMaterialsFile(GetModelDir() + cLineBufferSplit.value(1));
-            if(!cMaterialsFile.open(QIODevice::ReadOnly)) {
-               THROW_ARGOSEXCEPTION("Error loading materials from \"" <<
-                                    cMaterialsFile.fileName().toStdString() << "\": " <<
-                                    cMaterialsFile.errorString().toStdString());
-            }
+            cMaterialsFile.open(QIODevice::ReadOnly);
             QTextStream cMaterialsStream(&cMaterialsFile);
             ImportMaterials(cMaterialsStream);
          }
@@ -437,5 +347,82 @@ namespace argos {
 
    /****************************************/
    /****************************************/
+
+   GLuint CQTOpenGLObjModel::AddVertex(SInt32 n_key,
+                                       const CVector3& c_position,
+                                       const CVector3& c_normal,
+                                       const CVector2& c_texture) {
+      /* for readability */
+      typedef std::multimap<SInt32, GLuint>::iterator TCacheIterator;
+      typedef std::multimap<SInt32, GLuint>::value_type TCacheEntry;
+      /* find cache entries matching the key */
+      std::pair<TCacheIterator, TCacheIterator> cRange =
+         m_mapVertexCache.equal_range(n_key);
+      /* check if the vertex already exists in the cache */
+      TCacheIterator itVertex =
+         std::find_if(cRange.first,
+                      cRange.second,
+                      [this, &c_position, &c_normal, &c_texture] (const TCacheEntry& c_entry) {
+            return (m_vecVertices[c_entry.second].Position == c_position &&
+                    m_vecVertices[c_entry.second].Normal == c_normal &&
+                    m_vecVertices[c_entry.second].Texture == c_texture);
+      });
+      /* if the vertex doesn't exist create it and put it in the cache */
+      if(itVertex == cRange.second) {
+         m_vecVertices.emplace_back(c_position, c_normal, c_texture);
+         itVertex = m_mapVertexCache.emplace(n_key, m_vecVertices.size() - 1);
+      }
+      return itVertex->second;
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CQTOpenGLObjModel::BuildMeshes() {
+      SMaterial::TMapIterator itCurrentMaterial = std::end(m_mapMaterials);
+      for(const STriangle& s_triangle : m_vecTriangles) {
+         if(s_triangle.Material != itCurrentMaterial) {
+            /* select the current material */
+            itCurrentMaterial = s_triangle.Material;
+            /* create a new mesh */
+            m_vecMeshes.emplace_back(itCurrentMaterial);
+         }
+         m_vecMeshes.back().Triangles.push_back(s_triangle.Indices[0]);
+         m_vecMeshes.back().Triangles.push_back(s_triangle.Indices[1]);
+         m_vecMeshes.back().Triangles.push_back(s_triangle.Indices[2]);
+      }
+      /* sort the meshes based on their material's alpha. Fully opaque meshes towards the
+         front and fully transparent towards the back. */
+      std::sort(m_vecMeshes.begin(),
+                m_vecMeshes.end(),
+                [] (const SMesh& s_left,
+                    const SMesh& s_right) {
+         return (s_left.Material->second.Alpha > s_right.Material->second.Alpha);
+      });
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CQTOpenGLObjModel::GenerateOpenGLVectors() {
+      /* reserve memory */
+      m_vecOpenGLPositions.reserve(m_vecVertices.size() * 3);
+      m_vecOpenGLNormals.reserve(m_vecVertices.size() * 3);
+      /* copy data */
+      for(const SVertex& s_vertex : m_vecVertices) {
+         /* positions */
+         m_vecOpenGLPositions.push_back(s_vertex.Position.GetX());
+         m_vecOpenGLPositions.push_back(s_vertex.Position.GetY());
+         m_vecOpenGLPositions.push_back(s_vertex.Position.GetZ());
+         /* normals */
+         m_vecOpenGLNormals.push_back(s_vertex.Normal.GetX());
+         m_vecOpenGLNormals.push_back(s_vertex.Normal.GetY());
+         m_vecOpenGLNormals.push_back(s_vertex.Normal.GetZ());
+      }
+   }
+
+   /****************************************/
+   /****************************************/
+
 
 }
