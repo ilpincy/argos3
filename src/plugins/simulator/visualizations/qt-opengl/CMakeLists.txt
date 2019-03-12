@@ -6,8 +6,34 @@ set(ARGOS3_HEADERS_PLUGINS_SIMULATOR_VISUALIZATIONS_QTOPENGL_MODELS
   models/qtopengl_box.h
   models/qtopengl_cylinder.h
   models/qtopengl_light.h)
+# argos3/plugins/simulator/visualizations/qt-opengl/dialogs/layouts
+set(ARGOS3_HEADERS_PLUGINS_SIMULATOR_VISUALIZATIONS_QTOPENGL_DIALOGS_LAYOUTS
+  dialogs/layouts/qtopengl_entity_dialog_layout.h
+  dialogs/layouts/qtopengl_embodied_entity_dialog_layout.h
+  dialogs/layouts/qtopengl_box_entity_dialog_layout.h
+  dialogs/layouts/qtopengl_cylinder_entity_dialog_layout.h
+  dialogs/layouts/qtopengl_light_entity_dialog_layout.h
+  dialogs/layouts/qtopengl_bot_entity_dialog_layout.h
+  dialogs/layouts/qtopengl_epuck_entity_dialog_layout.h
+  dialogs/layouts/qtopengl_eyebot_entity_dialog_layout.h
+  dialogs/layouts/qtopengl_footbot_entity_dialog_layout.h
+  dialogs/layouts/qtopengl_spiri_entity_dialog_layout.h)
+# argos3/plugins/simulator/visualizations/qt-opengl/dialogs
+set(ARGOS3_HEADERS_PLUGINS_SIMULATOR_VISUALIZATIONS_QTOPENGL_DIALOGS
+  dialogs/qtopengl_add_entity_dialog.h)
 # argos3/plugins/simulator/visualizations/qt-opengl
 set(ARGOS3_HEADERS_PLUGINS_SIMULATOR_VISUALIZATIONS_QTOPENGL
+  dialogs/layouts/qtopengl_entity_dialog_layout.h
+  dialogs/layouts/qtopengl_embodied_entity_dialog_layout.h
+  dialogs/layouts/qtopengl_box_entity_dialog_layout.h
+  dialogs/layouts/qtopengl_cylinder_entity_dialog_layout.h
+  dialogs/layouts/qtopengl_light_entity_dialog_layout.h
+  dialogs/layouts/qtopengl_bot_entity_dialog_layout.h
+  dialogs/layouts/qtopengl_epuck_entity_dialog_layout.h
+  dialogs/layouts/qtopengl_eyebot_entity_dialog_layout.h
+  dialogs/layouts/qtopengl_footbot_entity_dialog_layout.h
+  dialogs/layouts/qtopengl_spiri_entity_dialog_layout.h
+  dialogs/qtopengl_add_entity_dialog.h
   qtopengl_application.h
   qtopengl_camera.h
   qtopengl_log_stream.h
@@ -36,6 +62,17 @@ set(ARGOS3_SOURCES_PLUGINS_SIMULATOR_VISUALIZATIONS_QTOPENGL
   models/qtopengl_box.cpp
   models/qtopengl_cylinder.cpp
   models/qtopengl_light.cpp
+  dialogs/layouts/qtopengl_entity_dialog_layout.cpp
+  dialogs/layouts/qtopengl_embodied_entity_dialog_layout.cpp
+  dialogs/layouts/qtopengl_box_entity_dialog_layout.cpp
+  dialogs/layouts/qtopengl_cylinder_entity_dialog_layout.cpp
+  dialogs/layouts/qtopengl_light_entity_dialog_layout.cpp
+  dialogs/layouts/qtopengl_bot_entity_dialog_layout.cpp
+  dialogs/layouts/qtopengl_epuck_entity_dialog_layout.cpp
+  dialogs/layouts/qtopengl_eyebot_entity_dialog_layout.cpp
+  dialogs/layouts/qtopengl_footbot_entity_dialog_layout.cpp
+  dialogs/layouts/qtopengl_spiri_entity_dialog_layout.cpp
+  dialogs/qtopengl_add_entity_dialog.cpp
   qtopengl_application.cpp
   qtopengl_camera.cpp
   qtopengl_main_window.cpp
@@ -66,6 +103,8 @@ target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_qtopengl argos3plugin_${AR
 
 install(DIRECTORY icons textures DESTINATION include/argos3/plugins/simulator/visualizations/qt-opengl)
 install(FILES ${ARGOS3_HEADERS_PLUGINS_SIMULATOR_VISUALIZATIONS_QTOPENGL_MODELS} DESTINATION include/argos3/plugins/simulator/visualizations/qt-opengl/models)
+install(FILES ${ARGOS3_HEADERS_PLUGINS_SIMULATOR_VISUALIZATIONS_QTOPENGL_DIALOGS_LAYOUTS} DESTINATION include/argos3/plugins/simulator/visualizations/qt-opengl/dialogs/layouts)
+install(FILES ${ARGOS3_HEADERS_PLUGINS_SIMULATOR_VISUALIZATIONS_QTOPENGL_DIALOGS} DESTINATION include/argos3/plugins/simulator/visualizations/qt-opengl/dialogs)
 install(FILES ${ARGOS3_HEADERS_PLUGINS_SIMULATOR_VISUALIZATIONS_QTOPENGL}        DESTINATION include/argos3/plugins/simulator/visualizations/qt-opengl)
 install(TARGETS argos3plugin_${ARGOS_BUILD_FOR}_qtopengl
   RUNTIME DESTINATION bin

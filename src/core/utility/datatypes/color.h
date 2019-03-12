@@ -179,6 +179,46 @@ namespace argos {
       }
 
       /**
+       * Gets one of the predefined colors from a string.
+       * The input string can contain predefined color names, such as <tt>red</tt>.
+       * @param str_color The input string specifying the color name.
+       */
+      static CColor GetColor(const std::string& str_color) {
+         if      (str_color == "black")   return CColor::BLACK;
+         else if (str_color == "white")   return CColor::WHITE;
+         else if (str_color == "red")     return CColor::RED;
+         else if (str_color == "green")   return CColor::GREEN;
+         else if (str_color == "blue")    return CColor::BLUE;
+         else if (str_color == "magenta") return CColor::MAGENTA;
+         else if (str_color == "cyan")    return CColor::CYAN;
+         else if (str_color == "yellow")  return CColor::YELLOW;
+         else if (str_color == "orange")  return CColor::ORANGE;
+         else if (str_color == "brown")   return CColor::BROWN;
+         else if (str_color == "purple")  return CColor::PURPLE;
+         else if (str_color == "gray10")  return CColor::GRAY10;
+         else if (str_color == "gray20")  return CColor::GRAY20;
+         else if (str_color == "gray30")  return CColor::GRAY30;
+         else if (str_color == "gray40")  return CColor::GRAY40;
+         else if (str_color == "gray50")  return CColor::GRAY50;
+         else if (str_color == "gray60")  return CColor::GRAY60;
+         else if (str_color == "gray70")  return CColor::GRAY70;
+         else if (str_color == "gray80")  return CColor::GRAY80;
+         else if (str_color == "gray90")  return CColor::GRAY90;
+         else return CColor::WHITE;
+      }
+
+      /**
+       * Creates and returns a vector containing all the predefined colors.
+       * @returns All the predefined colors as a vector of strings.
+       */
+      static inline std::vector<std::string> GetDefaultColors(){
+         static const char* pnColors[] = {"yellow", "red", "green", "blue", "magenta", 
+            "cyan", "orange", "brown", "purple", "black", "white", "gray10", "gray20",  
+            "gray30", "gray40", "gray50", "gray60", "gray70", "gray80", "gray90"};
+         return std::vector<std::string>(pnColors , pnColors+20);
+      }
+
+      /**
        * Cast operator.
        * Casts the color into a 32-bit structure.
        */

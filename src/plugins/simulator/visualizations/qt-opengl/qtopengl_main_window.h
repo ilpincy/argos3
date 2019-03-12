@@ -72,11 +72,14 @@ namespace argos {
       void ReadSettingsPostCreation();
       void WriteSettings();
 
+      void CreateArenaActions();
       void CreateExperimentActions();
       void CreateCameraActions();
       void CreatePOVRayActions();
       void CreateHelpActions();
 
+      void CreateArenaToolBar();
+      void CreateArenaMenu();
       void CreateExperimentToolBar();
       void CreateExperimentMenu();
       void CreateCameraToolBar();
@@ -154,6 +157,12 @@ namespace argos {
    public slots:
 
       /**
+       * Adds an entity to the arena.
+       * Shows a window to the user, with which he can specify the desired entity.
+       */
+      void AddEntity();
+
+      /**
        * Plays the experiment.
        * Internally sets a timer whose period corresponds to the
        * XML attribute 'ticks_per_second' in the .argos file.
@@ -227,6 +236,11 @@ namespace argos {
       QString m_strTextureDir;
 
       EExperimentState m_eExperimentState;
+
+      /* Arena actions, toolbar and menu */
+      QAction* m_pcAddEntityAction;
+      QToolBar* m_pcArenaToolBar;
+      QMenu* m_pcArenaMenu;
 
       QAction* m_pcPlayAction;
       QAction* m_pcFastForwardAction;
