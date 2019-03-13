@@ -145,7 +145,6 @@ set(ARGOS3_SOURCES_CORE
   ${ARGOS3_HEADERS_UTILITY_PROFILER}
   utility/profiler/profiler.cpp
   ${ARGOS3_HEADERS_UTILITY_MATH}
-  ${ARGOS3_HEADERS_UTILITY_MATH_MATRIX}
   utility/math/angles.cpp
   utility/math/box.cpp
   utility/math/cylinder.cpp
@@ -155,6 +154,7 @@ set(ARGOS3_SOURCES_CORE
   utility/math/plane.cpp
   utility/math/ray3.cpp
   utility/math/rng.cpp
+  ${ARGOS3_HEADERS_UTILITY_MATH_MATRIX}
   utility/math/matrix/squarematrix.cpp
   utility/math/matrix/rotationmatrix3.cpp
   utility/math/matrix/rotationmatrix2.cpp
