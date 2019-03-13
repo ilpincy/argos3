@@ -11,6 +11,8 @@ namespace argos {
    class CComposableEntity;
 }
 
+#include <argos3/core/utility/plugins/factory.h>
+
 namespace argos {
 
    /**
