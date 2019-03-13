@@ -1,7 +1,7 @@
 /**
  * @file <argos3/core/utility/math/vector2.h>
  *
- * @author Carlo Pinciroli <ilpincy@gmail.com>
+ * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */
 
 #ifndef VECTOR2_H
@@ -14,6 +14,7 @@ namespace argos {
 #include <argos3/core/utility/math/general.h>
 #include <argos3/core/utility/math/angles.h>
 #include <argos3/core/utility/string_utilities.h>
+#include <initializer_list>
 #include <iostream>
 #include <cmath>
 
@@ -34,6 +35,9 @@ namespace argos {
 
       /** The <em>y</em> axis */
       static const CVector2 Y;
+
+      /** The zero vector (0,0) */
+      static const CVector2 ZERO;
 
       /**
        * Class constructor.
@@ -56,6 +60,16 @@ namespace argos {
                Real f_y) :
          m_fX(f_x),
          m_fY(f_y) {
+      }
+
+      /**
+       * Class constructor.
+       * It initializes the vector from Cartesian coordinates.
+       * @param lst_coordinates The coordinates.
+       * @see Set()
+       */
+      CVector2(std::initializer_list<Real> lst_coordinates) {
+         Set(lst_coordinates);
       }
 
       /**
@@ -111,6 +125,22 @@ namespace argos {
       inline void Set(Real f_x, Real f_y) {
          m_fX = f_x;
          m_fY = f_y;
+      }
+
+      /**
+       * Sets the vector contents from Cartesian coordinates.
+       * @param lst_coordinates The coordinates.
+       */
+      inline void Set(std::initializer_list<Real> lst_coordinates) {
+         ARGOS_ASSERT(lst_coordinates.size() == 2,
+                      "Error initializing CVector2. " <<
+                      "List contains " <<
+                      lst_coordinates.size() <<
+                      " coordinates (should be 2)");
+         std::initializer_list<Real>::iterator itValues = 
+            std::begin(lst_coordinates);
+         m_fX = *itValues; itValues++;
+         m_fY = *itValues;
       }
 
       /**

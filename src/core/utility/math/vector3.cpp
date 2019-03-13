@@ -1,8 +1,6 @@
 /**
  * @file <argos3/core/utility/math/vector3.cpp>
  *
- * @brief This file provides the definition of
- *
  * @author Carlo Pinciroli - <ilpincy@gmail.com>
  */
 
