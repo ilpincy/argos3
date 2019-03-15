@@ -233,8 +233,8 @@ run ARGoS:
  $ ./argos3 -q all    # this shows all the plugins recognized by ARGoS
 
 If you execute ARGoS with the graphical visualization, you'll notice that
-icons and textures are missing. This is normal, as ARGoS by default looks
-for them in the default install location. To fix this, you need to edit
+icons, models, and textures are missing. This is normal, as ARGoS by default
+looks for them in the default install location. To fix this, you need to edit
 the default settings of the GUI.
 
 On Linux, edit the file +$HOME/.config/Iridia-ULB/ARGoS.conf+ as follows:
@@ -245,6 +245,7 @@ On Linux, edit the file +$HOME/.config/Iridia-ULB/ARGoS.conf+ as follows:
  #
  icon_dir=/PATH/TO/argos3/src/plugins/simulator/visualizations/qt-opengl/icons/
  texture_dir=/PATH/TO/argos3/src/plugins/simulator/visualizations/qt-opengl/textures/
+ model_dir=/PATH/TO/argos3/src/plugins/simulator/visualizations/qt-opengl/models/
  #
  # more stuff
  #
@@ -252,6 +253,7 @@ On Linux, edit the file +$HOME/.config/Iridia-ULB/ARGoS.conf+ as follows:
 On Mac, write the following commands on the terminal window to fix the paths manually:
 
  $ defaults write info.argos-sim.ARGoS MainWindow.texture_dir -string "/PATH/TO/argos3/src/plugins/simulator/visualizations/qt-opengl/textures/"
+ $ defaults write info.argos-sim.ARGoS MainWindow.model_dir -string "/PATH/TO/argos3/src/plugins/simulator/visualizations/qt-opengl/models/"
  $ defaults write info.argos-sim.ARGoS MainWindow.icon_dir -string "/PATH/TO/argos3/src/plugins/simulator/visualizations/qt-opengl/icons/"
  $ killall -u YOURUSERNAME cfprefsd
 

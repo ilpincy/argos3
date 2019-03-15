@@ -1,17 +1,16 @@
 #
 # Headers
 #
-# argos3/plugins/simulator/visualizations/qt-opengl/models
-set(ARGOS3_HEADERS_PLUGINS_SIMULATOR_VISUALIZATIONS_QTOPENGL_MODELS
-  models/qtopengl_box.h
-  models/qtopengl_cylinder.h
-  models/qtopengl_light.h)
 # argos3/plugins/simulator/visualizations/qt-opengl
 set(ARGOS3_HEADERS_PLUGINS_SIMULATOR_VISUALIZATIONS_QTOPENGL
   qtopengl_application.h
+  qtopengl_box.h
   qtopengl_camera.h
+  qtopengl_cylinder.h
+  qtopengl_light.h
   qtopengl_log_stream.h
   qtopengl_main_window.h
+  qtopengl_obj_model.h
   qtopengl_render.h
   qtopengl_user_functions.h
   qtopengl_widget.h)
@@ -32,13 +31,13 @@ endif(ARGOS_WITH_LUA)
 # Common for all builds
 set(ARGOS3_SOURCES_PLUGINS_SIMULATOR_VISUALIZATIONS_QTOPENGL
   ${ARGOS3_HEADERS_PLUGINS_SIMULATOR_VISUALIZATIONS_QTOPENGL}
-  ${ARGOS3_HEADERS_PLUGINS_SIMULATOR_VISUALIZATIONS_QTOPENGL_MODELS}
-  models/qtopengl_box.cpp
-  models/qtopengl_cylinder.cpp
-  models/qtopengl_light.cpp
   qtopengl_application.cpp
+  qtopengl_box.cpp
   qtopengl_camera.cpp
+  qtopengl_cylinder.cpp
+  qtopengl_light.cpp
   qtopengl_main_window.cpp
+  qtopengl_obj_model.cpp
   qtopengl_render.cpp
   qtopengl_user_functions.cpp
   qtopengl_widget.cpp)
@@ -64,9 +63,8 @@ target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_qtopengl argos3plugin_${AR
 #  target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_qtopengl ${SDL_LIBRARY})
 # endif(SDL_FOUND)
 
-install(DIRECTORY icons textures DESTINATION include/argos3/plugins/simulator/visualizations/qt-opengl)
-install(FILES ${ARGOS3_HEADERS_PLUGINS_SIMULATOR_VISUALIZATIONS_QTOPENGL_MODELS} DESTINATION include/argos3/plugins/simulator/visualizations/qt-opengl/models)
-install(FILES ${ARGOS3_HEADERS_PLUGINS_SIMULATOR_VISUALIZATIONS_QTOPENGL}        DESTINATION include/argos3/plugins/simulator/visualizations/qt-opengl)
+install(DIRECTORY icons textures models DESTINATION include/argos3/plugins/simulator/visualizations/qt-opengl)
+install(FILES ${ARGOS3_HEADERS_PLUGINS_SIMULATOR_VISUALIZATIONS_QTOPENGL} DESTINATION include/argos3/plugins/simulator/visualizations/qt-opengl)
 install(TARGETS argos3plugin_${ARGOS_BUILD_FOR}_qtopengl
   RUNTIME DESTINATION bin
   LIBRARY DESTINATION lib/argos3
