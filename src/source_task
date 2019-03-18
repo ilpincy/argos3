@@ -156,6 +156,20 @@ function fix_includes {
     rm -f ${LIST}
 }
 
+#
+# Fix bullet header include style
+# - #include "LinearMath/btVector3.h" becomes #include <argos3/plugins/simulator/physics_engines/dynamics3d/bullet/LinearMath/btVector3.h>
+# - #include "btVector3.h" is unchanged
+#
+function fix_bullet_includes {
+    BULLET_PATH=argos3/plugins/simulator/physics_engines/dynamics3d/bullet
+    find $BULLET_PATH -type f \( -name '*.h' -o -name '*.cpp' \) |
+    while read TARGET_PATH
+    do
+        sed -i -e "/[[:alnum:]]\/[[:alnum:]]/ s+#include \"\(.*\)\"+#include <$BULLET_PATH/\1>+g ; " $TARGET_PATH
+    done
+}
+
 function fix_email {
     echo "Creating list of files to change..."
     LIST=fix_email_list.txt
@@ -172,7 +186,7 @@ function fix_email {
 #
 if [ $# -ne 1 ]; then
     echo "Usage:"
-    echo "   $0 { open | check_headers | check_license | fix_file_doxy | fix_argos2 | fix_includes | fix_email }"
+    echo "   $0 { open | check_headers | check_license | fix_file_doxy | fix_argos2 | fix_includes | fix_bullet_includes | fix_email }"
     exit 1
 fi
 
@@ -203,6 +217,9 @@ case $1 in
         ;;
     "fix_includes")
         fix_includes
+        ;;
+    "fix_bullet_includes")
+        fix_bullet_includes
         ;;
     "fix_email")
         fix_email

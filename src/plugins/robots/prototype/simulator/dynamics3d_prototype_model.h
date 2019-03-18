@@ -51,16 +51,16 @@ namespace argos {
 
       struct SJoint {
          SJoint(CPrototypeJointEntity::EType e_type,
-                CLink& c_parent,
-                CLink& c_child,
+                std::shared_ptr<CLink>& ptr_parent,
+                std::shared_ptr<CLink>& ptr_child,
                 const btVector3& c_parent_offset,
                 const btVector3& c_child_offset,
                 const btQuaternion& c_parent_to_child_rotation,
                 const btVector3& c_axis,
                 bool b_disable_collision);
          CPrototypeJointEntity::EType Type;
-         CLink& Parent;
-         CLink& Child;
+         std::shared_ptr<CLink> Parent;
+         std::shared_ptr<CLink> Child;
          btVector3 ParentOffset;
          btVector3 ChildOffset;
          btQuaternion ParentToChildRotation;

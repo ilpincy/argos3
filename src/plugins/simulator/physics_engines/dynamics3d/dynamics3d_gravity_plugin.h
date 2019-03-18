@@ -42,7 +42,7 @@ namespace argos {
    private:
       
       btScalar m_fAcceleration;
-      std::vector<CDynamics3DModel::CAbstractBody*> m_vecTargets;
+      std::vector<std::shared_ptr<CDynamics3DModel::CAbstractBody> > m_vecTargets;
    };
    
    /****************************************/

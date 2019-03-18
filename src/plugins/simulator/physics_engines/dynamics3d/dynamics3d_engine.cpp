@@ -53,6 +53,7 @@ namespace argos {
          pcPlugin->Init(*tPluginIterator);
          AddPhysicsPlugin(tPluginIterator->Value(), *pcPlugin);
       }
+      GetNodeAttributeOrDefault(t_tree, "debug_file", strDebugFilename, strDebugFilename);
    }
 
    /****************************************/
@@ -180,6 +181,16 @@ namespace argos {
           it != std::end(m_tPhysicsModels);
           ++it) {
          it->second->UpdateEntityStatus();
+      }
+      /* Dump the state of the world to a bullet file (if requested) */
+      if(!strDebugFilename.empty()) {
+         btDefaultSerializer cSerializer;
+         m_cWorld.serialize(&cSerializer);
+         std::ofstream cDebugOutput(strDebugFilename);
+         if(cDebugOutput.is_open()) {
+            cDebugOutput.write(reinterpret_cast<const char*>(cSerializer.getBufferPointer()), 
+                               cSerializer.getCurrentBufferSize());
+         }
       }
    }
    

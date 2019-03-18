@@ -23,20 +23,21 @@ namespace argos {
    /****************************************/
 
    void CDynamics3DGravityPlugin::RegisterModel(CDynamics3DModel& c_model) {
-      for(CDynamics3DModel::CAbstractBody* pc_body : c_model.GetBodies()) {
-         m_vecTargets.push_back(pc_body);
-      }
+      std::vector<std::shared_ptr<CDynamics3DModel::CAbstractBody> >& vecBodies = c_model.GetBodies();
+      m_vecTargets.insert(std::end(m_vecTargets),
+                          std::begin(vecBodies),
+                          std::end(vecBodies));
    }
 
    /****************************************/
    /****************************************/
 
    void CDynamics3DGravityPlugin::UnregisterModel(CDynamics3DModel& c_model) {
-      std::vector<CDynamics3DModel::CAbstractBody*>::iterator itRemove =
+      std::vector<std::shared_ptr<CDynamics3DModel::CAbstractBody> >::iterator itRemove =
          std::remove_if(std::begin(m_vecTargets),
                         std::end(m_vecTargets),
-                        [&c_model] (CDynamics3DModel::CAbstractBody* pc_body) {
-                           return(&(pc_body->GetModel()) == &c_model);
+                        [&c_model] (const std::shared_ptr<CDynamics3DModel::CAbstractBody>& ptr_body) {
+                           return (&ptr_body->GetModel() == &c_model);
                         });
       m_vecTargets.erase(itRemove, std::end(m_vecTargets));
    }
@@ -45,9 +46,9 @@ namespace argos {
    /****************************************/
 
    void CDynamics3DGravityPlugin::Update() {
-      for(CDynamics3DModel::CAbstractBody* pc_body : m_vecTargets) {
-         btVector3 cGravity(0.0, -m_fAcceleration * pc_body->GetData().Mass, 0.0);
-         pc_body->ApplyForce(cGravity);
+      for(std::shared_ptr<CDynamics3DModel::CAbstractBody>& ptr_body : m_vecTargets) {
+         btVector3 cGravity(0.0, -m_fAcceleration * ptr_body->GetData().Mass, 0.0);
+         ptr_body->ApplyForce(cGravity);
       }
    }
    

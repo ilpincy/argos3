@@ -70,7 +70,7 @@ namespace argos {
       }
 
       inline btScalar GetDefaultFriction() const {
-         return 0.5f;
+         return 2.0f;
       }
       
       void AddPhysicsModel(const std::string& str_id,
@@ -90,6 +90,8 @@ namespace argos {
       /* Random number generation */
       CRandom::CRNG* m_pcRNG;
       CRange<UInt32> m_cRandomSeedRange;
+      /* Debug filename */
+      std::string strDebugFilename;
       /* Bullet Physics World Data */
       btDbvtBroadphase                m_cBroadphase;
       btDefaultCollisionConfiguration m_cConfiguration;

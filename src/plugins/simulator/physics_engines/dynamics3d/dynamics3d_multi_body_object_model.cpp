@@ -8,6 +8,8 @@
 
 #include <argos3/core/simulator/entity/composable_entity.h>
 
+#include <argos3/core/utility/math/matrix/transformationmatrix3.h>
+
 namespace argos {
 
    /****************************************/
@@ -41,8 +43,8 @@ namespace argos {
       /* Disable collisions between bodies in the same model */
       m_cMultiBody.setHasSelfCollision(false);
       /* Reset bodies */
-      for(CAbstractBody* pc_body : m_vecBodies) {
-         pc_body->Reset();
+      for(const std::shared_ptr<CAbstractBody>& ptr_body : m_vecBodies) {
+         ptr_body->Reset();
       }
    }
 
@@ -55,8 +57,8 @@ namespace argos {
       /* Add multi-body to the world */
       c_world.addMultiBody(&m_cMultiBody);
       /* Add the multi-body's links (collision objects) to the world */
-      for(CAbstractBody* pc_body : m_vecBodies) {
-         pc_body->AddToWorld(c_world);
+      for(const std::shared_ptr<CAbstractBody>& ptr_body : m_vecBodies) {
+         ptr_body->AddToWorld(c_world);
       }
    }
 
@@ -65,8 +67,8 @@ namespace argos {
 
    void CDynamics3DMultiBodyObjectModel::RemoveFromWorld(btMultiBodyDynamicsWorld& c_world) {
       /* Remove the multi-body's links (collision objects) from the world */
-      for(CAbstractBody* pc_body : m_vecBodies) {
-         pc_body->RemoveFromWorld(c_world);
+      for(const std::shared_ptr<CAbstractBody>& ptr_body : m_vecBodies) {
+         ptr_body->RemoveFromWorld(c_world);
       }
       /* Remove multi-body from the world */
       c_world.removeMultiBody(&m_cMultiBody);
@@ -78,12 +80,12 @@ namespace argos {
    void CDynamics3DMultiBodyObjectModel::CalculateBoundingBox() {
       btVector3 cModelAabbMin, cModelAabbMax, cBodyAabbMin, cBodyAabbMax;
       /* Initialize the bounding box with the base's AABB */
-      CAbstractBody* pcBase = m_vecBodies[0];
-      pcBase->GetShape().getAabb(pcBase->GetTransform(), cModelAabbMin, cModelAabbMax);
+      std::shared_ptr<CAbstractBody>& ptr_base = m_vecBodies[0];
+      ptr_base->GetShape().getAabb(ptr_base->GetTransform(), cModelAabbMin, cModelAabbMax);
       /* Extend AABB to include other bodies */
-      for(CAbstractBody* pc_body : m_vecBodies) {
+      for(const std::shared_ptr<CAbstractBody>& ptr_body : m_vecBodies) {
          /* Get the axis aligned bounding box for the current body */
-         pc_body->GetShape().getAabb(pc_body->GetTransform(), cBodyAabbMin, cBodyAabbMax);
+         ptr_body->GetShape().getAabb(ptr_body->GetTransform(), cBodyAabbMin, cBodyAabbMax);
          /* Update minimum corner */
          cModelAabbMin.setX(cModelAabbMin.getX() < cBodyAabbMin.getX() ? cModelAabbMin.getX() : cBodyAabbMin.getX());
          cModelAabbMin.setY(cModelAabbMin.getY() < cBodyAabbMin.getY() ? cModelAabbMin.getY() : cBodyAabbMin.getY());
@@ -139,13 +141,13 @@ namespace argos {
    void CDynamics3DMultiBodyObjectModel::UpdateOriginAnchor(SAnchor& s_anchor) {
       /* Calculate the origin anchor's position and orientation from the base link's anchor */
       const SAnchor& sBaseAnchor = m_vecBodies[0]->GetAnchor();
-      /* Calculate position */
-      CVector3 cOriginAnchorPosition(sBaseAnchor.Position);
-      cOriginAnchorPosition.Rotate(sBaseAnchor.OffsetOrientation.Inverse());
-      cOriginAnchorPosition -= sBaseAnchor.OffsetPosition;
       /* Calculate orientation */
       CQuaternion cOriginAnchorOrientation = sBaseAnchor.OffsetOrientation.Inverse() *
          sBaseAnchor.Orientation;
+      /* Calculate position */
+      CVector3 cOriginAnchorPosition = -sBaseAnchor.OffsetPosition;
+      cOriginAnchorPosition.Rotate(cOriginAnchorOrientation);
+      cOriginAnchorPosition += sBaseAnchor.Position;
       /* Transfer to origin anchor */
       s_anchor.Position = cOriginAnchorPosition;
       s_anchor.Orientation = cOriginAnchorOrientation;
@@ -156,10 +158,10 @@ namespace argos {
 
    CDynamics3DMultiBodyObjectModel::CLink::CLink(CDynamics3DMultiBodyObjectModel& c_model,
                                                  UInt32 un_link_index,
-                                                 SAnchor& s_anchor,
-                                                 std::shared_ptr<btCollisionShape>& ptr_shape,
+                                                 SAnchor* ps_anchor,
+                                                 const std::shared_ptr<btCollisionShape>& ptr_shape,
                                                  const SData& s_data) :
-      CAbstractBody(c_model, s_anchor, ptr_shape, s_data),
+      CAbstractBody(c_model, ps_anchor, ptr_shape, s_data),
       m_cModel(c_model),
       m_unLinkIndex(un_link_index),
       m_cMultiBodyLink(nullptr, 0) {}
@@ -242,10 +244,10 @@ namespace argos {
    /****************************************/
 
    CDynamics3DMultiBodyObjectModel::CBase::CBase(CDynamics3DMultiBodyObjectModel& c_model,
-                                                 SAnchor& s_anchor,
-                                                 std::shared_ptr<btCollisionShape>& ptr_shape,
+                                                 SAnchor* ps_anchor,
+                                                 const std::shared_ptr<btCollisionShape>& ptr_shape,
                                                  const SData& s_data) :
-      CLink(c_model, -1, s_anchor, ptr_shape, s_data) {}
+      CLink(c_model, -1, ps_anchor, ptr_shape, s_data) {}
 
    /****************************************/
    /****************************************/

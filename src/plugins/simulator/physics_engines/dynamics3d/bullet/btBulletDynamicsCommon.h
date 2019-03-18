@@ -19,33 +19,25 @@ subject to the following restrictions:
 ///Common headerfile includes for Bullet Dynamics, including Collision Detection
 #include "btBulletCollisionCommon.h"
 
-#include "BulletDynamics/Dynamics/btDiscreteDynamicsWorld.h"
+#include <argos3/plugins/simulator/physics_engines/dynamics3d/bullet/BulletDynamics/Dynamics/btDiscreteDynamicsWorld.h>
 
-#include "BulletDynamics/Dynamics/btSimpleDynamicsWorld.h"
-#include "BulletDynamics/Dynamics/btRigidBody.h"
+#include <argos3/plugins/simulator/physics_engines/dynamics3d/bullet/BulletDynamics/Dynamics/btSimpleDynamicsWorld.h>
+#include <argos3/plugins/simulator/physics_engines/dynamics3d/bullet/BulletDynamics/Dynamics/btRigidBody.h>
 
-#include "BulletDynamics/ConstraintSolver/btPoint2PointConstraint.h"
-#include "BulletDynamics/ConstraintSolver/btHingeConstraint.h"
-#include "BulletDynamics/ConstraintSolver/btConeTwistConstraint.h"
-#include "BulletDynamics/ConstraintSolver/btGeneric6DofConstraint.h"
-#include "BulletDynamics/ConstraintSolver/btSliderConstraint.h"
-#include "BulletDynamics/ConstraintSolver/btGeneric6DofSpringConstraint.h"
-#include "BulletDynamics/ConstraintSolver/btUniversalConstraint.h"
-#include "BulletDynamics/ConstraintSolver/btHinge2Constraint.h"
-#include "BulletDynamics/ConstraintSolver/btGearConstraint.h"
-#include "BulletDynamics/ConstraintSolver/btFixedConstraint.h"
+#include <argos3/plugins/simulator/physics_engines/dynamics3d/bullet/BulletDynamics/ConstraintSolver/btPoint2PointConstraint.h>
+#include <argos3/plugins/simulator/physics_engines/dynamics3d/bullet/BulletDynamics/ConstraintSolver/btHingeConstraint.h>
+#include <argos3/plugins/simulator/physics_engines/dynamics3d/bullet/BulletDynamics/ConstraintSolver/btConeTwistConstraint.h>
+#include <argos3/plugins/simulator/physics_engines/dynamics3d/bullet/BulletDynamics/ConstraintSolver/btGeneric6DofConstraint.h>
+#include <argos3/plugins/simulator/physics_engines/dynamics3d/bullet/BulletDynamics/ConstraintSolver/btSliderConstraint.h>
+#include <argos3/plugins/simulator/physics_engines/dynamics3d/bullet/BulletDynamics/ConstraintSolver/btGeneric6DofSpringConstraint.h>
+#include <argos3/plugins/simulator/physics_engines/dynamics3d/bullet/BulletDynamics/ConstraintSolver/btUniversalConstraint.h>
+#include <argos3/plugins/simulator/physics_engines/dynamics3d/bullet/BulletDynamics/ConstraintSolver/btHinge2Constraint.h>
+#include <argos3/plugins/simulator/physics_engines/dynamics3d/bullet/BulletDynamics/ConstraintSolver/btGearConstraint.h>
+#include <argos3/plugins/simulator/physics_engines/dynamics3d/bullet/BulletDynamics/ConstraintSolver/btFixedConstraint.h>
 
-
-#include "BulletDynamics/ConstraintSolver/btSequentialImpulseConstraintSolver.h"
-
+#include <argos3/plugins/simulator/physics_engines/dynamics3d/bullet/BulletDynamics/ConstraintSolver/btSequentialImpulseConstraintSolver.h>
 
 ///Vehicle simulation, with wheel contact simulated by raycasts
-#include "BulletDynamics/Vehicle/btRaycastVehicle.h"
+#include <argos3/plugins/simulator/physics_engines/dynamics3d/bullet/BulletDynamics/Vehicle/btRaycastVehicle.h>
 
-
-
-
-
-
-#endif //BULLET_DYNAMICS_COMMON_H
-
+#endif  //BULLET_DYNAMICS_COMMON_H

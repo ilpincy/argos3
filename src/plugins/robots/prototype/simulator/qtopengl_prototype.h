@@ -2,6 +2,7 @@
  * @file <argos3/plugins/robots/prototype/simulator/qtopengl_prototype.h>
  *
  * @author Michael Allwright - <allsey87@gmail.com>
+ * @author Weixu Zhu - <zhuweixu_harry@126.com>
  */
 
 #ifndef QTOPENGL_PROTOTYPE_H
@@ -9,7 +10,10 @@
 
 namespace argos {
    class CPrototypeEntity;
+   class CVector3;
 }
+
+#include <argos3/core/utility/math/convex_hull.h>
 
 #ifdef __APPLE__
 #include <gl.h>
@@ -40,6 +44,9 @@ namespace argos {
       void MakePoles();
       void MakeTag();
       void MakeTagTexture();
+
+      void DrawConvexHull(const std::vector<CVector3>& vec_points,
+                          const std::vector<CConvexHull::SFace>& vec_faces);
 
    private:
 

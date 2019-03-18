@@ -13,6 +13,7 @@
 #include <argos3/plugins/simulator/physics_engines/dynamics3d/dynamics3d_model.h>
 #include <argos3/plugins/simulator/entities/magnet_equipped_entity.h>
 #include <argos3/core/utility/datatypes/datatypes.h>
+#include <functional>
 #include <vector>
 
 namespace argos {
@@ -47,15 +48,15 @@ namespace argos {
 
       struct SMagneticDipole {
          /* Constructor */
-         SMagneticDipole(CDynamics3DModel::CAbstractBody& c_body,
-							    CMagnetEntity& c_magnet_entity,
+         SMagneticDipole(std::shared_ptr<CDynamics3DModel::CAbstractBody>& ptr_body,
+                         const std::function<btVector3()>& fn_get_field,
                          const btTransform& c_offset) :
-				Body(&c_body),
-            Magnet(&c_magnet_entity),
+            Body(ptr_body),
+            GetField(fn_get_field),
             Offset(c_offset) {}
          /* Members */
-         CDynamics3DModel::CAbstractBody* Body;
-         CMagnetEntity* Magnet;
+         std::shared_ptr<CDynamics3DModel::CAbstractBody> Body;
+         std::function<btVector3()> GetField;
          btTransform Offset;
       };    
 

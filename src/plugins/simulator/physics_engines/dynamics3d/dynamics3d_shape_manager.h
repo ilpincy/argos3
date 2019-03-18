@@ -2,6 +2,7 @@
  * @file <argos3/plugins/simulator/physics_engines/dynamics3d/dynamics3d_shape_manager.h>
  *
  * @author Michael Allwright - <allsey87@gmail.com>
+ * @author Weixu Zhu- <zhuweixu_harry@126.com>
  */
 
 #ifndef DYNAMICS3D_SHAPE_MANAGER_H
@@ -12,8 +13,10 @@ namespace argos {
 }
 
 #include <argos3/plugins/simulator/physics_engines/dynamics3d/bullet/BulletCollision/CollisionShapes/btBoxShape.h>
+#include <argos3/plugins/simulator/physics_engines/dynamics3d/bullet/BulletCollision/CollisionShapes/btConvexHullShape.h>
 #include <argos3/plugins/simulator/physics_engines/dynamics3d/bullet/BulletCollision/CollisionShapes/btCylinderShape.h>
 #include <argos3/plugins/simulator/physics_engines/dynamics3d/bullet/BulletCollision/CollisionShapes/btSphereShape.h>
+
 #include <vector>
 #include <memory>
 
@@ -31,6 +34,9 @@ namespace argos {
 
       static std::shared_ptr<btCollisionShape>
          RequestSphere(btScalar f_radius);
+
+      static std::shared_ptr<btCollisionShape>
+         RequestConvexHull(const std::vector<btVector3>& vec_points);
       
    private:
 
@@ -58,6 +64,13 @@ namespace argos {
       };
       static std::vector<SSphereResource> m_vecSphereResources;
 
+      /* convex hulls */
+      struct SConvexHullResource {
+         SConvexHullResource(const std::vector<btVector3>& vec_points);
+         std::vector<btVector3> Points;
+         std::shared_ptr<btConvexHullShape> Shape;
+      };
+      static std::vector<SConvexHullResource> m_vecConvexHullResources;
    };
 
 }

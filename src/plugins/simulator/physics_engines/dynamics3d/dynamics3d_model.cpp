@@ -21,24 +21,26 @@ namespace argos {
                                                  const btTransform& c_center_of_mass_offset,
                                                  const btVector3& c_inertia,
                                                  btScalar f_mass,
-                                                 btScalar f_friction) :
+                                                 btScalar f_friction,
+                                                 const std::vector<SDipole>& vec_dipoles) :
       StartTransform(c_start_transform),
       InverseStartTransform(c_start_transform.inverse()),
       CenterOfMassOffset(c_center_of_mass_offset),
       InverseCenterOfMassOffset(c_center_of_mass_offset.inverse()),
       Inertia(c_inertia),
       Mass(f_mass),
-      Friction(f_friction) {}
+      Friction(f_friction),
+      Dipoles(vec_dipoles) {}
 
    /****************************************/
    /****************************************/
 
    CDynamics3DModel::CAbstractBody::CAbstractBody(CDynamics3DModel& c_model,
-                                                  SAnchor& s_anchor,
-                                                  std::shared_ptr<btCollisionShape>& ptr_shape,
+                                                  SAnchor* ps_anchor,
+                                                  const std::shared_ptr<btCollisionShape>& ptr_shape,
                                                   const SData& s_data) :
       m_cModel(c_model),
-      m_sAnchor(s_anchor),
+      m_psAnchor(ps_anchor),
       m_ptrShape(ptr_shape),
       m_sData(s_data) {}
 
@@ -53,7 +55,7 @@ namespace argos {
    /****************************************/
 
    SAnchor& CDynamics3DModel::CAbstractBody::GetAnchor() {
-      return m_sAnchor;
+      return *m_psAnchor;
    }
 
    /****************************************/
@@ -66,7 +68,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   const CDynamics3DModel::CAbstractBody::SData& CDynamics3DModel::CAbstractBody::GetData() {
+   const CDynamics3DModel::CAbstractBody::SData& CDynamics3DModel::CAbstractBody::GetData() const {
       return m_sData;
    }
 
@@ -74,19 +76,21 @@ namespace argos {
    /****************************************/
 
    void CDynamics3DModel::CAbstractBody::UpdateAnchor() {
-      /* Offset the world transform to respect ARGoS conventions */
-      btTransform cTransform = 
-         GetTransform() * m_sData.CenterOfMassOffset;
-      /* Retrieve the position and orientation */
-      const btVector3& cPosition = cTransform.getOrigin();
-      const btQuaternion& cOrientation = cTransform.getRotation();
-      /* Swap coordinate system and set anchor position */
-      m_sAnchor.Position.Set(cPosition.getX(), -cPosition.getZ(), cPosition.getY());
-      /* Swap coordinate system and set anchor orientation */
-      m_sAnchor.Orientation.Set(cOrientation.getW(),
-                                cOrientation.getX(),
-                               -cOrientation.getZ(),
-                                cOrientation.getY());
+      if(m_psAnchor != nullptr) {
+         /* Offset the world transform to respect ARGoS conventions */
+         btTransform cTransform = 
+            GetTransform() * m_sData.CenterOfMassOffset;
+         /* Retrieve the position and orientation */
+         const btVector3& cPosition = cTransform.getOrigin();
+         const btQuaternion& cOrientation = cTransform.getRotation();
+         /* Swap coordinate system and set anchor position */
+         m_psAnchor->Position.Set(cPosition.getX(), -cPosition.getZ(), cPosition.getY());
+         /* Swap coordinate system and set anchor orientation */
+         m_psAnchor->Orientation.Set(cOrientation.getW(),
+                                     cOrientation.getX(),
+                                    -cOrientation.getZ(),
+                                     cOrientation.getY());
+      }
    }
 
    /****************************************/
@@ -97,16 +101,6 @@ namespace argos {
       CPhysicsModel(c_engine, c_entity.GetComponent<CEmbodiedEntity>("body")),
       m_cEngine(c_engine),
       m_cComposableEntity(c_entity) {}
-
-   /****************************************/
-   /****************************************/
-
-   CDynamics3DModel::~CDynamics3DModel() {
-      while(! m_vecBodies.empty()) {
-         delete m_vecBodies.back();
-         m_vecBodies.pop_back();
-      }
-   }
 
    /****************************************/
    /****************************************/
@@ -154,8 +148,8 @@ namespace argos {
    void CDynamics3DModel::UpdateEntityStatus() {
       /* Update the anchor associated with each body before running the base class's UpdateEntityStatus
          which updates the bounding box and origin anchor */
-      for(CAbstractBody* pc_body : m_vecBodies) {
-         pc_body->UpdateAnchor();
+      for(const std::shared_ptr<CAbstractBody>& ptr_body : m_vecBodies) {
+         ptr_body->UpdateAnchor();
       }
       CPhysicsModel::UpdateEntityStatus();
    }

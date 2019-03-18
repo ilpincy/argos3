@@ -18,6 +18,8 @@ namespace argos {
 #include <argos3/plugins/simulator/physics_engines/dynamics3d/bullet/btBulletCollisionCommon.h>
 #include <argos3/plugins/simulator/physics_engines/dynamics3d/bullet/BulletDynamics/Featherstone/btMultiBodyDynamicsWorld.h>
 
+#include <functional>
+
 namespace argos {
 
    /****************************************/
@@ -35,17 +37,30 @@ namespace argos {
 
    public:
 
-         using TVector = std::vector<CAbstractBody*>;
+         using TVector = std::vector<std::shared_ptr<CAbstractBody> >;
 
-         using TVectorIterator = std::vector<CAbstractBody*>::iterator;
+         using TVectorIterator = std::vector<std::shared_ptr<CAbstractBody> >::iterator;
 
          struct SData {
+            
+            struct SDipole {
+               /* Constructor */
+               SDipole(const std::function<btVector3()>& fn_get_field,
+                       const btTransform& c_offset) :
+                  GetField(fn_get_field),
+                  Offset(c_offset) {}
+               /* Data */
+               std::function<btVector3()> GetField;
+               btTransform Offset;
+            };
+
             /* Constructor */
             SData(const btTransform& c_start_transform,
                   const btTransform& c_center_of_mass_offset,
                   const btVector3& c_inertia,
                   btScalar f_mass,
-                  btScalar f_friction);
+                  btScalar f_friction,
+                  const std::vector<SDipole>& vec_dipoles = std::vector<SDipole>());
             /* Data */
             btTransform StartTransform;
             btTransform InverseStartTransform;
@@ -54,13 +69,14 @@ namespace argos {
             btVector3 Inertia;
             btScalar Mass;
             btScalar Friction;
+            std::vector<SDipole> Dipoles;
          };
 
       public:
 
          CAbstractBody(CDynamics3DModel& c_model,
-                       SAnchor& s_anchor,
-                       std::shared_ptr<btCollisionShape>& ptr_shape,
+                       SAnchor* ps_anchor,
+                       const std::shared_ptr<btCollisionShape>& ptr_shape,
                        const SData& s_data);
 
          virtual ~CAbstractBody() {}
@@ -71,7 +87,7 @@ namespace argos {
 
          btCollisionShape& GetShape();
 
-         const SData& GetData();
+         const SData& GetData() const;
 
          virtual void Reset() = 0;
 
@@ -93,7 +109,7 @@ namespace argos {
          /* Link to the model */
          CDynamics3DModel& m_cModel;
          /* Link to the anchor */
-         SAnchor& m_sAnchor;
+         SAnchor* m_psAnchor;
          /* Link to the collision shape */
          std::shared_ptr<btCollisionShape> m_ptrShape;
          /* Data for setting up the body */
@@ -105,7 +121,7 @@ namespace argos {
       CDynamics3DModel(CDynamics3DEngine& c_engine,
                        CComposableEntity& c_entity);
 
-      virtual ~CDynamics3DModel();
+      virtual ~CDynamics3DModel() {}
 
       virtual void Reset() = 0;
 
@@ -131,7 +147,7 @@ namespace argos {
 
       virtual void UpdateFromEntityStatus() {}
 
-      std::vector<CAbstractBody*>& GetBodies() {
+      std::vector<std::shared_ptr<CAbstractBody> >& GetBodies() {
          return m_vecBodies;
       }
 
@@ -141,7 +157,7 @@ namespace argos {
 
    protected:
 
-      std::vector<CAbstractBody*> m_vecBodies;
+      std::vector<std::shared_ptr<CAbstractBody> > m_vecBodies;
 
    private:
 
