@@ -41,7 +41,7 @@ namespace argos {
       m_unSphereList   = m_unBaseList + 2;
       m_unLEDList      = m_unBaseList + 3;
       m_unPoleList     = m_unBaseList + 4;
-      m_unTagList      = m_unBaseList + 5;     
+      m_unTagList      = m_unBaseList + 5;
       /* Make box list */
       glNewList(m_unBoxList, GL_COMPILE);
       MakeBox();
@@ -75,10 +75,10 @@ namespace argos {
    CQTOpenGLPrototype::~CQTOpenGLPrototype() {
       glDeleteLists(m_unBaseList, 6);
    }
-   
+
    /****************************************/
    /****************************************/
-   
+
    void CQTOpenGLPrototype::MakeLED() {
       CVector3 cNormal, cPoint;
       CRadians cSlice(CRadians::TWO_PI / m_unVertices);
@@ -115,10 +115,6 @@ namespace argos {
       for(CPrototypeLinkEntity* pcLink : c_entity.GetLinkEquippedEntity().GetLinks()){
          /* Configure the body material */
          glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, BODY_COLOR);
-//#ifndef NDEBUG
-//         glPolygonMode(GL_FRONT, GL_LINE);
-//         glPolygonMode(GL_BACK, GL_LINE);
-//#endif
          /* Get the position of the link */
          const CVector3& cPosition = pcLink->GetAnchor().Position;
          /* Get the orientation of the link */
@@ -130,18 +126,24 @@ namespace argos {
          glRotatef(ToDegrees(cXAngle).GetValue(), 1.0f, 0.0f, 0.0f);
          glRotatef(ToDegrees(cYAngle).GetValue(), 0.0f, 1.0f, 0.0f);
          glRotatef(ToDegrees(cZAngle).GetValue(), 0.0f, 0.0f, 1.0f);
-         glScalef(pcLink->GetExtents().GetX(),
-                  pcLink->GetExtents().GetY(),
-                  pcLink->GetExtents().GetZ());
          /* Draw the link */
          switch(pcLink->GetGeometry()) {
          case CPrototypeLinkEntity::EGeometry::BOX:
+            glScalef(pcLink->GetExtents().GetX(),
+                     pcLink->GetExtents().GetY(),
+                     pcLink->GetExtents().GetZ());
             glCallList(m_unBoxList);
             break;
          case CPrototypeLinkEntity::EGeometry::CYLINDER:
+            glScalef(pcLink->GetExtents().GetX(),
+                     pcLink->GetExtents().GetY(),
+                     pcLink->GetExtents().GetZ());
             glCallList(m_unCylinderList);
             break;
          case CPrototypeLinkEntity::EGeometry::SPHERE:
+            glScalef(pcLink->GetExtents().GetX(),
+                     pcLink->GetExtents().GetY(),
+                     pcLink->GetExtents().GetZ());
             glCallList(m_unSphereList);
             break;
          case CPrototypeLinkEntity::EGeometry::CONVEX_HULL:
@@ -149,17 +151,13 @@ namespace argos {
                            pcLink->GetConvexHullFaces());
             break;
          }
-//#ifndef NDEBUG
-//         glPolygonMode(GL_FRONT, GL_FILL);
-//         glPolygonMode(GL_BACK, GL_FILL);
-//#endif
          glPopMatrix();
       }
    }
 
    /****************************************/
    /****************************************/
-   
+
    void CQTOpenGLPrototype::DrawDevices(CPrototypeEntity& c_entity) {
       /* Draw the directional LEDs */
       if(c_entity.HasDirectionalLEDEquippedEntity()) {
@@ -170,7 +168,7 @@ namespace argos {
          glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, pfSpecular);
          glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, pfShininess);
          glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, pfEmission);
-         const CDirectionalLEDEquippedEntity& cDirectionalLEDEquippedEntity = 
+         const CDirectionalLEDEquippedEntity& cDirectionalLEDEquippedEntity =
             c_entity.GetDirectionalLEDEquippedEntity();
          for(const CDirectionalLEDEquippedEntity::SInstance& s_instance :
              cDirectionalLEDEquippedEntity.GetInstances()) {
@@ -217,13 +215,13 @@ namespace argos {
       }
       /* Draw the tags */
       if(c_entity.HasTagEquippedEntity()) {
-         const CTagEquippedEntity& cTagEquippedEntity = 
+         const CTagEquippedEntity& cTagEquippedEntity =
             c_entity.GetTagEquippedEntity();
          CRadians cZ, cY, cX;
          for(const CTagEquippedEntity::SInstance& s_instance :
              cTagEquippedEntity.GetInstances()) {
             const CVector3& cTagPosition = s_instance.Tag.GetPosition();
-            const CQuaternion& cTagOrientation = s_instance.Tag.GetOrientation(); 
+            const CQuaternion& cTagOrientation = s_instance.Tag.GetOrientation();
             cTagOrientation.ToEulerAngles(cZ, cY, cX);
             Real fScaling = s_instance.Tag.GetSideLength();
             glPushMatrix();
@@ -231,7 +229,7 @@ namespace argos {
                          cTagPosition.GetY(),
                          cTagPosition.GetZ());
             glRotatef(ToDegrees(cX).GetValue(), 1.0f, 0.0f, 0.0f);
-            glRotatef(ToDegrees(cY).GetValue(), 0.0f, 1.0f, 0.0f); 
+            glRotatef(ToDegrees(cY).GetValue(), 0.0f, 1.0f, 0.0f);
             glRotatef(ToDegrees(cZ).GetValue(), 0.0f, 0.0f, 1.0f);
             glScalef(fScaling, fScaling, 1.0f);
             glCallList(m_unTagList);
@@ -241,7 +239,7 @@ namespace argos {
 #ifndef NDEBUG
       /* Draw the magnetic poles */
       if(c_entity.HasMagnetEquippedEntity()) {
-         CMagnetEquippedEntity& cMagnetEquippedEntity = 
+         CMagnetEquippedEntity& cMagnetEquippedEntity =
             c_entity.GetMagnetEquippedEntity();
          CVector3 cFieldOrigin;
          CQuaternion cFieldOrientation;
@@ -256,13 +254,13 @@ namespace argos {
                CQuaternion(CVector3::Z, cField);
             cFieldOrientation.ToEulerAngles(cFieldOrientationZ,
                                             cFieldOrientationY,
-                                            cFieldOrientationX);       
+                                            cFieldOrientationX);
             glPushMatrix();
             glTranslatef(cFieldOrigin.GetX(),
                          cFieldOrigin.GetY(),
                          cFieldOrigin.GetZ());
             glRotatef(ToDegrees(cFieldOrientationX).GetValue(), 1.0f, 0.0f, 0.0f);
-            glRotatef(ToDegrees(cFieldOrientationY).GetValue(), 0.0f, 1.0f, 0.0f); 
+            glRotatef(ToDegrees(cFieldOrientationY).GetValue(), 0.0f, 1.0f, 0.0f);
             glRotatef(ToDegrees(cFieldOrientationZ).GetValue(), 0.0f, 0.0f, 1.0f);
             glScalef(1.0f, 1.0f, cField.Length() * FIELD_SCALE_FACTOR);
             glCallList(m_unPoleList);
@@ -274,7 +272,7 @@ namespace argos {
 
    /****************************************/
    /****************************************/
-   
+
    void CQTOpenGLPrototype::MakeBox() {
       glEnable(GL_NORMALIZE);
       /* Set the material */
@@ -325,7 +323,7 @@ namespace argos {
       glEnd();
       glDisable(GL_NORMALIZE);
    }
-   
+
    /****************************************/
    /****************************************/
 
@@ -396,7 +394,7 @@ namespace argos {
          }
       }
       glEnd();
-      glDisable(GL_NORMALIZE);    
+      glDisable(GL_NORMALIZE);
    }
 
    /****************************************/
@@ -420,7 +418,7 @@ namespace argos {
          glVertex3f(cVertex3.GetX(), cVertex3.GetY(), cVertex3.GetZ());
       }
       glEnd();
-      glDisable(GL_NORMALIZE);    
+      glDisable(GL_NORMALIZE);
    }
 
    /****************************************/
@@ -443,7 +441,7 @@ namespace argos {
       glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
       glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
       glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-      glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);    
+      glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
       glBegin(GL_QUADS);
       glNormal3f(0.0f, 0.0f, 1.0f);
       glTexCoord2f(1.0f, 1.0f); glVertex2f( 0.5f,  0.5f);
@@ -451,7 +449,7 @@ namespace argos {
       glTexCoord2f(0.03f, 0.03f); glVertex2f(-0.5f, -0.5f);
       glTexCoord2f(1.0f, 0.03f); glVertex2f( 0.5f, -0.5f);
       glEnd();
-      glDisable(GL_TEXTURE_2D);     
+      glDisable(GL_TEXTURE_2D);
       glEnable(GL_LIGHTING);
       glDisable(GL_NORMALIZE);
    }
@@ -460,7 +458,7 @@ namespace argos {
    /****************************************/
 
    void CQTOpenGLPrototype::MakePoles() {
-      glEnable(GL_NORMALIZE);	
+      glEnable(GL_NORMALIZE);
       glDisable(GL_LIGHTING);
       glLineWidth(4.0f);
       glBegin(GL_LINES);
@@ -469,7 +467,7 @@ namespace argos {
       glVertex3f(0.0f, 0.0f, 0.0f);
       glVertex3f(0.0f, 0.0f, 0.5f);
       /* north pole */
-      glColor3f(0.0, 0.0, 1.0);	
+      glColor3f(0.0, 0.0, 1.0);
       glVertex3f(0.0f, 0.0f, 0.0f);
       glVertex3f(0.0f, 0.0f, -0.5f);
       glEnd();
@@ -477,7 +475,7 @@ namespace argos {
       glEnable(GL_LIGHTING);
       glDisable(GL_NORMALIZE);
    }
-   
+
    /****************************************/
    /****************************************/
 
