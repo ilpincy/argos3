@@ -90,6 +90,32 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   void CDirectionalLEDEquippedEntity::AddLED(const CVector3& c_position,
+                                              const CQuaternion& c_orientation,
+                                              SAnchor& s_anchor,
+                                              const CRadians& c_observable_angle,
+                                              const CColor& c_color) {
+      /* create the new directional LED entity */
+      CDirectionalLEDEntity* pcLED =
+         new CDirectionalLEDEntity(this,
+                                   "directional_led_" + std::to_string(m_vecInstances.size()),
+                                   c_position,
+                                   c_orientation,
+                                   c_observable_angle,
+                                   c_color);
+      /* add it to the instances vector */
+      m_vecInstances.emplace_back(*pcLED,
+                                  s_anchor,
+                                  c_position,
+                                  c_orientation);
+      /* inform the base class about the new entity */
+      AddComponent(*pcLED);
+      UpdateComponents();
+   }
+
+   /****************************************/
+   /****************************************/
+
    void CDirectionalLEDEquippedEntity::Enable() {
       /* Perform generic enable behavior */
       CComposableEntity::Enable();
@@ -115,6 +141,20 @@ namespace argos {
    /****************************************/
 
    CDirectionalLEDEntity& CDirectionalLEDEquippedEntity::GetLED(UInt32 un_index) {
+      ARGOS_ASSERT(un_index < m_vecInstances.size(),
+                   "CLEDEquippedEntity::GetLED(), id=\"" <<
+                   GetContext() + GetId() <<
+                   "\": index out of bounds: un_index = " <<
+                   un_index <<
+                   ", m_vecInstances.size() = " <<
+                   m_vecInstances.size());
+      return m_vecInstances[un_index].LED;
+   }
+
+   /****************************************/
+   /****************************************/
+
+   const CDirectionalLEDEntity& CDirectionalLEDEquippedEntity::GetLED(UInt32 un_index) const {
       ARGOS_ASSERT(un_index < m_vecInstances.size(),
                    "CLEDEquippedEntity::GetLED(), id=\"" <<
                    GetContext() + GetId() <<

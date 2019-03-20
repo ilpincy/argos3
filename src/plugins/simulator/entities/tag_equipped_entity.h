@@ -72,6 +72,24 @@ namespace argos {
       virtual void Disable();
 
       /**
+       * Programmatically creates a new tag.
+       * @param c_position The position of the tag.
+       * @param c_orientation The orientation of the tag.
+       * @param s_anchor The anchor of the tag.
+       * @param c_observable_angle The observable angle of the tag.
+       * @param f_side_length The side length of the tag.
+       * @param str_payload The payload of the tag.
+       * @see GetInstances()
+       * @see GetTag()
+       */
+      void AddTag(const CVector3& c_position,
+                  const CQuaternion& c_orientation,
+                  SAnchor& s_anchor,
+                  const CRadians& c_observable_angle,
+                  Real f_side_length,
+                  const std::string& str_payload);
+
+      /**
        * Returns a tag by numeric index.
        * @param un_index The index of the specified tag.
        * @return A tag by numeric index.

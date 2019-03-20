@@ -34,12 +34,12 @@ namespace argos {
       CTagEntity(CComposableEntity* pc_parent);
 
       CTagEntity(CComposableEntity* pc_parent,
-                            const std::string& str_id,
-                            const CVector3& c_position,
-                            const CQuaternion& c_orientation,
-                            const CRadians& c_observable_angle,
-                            Real f_side_length,
-                            const std::string& str_payload);
+                 const std::string& str_id,
+                 const CVector3& c_position,
+                 const CQuaternion& c_orientation,
+                 const CRadians& c_observable_angle,
+                 Real f_side_length,
+                 const std::string& str_payload);
 
       virtual ~CTagEntity() {}
 

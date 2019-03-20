@@ -106,6 +106,27 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   void CRadioEquippedEntity::AddRadio(const CVector3& c_offset,
+                                       SAnchor& s_anchor,
+                                       Real f_transmit_range) {
+      /* create the new radio entity */
+      CRadioEntity* pcRadio =
+         new CRadioEntity(this,
+                          "radio_" + std::to_string(m_vecInstances.size()),
+                          f_transmit_range);
+      /* add it to the instances vector */
+      m_vecInstances.emplace_back(*pcRadio,
+                                  s_anchor,
+                                  c_offset);
+      /* inform the base class about the new entity */
+      AddComponent(*pcRadio);
+      UpdateComponents();
+   }
+
+
+   /****************************************/
+   /****************************************/
+
    CRadioEntity& CRadioEquippedEntity::GetRadio(UInt32 un_index) {
       ARGOS_ASSERT(un_index < m_vecInstances.size(),
                    "CRadioEquippedEntity::GetRadio(), id=\"" <<
