@@ -28,7 +28,8 @@ set(ARGOS3_HEADERS_PLUGINS_ROBOTS_GENERIC_CONTROLINTERFACE
   control_interface/ci_radios_actuator.h
   control_interface/ci_radios_sensor.h
   control_interface/ci_range_and_bearing_actuator.h
-  control_interface/ci_range_and_bearing_sensor.h)
+  control_interface/ci_range_and_bearing_sensor.h
+  control_interface/ci_tags_actuator.h)
 
 if(ARGOS_BUILD_FOR_SIMULATOR)
   # argos3/plugins/robots/generic/simulator
@@ -56,7 +57,8 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
     simulator/radios_default_actuator.h
     simulator/radios_default_sensor.h
     simulator/range_and_bearing_default_actuator.h
-    simulator/range_and_bearing_medium_sensor.h)
+    simulator/range_and_bearing_medium_sensor.h
+    simulator/tags_default_actuator.h)
 endif(ARGOS_BUILD_FOR_SIMULATOR)
 
 #
@@ -88,7 +90,8 @@ set(ARGOS3_SOURCES_PLUGINS_ROBOTS_GENERIC
   control_interface/ci_radios_actuator.cpp
   control_interface/ci_radios_sensor.cpp
   control_interface/ci_range_and_bearing_actuator.cpp
-  control_interface/ci_range_and_bearing_sensor.cpp)
+  control_interface/ci_range_and_bearing_sensor.cpp
+  control_interface/ci_tags_actuator.cpp)
 if(ARGOS_BUILD_FOR_SIMULATOR)
   set(ARGOS3_SOURCES_PLUGINS_ROBOTS_GENERIC
     ${ARGOS3_SOURCES_PLUGINS_ROBOTS_GENERIC}
@@ -115,7 +118,8 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
     simulator/radios_default_actuator.cpp
     simulator/radios_default_sensor.cpp
     simulator/range_and_bearing_default_actuator.cpp
-    simulator/range_and_bearing_medium_sensor.cpp)
+    simulator/range_and_bearing_medium_sensor.cpp
+    simulator/tags_default_actuator.cpp)
 endif(ARGOS_BUILD_FOR_SIMULATOR)
 
 #
