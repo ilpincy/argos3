@@ -38,11 +38,11 @@ namespace argos {
 
       struct SMaterial {
          /* OpenGL material arrays */
-         std::array<GLfloat, 4> Ambient = {0.0f, 0.0f, 0.0f, 1.0f};
-         std::array<GLfloat, 4> Diffuse = {0.0f, 0.0f, 0.0f, 1.0f};
-         std::array<GLfloat, 4> Emission = {0.0f, 0.0f, 0.0f, 1.0f};
-         std::array<GLfloat, 4> Specular = {0.0f, 0.0f, 0.0f, 1.0f};
-         std::array<GLfloat, 1> Shininess = {0.0f};
+         std::array<GLfloat, 4> Ambient = {{0.0f, 0.0f, 0.0f, 1.0f}};
+         std::array<GLfloat, 4> Diffuse = {{0.0f, 0.0f, 0.0f, 1.0f}};
+         std::array<GLfloat, 4> Emission = {{0.0f, 0.0f, 0.0f, 1.0f}};
+         std::array<GLfloat, 4> Specular = {{0.0f, 0.0f, 0.0f, 1.0f}};
+         std::array<GLfloat, 1> Shininess = {{0.0f}};
          /* material transparency */
          GLfloat Alpha = 1.0f;
          /* enable the transparency effect for this material? */
