@@ -24,12 +24,18 @@ namespace argos {
       /* Configure the floor */
       m_cFloorExtents = btVector3(cArenaSize.GetX(), fHeight, cArenaSize.GetY());
       m_cFloorOrigin = btVector3(cArenaCenter.GetX(), -fHeight * 0.5f, -cArenaCenter.GetY());
-      /* Call the destructors for the floor components */ 
+      /* Get the friction of the floor */
+      m_fFriction = m_pcEngine->GetDefaultFriction();
+      GetNodeAttributeOrDefault(t_tree, "friction", m_fFriction, m_fFriction);
+      /* Call the destructors for the floor components */
       m_cFloor.~btRigidBody();
       m_cFloorShape.~btBoxShape();
       /* Call the constructors for the floor components */
       new (&m_cFloorShape) btBoxShape(m_cFloorExtents * 0.5f);
-      new (&m_cFloor) btRigidBody(0, nullptr, &m_cFloorShape);
+      btRigidBody::btRigidBodyConstructionInfo sConstructionInfo(0, nullptr, &m_cFloorShape);
+      sConstructionInfo.m_friction = m_fFriction;
+      /* Create the floor */
+      new (&m_cFloor) btRigidBody(sConstructionInfo);
       m_cFloor.setUserPointer(nullptr);
       m_cFloor.getWorldTransform().setOrigin(m_cFloorOrigin);
       /* Add floor to world */
@@ -47,7 +53,10 @@ namespace argos {
       m_cFloorShape.~btBoxShape();
       /* Call the constructors for the floor components */
       new (&m_cFloorShape) btBoxShape(m_cFloorExtents * 0.5f);
-      new (&m_cFloor) btRigidBody(0, nullptr, &m_cFloorShape);
+      btRigidBody::btRigidBodyConstructionInfo sConstructionInfo(0, nullptr, &m_cFloorShape);
+      sConstructionInfo.m_friction = m_fFriction;
+      /* Create the floor */
+      new (&m_cFloor) btRigidBody(sConstructionInfo);
       m_cFloor.setUserPointer(nullptr);
       m_cFloor.getWorldTransform().setOrigin(m_cFloorOrigin);
       /* Add floor to world */
