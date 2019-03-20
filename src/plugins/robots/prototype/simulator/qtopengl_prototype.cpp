@@ -21,12 +21,14 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   static const Real LED_RADIUS         = 0.0025f;
-   static const Real FIELD_SCALE_FACTOR = 0.0005f;
    const GLfloat BODY_COLOR[]           = { 0.5f, 0.5f, 0.5f, 1.0f };
    const GLfloat SPECULAR[]             = { 0.0f, 0.0f, 0.0f, 1.0f };
    const GLfloat SHININESS[]            = { 0.0f                   };
    const GLfloat EMISSION[]             = { 0.0f, 0.0f, 0.0f, 1.0f };
+   static const Real LED_RADIUS         = 0.0025f;
+#ifndef NDEBUG
+   static const Real FIELD_SCALE_FACTOR = 0.0005f;
+#endif
 
    /****************************************/
    /****************************************/

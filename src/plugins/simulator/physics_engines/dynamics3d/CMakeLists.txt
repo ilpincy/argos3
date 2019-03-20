@@ -451,16 +451,17 @@ set(ARGOS3_SOURCES_PLUGINS_SIMULATOR_PHYSICS_ENGINES_DYNAMICS3D_BULLET
 #
 # Disable warnings from inside the Bullet Physics SDK
 #
-set_source_files_properties(
-  ${ARGOS3_SOURCES_PLUGINS_SIMULATOR_PHYSICS_ENGINES_DYNAMICS3D_BULLET}
-  PROPERTIES
-  COMPILE_FLAGS "-Wno-strict-aliasing -Wno-sign-compare")
-if(NOT APPLE)
+if(APPLE)
   set_source_files_properties(
     ${ARGOS3_SOURCES_PLUGINS_SIMULATOR_PHYSICS_ENGINES_DYNAMICS3D_BULLET}
     PROPERTIES
-    COMPILE_FLAGS "-Wno-misleading-indentation")
-endif(NOT APPLE)
+    COMPILE_FLAGS "-Wno-strict-aliasing -Wno-sign-compare -Wno-unused-function -Wno-unused-variable")
+else(APPLE)
+  set_source_files_properties(
+    ${ARGOS3_SOURCES_PLUGINS_SIMULATOR_PHYSICS_ENGINES_DYNAMICS3D_BULLET}
+    PROPERTIES
+    COMPILE_FLAGS "-Wno-strict-aliasing -Wno-sign-compare -Wno-unused-function -Wno-unused-variable -Wno-unused-but-set-variable -Wno-uninitialized -Wno-comment -Wno-misleading-indentation -Wno-maybe-uninitialized -Wno-class-memaccess")
+endif(APPLE)
 
 #
 # Header files
