@@ -21,14 +21,14 @@
         <cameras implementation="default" show_frustum="true">
           <camera id="fixed_camera" range="0.025:0.25" resolution="640,360"
                   anchor="origin" position="-0.05,0,0.125" orientation="90,-90,0"
-                  focal_length="884,884" principle_point="320,180">
+                  focal_length="884,884" principal_point="320,180">
             <led_detector medium="leds" show_rays="true"/>
             <directional_led_detector medium="directional_leds" show_rays="true"/>
             <tag_detector medium="tags" show_rays="true"/>
           </camera>
           <camera id="turret_camera" range="0.025:0.225" resolution="640,360"
                   anchor="turret" position="0.08,0,0.1" orientation="-90,112.5,0"
-                  focal_length="884,884" principle_point="320,180">
+                  focal_length="884,884" principal_point="320,180">
             <led_detector medium="leds" show_rays="true"/>
             <directional_led_detector medium="directional_leds" show_rays="true"/>
             <tag_detector medium="tags" show_rays="true"/>

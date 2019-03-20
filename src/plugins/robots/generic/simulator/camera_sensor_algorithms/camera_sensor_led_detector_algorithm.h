@@ -38,12 +38,12 @@ namespace argos {
          /* constructor */
          CUpdateOperation(const CSquareMatrix<3>& c_projection_matrix,
                           const std::array<CPlane, 6>& arr_frustum_planes,
-                          const CTransformationMatrix3& c_world_to_camera_transform,
+                          const CTransformationMatrix3& c_camera_to_world_transform,
                           const CVector3& c_camera_location,
                           CCameraSensorLEDDetectorAlgorithm& c_algorithm) :
             CBaseUpdateOperation(c_projection_matrix,
                                  arr_frustum_planes,
-                                 c_world_to_camera_transform,
+                                 c_camera_to_world_transform,
                                  c_camera_location),
             m_cAlgorithm(c_algorithm) {
             m_cOcclusionCheckRay.SetStart(c_camera_location);
@@ -51,7 +51,7 @@ namespace argos {
          /* destructor */
          virtual ~CUpdateOperation() {}
          /* operation */
-         bool operator()(CLEDEntity& c_led) {
+         virtual bool operator()(CLEDEntity& c_led) {
             if(c_led.GetColor() == CColor::BLACK) {
                return true;
             }
@@ -85,7 +85,7 @@ namespace argos {
 
       virtual void Update(const CSquareMatrix<3>& c_projection_matrix,
                           const std::array<CPlane, 6>& arr_frustum_planes,
-                          const CTransformationMatrix3& c_world_to_camera_transform,
+                          const CTransformationMatrix3& c_camera_to_world_transform,
                           const CVector3& c_camera_location,
                           const CVector3& c_bounding_box_position,
                           const CVector3& c_bounding_box_half_extents);

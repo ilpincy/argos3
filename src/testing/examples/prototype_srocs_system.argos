@@ -28,7 +28,7 @@
         <cameras implementation="default" show_frustum="false">
           <camera id="ov5460" range="0.05:0.50" resolution="640,360"
                   anchor="vertical_link" position="0.056500,0,0.09528" orientation="-90,135,0"
-                  focal_length="883.961,883.961" principle_point="319.5,179.5">
+                  focal_length="883.961,883.961" principal_point="319.5,179.5">
             <directional_led_detector medium="directional_leds" show_rays="false"/>
             <tag_detector medium="apriltags" show_rays="false"/>
           </camera>
