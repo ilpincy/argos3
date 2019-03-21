@@ -40,6 +40,7 @@ namespace argos {
 
    private:
 
+      btScalar m_fFriction;
       btVector3 m_cFloorExtents;
       btVector3 m_cFloorOrigin;
       btBoxShape m_cFloorShape;

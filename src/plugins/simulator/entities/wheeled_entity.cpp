@@ -17,7 +17,6 @@ namespace argos {
       CEntity(pc_parent),
       m_unNumWheels(un_num_wheels) {
       m_pcWheelPositions = new CVector3[m_unNumWheels];
-      ::memset(m_pcWheelPositions, 0, m_unNumWheels * sizeof(CVector3));
       m_pfWheelRadia = new Real[m_unNumWheels];
       ::memset(m_pfWheelRadia, 0, m_unNumWheels * sizeof(Real));
       m_pfWheelVelocities = new Real[m_unNumWheels];
@@ -34,7 +33,6 @@ namespace argos {
       CEntity(pc_parent, str_id),
       m_unNumWheels(un_num_wheels) {
       m_pcWheelPositions = new CVector3[m_unNumWheels];
-      ::memset(m_pcWheelPositions, 0, m_unNumWheels * sizeof(CVector3));
       m_pfWheelRadia = new Real[m_unNumWheels];
       ::memset(m_pfWheelRadia, 0, m_unNumWheels * sizeof(Real));
       m_pfWheelVelocities = new Real[m_unNumWheels];

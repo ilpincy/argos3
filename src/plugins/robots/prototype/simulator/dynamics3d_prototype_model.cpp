@@ -2,12 +2,14 @@
  * @file <argos3/plugins/robots/prototype/simulator/dynamics3d_prototype_model.cpp>
  *
  * @author Michael Allwright - <allsey87@gmail.com>
+ * @author Weixu Zhu- <zhuweixu_harry@126.com>
  */
 
 #include "dynamics3d_prototype_model.h"
 #include <argos3/plugins/robots/prototype/simulator/prototype_entity.h>
 #include <argos3/plugins/robots/prototype/simulator/prototype_joint_equipped_entity.h>
 #include <argos3/plugins/robots/prototype/simulator/prototype_link_equipped_entity.h>
+#include <argos3/plugins/simulator/entities/magnet_equipped_entity.h>
 #include <argos3/plugins/simulator/physics_engines/dynamics3d/dynamics3d_multi_body_object_model.h>
 #include <argos3/plugins/simulator/physics_engines/dynamics3d/dynamics3d_shape_manager.h>
 #include <argos3/plugins/simulator/physics_engines/dynamics3d/dynamics3d_engine.h>
@@ -21,22 +23,32 @@ namespace argos {
       btVector3 cHalfExtents(c_link_entity.GetExtents().GetX() * 0.5f,
                              c_link_entity.GetExtents().GetZ() * 0.5f,
                              c_link_entity.GetExtents().GetY() * 0.5f);
-      std::shared_ptr<btCollisionShape> pcShape;
+      std::vector<btVector3> vecConvexHullPoints;
+      std::shared_ptr<btCollisionShape> ptrShape;
       switch(c_link_entity.GetGeometry()) {
       case CPrototypeLinkEntity::EGeometry::BOX:
-         pcShape = CDynamics3DShapeManager::RequestBox(cHalfExtents);
+         ptrShape = CDynamics3DShapeManager::RequestBox(cHalfExtents);
          break;
       case CPrototypeLinkEntity::EGeometry::CYLINDER:
-         pcShape = CDynamics3DShapeManager::RequestCylinder(cHalfExtents);
+         ptrShape = CDynamics3DShapeManager::RequestCylinder(cHalfExtents);
          break;
       case CPrototypeLinkEntity::EGeometry::SPHERE:
-         pcShape = CDynamics3DShapeManager::RequestSphere(cHalfExtents.getZ());
+         ptrShape = CDynamics3DShapeManager::RequestSphere(cHalfExtents.getZ());
+         break;
+      case CPrototypeLinkEntity::EGeometry::CONVEX_HULL:
+         vecConvexHullPoints.reserve(c_link_entity.GetConvexHullPoints().size());
+         for(const CVector3& c_point : c_link_entity.GetConvexHullPoints()) {
+            vecConvexHullPoints.emplace_back(c_point.GetX(),
+                                             c_point.GetZ(),
+                                            -c_point.GetY());
+         }
+         ptrShape = CDynamics3DShapeManager::RequestConvexHull(vecConvexHullPoints);
          break;
       default:
          THROW_ARGOSEXCEPTION("Collision shape geometry not implemented");
          break;
       }
-      return pcShape;
+      return ptrShape;
    }
 
    /****************************************/
@@ -63,8 +75,30 @@ namespace argos {
       /* Calculate center of mass offset */
       btTransform cCenterOfMassOffset(btQuaternion(0.0f, 0.0f, 0.0f, 1.0f),
                                       btVector3(0.0f, -c_link_entity.GetExtents().GetZ() * 0.5f, 0.0f));
+      std::vector<CAbstractBody::SData::SDipole> vecDipoles;
+      /* check if this link is magnetic */
+      if(m_cEntity.HasMagnetEquippedEntity()) {
+         CMagnetEquippedEntity::SInstance::TVector& vecInstances =
+            m_cEntity.GetMagnetEquippedEntity().GetInstances();
+         for(CMagnetEquippedEntity::SInstance& s_instance : vecInstances) {
+            /* check if the dipole/magnet belongs to this link by comparing the anchors */
+            if(s_instance.Anchor.Index == c_link_entity.GetAnchor().Index) {
+               btTransform cOffset(btQuaternion(0.0f, 0.0f, 0.0f, 1.0f),
+                                   btVector3(s_instance.Offset.GetX(),
+                                             s_instance.Offset.GetZ(),
+                                            -s_instance.Offset.GetY()));
+               cOffset *= cCenterOfMassOffset;
+               std::function<btVector3()> fnGetField = [&s_instance] () {
+                  const CVector3& cField = s_instance.Magnet.GetField();
+                  return btVector3(cField.GetX(), cField.GetZ(), -cField.GetY());
+               };
+               vecDipoles.emplace_back(fnGetField, cOffset);
+            }
+         }
+      }
       /* Return link data */
-      return CAbstractBody::SData(cStartTransform, cCenterOfMassOffset, cInertia, fMass, fFriction);
+      return CAbstractBody::SData(cStartTransform, cCenterOfMassOffset, cInertia, fMass, fFriction, vecDipoles);
+
    }
 
    /****************************************/
@@ -83,13 +117,10 @@ namespace argos {
       /* Get the collision shape */
       std::shared_ptr<btCollisionShape> ptrBaseLinkShape = RequestShape(cBaseLink);
       /* Set up the base link body */
-      CBase* pcBase = 
-         new CBase(*this,
-                   cBaseLink.GetAnchor(),
-                   ptrBaseLinkShape,
-                   CreateBodyData(cBaseLink));
+      std::shared_ptr<CBase> ptrBase = 
+         std::make_shared<CBase>(*this, &cBaseLink.GetAnchor(), ptrBaseLinkShape, CreateBodyData(cBaseLink));
       /* Add to collection */
-      m_vecBodies.push_back(pcBase);
+      m_vecBodies.push_back(ptrBase);
       /* Counter for enumerating the links inside the btMultiBody */
       UInt32 unLinkIndex = 0;
       /* Copy all joints pointers into a temporary vector */
@@ -109,29 +140,30 @@ namespace argos {
             CAbstractBody::TVectorIterator itParentLinkBody =
                std::find_if(std::begin(m_vecBodies),
                             std::end(m_vecBodies),
-                            [&cParentLink] (CAbstractBody* pc_body) {
-               return (cParentLink.GetAnchor().Index == pc_body->GetAnchor().Index);
+                            [&cParentLink] (const std::shared_ptr<CAbstractBody>& ptr_body) {
+               return (cParentLink.GetAnchor().Index == ptr_body->GetAnchor().Index);
             });
             /* If the parent link hasn't been added yet, try the next joint */
             if(itParentLinkBody == std::end(m_vecBodies)) {
                continue;
             }
-            /* There should be no need to check the result of this cast */
-            CLink* pcParentLinkBody = dynamic_cast<CLink*>(*itParentLinkBody);
+            /* Parent body must be a CLink, therefore no need to use dynamic_pointer_cast */
+            std::shared_ptr<CLink> ptrParentLinkBody = 
+               std::static_pointer_cast<CLink>(*itParentLinkBody);
             /* Get a reference to the child link */
             CPrototypeLinkEntity& cChildLink = cJoint.GetChildLink();
             /* Get the collision shape */
             std::shared_ptr<btCollisionShape> ptrChildLinkShape =
                RequestShape(cChildLink);
             /* Set up the child link body */
-            CLink* pcChildLinkBody = 
-               new CLink(*this,
-                         unLinkIndex++,
-                         cChildLink.GetAnchor(),
-                         ptrChildLinkShape,
-                         CreateBodyData(cChildLink));
+            std::shared_ptr<CLink> ptrChildLinkBody =
+               std::make_shared<CLink>(*this,
+                                       unLinkIndex++,
+                                       &cChildLink.GetAnchor(),
+                                       ptrChildLinkShape,
+                                       CreateBodyData(cChildLink));
             /* Add to collection */
-            m_vecBodies.push_back(pcChildLinkBody);
+            m_vecBodies.push_back(ptrChildLinkBody);
             /* Calculate joint parameters for parent link */
             const CVector3& cParentOffsetPosition = cJoint.GetParentLinkJointPosition();
             const CQuaternion& cParentOffsetOrientation = cJoint.GetParentLinkJointOrientation();
@@ -143,7 +175,7 @@ namespace argos {
                            btVector3(cParentOffsetPosition.GetX(),
                                      cParentOffsetPosition.GetZ(),
                                     -cParentOffsetPosition.GetY()));
-            cParentOffsetTransform = pcParentLinkBody->GetData().CenterOfMassOffset * cParentOffsetTransform;
+            cParentOffsetTransform = ptrParentLinkBody->GetData().CenterOfMassOffset * cParentOffsetTransform;
             /* Calculate joint parameters for child link */
             const CVector3& cChildOffsetPosition = cJoint.GetChildLinkJointPosition();
             const CQuaternion& cChildOffsetOrientation = cJoint.GetChildLinkJointOrientation();
@@ -155,7 +187,7 @@ namespace argos {
                            btVector3(cChildOffsetPosition.GetX(),
                                      cChildOffsetPosition.GetZ(),
                                     -cChildOffsetPosition.GetY()));
-            cChildOffsetTransform = pcChildLinkBody->GetData().CenterOfMassOffset * cChildOffsetTransform;
+            cChildOffsetTransform = ptrChildLinkBody->GetData().CenterOfMassOffset * cChildOffsetTransform;
             /* Calculate the joint axis */
             btVector3 cJointAxis(cJoint.GetJointAxis().GetX(),
                                  cJoint.GetJointAxis().GetZ(),
@@ -170,8 +202,8 @@ namespace argos {
                cParentOffsetTransform.inverse().getRotation();
             /* Store joint configuration for reset */
             m_vecJoints.emplace_back(cJoint.GetType(),
-                                     *pcParentLinkBody,
-                                     *pcChildLinkBody,
+                                     ptrParentLinkBody,
+                                     ptrChildLinkBody,
                                      cParentOffsetTransform.getOrigin(),
                                      -cChildOffsetTransform.getOrigin(),
                                      cParentToChildRotation,
@@ -183,12 +215,12 @@ namespace argos {
                /* If the joint actuator isn't disabled */
                CPrototypeJointEntity::SActuator& sActuator = cJoint.GetActuator();
                   if(sActuator.Mode != CPrototypeJointEntity::SActuator::EMode::DISABLED) {
-                  m_vecActuators.emplace_back(*this, sActuator, pcChildLinkBody->GetIndex());
+                  m_vecActuators.emplace_back(*this, sActuator, ptrChildLinkBody->GetIndex());
                }
                /* And if the joint sensor isn't disabled */
                CPrototypeJointEntity::SSensor& sSensor = cJoint.GetSensor();
                if(sSensor.Mode != CPrototypeJointEntity::SSensor::EMode::DISABLED) {
-                  m_vecSensors.emplace_back(*this, sSensor, pcChildLinkBody->GetIndex());
+                  m_vecSensors.emplace_back(*this, sSensor, ptrChildLinkBody->GetIndex());
                }
             }
             /* Joint limits */
@@ -198,14 +230,14 @@ namespace argos {
                   m_vecLimits.emplace_back(*this,
                                            cLimit.GetMin().GetValue(),
                                            cLimit.GetMax().GetValue(),
-                                           pcChildLinkBody->GetIndex());
+                                           ptrChildLinkBody->GetIndex());
                }
                else if(cJoint.GetType() == CPrototypeJointEntity::EType::PRISMATIC) {
                   const CRange<Real>& cLimit = cJoint.GetLimit().Prismatic;
                   m_vecLimits.emplace_back(*this,
                                            cLimit.GetMin(),
                                            cLimit.GetMax(),
-                                           pcChildLinkBody->GetIndex());
+                                           ptrChildLinkBody->GetIndex());
                }
             }
             /* Now that the joint and link has been added we remove it from the vector
@@ -225,8 +257,8 @@ namespace argos {
       for(CPrototypeLinkEntity* pc_link : m_cEntity.GetLinkEquippedEntity().GetLinks()) {
          if(std::find_if(std::begin(m_vecBodies),
                          std::end(m_vecBodies),
-                         [pc_link] (CAbstractBody* pc_body) {
-            return (pc_link->GetAnchor().Index == pc_body->GetAnchor().Index);
+                         [pc_link] (std::shared_ptr<CAbstractBody>& ptr_body) {
+            return (pc_link->GetAnchor().Index == ptr_body->GetAnchor().Index);
          }) == std::end(m_vecBodies)) {
             THROW_ARGOSEXCEPTION("Link \"" << pc_link->GetId() <<
                                  "\" is not connected to the model.");
@@ -279,29 +311,29 @@ namespace argos {
       for(SJoint& s_joint : m_vecJoints) {
          switch(s_joint.Type) {
          case CPrototypeJointEntity::EType::FIXED:
-            m_cMultiBody.setupFixed(s_joint.Child.GetIndex(),
-                                    s_joint.Child.GetData().Mass,
-                                    s_joint.Child.GetData().Inertia,
-                                    s_joint.Parent.GetIndex(),
+            m_cMultiBody.setupFixed(s_joint.Child->GetIndex(),
+                                    s_joint.Child->GetData().Mass,
+                                    s_joint.Child->GetData().Inertia,
+                                    s_joint.Parent->GetIndex(),
                                     s_joint.ParentToChildRotation,
                                     s_joint.ParentOffset,
                                     s_joint.ChildOffset);
             break;
          case CPrototypeJointEntity::EType::SPHERICAL:
-            m_cMultiBody.setupSpherical(s_joint.Child.GetIndex(),
-                                        s_joint.Child.GetData().Mass,
-                                        s_joint.Child.GetData().Inertia,
-                                        s_joint.Parent.GetIndex(),
+            m_cMultiBody.setupSpherical(s_joint.Child->GetIndex(),
+                                        s_joint.Child->GetData().Mass,
+                                        s_joint.Child->GetData().Inertia,
+                                        s_joint.Parent->GetIndex(),
                                         s_joint.ParentToChildRotation,
                                         s_joint.ParentOffset,
                                         s_joint.ChildOffset,
                                         s_joint.DisableCollision);
             break;
          case CPrototypeJointEntity::EType::REVOLUTE:
-            m_cMultiBody.setupRevolute(s_joint.Child.GetIndex(),
-                                       s_joint.Child.GetData().Mass,
-                                       s_joint.Child.GetData().Inertia,
-                                       s_joint.Parent.GetIndex(),
+            m_cMultiBody.setupRevolute(s_joint.Child->GetIndex(),
+                                       s_joint.Child->GetData().Mass,
+                                       s_joint.Child->GetData().Inertia,
+                                       s_joint.Parent->GetIndex(),
                                        s_joint.ParentToChildRotation,
                                        s_joint.Axis,
                                        s_joint.ParentOffset,
@@ -309,10 +341,10 @@ namespace argos {
                                        s_joint.DisableCollision);
             break;
          case CPrototypeJointEntity::EType::PRISMATIC:
-            m_cMultiBody.setupPrismatic(s_joint.Child.GetIndex(),
-                                        s_joint.Child.GetData().Mass,
-                                        s_joint.Child.GetData().Inertia,
-                                        s_joint.Parent.GetIndex(),
+            m_cMultiBody.setupPrismatic(s_joint.Child->GetIndex(),
+                                        s_joint.Child->GetData().Mass,
+                                        s_joint.Child->GetData().Inertia,
+                                        s_joint.Parent->GetIndex(),
                                         s_joint.ParentToChildRotation,
                                         s_joint.Axis,
                                         s_joint.ParentOffset,
@@ -363,16 +395,16 @@ namespace argos {
    /****************************************/
 
    CDynamics3DPrototypeModel::SJoint::SJoint(CPrototypeJointEntity::EType e_type,
-                                             CLink& c_parent,
-                                             CLink& c_child,
+                                             std::shared_ptr<CLink>& ptr_parent,
+                                             std::shared_ptr<CLink>& ptr_child,
                                              const btVector3& c_parent_offset,
                                              const btVector3& c_child_offset,
                                              const btQuaternion& c_parent_to_child_rotation,
                                              const btVector3& c_axis,
                                              bool b_disable_collision) :
       Type(e_type),
-      Parent(c_parent),
-      Child(c_child),
+      Parent(ptr_parent),
+      Child(ptr_child),
       ParentOffset(c_parent_offset),
       ChildOffset(c_child_offset),
       ParentToChildRotation(c_parent_to_child_rotation),

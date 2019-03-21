@@ -24,11 +24,11 @@ namespace argos {
       CDynamics3DBoxModel(CDynamics3DEngine& c_engine,
                           CBoxEntity& c_box);
 
-      virtual ~CDynamics3DBoxModel();
+      virtual ~CDynamics3DBoxModel() {}
 
    private:
 
-      CBody* m_pcBody;
+      std::shared_ptr<CBody> m_ptrBody;
 
    };
 }

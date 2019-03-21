@@ -30,11 +30,11 @@ namespace argos {
 
          CBaseUpdateOperation(const CSquareMatrix<3>& c_projection_matrix,
                               const std::array<CPlane, 6>& arr_frustum_planes,
-                              const CTransformationMatrix3& c_world_to_camera_transform,
+                              const CTransformationMatrix3& c_camera_to_world_transform,
                               const CVector3& c_camera_location) :
             m_cProjectionMatrix(c_projection_matrix),
             m_arrFrustumPlanes(arr_frustum_planes),
-            m_cWorldToCameraTransform(c_world_to_camera_transform),
+            m_cCameraToWorldTransform(c_camera_to_world_transform),
             m_cCameraLocation(c_camera_location) {}
 
          virtual ~CBaseUpdateOperation() {}
@@ -48,7 +48,7 @@ namespace argos {
          }
 
          CVector2 ProjectOntoSensor(const CVector3& c_vector) const {
-            CVector3 cCameraToEntityTranslation(m_cWorldToCameraTransform * c_vector);
+            CVector3 cCameraToEntityTranslation(m_cCameraToWorldTransform * c_vector);
             /* this could be avoided if CVector3 inherited from CMatrix<3,1> */
             CMatrix<3,1> cCameraToEntityTranslationMatrix;
             cCameraToEntityTranslationMatrix(0,0) = 
@@ -75,7 +75,7 @@ namespace argos {
 
          const CSquareMatrix<3>& m_cProjectionMatrix;
          const std::array<CPlane, 6>& m_arrFrustumPlanes;
-         const CTransformationMatrix3& m_cWorldToCameraTransform;
+         const CTransformationMatrix3& m_cCameraToWorldTransform;
          const CVector3& m_cCameraLocation;
       };
 

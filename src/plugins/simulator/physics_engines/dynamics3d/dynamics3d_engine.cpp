@@ -22,6 +22,7 @@ namespace argos {
    CDynamics3DEngine::CDynamics3DEngine() :
       m_pcRNG(nullptr),
       m_cRandomSeedRange(0,1000),
+      m_fDefaultFriction(1.0f),
       m_cBroadphase(),
       m_cConfiguration(),
       m_cDispatcher(&m_cConfiguration),
@@ -53,6 +54,8 @@ namespace argos {
          pcPlugin->Init(*tPluginIterator);
          AddPhysicsPlugin(tPluginIterator->Value(), *pcPlugin);
       }
+      GetNodeAttributeOrDefault(t_tree, "debug_file", m_strDebugFilename, m_strDebugFilename);
+      GetNodeAttributeOrDefault(t_tree, "default_friction", m_fDefaultFriction, m_fDefaultFriction);
    }
 
    /****************************************/
@@ -180,6 +183,16 @@ namespace argos {
           it != std::end(m_tPhysicsModels);
           ++it) {
          it->second->UpdateEntityStatus();
+      }
+      /* Dump the state of the world to a bullet file (if requested) */
+      if(!m_strDebugFilename.empty()) {
+         btDefaultSerializer cSerializer;
+         m_cWorld.serialize(&cSerializer);
+         std::ofstream cDebugOutput(m_strDebugFilename);
+         if(cDebugOutput.is_open()) {
+            cDebugOutput.write(reinterpret_cast<const char*>(cSerializer.getBufferPointer()), 
+                               cSerializer.getCurrentBufferSize());
+         }
       }
    }
    
@@ -318,20 +331,37 @@ namespace argos {
                            "  </physics_engines>\n\n"
                            "The 'id' attribute is necessary and must be unique among the physics engines.\n\n"
                            "OPTIONAL XML CONFIGURATION\n\n"
-                           "The physics engine supports a number of plugins that add features to the\n"
-                           "simulation. In the example below, a floor plane has been added which has a\n"
-                           "height of 1 cm and dimensions of the floor as specified in the arena node. By\n"
-                           "default, there is no gravity in simulation. This can be changed by adding a\n"
-                           "gravity node with a single attribute 'g' which is the downwards acceleration\n"
-                           "caused by gravity. Finally, there is a magnetism plugin. This plugin applies\n"
-                           "forces and torques to bodies in the simulation whose model contains a magnet\n"
-                           "equipped entity. The 'max_distance' attribute is an optional optimization\n"
-                           "that sets the maximum distance at which two magnetic dipoles will interact\n"
-                           "with each other. In the example, this distance has been set to 4 cm.\n\n"
+                           "It is possible to change the default friction used in the simulation from\n"
+                           "its initial value of 1.0 using the default_friction attribute as shown\n"
+                           "below. For debugging purposes, it is also possible to provide a filename\n"
+                           "via the debug_file attribute which will cause the Bullet world to be\n"
+                           "serialized and written out to a file at the end of each step. This file\n"
+                           "can then be opened using the Bullet example browser and can provide useful\n"
+                           "insights into the stability of a simulation.\n\n"
                            "  <physics_engines>\n"
                            "    ...\n"
-                           "    <dynamics3d id=\"dyn3d\">\n"
-                           "      <floor height=\"0.01\"/>\n"
+                           "    <dynamics3d id=\"dyn3d\"\n"
+                           "                default_friction=\"1.0\"\n"
+                           "                debug_file=\"dynamics3d.bullet\"/>\n"
+                           "    ...\n"
+                           "  </physics_engines>\n\n"
+                           "The physics engine supports a number of plugins that add features to the\n"
+                           "simulation. In the example below, a floor plane has been added which has a\n"
+                           "height of 1 cm and the dimensions of the floor as specified by the arena\n"
+                           "node. It is possible to change the coefficient of friction of the floor\n"
+                           "using the friction attribute. This will override the default friction used\n"
+                           "by the physics engine. By default, there will be no gravity in the\n"
+                           "simulation. This can be changed by adding a gravity node with a single\n"
+                           "attribute 'g' which is the downwards acceleration caused by gravity.\n"
+                           "Finally, there is a magnetism plugin. This plugin applies forces and\n"
+                           "torques to bodies in the simulation that contains magnetic dipoles. The\n"
+                           "'max_distance' attribute is an optional optimization that sets the maximum\n"
+                           "distance at which two magnetic dipoles will interact with each other. In\n"
+                           "the example below, this distance has been set to 4 cm.\n\n"
+                           "  <physics_engines>\n"
+                           "    ...\n"
+                           "    <dynamics3d id=\"dyn3d\" default_friction=\"2.0\">\n"
+                           "      <floor height=\"0.01\" friction=\"0.05\"/>\n"
                            "      <gravity g=\"10\" />\n"
                            "      <magnetism max_distance=\"0.04\" />\n"
                            "    </dynamics3d>\n"

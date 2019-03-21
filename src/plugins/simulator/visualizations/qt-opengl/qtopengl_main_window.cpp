@@ -209,6 +209,16 @@ namespace argos {
          m_strTextureDir = QString::fromStdString(CSimulator::GetInstance().GetInstallationDirectory());
          m_strTextureDir += "/include/argos3/plugins/simulator/visualizations/qt-opengl/textures/";
       }
+      if(cSettings.contains("model_dir")) {
+         m_strModelDir = cSettings.value("model_dir").toString();
+         if(m_strModelDir.at(m_strModelDir.length()-1) != '/') {
+            m_strModelDir.append("/");
+         }
+      }
+      else {
+         m_strModelDir = QString::fromStdString(CSimulator::GetInstance().GetInstallationDirectory());
+         m_strModelDir += "/include/argos3/plugins/simulator/visualizations/qt-opengl/models/";
+      }
       cSettings.endGroup();
    }
 
@@ -233,6 +243,7 @@ namespace argos {
       cSettings.setValue("position", pos());
       cSettings.setValue("icon_dir", m_strIconDir);
       cSettings.setValue("texture_dir", m_strTextureDir);
+      cSettings.setValue("model_dir", m_strModelDir);
       cSettings.endGroup();
    }
 

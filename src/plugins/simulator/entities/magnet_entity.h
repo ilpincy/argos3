@@ -27,9 +27,9 @@ namespace argos {
       CMagnetEntity(CComposableEntity* pc_parent);
 
       CMagnetEntity(CComposableEntity* pc_parent,
-                           const std::string& str_id,
-                           const CVector3& c_passive_field,
-                           const CVector3& c_active_field);
+                    const std::string& str_id,
+                    const CVector3& c_passive_field,
+                    const CVector3& c_active_field);
 
       virtual ~CMagnetEntity() {}
 

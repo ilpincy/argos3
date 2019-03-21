@@ -19,9 +19,9 @@ namespace argos {
    CDynamics3DBoxModel::CDynamics3DBoxModel(CDynamics3DEngine& c_engine,
                                             CBoxEntity& c_box) :
       CDynamics3DSingleBodyObjectModel(c_engine, c_box),
-      m_pcBody(nullptr) {
+      m_ptrBody(nullptr) {
       /* Fetch a collision shape for this model */
-      std::shared_ptr<btCollisionShape> ptrShape = 
+      const std::shared_ptr<btCollisionShape>& ptrShape = 
          CDynamics3DShapeManager::RequestBox(
             btVector3(c_box.GetSize().GetX() * 0.5f,
                       c_box.GetSize().GetZ() * 0.5f, 
@@ -53,17 +53,12 @@ namespace argos {
       }
       /* Use the default friction */
       btScalar fFriction = GetEngine().GetDefaultFriction();
-      /* Set up the body */
-      CBody* m_pcBody = new CBody(*this,
-                                  sAnchor,
-                                  ptrShape,
-                                  CBody::SData(cStartTransform,
-                                               cCenterOfMassOffset,
-                                               cInertia,
-                                               fMass,
-                                               fFriction));
+      /* Set up body data */
+      CBody::SData sData(cStartTransform, cCenterOfMassOffset, cInertia, fMass, fFriction);
+      /* Create the body */
+      m_ptrBody = std::make_shared<CBody>(*this, &sAnchor, ptrShape, sData);
       /* Transfer the body to the base class */
-      m_vecBodies.push_back(m_pcBody);
+      m_vecBodies.push_back(m_ptrBody);
       /* Synchronize with the entity in the space */
       UpdateEntityStatus();
    }
@@ -71,14 +66,6 @@ namespace argos {
    /****************************************/
    /****************************************/
    
-   CDynamics3DBoxModel::~CDynamics3DBoxModel() {
-      /* Delete the body */
-      delete m_pcBody;
-   }
-   
-   /****************************************/
-   /****************************************/
-
    REGISTER_STANDARD_DYNAMICS3D_OPERATIONS_ON_ENTITY(CBoxEntity, CDynamics3DBoxModel);
 
    /****************************************/

@@ -70,6 +70,18 @@ namespace argos {
       virtual void Disable();
 
       /**
+       * Programmatically creates a new radio.
+       * @param c_offset The position of the radio.
+       * @param s_anchor The anchor of the radio.
+       * @param f_transmit_range The transmit range of the radio.
+       * @see GetInstances()
+       * @see GetRadio()
+       */
+      void AddRadio(const CVector3& c_offset,
+                    SAnchor& s_anchor,
+                    Real f_transmit_range);
+
+      /**
        * Returns a radio by numeric index.
        * @param un_index The index of the specified radio.
        * @return A radio by numeric index.

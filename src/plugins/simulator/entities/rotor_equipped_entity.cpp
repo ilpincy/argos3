@@ -17,7 +17,6 @@ namespace argos {
       CEntity(pc_parent),
       m_unNumRotors(un_num_rotors) {
       m_pcRotorPositions = new CVector3[m_unNumRotors];
-      ::memset(m_pcRotorPositions, 0, m_unNumRotors * sizeof(CVector3));
       m_pfRotorVelocities = new Real[m_unNumRotors];
       ::memset(m_pfRotorVelocities, 0, m_unNumRotors * sizeof(Real));
       Disable();
@@ -32,7 +31,6 @@ namespace argos {
       CEntity(pc_parent, str_id),
       m_unNumRotors(un_num_rotors) {
       m_pcRotorPositions = new CVector3[m_unNumRotors];
-      ::memset(m_pcRotorPositions, 0, m_unNumRotors * sizeof(CVector3));
       m_pfRotorVelocities = new Real[m_unNumRotors];
       ::memset(m_pfRotorVelocities, 0, m_unNumRotors * sizeof(Real));
       Disable();

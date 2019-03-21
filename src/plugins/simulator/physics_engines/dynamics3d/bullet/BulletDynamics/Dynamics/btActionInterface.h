@@ -19,28 +19,23 @@ subject to the following restrictions:
 class btIDebugDraw;
 class btCollisionWorld;
 
-#include "LinearMath/btScalar.h"
+#include <argos3/plugins/simulator/physics_engines/dynamics3d/bullet/LinearMath/btScalar.h>
 #include "btRigidBody.h"
 
 ///Basic interface to allow actions such as vehicles and characters to be updated inside a btDynamicsWorld
 class btActionInterface
 {
 protected:
-
 	static btRigidBody& getFixedBody();
-	
-	
-public:
 
+public:
 	virtual ~btActionInterface()
 	{
 	}
 
-	virtual void updateAction( btCollisionWorld* collisionWorld, btScalar deltaTimeStep)=0;
+	virtual void updateAction(btCollisionWorld* collisionWorld, btScalar deltaTimeStep) = 0;
 
 	virtual void debugDraw(btIDebugDraw* debugDrawer) = 0;
-
 };
 
-#endif //_BT_ACTION_INTERFACE_H
-
+#endif  //_BT_ACTION_INTERFACE_H

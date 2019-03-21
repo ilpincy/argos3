@@ -14,6 +14,7 @@ namespace argos {
 #include <argos3/core/simulator/actuator.h>
 #include <argos3/plugins/robots/generic/control_interface/ci_radios_actuator.h>
 #include <argos3/plugins/simulator/entities/radio_equipped_entity.h>
+#include <argos3/plugins/simulator/media/radio_medium.h>
 
 namespace argos {
 
@@ -34,10 +35,23 @@ namespace argos {
 
       virtual void Reset();
 
-   protected:
+   private:
 
       CRadioEquippedEntity* m_pcRadioEquippedEntity;
 
+      class CTxOperation : public CPositionalIndex<CRadioEntity>::COperation {
+      public:
+
+         CTxOperation(const CRadioEntity& c_tx_radio,
+                      const std::vector<CByteArray>& c_tx_data);
+
+         virtual bool operator()(CRadioEntity& c_rx_radio);
+
+      private:
+
+         const CRadioEntity& m_cTxRadio;
+         const std::vector<CByteArray>& m_cTxData;
+      };
    };
 }
 

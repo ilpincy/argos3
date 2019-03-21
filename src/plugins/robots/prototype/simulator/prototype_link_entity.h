@@ -2,6 +2,7 @@
  * @file <argos3/plugins/robots/prototype/simulator/prototype_link_entity.h>
  *
  * @author Michael Allwright - <allsey87@gmail.com>
+ * @author Weixu Zhu - <zhuweixu_harry@126.com>
  */
 
 #ifndef PROTOTYPE_LINK_ENTITY_H
@@ -11,9 +12,11 @@ namespace argos {
    class CPrototypeLinkEntity;
 }
 
-#include <argos3/core/utility/math/vector3.h>
-#include <argos3/core/utility/math/quaternion.h>
 #include <argos3/core/simulator/entity/embodied_entity.h>
+#include <argos3/core/utility/math/convex_hull.h>
+#include <argos3/core/utility/math/quaternion.h>
+#include <argos3/core/utility/math/vector3.h>
+
 #include <unordered_map>
 
 namespace argos {
@@ -33,6 +36,7 @@ namespace argos {
          CYLINDER,
          BOX,
          SPHERE,
+         CONVEX_HULL,
       };
 
    public:
@@ -55,6 +59,22 @@ namespace argos {
          return m_cExtents;
       }
 
+      const std::vector<CVector3>& GetConvexHullPoints() const {
+         ARGOS_ASSERT(m_eGeometry == EGeometry::CONVEX_HULL,
+                      "CPrototypeLinkEntity::GetConvexHullPoints(), id=\"" <<
+                      GetContext() << GetId() <<
+                      "\": is not a convex hull.");
+         return m_vecConvexHullPoints;
+      }
+
+      const std::vector<CConvexHull::SFace>& GetConvexHullFaces() const {
+         ARGOS_ASSERT(m_eGeometry == EGeometry::CONVEX_HULL,
+                      "CPrototypeLinkEntity::GetConvexHullFaces(), id=\"" <<
+                      GetContext() << GetId() <<
+                      "\": is not a convex hull.");
+         return m_vecConvexHullFaces;
+      }
+
       Real GetMass() const {
          return m_fMass;
       }
@@ -69,10 +89,13 @@ namespace argos {
 
    private:
 
-		EGeometry m_eGeometry;
-		CVector3 m_cExtents;
-		Real m_fMass;
+      EGeometry m_eGeometry;
+      CVector3 m_cExtents;
+      Real m_fMass;
       SAnchor* m_psAnchor;
+
+      std::vector<CVector3> m_vecConvexHullPoints;
+      std::vector<CConvexHull::SFace> m_vecConvexHullFaces;
    };
 
 }

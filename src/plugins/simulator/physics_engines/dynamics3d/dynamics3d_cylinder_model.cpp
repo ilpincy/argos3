@@ -19,10 +19,10 @@ namespace argos {
    CDynamics3DCylinderModel::CDynamics3DCylinderModel(CDynamics3DEngine& c_engine,
                                                       CCylinderEntity& c_cylinder) :
       CDynamics3DSingleBodyObjectModel(c_engine, c_cylinder),
-      m_pcBody(nullptr) {
+      m_ptrBody(nullptr) {
       /* Fetch a collision shape for this model */
-      std::shared_ptr<btCollisionShape> ptrShape = 
-         CDynamics3DShapeManager::RequestBox(
+      const std::shared_ptr<btCollisionShape>& ptrShape = 
+         CDynamics3DShapeManager::RequestCylinder(
             btVector3(c_cylinder.GetRadius(),
                       c_cylinder.GetHeight() * 0.5f, 
                       c_cylinder.GetRadius()));
@@ -53,17 +53,12 @@ namespace argos {
       }
       /* Use the default friction */
       btScalar fFriction = GetEngine().GetDefaultFriction();
-      /* Set up the body */
-      CBody* m_pcBody = new CBody(*this,
-                                  sAnchor,
-                                  ptrShape,
-                                  CBody::SData(cStartTransform,
-                                               cCenterOfMassOffset,
-                                               cInertia,
-                                               fMass,
-                                               fFriction));
+      /* Set up body data */
+      CBody::SData sData(cStartTransform, cCenterOfMassOffset, cInertia, fMass, fFriction);
+      /* Create the body */
+      m_ptrBody = std::make_shared<CBody>(*this, &sAnchor, ptrShape, sData);
       /* Transfer the body to the base class */
-      m_vecBodies.push_back(m_pcBody);
+      m_vecBodies.push_back(m_ptrBody);
       /* Synchronize with the entity in the space */
       UpdateEntityStatus();
    }
@@ -71,14 +66,6 @@ namespace argos {
    /****************************************/
    /****************************************/
    
-   CDynamics3DCylinderModel::~CDynamics3DCylinderModel() {
-      /* Delete the body */
-      delete m_pcBody;
-   }
-   
-   /****************************************/
-   /****************************************/
-
    REGISTER_STANDARD_DYNAMICS3D_OPERATIONS_ON_ENTITY(CCylinderEntity, CDynamics3DCylinderModel);
 
    /****************************************/

@@ -17,31 +17,31 @@ subject to the following restrictions:
 #define BT_BOX_BOX__COLLISION_ALGORITHM_H
 
 #include "btActivatingCollisionAlgorithm.h"
-#include "BulletCollision/BroadphaseCollision/btBroadphaseProxy.h"
-#include "BulletCollision/BroadphaseCollision/btDispatcher.h"
-#include "BulletCollision/CollisionDispatch/btCollisionCreateFunc.h"
+#include <argos3/plugins/simulator/physics_engines/dynamics3d/bullet/BulletCollision/BroadphaseCollision/btBroadphaseProxy.h>
+#include <argos3/plugins/simulator/physics_engines/dynamics3d/bullet/BulletCollision/BroadphaseCollision/btDispatcher.h>
+#include <argos3/plugins/simulator/physics_engines/dynamics3d/bullet/BulletCollision/CollisionDispatch/btCollisionCreateFunc.h>
 
 class btPersistentManifold;
 
 ///box-box collision detection
 class btBoxBoxCollisionAlgorithm : public btActivatingCollisionAlgorithm
 {
-	bool	m_ownManifold;
-	btPersistentManifold*	m_manifoldPtr;
-	
+	bool m_ownManifold;
+	btPersistentManifold* m_manifoldPtr;
+
 public:
 	btBoxBoxCollisionAlgorithm(const btCollisionAlgorithmConstructionInfo& ci)
 		: btActivatingCollisionAlgorithm(ci) {}
 
-	virtual void processCollision (const btCollisionObjectWrapper* body0Wrap,const btCollisionObjectWrapper* body1Wrap,const btDispatcherInfo& dispatchInfo,btManifoldResult* resultOut);
+	virtual void processCollision(const btCollisionObjectWrapper* body0Wrap, const btCollisionObjectWrapper* body1Wrap, const btDispatcherInfo& dispatchInfo, btManifoldResult* resultOut);
 
-	virtual btScalar calculateTimeOfImpact(btCollisionObject* body0,btCollisionObject* body1,const btDispatcherInfo& dispatchInfo,btManifoldResult* resultOut);
+	virtual btScalar calculateTimeOfImpact(btCollisionObject* body0, btCollisionObject* body1, const btDispatcherInfo& dispatchInfo, btManifoldResult* resultOut);
 
-	btBoxBoxCollisionAlgorithm(btPersistentManifold* mf,const btCollisionAlgorithmConstructionInfo& ci,const btCollisionObjectWrapper* body0Wrap,const btCollisionObjectWrapper* body1Wrap);
+	btBoxBoxCollisionAlgorithm(btPersistentManifold* mf, const btCollisionAlgorithmConstructionInfo& ci, const btCollisionObjectWrapper* body0Wrap, const btCollisionObjectWrapper* body1Wrap);
 
 	virtual ~btBoxBoxCollisionAlgorithm();
 
-	virtual	void	getAllContactManifolds(btManifoldArray&	manifoldArray)
+	virtual void getAllContactManifolds(btManifoldArray& manifoldArray)
 	{
 		if (m_manifoldPtr && m_ownManifold)
 		{
@@ -49,18 +49,15 @@ public:
 		}
 	}
 
-
-	struct CreateFunc :public 	btCollisionAlgorithmCreateFunc
+	struct CreateFunc : public btCollisionAlgorithmCreateFunc
 	{
-		virtual	btCollisionAlgorithm* CreateCollisionAlgorithm(btCollisionAlgorithmConstructionInfo& ci, const btCollisionObjectWrapper* body0Wrap,const btCollisionObjectWrapper* body1Wrap)
+		virtual btCollisionAlgorithm* CreateCollisionAlgorithm(btCollisionAlgorithmConstructionInfo& ci, const btCollisionObjectWrapper* body0Wrap, const btCollisionObjectWrapper* body1Wrap)
 		{
 			int bbsize = sizeof(btBoxBoxCollisionAlgorithm);
 			void* ptr = ci.m_dispatcher1->allocateCollisionAlgorithm(bbsize);
-			return new(ptr) btBoxBoxCollisionAlgorithm(0,ci,body0Wrap,body1Wrap);
+			return new (ptr) btBoxBoxCollisionAlgorithm(0, ci, body0Wrap, body1Wrap);
 		}
 	};
-
 };
 
-#endif //BT_BOX_BOX__COLLISION_ALGORITHM_H
-
+#endif  //BT_BOX_BOX__COLLISION_ALGORITHM_H

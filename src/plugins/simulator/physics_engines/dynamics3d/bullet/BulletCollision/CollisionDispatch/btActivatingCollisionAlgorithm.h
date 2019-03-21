@@ -16,21 +16,20 @@ subject to the following restrictions:
 #ifndef __BT_ACTIVATING_COLLISION_ALGORITHM_H
 #define __BT_ACTIVATING_COLLISION_ALGORITHM_H
 
-#include "BulletCollision/BroadphaseCollision/btCollisionAlgorithm.h"
+#include <argos3/plugins/simulator/physics_engines/dynamics3d/bullet/BulletCollision/BroadphaseCollision/btCollisionAlgorithm.h>
 
 ///This class is not enabled yet (work-in-progress) to more aggressively activate objects.
 class btActivatingCollisionAlgorithm : public btCollisionAlgorithm
 {
-//	btCollisionObject* m_colObj0;
-//	btCollisionObject* m_colObj1;
+	//	btCollisionObject* m_colObj0;
+	//	btCollisionObject* m_colObj1;
+
+protected:
+	btActivatingCollisionAlgorithm(const btCollisionAlgorithmConstructionInfo& ci);
+
+	btActivatingCollisionAlgorithm(const btCollisionAlgorithmConstructionInfo& ci, const btCollisionObjectWrapper* body0Wrap, const btCollisionObjectWrapper* body1Wrap);
 
 public:
-
-	btActivatingCollisionAlgorithm (const btCollisionAlgorithmConstructionInfo& ci);
-
-	btActivatingCollisionAlgorithm (const btCollisionAlgorithmConstructionInfo& ci, const btCollisionObjectWrapper* body0Wrap,const btCollisionObjectWrapper* body1Wrap);
-
 	virtual ~btActivatingCollisionAlgorithm();
-
 };
-#endif //__BT_ACTIVATING_COLLISION_ALGORITHM_H
+#endif  //__BT_ACTIVATING_COLLISION_ALGORITHM_H

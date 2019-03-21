@@ -2,6 +2,7 @@
  * @file <argos3/plugins/robots/prototype/simulator/prototype_link_entity.cpp>
  *
  * @author Michael Allwright - <allsey87@gmail.com>
+ * @author Weixu Zhu - <zhuweixu_harry@126.com>
  */
 
 #include "prototype_link_entity.h"
@@ -45,6 +46,27 @@ namespace argos {
             Real fRadius;
             GetNodeAttribute(t_tree, "radius", fRadius);
             m_cExtents.Set(fRadius * 2.0f, fRadius * 2.0f, fRadius * 2.0f);
+         } else if(strLinkGeometry == "convex_hull") {
+            std::string strPoints;
+            std::vector<std::string> vecPoints;
+            CVector3 cPoint;
+            m_eGeometry = CONVEX_HULL;
+            m_cExtents.Set(0.0f, 0.0f, 0.0f);
+            /* Parse the points of the convex hull */
+            GetNodeText(t_tree, strPoints);
+            /* Remove any whitespace characters */
+            std::string::iterator itEraseBegin = 
+               std::remove_if(std::begin(strPoints), std::end(strPoints), ::isspace);
+            strPoints.erase(itEraseBegin, std::end(strPoints));
+            /* Split into individual points */
+            Tokenize(strPoints, vecPoints, "()");
+            for(const std::string& str_point : vecPoints) {
+               std::istringstream(str_point) >> cPoint;
+               m_vecConvexHullPoints.push_back(cPoint);
+            }
+            CConvexHull cConvexHull(m_vecConvexHullPoints);
+            /* store the faces in this object */
+            m_vecConvexHullFaces = cConvexHull.GetFaces();
          } else {
             /* unknown geometry requested */
             THROW_ARGOSEXCEPTION("Geometry \"" << strLinkGeometry << "\" is not implemented");

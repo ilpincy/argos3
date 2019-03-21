@@ -28,31 +28,12 @@ namespace argos {
    /****************************************/
 
    void CDynamics3DMagnetismPlugin::RegisterModel(CDynamics3DModel& c_model) {
-      CComposableEntity& cEntity = c_model.GetComposableEntity();
-      if(cEntity.HasComponent("magnets")) {
-         /* Get the list of bodies belonging to this model */
-         std::vector<CDynamics3DModel::CAbstractBody*>& cModelBodies = c_model.GetBodies();
-         /* Get the list of magnets belonging to the entity */
-         CMagnetEquippedEntity::SInstance::TVector& vecInstances =
-            cEntity.GetComponent<CMagnetEquippedEntity>("magnets").GetInstances();
-         /* For each magnet */
-         for(CMagnetEquippedEntity::SInstance& s_instance : vecInstances) {
-            std::vector<CDynamics3DModel::CAbstractBody*>::iterator itMagneticBody =
-               std::find_if(std::begin(cModelBodies),
-                            std::end(cModelBodies),
-                            [&s_instance] (CDynamics3DModel::CAbstractBody* pc_body) {
-               /* If both the body and the magnet share the same anchor,
-                  we have found our magnetic body */
-               return (&(s_instance.Anchor) == &(pc_body->GetAnchor()));
-            });
-            if(itMagneticBody != std::end(cModelBodies)) {
-               btTransform cOffset(btQuaternion(0.0f, 0.0f, 0.0f, 1.0f),
-                                   btVector3(s_instance.Offset.GetX(),
-                                             s_instance.Offset.GetZ(),
-                                            -s_instance.Offset.GetY()));
-               cOffset *= (*itMagneticBody)->GetData().CenterOfMassOffset;
-               m_vecDipoles.emplace_back(**itMagneticBody, s_instance.Magnet, cOffset);
-            }
+      for(std::shared_ptr<CDynamics3DModel::CAbstractBody>& ptr_body : c_model.GetBodies()) {
+         for(const CDynamics3DModel::CAbstractBody::SData::SDipole& s_dipole :
+             ptr_body->GetData().Dipoles) {
+            m_vecDipoles.emplace_back(ptr_body,
+                                      s_dipole.GetField,
+                                      s_dipole.Offset);
          }
       }
    }
@@ -90,7 +71,7 @@ namespace argos {
             const btVector3& cPositionDipole1 = cTransformDipole1.getOrigin();
             /* calculate the distance between the two magnetic bodies */
             btScalar fDistance = cPositionDipole0.distance(cPositionDipole1);
-            /* optimisation - don't calculate magnetism for dipoles more than m_fMaxDistance apart */
+            /* optimization - don't calculate magnetism for dipoles more than m_fMaxDistance apart */
             if(fDistance > m_fMaxDistance) {
                continue;
             }
@@ -99,13 +80,11 @@ namespace argos {
             const btVector3& cNormalizedSeparation =
                btVector3(cPositionDipole0 - cPositionDipole1) / fDistance;
             /* calculate the rotated field of dipole 0 */
-            const CVector3& cFieldDipole0 = itDipole0->Magnet->GetField();
-            const btVector3& cRotatedFieldDipole0 = itDipole0->Body->GetTransform().getBasis() *
-               btVector3(cFieldDipole0.GetX(), cFieldDipole0.GetZ(), -cFieldDipole0.GetY());
+            const btVector3& cRotatedFieldDipole0 =
+               itDipole0->Body->GetTransform().getBasis() * itDipole0->GetField();
             /* calculate the rotated field of dipole 1 */
-            const CVector3& cFieldDipole1 = itDipole1->Magnet->GetField();
-            const btVector3& cRotatedFieldDipole1 = itDipole1->Body->GetTransform().getBasis() *
-               btVector3(cFieldDipole1.GetX(), cFieldDipole1.GetZ(), -cFieldDipole1.GetY());
+            const btVector3& cRotatedFieldDipole1 =
+               itDipole1->Body->GetTransform().getBasis() * itDipole1->GetField();
             /* We now have cRotatedFieldDipole0 and cRotatedFieldDipole1 as the magnetic moments
                (i.e., m0, m1), cNormalizedSeparation as the direction unit vector from Dipole 1
                to Dipole 0 (i.e., n), fDistance is the scalar distance between the dipoles (i.e.,

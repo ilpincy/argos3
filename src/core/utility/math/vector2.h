@@ -14,7 +14,7 @@ namespace argos {
 #include <argos3/core/utility/math/general.h>
 #include <argos3/core/utility/math/angles.h>
 #include <argos3/core/utility/string_utilities.h>
-#include <initializer_list>
+#include <array>
 #include <iostream>
 #include <cmath>
 
@@ -65,11 +65,11 @@ namespace argos {
       /**
        * Class constructor.
        * It initializes the vector from Cartesian coordinates.
-       * @param lst_coordinates The coordinates.
+       * @param arr_coordinates The coordinates.
        * @see Set()
        */
-      CVector2(std::initializer_list<Real> lst_coordinates) {
-         Set(lst_coordinates);
+      CVector2(const std::array<Real, 2>& arr_coordinates) {
+         Set(arr_coordinates);
       }
 
       /**
@@ -129,18 +129,11 @@ namespace argos {
 
       /**
        * Sets the vector contents from Cartesian coordinates.
-       * @param lst_coordinates The coordinates.
+       * @param arr_coordinates The new coordinates.
        */
-      inline void Set(std::initializer_list<Real> lst_coordinates) {
-         ARGOS_ASSERT(lst_coordinates.size() == 2,
-                      "Error initializing CVector2. " <<
-                      "List contains " <<
-                      lst_coordinates.size() <<
-                      " coordinates (should be 2)");
-         std::initializer_list<Real>::iterator itValues = 
-            std::begin(lst_coordinates);
-         m_fX = *itValues; itValues++;
-         m_fY = *itValues;
+      inline void Set(const std::array<Real, 2>& arr_coordinates) {
+         m_fX = arr_coordinates[0];
+         m_fY = arr_coordinates[1];
       }
 
       /**

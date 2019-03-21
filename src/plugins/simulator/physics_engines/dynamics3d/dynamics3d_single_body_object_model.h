@@ -25,8 +25,8 @@ namespace argos {
       public:
 
          CBody(CDynamics3DModel& c_model,
-               SAnchor& s_anchor,
-               std::shared_ptr<btCollisionShape>& ptr_shape,
+               SAnchor* ps_anchor,
+               const std::shared_ptr<btCollisionShape>& ptr_shape,
                const SData& s_data);
 
          virtual ~CBody() {}

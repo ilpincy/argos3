@@ -12,16 +12,14 @@ subject to the following restrictions:
 3. This notice may not be removed or altered from any source distribution.
 */
 
-
-
 #ifndef BT_MULTIBODY_JOINT_FEEDBACK_H
 #define BT_MULTIBODY_JOINT_FEEDBACK_H
 
-#include "LinearMath/btSpatialAlgebra.h"
+#include <argos3/plugins/simulator/physics_engines/dynamics3d/bullet/LinearMath/btSpatialAlgebra.h>
 
 struct btMultiBodyJointFeedback
 {
-	btSpatialForceVector	m_reactionForces;
+	btSpatialForceVector m_reactionForces;
 };
 
-#endif //BT_MULTIBODY_JOINT_FEEDBACK_H
+#endif  //BT_MULTIBODY_JOINT_FEEDBACK_H

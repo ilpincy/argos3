@@ -66,11 +66,11 @@ namespace argos {
             GetNodeAttribute(*itCamera, "focal_length", cFocalLength);
             cProjectionMatrix(0,0) = cFocalLength.GetX(); // Fx
             cProjectionMatrix(1,1) = cFocalLength.GetY(); // Fy
-            /* set the principle point */
-            CVector2 cPrinciplePoint;
-            GetNodeAttribute(*itCamera, "principle_point", cPrinciplePoint);
-            cProjectionMatrix(0,2) = cPrinciplePoint.GetX(); // Px
-            cProjectionMatrix(1,2) = cPrinciplePoint.GetY(); // Py
+            /* set the principal point */
+            CVector2 cPrincipalPoint;
+            GetNodeAttribute(*itCamera, "principal_point", cPrincipalPoint);
+            cProjectionMatrix(0,2) = cPrincipalPoint.GetX(); // Px
+            cProjectionMatrix(1,2) = cPrincipalPoint.GetY(); // Py
             /* set the distortion parameters */
             /*
             CMatrix<1,5> cDistortionParameters;
@@ -132,7 +132,6 @@ namespace argos {
       CTransformationMatrix3 cWorldToAnchorTransform;
       CTransformationMatrix3 cWorldToCameraTransform;
       CTransformationMatrix3 cCameraToWorldTransform;
-      //CTransformationMatrix3 cCameraToWorldTransform;
       CVector3 cCameraLocation, cLookAt, cUp;
       CVector3 cX, cY, cZ;
       CVector3 cNearCenter, cNearTopLeft, cNearTopRight, cNearBottomLeft, cNearBottomRight;
@@ -289,7 +288,7 @@ namespace argos {
                    "To add a camera to the plugin, create a camera node as shown in the following\n"
                    "example. A camera is defined by its range (how close and how far the camera\n"
                    "can see), its anchor and its position and orientation offsets from that\n"
-                   "that anchor, its focal length and principle point (which define the\n"
+                   "that anchor, its focal length and principal point (which define the\n"
                    "projection matrix), and its resolution.\n\n"
                    "  <controllers>\n"
                    "    ...\n"
@@ -300,7 +299,7 @@ namespace argos {
                    "        <cameras implementation=\"default\" show_frustum=\"true\">\n"
                    "          <camera id=\"camera0\" range=\"0.025:0.25\" anchor=\"origin\"\n"
                    "                  position=\"0.1,0,0.1\" orientation=\"90,-90,0\"\n"
-                   "                  focal_length=\"800,800\" principle_point=\"320,240\"\n"
+                   "                  focal_length=\"800,800\" principal_point=\"320,240\"\n"
                    "                  resolution=\"640,480\"/>\n"
                    "        </cameras>\n"
                    "        ...\n"
@@ -325,7 +324,7 @@ namespace argos {
                    "        <cameras implementation=\"default\" show_frustum=\"true\">\n"
                    "          <camera id=\"camera0\" range=\"0.025:0.25\" anchor=\"origin\"\n"
                    "                  position=\"0.1,0,0.1\" orientation=\"90,-90,0\"\n"
-                   "                  focal_length=\"800,800\" principle_point=\"320,240\"\n"
+                   "                  focal_length=\"800,800\" principal_point=\"320,240\"\n"
                    "                  resolution=\"640,480\">\n"
                    "             <led_detector medium=\"leds\" show_rays=\"true\"/>\n"
                    "          </camera>\n"

@@ -2,6 +2,7 @@
  * @file <argos3/plugins/simulator/physics_engines/dynamics3d/dynamics3d_shape_manager.cpp>
  *
  * @author Michael Allwright - <allsey87@gmail.com>
+ * @author Weixu Zhu- <zhuweixu_harry@126.com>
  */
 
 #include "dynamics3d_shape_manager.h"
@@ -101,6 +102,42 @@ namespace argos {
    CDynamics3DShapeManager::SSphereResource::SSphereResource(btScalar f_radius) : 
       Radius(f_radius),
       Shape(new btSphereShape(f_radius)) {}
+
+   /****************************************/
+   /****************************************/
+
+   std::vector<CDynamics3DShapeManager::SConvexHullResource> 
+      CDynamics3DShapeManager::m_vecConvexHullResources;
+
+   /****************************************/
+   /****************************************/
+
+   std::shared_ptr<btCollisionShape> CDynamics3DShapeManager::RequestConvexHull(const std::vector<btVector3>& vec_points) {
+      std::vector<SConvexHullResource>::iterator itConvexHullResource;      
+      for(itConvexHullResource = std::begin(m_vecConvexHullResources);
+          itConvexHullResource != std::end(m_vecConvexHullResources);
+          ++itConvexHullResource) {
+         if(itConvexHullResource->Points == vec_points) break;
+      }
+      /* If the resource doesn't exist, create a new one */
+      if(itConvexHullResource == std::end(m_vecConvexHullResources)) {
+         itConvexHullResource = 
+            m_vecConvexHullResources.emplace(itConvexHullResource, vec_points);
+      }
+      return std::static_pointer_cast<btCollisionShape>(itConvexHullResource->Shape);
+   }
+
+   /****************************************/
+   /****************************************/
+
+   CDynamics3DShapeManager::SConvexHullResource::SConvexHullResource(const std::vector<btVector3>& vec_points) :
+      Points(vec_points),
+      Shape(new btConvexHullShape) {
+      Shape->setMargin(0);
+      for(const btVector3& c_point : vec_points) {
+         Shape->addPoint(c_point);
+      }
+   }
 
    /****************************************/
    /****************************************/

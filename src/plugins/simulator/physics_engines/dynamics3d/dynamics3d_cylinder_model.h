@@ -24,11 +24,11 @@ namespace argos {
       CDynamics3DCylinderModel(CDynamics3DEngine& c_engine,
                           CCylinderEntity& c_cylinder);
 
-      virtual ~CDynamics3DCylinderModel();
+      virtual ~CDynamics3DCylinderModel() {}
 
    private:
 
-      CBody* m_pcBody;
+      std::shared_ptr<CBody> m_ptrBody;
 
    };
 }

@@ -113,6 +113,34 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   void CTagEquippedEntity::AddTag(const CVector3& c_position,
+                                   const CQuaternion& c_orientation,
+                                   SAnchor& s_anchor,
+                                   const CRadians& c_observable_angle,
+                                   Real f_side_length,
+                                   const std::string& str_payload) {
+      /* create the new tag entity */
+      CTagEntity* pcTag =
+         new CTagEntity(this,
+                        "tag_" + std::to_string(m_vecInstances.size()),
+                        c_position,
+                        c_orientation,
+                        c_observable_angle,
+                        f_side_length,
+                        str_payload);
+      /* add it to the instances vector */
+      m_vecInstances.emplace_back(*pcTag,
+                                  s_anchor,
+                                  c_position,
+                                  c_orientation);
+      /* inform the base class about the new entity */
+      AddComponent(*pcTag);
+      UpdateComponents();
+   }
+
+   /****************************************/
+   /****************************************/
+
    CTagEntity& CTagEquippedEntity::GetTag(UInt32 un_index) {
       ARGOS_ASSERT(un_index < m_vecInstances.size(),
                    "CTagEquippedEntity::GetTag(), id=\"" <<

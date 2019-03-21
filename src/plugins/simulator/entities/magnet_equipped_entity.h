@@ -42,7 +42,7 @@ namespace argos {
          SInstance(CMagnetEntity& c_magnet,
                    SAnchor& s_anchor,
                    const CVector3& c_position_offset);
-         using TVector = std::vector<SInstance>;        
+         using TVector = std::vector<SInstance>;
       };
 
    public:
@@ -76,6 +76,12 @@ namespace argos {
        * @see GetAllMagnets()
        */
       CMagnetEntity& GetMagnet(UInt32 un_index);
+
+      CMagnetEntity& AddMagnet(const std::string& str_id, 
+                               SAnchor& s_anchor,
+                               const CVector3& c_position_offset,
+                               const CVector3& c_passive_field,
+                               const CVector3& c_active_field = CVector3());
 
       SInstance::TVector& GetInstances() {
          return m_vecInstances;

@@ -110,6 +110,20 @@ namespace argos {
                    m_vecInstances.size());
       return m_vecInstances[un_index].Magnet;
    }
+
+   /****************************************/
+   /****************************************/
+
+   CMagnetEntity& CMagnetEquippedEntity::AddMagnet(const std::string& str_id,
+                                                   SAnchor& s_anchor,
+                                                   const CVector3& c_position_offset,
+                                                   const CVector3& c_passive_field,
+                                                   const CVector3& c_active_field) {
+      CMagnetEntity* pcMagnet = new CMagnetEntity(this, str_id, c_passive_field, c_active_field);
+      m_vecInstances.emplace_back(*pcMagnet, s_anchor, c_position_offset);
+      AddComponent(*pcMagnet);
+      return *pcMagnet;
+   }
    
    /****************************************/
    /****************************************/
