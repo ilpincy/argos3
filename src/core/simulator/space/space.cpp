@@ -174,7 +174,7 @@ namespace argos {
       }
       /* If no engine can house the entity, bomb out */
       if(vecPotentialEngines.empty()) {
-         THROW_ARGOSEXCEPTION("No physics engine can house entity \"" << pcToAdd->GetId() << "\".");
+         THROW_ARGOSEXCEPTION("No physics engines available to house entity \"" << pcToAdd->GetId() << "\"@(" << cPos << ").");
       }
       /* If the entity is not movable, add the entity to all the matching engines */
       if(! c_entity.IsMovable()) {
@@ -183,14 +183,21 @@ namespace argos {
             bAdded |= vecPotentialEngines[i]->AddEntity(*pcToAdd);
          }
          if(!bAdded) {
-            THROW_ARGOSEXCEPTION("No physics engine can house entity \"" << pcToAdd->GetId() << "\".");
+            std::ostringstream ossMsg;
+            ossMsg << "None of the matching physics engines (";
+            ossMsg << "\"" << vecPotentialEngines[0]->GetId() << "\"";
+            for(size_t i = 1; i < vecPotentialEngines.size(); ++i) {
+               ossMsg << ",\"" << vecPotentialEngines[i]->GetId() << "\"";
+            }
+            ossMsg << ") can house non-movable entity \"" << pcToAdd->GetId() << "\"@(" << cPos << ").";
+            THROW_ARGOSEXCEPTION(ossMsg.str());
          }
       }
       /* If the entity is movable, only one engine can be associated to the embodied entity */
       else if(vecPotentialEngines.size() == 1) {
          /* Only one engine matches, bingo! */
          if(!vecPotentialEngines[0]->AddEntity(*pcToAdd)) {
-            THROW_ARGOSEXCEPTION("No physics engine can house entity \"" << pcToAdd->GetId() << "\".");
+            THROW_ARGOSEXCEPTION("The matching physics engine (\"" << vecPotentialEngines[0]->GetId() << "\"), cannot house movable entity \"" << pcToAdd->GetId()  << "\"@(" << cPos << ").");
          }
       }
       else {
@@ -199,7 +206,14 @@ namespace argos {
             if(vecPotentialEngines[i]->AddEntity(*pcToAdd)) return;
          }
          /* No engine can house the entity */
-         THROW_ARGOSEXCEPTION("No physics engine can house entity \"" << pcToAdd->GetId() << "\".");
+         std::ostringstream ossMsg;
+         ossMsg << "None of the matching physics engines (";
+         ossMsg << "\"" << vecPotentialEngines[0]->GetId() << "\"";
+         for(size_t i = 1; i < vecPotentialEngines.size(); ++i) {
+            ossMsg << ",\"" << vecPotentialEngines[i]->GetId() << "\"";
+         }
+         ossMsg << ") can house movable entity \"" << pcToAdd->GetId() << "\"@(" << cPos << ").";
+         THROW_ARGOSEXCEPTION(ossMsg.str());
       }
    }
       
