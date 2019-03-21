@@ -72,9 +72,10 @@ if(NOT ARGOS_FORCE_NO_QTOPENGL)
             
             # All the required libraries are OK
             set(ARGOS_COMPILE_QTOPENGL ON)
-	          if(APPLE)
-	            include_directories(${OPENGL_INCLUDE_DIR}/Headers)
-	          endif(APPLE)
+            if(APPLE)
+              add_definitions(-DGL_SILENCE_DEPRECATION)
+              include_directories(${OPENGL_INCLUDE_DIR}/Headers)
+            endif(APPLE)
             # These are required by Qt5
             set(CMAKE_AUTOMOC ON)
             set(CMAKE_CXX_STANDARD 14)
