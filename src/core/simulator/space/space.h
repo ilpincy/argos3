@@ -140,7 +140,7 @@ namespace argos {
       /**
        * Returns the entity with the given id.
        * @param str_id The id of the wanted entity
-       * @return The entity with the given id.       
+       * @return The entity with the given id.
        * @throws CARGoSException if an entity with the wanted id does not exist
        */
       inline CEntity& GetEntity(const std::string& str_id) {
@@ -157,7 +157,7 @@ namespace argos {
        * The pattern must be a valid regexp.
        * @param t_buffer A vector filled with all the entities that match the given pattern.
        * @param str_pattern The pattern to match.
-       * @return The entity with the given id.       
+       * @return The entity with the given id.
        * @throws CARGoSException if the regexp is not valid.
        */
       void GetEntitiesMatching(CEntity::TVector& t_buffer,
@@ -208,7 +208,14 @@ namespace argos {
        * @see TMapPerType
        * @see GetEntityMapPerTypePerId()
        */
-      TMapPerType& GetEntitiesByType(const std::string& str_type);
+
+      TMapPerType& GetEntitiesByType(const std::string& str_type) {
+        return GetEntitiesByTypeImpl(str_type);
+      }
+
+      const TMapPerType& GetEntitiesByType(const std::string& str_type) const {
+        return GetEntitiesByTypeImpl(str_type);
+      }
 
       /**
        * Returns the floor entity.
@@ -392,7 +399,7 @@ namespace argos {
       virtual void AddControllableEntity(CControllableEntity& c_entity);
       virtual void RemoveControllableEntity(CControllableEntity& c_entity);
       virtual void AddEntityToPhysicsEngine(CEmbodiedEntity& c_entity);
-      
+
    protected:
 
       virtual void UpdateControllableEntitiesAct() = 0;
@@ -452,6 +459,9 @@ namespace argos {
 
       /** A pointer to the list of media */
       CMedium::TVector* m_ptMedia;
+
+  private:
+      TMapPerType& GetEntitiesByTypeImpl(const std::string& str_type) const;
    };
 
    /****************************************/
