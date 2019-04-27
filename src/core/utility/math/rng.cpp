@@ -128,6 +128,27 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   UInt32 CRandom::CRNG::Poisson(Real f_mean)
+   {
+      /* This is the Devroye method. 
+         see http://www.nrbook.com/devroye/Devroye_files/chapter_six.pdf
+      */
+      UInt32 unRetVal = 0;
+      Real fP, fS, fU;
+      fP = Exp(-f_mean);
+      fS = fP;
+      fU = Uniform(CRange<Real>(0.0f, 1.0f));
+      while(fU > fS) {
+         unRetVal += 1;
+         fP *= f_mean / unRetVal;
+         fS += fP;
+      }
+      return unRetVal;
+   }
+
+   /****************************************/
+   /****************************************/
+
    Real CRandom::CRNG::Gaussian(Real f_std_dev,
                                 Real f_mean) {
       /* This is the Box-Muller method in its cartesian variant

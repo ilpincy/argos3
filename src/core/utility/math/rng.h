@@ -175,6 +175,13 @@ namespace argos {
           * @return a random value from an exponential distribution.
           */
          Real Exponential(Real f_mean);
+
+         /**
+          * Returns a random value from a Poisson distribution.
+          * @param f_mean the mean of the Poisson distribution.
+          * @return a random value from the Poisson distribution.
+          */
+         UInt32 Poisson(Real f_mean);
          
          /**
           * Returns a random value from a Gaussian distribution.
