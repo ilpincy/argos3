@@ -186,14 +186,14 @@ namespace argos {
             m_fValues[1] * m_fValues[3] +
             m_fValues[0] * m_fValues[2];
 
-         if(fTest > 0.499f) {
+         if(fTest > 0.49999f) {
             /* Gimbal lock */
             c_x_angle = CRadians::ZERO;
             c_y_angle = CRadians::PI_OVER_TWO;
             c_z_angle = ATan2(2.0f * (m_fValues[1] * m_fValues[2] + m_fValues[0] * m_fValues[3]),
                               1.0f - 2.0f * (m_fValues[1] * m_fValues[1] + m_fValues[3] * m_fValues[3]));
          }
-         else if(fTest < -0.499f) {
+         else if(fTest < -0.49999f) {
             /* Gimbal lock */
             c_x_angle = CRadians::ZERO;
             c_y_angle = -CRadians::PI_OVER_TWO;
