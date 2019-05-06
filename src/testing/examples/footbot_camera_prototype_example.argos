@@ -90,7 +90,7 @@
     <dynamics2d id="dyn2d" iterations="20" />
     <dynamics3d id="dyn3d" iterations="20">
       <gravity g="9.8" />
-      <floor height="0.01"/>
+      <floor />
     </dynamics3d>
   </physics_engines>
 

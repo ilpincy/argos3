@@ -19,9 +19,8 @@ namespace argos {
    class CDynamics3DFloorPlugin : public CDynamics3DPlugin {
    public:
       CDynamics3DFloorPlugin() :
-         m_cFloorExtents(0.0f, 0.0f, 0.0f),
          m_cFloorOrigin(0.0f, 0.0f, 0.0f),
-         m_cFloorShape(btVector3(0.0f, 0.0f, 0.0f)),
+         m_cFloorShape(btVector3(0.0f, 1.0f, 0.0f), 0.0f),
          m_cFloor(0.0f, nullptr, nullptr) {}
       
       ~CDynamics3DFloorPlugin() {}
@@ -41,9 +40,8 @@ namespace argos {
    private:
 
       btScalar m_fFriction;
-      btVector3 m_cFloorExtents;
       btVector3 m_cFloorOrigin;
-      btBoxShape m_cFloorShape;
+      btStaticPlaneShape m_cFloorShape;
       btRigidBody m_cFloor;
    };
    
