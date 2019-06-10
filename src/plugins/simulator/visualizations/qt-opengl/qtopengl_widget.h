@@ -55,7 +55,7 @@ namespace argos {
 
    class CQTOpenGLWidget : public QOpenGLWidget, protected QOpenGLFunctions {
 
-      Q_OBJECT
+    Q_OBJECT
 
     public:
 
@@ -63,18 +63,24 @@ namespace argos {
        * Data regarding frame grabbing
        */
       struct SFrameGrabData {
-         bool Grabbing;     // true when grabbing
-         QString Directory; // output directory
-         QString BaseName;  // frame file basename
-         QString Format;    // output file format
-         SInt32 Quality;    // output quality [0-100]
+         bool GUIGrabbing;          // true when grabbing enabled from GUI
+         bool HeadlessGrabbing;     // true when headless grabbing enabled
+         UInt32 HeadlessFrameRate;  // Grab every nth frame
+         QString Directory;         // output directory
+         QString BaseName;          // frame file basename
+         QString Format;            // output file format
+         SInt32 Quality;            // output quality [0-100]
+         QSize  Size;               // Frame size
 
          SFrameGrabData() :
-            Grabbing(false),
+            GUIGrabbing(false),
+            HeadlessGrabbing(false),
+            HeadlessFrameRate(1),
             Directory("."),
             BaseName("frame_"),
             Format("png"),
-            Quality(-1) {}
+            Quality(-1),
+            Size(1600, 1200) {}
 
          void Init(TConfigurationNode& t_tree);
       };

@@ -31,7 +31,7 @@
 namespace argos {
 
    static const Real ASPECT_RATIO         = 4.0f / 3.0f;
-   
+
    /****************************************/
    /****************************************/
 
@@ -54,7 +54,7 @@ namespace argos {
       m_pcFloorTexture(NULL),
       m_pcGroundTexture(NULL) {
       /* Set the widget's size policy */
-      QSizePolicy cSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+      QSizePolicy cSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
       cSizePolicy.setHeightForWidth(true);
       setSizePolicy(cSizePolicy);
       /* Grab focus when clicked on */
@@ -186,7 +186,7 @@ namespace argos {
       // cPainter.drawText(rect(), QString("%1 FPS").arg(m_fFPS, 0, 'f', 0));
       cPainter.end();
       /* Grab frame, if necessary */
-      if(m_sFrameGrabData.Grabbing) {
+      if(m_sFrameGrabData.GUIGrabbing || m_sFrameGrabData.HeadlessGrabbing) {
          QString strFileName = QString("%1/%2%3.%4")
             .arg(m_sFrameGrabData.Directory)
             .arg(m_sFrameGrabData.BaseName)
@@ -550,7 +550,7 @@ namespace argos {
    /****************************************/
 
    void CQTOpenGLWidget::SetGrabFrame(bool b_grab_on) {
-      m_sFrameGrabData.Grabbing = b_grab_on;
+     m_sFrameGrabData.GUIGrabbing = b_grab_on;
    }
 
    /****************************************/
@@ -975,6 +975,27 @@ namespace argos {
          Format = strBuffer.c_str();
          /* Parse quality */
          GetNodeAttributeOrDefault(tNode, "quality", Quality, Quality);
+
+         /* Parse headless grabbing */
+         GetNodeAttributeOrDefault(tNode,
+                                   "headless_grabbing",
+                                   HeadlessGrabbing,
+                                   HeadlessGrabbing);
+         /* Parse headless frame size */
+         strBuffer = "1600x1200";
+         GetNodeAttributeOrDefault(tNode,
+                                   "headless_frame_size",
+                                   strBuffer,
+                                   strBuffer);
+         uint dims[2];
+         ParseValues(strBuffer, 2, dims, 'x');
+         Size = QSize(dims[0], dims[1]);
+
+         /* Parse headless frame rate */
+         GetNodeAttributeOrDefault(tNode,
+                                   "headless_frame_rate",
+                                   HeadlessFrameRate,
+                                   HeadlessFrameRate);
       }
    }
 
