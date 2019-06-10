@@ -82,14 +82,9 @@ namespace argos {
          }
       }
 
-      virtual QSize minimumSize () const {
-         return QSize(320,240);
-      }
-
       virtual QSize sizeHint () const {
          return QSize(640,480);
       }
-
       virtual void setGeometry(const QRect& r) {
          /* Set the layout geometry */
          QLayout::setGeometry(r);
@@ -163,8 +158,12 @@ namespace argos {
       /* Should we play instantly? */
       bool bAutoPlay = false;
       GetNodeAttributeOrDefault(t_tree, "autoplay", bAutoPlay, bAutoPlay);
-      if(bAutoPlay) {
-         PlayExperiment();
+      if (bAutoPlay) {
+        if (m_pcOpenGLWidget->GetFrameGrabData().HeadlessGrabbing) {
+          FastForwardExperiment();
+        } else {
+          PlayExperiment();
+        }
       }
    }
 
@@ -477,6 +476,15 @@ namespace argos {
       m_pcOpenGLWidget->setCursor(QCursor(Qt::OpenHandCursor));
       m_pcOpenGLWidget->GetCamera().Init(t_tree);
       m_pcOpenGLWidget->GetFrameGrabData().Init(t_tree);
+
+      /* Set headless grabbing frame size after it has been parsed */
+      if (m_pcOpenGLWidget->GetFrameGrabData().HeadlessGrabbing) {
+        setMinimumSize(m_pcOpenGLWidget->GetFrameGrabData().Size);
+        m_pcOpenGLWidget->SetDrawFrameEvery(
+            m_pcOpenGLWidget->GetFrameGrabData().HeadlessFrameRate);
+      } else {
+        setMinimumSize(QSize(320, 240));
+      }
       /* Invert mouse controls? */
       bool bInvertMouse;
       GetNodeAttributeOrDefault(t_tree, "invert_mouse", bInvertMouse, false);
@@ -799,6 +807,13 @@ namespace argos {
       /* Change state and emit signal */
       m_eExperimentState = EXPERIMENT_DONE;
       emit ExperimentDone();
+
+      /*
+       * Invisible window does not close automatically when simulation finishes
+       */
+      if (m_pcOpenGLWidget->GetFrameGrabData().HeadlessGrabbing) {
+        qApp->exit();
+      }
    }
 
    /****************************************/
