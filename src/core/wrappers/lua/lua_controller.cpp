@@ -7,7 +7,10 @@
 #include "lua_controller.h"
 #include <argos3/core/utility/logging/argos_log.h>
 
+#include <argos3/core/wrappers/lua/lua_quaternion.h>
 #include <argos3/core/wrappers/lua/lua_utility.h>
+#include <argos3/core/wrappers/lua/lua_vector2.h>
+#include <argos3/core/wrappers/lua/lua_vector3.h>
 
 namespace argos {
 
@@ -146,6 +149,10 @@ namespace argos {
    void CLuaController::CreateLuaState() {
       /* Register functions */
       CLuaUtility::RegisterLoggerWrapper(m_ptLuaState);
+      /* Register metatables */
+      CLuaVector2::RegisterMetatable(m_ptLuaState);
+      CLuaVector3::RegisterMetatable(m_ptLuaState);
+      CLuaQuaternion::RegisterMetatable(m_ptLuaState);
       /* Create a table that will contain the state of the robot */
       lua_newtable(m_ptLuaState);
       /* Set the id of the robot */
