@@ -138,7 +138,7 @@ namespace argos {
                        lua_tonumber(pt_state, -3),
                        lua_tonumber(pt_state, -2),
                        lua_tonumber(pt_state, -1));
-      /* clean up the stack (pop w,x,y,z values and the copy of the table) */
+      /* clean up the stack (pop w, x, y, and z values and the copy of the table) */
       lua_pop(pt_state, 5);
       return 0;
    }
@@ -177,13 +177,13 @@ namespace argos {
    /****************************************/
 
    int CLuaQuaternion::Equal(lua_State* pt_state) {
-      CQuaternion cLeftQuaternion;
-      CQuaternion cRightQuaternion;
-      /* pop the operands from the stack */
-      FromLuaState(pt_state, 1, cLeftQuaternion);
-      FromLuaState(pt_state, 2, cRightQuaternion);
-      /* push the result onto the stack */
-      lua_pushboolean(pt_state, cLeftQuaternion == cRightQuaternion);
+      CQuaternion cFirstQuaternion;
+      CQuaternion cSecondQuaternion;
+      /* copy the operands from the stack */
+      FromLuaState(pt_state, 1, cFirstQuaternion);
+      FromLuaState(pt_state, 2, cSecondQuaternion);
+      /* push the result onto the stack and return it */
+      lua_pushboolean(pt_state, cFirstQuaternion == cSecondQuaternion);
       return 1;
    }
 
@@ -191,15 +191,15 @@ namespace argos {
    /****************************************/
 
    int CLuaQuaternion::Multiply(lua_State* pt_state) {
-      CQuaternion cLeftQuaternion;
-      CQuaternion cRightQuaternion;
-      /* pop the operands from the stack */
-      FromLuaState(pt_state, 1, cLeftQuaternion);
-      FromLuaState(pt_state, 2, cRightQuaternion);
+      CQuaternion cFirstQuaternion;
+      CQuaternion cSecondQuaternion;
+      /* copy the operands from the stack */
+      FromLuaState(pt_state, 1, cFirstQuaternion);
+      FromLuaState(pt_state, 2, cSecondQuaternion);
       /* perform the multiplication */
-      cLeftQuaternion *= cRightQuaternion;
-      /* push the result onto the stack */
-      ToLuaState(pt_state, cLeftQuaternion);
+      cFirstQuaternion *= cSecondQuaternion;
+      /* push the result onto the stack and return it */
+      ToLuaState(pt_state, cFirstQuaternion);
       return 1;
    }
 
@@ -208,11 +208,11 @@ namespace argos {
 
    int CLuaQuaternion::Normalize(lua_State* pt_state) {
       CQuaternion cQuaternion;
-      /* pop the operand from the stack */
+      /* copy the operand from the stack */
       FromLuaState(pt_state, 1, cQuaternion);
       /* apply operation */
       cQuaternion.Normalize();
-      /* push the result (the operand) onto the stack */
+      /* modify the operand in place and return it */
       ToLuaState(pt_state, 1, cQuaternion);
       return 1;
    }
@@ -222,9 +222,9 @@ namespace argos {
 
    int CLuaQuaternion::Inverse(lua_State* pt_state) {
       CQuaternion cQuaternion;
-      /* pop the operand from the stack */
+      /* copy the operand from the stack */
       FromLuaState(pt_state, 1, cQuaternion);
-      /* push the result onto the stack */
+      /* push the result onto the stack and return it */
       ToLuaState(pt_state, cQuaternion.Inverse());
       return 1;
    }
@@ -236,11 +236,11 @@ namespace argos {
       CQuaternion cQuaternion;
       CRadians cAngle;
       CVector3 cAxis;
-      /* pop the operand from the stack */
+      /* copy the operand from the stack */
       FromLuaState(pt_state, 1, cQuaternion);
       /* apply operation */
       cQuaternion.ToAngleAxis(cAngle, cAxis);
-      /* push the results onto the stack */
+      /* push the results onto the stack and return them */
       lua_pushnumber(pt_state, cAngle.GetValue());
       CLuaVector3::ToLuaState(pt_state, cAxis);
       return 2;
@@ -251,12 +251,12 @@ namespace argos {
 
    int CLuaQuaternion::ToString(lua_State* pt_state) {
       CQuaternion cQuaternion;
-      /* pop the operand from the stack */
+      /* copy the operand from the stack */
       FromLuaState(pt_state, 1, cQuaternion);
-      /* convert to string */
+      /* convert it to a string */
       std::ostringstream ossOutput;
       ossOutput << cQuaternion;
-      /* push the string onto the stack */
+      /* push the string onto the stack and return it */
       lua_pushstring(pt_state, ossOutput.str().c_str());
       return 1;
    }

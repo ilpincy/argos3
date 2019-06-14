@@ -126,7 +126,7 @@ namespace argos {
       c_vector.Set(lua_tonumber(pt_state, -3),
                    lua_tonumber(pt_state, -2),
                    lua_tonumber(pt_state, -1));
-      /* clean up the stack (pop x,y,z values and the copy of the table) */
+      /* clean up the stack (pop x, y, and z values and the copy of the table) */
       lua_pop(pt_state, 4);
       return 0;
    }
@@ -164,12 +164,12 @@ namespace argos {
    /****************************************/
 
    int CLuaVector3::Equal(lua_State* pt_state) {
-      CVector3 cLeftVector, cRightVector;
-      /* pop the operands from the stack */
-      FromLuaState(pt_state, 1, cLeftVector);
-      FromLuaState(pt_state, 2, cRightVector);
-      /* push the result onto the stack */
-      lua_pushboolean(pt_state, cLeftVector == cRightVector);
+      CVector3 cFirstVector, cSecondVector;
+      /* copy the operands from the stack */
+      FromLuaState(pt_state, 1, cFirstVector);
+      FromLuaState(pt_state, 2, cSecondVector);
+      /* push the result onto the stack and return it */
+      lua_pushboolean(pt_state, cFirstVector == cSecondVector);
       return 1;
    }
 
@@ -177,12 +177,12 @@ namespace argos {
    /****************************************/
 
    int CLuaVector3::Add(lua_State* pt_state) {
-      CVector3 cLeftVector, cRightVector;
-      /* pop the operands from the stack */
-      FromLuaState(pt_state, 1, cLeftVector);
-      FromLuaState(pt_state, 2, cRightVector);
-      /* push the result onto the stack */
-      ToLuaState(pt_state, cLeftVector + cRightVector);
+      CVector3 cFirstVector, cSecondVector;
+      /* copy the operands from the stack */
+      FromLuaState(pt_state, 1, cFirstVector);
+      FromLuaState(pt_state, 2, cSecondVector);
+      /* push the result onto the stack and return it */
+      ToLuaState(pt_state, cFirstVector + cSecondVector);
       return 1;
    }
 
@@ -192,12 +192,12 @@ namespace argos {
    int CLuaVector3::Multiply(lua_State* pt_state) {
       CVector3 cVector;
       Real fScalar;
-      /* assume the right operand is the scalar */
+      /* assume the second operand is the scalar */
       if(lua_isnumber(pt_state, 2)) {
          fScalar = lua_tonumber(pt_state, 2);
          FromLuaState(pt_state, 1, cVector);
       }
-      /* assume the left operand is the scalar */
+      /* assume the first operand is the scalar */
       else if(lua_isnumber(pt_state, 1)) {
          fScalar = lua_tonumber(pt_state, 1);
          FromLuaState(pt_state, 2, cVector);
@@ -207,7 +207,7 @@ namespace argos {
          lua_pushstring(pt_state, "invalid arguments for multiplication by scalar");
          return lua_error(pt_state);
       }
-      /* return the result */
+      /* push the result onto the stack and return it */
       cVector *= fScalar;
       ToLuaState(pt_state, cVector);
       return 1;
@@ -217,12 +217,12 @@ namespace argos {
    /****************************************/
 
    int CLuaVector3::Subtract(lua_State* pt_state) {
-      CVector3 cLeftVector, cRightVector;
-      /* pop the operands from the stack */
-      FromLuaState(pt_state, 1, cLeftVector);
-      FromLuaState(pt_state, 2, cRightVector);
-      /* push the result onto the stack */
-      ToLuaState(pt_state, cLeftVector - cRightVector);
+      CVector3 cFirstVector, cSecondVector;
+      /* copy the operands from the stack */
+      FromLuaState(pt_state, 1, cFirstVector);
+      FromLuaState(pt_state, 2, cSecondVector);
+      /* push the result onto the stack and return it */
+      ToLuaState(pt_state, cFirstVector - cSecondVector);
       return 1;
    }
 
@@ -231,9 +231,9 @@ namespace argos {
 
    int CLuaVector3::UnaryMinus(lua_State* pt_state) {
       CVector3 cVector;
-      /* pop the operand from the stack */
+      /* copy the operand from the stack */
       FromLuaState(pt_state, 1, cVector);
-      /* push the result onto the stack */
+      /* push the result onto the stack and return it */
       ToLuaState(pt_state, -cVector);
       return 1;
    }
@@ -243,9 +243,9 @@ namespace argos {
 
    int CLuaVector3::Normalize(lua_State* pt_state) {
       CVector3 cVector;
-      /* pop the operand from the stack */
+      /* copy the operand from the stack */
       FromLuaState(pt_state, 1, cVector);
-      /* push the result (the operand) onto the stack */
+      /* modify the operand in place and return it */
       ToLuaState(pt_state, 1, cVector.Normalize());
       return 1;
    }
@@ -255,9 +255,9 @@ namespace argos {
 
    int CLuaVector3::Length(lua_State* pt_state) {
       CVector3 cVector;
-      /* pop the operand from the stack */
+      /* copy the operand from the stack */
       FromLuaState(pt_state, 1, cVector);
-      /* push the result (the operand) onto the stack */
+      /* push the result onto the stack and return it */
       lua_pushnumber(pt_state, cVector.Length());
       return 1;
    }
@@ -266,12 +266,14 @@ namespace argos {
    /****************************************/
 
    int CLuaVector3::CrossProduct(lua_State* pt_state) {
-      CVector3 cLeftVector, cRightVector;
-      /* pop the operands from the stack */
-      FromLuaState(pt_state, 1, cLeftVector);
-      FromLuaState(pt_state, 2, cRightVector);
-      /* push the result (the left operand) onto the stack */
-      ToLuaState(pt_state, 1, cLeftVector.CrossProduct(cRightVector));
+      CVector3 cFirstVector, cSecondVector;
+      /* copy the operands from the stack */
+      FromLuaState(pt_state, 1, cFirstVector);
+      FromLuaState(pt_state, 2, cSecondVector);
+      /* pop the second operand from the stack */
+      lua_pop(pt_state, 1);
+      /* modify the first operand in place and return it */
+      ToLuaState(pt_state, 1, cFirstVector.CrossProduct(cSecondVector));
       return 1;
    }
 
@@ -279,12 +281,12 @@ namespace argos {
    /****************************************/
 
    int CLuaVector3::DotProduct(lua_State* pt_state) {
-      CVector3 cLeftVector, cRightVector;
-      /* pop the operands from the stack */
-      FromLuaState(pt_state, 1, cLeftVector);
-      FromLuaState(pt_state, 2, cRightVector);
-      /* push the result onto the stack */
-      lua_pushnumber(pt_state, cLeftVector.DotProduct(cRightVector));
+      CVector3 cFirstVector, cSecondVector;
+      /* copy the operands from the stack */
+      FromLuaState(pt_state, 1, cFirstVector);
+      FromLuaState(pt_state, 2, cSecondVector);
+      /* push the result onto the stack and return it */
+      lua_pushnumber(pt_state, cFirstVector.DotProduct(cSecondVector));
       return 1;
    }
 
@@ -294,12 +296,14 @@ namespace argos {
    int CLuaVector3::Rotate(lua_State* pt_state) {
       CVector3 cVector;
       CQuaternion cQuaternion;
-      /* pop the operands from the stack */
+      /* copy the operands from the stack */
       FromLuaState(pt_state, 1, cVector);
       CLuaQuaternion::FromLuaState(pt_state, 2, cQuaternion);
-      /* perform the rotation on the vector */
+      /* pop the second operand from the stack */
+      lua_pop(pt_state, 1);
+      /* rotate the vector by the quaternion */
       cVector.Rotate(cQuaternion);
-      /* push the result (the left operand) onto the stack */
+      /* modify the first operand in place and return it */
       ToLuaState(pt_state, 1, cVector);
       return 1;
    }
@@ -309,12 +313,12 @@ namespace argos {
 
    int CLuaVector3::ToString(lua_State* pt_state) {
       CVector3 cVector;
-      /* pop the operand from the stack */      
+      /* copy the operand from the stack */
       FromLuaState(pt_state, 1, cVector);
-      /* convert to string */
+      /* convert it to a string */
       std::ostringstream ossOutput;
       ossOutput << cVector;
-      /* push the string onto the stack */
+      /* push the string onto the stack and return it */
       lua_pushstring(pt_state, ossOutput.str().c_str());
       return 1;
    }
