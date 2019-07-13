@@ -206,6 +206,21 @@ namespace argos {
           */
          Real Lognormal(Real f_sigma, Real f_mu);
 
+         /**
+          * Shuffles the values of the given vector in-place.
+          * @param vec_data The vector whose values must be shuffled.
+          */
+         template <typename T>
+         void Shuffle(std::vector<T>& vec_data) {
+            UInt32 j;
+            for(UInt32 i = 0; i < vec_data.size()-1; ++i) {
+               j = i + Uniform(CRange<UInt32>(0, vec_data.size() - i));
+               T tTmp = vec_data[i];
+               vec_data[i] = vec_data[j];
+               vec_data[j] = tTmp;
+            }
+         }
+
       private:
 
          /*
