@@ -413,7 +413,8 @@ namespace argos {
          const CVector3& cVertex1 = vec_points[s_face.VertexIndices[0]];
          const CVector3& cVertex2 = vec_points[s_face.VertexIndices[1]];
          const CVector3& cVertex3 = vec_points[s_face.VertexIndices[2]];
-         const CVector3& cNormal = (cVertex2 - cVertex1).CrossProduct(cVertex3 - cVertex1);
+         CVector3 cNormal(cVertex2 - cVertex1);
+         cNormal.CrossProduct(cVertex3 - cVertex1);
          glNormal3f(cNormal.GetX(), cNormal.GetY(), cNormal.GetZ());
          glVertex3f(cVertex1.GetX(), cVertex1.GetY(), cVertex1.GetZ());
          glVertex3f(cVertex2.GetX(), cVertex2.GetY(), cVertex2.GetZ());

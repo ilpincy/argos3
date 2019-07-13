@@ -12,26 +12,12 @@ namespace argos {
    /****************************************/
    
    void CDynamics3DFloorPlugin::Init(TConfigurationNode& t_tree) {
-      /* Get the floor height */
-      Real fHeight = 0.0f;
-      GetNodeAttributeOrDefault(t_tree, "height", fHeight, fHeight);
-      /* Get the arena center and size from the arena node */
-      CVector3 cArenaCenter(0.0f, 0.0f, 0.0f);
-      CVector3 cArenaSize(0.0f, 0.0f, 0.0f);
-      TConfigurationNode& tArena = GetNode(CSimulator::GetInstance().GetConfigurationRoot(), "arena");
-      GetNodeAttribute(tArena, "size", cArenaSize);
-      GetNodeAttributeOrDefault(tArena, "center", cArenaCenter, cArenaCenter);
-      /* Configure the floor */
-      m_cFloorExtents = btVector3(cArenaSize.GetX(), fHeight, cArenaSize.GetY());
-      m_cFloorOrigin = btVector3(cArenaCenter.GetX(), -fHeight * 0.5f, -cArenaCenter.GetY());
       /* Get the friction of the floor */
       m_fFriction = m_pcEngine->GetDefaultFriction();
       GetNodeAttributeOrDefault(t_tree, "friction", m_fFriction, m_fFriction);
-      /* Call the destructors for the floor components */
+      /* Call the destructor for the floor body */
       m_cFloor.~btRigidBody();
-      m_cFloorShape.~btBoxShape();
-      /* Call the constructors for the floor components */
-      new (&m_cFloorShape) btBoxShape(m_cFloorExtents * 0.5f);
+      /* Call the constructor for the floor body */
       btRigidBody::btRigidBodyConstructionInfo sConstructionInfo(0, nullptr, &m_cFloorShape);
       sConstructionInfo.m_friction = m_fFriction;
       /* Create the floor */
@@ -48,11 +34,9 @@ namespace argos {
    void CDynamics3DFloorPlugin::Reset() {
       /* Remove floor from world */
       m_pcEngine->GetWorld().removeRigidBody(&m_cFloor);
-      /* Call the destructors for the floor components */ 
+      /* Call the destructor for the floor body */ 
       m_cFloor.~btRigidBody();
-      m_cFloorShape.~btBoxShape();
-      /* Call the constructors for the floor components */
-      new (&m_cFloorShape) btBoxShape(m_cFloorExtents * 0.5f);
+      /* Call the constructor for the floor body */
       btRigidBody::btRigidBodyConstructionInfo sConstructionInfo(0, nullptr, &m_cFloorShape);
       sConstructionInfo.m_friction = m_fFriction;
       /* Create the floor */

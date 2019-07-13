@@ -32,12 +32,11 @@ namespace argos {
 
    public:
 
-      enum EARGoSTypes {
-         TYPE_NORMAL = 0,
-         TYPE_VECTOR2,
-         TYPE_VECTOR3,
-         TYPE_QUATERNION,
-         TYPE_COLOR
+      enum class EARGoSType : lua_Integer {
+         CVector2,
+         CVector3,
+         CQuaternion,
+         CColor,
       };
       
    public:
@@ -156,6 +155,18 @@ namespace argos {
        */
       static void EndTable(lua_State* pt_state);
 
+
+      /**
+       * Sets the metatable with the given string key to the table located at the top of the stack.
+       * At the end of the execution, the stack is in the same state as it was
+       * before this function was called.
+       * @param pt_state The Lua state.
+       * @param str_key The string key for the metatable.
+       */
+      static void SetMetatable(lua_State* pt_state,
+                               const std::string& str_key);
+
+
       /**
        * Adds a pointer to a chunk of data with the given string key to the table located at the top of the stack.
        * At the end of the execution, the stack is in the same state as it was
@@ -181,17 +192,6 @@ namespace argos {
                              lua_CFunction pt_data);
 
       /**
-       * Adds a Real with the given string key to the table located at the top of the stack.
-       * At the end of the execution, the stack is in the same state as it was
-       * before this function was called.
-       * @param pt_state The Lua state.
-       * @param str_key The string key for the parent table.
-       * @param f_data The data to add to the table.
-       */
-      static void AddToTable(lua_State* pt_state,
-                             const std::string& str_key,
-                             Real f_data);
-      /**
        * Adds a string with the given string key to the table located at the top of the stack.
        * At the end of the execution, the stack is in the same state as it was
        * before this function was called.
@@ -202,6 +202,30 @@ namespace argos {
       static void AddToTable(lua_State* pt_state,
                              const std::string& str_key,
                              const std::string& str_data);
+
+      /**
+       * Adds a string with the given string key to the table located at the top of the stack.
+       * At the end of the execution, the stack is in the same state as it was
+       * before this function was called.
+       * @param pt_state The Lua state.
+       * @param n_key The numeric key for the parent table.
+       * @param str_data The data to add to the table.
+       */
+      static void AddToTable(lua_State* pt_state,
+                             int n_key,
+                             const std::string& str_data);
+
+      /**
+       * Adds a Real with the given string key to the table located at the top of the stack.
+       * At the end of the execution, the stack is in the same state as it was
+       * before this function was called.
+       * @param pt_state The Lua state.
+       * @param str_key The string key for the parent table.
+       * @param f_data The data to add to the table.
+       */
+      static void AddToTable(lua_State* pt_state,
+                             const std::string& str_key,
+                             Real f_data);
 
       /**
        * Adds a Real with the given numeric key to the table located at the top of the stack.

@@ -57,7 +57,7 @@
   <physics_engines>
     <dynamics3d id="dyn3d" iterations="20" default_friction="0.25">
       <gravity g="9.8" />
-      <floor height="0.01"/>
+      <floor />
       <magnetism max_distance="0.08"/>
     </dynamics3d>
   </physics_engines>

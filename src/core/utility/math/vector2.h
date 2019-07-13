@@ -13,6 +13,7 @@ namespace argos {
 
 #include <argos3/core/utility/math/general.h>
 #include <argos3/core/utility/math/angles.h>
+#include <argos3/core/utility/math/matrix/matrix.h>
 #include <argos3/core/utility/string_utilities.h>
 #include <array>
 #include <iostream>
@@ -365,6 +366,26 @@ namespace argos {
          CVector2 cResult(*this);
          cResult /= f_value;
          return cResult;
+      }
+
+      /**
+       * Implict conversion to a row matrix.
+       */
+      operator CMatrix<1,2>() const {
+         CMatrix<1,2> cMatrix;
+         cMatrix(0,0) = m_fX;
+         cMatrix(0,1) = m_fY;
+         return cMatrix;
+      }
+
+      /**
+       * Implict conversion to a column matrix.
+       */
+      operator CMatrix<2,1>() const {
+         CMatrix<2,1> cMatrix;
+         cMatrix(0,0) = m_fX;
+         cMatrix(1,0) = m_fY;
+         return cMatrix;
       }
 
       /**

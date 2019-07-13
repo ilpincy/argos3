@@ -112,7 +112,10 @@ set(ARGOS3_HEADERS_SIMULATOR_SPACE
 # argos3/core/wrappers/lua
 set(ARGOS3_HEADERS_WRAPPERS_LUA
   wrappers/lua/lua_controller.h
-  wrappers/lua/lua_utility.h)
+  wrappers/lua/lua_quaternion.h
+  wrappers/lua/lua_utility.h
+  wrappers/lua/lua_vector2.h
+  wrappers/lua/lua_vector3.h)
 # argos3/core/real_robot
 set(ARGOS3_HEADERS_REALROBOT
   real_robot/real_robot.h)
@@ -206,7 +209,10 @@ if(ARGOS_WITH_LUA)
     ${ARGOS3_SOURCES_CORE}
     ${ARGOS3_HEADERS_WRAPPERS_LUA}
     wrappers/lua/lua_controller.cpp
-    wrappers/lua/lua_utility.cpp)
+    wrappers/lua/lua_quaternion.cpp
+    wrappers/lua/lua_utility.cpp
+    wrappers/lua/lua_vector2.cpp
+    wrappers/lua/lua_vector3.cpp)
 endif(ARGOS_WITH_LUA)
 
 
