@@ -102,8 +102,12 @@ find_package(ASCIIDoc)
 #
 find_package(Lua52)
 if(LUA52_FOUND)
-  set(ARGOS_WITH_LUA ON)
-  include_directories(${LUA_INCLUDE_DIR})
+  if (NOT ARGOS_WITH_LUA)
+    message("-- Lua5.2 found but disabled by configuration")
+  else()
+    set(ARGOS_WITH_LUA ON)
+    include_directories(${LUA_INCLUDE_DIR})
+  endif(NOT ARGOS_WITH_LUA)
 endif(LUA52_FOUND)
 
 #

@@ -73,3 +73,19 @@ endif(NOT DEFINED ARGOS_USE_DOUBLE)
 if(NOT DEFINED ARGOS_DOCUMENTATION)
   option(ARGOS_DOCUMENTATION "ON -> compile documentation, OFF -> dont'compile documentation" ON)
 endif(NOT DEFINED ARGOS_DOCUMENTATION)
+
+#
+# Should Lua support be compiled in if it is found?
+#
+if(NOT DEFINED ARGOS_WITH_LUA)
+  option(ARGOS_WITH_LUA "ON -> compile in Lua support, if the required libraries
+are found on the system, OFF -> dont'compile Lua support, even if the required
+libraries are found on the system" OFF)
+endif(NOT DEFINED ARGOS_WITH_LUA)
+
+# Configure CCache if available
+find_program(CCACHE_FOUND ccache)
+if (CCACHE_FOUND)
+  set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
+  set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
+endif()
