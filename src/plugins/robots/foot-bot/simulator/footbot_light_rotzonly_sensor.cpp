@@ -100,7 +100,7 @@ namespace argos {
 
    /****************************************/
    /****************************************/
-   
+
    void CFootBotLightRotZOnlySensor::Update() {
       /* Erase readings */
       for(size_t i = 0; i < m_tReadings.size(); ++i) {
@@ -214,7 +214,7 @@ namespace argos {
          }
       }
    }
-      
+
    /****************************************/
    /****************************************/
 

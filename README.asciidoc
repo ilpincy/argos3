@@ -175,6 +175,7 @@ The compilation of ARGoS can be configured through a set of CMake options:
 | +ARGOS_USE_DOUBLE+       | _BOOLEAN_ | Use +double+ (+ON+) or +float+ (+OFF+) [+ON+]
 | +ARGOS_DOCUMENTATION+    | _BOOLEAN_ | Create API documentation [+ON+]
 | +ARGOS_INSTALL_LDSOCONF+ | _BOOLEAN_ | Install the file +/etc/ld.so.conf/argos3.conf+ [+ON+ on Linux, +OFF+ on Mac]
+| +ARGOS_WITH_LUA          | _BOOLEAN_ | Enable Lua support if the required libraries and headers are found+ [+OFF+]
 |====================================================================================================================
 
 You can pass the wanted values from the command line. For instance, if you
@@ -190,6 +191,7 @@ wanted to set explictly all the default values, when compiling on Linux you woul
          -DARGOS_USE_DOUBLE=ON \
          -DARGOS_DOCUMENTATION=ON \
          -DARGOS_INSTALL_LDSOCONF=ON \
+         -DARGOS_WITH_LUA=OFF \
          ../src
 
 IMPORTANT: When +ARGOS_BUILD_FOR+ is set to +simulator+, +ARGOS_THREADSAFE_LOG+

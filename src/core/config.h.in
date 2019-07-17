@@ -39,11 +39,6 @@
 #cmakedefine ARGOS_COMPILE_QTOPENGL
 
 /*
- * Whether ARGoS was compiled with GSL support
- */
-#cmakedefine ARGOS_WITH_GSL
-
-/*
  * Whether ARGoS was compiled with FreeImage support
  */
 #cmakedefine ARGOS_WITH_FREEIMAGE
