@@ -178,7 +178,11 @@ namespace argos {
    /****************************************/
 
    void CARGoSCommandLineArgParser::PrintVersion() {
-      LOG << ARGOS_VERSION << "-" << ARGOS_RELEASE << std::endl;
+     LOG << "ARGOS_INSTALL_PREFIX=" << ARGOS_INSTALL_PREFIX << std::endl;
+     LOG << "ARGOS_USE_DOUBLE=" << ARGOS_VERSIONING_USE_DOUBLE << std::endl;
+     LOG << "ARGOS_WITH_LUA=" << ARGOS_VERSIONING_WITH_LUA << std::endl;
+     LOG << "ARGOS_BUILD_FLAGS=" << ARGOS_VERSIONING_BUILD_FLAGS << std::endl;
+     LOG << "ARGOS_VERSION=" << ARGOS_VERSION << "-" << ARGOS_RELEASE << std::endl;
    }
 
    /****************************************/
