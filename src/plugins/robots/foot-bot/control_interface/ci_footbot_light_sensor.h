@@ -81,6 +81,10 @@ namespace argos {
       virtual void ReadingsToLuaState(lua_State* pt_lua_state);
 #endif
 
+     virtual void Enable() = 0;
+
+     virtual void Disable() = 0;
+
    protected:
 
       TReadings m_tReadings;
