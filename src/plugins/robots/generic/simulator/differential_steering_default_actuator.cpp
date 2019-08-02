@@ -150,9 +150,11 @@ REGISTER_ACTUATOR(CDifferentialSteeringDefaultActuator,
                   "Carlo Pinciroli [ilpincy@gmail.com]",
                   "1.0",
                   "The differential steering actuator.",
+
                   "This actuator controls the two wheels a differential steering robot. For a\n"
                   "complete description of its usage, refer to the\n"
                   "ci_differential_steering_actuator.h file.\n\n"
+
                   "REQUIRED XML CONFIGURATION\n\n"
                   "  <controllers>\n"
                   "    ...\n"
@@ -167,7 +169,9 @@ REGISTER_ACTUATOR(CDifferentialSteeringDefaultActuator,
                   "    </my_controller>\n"
                   "    ...\n"
                   "  </controllers>\n\n"
+
                   "OPTIONAL XML CONFIGURATION\n\n"
+
                   "It is possible to specify noisy speed in order to match the characteristics\n"
                   "of the real robot. For each wheel, the noise model is as follows:\n\n"
                   "w = ideal wheel actuation (as set in the controller)\n"
@@ -181,7 +185,8 @@ REGISTER_ACTUATOR(CDifferentialSteeringDefaultActuator,
                   "factor attributes are dimensionless. If none of these attributed is specified,\n"
                   "no noise is added. If at least one of these attributed is specified, noise is\n"
                   "added and, for the non-specified attributes, the default value of 1 is used for\n"
-                  "the '*_avg' attributes, while 0 is used for '*_stddev' attributes. Examples:\n\n" 
+                  "the '*_avg' attributes, while 0 is used for '*_stddev' attributes. Examples:\n\n"
+
                   "  <controllers>\n"
                   "    ...\n"
                   "    <my_controller ...>\n"
@@ -209,9 +214,11 @@ REGISTER_ACTUATOR(CDifferentialSteeringDefaultActuator,
                   "    </my_controller>\n"
                   "    ...\n"
                   "  </controllers>\n\n"
+
                   "The above examples set the same noise for both wheels. If you want to set\n"
                   "different noise parameters for each wheel, append '_left' and '_right' to the\n"
                   "attribute names:\n\n"
+
                   "  <controllers>\n"
                   "    ...\n"
                   "    <my_controller ...>\n"
@@ -231,6 +238,7 @@ REGISTER_ACTUATOR(CDifferentialSteeringDefaultActuator,
                   "    </my_controller>\n"
                   "    ...\n"
                   "  </controllers>\n\n"
+
                   "Wheel-specific attributes overwrite the values of non-wheel specific attributes.\n"
                   "So, if you set 'bias_avg' = 2 and then 'bias_avg_left' = 3, the left wheel will\n"
                   "use 3 and the right wheel will use 2.\n\n"
@@ -239,4 +247,3 @@ REGISTER_ACTUATOR(CDifferentialSteeringDefaultActuator,
                   "information.",
                   "Usable"
    );
-   

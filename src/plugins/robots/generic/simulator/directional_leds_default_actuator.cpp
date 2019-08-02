@@ -59,8 +59,10 @@ namespace argos {
                      "Michael Allwright [allsey87@gmail.com]",
                      "1.0",
                      "The directional LEDs actuator.",
+
                      "This actuator controls a group of directional LEDs. For a complete description\n"
                      "of its usage, refer to the ci_leds_actuator.h file.\n\n"
+
                      "REQUIRED XML CONFIGURATION\n\n"
                      "  <controllers>\n"
                      "    ...\n"
@@ -75,9 +77,12 @@ namespace argos {
                      "    </my_controller>\n"
                      "    ...\n"
                      "  </controllers>\n\n"
+
                      "The 'medium' attribute sets the id of the LED medium declared in the <media>\n"
                      "XML section.\n\n"
+
                      "OPTIONAL XML CONFIGURATION\n\n"
+
                      "None.\n",
                      "Usable"
    );

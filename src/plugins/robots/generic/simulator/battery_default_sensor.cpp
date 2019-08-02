@@ -104,9 +104,11 @@ namespace argos {
                    "Adhavan Jayabalan [jadhu94@gmail.com]",
                    "1.0",
                    "A generic battery level sensor.",
+
                    "This sensor returns the current battery level of a robot. This sensor\n"
                    "can be used with any robot, since it accesses only the body component. In\n"
                    "controllers, you must include the ci_battery_sensor.h header.\n\n"
+
                    "REQUIRED XML CONFIGURATION\n\n"
                    "  <controllers>\n"
                    "    ...\n"
@@ -121,7 +123,9 @@ namespace argos {
                    "    </my_controller>\n"
                    "    ...\n"
                    "  </controllers>\n\n"
+
                    "OPTIONAL XML CONFIGURATION\n\n"
+
                    "It is possible to add uniform noise to the sensor, thus matching the\n"
                    "characteristics of a real robot better. You can add noise through the\n"
                    "attribute 'noise_range' as follows:\n\n"
@@ -138,9 +142,8 @@ namespace argos {
                    "      ...\n"
                    "    </my_controller>\n"
                    "    ...\n"
-                   "  </controllers>\n\n"
-                   "OPTIONAL XML CONFIGURATION\n\n"
-                   "None.\n",
+                   "  </controllers>\n\n",
+
                    "Usable"
 		  );
 

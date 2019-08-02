@@ -73,9 +73,12 @@ REGISTER_ACTUATOR(CLEDsDefaultActuator,
                   "Carlo Pinciroli [ilpincy@gmail.com]",
                   "1.0",
                   "The LEDs actuator.",
+
                   "This actuator controls a group of LEDs. For a complete description of its\n"
                   "usage, refer to the ci_leds_actuator.h file.\n\n"
+
                   "REQUIRED XML CONFIGURATION\n\n"
+
                   "  <controllers>\n"
                   "    ...\n"
                   "    <my_controller ...>\n"
@@ -90,10 +93,14 @@ REGISTER_ACTUATOR(CLEDsDefaultActuator,
                   "    </my_controller>\n"
                   "    ...\n"
                   "  </controllers>\n\n"
+
                   "The 'medium' attribute sets the id of the LED medium declared in the <media>\n"
                   "XML section.\n\n"
+
                   "OPTIONAL XML CONFIGURATION\n\n"
+
                   "None.\n",
+
                   "Usable"
    );
 

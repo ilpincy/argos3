@@ -111,10 +111,13 @@ REGISTER_ACTUATOR(CQuadRotorPositionDefaultActuator,
                   "Carlo Pinciroli [ilpincy@gmail.com]",
                   "1.0",
                   "The quadrotor position actuator.",
+
                   "This actuator controls the position of a quadrotor robot. For a\n"
                   "complete description of its usage, refer to the\n"
                   "ci_quadrotor_position_actuator.h file.\n\n"
+
                   "REQUIRED XML CONFIGURATION\n\n"
+
                   "  <controllers>\n"
                   "    ...\n"
                   "    <my_controller ...>\n"
@@ -128,7 +131,9 @@ REGISTER_ACTUATOR(CQuadRotorPositionDefaultActuator,
                   "    </my_controller>\n"
                   "    ...\n"
                   "  </controllers>\n\n"
+
                   "OPTIONAL XML CONFIGURATION\n\n"
+
                   "None for the time being.\n\n"
                   ,
                   "Usable"
