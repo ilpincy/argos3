@@ -71,13 +71,15 @@ namespace argos {
 
       /**
        * Programmatically creates a new radio.
+       * @param str_id The identifier of the radio.
        * @param c_offset The position of the radio.
        * @param s_anchor The anchor of the radio.
        * @param f_transmit_range The transmit range of the radio.
        * @see GetInstances()
        * @see GetRadio()
        */
-      void AddRadio(const CVector3& c_offset,
+      void AddRadio(const std::string& str_id,
+                    const CVector3& c_offset,
                     SAnchor& s_anchor,
                     Real f_transmit_range);
 

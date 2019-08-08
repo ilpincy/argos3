@@ -106,13 +106,14 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CRadioEquippedEntity::AddRadio(const CVector3& c_offset,
+   void CRadioEquippedEntity::AddRadio(const std::string& str_id,
+                                       const CVector3& c_offset,
                                        SAnchor& s_anchor,
                                        Real f_transmit_range) {
       /* create the new radio entity */
       CRadioEntity* pcRadio =
          new CRadioEntity(this,
-                          "radio_" + std::to_string(m_vecInstances.size()),
+                          str_id,
                           f_transmit_range);
       /* add it to the instances vector */
       m_vecInstances.emplace_back(*pcRadio,

@@ -90,7 +90,8 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CDirectionalLEDEquippedEntity::AddLED(const CVector3& c_position,
+   void CDirectionalLEDEquippedEntity::AddLED(const std::string& str_id,
+                                              const CVector3& c_position,
                                               const CQuaternion& c_orientation,
                                               SAnchor& s_anchor,
                                               const CRadians& c_observable_angle,
@@ -98,7 +99,7 @@ namespace argos {
       /* create the new directional LED entity */
       CDirectionalLEDEntity* pcLED =
          new CDirectionalLEDEntity(this,
-                                   "directional_led_" + std::to_string(m_vecInstances.size()),
+                                   str_id,
                                    c_position,
                                    c_orientation,
                                    c_observable_angle,

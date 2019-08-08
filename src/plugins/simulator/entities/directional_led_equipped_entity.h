@@ -74,6 +74,7 @@ namespace argos {
 
       /**
        * Programmatically creates a new directional LED.
+       * @param str_id The identifier of the LED.
        * @param c_position The position of the LED.
        * @param c_orientation The orientation of the LED.
        * @param s_anchor The anchor of the LED.
@@ -82,7 +83,8 @@ namespace argos {
        * @see GetInstances()
        * @see GetLED()
        */
-      void AddLED(const CVector3& c_position,
+      void AddLED(const std::string& str_id,
+                  const CVector3& c_position,
                   const CQuaternion& c_orientation,
                   SAnchor& s_anchor,
                   const CRadians& c_observable_angle,

@@ -73,6 +73,7 @@ namespace argos {
 
       /**
        * Programmatically creates a new tag.
+       * @param str_id The identifier of the tag.
        * @param c_position The position of the tag.
        * @param c_orientation The orientation of the tag.
        * @param s_anchor The anchor of the tag.
@@ -82,7 +83,8 @@ namespace argos {
        * @see GetInstances()
        * @see GetTag()
        */
-      void AddTag(const CVector3& c_position,
+      void AddTag(const std::string& str_id,
+                  const CVector3& c_position,
                   const CQuaternion& c_orientation,
                   SAnchor& s_anchor,
                   const CRadians& c_observable_angle,
