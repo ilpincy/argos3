@@ -116,16 +116,16 @@ namespace argos {
       m_ptLuaState = luaL_newstate();
       /* Load the Lua libraries */
       luaL_openlibs(m_ptLuaState);
+      /* Create and set variables */
+      CreateLuaState();
+      SensorReadingsToLuaState();
+      ParametersToLuaState(t_tree);
       /* Load script */
       if(!CLuaUtility::LoadScript(m_ptLuaState, str_script)) {
          m_bIsOK = false;
          return;
       }
       m_strScriptFileName = str_script;
-      /* Create and set variables */
-      CreateLuaState();
-      SensorReadingsToLuaState();
-      ParametersToLuaState(t_tree);
       /* Execute script init function */
       if(!CLuaUtility::CallLuaFunction(m_ptLuaState, "init")) {
          m_bIsOK = false;
