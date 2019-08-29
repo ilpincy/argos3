@@ -150,9 +150,9 @@ namespace argos {
       /* Register functions */
       CLuaUtility::RegisterLoggerWrapper(m_ptLuaState);
       /* Register metatables */
-      CLuaVector2::RegisterMetatable(m_ptLuaState);
-      CLuaVector3::RegisterMetatable(m_ptLuaState);
-      CLuaQuaternion::RegisterMetatable(m_ptLuaState);
+      CLuaVector2::RegisterType(m_ptLuaState);
+      CLuaVector3::RegisterType(m_ptLuaState);
+      CLuaQuaternion::RegisterType(m_ptLuaState);
       /* Create a table that will contain the state of the robot */
       lua_newtable(m_ptLuaState);
       /* Set the id of the robot */

@@ -7,14 +7,6 @@
  * @author Michael Allwright <allsey87@gmail.com>
  */
 
-namespace argos {
-   class CRadians;
-   class CVector2;
-   class CVector3;
-   class CQuaternion;
-   class CColor;
-}
-
 extern "C" {
 #include <lua.h>
 #include <lualib.h>
@@ -22,9 +14,10 @@ extern "C" {
 }
 
 #include <argos3/core/utility/datatypes/datatypes.h>
+#include <argos3/core/utility/math/quaternion.h>
 
 #include <string>
-#include <iostream>
+#include <utility>
 
 namespace argos {
 
@@ -32,13 +25,27 @@ namespace argos {
 
    public:
 
-      static const std::string& GetMetatableKey() {
-         return m_strMetatableKey;
-      }
-
-      static void RegisterMetatable(lua_State* pt_state);
+      static void RegisterType(lua_State* pt_state);
 
       static int Create(lua_State* pt_state);
+      
+      template<class... TArguments>
+      static void PushQuaternion(lua_State* pt_state, TArguments&&... t_arguments) {
+         /* create a new quaternion */
+         void* pvUserdatum = 
+            lua_newuserdata(pt_state, sizeof(CQuaternion));
+         /* run the constructor on the allocated memory */
+         new (pvUserdatum) CQuaternion(std::forward<TArguments>(t_arguments)...);
+         /* set the metatable for the userdatum */
+         luaL_getmetatable(pt_state, m_strTypeId.c_str());
+         lua_setmetatable(pt_state, -2);
+      }
+
+      static CQuaternion& ToQuaternion(lua_State* pt_state, int n_index);
+
+      static int Index(lua_State* pt_state);
+
+      static int NewIndex(lua_State* pt_state);
 
       static int ToString(lua_State* pt_state);
 
@@ -52,20 +59,10 @@ namespace argos {
 
       static int ToAngleAxis(lua_State* pt_state);
 
-      static int FromLuaState(lua_State* pt_state,
-                              int n_index,
-                              CQuaternion& c_quaternion);
-
-      static void ToLuaState(lua_State* pt_state,
-                             int n_index,
-                             const CQuaternion& c_quaternion);
-
-      static void ToLuaState(lua_State* pt_state,
-                             const CQuaternion& c_quaternion);
 
    private:
 
-      static const std::string m_strMetatableKey;
+      static const std::string m_strTypeId;
 
    };
 

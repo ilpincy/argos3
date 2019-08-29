@@ -445,11 +445,9 @@ namespace argos {
    void CLuaUtility::AddToTable(lua_State* pt_state,
                                 const std::string& str_key,
                                 const CVector2& c_data) {
-      StartTable(pt_state, str_key);
-      SetMetatable(pt_state, CLuaVector2::GetMetatableKey());
-      AddToTable(pt_state, "x", c_data.GetX());
-      AddToTable(pt_state, "y", c_data.GetY());
-      EndTable(pt_state);
+      lua_pushstring          (pt_state, str_key.c_str());
+      CLuaVector2::PushVector2(pt_state, c_data);
+      lua_settable            (pt_state, -3);
    }
    
    /****************************************/
@@ -458,11 +456,9 @@ namespace argos {
    void CLuaUtility::AddToTable(lua_State* pt_state,
                                 int n_key,
                                 const CVector2& c_data) {
-      StartTable(pt_state, n_key);
-      SetMetatable(pt_state, CLuaVector2::GetMetatableKey());
-      AddToTable(pt_state, "x", c_data.GetX());
-      AddToTable(pt_state, "y", c_data.GetY());
-      EndTable(pt_state);
+      lua_pushnumber          (pt_state, n_key);
+      CLuaVector2::PushVector2(pt_state, c_data);
+      lua_settable            (pt_state, -3);
    }
    
    /****************************************/
@@ -471,12 +467,9 @@ namespace argos {
    void CLuaUtility::AddToTable(lua_State* pt_state,
                                 const std::string& str_key,
                                 const CVector3& c_data) {
-      StartTable(pt_state, str_key               );
-      SetMetatable(pt_state, CLuaVector3::GetMetatableKey());
-      AddToTable(pt_state, "x", c_data.GetX());
-      AddToTable(pt_state, "y", c_data.GetY());
-      AddToTable(pt_state, "z", c_data.GetZ());
-      EndTable(pt_state);
+      lua_pushstring          (pt_state, str_key.c_str());
+      CLuaVector3::PushVector3(pt_state, c_data);
+      lua_settable            (pt_state, -3);
    }
    
    /****************************************/
@@ -485,13 +478,11 @@ namespace argos {
    void CLuaUtility::AddToTable(lua_State* pt_state,
                                 int n_key,
                                 const CVector3& c_data) {
-      StartTable(pt_state, n_key);
-      SetMetatable(pt_state, CLuaVector3::GetMetatableKey());
-      AddToTable(pt_state, "x", c_data.GetX());
-      AddToTable(pt_state, "y", c_data.GetY());
-      AddToTable(pt_state, "z", c_data.GetZ());
-      EndTable(pt_state);
+      lua_pushnumber          (pt_state, n_key);
+      CLuaVector3::PushVector3(pt_state, c_data);
+      lua_settable            (pt_state, -3);
    }
+
    
    /****************************************/
    /****************************************/
@@ -499,13 +490,9 @@ namespace argos {
    void CLuaUtility::AddToTable(lua_State* pt_state,
                                 const std::string& str_key,
                                 const CQuaternion& c_data) {
-      StartTable(pt_state, str_key);
-      SetMetatable(pt_state, CLuaQuaternion::GetMetatableKey());
-      AddToTable(pt_state, "w", c_data.GetW());
-      AddToTable(pt_state, "x", c_data.GetX());
-      AddToTable(pt_state, "y", c_data.GetY());
-      AddToTable(pt_state, "z", c_data.GetZ());
-      EndTable(pt_state);
+      lua_pushstring                (pt_state, str_key.c_str());
+      CLuaQuaternion::PushQuaternion(pt_state, c_data);
+      lua_settable                  (pt_state, -3);
    }
    
    /****************************************/
@@ -514,13 +501,9 @@ namespace argos {
    void CLuaUtility::AddToTable(lua_State* pt_state,
                                 int n_key,
                                 const CQuaternion& c_data) {
-      StartTable(pt_state, n_key);
-      SetMetatable(pt_state, CLuaQuaternion::GetMetatableKey());
-      AddToTable(pt_state, "w", c_data.GetW());
-      AddToTable(pt_state, "x", c_data.GetX());
-      AddToTable(pt_state, "y", c_data.GetY());
-      AddToTable(pt_state, "z", c_data.GetZ());
-      EndTable(pt_state);
+      lua_pushnumber                (pt_state, n_key);
+      CLuaQuaternion::PushQuaternion(pt_state, c_data);
+      lua_settable                  (pt_state, -3);
    }
    
    /****************************************/
@@ -530,7 +513,6 @@ namespace argos {
                                 const std::string& str_key,
                                 const CColor& c_data) {
       StartTable(pt_state, str_key                   );
-      AddToTable(pt_state, "_type", static_cast<lua_Number>(EARGoSType::CColor));
       AddToTable(pt_state, "red",   c_data.GetRed()  );
       AddToTable(pt_state, "green", c_data.GetGreen());
       AddToTable(pt_state, "blue",  c_data.GetBlue() );
@@ -544,7 +526,6 @@ namespace argos {
                                 int n_key,
                                 const CColor& c_data) {
       StartTable(pt_state, n_key                     );
-      AddToTable(pt_state, "_type", static_cast<lua_Number>(EARGoSType::CColor));
       AddToTable(pt_state, "red",   c_data.GetRed()  );
       AddToTable(pt_state, "green", c_data.GetGreen());
       AddToTable(pt_state, "blue",  c_data.GetBlue() );

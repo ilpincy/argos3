@@ -29,15 +29,6 @@ extern "C" {
 namespace argos {
 
    class CLuaUtility {
-
-   public:
-
-      enum class EARGoSType : lua_Integer {
-         CVector2,
-         CVector3,
-         CQuaternion,
-         CColor,
-      };
       
    public:
 
