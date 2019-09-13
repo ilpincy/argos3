@@ -59,6 +59,8 @@ namespace argos {
 
       static int ToAngleAxis(lua_State* pt_state);
 
+      static int ToEulerAngles(lua_State* pt_state);
+
 
    private:
 
