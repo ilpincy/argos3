@@ -9,6 +9,11 @@
 
 #include <argos3/core/utility/logging/argos_log.h>
 #include <argos3/core/wrappers/lua/lua_utility.h>
+#include <argos3/core/wrappers/lua/lua_vector2.h>
+#include <argos3/core/wrappers/lua/lua_vector3.h>
+#include <argos3/core/wrappers/lua/lua_quaternion.h>
+
+#include <sstream>
 
 namespace argos {
 
@@ -181,6 +186,61 @@ namespace argos {
             }
          }
       }
+      else if(lua_isuserdata(pt_state, -1)) {
+         std::ostringstream cBuffer;
+         cBuffer << std::fixed;
+         void *pvUserdatum = lua_touserdata(pt_state, -1);
+         if (lua_getmetatable(pt_state, -1)) {
+            lua_getfield(pt_state, LUA_REGISTRYINDEX, CLuaVector2::GetTypeId().c_str());  /* get correct metatable */
+            if (lua_rawequal(pt_state, -1, -2)) {
+               /* remove the two metatables */
+               lua_pop(pt_state, 2);
+               /* add the entry to the table */
+               CVector2* pcVector2 = static_cast<CVector2*>(pvUserdatum);
+               cBuffer << std::setprecision(3)
+                       << pcVector2->GetX() << ", "
+                       << pcVector2->GetY();
+               cData << cBuffer.str().c_str();
+               pc_item->AddChild(new CQTOpenGLLuaStateTreeItem(cData, pc_item));
+            }
+            else {
+               /* remove the vector2 metatable */
+               lua_pop(pt_state, 1);
+               lua_getfield(pt_state, LUA_REGISTRYINDEX, CLuaVector3::GetTypeId().c_str());
+               if (lua_rawequal(pt_state, -1, -2)) {
+                  /* remove the two metatables */
+                  lua_pop(pt_state, 2);
+                  /* add the entry to the table */
+                  CVector3* pcVector3 = static_cast<CVector3*>(pvUserdatum);
+                  cBuffer << std::setprecision(3)
+                          << pcVector3->GetX() << ", "
+                          << pcVector3->GetY() << ", "
+                          << pcVector3->GetZ();
+                  cData << cBuffer.str().c_str();
+                  pc_item->AddChild(new CQTOpenGLLuaStateTreeItem(cData, pc_item));
+               }
+               else {
+                  /* remove the vector3 metatable */
+                  lua_pop(pt_state, 1);
+                  lua_getfield(pt_state, LUA_REGISTRYINDEX, CLuaQuaternion::GetTypeId().c_str());
+                  if (lua_rawequal(pt_state, -1, -2)) {
+                     /* remove the two metatables */
+                     lua_pop(pt_state, 2);
+                     /* add the entry to the table */
+                     CQuaternion* pcQuaternion = static_cast<CQuaternion*>(pvUserdatum);
+                     CRadians cZ, cY, cX;
+                     pcQuaternion->ToEulerAngles(cZ, cY, cX);
+                     cBuffer << std::setprecision(1)
+                             << ToDegrees(cZ).GetValue() << ", "
+                             << ToDegrees(cY).GetValue() << ", "
+                             << ToDegrees(cX).GetValue();
+                     cData << cBuffer.str().c_str();
+                     pc_item->AddChild(new CQTOpenGLLuaStateTreeItem(cData, pc_item));
+                  }
+               }
+            }
+         }
+      }
       else {
          switch(lua_type(pt_state, -1)) {
             case LUA_TBOOLEAN:
@@ -242,7 +302,7 @@ namespace argos {
    bool CQTOpenGLLuaStateTreeVariableModel::IsTypeVisitable(lua_State* pt_state) {
       int nValueType = lua_type(pt_state, -1);
       int nKeyType = lua_type(pt_state, -2);
-      if(nValueType == LUA_TSTRING || nValueType == LUA_TNUMBER || nValueType == LUA_TBOOLEAN) {
+      if(nValueType == LUA_TSTRING || nValueType == LUA_TNUMBER || nValueType == LUA_TBOOLEAN || nValueType == LUA_TUSERDATA) {
          if(nKeyType != LUA_TSTRING) {
             return true;
          }
