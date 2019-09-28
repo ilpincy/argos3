@@ -27,6 +27,10 @@ namespace argos {
 
       static void RegisterType(lua_State* pt_state);
 
+      static const std::string& GetTypeId() {
+         return m_strTypeId;
+      }
+
       static int Create(lua_State* pt_state);
       
       template<class... TArguments>

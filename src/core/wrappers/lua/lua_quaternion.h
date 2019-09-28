@@ -27,6 +27,10 @@ namespace argos {
 
       static void RegisterType(lua_State* pt_state);
 
+      static const std::string& GetTypeId() {
+         return m_strTypeId;
+      }
+
       static int Create(lua_State* pt_state);
       
       template<class... TArguments>
@@ -58,6 +62,8 @@ namespace argos {
       static int Inverse(lua_State* pt_state);
 
       static int ToAngleAxis(lua_State* pt_state);
+
+      static int ToEulerAngles(lua_State* pt_state);
 
 
    private:

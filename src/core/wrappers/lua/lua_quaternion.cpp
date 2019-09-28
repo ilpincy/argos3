@@ -37,6 +37,7 @@ namespace argos {
       CLuaUtility::AddToTable(pt_state, "__mul", Multiply);
       CLuaUtility::AddToTable(pt_state, "normalize", Normalize);
       CLuaUtility::AddToTable(pt_state, "toangleaxis", ToAngleAxis);
+      CLuaUtility::AddToTable(pt_state, "toeulerangles", ToEulerAngles);
       CLuaUtility::AddToTable(pt_state, "inverse", Inverse);
    }
 
@@ -234,12 +235,28 @@ namespace argos {
       CVector3 cAxis;
       /* get a reference to the operand from the stack */
       const CQuaternion& cQuaternion = ToQuaternion(pt_state, 1);
-      /* apply operation */
+      /* do conversion */
       cQuaternion.ToAngleAxis(cAngle, cAxis);
       /* push the results onto the stack and return them */
       lua_pushnumber(pt_state, cAngle.GetValue());
       CLuaVector3::PushVector3(pt_state, cAxis);
       return 2;
+   }
+
+   /****************************************/
+   /****************************************/
+
+   int CLuaQuaternion::ToEulerAngles(lua_State* pt_state) {
+      CRadians cZ, cY, cX;
+      /* get a reference to the operand from the stack */
+      const CQuaternion& cQuaternion = ToQuaternion(pt_state, 1);
+      /* do conversion */
+      cQuaternion.ToEulerAngles(cZ, cY, cX);
+      /* push the results onto the stack and return them */
+      lua_pushnumber(pt_state, cZ.GetValue());
+      lua_pushnumber(pt_state, cY.GetValue());
+      lua_pushnumber(pt_state, cX.GetValue());
+      return 3;
    }
 
    /****************************************/
