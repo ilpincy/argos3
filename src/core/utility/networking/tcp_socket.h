@@ -8,15 +8,43 @@ namespace argos {
 #include <argos3/core/utility/datatypes/byte_array.h>
 #include <argos3/core/utility/datatypes/datatypes.h>
 
+#include <unordered_set>
+
 namespace argos {
 
    class CTCPSocket {
 
    public:
 
+      enum class EEvent : UInt32 {
+         InputReady,
+         OutputReady,
+         HangUp,
+         ErrorCondition,
+         InvalidRequest
+      };
+
+   public:
+
       CTCPSocket(int n_stream = -1);
 
+      CTCPSocket(const CTCPSocket& c_other) = delete;
+
+      CTCPSocket(CTCPSocket&& c_other);
+
       ~CTCPSocket();
+
+      CTCPSocket& operator=(const CTCPSocket& c_other) = delete;
+
+      CTCPSocket& operator=(CTCPSocket&& c_other);
+
+      /**
+       * Returns <tt>true</tt> if the two sockets refer to same file descriptor.
+       * @return <tt>true</tt> if the two sockets refer to same file descriptor.
+       */
+      inline bool operator==(const CTCPSocket& c_other) const {
+         return m_nStream == c_other.m_nStream;
+      }
 
       /**
        * Returns <tt>true</tt> if the socket is connected.
@@ -82,6 +110,12 @@ namespace argos {
        * @throws CARGoSException in case of error
        */
       void Disconnect();
+
+      /**
+       * Check the socket for events
+       * @return an ordered set of events
+       */
+      std::unordered_set<EEvent> GetEvents();
 
       /**
        * Sends the passed buffer through the socket.

@@ -8,6 +8,7 @@
 #include <netdb.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <poll.h>
 #include <unistd.h>
 
 namespace argos {
@@ -17,6 +18,33 @@ namespace argos {
 
    CTCPSocket::CTCPSocket(int n_stream) :
       m_nStream(n_stream) {
+   }
+
+   /****************************************/
+   /****************************************/
+
+   CTCPSocket::CTCPSocket(CTCPSocket&& c_other) :
+      m_nStream(c_other.m_nStream),
+      m_strAddress(c_other.m_strAddress) {
+      /* leave c_other in a default constructed state */
+      c_other.m_nStream = -1;
+      c_other.m_strAddress.clear();
+   }
+
+   /****************************************/
+   /****************************************/
+
+   CTCPSocket& CTCPSocket::operator=(CTCPSocket&& c_other) {
+      /* disconnect the current socket */
+      Disconnect();
+      /* steal c_other's resources */
+      m_nStream = c_other.m_nStream;
+      m_strAddress = c_other.m_strAddress;
+      /* leave c_other in a default constructed state */
+      c_other.m_nStream = -1;
+      c_other.m_strAddress.clear();
+      /* return this instance */
+      return *this;
    }
 
    /****************************************/
@@ -97,15 +125,8 @@ namespace argos {
                               ptInterface->ai_protocol);
          if(m_nStream > 0) {
             int nTrue = 1;
-            if((::setsockopt(m_nStream,
-                             SOL_SOCKET,
-                             SO_REUSEADDR,
-                             &nTrue,
-                             sizeof(nTrue)) != -1)
-               &&
-               (::bind(m_nStream,
-                       ptInterface->ai_addr,
-                       ptInterface->ai_addrlen) == -1)) {
+            if(::setsockopt(m_nStream, SOL_SOCKET, SO_REUSEADDR, &nTrue, sizeof(nTrue)) != 0 ||
+               ::bind(m_nStream, ptInterface->ai_addr, ptInterface->ai_addrlen) != 0) {
                Disconnect();
             }
          }
@@ -143,7 +164,28 @@ namespace argos {
    void CTCPSocket::Disconnect() {
       ::close(m_nStream);
       m_nStream = -1;
-      m_strAddress = "";
+   }
+
+   /****************************************/
+   /****************************************/
+
+   std::unordered_set<CTCPSocket::EEvent> CTCPSocket::GetEvents() {
+      std::unordered_set<EEvent> setEvents;
+      ::pollfd tFileDescriptor;
+      tFileDescriptor.fd = m_nStream;
+      tFileDescriptor.events = POLLIN | POLLOUT;
+      ::poll(&tFileDescriptor, 1, 1);
+      if(tFileDescriptor.revents & POLLIN)
+         setEvents.insert(EEvent::InputReady);
+      if(tFileDescriptor.revents & POLLOUT)
+         setEvents.insert(EEvent::OutputReady);
+      if(tFileDescriptor.revents & POLLHUP)
+         setEvents.insert(EEvent::HangUp);
+      if(tFileDescriptor.revents & POLLERR)
+         setEvents.insert(EEvent::ErrorCondition);
+      if(tFileDescriptor.revents & POLLNVAL)
+         setEvents.insert(EEvent::InvalidRequest);
+      return setEvents;
    }
 
    /****************************************/
@@ -173,7 +215,7 @@ namespace argos {
          nReceived = ::recv(m_nStream, pun_buffer, un_size, 0);
          if(nReceived < 0){
             Disconnect();
-             THROW_ARGOSEXCEPTION("Error receiving data: " << ::strerror(errno));
+            THROW_ARGOSEXCEPTION("Error receiving data: " << ::strerror(errno));
          }
          if(nReceived == 0) return false;
          un_size -= nReceived;
