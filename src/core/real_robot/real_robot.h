@@ -52,7 +52,7 @@ namespace argos {
       /**
        * Collect data from the sensors.
        */
-      virtual void Sense() = 0;
+      virtual void Sense(Real f_elapsed_time) = 0;
       
       /**
        * Execute the robot controller.
@@ -62,7 +62,7 @@ namespace argos {
       /**
        * Send data to the actuators.
        */
-      virtual void Act() = 0;
+      virtual void Act(Real f_elapsed_time) = 0;
 
       /**
        * Performs the main loop.
