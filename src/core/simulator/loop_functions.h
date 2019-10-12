@@ -180,6 +180,10 @@ namespace argos {
          return m_cSpace;
       }
 
+      inline const CSpace& GetSpace() const {
+        return m_cSpace;
+      }
+
       /**
        * Moves the entity to the wanted position and orientation.
        * @param c_entity The positional component of the entity to move.

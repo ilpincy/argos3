@@ -30,7 +30,7 @@ namespace argos {
       m_pcFloorEntity(NULL),
       m_ptPhysicsEngines(NULL),
       m_ptMedia(NULL) {}
-   
+
    /****************************************/
    /****************************************/
 
@@ -105,16 +105,14 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   CSpace::TMapPerType& CSpace::GetEntitiesByType(const std::string& str_type) {
-      TMapPerTypePerId::iterator itEntities = m_mapEntitiesPerTypePerId.find(str_type);
-      if (itEntities != m_mapEntitiesPerTypePerId.end()){
-         return itEntities->second;
-      }
-      else {
-         THROW_ARGOSEXCEPTION("Entity map for type \"" << str_type << "\" not found.");
-      }
+   CSpace::TMapPerType& CSpace::GetEntitiesByTypeImpl(const std::string& str_type) const {
+     TMapPerTypePerId::const_iterator itEntities = m_mapEntitiesPerTypePerId.find(str_type);
+     if(itEntities != m_mapEntitiesPerTypePerId.end()){
+       return const_cast<CSpace::TMapPerType&>(itEntities->second);
+     } else {
+       THROW_ARGOSEXCEPTION("Entity map for type \"" << str_type << "\" not found.");
+     }
    }
-
    /****************************************/
    /****************************************/
 
@@ -156,7 +154,7 @@ namespace argos {
          m_vecControllableEntities.erase(it);
       }
    }
-      
+
    /****************************************/
    /****************************************/
 
@@ -216,7 +214,7 @@ namespace argos {
          THROW_ARGOSEXCEPTION(ossMsg.str());
       }
    }
-      
+
    /****************************************/
    /****************************************/
 
