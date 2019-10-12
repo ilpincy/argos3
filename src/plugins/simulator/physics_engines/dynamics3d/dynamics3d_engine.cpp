@@ -134,7 +134,7 @@ namespace argos {
          m_cWorld.getMultiBodyConstraint(i)->finalizeMultiDof();
       }
    }
-   
+
    /****************************************/
    /****************************************/
 
@@ -168,7 +168,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CDynamics3DEngine::Update() {      
+   void CDynamics3DEngine::Update() {
       /* Update the physics state from the entities */
       for(CDynamics3DModel::TMap::iterator it = m_tPhysicsModels.begin();
           it != std::end(m_tPhysicsModels); ++it) {
@@ -190,22 +190,22 @@ namespace argos {
          m_cWorld.serialize(&cSerializer);
          std::ofstream cDebugOutput(m_strDebugFilename);
          if(cDebugOutput.is_open()) {
-            cDebugOutput.write(reinterpret_cast<const char*>(cSerializer.getBufferPointer()), 
+            cDebugOutput.write(reinterpret_cast<const char*>(cSerializer.getBufferPointer()),
                                cSerializer.getCurrentBufferSize());
          }
       }
    }
-   
+
    /****************************************/
    /****************************************/
-   
+
    void CDynamics3DEngine::CheckIntersectionWithRay(TEmbodiedEntityIntersectionData& t_data,
                                                     const CRay3& c_ray) const {
       /* Convert the start and end ray vectors to the bullet coordinate system */
       btVector3 cRayStart(c_ray.GetStart().GetX(), c_ray.GetStart().GetZ(), -c_ray.GetStart().GetY());
       btVector3 cRayEnd(c_ray.GetEnd().GetX(), c_ray.GetEnd().GetZ(), -c_ray.GetEnd().GetY());
       btCollisionWorld::ClosestRayResultCallback cResult(cRayStart, cRayEnd);
-      /* The default flag/algorithm 'kF_UseSubSimplexConvexCastRaytest' is too approximate for 
+      /* The default flag/algorithm 'kF_UseSubSimplexConvexCastRaytest' is too approximate for
          our purposes */
       cResult.m_flags |= btTriangleRaycastCallback::kF_UseGjkConvexCastRaytest;
       /* Run the ray test */
@@ -221,11 +221,11 @@ namespace argos {
 
    /****************************************/
    /****************************************/
-   
+
    size_t CDynamics3DEngine::GetNumPhysicsModels() {
       return m_tPhysicsModels.size();
    }
-     
+
    /****************************************/
    /****************************************/
 
@@ -245,7 +245,7 @@ namespace argos {
          (*this, c_entity);
       return cOutcome.Value;
    }
-  
+
    /****************************************/
    /****************************************/
 
@@ -283,7 +283,7 @@ namespace argos {
          m_tPhysicsModels.erase(itModel);
       }
       else {
-         THROW_ARGOSEXCEPTION("The model \"" << str_id << 
+         THROW_ARGOSEXCEPTION("The model \"" << str_id <<
                               "\" was not found in the dynamics 3D engine \"" <<
                               GetId() << "\"");
       }
@@ -307,8 +307,8 @@ namespace argos {
          m_tPhysicsPlugins.erase(it);
       }
       else {
-         THROW_ARGOSEXCEPTION("The plugin \"" << str_id << 
-                              "\" was not found in the dynamics 3D engine \"" << 
+         THROW_ARGOSEXCEPTION("The plugin \"" << str_id <<
+                              "\" was not found in the dynamics 3D engine \"" <<
                               GetId() << "\"");
       }
    }
@@ -323,21 +323,26 @@ namespace argos {
                            "A 3D dynamics physics engine",
                            "This physics engine is a 3D dynamics engine based on the Bullet Physics SDK\n"
                            "(https://github.com/bulletphysics/bullet3).\n\n"
+
                            "REQUIRED XML CONFIGURATION\n\n"
                            "  <physics_engines>\n"
                            "    ...\n"
                            "    <dynamics3d id=\"dyn3d\" />\n"
                            "    ...\n"
                            "  </physics_engines>\n\n"
+
                            "The 'id' attribute is necessary and must be unique among the physics engines.\n\n"
+
                            "OPTIONAL XML CONFIGURATION\n\n"
+
                            "It is possible to change the default friction used in the simulation from\n"
                            "its initial value of 1.0 using the default_friction attribute as shown\n"
                            "below. For debugging purposes, it is also possible to provide a filename\n"
                            "via the debug_file attribute which will cause the Bullet world to be\n"
-                           "serialized and written out to a file at the end of each step. This file\n"
-                           "can then be opened using the Bullet example browser and can provide useful\n"
+                           "serialized and written out to a file at the end of each step. This file can\n"
+                           "then be opened using the Bullet example browser and can provide useful\n"
                            "insights into the stability of a simulation.\n\n"
+
                            "  <physics_engines>\n"
                            "    ...\n"
                            "    <dynamics3d id=\"dyn3d\"\n"
@@ -345,6 +350,7 @@ namespace argos {
                            "                debug_file=\"dynamics3d.bullet\"/>\n"
                            "    ...\n"
                            "  </physics_engines>\n\n"
+
                            "The physics engine supports a number of plugins that add features to the\n"
                            "simulation. In the example below, a floor plane has been added which has a\n"
                            "height of 1 cm and the dimensions of the floor as specified by the arena\n"
@@ -358,6 +364,7 @@ namespace argos {
                            "'max_distance' attribute is an optional optimization that sets the maximum\n"
                            "distance at which two magnetic dipoles will interact with each other. In\n"
                            "the example below, this distance has been set to 4 cm.\n\n"
+
                            "  <physics_engines>\n"
                            "    ...\n"
                            "    <dynamics3d id=\"dyn3d\" default_friction=\"2.0\">\n"
@@ -367,6 +374,7 @@ namespace argos {
                            "    </dynamics3d>\n"
                            "    ...\n"
                            "  </physics_engines>\n\n",
+
                            "Usable"
       );
 

@@ -92,10 +92,13 @@ REGISTER_ACTUATOR(CQuadRotorSpeedDefaultActuator,
                   "Carlo Pinciroli [ilpincy@gmail.com]",
                   "1.0",
                   "The quadrotor speed actuator.",
+
                   "This actuator controls the speed of a quadrotor robot. For a\n"
                   "complete description of its usage, refer to the\n"
                   "ci_quadrotor_speed_actuator.h file.\n\n"
+
                   "REQUIRED XML CONFIGURATION\n\n"
+
                   "  <controllers>\n"
                   "    ...\n"
                   "    <my_controller ...>\n"
@@ -109,8 +112,10 @@ REGISTER_ACTUATOR(CQuadRotorSpeedDefaultActuator,
                   "    </my_controller>\n"
                   "    ...\n"
                   "  </controllers>\n\n"
+
                   "OPTIONAL XML CONFIGURATION\n\n"
-                  "None for the time being.\n\n"
+
+                  "None.\n\n"
                   ,
                   "Usable"
    );

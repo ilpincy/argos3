@@ -66,7 +66,7 @@ namespace argos {
 
    /****************************************/
    /****************************************/
-   
+
    void CGroundRotZOnlySensor::Update() {
       /*
        * We make the assumption that the robot is rotated only wrt to Z
@@ -125,11 +125,13 @@ namespace argos {
                    "Carlo Pinciroli [ilpincy@gmail.com]",
                    "1.0",
                    "A generic ground sensor (optimized for 2D).",
+
                    "This sensor accesses a set of ground sensors. The sensors all return a value\n"
                    "between 0 and 1, where 0 means black and 1 means white. Depending on the type\n"
                    "of ground sensor, readings can either take 0 or 1 as value (bw sensors) or a\n"
                    "value in between (grayscale sensors). In controllers, you must include the\n"
                    "ci_ground_sensor.h header.\n\n"
+
                    "REQUIRED XML CONFIGURATION\n\n"
                    "  <controllers>\n"
                    "    ...\n"
@@ -144,7 +146,9 @@ namespace argos {
                    "    </my_controller>\n"
                    "    ...\n"
                    "  </controllers>\n\n"
+
                    "OPTIONAL XML CONFIGURATION\n\n"
+
                    "It is possible to add uniform noise to the sensors, thus matching the\n"
                    "characteristics of a real robot better. This can be done with the attribute\n"
                    "\"noise_level\", whose allowed range is in [-1,1] and is added to the calculated\n"
@@ -162,9 +166,8 @@ namespace argos {
                    "      ...\n"
                    "    </my_controller>\n"
                    "    ...\n"
-                   "  </controllers>\n\n"
-                   "OPTIONAL XML CONFIGURATION\n\n"
-                   "None.\n",
+                   "  </controllers>\n\n",
+
                    "Usable"
 		  );
 

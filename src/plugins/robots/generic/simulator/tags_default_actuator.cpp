@@ -59,11 +59,14 @@ namespace argos {
                      "Michael Allwright [allsey87@gmail.com]",
                      "1.0",
                      "The tags actuator.",
+
                      "This actuator controls the payloads of a group of tags. The idea"
                      "is to represent an LCD screen that displays different tags. For a"
                      "complete description of its usage, refer to the ci_tags_actuator.h"
                      " file.\n\n"
+
                      "REQUIRED XML CONFIGURATION\n\n"
+
                      "  <controllers>\n"
                      "    ...\n"
                      "    <my_controller ...>\n"
@@ -77,8 +80,11 @@ namespace argos {
                      "    </my_controller>\n"
                      "    ...\n"
                      "  </controllers>\n\n"
+
                      "OPTIONAL XML CONFIGURATION\n\n"
+
                      "None.\n",
+
                      "Usable"
    );
 

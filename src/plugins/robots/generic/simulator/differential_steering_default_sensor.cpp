@@ -93,10 +93,13 @@ namespace argos {
                    "Carlo Pinciroli [ilpincy@gmail.com]",
                    "1.0",
                    "A generic differential steering sensor.",
+
                    "This sensor returns the current position and orientation of a robot. This sensor\n"
                    "can be used with any robot, since it accesses only the body component. In\n"
                    "controllers, you must include the ci_differential_steering_sensor.h header.\n\n"
+
                    "REQUIRED XML CONFIGURATION\n\n"
+
                    "  <controllers>\n"
                    "    ...\n"
                    "    <my_controller ...>\n"
@@ -110,13 +113,16 @@ namespace argos {
                    "    </my_controller>\n"
                    "    ...\n"
                    "  </controllers>\n\n"
+
                    "OPTIONAL XML CONFIGURATION\n\n"
+
                    "It is possible to add uniform noise to the sensor, thus matching the\n"
                    "characteristics of a real robot better. You can add noise through the\n"
                    "attributes 'vel_noise_range' and 'dist_noise_range'.\n"
                    "Attribute 'vel_noise_range' regulates the noise range on the velocity returned\n"
                    "by the sensor. Attribute 'dist_noise_range' sets the noise range on the\n"
                    "distance covered by the wheels.\n\n"
+
                    "  <controllers>\n"
                    "    ...\n"
                    "    <my_controller ...>\n"
@@ -131,9 +137,8 @@ namespace argos {
                    "      ...\n"
                    "    </my_controller>\n"
                    "    ...\n"
-                   "  </controllers>\n\n"
-                   "OPTIONAL XML CONFIGURATION\n\n"
-                   "None.\n",
+                   "  </controllers>\n\n",
+
                    "Usable"
 		  );
 

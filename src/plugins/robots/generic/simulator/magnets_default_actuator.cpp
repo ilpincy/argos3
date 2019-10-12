@@ -78,13 +78,16 @@ namespace argos {
                      "Michael Allwright [allsey87@gmail.com]",
                      "1.0",
                      "The (electro)magnet actuator.",
+
                      "This actuator is used to modify the magnetic field of a magnet entity in the\n"
                      "simulation. A magnetic entity has a passive and an active field. The overall\n"
                      "field of a magnetic entity is calculated as:\n\n"
                      "  field = passive_field + (current x active_field)\n\n"
                      "This actuator allows you to set the current, a scalar multiplier of the active\n"
                      "field.\n\n"
+
                      "REQUIRED XML CONFIGURATION\n\n"
+
                      "  <controllers>\n"
                      "    ...\n"
                      "    <my_controller ...>\n"
@@ -98,8 +101,11 @@ namespace argos {
                      "    </my_controller>\n"
                      "    ...\n"
                      "  </controllers>\n\n"
+
                      "OPTIONAL XML CONFIGURATION\n\n"
+
                      "None.\n",
+
                      "Under development"
    );
 
