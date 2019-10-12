@@ -109,8 +109,8 @@ namespace argos {
       /* Convert speeds in m/s */
       m_fCurrentVelocity[LEFT_WHEEL] = f_left_velocity * 0.01;
       m_fCurrentVelocity[RIGHT_WHEEL] = f_right_velocity * 0.01;
-      /* Apply noise */
-      if(m_pcRNG) {
+      /* Apply noise only if the robot is in motion (at least one of the wheels is moving)*/
+      if( (m_pcRNG) && ( (f_left_velocity!=0) || (f_right_velocity!=0) ) ) {
          ADD_NOISE(LEFT);
          ADD_NOISE(RIGHT);
       }
