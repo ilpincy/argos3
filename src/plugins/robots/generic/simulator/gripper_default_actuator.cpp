@@ -48,8 +48,10 @@ REGISTER_ACTUATOR(CGripperDefaultActuator,
                   "Carlo Pinciroli [ilpincy@gmail.com]",
                   "1.0",
                   "The Gripper actuator.",
+
                   "This actuator controls a gripper. For a complete description of its\n"
                   "usage, refer to the ci_gripper_actuator.h file.\n\n"
+
                   "REQUIRED XML CONFIGURATION\n\n"
                   "  <controllers>\n"
                   "    ...\n"
@@ -64,8 +66,11 @@ REGISTER_ACTUATOR(CGripperDefaultActuator,
                   "    </my_controller>\n"
                   "    ...\n"
                   "  </controllers>\n\n"
+
                   "OPTIONAL XML CONFIGURATION\n\n"
+
                   "None.\n",
+
                   "Usable"
    );
 

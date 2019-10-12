@@ -263,12 +263,15 @@ namespace argos {
                    "colored_blob_perspective_camera", "default",
                    "Carlo Pinciroli [ilpincy@gmail.com]",
                    "1.0",
+
                    "A generic perspective camera sensor to detect colored blobs.",
                    "This sensor accesses an perspective camera that detects colored blobs. The\n"
                    "sensor returns a list of blobs, each defined by a color and a position with\n"
                    "respect to the robot reference point on the ground. In controllers, you must\n"
                    "include the ci_colored_blob_perspective_camera_sensor.h header.\n\n"
+
                    "REQUIRED XML CONFIGURATION\n\n"
+
                    "  <controllers>\n"
                    "    ...\n"
                    "    <my_controller ...>\n"
@@ -283,9 +286,12 @@ namespace argos {
                    "    </my_controller>\n"
                    "    ...\n"
                    "  </controllers>\n\n"
+
                    "The 'medium' attribute must be set to the id of the leds medium declared in the\n"
                    "<media> section.\n\n"
+
                    "OPTIONAL XML CONFIGURATION\n\n"
+
                    "It is possible to draw the rays shot by the camera sensor in the OpenGL\n"
                    "visualization. This can be useful for sensor debugging but also to understand\n"
                    "what's wrong in your controller. In OpenGL, the rays are drawn in cyan when\n"
@@ -293,6 +299,7 @@ namespace argos {
                    "obstructed, a black dot is drawn where the intersection occurred.\n"
                    "To turn this functionality on, add the attribute \"show_rays\" as in this\n"
                    "example:\n\n"
+
                    "  <controllers>\n"
                    "    ...\n"
                    "    <my_controller ...>\n"
@@ -308,9 +315,11 @@ namespace argos {
                    "    </my_controller>\n"
                    "    ...\n"
                    "  </controllers>\n\n"
+
                    "It is possible to add uniform noise to the blobs, thus matching the\n"
                    "characteristics of a real robot better. This can be done with the attribute\n"
                    "\"noise_std_dev\".\n\n"
+
                    "  <controllers>\n"
                    "    ...\n"
                    "    <my_controller ...>\n"
@@ -326,6 +335,7 @@ namespace argos {
                    "    </my_controller>\n"
                    "    ...\n"
                    "  </controllers>\n",
+
                    "Usable"
       );
 
