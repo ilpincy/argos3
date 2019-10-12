@@ -52,7 +52,7 @@ namespace argos {
    /****************************************/
 
    CFootBotLightRotZOnlySensor::CFootBotLightRotZOnlySensor() :
-      m_bEnabled(false),
+      m_bEnabled(true),
       m_pcEmbodiedEntity(NULL),
       m_bShowRays(false),
       m_pcRNG(NULL),
