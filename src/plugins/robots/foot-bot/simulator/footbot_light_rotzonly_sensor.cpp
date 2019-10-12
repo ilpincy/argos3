@@ -52,6 +52,7 @@ namespace argos {
    /****************************************/
 
    CFootBotLightRotZOnlySensor::CFootBotLightRotZOnlySensor() :
+      m_bEnabled(false),
       m_pcEmbodiedEntity(NULL),
       m_bShowRays(false),
       m_pcRNG(NULL),
@@ -102,6 +103,9 @@ namespace argos {
    /****************************************/
    
    void CFootBotLightRotZOnlySensor::Update() {
+      if (!m_bEnabled) {
+        return;
+      }
       /* Erase readings */
       for(size_t i = 0; i < m_tReadings.size(); ++i) {
          m_tReadings[i].Value = 0.0f;
@@ -222,6 +226,20 @@ namespace argos {
       for(UInt32 i = 0; i < GetReadings().size(); ++i) {
          m_tReadings[i].Value = 0.0f;
       }
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CFootBotLightRotZOnlySensor::Enable() {
+     m_bEnabled = true;
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CFootBotLightRotZOnlySensor::Disable() {
+     m_bEnabled = false;
    }
 
    /****************************************/
