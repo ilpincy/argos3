@@ -59,8 +59,8 @@ namespace argos {
       m_ptrBody = std::make_shared<CBody>(*this, &sAnchor, ptrShape, sData);
       /* Transfer the body to the base class */
       m_vecBodies.push_back(m_ptrBody);
-      /* Synchronize with the entity in the space */
-      UpdateEntityStatus();
+      /* Finalize model with a reset */
+      Reset();
    }
    
    /****************************************/

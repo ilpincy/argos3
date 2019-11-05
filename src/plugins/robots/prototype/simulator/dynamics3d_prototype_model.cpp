@@ -265,7 +265,7 @@ namespace argos {
 
          }
       }
-      /* With this call to reset, the multi-body model is configured and ready to be added */
+      /* Finalize model with a reset */
       Reset();
    }
 

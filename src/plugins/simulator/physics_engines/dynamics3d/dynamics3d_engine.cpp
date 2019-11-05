@@ -80,8 +80,9 @@ namespace argos {
              ++itPlugin) {
             itPlugin->second->UnregisterModel(*itModel->second);
          }
-         /* Reset the model */
+         /* Remove model from world */
          itModel->second->RemoveFromWorld(m_cWorld);
+         /* Reset the model */
          itModel->second->Reset();
       }
       /* Run the destructors on bullet's components */
