@@ -46,6 +46,12 @@ namespace argos {
       for(const std::shared_ptr<CAbstractBody>& ptr_body : m_vecBodies) {
          ptr_body->Reset();
       }
+      /* TODO. For the moment, we rely on the class that derives from
+         this model to call UpdateEntityStatus after the joints
+         have been configured. This is ugly and should be fixed
+         by moving the code for joints into this class */
+      /* Synchronize with the entity in the space */
+      //UpdateEntityStatus();
    }
 
    /****************************************/

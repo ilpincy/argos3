@@ -146,11 +146,11 @@ namespace argos {
    /****************************************/
 
    void CDynamics3DModel::UpdateEntityStatus() {
-      /* Update the anchor associated with each body before running the base class's UpdateEntityStatus
-         which updates the bounding box and origin anchor */
+      /* Update the anchor associated with each body */
       for(const std::shared_ptr<CAbstractBody>& ptr_body : m_vecBodies) {
          ptr_body->UpdateAnchor();
       }
+      /* Call CPhysicsModel::UpdateEntityStatus which updates the AABB and origin anchor */
       CPhysicsModel::UpdateEntityStatus();
    }
   

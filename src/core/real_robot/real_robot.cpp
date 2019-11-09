@@ -72,7 +72,11 @@ void CRealRobot::Init(const std::string& str_conf_fname,
    * Initialize the controller
    */
   LOG << "[INFO] Controller type '" << strControllerTag << "', id '" << str_controller_id << "' initialization start" << std::endl;
+#ifdef ARGOS_DYNAMIC_LIBRARY_LOADING
+  m_pcController = CFactory<CCI_Controller>::New(strControllerTag);
+#else
   m_pcController = ControllerMaker(strControllerTag);
+#endif
   /* Set the controller id using the machine hostname */
   char pchHostname[256];
   pchHostname[255] = '\0';
