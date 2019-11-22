@@ -60,7 +60,9 @@ namespace argos {
 
    void CQTOpenGLObjModel::Draw() const {
       for(const CQTOpenGLObjModel::SMesh& s_mesh : m_vecMeshes) {
-         /* set material properties for the mesh */
+	 /* BAD: enable color material in diffuse and ambient */
+	 /* glEnable(GL_COLOR_MATERIAL); */
+	 /* set material properties for the mesh */
          glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, s_mesh.Material->second.Ambient.data());
          glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, s_mesh.Material->second.Diffuse.data());
          glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, s_mesh.Material->second.Emission.data());
@@ -315,6 +317,10 @@ namespace argos {
             }
             itMaterial = m_mapMaterials.emplace(strMaterialName.toStdString(), SMaterial()).first;
          }
+         else if(cLineBufferSplit[0] == "Ks") {
+	 itMaterial->second.Emission = {
+               0.0f, 0.0f, 0.0f, 1.0f};
+	 }
          else if(cLineBufferSplit[0] == "Ka") {
             itMaterial->second.Ambient[0] = cLineBufferSplit.value(1).toFloat();
             itMaterial->second.Ambient[1] = cLineBufferSplit.value(2).toFloat();
@@ -353,7 +359,7 @@ namespace argos {
          else if(cLineBufferSplit[0] == "i" && cLineBufferSplit.value(1) == "1") {
             itMaterial->second.Specular = {
                0.0f, 0.0f, 0.0f, 1.0f
-            };
+            }; 
          }
       }
    }
