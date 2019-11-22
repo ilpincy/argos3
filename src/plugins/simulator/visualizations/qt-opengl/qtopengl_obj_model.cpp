@@ -60,8 +60,6 @@ namespace argos {
 
    void CQTOpenGLObjModel::Draw() const {
       for(const CQTOpenGLObjModel::SMesh& s_mesh : m_vecMeshes) {
-	 /* BAD: enable color material in diffuse and ambient */
-	 /* glEnable(GL_COLOR_MATERIAL); */
 	 /* set material properties for the mesh */
          glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, s_mesh.Material->second.Ambient.data());
          glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, s_mesh.Material->second.Diffuse.data());
