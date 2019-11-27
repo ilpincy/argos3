@@ -178,4 +178,18 @@ namespace argos {
 
 }
 
+/**
+ * For argos::CTCPSocket::EEvent to be used in std::unordered_set<> and
+ * std::unordered_map<>, we need to specialize std::hash().
+ * 
+ * This is necessary in C+11. Starting from C++14, this would not be necessary.
+ */
+namespace std {
+   template<> struct hash<argos::CTCPSocket::EEvent> {
+      size_t operator()(const argos::CTCPSocket::EEvent& e_event) const {
+         return static_cast<size_t>(e_event);
+      }
+   };
+}
+
 #endif
