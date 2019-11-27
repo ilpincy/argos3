@@ -845,8 +845,10 @@ namespace argos {
             with the plane created before */
          CVector3 cNewPos;
          if(cMouseRay.Intersects(cXYPlane, cNewPos)) {
-            pcEntity->MoveTo(cNewPos,
-                             pcEntity->GetOriginAnchor().Orientation);
+            CVector3 cOldPos(pcEntity->GetOriginAnchor().Position);
+            if(pcEntity->MoveTo(cNewPos, pcEntity->GetOriginAnchor().Orientation)) {
+               m_cUserFunctions.EntityMoved(pcEntity->GetRootEntity(), cOldPos, cNewPos);
+            }
             /* Entity moved, redraw */
             update();
          }
