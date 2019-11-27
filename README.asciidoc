@@ -2,7 +2,7 @@ ARGoS README
 =============
 :Author: Carlo Pinciroli
 :Email:  ilpincy@gmail.com
-:Date:   February 27th, 2015
+:Date:   November 26th, 2019
 
 What is ARGoS?
 ---------------
@@ -38,9 +38,9 @@ Requirements
 If you downloaded the sources of ARGoS and want to compile its code, you need:
 
 * A UNIX system (Linux or MacOSX; Microsoft Windows is not supported)
-* _g++_ >= 4.3 (on Linux)
+* _g++_ >= 5.4 (on Linux)
 * _clang_ >= 3.1 (on MacOSX)
-* _cmake_ >= 2.6
+* _cmake_ >= 3.5.1
 
 If you want to compile the simulator, you need:
 
@@ -56,7 +56,7 @@ libraries are found:
 
 If you want to create the Lua wrapper you need:
 
-* _lua_ == 5.2
+* _lua_ == 5.3
 
 If you want to create the documentation you need:
 
@@ -73,8 +73,8 @@ On Debian, you can install all of the necessary requirements
 with the following command:
 
  $ sudo apt-get install cmake libfreeimage-dev libfreeimageplus-dev \
-   qt5-default freeglut3-dev libxi-dev libxmu-dev liblua5.2-dev \
-   lua5.2 doxygen graphviz graphviz-dev asciidoc
+   qt5-default freeglut3-dev libxi-dev libxmu-dev liblua5.3-dev \
+   lua5.3 doxygen graphviz graphviz-dev asciidoc
 
 OpenSuse
 ^^^^^^^^

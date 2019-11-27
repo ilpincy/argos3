@@ -56,7 +56,7 @@ set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${AR
 #
 # Configuration for the Debian generator
 #
-set(CPACK_DEBIAN_PACKAGE_DEPENDS "gcc (>= 4.2), g++ (>= 4.2), cmake (>= 2.6), freeglut3-dev (>= 2.6.0), qt5-default (>= 5.5.1), libxi-dev, libxmu-dev, libfreeimage-dev (>= 3.15), libfreeimageplus-dev (>= 3.15), liblua5.2-dev, lua5.2")
+set(CPACK_DEBIAN_PACKAGE_DEPENDS "gcc (>= 5.4), g++ (>= 5.4), cmake (>= 3.5), freeglut3-dev (>= 2.6.0), qt5-default (>= 5.5.1), libxi-dev, libxmu-dev, libfreeimage-dev (>= 3.15), libfreeimageplus-dev (>= 3.15), liblua5.3-dev, lua5.3")
 set(CPACK_DEBIAN_PACKAGE_DESCRIPTION ${CPACK_PACKAGE_DESCRIPTION})
 set(CPACK_DEBIAN_PACKAGE_HOMEPAGE ${CPACK_PACKAGE_HOMEPAGE})
 set(CPACK_DEBIAN_PACKAGE_MAINTAINER ${CPACK_PACKAGE_MAINTAINER})
@@ -70,7 +70,7 @@ set(CPACK_RPM_PACKAGE_DESCRIPTION ${CPACK_PACKAGE_DESCRIPTION})
 set(CPACK_RPM_PACKAGE_URL ${CPACK_PACKAGE_HOMEPAGE})
 set(CPACK_RPM_PACKAGE_GROUP "Development/Tools")
 set(CPACK_RPM_PACKAGE_LICENSE "MIT")
-set(CPACK_RPM_PACKAGE_REQUIRES "gcc >= 4.2, gcc-c++ >= 4.2, pkg-config, cmake >= 2.6, freeglut-devel >= 2.8.0, libXmu-devel >= 1.0, libXi-devel >= 1.0, libqt5-qtbase-devel >= 5.5, libfreeimage3 >= 3.15, libfreeimageplus3 >= 3.15, freeimage-devel >= 3.15, lua >= 5.2.1, lua-devel >= 5.2.1, liblua5_2 >= 5.2.1")
+set(CPACK_RPM_PACKAGE_REQUIRES "gcc >= 5.4, gcc-c++ >= 5.4, pkg-config, cmake >= 3.5, freeglut-devel >= 2.8.0, libXmu-devel >= 1.0, libXi-devel >= 1.0, libqt5-qtbase-devel >= 5.5, libfreeimage3 >= 3.15, libfreeimageplus3 >= 3.15, freeimage-devel >= 3.15, lua >= 5.3, lua-devel >= 5.3, liblua5_3 >= 5.3")
 set(CPACK_RPM_PACKAGE_URL ${CPACK_PACKAGE_HOMEPAGE})
 set(CPACK_RPM_PACKAGE_RELEASE ${CPACK_PACKAGE_RELEASE})
 set(CPACK_RPM_POST_INSTALL_SCRIPT_FILE "${CMAKE_BINARY_DIR}/argos_post_install.sh")

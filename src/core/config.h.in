@@ -39,11 +39,6 @@
 #cmakedefine ARGOS_COMPILE_QTOPENGL
 
 /*
- * Whether ARGoS was compiled with GSL support
- */
-#cmakedefine ARGOS_WITH_GSL
-
-/*
  * Whether ARGoS was compiled with FreeImage support
  */
 #cmakedefine ARGOS_WITH_FREEIMAGE
@@ -52,3 +47,12 @@
  * Whether to use the ARGoS threadsafe log
  */
 #cmakedefine ARGOS_THREADSAFE_LOG
+
+/*
+ * Compilation flags
+ */
+#ifndef NDEBUG
+#  define ARGOS_BUILD_FLAGS "@CMAKE_CXX_FLAGS@ @CMAKE_CXX_FLAGS_DEBUG@"
+#else
+#  define ARGOS_BUILD_FLAGS "@CMAKE_CXX_FLAGS@ @CMAKE_CXX_FLAGS_RELEASE@"
+#endif

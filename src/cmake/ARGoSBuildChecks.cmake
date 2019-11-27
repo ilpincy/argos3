@@ -98,13 +98,13 @@ endif(ARGOS_DOCUMENTATION)
 find_package(ASCIIDoc)
 
 #
-# Check for Lua 5.2
+# Check for Lua 5.3
 #
-find_package(Lua52)
-if(LUA52_FOUND)
+find_package(Lua53)
+if(LUA53_FOUND)
   set(ARGOS_WITH_LUA ON)
   include_directories(${LUA_INCLUDE_DIR})
-endif(LUA52_FOUND)
+endif(LUA53_FOUND)
 
 #
 # Configure PhysX library linking
@@ -138,8 +138,3 @@ endif(ARGOS_BUILD_FOR_SIMULATOR)
 if(ARGOS_BUILD_FOR_SIMULATOR)
   include(ARGoSCheckQTOpenGL)
 endif(ARGOS_BUILD_FOR_SIMULATOR)
-
-# Add versioning
-add_definitions(-DARGOS_VERSIONING_USE_DOUBLE=$<IF:$<BOOL:${ARGOS_USE_DOUBLE}>,"YES","NO">)
-add_definitions(-DARGOS_VERSIONING_WITH_LUA=$<IF:$<BOOL:${ARGOS_WITH_LUA}>,"YES","NO">)
-add_definitions(-DARGOS_VERSIONING_BUILD_FLAGS=$<IF:$<CONFIG:Debug>,"${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_DEBUG}","${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELEASE}">)

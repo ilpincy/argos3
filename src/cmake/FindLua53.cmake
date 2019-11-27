@@ -28,8 +28,8 @@
 # Find the folder that contains lua.h
 find_path(LUA_INCLUDE_DIR lua.h
   HINTS
-  ENV LUA_DIR
-  PATH_SUFFIXES include/lua52 include/lua5.2 include/lua-5.2 include/lua include
+  ENV LUA_INC_DIR
+  PATH_SUFFIXES include/lua53 include/lua5.3 include/lua-5.3 include/lua include
   PATHS
   ~/Library/Frameworks
   /Library/Frameworks
@@ -38,7 +38,7 @@ find_path(LUA_INCLUDE_DIR lua.h
   /opt/csw # Blastwave
   /opt
   )
-# Make sure that the version number is 5.2
+# Make sure that the version number is 5.3
 if(LUA_INCLUDE_DIR AND EXISTS "${LUA_INCLUDE_DIR}/lua.h")
   file(STRINGS "${LUA_INCLUDE_DIR}/lua.h" lua_version_major_define REGEX "^#define[ \t]+LUA_VERSION_MAJOR")
   file(STRINGS "${LUA_INCLUDE_DIR}/lua.h" lua_version_minor_define REGEX "^#define[ \t]+LUA_VERSION_MINOR")
@@ -46,16 +46,16 @@ if(LUA_INCLUDE_DIR AND EXISTS "${LUA_INCLUDE_DIR}/lua.h")
     string(REGEX MATCH "[0-9]+" lua_version_major ${lua_version_major_define})
     string(REGEX MATCH "[0-9]+" lua_version_minor ${lua_version_minor_define})
     set(LUA_VERSION_STRING "${lua_version_major}.${lua_version_minor}")
-    if(${LUA_VERSION_STRING} VERSION_EQUAL "5.2")
+    if(${LUA_VERSION_STRING} VERSION_EQUAL "5.3")
       set(LUA_CORRECT_VERSION 1)
     endif()
   endif()
 endif()
 
 find_library(LUA_LIBRARY
-  NAMES lua52 lua5.2 lua-5.2 lua
+  NAMES lua53 lua5.3 lua-5.3 lua
   HINTS
-  ENV LUA_DIR
+  ENV LUA_LIB_DIR
   PATH_SUFFIXES lib
   PATHS
   ~/Library/Frameworks
@@ -80,7 +80,7 @@ endif()
 include(FindPackageHandleStandardArgs)
 # handle the QUIETLY and REQUIRED arguments and set LUA_FOUND to TRUE if
 # all listed variables are TRUE
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(Lua52
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(Lua53
   REQUIRED_VARS LUA_LIBRARIES LUA_INCLUDE_DIR LUA_CORRECT_VERSION
   VERSION_VAR LUA_VERSION_STRING)
 
