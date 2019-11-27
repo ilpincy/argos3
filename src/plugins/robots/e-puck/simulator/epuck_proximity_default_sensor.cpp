@@ -153,7 +153,7 @@ namespace argos {
                    "epuck_proximity", "default",
                    "Danesh Tarapore [daneshtarapore@gmail.com]",
                    "1.0",
-                   "An update to the generic proximity sensor - where angles of the IR sensors is stored with their usual sensor readings. Useful to quickly compute diffusion vector for e-puck robot.",
+                   "The E-Puck proximity sensor.",
                    "This sensor accesses a set of proximity sensors. The sensors all return a value\n"
                    "between 0 and 1, where 0 means nothing within range and 1 means an external\n"
                    "object is touching the sensor. Values between 0 and 1 depend on the distance of\n"
