@@ -94,6 +94,7 @@ namespace argos {
 
    void CRadioMedium::AddEntity(CRadioEntity& c_entity) {
       m_pcRadioEntityIndex->AddEntity(c_entity);
+      m_pcRadioEntityIndex->Update();
    }
 
    /****************************************/
@@ -101,6 +102,7 @@ namespace argos {
 
    void CRadioMedium::RemoveEntity(CRadioEntity& c_entity) {
       m_pcRadioEntityIndex->RemoveEntity(c_entity);
+      m_pcRadioEntityIndex->Update();
    }
 
    /****************************************/

@@ -93,6 +93,7 @@ namespace argos {
 
    void CDirectionalLEDMedium::AddEntity(CDirectionalLEDEntity& c_entity) {
       m_pcDirectionalLEDEntityIndex->AddEntity(c_entity);
+      m_pcDirectionalLEDEntityIndex->Update();
    }
 
    /****************************************/
@@ -100,6 +101,7 @@ namespace argos {
 
    void CDirectionalLEDMedium::RemoveEntity(CDirectionalLEDEntity& c_entity) {
       m_pcDirectionalLEDEntityIndex->RemoveEntity(c_entity);
+      m_pcDirectionalLEDEntityIndex->Update();
    }
 
    /****************************************/

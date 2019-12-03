@@ -93,6 +93,7 @@ namespace argos {
 
    void CTagMedium::AddEntity(CTagEntity& c_entity) {
       m_pcTagEntityIndex->AddEntity(c_entity);
+      m_pcTagEntityIndex->Update();
    }
 
    /****************************************/
@@ -100,6 +101,7 @@ namespace argos {
 
    void CTagMedium::RemoveEntity(CTagEntity& c_entity) {
       m_pcTagEntityIndex->RemoveEntity(c_entity);
+      m_pcTagEntityIndex->Update();
    }
 
    /****************************************/
