@@ -94,9 +94,9 @@ namespace argos {
          m_cCameraPos += m_cOmnicamEntity.GetOffset();
          m_cOcclusionCheckRay.SetStart(m_cCameraPos);
       }
-      
+
    private:
-      
+
       CCI_ColoredBlobOmnidirectionalCameraSensor::TBlobList& m_tBlobs;
       COmnidirectionalCameraEquippedEntity& m_cOmnicamEntity;
       CEmbodiedEntity& m_cEmbodiedEntity;
@@ -291,9 +291,13 @@ namespace argos {
                    "    ...\n"
                    "  </controllers>\n\n"
 
-                   "It is possible to add uniform noise to the blobs, thus matching the\n"
+                   "It is possible to add noise to the detected blobs, thus matching the\n"
                    "characteristics of a real robot better. This can be done with the attribute\n"
-                   "\"noise_std_dev\".\n\n"
+                   "\"noise_std_dev\", which must be specified as a postive float in [0.0,1.0].\n"
+                   "Each timestep the camera is enabled, a vector of randomly generated noise\n"
+                   "{Gaussian(noise_std_dev), Uniform(0, 2*pi)} is added the reading for each\n"
+                   "detected blob.\n\n"
+
                    "  <controllers>\n"
                    "    ...\n"
                    "    <my_controller ...>\n"

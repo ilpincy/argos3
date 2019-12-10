@@ -180,7 +180,9 @@ REGISTER_ACTUATOR(CDifferentialSteeringDefaultActuator,
                   "b = random bias from a Gaussian distribution\n"
                   "f = random factor from a Gaussian distribution\n"
                   "a = actual actuated value\n\n"
+
                   "a = f * (w + b)\n\n"
+
                   "You can configure the average and stddev of both the bias and the factor. This\n"
                   "can be done with the optional attributes: 'bias_avg', 'bias_stddev',\n"
                   "'factor_avg', and 'factor_stddev'. Bias attributes are expressed in m/s, while\n"
