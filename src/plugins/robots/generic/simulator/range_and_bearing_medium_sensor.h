@@ -21,6 +21,7 @@ namespace argos {
 #include <argos3/core/utility/math/rng.h>
 #include <argos3/core/simulator/space/space.h>
 #include <argos3/plugins/robots/generic/control_interface/ci_range_and_bearing_sensor.h>
+#include <argos3/plugins/robots/generic/simulator/noise_injector.h>
 
 namespace argos {
 
@@ -58,11 +59,18 @@ namespace argos {
       CRABEquippedEntity*  m_pcRangeAndBearingEquippedEntity;
       CControllableEntity* m_pcControllableEntity;
       CRABMedium*          m_pcRangeAndBearingMedium;
-      Real                 m_fDistanceNoiseStdDev;
       Real                 m_fPacketDropProb;
       CRandom::CRNG*       m_pcRNG;
       CSpace&              m_cSpace;
       bool                 m_bShowRays;
+
+     /* Position noise injectors */
+     CNoiseInjector m_cDistanceNoiseInjector;
+     CNoiseInjector m_cAzimuthNoiseInjector;
+     CNoiseInjector m_cInclinationNoiseInjector;
+
+     /** Packet drop probability noise injector */
+     CNoiseInjector m_cPacketDropNoiseInjector;
    };
 }
 

@@ -16,9 +16,7 @@ namespace argos {
    /****************************************/
 
    CDifferentialSteeringDefaultSensor::CDifferentialSteeringDefaultSensor() :
-      m_pcWheeledEntity(NULL),
-      m_pcRNG(NULL),
-      m_bAddNoise(false) {}
+      m_pcWheeledEntity(NULL) {}
 
    /****************************************/
    /****************************************/
@@ -45,13 +43,14 @@ namespace argos {
    void CDifferentialSteeringDefaultSensor::Init(TConfigurationNode& t_tree) {
       try {
          CCI_DifferentialSteeringSensor::Init(t_tree);
-         /* Parse noise range */
-         GetNodeAttributeOrDefault(t_tree, "vel_noise_range",  m_cVelNoiseRange,  m_cVelNoiseRange);
-         GetNodeAttributeOrDefault(t_tree, "dist_noise_range", m_cDistNoiseRange, m_cDistNoiseRange);
-         if(m_cVelNoiseRange.GetSpan() != 0 ||
-            m_cDistNoiseRange.GetSpan() != 0) {
-            m_bAddNoise = true;
-            m_pcRNG = CRandom::CreateRNG("argos");
+         /* Parse noise injection */
+         if(NodeExists(t_tree, "vel_noise")) {
+           TConfigurationNode& tNode = GetNode(t_tree, "vel_noise");
+           m_cVelNoiseInjector.Init(tNode);
+         }
+         if(NodeExists(t_tree, "dist_noise")) {
+           TConfigurationNode& tNode = GetNode(t_tree, "dist_noise");
+           m_cDistNoiseInjector.Init(tNode);
          }
       }
       catch(CARGoSException& ex) {
@@ -61,17 +60,19 @@ namespace argos {
 
    /****************************************/
    /****************************************/
-   
+
    void CDifferentialSteeringDefaultSensor::Update() {
       m_sReading.VelocityLeftWheel = m_pfWheelVelocities[0] * 100.0f;
       m_sReading.VelocityRightWheel = m_pfWheelVelocities[1] * 100.0f;
       m_sReading.CoveredDistanceLeftWheel = m_sReading.VelocityLeftWheel * CPhysicsEngine::GetSimulationClockTick();
       m_sReading.CoveredDistanceRightWheel = m_sReading.VelocityRightWheel * CPhysicsEngine::GetSimulationClockTick();
-      if(m_bAddNoise) {
-         m_sReading.VelocityLeftWheel  += m_pcRNG->Uniform(m_cVelNoiseRange);
-         m_sReading.VelocityRightWheel += m_pcRNG->Uniform(m_cVelNoiseRange);
-         m_sReading.CoveredDistanceLeftWheel  += m_pcRNG->Uniform(m_cDistNoiseRange);
-         m_sReading.CoveredDistanceRightWheel += m_pcRNG->Uniform(m_cDistNoiseRange);
+      if (m_cDistNoiseInjector.Enabled()) {
+        m_sReading.CoveredDistanceLeftWheel  += m_cDistNoiseInjector.InjectNoise();
+        m_sReading.CoveredDistanceRightWheel += m_cDistNoiseInjector.InjectNoise();
+      }
+      if (m_cVelNoiseInjector.Enabled()) {
+        m_sReading.VelocityLeftWheel  += m_cVelNoiseInjector.InjectNoise();
+        m_sReading.VelocityRightWheel += m_cVelNoiseInjector.InjectNoise();
       }
    }
 
@@ -116,28 +117,24 @@ namespace argos {
 
                    "OPTIONAL XML CONFIGURATION\n\n"
 
-                   "It is possible to add uniform noise to the sensor, thus matching the\n"
-                   "characteristics of a real robot better. You can add noise through the\n"
-                   "attributes 'vel_noise_range' and 'dist_noise_range'.\n"
-                   "Attribute 'vel_noise_range' regulates the noise range on the velocity returned\n"
-                   "by the sensor. Attribute 'dist_noise_range' sets the noise range on the\n"
-                   "distance covered by the wheels.\n\n"
+                   "----------------------------------------\n"
+                   "Noise Injection\n"
+                   "----------------------------------------\n"
 
-                   "  <controllers>\n"
-                   "    ...\n"
-                   "    <my_controller ...>\n"
-                   "      ...\n"
-                   "      <sensors>\n"
-                   "        ...\n"
-                   "        <differential_steering implementation=\"default\"\n"
-                   "                               vel_noise_range=\"-0.1:0.2\"\n"
-                   "                               dist_noise_range=\"-10.5:13.7\" />\n"
-                   "        ...\n"
-                   "      </sensors>\n"
-                   "      ...\n"
-                   "    </my_controller>\n"
-                   "    ...\n"
-                   "  </controllers>\n\n",
+                   "It is possible to one or more of the following NOISE_TYPE child tags\n"
+                   "to differential steering sensor configuration (all noise types are independent):\n"
+                   "['dist_noise', 'vel_noise']. "
+
+                   "Tag 'dist_noise' controls the noise applied to the reading of distance\n"
+                   "covered by the wheels. Tag 'vel_noise' controls the noise applied to the\n"
+                   "sensor velocity reading.\n\n" +
+
+                   CNoiseInjector::GetQueryDocumentation({
+                       .strDocName = "differential steering sensor",
+                           .strXMLParent = "differential_steering",
+                           .strXMLTag = "NOISE_TYPE",
+                           .strSAAType = "sensor",
+                           .bShowExamples = true}),
 
                    "Usable"
 		  );

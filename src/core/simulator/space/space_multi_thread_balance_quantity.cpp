@@ -288,6 +288,7 @@ namespace argos {
       CRange<size_t> cMediaRange = CalculatePluginRangeForThread(unId, m_ptMedia->size());
       /* Variables storing the portion of entities to update */
       CRange<size_t> cEntityRange;
+
       while(1) {
          THREAD_WAIT_FOR_GO_SIGNAL(Act);
          /* Calculate the portion of entities to update, if needed */
@@ -356,6 +357,7 @@ namespace argos {
             THREAD_SIGNAL_PHASE_DONE(SenseControlStep);
          }
       }
+
       pthread_cleanup_pop(1);
    }
 

@@ -19,6 +19,7 @@ namespace argos {
 #include <argos3/plugins/simulator/entities/wheeled_entity.h>
 #include <argos3/core/simulator/entity/composable_entity.h>
 #include <argos3/core/utility/math/rng.h>
+#include <argos3/plugins/robots/generic/simulator/noise_injector.h>
 
 namespace argos {
 
@@ -63,21 +64,15 @@ namespace argos {
       virtual void Reset();
 
    protected:
+      void ParseNoiseInjection(TConfigurationNode& t_tree);
 
       CWheeledEntity* m_pcWheeledEntity;
-      
-      /** Random number generator */
-      CRandom::CRNG* m_pcRNG;
 
       /** Noise bias for each wheel */
       Real m_fNoiseBias[2];
-      
-      /** Noise factor average (Gaussian model) for each wheel  */
-      Real m_fNoiseFactorAvg[2];
 
-      /** Noise factor stddev (Gaussian model) for each wheel  */
-      Real m_fNoiseFactorStdDev[2];
-
+      /** Noise factor for each wheel  */
+      CNoiseInjector m_cNoiseFactor[2];
    };
 
 }

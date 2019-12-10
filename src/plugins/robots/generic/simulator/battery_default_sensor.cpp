@@ -23,9 +23,7 @@ namespace argos {
 
    CBatteryDefaultSensor::CBatteryDefaultSensor() :
       m_pcEmbodiedEntity(NULL),
-      m_pcBatteryEntity(NULL),
-      m_pcRNG(NULL),
-      m_bAddNoise(false) {}
+      m_pcBatteryEntity(NULL) {}
 
    /****************************************/
    /****************************************/
@@ -48,11 +46,10 @@ namespace argos {
       try {
          /* Execute standard logic */
          CCI_BatterySensor::Init(t_tree);
-         /* Parse noise range */
-         GetNodeAttributeOrDefault(t_tree, "noise_range", m_cNoiseRange, m_cNoiseRange);
-         if(m_cNoiseRange.GetSpan() != 0) {
-            m_bAddNoise = true;
-            m_pcRNG = CRandom::CreateRNG("argos");
+         /* Parse noise injection */
+         if(NodeExists(t_tree, "noise")) {
+           TConfigurationNode& tNode = GetNode(t_tree, "noise");
+           m_cNoiseInjector.Init(tNode);
          }
       }
       catch(CARGoSException& ex) {
@@ -71,8 +68,8 @@ namespace argos {
          m_pcBatteryEntity->GetAvailableCharge() /
          m_pcBatteryEntity->GetFullCharge();
       /* Add noise */
-      if(m_bAddNoise) {
-         m_sReading.AvailableCharge += m_pcRNG->Uniform(m_cNoiseRange);
+      if(m_cNoiseInjector.Enabled()) {
+         m_sReading.AvailableCharge += m_cNoiseInjector.InjectNoise();
          /* To trunc battery level between 0 and 1 */
          UNIT.TruncValue(m_sReading.AvailableCharge);
       }
@@ -126,23 +123,19 @@ namespace argos {
 
                    "OPTIONAL XML CONFIGURATION\n\n"
 
-                   "It is possible to add uniform noise to the sensor, thus matching the\n"
-                   "characteristics of a real robot better. You can add noise through the\n"
-                   "attribute 'noise_range' as follows:\n\n"
-                   "  <controllers>\n"
-                   "    ...\n"
-                   "    <my_controller ...>\n"
-                   "      ...\n"
-                   "      <sensors>\n"
-                   "        ...\n"
-                   "        <battery implementation=\"default\"\n"
-                   "                 noise_range=\"-0.3:0.4\" />\n"
-                   "        ...\n"
-                   "      </sensors>\n"
-                   "      ...\n"
-                   "    </my_controller>\n"
-                   "    ...\n"
-                   "  </controllers>\n\n",
+
+                   "----------------------------------------\n"
+                   "Noise Injection\n"
+                   "----------------------------------------\n" +
+
+                   CNoiseInjector::GetQueryDocumentation({
+                       .strDocName = "battery sensor",
+                           .strXMLParent = "battery",
+                           .strXMLTag = "noise",
+                           .strSAAType = "sensor",
+                           .bShowExamples = true}) +
+
+                   "The final sensor reading after noise has been added is clamped to the [0-1] range.\n\n",
 
                    "Usable"
 		  );

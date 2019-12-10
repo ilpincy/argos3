@@ -119,7 +119,8 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
     simulator/radios_default_sensor.cpp
     simulator/range_and_bearing_default_actuator.cpp
     simulator/range_and_bearing_medium_sensor.cpp
-    simulator/tags_default_actuator.cpp)
+    simulator/tags_default_actuator.cpp
+    simulator/noise_injector.cpp)
 endif(ARGOS_BUILD_FOR_SIMULATOR)
 
 #

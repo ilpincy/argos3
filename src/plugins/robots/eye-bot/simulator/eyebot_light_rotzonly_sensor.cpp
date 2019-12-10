@@ -54,8 +54,6 @@ namespace argos {
    CEyeBotLightRotZOnlySensor::CEyeBotLightRotZOnlySensor() :
       m_pcEmbodiedEntity(NULL),
       m_bShowRays(false),
-      m_pcRNG(NULL),
-      m_bAddNoise(false),
       m_cSpace(CSimulator::GetInstance().GetSpace()) {}
 
    /****************************************/
@@ -80,16 +78,10 @@ namespace argos {
       try {
          /* Show rays? */
          GetNodeAttributeOrDefault(t_tree, "show_rays", m_bShowRays, m_bShowRays);
-         /* Parse noise level */
-         Real fNoiseLevel = 0.0f;
-         GetNodeAttributeOrDefault(t_tree, "noise_level", fNoiseLevel, fNoiseLevel);
-         if(fNoiseLevel < 0.0f) {
-            THROW_ARGOSEXCEPTION("Can't specify a negative value for the noise level of the light sensor");
-         }
-         else if(fNoiseLevel > 0.0f) {
-            m_bAddNoise = true;
-            m_cNoiseRange.Set(-fNoiseLevel, fNoiseLevel);
-            m_pcRNG = CRandom::CreateRNG("argos");
+         /* Parse noise injection */
+         if(NodeExists(t_tree, "noise")) {
+           TConfigurationNode& tNode = GetNode(t_tree, "noise");
+           m_cNoiseInjector.Init(tNode);
          }
          m_tReadings.resize(m_pcLightEntity->GetNumSensors());
       }
@@ -100,7 +92,7 @@ namespace argos {
 
    /****************************************/
    /****************************************/
-   
+
    void CEyeBotLightRotZOnlySensor::Update() {
       /* Erase readings */
       for(size_t i = 0; i < m_tReadings.size(); ++i) {
@@ -189,9 +181,9 @@ namespace argos {
          }
       }
       /* Apply noise to the sensors */
-      if(m_bAddNoise) {
+      if(m_cNoiseInjector.Enabled()) {
          for(size_t i = 0; i < 24; ++i) {
-            m_tReadings[i].Value += m_pcRNG->Uniform(m_cNoiseRange);
+            m_tReadings[i].Value += m_cNoiseInjector.InjectNoise();
          }
       }
       /* Trunc the reading between 0 and 1 */
@@ -217,74 +209,9 @@ namespace argos {
                    "Carlo Pinciroli [ilpincy@gmail.com]",
                    "1.0",
                    "The eye-bot light sensor (optimized for 2D).",
-                   "This sensor accesses a set of light sensors. The sensors all return a value\n"
-                   "between 0 and 1, where 0 means nothing within range and 1 means the perceived\n"
-                   "light saturates the sensor. Values between 0 and 1 depend on the distance of\n"
-                   "the perceived light. Each reading R is calculated with R=(I/x)^2, where x is the\n"
-                   "distance between a sensor and the light, and I is the reference intensity of the\n"
-                   "perceived light. The reference intensity corresponds to the minimum distance at\n"
-                   "which the light saturates a sensor. The reference intensity depends on the\n"
-                   "individual light, and it is set with the \"intensity\" attribute of the light\n"
-                   "entity. In case multiple lights are present in the environment, each sensor\n"
-                   "reading is calculated as the sum of the individual readings due to each light.\n"
-                   "In other words, light wave interference is not taken into account. In\n"
-                   "controllers, you must include the ci_light_sensor.h header.\n\n"
-                   "REQUIRED XML CONFIGURATION\n\n"
-                   "  <controllers>\n"
-                   "    ...\n"
-                   "    <my_controller ...>\n"
-                   "      ...\n"
-                   "      <sensors>\n"
-                   "        ...\n"
-                   "        <eyebot_light implementation=\"rot_z_only\" />\n"
-                   "        ...\n"
-                   "      </sensors>\n"
-                   "      ...\n"
-                   "    </my_controller>\n"
-                   "    ...\n"
-                   "  </controllers>\n\n"
-                   "OPTIONAL XML CONFIGURATION\n\n"
-                   "It is possible to draw the rays shot by the light sensor in the OpenGL\n"
-                   "visualization. This can be useful for sensor debugging but also to understand\n"
-                   "what's wrong in your controller. In OpenGL, the rays are drawn in cyan when\n"
-                   "they are not obstructed and in purple when they are. In case a ray is\n"
-                   "obstructed, a black dot is drawn where the intersection occurred.\n"
-                   "To turn this functionality on, add the attribute \"show_rays\" as in this\n"
-                   "example:\n\n"
-                   "  <controllers>\n"
-                   "    ...\n"
-                   "    <my_controller ...>\n"
-                   "      ...\n"
-                   "      <sensors>\n"
-                   "        ...\n"
-                   "        <eyebot_light implementation=\"rot_z_only\"\n"
-                   "                      show_rays=\"true\" />\n"
-                   "        ...\n"
-                   "      </sensors>\n"
-                   "      ...\n"
-                   "    </my_controller>\n"
-                   "    ...\n"
-                   "  </controllers>\n\n"
-                   "It is possible to add uniform noise to the sensors, thus matching the\n"
-                   "characteristics of a real robot better. This can be done with the attribute\n"
-                   "\"noise_level\", whose allowed range is in [-1,1] and is added to the calculated\n"
-                   "reading. The final sensor reading is always normalized in the [0-1] range.\n\n"
-                   "  <controllers>\n"
-                   "    ...\n"
-                   "    <my_controller ...>\n"
-                   "      ...\n"
-                   "      <sensors>\n"
-                   "        ...\n"
-                   "        <eyebot_light implementation=\"rot_z_only\"\n"
-                   "                      noise_level=\"0.1\" />\n"
-                   "        ...\n"
-                   "      </sensors>\n"
-                   "      ...\n"
-                   "    </my_controller>\n"
-                   "    ...\n"
-                   "  </controllers>\n\n"
-                   "OPTIONAL XML CONFIGURATION\n\n"
-                   "None.\n",
+                   "This sensor accesses the eye-bot light sensor. For a complete description\n"
+                   "of its usage, refer to the ci_eyebot_light_sensor.h interface. For the XML\n"
+                   "configuration, refer to the default light sensor.\n",
                    "Usable"
       );
 

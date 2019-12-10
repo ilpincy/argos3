@@ -18,7 +18,7 @@ namespace argos {
 #include <argos3/plugins/robots/mini-quadrotor/control_interface/ci_miniquadrotor_rotor_actuator.h>
 #include <argos3/core/simulator/actuator.h>
 #include <argos3/core/simulator/entity/composable_entity.h>
-#include <argos3/core/utility/math/rng.h>
+#include <argos3/plugins/robots/generic/simulator/noise_injector.h>
 
 namespace argos {
 
@@ -52,20 +52,11 @@ namespace argos {
 
    protected:
 
-      /** Adds noise to the rotor velocity */
-      virtual void AddGaussianNoise();
-
-   protected:
-
       /** The rotor equipped entity */
       CRotorEquippedEntity* m_pcRotorEquippedEntity;
-      
-      /** Random number generator */
-      CRandom::CRNG* m_pcRNG;
-      
-      /** Noise parameters, at the moment noise is Gaussian */
-      Real m_fNoiseStdDeviation;
 
+      /** Noise injector */
+      CNoiseInjector m_cNoiseInjector;
    };
 
 }

@@ -17,10 +17,9 @@ namespace argos {
 }
 
 #include <argos3/plugins/robots/generic/control_interface/ci_battery_sensor.h>
-#include <argos3/core/utility/math/range.h>
-#include <argos3/core/utility/math/rng.h>
 #include <argos3/core/simulator/space/space.h>
 #include <argos3/core/simulator/sensor.h>
+#include <argos3/plugins/robots/generic/simulator/noise_injector.h>
 
 namespace argos {
 
@@ -49,14 +48,8 @@ namespace argos {
       /** Reference to battery sensor equipped entity associated to this sensor */
       CBatteryEquippedEntity* m_pcBatteryEntity;
 
-      /** Random number generator */
-      CRandom::CRNG* m_pcRNG;
-
-      /** Whether to add noise or not */
-      bool m_bAddNoise;
-
-      /** Noise range on battery level */
-      CRange<Real> m_cNoiseRange;
+     /** Noise injector */
+      CNoiseInjector m_cNoiseInjector;
    };
 
 }

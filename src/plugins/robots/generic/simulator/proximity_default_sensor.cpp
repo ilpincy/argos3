@@ -24,8 +24,6 @@ namespace argos {
    CProximityDefaultSensor::CProximityDefaultSensor() :
       m_pcEmbodiedEntity(NULL),
       m_bShowRays(false),
-      m_pcRNG(NULL),
-      m_bAddNoise(false),
       m_cSpace(CSimulator::GetInstance().GetSpace()) {}
 
    /****************************************/
@@ -51,16 +49,10 @@ namespace argos {
          CCI_ProximitySensor::Init(t_tree);
          /* Show rays? */
          GetNodeAttributeOrDefault(t_tree, "show_rays", m_bShowRays, m_bShowRays);
-         /* Parse noise level */
-         Real fNoiseLevel = 0.0f;
-         GetNodeAttributeOrDefault(t_tree, "noise_level", fNoiseLevel, fNoiseLevel);
-         if(fNoiseLevel < 0.0f) {
-            THROW_ARGOSEXCEPTION("Can't specify a negative value for the noise level of the proximity sensor");
-         }
-         else if(fNoiseLevel > 0.0f) {
-            m_bAddNoise = true;
-            m_cNoiseRange.Set(-fNoiseLevel, fNoiseLevel);
-            m_pcRNG = CRandom::CreateRNG("argos");
+         /* Parse noise injection */
+         if(NodeExists(t_tree, "noise")) {
+           TConfigurationNode& tNode = GetNode(t_tree, "noise");
+           m_cNoiseInjector.Init(tNode);
          }
          m_tReadings.resize(m_pcProximityEntity->GetNumSensors());
       }
@@ -110,8 +102,8 @@ namespace argos {
             }
          }
          /* Apply noise to the sensor */
-         if(m_bAddNoise) {
-            m_tReadings[i] += m_pcRNG->Uniform(m_cNoiseRange);
+         if(m_cNoiseInjector.Enabled()) {
+            m_tReadings[i] += m_cNoiseInjector.InjectNoise();
          }
          /* Trunc the reading between 0 and 1 */
          UNIT.TruncValue(m_tReadings[i]);
@@ -190,25 +182,20 @@ namespace argos {
                    "    ...\n"
                    "  </controllers>\n\n"
 
-                   "It is possible to add uniform noise to the sensors, thus matching the\n"
-                   "characteristics of a real robot better. This can be done with the attribute\n"
-                   "\"noise_level\", whose allowed range is in [-1,1] and is added to the calculated\n"
-                   "reading. The final sensor reading is always normalized in the [0-1] range.\n\n"
+                   "----------------------------------------\n"
+                   "Noise Injection\n"
+                   "----------------------------------------\n" +
 
-                   "  <controllers>\n"
-                   "    ...\n"
-                   "    <my_controller ...>\n"
-                   "      ...\n"
-                   "      <sensors>\n"
-                   "        ...\n"
-                   "        <proximity implementation=\"default\"\n"
-                   "                   noise_level=\"0.1\" />\n"
-                   "        ...\n"
-                   "      </sensors>\n"
-                   "      ...\n"
-                   "    </my_controller>\n"
-                   "    ...\n"
-                   "  </controllers>\n\n",
+                   CNoiseInjector::GetQueryDocumentation({
+                       .strDocName = "proximity sensor",
+                           .strXMLParent = "proximity",
+                           .strXMLTag = "noise",
+                           .strSAAType = "sensor",
+                           .bShowExamples = true}) +
+
+                   "The final proximity sensor reading after noise has been added is clamped to the "
+                   "[0-1] range.\n\n",
+
 
                    "Usable"
 		  );

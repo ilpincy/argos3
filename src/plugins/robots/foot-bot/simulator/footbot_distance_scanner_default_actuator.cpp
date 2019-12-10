@@ -86,7 +86,7 @@ namespace argos {
                      "1.0",
                      "The foot-bot distance scanner actuator.",
                      "This actuator controls the foot-bot distance scanner. For a complete\n"
-                     "description of its usage, refer to the ci_footbot_distance_scanner_actuator\n"
+                     "description of its usage, refer to the ci_footbot_distance_scanner_actuator.h\n"
                      "file.\n\n"
                      "REQUIRED XML CONFIGURATION\n\n"
                      "  <controllers>\n"

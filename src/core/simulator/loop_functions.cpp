@@ -13,7 +13,7 @@ namespace argos {
 
    /****************************************/
    /****************************************/
-   
+
    void CLoopFunctions::MoveEntity(CPositionalEntity& c_entity,
                                    const CVector3& c_position,
                                    const CQuaternion& c_orientation) {
@@ -36,7 +36,7 @@ namespace argos {
    void CLoopFunctions::AddEntity(CEntity& c_entity) {
       CallEntityOperation<CSpaceOperationAddEntity, CSpace, void>(m_cSpace, c_entity);
    }
-   
+
    /****************************************/
    /****************************************/
 
@@ -44,10 +44,10 @@ namespace argos {
       CEntity& entity = m_cSpace.GetEntity(str_entity_id);
       RemoveEntity(entity);
    }
-   
+
    /****************************************/
    /****************************************/
-   
+
    void CLoopFunctions::RemoveEntity(CEntity& c_entity) {
       CallEntityOperation<CSpaceOperationRemoveEntity, CSpace, void>(m_cSpace, c_entity);
    }

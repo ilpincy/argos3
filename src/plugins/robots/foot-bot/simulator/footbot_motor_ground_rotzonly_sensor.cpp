@@ -26,8 +26,6 @@ namespace argos {
       m_pcEmbodiedEntity(NULL),
       m_pcFloorEntity(NULL),
       m_pcGroundSensorEntity(NULL),
-      m_pcRNG(NULL),
-      m_bAddNoise(false),
       m_cSpace(CSimulator::GetInstance().GetSpace()) {}
 
    /****************************************/
@@ -46,16 +44,10 @@ namespace argos {
    void CFootBotMotorGroundRotZOnlySensor::Init(TConfigurationNode& t_tree) {
       try {
          CCI_FootBotMotorGroundSensor::Init(t_tree);
-         /* Parse noise level */
-         Real fNoiseLevel = 0.0f;
-         GetNodeAttributeOrDefault(t_tree, "noise_level", fNoiseLevel, fNoiseLevel);
-         if(fNoiseLevel < 0.0f) {
-            THROW_ARGOSEXCEPTION("Can't specify a negative value for the noise level of the foot-bot ground sensor");
-         }
-         else if(fNoiseLevel > 0.0f) {
-            m_bAddNoise = true;
-            m_cNoiseRange.Set(-fNoiseLevel, fNoiseLevel);
-            m_pcRNG = CRandom::CreateRNG("argos");
+         /* Parse noise injection */
+         if(NodeExists(t_tree, "noise")) {
+           TConfigurationNode& tNode = GetNode(t_tree, "noise");
+           m_cNoiseInjector.Init(tNode);
          }
          m_tReadings.resize(4);
       }
@@ -92,8 +84,8 @@ namespace argos {
          /* Set the reading */
          m_tReadings[i].Value = cColor.ToGrayScale() / 255.0f;
          /* Apply noise to the sensor */
-         if(m_bAddNoise) {
-            m_tReadings[i].Value += m_pcRNG->Uniform(m_cNoiseRange);
+         if(m_cNoiseInjector.Enabled()) {
+           m_tReadings[i].Value += m_cNoiseInjector.InjectNoise();
          }
          /* Clamp the reading between 0 and 1 */
          UNIT.TruncValue(m_tReadings[i].Value);

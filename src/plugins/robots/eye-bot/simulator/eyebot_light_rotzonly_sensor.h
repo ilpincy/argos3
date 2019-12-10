@@ -16,10 +16,9 @@ namespace argos {
 }
 
 #include <argos3/plugins/robots/eye-bot/control_interface/ci_eyebot_light_sensor.h>
-#include <argos3/core/utility/math/range.h>
-#include <argos3/core/utility/math/rng.h>
 #include <argos3/core/simulator/space/space.h>
 #include <argos3/core/simulator/sensor.h>
+#include <argos3/plugins/robots/generic/simulator/noise_injector.h>
 
 namespace argos {
 
@@ -70,17 +69,11 @@ namespace argos {
       /** Flag to show rays in the simulator */
       bool m_bShowRays;
 
-      /** Random number generator */
-      CRandom::CRNG* m_pcRNG;
-
-      /** Whether to add noise or not */
-      bool m_bAddNoise;
-
-      /** Noise range */
-      CRange<Real> m_cNoiseRange;
-
       /** Reference to the space */
       CSpace& m_cSpace;
+
+      /** Noise injector */
+      CNoiseInjector m_cNoiseInjector;
    };
 
 }

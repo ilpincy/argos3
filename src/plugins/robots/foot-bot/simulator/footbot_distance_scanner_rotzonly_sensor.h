@@ -16,8 +16,6 @@ namespace argos {
 #include <argos3/plugins/robots/foot-bot/control_interface/ci_footbot_distance_scanner_sensor.h>
 #include <argos3/plugins/robots/foot-bot/simulator/footbot_distance_scanner_equipped_entity.h>
 #include <argos3/core/simulator/entity/embodied_entity.h>
-#include <argos3/core/utility/math/rng.h>
-#include <argos3/core/utility/math/ray3.h>
 #include <argos3/core/simulator/sensor.h>
 
 #include <string>
@@ -70,15 +68,6 @@ namespace argos {
       }
 
    private:
-
-      /** Random number generator */
-      CRandom::CRNG* m_pcRNG;
-
-      /** Whether to add noise or not */
-      bool m_bAddNoise;
-
-      /** Noise range */
-      CRange<Real> m_cNoiseRange;
 
       CSpace& m_cSpace;
       CFootBotDistanceScannerEquippedEntity* m_pcDistScanEntity;

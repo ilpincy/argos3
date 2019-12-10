@@ -15,14 +15,12 @@ namespace argos {
    /****************************************/
 
    CMiniQuadrotorRotorDefaultActuator::CMiniQuadrotorRotorDefaultActuator() :
-      m_pcRotorEquippedEntity(NULL),
-      m_pcRNG(NULL),
-      m_fNoiseStdDeviation(0.0f) {
+      m_pcRotorEquippedEntity(NULL) {
    }
-   
+
    /****************************************/
    /****************************************/
-   
+
    void CMiniQuadrotorRotorDefaultActuator::SetRobot(CComposableEntity& c_entity) {
       try {
          m_pcRotorEquippedEntity = &(c_entity.GetComponent<CRotorEquippedEntity>("rotors"));
@@ -41,9 +39,10 @@ namespace argos {
    void CMiniQuadrotorRotorDefaultActuator::Init(TConfigurationNode& t_tree) {
       try {
          CCI_MiniQuadrotorRotorActuator::Init(t_tree);
-         GetNodeAttributeOrDefault<Real>(t_tree, "noise_std_dev", m_fNoiseStdDeviation, 0.0f);
-         if(m_fNoiseStdDeviation > 0.0f) {
-            m_pcRNG = CRandom::CreateRNG("argos");
+         /* Parse noise injection */
+         if(NodeExists(t_tree, "noise")) {
+           TConfigurationNode& tNode = GetNode(t_tree, "noise");
+           m_cNoiseInjector.Init(tNode);
          }
       }
       catch(CARGoSException& ex) {
@@ -53,38 +52,31 @@ namespace argos {
 
    /****************************************/
    /****************************************/
-   
+
    void CMiniQuadrotorRotorDefaultActuator::SetRotorVelocities(const CCI_MiniQuadrotorRotorActuator::SVelocities& s_velocities) {
       /* Set velocities */
       m_sCurrentVelocities = s_velocities;
       /* Apply noise */
-      if(m_fNoiseStdDeviation > 0.0f) {
-         AddGaussianNoise();
+      if(m_cNoiseInjector.Enabled()) {
+        m_sCurrentVelocities.Velocities[0] += m_sCurrentVelocities.Velocities[0] * m_cNoiseInjector.InjectNoise();
+        m_sCurrentVelocities.Velocities[1] += m_sCurrentVelocities.Velocities[1] * m_cNoiseInjector.InjectNoise();
+        m_sCurrentVelocities.Velocities[2] += m_sCurrentVelocities.Velocities[2] * m_cNoiseInjector.InjectNoise();
+        m_sCurrentVelocities.Velocities[3] += m_sCurrentVelocities.Velocities[3] * m_cNoiseInjector.InjectNoise();
       }
    }
-   
+
    /****************************************/
    /****************************************/
-   
+
    void CMiniQuadrotorRotorDefaultActuator::Update() {
       m_pcRotorEquippedEntity->SetVelocities(m_sCurrentVelocities.Velocities);
    }
 
    /****************************************/
    /****************************************/
-   
+
    void CMiniQuadrotorRotorDefaultActuator::Reset() {
       m_sCurrentVelocities = SVelocities();
-   }
-   
-   /****************************************/
-   /****************************************/
-   
-   void CMiniQuadrotorRotorDefaultActuator::AddGaussianNoise() {
-      m_sCurrentVelocities.Velocities[0] += m_sCurrentVelocities.Velocities[0] * m_pcRNG->Gaussian(m_fNoiseStdDeviation);
-      m_sCurrentVelocities.Velocities[1] += m_sCurrentVelocities.Velocities[1] * m_pcRNG->Gaussian(m_fNoiseStdDeviation);
-      m_sCurrentVelocities.Velocities[2] += m_sCurrentVelocities.Velocities[2] * m_pcRNG->Gaussian(m_fNoiseStdDeviation);
-      m_sCurrentVelocities.Velocities[3] += m_sCurrentVelocities.Velocities[3] * m_pcRNG->Gaussian(m_fNoiseStdDeviation);
    }
 
    /****************************************/
@@ -115,24 +107,15 @@ REGISTER_ACTUATOR(CMiniQuadrotorRotorDefaultActuator,
                   "    ...\n"
                   "  </controllers>\n\n"
                   "OPTIONAL XML CONFIGURATION\n\n"
-                  "It is possible to specify noisy speed in order to match the characteristics\n"
-                  "of the real robot. This can be done with the attribute: 'noise_std_dev',\n" 
-                  "which indicates the standard deviation of a gaussian noise applied to the\n"
-                  "desired velocity of the rotor:\n\n"
-                  "  <controllers>\n"
-                  "    ...\n"
-                  "    <my_controller ...>\n"
-                  "      ...\n"
-                  "      <actuators>\n"
-                  "        ...\n"
-                  "        <miniquadrotor_rotor implementation=\"default\"\n"
-                  "                               noise_std_dev=\"1\" />\n"
-                  "        ...\n"
-                  "      </actuators>\n"
-                  "      ...\n"
-                  "    </my_controller>\n"
-                  "    ...\n"
-                  "  </controllers>\n",
+                  "----------------------------------------\n"
+                   "Noise Injection\n"
+                   "----------------------------------------\n" +
+
+                   CNoiseInjector::GetQueryDocumentation("Mini-quadrotor rotor",
+                                                         "miniquadrotor_rotor",
+                                                         "noise") +
+
+                  "The final actuation value is not clamped after noise has been added.\n\n",
+
                   "Usable"
    );
-   

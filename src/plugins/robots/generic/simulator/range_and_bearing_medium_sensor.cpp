@@ -23,11 +23,10 @@ namespace argos {
 
    CRangeAndBearingMediumSensor::CRangeAndBearingMediumSensor() :
       m_pcRangeAndBearingEquippedEntity(NULL),
-      m_fDistanceNoiseStdDev(0.0f),
       m_fPacketDropProb(0.0f),
-      m_pcRNG(NULL),
       m_cSpace(CSimulator::GetInstance().GetSpace()),
-      m_bShowRays(false) {}
+      m_bShowRays(false),
+      m_cPacketDropNoiseInjector() {}
 
    /****************************************/
    /****************************************/
@@ -48,13 +47,16 @@ namespace argos {
          CCI_RangeAndBearingSensor::Init(t_tree);
          /* Show rays? */
          GetNodeAttributeOrDefault(t_tree, "show_rays", m_bShowRays, m_bShowRays);
-         /* Parse noise */
-         GetNodeAttributeOrDefault(t_tree, "noise_std_dev", m_fDistanceNoiseStdDev, m_fDistanceNoiseStdDev);
-         GetNodeAttributeOrDefault(t_tree, "packet_drop_prob", m_fPacketDropProb, m_fPacketDropProb);
-         if((m_fPacketDropProb > 0.0f) ||
-            (m_fDistanceNoiseStdDev > 0.0f)) {
-            m_pcRNG = CRandom::CreateRNG("argos");
+         /* Parse noise injection */
+         if(NodeExists(t_tree, "distance_noise")) {
+           TConfigurationNode& tNode = GetNode(t_tree, "distance_noise");
+           m_cDistanceNoiseInjector.Init(tNode);
          }
+         if(NodeExists(t_tree, "packet_drop_noise")) {
+           TConfigurationNode& tNode = GetNode(t_tree, "packet_drop_noise");
+           m_cPacketDropNoiseInjector.Init(tNode);
+         }
+
          /* Get RAB medium from id specified in the XML */
          std::string strMedium;
          GetNodeAttribute(t_tree, "medium", strMedium);
@@ -85,63 +87,61 @@ namespace argos {
       /* Go through communicating RABs and create packets */
       for(CSet<CRABEquippedEntity*>::iterator it = setRABs.begin();
           it != setRABs.end(); ++it) {
-         /* Should we drop this packet? */
-         if(m_pcRNG == NULL || /* No noise to apply */
-            !(m_fPacketDropProb > 0.0f &&
-              m_pcRNG->Bernoulli(m_fPacketDropProb)) /* Packet is not dropped */
-            ) {
-            /* Create a reference to the RAB entity to process */
-            CRABEquippedEntity& cRABEntity = **it;
-            /* Add ray if requested */
-            if(m_bShowRays) {
-               m_pcControllableEntity->AddCheckedRay(false,
-                                                     CRay3(cRABEntity.GetPosition(),
-                                                           m_pcRangeAndBearingEquippedEntity->GetPosition()));
-            }
-            /* Calculate vector to entity */
-            cVectorRobotToMessage = cRABEntity.GetPosition();
-            cVectorRobotToMessage -= m_pcRangeAndBearingEquippedEntity->GetPosition();
-            /* If noise was setup, add it */
-            if(m_pcRNG && m_fDistanceNoiseStdDev > 0.0f) {
-               cVectorRobotToMessage += CVector3(
-                  m_pcRNG->Gaussian(m_fDistanceNoiseStdDev),
-                  m_pcRNG->Uniform(INCLINATION_RANGE),
-                  m_pcRNG->Uniform(CRadians::UNSIGNED_RANGE));
-            }
-            /*
-             * Set range and bearing from cVectorRobotToMessage
-             * First, we must rotate the cVectorRobotToMessage so that
-             * it is local to the robot coordinate system. To do this,
-             * it enough to rotate cVectorRobotToMessage by the inverse
-             * of the robot orientation.
-             */
-            cVectorRobotToMessage.Rotate(m_pcRangeAndBearingEquippedEntity->GetOrientation().Inverse());
-            cVectorRobotToMessage.ToSphericalCoords(sPacket.Range,
-                                                    sPacket.VerticalBearing,
-                                                    sPacket.HorizontalBearing);
-            /* Convert range to cm */
-            sPacket.Range *= 100.0f;
-            /* Normalize horizontal bearing between [-pi,pi] */
-            sPacket.HorizontalBearing.SignedNormalize();
-            /*
-             * The vertical bearing is defined as the angle between the local
-             * robot XY plane and the message source position, i.e., the elevation
-             * in math jargon. However, cVectorRobotToMessage.ToSphericalCoords()
-             * sets sPacket.VerticalBearing to the inclination, which is the angle
-             * between the azimuth vector (robot local Z axis) and
-             * cVectorRobotToMessage. Elevation = 90 degrees - Inclination.
-             */
-            sPacket.VerticalBearing.Negate();
-            sPacket.VerticalBearing += CRadians::PI_OVER_TWO;
-            sPacket.VerticalBearing.SignedNormalize();
-            /* Set message data */
-            sPacket.Data = cRABEntity.GetData();
-            /* Add message to the list */
-            m_tReadings.push_back(sPacket);
-         }
+        /* Should we drop this packet? */
+        if(m_cPacketDropNoiseInjector.Enabled() &&
+           !m_cPacketDropNoiseInjector.BernoulliEvent()) {
+          continue;
+        }
+        /* Create a reference to the RAB entity to process */
+        CRABEquippedEntity& cRABEntity = **it;
+        /* Add ray if requested */
+        if(m_bShowRays) {
+          m_pcControllableEntity->AddCheckedRay(false,
+                                                CRay3(cRABEntity.GetPosition(),
+                                                      m_pcRangeAndBearingEquippedEntity->GetPosition()));
+        }
+        /* Calculate vector to entity */
+        cVectorRobotToMessage = cRABEntity.GetPosition();
+        cVectorRobotToMessage -= m_pcRangeAndBearingEquippedEntity->GetPosition();
+        /* If noise was setup, add it */
+        if(m_cDistanceNoiseInjector.Enabled()) {
+          cVectorRobotToMessage += CVector3(m_cDistanceNoiseInjector.InjectNoise(),
+                                            CRadians(m_cInclinationNoiseInjector.InjectNoise()),
+                                            CRadians(m_cAzimuthNoiseInjector.InjectNoise()));
+        }
+        /*
+         * Set range and bearing from cVectorRobotToMessage
+         * First, we must rotate the cVectorRobotToMessage so that
+         * it is local to the robot coordinate system. To do this,
+         * it enough to rotate cVectorRobotToMessage by the inverse
+         * of the robot orientation.
+         */
+        cVectorRobotToMessage.Rotate(m_pcRangeAndBearingEquippedEntity->GetOrientation().Inverse());
+        cVectorRobotToMessage.ToSphericalCoords(sPacket.Range,
+                                                sPacket.VerticalBearing,
+                                                sPacket.HorizontalBearing);
+        /* Convert range to cm */
+        sPacket.Range *= 100.0f;
+        /* Normalize horizontal bearing between [-pi,pi] */
+        sPacket.HorizontalBearing.SignedNormalize();
+        /*
+         * The vertical bearing is defined as the angle between the local
+         * robot XY plane and the message source position, i.e., the elevation
+         * in math jargon. However, cVectorRobotToMessage.ToSphericalCoords()
+         * sets sPacket.VerticalBearing to the inclination, which is the angle
+         * between the azimuth vector (robot local Z axis) and
+         * cVectorRobotToMessage. Elevation = 90 degrees - Inclination.
+         */
+        sPacket.VerticalBearing.Negate();
+        sPacket.VerticalBearing += CRadians::PI_OVER_TWO;
+        sPacket.VerticalBearing.SignedNormalize();
+        /* Set message data */
+        sPacket.Data = cRABEntity.GetData();
+        /* Add message to the list */
+        m_tReadings.push_back(sPacket);
       }
    }
-      
+
    /****************************************/
    /****************************************/
 
@@ -220,50 +220,35 @@ namespace argos {
                    "    ...\n"
                    "  </controllers>\n\n"
 
-                   "It is possible to add noise to the readings, thus matching the characteristics\n"
-                   "of a real robot better. Noise is implemented as a random vector added to the\n"
-                   "vector joining two communicating robots. For the random vector, the inclination\n"
-                   "and azimuth are chosen uniformly in the range [0:PI] and [0:2PI], respectively,\n"
-                   "and the length is drawn from a Gaussian distribution. The standard deviation of\n"
-                   "the Gaussian distribution is expressed in meters and set by the user through\n"
-                   "the attribute 'noise_std_dev' as shown in this example:\n\n"
+                   "----------------------------------------\n"
+                   "Noise Injection\n"
+                   "----------------------------------------\n" +
 
-                   "  <controllers>\n"
-                   "    ...\n"
-                   "    <my_controller ...>\n"
-                   "      ...\n"
-                   "      <sensors>\n"
-                   "        ...\n"
-                   "        <range_and_bearing implementation=\"medium\"\n"
-                   "                           medium=\"rab\"\n"
-                   "                           noise_std_dev=\"0.1\" />\n"
-                   "        ...\n"
-                   "      </sensors>\n"
-                   "      ...\n"
-                   "    </my_controller>\n"
-                   "    ...\n"
-                   "  </controllers>\n\n"
+                   CNoiseInjector::GetQueryDocumentation({
+                       .strDocName = "RAB sensor",
+                           .strXMLParent = "range_and_bearing",
+                           .strXMLTag = "distance_drop_noise",
+                           .strSAAType = "sensor",
+                           .bShowExamples = true}) +
 
-                   "In addition, it is possible to specify the probability that a packet gets lost\n"
-                   "even though the robot should have received it (i.e., packet dropping). To set\n"
-                   "this probability, use the attribute 'packet_drop_prob' as shown in the example:\n"
+                   "Each timestep distance noise injection for the RAB sensor is enabled, a vector\n"
+                   "of randomly generated noise {'model', Uniform(0, PI), Uniform(0, 2PI)} is\n"
+                   "added to the (distance, inclination, azimuth) position readings for each entity.\n"
+                   "within range. That is, the model of noise for the distance measure for the reading,\n"
+                   "is configurable, and the model for the (inclination, azimuth) measures for the reading\n"
+                   "are always Uniform().\n\n" +
 
-                   "  <controllers>\n"
-                   "    ...\n"
-                   "    <my_controller ...>\n"
-                   "      ...\n"
-                   "      <sensors>\n"
-                   "        ...\n"
-                   "        <range_and_bearing implementation=\"medium\"\n"
-                   "                           medium=\"rab\"\n"
-                   "                           packet_drop_prob=\"0.1\" />\n"
-                   "        ...\n"
-                   "      </sensors>\n"
-                   "      ...\n"
-                   "    </my_controller>\n"
-                   "    ...\n"
-                   "  </controllers>\n" ,
+                   CNoiseInjector::GetQueryDocumentation({
+                       .strDocName = "RAB sensor",
+                           .strXMLParent = "range_and_bearing",
+                           .strXMLTag = "packet_drop_noise",
+                           .strSAAType = "sensor",
+                           .bShowExamples = true}) +
+
+                   "Each timestep packet drop noise injection for the RAB sensor is enabled, the injected\n"
+                   "noise (n) for each packet is used to compute Bernoulli(n) to determine if the packet\n"
+                   "should be dropped or not.\n\n",
 
                    "Usable");
-   
+
 }

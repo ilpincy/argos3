@@ -16,10 +16,9 @@ namespace argos {
 }
 
 #include <argos3/plugins/robots/generic/control_interface/ci_positioning_sensor.h>
-#include <argos3/core/utility/math/range.h>
-#include <argos3/core/utility/math/rng.h>
 #include <argos3/core/simulator/space/space.h>
 #include <argos3/core/simulator/sensor.h>
+#include <argos3/plugins/robots/generic/simulator/noise_injector.h>
 
 namespace argos {
 
@@ -45,20 +44,14 @@ namespace argos {
       /** Reference to embodied entity associated to this sensor */
       CEmbodiedEntity* m_pcEmbodiedEntity;
 
-      /** Random number generator */
-      CRandom::CRNG* m_pcRNG;
+      /** Position noise injector */
+      CNoiseInjector m_cPosNoiseInjector;
 
-      /** Whether to add noise or not */
-      bool m_bAddNoise;
+      /** Angle noise injector */
+      CNoiseInjector m_cAngleNoiseInjector;
 
-      /** Noise range on position */
-      CRange<Real> m_cPosNoiseRange;
-
-      /** Noise range on angle */
-      CRange<CRadians> m_cAngleNoiseRange;
-
-      /** Noise range on axis */
-      CRange<Real> m_cAxisNoiseRange;
+      /** Axis noise injector */
+      CNoiseInjector m_cAxisNoiseInjector;
    };
 
 }

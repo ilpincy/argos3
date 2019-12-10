@@ -21,20 +21,19 @@ namespace argos {
          COmnidirectionalCameraEquippedEntity& c_omnicam_entity,
          CEmbodiedEntity& c_embodied_entity,
          CControllableEntity& c_controllable_entity,
-         bool b_show_rays,
-         Real f_noise_std_dev) :
+         CNoiseInjector& c_distance_injector,
+         CNoiseInjector& c_azimuth_injector,
+         bool b_show_rays) :
          m_tBlobs(t_blobs),
          m_cOmnicamEntity(c_omnicam_entity),
          m_cEmbodiedEntity(c_embodied_entity),
          m_cControllableEntity(c_controllable_entity),
-         m_bShowRays(b_show_rays),
-         m_fDistanceNoiseStdDev(f_noise_std_dev),
-         m_pcRNG(NULL) {
+         m_cDistanceNoiseInjector(c_distance_injector),
+         m_cAzimuthNoiseInjector(c_azimuth_injector),
+         m_bShowRays(b_show_rays) {
          m_pcRootSensingEntity = &m_cEmbodiedEntity.GetParent();
-         if(m_fDistanceNoiseStdDev > 0.0f) {
-            m_pcRNG = CRandom::CreateRNG("argos");
-         }
       }
+
       virtual ~COmnidirectionalCameraLEDCheckOperation() {
          while(! m_tBlobs.empty()) {
             delete m_tBlobs.back();
@@ -66,10 +65,10 @@ namespace argos {
                                                          m_cOcclusionCheckRay,
                                                          m_cEmbodiedEntity)) {
                /* If noise was setup, add it */
-               if(m_fDistanceNoiseStdDev > 0.0f) {
+              if(m_cDistanceNoiseInjector.Enabled()) {
                   m_cLEDRelativePosXY += CVector2(
-                     m_cLEDRelativePosXY.Length() * m_pcRNG->Gaussian(m_fDistanceNoiseStdDev),
-                     m_pcRNG->Uniform(CRadians::UNSIGNED_RANGE));
+                     m_cLEDRelativePosXY.Length() * m_cDistanceNoiseInjector.InjectNoise(),
+                     CRadians(m_cAzimuthNoiseInjector.InjectNoise()));
                }
                m_tBlobs.push_back(new CCI_ColoredBlobOmnidirectionalCameraSensor::SBlob(
                                      c_led.GetColor(),
@@ -94,14 +93,16 @@ namespace argos {
          m_cCameraPos += m_cOmnicamEntity.GetOffset();
          m_cOcclusionCheckRay.SetStart(m_cCameraPos);
       }
-      
+
    private:
-      
+
       CCI_ColoredBlobOmnidirectionalCameraSensor::TBlobList& m_tBlobs;
       COmnidirectionalCameraEquippedEntity& m_cOmnicamEntity;
       CEmbodiedEntity& m_cEmbodiedEntity;
       CControllableEntity& m_cControllableEntity;
       Real m_fGroundHalfRange;
+      CNoiseInjector& m_cDistanceNoiseInjector;
+      CNoiseInjector& m_cAzimuthNoiseInjector;
       bool m_bShowRays;
       CEntity* m_pcRootSensingEntity;
       CEntity* m_pcRootOfLEDEntity;
@@ -112,8 +113,6 @@ namespace argos {
       CVector2 m_cLEDRelativePosXY;
       SEmbodiedEntityIntersectionItem m_sIntersectionItem;
       CRay3 m_cOcclusionCheckRay;
-      Real m_fDistanceNoiseStdDev;
-      CRandom::CRNG* m_pcRNG;
    };
 
    /****************************************/
@@ -128,7 +127,6 @@ namespace argos {
       m_pcEmbodiedIndex(NULL),
       m_bShowRays(false) {
    }
-
    /****************************************/
    /****************************************/
 
@@ -156,9 +154,14 @@ namespace argos {
          CCI_ColoredBlobOmnidirectionalCameraSensor::Init(t_tree);
          /* Show rays? */
          GetNodeAttributeOrDefault(t_tree, "show_rays", m_bShowRays, m_bShowRays);
-         /* Parse noise */
-         Real fDistanceNoiseStdDev = 0;
-         GetNodeAttributeOrDefault(t_tree, "noise_std_dev", fDistanceNoiseStdDev, fDistanceNoiseStdDev);
+         /* Init noise injection */
+         if(NodeExists(t_tree, "noise")) {
+           TConfigurationNode& tNode = GetNode(t_tree, "noise");
+           m_cDistanceNoiseInjector.Init(tNode);
+           /* always uniform noise for angle */
+           m_cAzimuthNoiseInjector.InitUniform(CRange<Real>(0.0,
+                                                            CRadians::TWO_PI.GetValue()));
+         }
          /* Get LED medium from id specified in the XML */
          std::string strMedium;
          GetNodeAttribute(t_tree, "medium", strMedium);
@@ -169,8 +172,9 @@ namespace argos {
             *m_pcOmnicamEntity,
             *m_pcEmbodiedEntity,
             *m_pcControllableEntity,
-            m_bShowRays,
-            fDistanceNoiseStdDev);
+            m_cDistanceNoiseInjector,
+            m_cAzimuthNoiseInjector,
+            m_bShowRays);
       }
       catch(CARGoSException& ex) {
          THROW_ARGOSEXCEPTION_NESTED("Error initializing the colored blob omnidirectional camera rotzonly sensor", ex);
@@ -291,24 +295,22 @@ namespace argos {
                    "    ...\n"
                    "  </controllers>\n\n"
 
-                   "It is possible to add uniform noise to the blobs, thus matching the\n"
-                   "characteristics of a real robot better. This can be done with the attribute\n"
-                   "\"noise_std_dev\".\n\n"
-                   "  <controllers>\n"
-                   "    ...\n"
-                   "    <my_controller ...>\n"
-                   "      ...\n"
-                   "      <sensors>\n"
-                   "        ...\n"
-                   "        <colored_blob_omnidirectional_camera implementation=\"rot_z_only\"\n"
-                   "                                             medium=\"leds\" />\n"
-                   "                                             noise_std_dev=\"0.1\" />\n"
-                   "        ...\n"
-                   "      </sensors>\n"
-                   "      ...\n"
-                   "    </my_controller>\n"
-                   "    ...\n"
-                   "  </controllers>\n\n"
+                   "----------------------------------------\n"
+                   "Noise Injection\n"
+                   "----------------------------------------\n" +
+
+                   CNoiseInjector::GetQueryDocumentation({
+                       .strDocName = "camera sensor",
+                           .strXMLParent = "colored_blob_omnidirectional_camera",
+                           .strXMLTag = "noise",
+                           .strSAAType = "sensor",
+                           .bShowExamples = true}) +
+
+                   "Each timestep the camera is enabled, a vector of randomly generated noise\n"
+                   "{'model', Uniform(0, 2PI)} is added the (distance, angle) reading for each detected.\n"
+                   "blob. That is, the model of noise for the distance measure for the blob is configurable,\n"
+                   "and the type for the angle measure for the blob is always Uniform(0, 2PI). The color\n"
+                   "of the detected blob is unaffected by noise injection.\n\n"
 
                    "OPTIMIZATION HINTS\n\n"
 

@@ -31,8 +31,6 @@ namespace argos {
    /****************************************/
 
    CFootBotDistanceScannerRotZOnlySensor::CFootBotDistanceScannerRotZOnlySensor() :
-      m_pcRNG(NULL),
-      m_bAddNoise(false),
       m_cSpace(CSimulator::GetInstance().GetSpace()),
       m_bShowRays(false) {}
 
@@ -44,12 +42,6 @@ namespace argos {
          CCI_FootBotDistanceScannerSensor::Init(t_tree);
          /* Show rays? */
          GetNodeAttributeOrDefault(t_tree, "show_rays", m_bShowRays, m_bShowRays);
-         /* Noise range */
-         GetNodeAttributeOrDefault(t_tree, "noise_range", m_cNoiseRange, m_cNoiseRange);
-         if(m_cNoiseRange.GetSpan() > 0.0f) {
-            m_bAddNoise = true;
-            m_pcRNG = CRandom::CreateRNG("argos");
-         }
       }
       catch(CARGoSException& ex) {
          THROW_ARGOSEXCEPTION_NESTED("Initialization error in foot-bot distance scanner rot_z_only sensor.", ex);
