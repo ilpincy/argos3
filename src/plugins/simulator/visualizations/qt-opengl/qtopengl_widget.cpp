@@ -50,6 +50,7 @@ namespace argos {
       m_bInvertMouse(false),
       m_cSimulator(CSimulator::GetInstance()),
       m_cSpace(m_cSimulator.GetSpace()),
+      m_bShowBoundary(true),
       m_bUsingFloorTexture(false),
       m_pcFloorTexture(NULL),
       m_pcGroundTexture(NULL) {
@@ -724,45 +725,47 @@ namespace argos {
 #endif
       /* Disable the textures */
       glDisable(GL_TEXTURE_2D);
-      /* Draw walls */
-      glDisable(GL_CULL_FACE);
-      glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-      glLineWidth(10.0f);
-      glColor3f(0.0f, 0.0f, 0.0f);
-      /* This part covers the top and bottom faces (parallel to XY) */
-      glBegin(GL_QUADS);
-      /* Top face */
-      glVertex3f(cArenaMinCorner.GetX(), cArenaMinCorner.GetY(), cArenaMaxCorner.GetZ());
-      glVertex3f(cArenaMaxCorner.GetX(), cArenaMinCorner.GetY(), cArenaMaxCorner.GetZ());
-      glVertex3f(cArenaMaxCorner.GetX(), cArenaMaxCorner.GetY(), cArenaMaxCorner.GetZ());
-      glVertex3f(cArenaMinCorner.GetX(), cArenaMaxCorner.GetY(), cArenaMaxCorner.GetZ());
-      glEnd();
-      /* This part covers the faces (South, East, North, West) */
-      glBegin(GL_QUADS);
-      /* South face */
-      glVertex3f(cArenaMinCorner.GetX(), cArenaMinCorner.GetY(), cArenaMinCorner.GetZ());
-      glVertex3f(cArenaMinCorner.GetX(), cArenaMinCorner.GetY(), cArenaMaxCorner.GetZ());
-      glVertex3f(cArenaMinCorner.GetX(), cArenaMaxCorner.GetY(), cArenaMaxCorner.GetZ());
-      glVertex3f(cArenaMinCorner.GetX(), cArenaMaxCorner.GetY(), cArenaMinCorner.GetZ());
-      /* East face */
-      glVertex3f(cArenaMinCorner.GetX(), cArenaMinCorner.GetY(), cArenaMinCorner.GetZ());
-      glVertex3f(cArenaMaxCorner.GetX(), cArenaMinCorner.GetY(), cArenaMinCorner.GetZ());
-      glVertex3f(cArenaMaxCorner.GetX(), cArenaMinCorner.GetY(), cArenaMaxCorner.GetZ());
-      glVertex3f(cArenaMinCorner.GetX(), cArenaMinCorner.GetY(), cArenaMaxCorner.GetZ());
-      /* North face */
-      glVertex3f(cArenaMaxCorner.GetX(), cArenaMinCorner.GetY(), cArenaMinCorner.GetZ());
-      glVertex3f(cArenaMaxCorner.GetX(), cArenaMaxCorner.GetY(), cArenaMinCorner.GetZ());
-      glVertex3f(cArenaMaxCorner.GetX(), cArenaMaxCorner.GetY(), cArenaMaxCorner.GetZ());
-      glVertex3f(cArenaMaxCorner.GetX(), cArenaMinCorner.GetY(), cArenaMaxCorner.GetZ());
-      /* West face */
-      glVertex3f(cArenaMinCorner.GetX(), cArenaMaxCorner.GetY(), cArenaMinCorner.GetZ());
-      glVertex3f(cArenaMinCorner.GetX(), cArenaMaxCorner.GetY(), cArenaMaxCorner.GetZ());
-      glVertex3f(cArenaMaxCorner.GetX(), cArenaMaxCorner.GetY(), cArenaMaxCorner.GetZ());
-      glVertex3f(cArenaMaxCorner.GetX(), cArenaMaxCorner.GetY(), cArenaMinCorner.GetZ());
-      glEnd();
-      glLineWidth(1.0f);
-      glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-      glEnable(GL_CULL_FACE);
+      if(m_bShowBoundary) {
+         /* Draw walls */
+         glDisable(GL_CULL_FACE);
+         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+         glLineWidth(10.0f);
+         glColor3f(0.0f, 0.0f, 0.0f);
+         /* This part covers the top and bottom faces (parallel to XY) */
+         glBegin(GL_QUADS);
+         /* Top face */
+         glVertex3f(cArenaMinCorner.GetX(), cArenaMinCorner.GetY(), cArenaMaxCorner.GetZ());
+         glVertex3f(cArenaMaxCorner.GetX(), cArenaMinCorner.GetY(), cArenaMaxCorner.GetZ());
+         glVertex3f(cArenaMaxCorner.GetX(), cArenaMaxCorner.GetY(), cArenaMaxCorner.GetZ());
+         glVertex3f(cArenaMinCorner.GetX(), cArenaMaxCorner.GetY(), cArenaMaxCorner.GetZ());
+         glEnd();
+         /* This part covers the faces (South, East, North, West) */
+         glBegin(GL_QUADS);
+         /* South face */
+         glVertex3f(cArenaMinCorner.GetX(), cArenaMinCorner.GetY(), cArenaMinCorner.GetZ());
+         glVertex3f(cArenaMinCorner.GetX(), cArenaMinCorner.GetY(), cArenaMaxCorner.GetZ());
+         glVertex3f(cArenaMinCorner.GetX(), cArenaMaxCorner.GetY(), cArenaMaxCorner.GetZ());
+         glVertex3f(cArenaMinCorner.GetX(), cArenaMaxCorner.GetY(), cArenaMinCorner.GetZ());
+         /* East face */
+         glVertex3f(cArenaMinCorner.GetX(), cArenaMinCorner.GetY(), cArenaMinCorner.GetZ());
+         glVertex3f(cArenaMaxCorner.GetX(), cArenaMinCorner.GetY(), cArenaMinCorner.GetZ());
+         glVertex3f(cArenaMaxCorner.GetX(), cArenaMinCorner.GetY(), cArenaMaxCorner.GetZ());
+         glVertex3f(cArenaMinCorner.GetX(), cArenaMinCorner.GetY(), cArenaMaxCorner.GetZ());
+         /* North face */
+         glVertex3f(cArenaMaxCorner.GetX(), cArenaMinCorner.GetY(), cArenaMinCorner.GetZ());
+         glVertex3f(cArenaMaxCorner.GetX(), cArenaMaxCorner.GetY(), cArenaMinCorner.GetZ());
+         glVertex3f(cArenaMaxCorner.GetX(), cArenaMaxCorner.GetY(), cArenaMaxCorner.GetZ());
+         glVertex3f(cArenaMaxCorner.GetX(), cArenaMinCorner.GetY(), cArenaMaxCorner.GetZ());
+         /* West face */
+         glVertex3f(cArenaMinCorner.GetX(), cArenaMaxCorner.GetY(), cArenaMinCorner.GetZ());
+         glVertex3f(cArenaMinCorner.GetX(), cArenaMaxCorner.GetY(), cArenaMaxCorner.GetZ());
+         glVertex3f(cArenaMaxCorner.GetX(), cArenaMaxCorner.GetY(), cArenaMaxCorner.GetZ());
+         glVertex3f(cArenaMaxCorner.GetX(), cArenaMaxCorner.GetY(), cArenaMinCorner.GetZ());
+         glEnd();
+         glLineWidth(1.0f);
+         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+         glEnable(GL_CULL_FACE);
+      }
       /* Restore lighting */
       glEnable(GL_LIGHTING);
    }
