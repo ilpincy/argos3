@@ -489,6 +489,10 @@ namespace argos {
       bool bInvertMouse;
       GetNodeAttributeOrDefault(t_tree, "invert_mouse", bInvertMouse, false);
       m_pcOpenGLWidget->SetInvertMouse(bInvertMouse);
+      /* Show boundary walls? */
+      bool bShowBoundary;
+      GetNodeAttributeOrDefault(t_tree, "show_boundary", bShowBoundary, true);
+      m_pcOpenGLWidget->SetShowBoundary(bShowBoundary);
       /* Set the window as the central widget */
       CQTOpenGLLayout* pcQTOpenGLLayout = new CQTOpenGLLayout();
       pcQTOpenGLLayout->addWidget(m_pcOpenGLWidget);

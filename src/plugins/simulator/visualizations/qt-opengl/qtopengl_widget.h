@@ -229,8 +229,15 @@ namespace argos {
       /**
        * Sets whether the mouse should be inverted when moving.
        */
-      inline void SetInvertMouse(bool b_InvertMouse) {
-    	  m_bInvertMouse = b_InvertMouse;
+      inline void SetInvertMouse(bool b_invert_mouse) {
+         m_bInvertMouse = b_invert_mouse;
+      }
+
+      /**
+       * Sets whether the boundary walls should be rendered.
+       */
+      inline void SetShowBoundary(bool b_show_boundary) {
+         m_bShowBoundary = b_show_boundary;
       }
 
    signals:
@@ -371,6 +378,9 @@ namespace argos {
       CSimulator& m_cSimulator;
       /** Reference to the space state */
       CSpace& m_cSpace;
+
+      /** True if the boundary walls should be shown */
+      bool m_bShowBoundary;
 
       /** True if using a user-defined texture for the floor */
       bool m_bUsingFloorTexture;
