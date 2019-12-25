@@ -69,12 +69,12 @@ namespace argos {
          /* Perform the step */
          for(CPointMass3DModel::TMap::iterator it = m_tPhysicsModels.begin();
              it != m_tPhysicsModels.end(); ++it) {
-            for(CPointMass3DModel::TMap::iterator it = m_tPhysicsModels.begin();
-                it != m_tPhysicsModels.end(); ++it) {
-               it->second->UpdatePhysics();
-            }
-            it->second->Step();
+            it->second->UpdatePhysics();
          }
+      }
+      for(CPointMass3DModel::TMap::iterator it = m_tPhysicsModels.begin();
+          it != m_tPhysicsModels.end(); ++it) {
+         it->second->Step();
       }
       /* Update the simulated space */
       for(CPointMass3DModel::TMap::iterator it = m_tPhysicsModels.begin();
