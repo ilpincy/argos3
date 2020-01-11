@@ -18,6 +18,7 @@ namespace argos {
       pthread_mutex_t* StartActPhaseMutex;
       pthread_mutex_t* StartPhysicsPhaseMutex;
       pthread_mutex_t* StartMediaPhaseMutex;
+      pthread_mutex_t* StartEntityIterPhaseMutex;
       pthread_mutex_t* FetchTaskMutex;
    };
 
@@ -33,6 +34,7 @@ namespace argos {
       pthread_mutex_unlock(sData.StartActPhaseMutex);
       pthread_mutex_unlock(sData.StartPhysicsPhaseMutex);
       pthread_mutex_unlock(sData.StartMediaPhaseMutex);
+      pthread_mutex_unlock(sData.StartEntityIterPhaseMutex);
    }
 
    void* LaunchThreadBalanceLength(void* p_data) {
@@ -50,6 +52,7 @@ namespace argos {
       sCancelData.StartActPhaseMutex = &(psData->Space->m_tStartActPhaseMutex);
       sCancelData.StartPhysicsPhaseMutex = &(psData->Space->m_tStartPhysicsPhaseMutex);
       sCancelData.StartMediaPhaseMutex = &(psData->Space->m_tStartMediaPhaseMutex);
+      sCancelData.StartEntityIterPhaseMutex = &(psData->Space->m_tStartEntityIterPhaseMutex);
       sCancelData.FetchTaskMutex = &(psData->Space->m_tFetchTaskMutex);
       pthread_cleanup_push(CleanupThread, &sCancelData);
       psData->Space->SlaveThread();
@@ -71,6 +74,7 @@ namespace argos {
          (nErrors = pthread_mutex_init(&m_tStartActPhaseMutex, NULL)) ||
          (nErrors = pthread_mutex_init(&m_tStartPhysicsPhaseMutex, NULL)) ||
          (nErrors = pthread_mutex_init(&m_tStartMediaPhaseMutex, NULL)) ||
+         (nErrors = pthread_mutex_init(&m_tStartEntityIterPhaseMutex, NULL)) ||
          (nErrors = pthread_mutex_init(&m_tFetchTaskMutex, NULL))) {
          THROW_ARGOSEXCEPTION("Error creating thread mutexes " << ::strerror(nErrors));
       }
@@ -79,6 +83,7 @@ namespace argos {
          (nErrors = pthread_cond_init(&m_tStartActPhaseCond, NULL)) ||
          (nErrors = pthread_cond_init(&m_tStartPhysicsPhaseCond, NULL)) ||
          (nErrors = pthread_cond_init(&m_tStartMediaPhaseCond, NULL)) ||
+         (nErrors = pthread_cond_init(&m_tStartEntityIterPhaseCond, NULL)) ||
          (nErrors = pthread_cond_init(&m_tFetchTaskCond, NULL))) {
          THROW_ARGOSEXCEPTION("Error creating thread conditionals " << ::strerror(nErrors));
       }
@@ -87,6 +92,7 @@ namespace argos {
       m_unActPhaseIdleCounter = CSimulator::GetInstance().GetNumThreads();
       m_unPhysicsPhaseIdleCounter = CSimulator::GetInstance().GetNumThreads();
       m_unMediaPhaseIdleCounter = CSimulator::GetInstance().GetNumThreads();
+      m_unEntityIterPhaseIdleCounter = CSimulator::GetInstance().GetNumThreads();
       /* Start threads */
       StartThreads();
    }
@@ -126,11 +132,14 @@ namespace argos {
       pthread_mutex_destroy(&m_tStartActPhaseMutex);
       pthread_mutex_destroy(&m_tStartPhysicsPhaseMutex);
       pthread_mutex_destroy(&m_tStartMediaPhaseMutex);
+      pthread_mutex_destroy(&m_tStartEntityIterPhaseMutex);
       pthread_mutex_destroy(&m_tFetchTaskMutex);
+
       pthread_cond_destroy(&m_tStartSenseControlPhaseCond);
       pthread_cond_destroy(&m_tStartActPhaseCond);
       pthread_cond_destroy(&m_tStartPhysicsPhaseCond);
       pthread_cond_destroy(&m_tStartMediaPhaseCond);
+      pthread_cond_destroy(&m_tStartEntityIterPhaseCond);
       pthread_cond_destroy(&m_tFetchTaskCond);
 
       /* Destroy the base space */
@@ -146,6 +155,7 @@ namespace argos {
       m_unActPhaseIdleCounter = CSimulator::GetInstance().GetNumThreads();
       m_unPhysicsPhaseIdleCounter = CSimulator::GetInstance().GetNumThreads();
       m_unMediaPhaseIdleCounter = CSimulator::GetInstance().GetNumThreads();
+      m_unEntityIterPhaseIdleCounter = CSimulator::GetInstance().GetNumThreads();
       /* Update the space */
       CSpace::Update();
    }
@@ -200,6 +210,18 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   void CSpaceMultiThreadBalanceLength::IterateOverControllableEntities(
+       const TControllableEntityIterCBType &c_cb) {
+     m_cbControllableEntityIter = c_cb;
+     /* Iterate over all robots in the swarm */
+     MAIN_START_PHASE(EntityIter);
+     MAIN_WAIT_FOR_END_OF(EntityIter);
+   } /* IterateOverControllableEntities() */
+
+
+   /****************************************/
+   /****************************************/
+
    void CSpaceMultiThreadBalanceLength::UpdateControllableEntitiesSenseStep() {
       /* Sense/control phase */
       MAIN_START_PHASE(SenseControl);
@@ -238,10 +260,10 @@ namespace argos {
    pthread_mutex_unlock(&m_tStart ## PHASE ## PhaseMutex);                                  \
    pthread_testcancel();
 
-#define THREAD_PERFORM_TASK(PHASE, TASKVEC, SNIPPET)                \
+#define THREAD_PERFORM_TASK(PHASE, TASKVEC, CONDITION, SNIPPET)     \
    while(1) {                                                       \
       pthread_mutex_lock(&m_tFetchTaskMutex);                       \
-      if(m_unTaskIndex < (TASKVEC).size()) {                        \
+      if((CONDITION) && m_unTaskIndex < (TASKVEC).size()) {         \
          unTaskIndex = m_unTaskIndex;                               \
          ++m_unTaskIndex;                                           \
          pthread_mutex_unlock(&m_tFetchTaskMutex);                  \
@@ -272,30 +294,48 @@ namespace argos {
          THREAD_PERFORM_TASK(
             Act,
             m_vecControllableEntities,
+            true,
             if(m_vecControllableEntities[unTaskIndex]->IsEnabled()) m_vecControllableEntities[unTaskIndex]->Act();
             );
          THREAD_WAIT_FOR_START_OF(Physics);
          THREAD_PERFORM_TASK(
             Physics,
             *m_ptPhysicsEngines,
+            true,
             (*m_ptPhysicsEngines)[unTaskIndex]->Update();
             );
          THREAD_WAIT_FOR_START_OF(Media);
          THREAD_PERFORM_TASK(
             Media,
             *m_ptMedia,
+            true,
             (*m_ptMedia)[unTaskIndex]->Update();
             );
+         /* loop functions PreStep() */
+         THREAD_WAIT_FOR_START_OF(EntityIter);
+         THREAD_PERFORM_TASK(
+             EntityIter,
+             m_vecControllableEntities,
+             ControllableEntityIterationEnabled(),
+             m_cbControllableEntityIter(m_vecControllableEntities[unTaskIndex]));
          THREAD_WAIT_FOR_START_OF(SenseControl);
          THREAD_PERFORM_TASK(
             SenseControl,
             m_vecControllableEntities,
+            true,
             if(m_vecControllableEntities[unTaskIndex]->IsEnabled()) {
                m_vecControllableEntities[unTaskIndex]->Sense();
                m_vecControllableEntities[unTaskIndex]->ControlStep();
             }
             );
-      }
+         /* loop functions PostStep() */
+         THREAD_WAIT_FOR_START_OF(EntityIter);
+         THREAD_PERFORM_TASK(
+             EntityIter,
+             m_vecControllableEntities,
+             ControllableEntityIterationEnabled(),
+             m_cbControllableEntityIter(m_vecControllableEntities[unTaskIndex]));
+      } /* while(1) */
    }
 
    /****************************************/

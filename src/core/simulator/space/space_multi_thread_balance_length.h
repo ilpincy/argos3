@@ -34,6 +34,8 @@ namespace argos {
       virtual void UpdatePhysics();
       virtual void UpdateMedia();
       virtual void UpdateControllableEntitiesSenseStep();
+      virtual void IterateOverControllableEntities(
+          const TControllableEntityIterCBType& c_cb);
 
    private:
 
@@ -47,7 +49,7 @@ namespace argos {
       struct SThreadLaunchData {
          UInt32 ThreadId;
          CSpaceMultiThreadBalanceLength* Space;
-         
+
          SThreadLaunchData(UInt32 un_thread_id,
                            CSpaceMultiThreadBalanceLength* pc_space) :
             ThreadId(un_thread_id),
@@ -71,6 +73,8 @@ namespace argos {
       pthread_mutex_t m_tStartPhysicsPhaseMutex;
       /** Mutex for the start of the media phase */
       pthread_mutex_t m_tStartMediaPhaseMutex;
+      /** Mutex for the start of the robot iteration phase */
+      pthread_mutex_t m_tStartEntityIterPhaseMutex;
       /** Mutex to fetch a task from the dispatcher */
       pthread_mutex_t m_tFetchTaskMutex;
 
@@ -82,6 +86,8 @@ namespace argos {
       pthread_cond_t m_tStartPhysicsPhaseCond;
       /** Conditional for the start of the media phase */
       pthread_cond_t m_tStartMediaPhaseCond;
+      /** Conditional for the start of the robot iteration phase */
+      pthread_cond_t m_tStartEntityIterPhaseCond;
       /** Conditional controlling task fetching from the dispatcher */
       pthread_cond_t m_tFetchTaskCond;
 
@@ -93,6 +99,8 @@ namespace argos {
       UInt32 m_unPhysicsPhaseIdleCounter;
       /** How many threads are idle in the media phase */
       UInt32 m_unMediaPhaseIdleCounter;
+      /** How many threads are idle in the media phase */
+      UInt32 m_unEntityIterPhaseIdleCounter;
 
    };
 

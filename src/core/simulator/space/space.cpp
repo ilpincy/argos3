@@ -127,10 +127,35 @@ namespace argos {
       UpdateMedia();
       /* Call loop functions */
       m_cSimulator.GetLoopFunctions().PreStep();
+      /*
+       * If the loop functions did not use ARGoS threads during PreStep(), tell
+       * the waiting thread pool to continue.
+       */
+      if (!ControllableEntityIterationEnabled()) {
+        ControllableEntityIterationWaitAbort();
+      }
+      /*
+       * Reset callback to NULL to disable entity iteration for PostStep()
+       * unless enabled again by the loop functions.
+       */
+      m_cbControllableEntityIter = nullptr;
       /* Perform the 'sense+step' phase for controllable entities */
       UpdateControllableEntitiesSenseStep();
       /* Call loop functions */
       m_cSimulator.GetLoopFunctions().PostStep();
+
+      /*
+       * If the loop functions did not use ARGoS threads during PostStep(), tell
+       * the waiting thread pool to continue.
+       */
+      if (!ControllableEntityIterationEnabled()) {
+        ControllableEntityIterationWaitAbort();
+      }
+      /*
+       * Reset callback to NULL to disable entity iteration for next PreStep()
+       * unless enabled again by the loop functions.
+       */
+      m_cbControllableEntityIter = nullptr;
       /* Flush logs */
       LOG.Flush();
       LOGERR.Flush();

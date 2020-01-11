@@ -20,6 +20,7 @@ namespace argos {
       pthread_mutex_t* ActConditionalMutex;
       pthread_mutex_t* PhysicsConditionalMutex;
       pthread_mutex_t* MediaConditionalMutex;
+      pthread_mutex_t* EntityIterConditionalMutex;
    };
 
    static void CleanupUpdateThread(void* p_data) {
@@ -33,6 +34,7 @@ namespace argos {
       pthread_mutex_unlock(sData.ActConditionalMutex);
       pthread_mutex_unlock(sData.PhysicsConditionalMutex);
       pthread_mutex_unlock(sData.MediaConditionalMutex);
+      pthread_mutex_unlock(sData.EntityIterConditionalMutex);
    }
 
    void* LaunchUpdateThreadBalanceQuantity(void* p_data) {
@@ -64,18 +66,22 @@ namespace argos {
       m_unActPhaseDoneCounter = CSimulator::GetInstance().GetNumThreads();
       m_unPhysicsPhaseDoneCounter = CSimulator::GetInstance().GetNumThreads();
       m_unMediaPhaseDoneCounter = CSimulator::GetInstance().GetNumThreads();
+      m_unEntityIterPhaseDoneCounter = CSimulator::GetInstance().GetNumThreads();
+
       /* Then the mutexes */
       if((nErrors = pthread_mutex_init(&m_tSenseControlStepConditionalMutex, NULL)) ||
          (nErrors = pthread_mutex_init(&m_tActConditionalMutex, NULL)) ||
          (nErrors = pthread_mutex_init(&m_tPhysicsConditionalMutex, NULL)) ||
-         (nErrors = pthread_mutex_init(&m_tMediaConditionalMutex, NULL))) {
+         (nErrors = pthread_mutex_init(&m_tMediaConditionalMutex, NULL)) ||
+         (nErrors = pthread_mutex_init(&m_tEntityIterConditionalMutex, NULL))) {
          THROW_ARGOSEXCEPTION("Error creating thread mutexes " << ::strerror(nErrors));
       }
       /* Finally the conditionals */
       if((nErrors = pthread_cond_init(&m_tSenseControlStepConditional, NULL)) ||
          (nErrors = pthread_cond_init(&m_tActConditional, NULL)) ||
          (nErrors = pthread_cond_init(&m_tPhysicsConditional, NULL)) ||
-         (nErrors = pthread_cond_init(&m_tMediaConditional, NULL))) {
+         (nErrors = pthread_cond_init(&m_tMediaConditional, NULL)) ||
+         (nErrors = pthread_cond_init(&m_tEntityIterConditional, NULL))) {
          THROW_ARGOSEXCEPTION("Error creating thread conditionals " << ::strerror(nErrors));
       }
       /* Start threads */
@@ -138,17 +144,21 @@ namespace argos {
       pthread_mutex_destroy(&m_tActConditionalMutex);
       pthread_mutex_destroy(&m_tPhysicsConditionalMutex);
       pthread_mutex_destroy(&m_tMediaConditionalMutex);
+      pthread_mutex_destroy(&m_tEntityIterConditionalMutex);
+
       pthread_cond_destroy(&m_tSenseControlStepConditional);
       pthread_cond_destroy(&m_tActConditional);
       pthread_cond_destroy(&m_tPhysicsConditional);
       pthread_cond_destroy(&m_tMediaConditional);
+      pthread_cond_destroy(&m_tEntityIterConditional);
+
       /* Destroy the base space */
       CSpace::Destroy();
    }
 
    /****************************************/
    /****************************************/
-   
+
    void CSpaceMultiThreadBalanceQuantity::AddControllableEntity(CControllableEntity& c_entity) {
       m_bIsControllableEntityAssignmentRecalculationNeeded = true;
       CSpace::AddControllableEntity(c_entity);
@@ -156,7 +166,7 @@ namespace argos {
 
    /****************************************/
    /****************************************/
-   
+
    void CSpaceMultiThreadBalanceQuantity::RemoveControllableEntity(CControllableEntity& c_entity) {
       m_bIsControllableEntityAssignmentRecalculationNeeded = true;
       CSpace::RemoveControllableEntity(c_entity);
@@ -164,7 +174,7 @@ namespace argos {
 
    /****************************************/
    /****************************************/
-   
+
 #define MAIN_SEND_GO_FOR_PHASE(PHASE)                       \
    LOG.Flush();                                             \
    LOGERR.Flush();                                          \
@@ -179,7 +189,7 @@ namespace argos {
       pthread_cond_wait(&m_t ## PHASE ## Conditional, &m_t ## PHASE ## ConditionalMutex); \
    }                                                                    \
    pthread_mutex_unlock(&m_t ## PHASE ## ConditionalMutex);
-   
+
    void CSpaceMultiThreadBalanceQuantity::UpdateControllableEntitiesAct() {
       MAIN_SEND_GO_FOR_PHASE(Act);
       MAIN_WAIT_FOR_PHASE_END(Act);
@@ -214,6 +224,26 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   void CSpaceMultiThreadBalanceQuantity::IterateOverControllableEntities(
+       const TControllableEntityIterCBType &c_cb) {
+     m_cbControllableEntityIter = c_cb;
+
+     /* Iterate over all robots in the swarm */
+     MAIN_SEND_GO_FOR_PHASE(EntityIter);
+     MAIN_WAIT_FOR_PHASE_END(EntityIter);
+   } /* IterateOverControllableEntities() */
+
+   /****************************************/
+   /****************************************/
+
+   void CSpaceMultiThreadBalanceQuantity::ControllableEntityIterationWaitAbort(void) {
+     IterateOverControllableEntities(nullptr);
+   } /* ControllableEntitiesIterationWaitAbort() */
+
+
+   /****************************************/
+   /****************************************/
+
    void CSpaceMultiThreadBalanceQuantity::UpdateControllableEntitiesSenseStep() {
       MAIN_SEND_GO_FOR_PHASE(SenseControlStep);
       MAIN_WAIT_FOR_PHASE_END(SenseControlStep);
@@ -231,7 +261,7 @@ namespace argos {
    }                                                                                       \
    pthread_mutex_unlock(&m_t ## PHASE ## ConditionalMutex);                                \
    pthread_testcancel();
-   
+
 #define THREAD_SIGNAL_PHASE_DONE(PHASE)                     \
    pthread_mutex_lock(&m_t ## PHASE ## ConditionalMutex);   \
    ++m_un ## PHASE ## PhaseDoneCounter;                     \
@@ -281,85 +311,174 @@ namespace argos {
       sCancelData.ActConditionalMutex = &m_tActConditionalMutex;
       sCancelData.PhysicsConditionalMutex = &m_tPhysicsConditionalMutex;
       sCancelData.MediaConditionalMutex = &m_tMediaConditionalMutex;
+      sCancelData.EntityIterConditionalMutex = &m_tEntityIterConditionalMutex;
+
       pthread_cleanup_push(CleanupUpdateThread, &sCancelData);
+
       /* Id range for the physics engines assigned to this thread */
-      CRange<size_t> cPhysicsRange = CalculatePluginRangeForThread(unId, m_ptPhysicsEngines->size());
-      /* Id range for the physics engines assigned to this thread */
-      CRange<size_t> cMediaRange = CalculatePluginRangeForThread(unId, m_ptMedia->size());
-      /* Variables storing the portion of entities to update */
+      CRange<size_t> cPhysicsRange = CalculatePluginRangeForThread(unId,
+                                                                   m_ptPhysicsEngines->size());
+      /* Id range for the media assigned to this thread */
+      CRange<size_t> cMediaRange = CalculatePluginRangeForThread(unId,
+                                                                 m_ptMedia->size());
+
+      /*
+       * Id range for the entities to update assigned to this thread. Can change
+       * as simulation progressesso periodic re-calculation may be necessary
+       * before *ANY* phase which iterates over the entities, as the
+       * CLoopFunctions::PreStep()/CLoopFunctions::PostStep() may have
+       * added/removed entities.
+       */
       CRange<size_t> cEntityRange;
-      while(1) {
-         THREAD_WAIT_FOR_GO_SIGNAL(Act);
-         /* Calculate the portion of entities to update, if needed */
-         if(m_bIsControllableEntityAssignmentRecalculationNeeded) {
-            cEntityRange = CalculatePluginRangeForThread(unId, m_vecControllableEntities.size());
-         }
-         /* Cope with the fact that there may be less entities than threads */
-         if(cEntityRange.GetSpan() > 0) {
-            /* This thread has entities */
-            /* Actuate control choices */
-            for(size_t i = cEntityRange.GetMin(); i < cEntityRange.GetMax(); ++i) {
-               if(m_vecControllableEntities[i]->IsEnabled())
-                  m_vecControllableEntities[i]->Act();
-            }
-            pthread_testcancel();
-            THREAD_SIGNAL_PHASE_DONE(Act);
-         }
-         else {
-            /* This thread has no entities -> dummy computation */
-            THREAD_SIGNAL_PHASE_DONE(Act);
-         }
-         /* Update physics engines, if this thread has been assigned to them */
-         THREAD_WAIT_FOR_GO_SIGNAL(Physics);
-         if(cPhysicsRange.GetSpan() > 0) {
-            /* This thread has engines, update them */
-            for(size_t i = cPhysicsRange.GetMin(); i < cPhysicsRange.GetMax(); ++i) {
-               (*m_ptPhysicsEngines)[i]->Update();
-            }
-            pthread_testcancel();
-            THREAD_SIGNAL_PHASE_DONE(Physics);
-         }
-         else {
-            /* This thread has no engines -> dummy computation */
-            THREAD_SIGNAL_PHASE_DONE(Physics);
-         }
-         /* Update media, if this thread has been assigned to them */
-         THREAD_WAIT_FOR_GO_SIGNAL(Media);
-         if(cMediaRange.GetSpan() > 0) {
-            /* This thread has media, update them */
-            for(size_t i = cMediaRange.GetMin(); i < cMediaRange.GetMax(); ++i) {
-               (*m_ptMedia)[i]->Update();
-            }
-            pthread_testcancel();
-            THREAD_SIGNAL_PHASE_DONE(Media);
-         }
-         else {
-            /* This thread has no media -> dummy computation */
-            THREAD_SIGNAL_PHASE_DONE(Media);
-         }
-         /* Update sensor readings and call controllers */
-         THREAD_WAIT_FOR_GO_SIGNAL(SenseControlStep);
-         /* Cope with the fact that there may be less entities than threads */
-         if(cEntityRange.GetSpan() > 0) {
-            /* This thread has entities */
-            for(size_t i = cEntityRange.GetMin(); i < cEntityRange.GetMax(); ++i) {
-               if(m_vecControllableEntities[i]->IsEnabled()) {
-                  m_vecControllableEntities[i]->Sense();
-                  m_vecControllableEntities[i]->ControlStep();
-               }
-            }
-            pthread_testcancel();
-            THREAD_SIGNAL_PHASE_DONE(SenseControlStep);
-         }
-         else {
-            /* This thread has no entities -> dummy computation */
-            THREAD_SIGNAL_PHASE_DONE(SenseControlStep);
-         }
-      }
+      while (1) {
+        /* Actuate entities assigned to this thread */
+        UpdateThreadEntityAct(un_id, cEntityRange);
+
+        /* Update physics engines assigned to this thread */
+        UpdateThreadPhysics(cPhysicsRange);
+
+        /* Update media assigned to this thread */
+        UpdateThreadMedia(cMediaRange);
+
+        /* loop functions PreStep() iteration (maybe) */
+        UpdateThreadIterateOverEntities(un_id, cEntityRange);
+
+        /* Update sensor readings/execute control step for entities */
+        UpdateThreadEntitySenseControl(un_id, cEntityRange);
+
+        /* loop functions PostStep() iteration (maybe) */
+        UpdateThreadIterateOverEntities(un_id, cEntityRange);
+      } /* while(1) */
+
       pthread_cleanup_pop(1);
-   }
+   } /* UpdateThread */
 
    /****************************************/
    /****************************************/
 
+   void CSpaceMultiThreadBalanceQuantity::UpdateThreadEntityAct(UInt32 un_id,
+                                                                CRange<size_t>& c_range) {
+     THREAD_WAIT_FOR_GO_SIGNAL(Act);
+     /* Calculate the portion of entities to update, if needed */
+     if (m_bIsControllableEntityAssignmentRecalculationNeeded) {
+       c_range = CalculatePluginRangeForThread(un_id,
+                                               m_vecControllableEntities.size());
+     }
+     /* Cope with the fact that there may be less entities than threads */
+     if (c_range.GetSpan() > 0) {
+       /* This thread has entities */
+       /* Actuate control choices */
+       for(size_t i = c_range.GetMin(); i < c_range.GetMax(); ++i) {
+         if(m_vecControllableEntities[i]->IsEnabled())
+           m_vecControllableEntities[i]->Act();
+       }
+       pthread_testcancel();
+       THREAD_SIGNAL_PHASE_DONE(Act);
+     }
+     else {
+       /* This thread has no entities -> dummy computation */
+       THREAD_SIGNAL_PHASE_DONE(Act);
+     }
+   } /* UpdateThreadEntityAct() */
+
+   /****************************************/
+   /****************************************/
+
+   void CSpaceMultiThreadBalanceQuantity::UpdateThreadPhysics(
+       const CRange<size_t>& c_range) {
+     /* Update physics engines, if this thread has been assigned to them */
+     THREAD_WAIT_FOR_GO_SIGNAL(Physics);
+     if (c_range.GetSpan() > 0) {
+       /* This thread has engines, update them */
+       for (size_t i = c_range.GetMin(); i < c_range.GetMax(); ++i) {
+         (*m_ptPhysicsEngines)[i]->Update();
+       }
+       pthread_testcancel();
+       THREAD_SIGNAL_PHASE_DONE(Physics);
+     }
+     else {
+       /* This thread has no engines -> dummy computation */
+       THREAD_SIGNAL_PHASE_DONE(Physics);
+     }
+   } /* UpdateThreadPhysics() */
+
+   /****************************************/
+   /****************************************/
+
+   void CSpaceMultiThreadBalanceQuantity::UpdateThreadMedia(
+       const CRange<size_t>& c_range) {
+     /* Update media, if this thread has been assigned to them */
+     THREAD_WAIT_FOR_GO_SIGNAL(Media);
+     if(c_range.GetSpan() > 0) {
+       /* This thread has media, update them */
+       for(size_t i = c_range.GetMin(); i < c_range.GetMax(); ++i) {
+         (*m_ptMedia)[i]->Update();
+       }
+       pthread_testcancel();
+       THREAD_SIGNAL_PHASE_DONE(Media);
+     }
+     else {
+       /* This thread has no media -> dummy computation */
+       THREAD_SIGNAL_PHASE_DONE(Media);
+     }
+   } /* UpdateThreadMedia() */
+
+   /****************************************/
+   /****************************************/
+
+   void CSpaceMultiThreadBalanceQuantity::UpdateThreadIterateOverEntities(UInt32 un_id,
+                                                                          CRange<size_t>& c_range) {
+     THREAD_WAIT_FOR_GO_SIGNAL(EntityIter);
+     /* Calculate the portion of entities to update, if needed */
+     if (m_bIsControllableEntityAssignmentRecalculationNeeded) {
+       c_range = CalculatePluginRangeForThread(un_id,
+                                               m_vecControllableEntities.size());
+     }
+     /* Cope with the fact that there may be less entities than threads */
+     if (c_range.GetSpan() > 0 && ControllableEntityIterationEnabled()) {
+       /* This thread has entities */
+       for (size_t i = c_range.GetMin(); i < c_range.GetMax(); ++i) {
+         m_cbControllableEntityIter(m_vecControllableEntities[i]);
+       } /* for(i...) */
+       pthread_testcancel();
+       THREAD_SIGNAL_PHASE_DONE(EntityIter);
+     }
+     else {
+       THREAD_SIGNAL_PHASE_DONE(EntityIter);
+     }
+   } /* UpdateThreadIterateOverEntities() */
+
+   /****************************************/
+   /****************************************/
+
+   void CSpaceMultiThreadBalanceQuantity::UpdateThreadEntitySenseControl(UInt32 un_id,
+                                                                         CRange<size_t>& c_range) {
+     /* Update sensor readings and call controllers */
+     THREAD_WAIT_FOR_GO_SIGNAL(SenseControlStep);
+
+     /* Calculate the portion of entities to update, if needed */
+     if (m_bIsControllableEntityAssignmentRecalculationNeeded) {
+       c_range = CalculatePluginRangeForThread(un_id,
+                                               m_vecControllableEntities.size());
+     }
+     /* Cope with the fact that there may be less entities than threads */
+     if (c_range.GetSpan() > 0) {
+       /* This thread has entities */
+       for (size_t i = c_range.GetMin(); i < c_range.GetMax(); ++i) {
+         if (m_vecControllableEntities[i]->IsEnabled()) {
+           m_vecControllableEntities[i]->Sense();
+           m_vecControllableEntities[i]->ControlStep();
+         }
+       }
+       pthread_testcancel();
+       THREAD_SIGNAL_PHASE_DONE(SenseControlStep);
+     }
+     else {
+       /* This thread has no entities -> dummy computation */
+       THREAD_SIGNAL_PHASE_DONE(SenseControlStep);
+     }
+   } /* UpdateThreadEntitySenseControl() */
+
+   /****************************************/
+   /****************************************/
 }
