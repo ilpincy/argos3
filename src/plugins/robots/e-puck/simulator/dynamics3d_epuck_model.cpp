@@ -105,15 +105,17 @@ namespace argos {
                                  true);
       /* set up motors for the wheels */
       m_ptrLeftMotor = 
-         std::make_unique<btMultiBodyJointMotor>(&m_cMultiBody,
-                                                 m_ptrLeftWheel->GetIndex(),
-                                                 0.0,
-                                                 m_fWheelMotorMaxImpulse);
+         std::unique_ptr<btMultiBodyJointMotor>(
+            new btMultiBodyJointMotor(&m_cMultiBody,
+                                      m_ptrLeftWheel->GetIndex(),
+                                      0.0,
+                                      m_fWheelMotorMaxImpulse));
       m_ptrRightMotor = 
-         std::make_unique<btMultiBodyJointMotor>(&m_cMultiBody,
-                                                 m_ptrRightWheel->GetIndex(),
-                                                 0.0,
-                                                 m_fWheelMotorMaxImpulse);
+         std::unique_ptr<btMultiBodyJointMotor>(
+            new btMultiBodyJointMotor(&m_cMultiBody,
+                                      m_ptrRightWheel->GetIndex(),
+                                      0.0,
+                                      m_fWheelMotorMaxImpulse));
       /* Allocate memory and prepare the btMultiBody */
       m_cMultiBody.finalizeMultiDof();
       /* Synchronize with the entity in the space */
