@@ -106,7 +106,7 @@ namespace argos {
    /****************************************/
 
    void CCI_DirectionalLEDsActuator::SetSingleColor(UInt32 un_led_number,
-                                         const CColor& c_color) {
+                                                    const CColor& c_color) {
       m_tSettings[un_led_number] = c_color;
    }
       
@@ -122,7 +122,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CCI_DirectionalLEDsActuator::SetAllColors(const TSettings& c_colors) {
+   void CCI_DirectionalLEDsActuator::SetAllColors(const std::vector<CColor>& c_colors) {
       m_tSettings = c_colors;
    }
 
@@ -130,7 +130,7 @@ namespace argos {
    /****************************************/
 
    void CCI_DirectionalLEDsActuator::SetSingleIntensity(UInt32 un_led_number,
-                                             UInt8 un_intensity) {
+                                                        UInt8 un_intensity) {
       m_tSettings[un_led_number].SetAlpha(un_intensity);
    }
 

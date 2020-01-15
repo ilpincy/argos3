@@ -22,7 +22,13 @@ namespace argos {
    void CDirectionalLEDsDefaultActuator::SetRobot(CComposableEntity& c_entity) {
       m_pcDirectionalLEDEquippedEntity = 
          &(c_entity.GetComponent<CDirectionalLEDEquippedEntity>("directional_leds"));
-      m_tSettings.resize(m_pcDirectionalLEDEquippedEntity->GetInstances().size());
+      m_tSettings.reserve(m_pcDirectionalLEDEquippedEntity->GetInstances().size());
+      /* populate m_tSettings with the initial configuration */
+      for(const CDirectionalLEDEquippedEntity::SInstance& s_instance :
+          m_pcDirectionalLEDEquippedEntity->GetInstances()) {
+         m_tSettings.push_back(s_instance.LED.GetColor());
+      }
+      m_tInitSettings = m_tSettings;
    }
 
    /****************************************/
@@ -48,7 +54,7 @@ namespace argos {
    /****************************************/
 
    void CDirectionalLEDsDefaultActuator::Reset() {
-      SetAllColors(CColor::BLACK);
+      SetAllColors(m_tInitSettings);
    }
 
    /****************************************/

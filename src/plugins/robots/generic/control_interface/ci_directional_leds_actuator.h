@@ -20,10 +20,6 @@ namespace argos {
 
    public:
 
-      typedef std::vector<CColor> TSettings;
-
-   public:
-
       CCI_DirectionalLEDsActuator() {}
 
       virtual ~CCI_DirectionalLEDsActuator() {}
@@ -64,7 +60,7 @@ namespace argos {
        *
        * @param c_colors color to set for each LED.
        */
-      virtual void SetAllColors(const TSettings& c_colors);
+      virtual void SetAllColors(const std::vector<CColor>& c_colors);
 
       /**
        * @brief Sets the intensity of a single LED in the ring.
@@ -90,7 +86,8 @@ namespace argos {
 
    protected:
 
-      TSettings m_tSettings;
+      std::vector<CColor> m_tSettings;
+      std::vector<CColor> m_tInitSettings;
 
    };
 
