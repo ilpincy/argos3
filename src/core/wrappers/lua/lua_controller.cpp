@@ -120,6 +120,19 @@ namespace argos {
       CreateLuaState();
       SensorReadingsToLuaState();
       ParametersToLuaState(t_tree);
+      /* Add the path of the script to package.path */
+      const std::string& strScriptPath =
+         str_script.substr(0, str_script.find_last_of('/'));
+      std::string strPackagePath;
+      strPackagePath += (strScriptPath + "/?.lua;");
+      strPackagePath += (strScriptPath + "/?/init.lua;");
+      lua_getglobal(m_ptLuaState, "package");
+      lua_getfield(m_ptLuaState, -1, "path");
+      strPackagePath += lua_tostring(m_ptLuaState, -1);
+      lua_pop(m_ptLuaState, 1);
+      lua_pushstring(m_ptLuaState, strPackagePath.c_str());
+      lua_setfield(m_ptLuaState, -2, "path");
+      lua_pop(m_ptLuaState, 1);
       /* Load script */
       if(!CLuaUtility::LoadScript(m_ptLuaState, str_script)) {
          m_bIsOK = false;
