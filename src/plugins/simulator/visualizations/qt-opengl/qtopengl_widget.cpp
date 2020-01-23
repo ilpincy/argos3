@@ -21,6 +21,7 @@
 #include <QToolTip>
 #include <QTimerEvent>
 #include <QMouseEvent>
+#include <QWheelEvent>
 #include <QPainter>
 #include <QOpenGLFramebufferObject>
 
@@ -899,6 +900,39 @@ namespace argos {
       }
       else {
          m_cUserFunctions.MouseMoved(pc_event);
+      }
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CQTOpenGLWidget::wheelEvent(QWheelEvent *pc_event) {
+      if(m_sSelectionInfo.IsSelected && (pc_event->modifiers() & Qt::ControlModifier)) {
+         /* Treat selected entity as an embodied entity */
+         CEmbodiedEntity* pcEntity = dynamic_cast<CEmbodiedEntity*>(m_sSelectionInfo.Entity);
+         if(pcEntity == NULL) {
+            /* Treat selected entity as a composable entity with an embodied component */
+            CComposableEntity* pcCompEntity = dynamic_cast<CComposableEntity*>(m_sSelectionInfo.Entity);
+            if(pcCompEntity != NULL && pcCompEntity->HasComponent("body")) {
+               pcEntity = &pcCompEntity->GetComponent<CEmbodiedEntity>("body");
+            }
+            else {
+               return;
+            }
+         }
+         /*
+          * If we get here, pcEntity is set to a non-NULL value
+          * Rotate the entity
+          */
+         CDegrees cDegrees(pc_event->angleDelta().y() / 8);
+         CQuaternion cRotation(ToRadians(cDegrees), CVector3::Z);
+         CQuaternion cOldOrientation(pcEntity->GetOriginAnchor().Orientation);
+         CQuaternion cNewOrientation(cOldOrientation * cRotation);
+         if(pcEntity->MoveTo(pcEntity->GetOriginAnchor().Position, cNewOrientation)) {
+            m_cUserFunctions.EntityRotated(pcEntity->GetRootEntity(), cOldOrientation, cNewOrientation);
+         }
+         /* entity updated, redraw the scene */
+         update();
       }
    }
 
