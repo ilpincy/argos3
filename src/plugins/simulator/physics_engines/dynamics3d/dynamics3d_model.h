@@ -15,8 +15,23 @@ namespace argos {
 #include <argos3/core/simulator/entity/composable_entity.h>
 #include <argos3/core/utility/math/vector3.h>
 #include <argos3/core/utility/math/quaternion.h>
+
+#ifdef __APPLE__
+#pragma clang diagnostic push
+//#pragma clang diagnostic ignored "-Weverything"
+#else
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wreorder"
+#endif
+
 #include <argos3/plugins/simulator/physics_engines/dynamics3d/bullet/btBulletCollisionCommon.h>
 #include <argos3/plugins/simulator/physics_engines/dynamics3d/bullet/BulletDynamics/Featherstone/btMultiBodyDynamicsWorld.h>
+
+#ifdef __APPLE__
+#pragma clang diagnostic pop
+#else
+#pragma GCC diagnostic pop
+#endif
 
 #include <functional>
 

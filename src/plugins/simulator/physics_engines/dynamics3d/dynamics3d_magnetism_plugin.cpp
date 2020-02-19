@@ -9,10 +9,8 @@
 #include "dynamics3d_magnetism_plugin.h"
 
 #include <argos3/plugins/simulator/physics_engines/dynamics3d/dynamics3d_model.h>
-#include <algorithm>
 
-#include <argos3/plugins/simulator/physics_engines/dynamics3d/dynamics3d_multi_body_object_model.h>
-#include <argos3/plugins/simulator/physics_engines/dynamics3d/bullet/BulletDynamics/Featherstone/btMultiBodyLink.h>
+#include <algorithm>
 
 namespace argos {
 

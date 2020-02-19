@@ -12,9 +12,24 @@ namespace argos {
 }
 
 #include <argos3/plugins/simulator/physics_engines/dynamics3d/dynamics3d_model.h>
+
+#ifdef __APPLE__
+#pragma clang diagnostic push
+//#pragma clang diagnostic ignored "-Weverything"
+#else
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wreorder"
+#endif
+
 #include <argos3/plugins/simulator/physics_engines/dynamics3d/bullet/BulletDynamics/Featherstone/btMultiBody.h>
 #include <argos3/plugins/simulator/physics_engines/dynamics3d/bullet/BulletDynamics/Featherstone/btMultiBodyLink.h>
 #include <argos3/plugins/simulator/physics_engines/dynamics3d/bullet/BulletDynamics/Featherstone/btMultiBodyLinkCollider.h>
+
+#ifdef __APPLE__
+#pragma clang diagnostic pop
+#else
+#pragma GCC diagnostic pop
+#endif
 
 namespace argos {
 

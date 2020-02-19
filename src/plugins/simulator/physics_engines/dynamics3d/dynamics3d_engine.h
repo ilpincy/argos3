@@ -17,9 +17,25 @@ namespace argos {
 #include <argos3/core/simulator/physics_engine/physics_engine.h>
 #include <argos3/core/utility/math/ray2.h>
 #include <argos3/core/utility/math/rng.h>
+
+#ifdef __APPLE__
+#pragma clang diagnostic push
+//#pragma clang diagnostic ignored "-Weverything"
+#else
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wreorder"
+#endif
+
 #include <argos3/plugins/simulator/physics_engines/dynamics3d/bullet/btBulletDynamicsCommon.h>
+#include <argos3/plugins/simulator/physics_engines/dynamics3d/bullet/BulletCollision/NarrowPhaseCollision/btRaycastCallback.h>
 #include <argos3/plugins/simulator/physics_engines/dynamics3d/bullet/BulletDynamics/Featherstone/btMultiBodyConstraintSolver.h>
 #include <argos3/plugins/simulator/physics_engines/dynamics3d/bullet/BulletDynamics/Featherstone/btMultiBodyDynamicsWorld.h>
+
+#ifdef __APPLE__
+#pragma clang diagnostic pop
+#else
+#pragma GCC diagnostic pop
+#endif
 
 namespace argos {
 
