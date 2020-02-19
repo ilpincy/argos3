@@ -20,7 +20,7 @@ namespace argos {
 
 #ifdef __APPLE__
 #pragma clang diagnostic push
-//#pragma clang diagnostic ignored "-Weverything"
+#pragma clang diagnostic ignored "-Wreorder"
 #else
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wreorder"

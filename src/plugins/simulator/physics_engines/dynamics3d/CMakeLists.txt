@@ -458,7 +458,7 @@ if(APPLE)
   set_source_files_properties(
     ${ARGOS3_SOURCES_PLUGINS_SIMULATOR_PHYSICS_ENGINES_DYNAMICS3D_BULLET}
     PROPERTIES
-    COMPILE_FLAGS "-Weverything")
+    COMPILE_FLAGS "-Wno-everything")
 else(APPLE)
   set_source_files_properties(
     ${ARGOS3_SOURCES_PLUGINS_SIMULATOR_PHYSICS_ENGINES_DYNAMICS3D_BULLET}
