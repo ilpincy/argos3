@@ -117,7 +117,7 @@ namespace argos {
       /* Get the collision shape */
       std::shared_ptr<btCollisionShape> ptrBaseLinkShape = RequestShape(cBaseLink);
       /* Set up the base link body */
-      std::shared_ptr<CBase> ptrBase = 
+      std::shared_ptr<CBase> ptrBase =
          std::make_shared<CBase>(*this, &cBaseLink.GetAnchor(), ptrBaseLinkShape, CreateBodyData(cBaseLink));
       /* Add to collection */
       m_vecBodies.push_back(ptrBase);
@@ -148,7 +148,7 @@ namespace argos {
                continue;
             }
             /* Parent body must be a CLink, therefore no need to use dynamic_pointer_cast */
-            std::shared_ptr<CLink> ptrParentLinkBody = 
+            std::shared_ptr<CLink> ptrParentLinkBody =
                std::static_pointer_cast<CLink>(*itParentLinkBody);
             /* Get a reference to the child link */
             CPrototypeLinkEntity& cChildLink = cJoint.GetChildLink();
@@ -198,7 +198,7 @@ namespace argos {
             btQuaternion cParentToChildRotation = cParentOffsetTransform.inverse().getRotation() *
                cChildOffsetTransform.getRotation();
             */
-            btQuaternion cParentToChildRotation = cChildOffsetTransform.getRotation() * 
+            btQuaternion cParentToChildRotation = cChildOffsetTransform.getRotation() *
                cParentOffsetTransform.inverse().getRotation();
             /* Store joint configuration for reset */
             m_vecJoints.emplace_back(cJoint.GetType(),
@@ -508,4 +508,3 @@ namespace argos {
    /****************************************/
 
 }
-

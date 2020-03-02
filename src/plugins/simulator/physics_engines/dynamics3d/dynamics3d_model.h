@@ -42,7 +42,7 @@ namespace argos {
          using TVectorIterator = std::vector<std::shared_ptr<CAbstractBody> >::iterator;
 
          struct SData {
-            
+
             struct SDipole {
                /* Constructor */
                SDipole(const std::function<btVector3()>& fn_get_field,
@@ -165,7 +165,7 @@ namespace argos {
       CComposableEntity& m_cComposableEntity;
 
    };
-   
+
    /****************************************/
    /****************************************/
 

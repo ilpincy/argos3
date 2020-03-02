@@ -32,7 +32,7 @@ namespace argos {
          std::string strLinkGeometry;
          GetNodeAttribute(t_tree, "geometry", strLinkGeometry);
          if(strLinkGeometry == "box") {
-            m_eGeometry = BOX; 
+            m_eGeometry = BOX;
             GetNodeAttribute(t_tree, "size", m_cExtents);
          } else if(strLinkGeometry == "cylinder") {
             m_eGeometry = CYLINDER;
@@ -55,7 +55,7 @@ namespace argos {
             /* Parse the points of the convex hull */
             GetNodeText(t_tree, strPoints);
             /* Remove any whitespace characters */
-            std::string::iterator itEraseBegin = 
+            std::string::iterator itEraseBegin =
                std::remove_if(std::begin(strPoints), std::end(strPoints), ::isspace);
             strPoints.erase(itEraseBegin, std::end(strPoints));
             /* Split into individual points */

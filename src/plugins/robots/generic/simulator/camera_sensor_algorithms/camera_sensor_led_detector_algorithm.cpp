@@ -16,15 +16,15 @@
 namespace argos {
 
    /****************************************/
-   /****************************************/   
+   /****************************************/
 
    CCameraSensorLEDDetectorAlgorithm::CCameraSensorLEDDetectorAlgorithm() :
       m_bShowRays(false),
       m_pcLEDIndex(nullptr) {}
 
    /****************************************/
-   /****************************************/   
-   
+   /****************************************/
+
    void CCameraSensorLEDDetectorAlgorithm::Init(TConfigurationNode& t_tree) {
       try {
          /* Parent class init */
@@ -75,5 +75,5 @@ namespace argos {
                                     "returns the X and Y coordinates on the sensor",
                                     "This algorithm detects nearby LEDs seen by the camera and\n"
                                     "returns the X and Y coordinates on the sensor",
-                                    "Under development");  
+                                    "Under development");
 }

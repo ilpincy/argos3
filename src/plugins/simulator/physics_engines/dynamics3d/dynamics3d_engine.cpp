@@ -49,6 +49,14 @@ namespace argos {
       for(tPluginIterator = tPluginIterator.begin(&t_tree);
           tPluginIterator != tPluginIterator.end();
           ++tPluginIterator) {
+        /*
+         * Boundary configuration handled in parent. <boundaries> is NOT a
+         * plugin, so we have to skip it when initializing, because it is
+         * nested under the engine just like the rest of the plugins.
+         */
+        if ("boundaries" == tPluginIterator->Value()) {
+          continue;
+        }
          CDynamics3DPlugin* pcPlugin = CFactory<CDynamics3DPlugin>::New(tPluginIterator->Value());
          pcPlugin->SetEngine(*this);
          pcPlugin->Init(*tPluginIterator);

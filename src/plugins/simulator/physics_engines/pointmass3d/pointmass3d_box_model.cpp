@@ -43,7 +43,7 @@ namespace argos {
                     GetEmbodiedEntity().GetOriginAnchor().Orientation);
       return m_cShape.Intersects(f_t_on_ray, c_ray);
    }
-   
+
    /****************************************/
    /****************************************/
 

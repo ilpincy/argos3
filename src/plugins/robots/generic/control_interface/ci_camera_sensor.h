@@ -29,14 +29,14 @@ namespace argos {
          std::vector<CCI_CameraSensorAlgorithm*> Algorithms;
          typedef std::vector<SInterface> TVector;
       };
-      
+
    public:
-    
+
       /**
        * Constructor
        */
       CCI_CameraSensor() {}
-      
+
       /**
        * Destructor
        */
@@ -52,7 +52,7 @@ namespace argos {
 
 #ifdef ARGOS_WITH_LUA
       virtual void CreateLuaState(lua_State* pt_lua_state);
-      
+
       virtual void ReadingsToLuaState(lua_State* pt_lua_state);
 #endif
 
@@ -61,7 +61,7 @@ namespace argos {
       SInterface::TVector m_vecInterfaces;
 
    };
-   
+
 }
 
 #endif

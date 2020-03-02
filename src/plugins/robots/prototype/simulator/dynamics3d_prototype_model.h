@@ -28,7 +28,7 @@ namespace argos {
       virtual ~CDynamics3DPrototypeModel() {}
 
       virtual void Reset();
-           
+
       virtual void UpdateEntityStatus();
 
       virtual void UpdateFromEntityStatus();

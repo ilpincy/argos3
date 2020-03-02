@@ -33,7 +33,7 @@ namespace argos {
                    c_position.GetZ(),
                   -c_position.GetY()));
       /* Move the body */
-      m_vecBodies[0]->GetTransform() = 
+      m_vecBodies[0]->GetTransform() =
          cTransform * m_vecBodies[0]->GetData().InverseCenterOfMassOffset;
       /* Synchronize with the entity in the space */
       UpdateEntityStatus();
@@ -80,7 +80,7 @@ namespace argos {
    /****************************************/
 
    void CDynamics3DSingleBodyObjectModel::CBody::Reset() {
-      btRigidBody::btRigidBodyConstructionInfo cInfo(m_sData.Mass, 
+      btRigidBody::btRigidBodyConstructionInfo cInfo(m_sData.Mass,
                                                      nullptr,
                                                      &GetShape(),
                                                      m_sData.Inertia);
@@ -130,7 +130,7 @@ namespace argos {
 
    void CDynamics3DSingleBodyObjectModel::CBody::ApplyForce(const btVector3& c_force,
                                                             const btVector3& c_offset) {
-      m_cRigidBody.applyForce(c_force, c_offset);         
+      m_cRigidBody.applyForce(c_force, c_offset);
    }
 
    /****************************************/

@@ -26,9 +26,9 @@ extern "C" {
 
 
 namespace argos {
-   
+
    class CCI_CameraSensorDirectionalLEDDetectorAlgorithm : virtual public CCI_CameraSensorAlgorithm {
-      
+
    public:
 
       struct SReading {
@@ -48,24 +48,24 @@ namespace argos {
       };
 
    public:
-      
+
       /**
        * Constructor
        */
       CCI_CameraSensorDirectionalLEDDetectorAlgorithm() {}
-      
+
       /**
        * Destructor
        */
       virtual ~CCI_CameraSensorDirectionalLEDDetectorAlgorithm() {}
-      
+
       const std::vector<SReading>& GetReadings() const {
          return m_vecReadings;
       }
-      
+
 #ifdef ARGOS_WITH_LUA
       virtual void CreateLuaState(lua_State* pt_lua_state);
-      
+
       virtual void ReadingsToLuaState(lua_State* pt_lua_state);
 
       virtual const std::string& GetId() {
@@ -77,9 +77,9 @@ namespace argos {
    protected:
 
       std::vector<SReading> m_vecReadings;
-      
+
    };
-   
+
 }
 
 #endif

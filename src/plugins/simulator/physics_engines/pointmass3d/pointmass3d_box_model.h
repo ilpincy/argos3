@@ -22,11 +22,11 @@ namespace argos {
    class CPointMass3DBoxModel : public CPointMass3DModel {
 
    public:
-      
+
       CPointMass3DBoxModel(CPointMass3DEngine& c_engine,
                            CBoxEntity& c_box);
       virtual ~CPointMass3DBoxModel() {}
-      
+
       virtual void UpdateFromEntityStatus() {}
       virtual void Step() {}
       virtual void UpdateEntityStatus() {}
