@@ -340,7 +340,7 @@ namespace argos {
 
                            "Multiple physics engines can also be used. If multiple physics engines are used,\n"
                            "the disjoint union of the area within the arena assigned to each engine must cover\n"
-                           "the entire arena without overlapping. If the entire arena is not covered,robots can\n"
+                           "the entire arena without overlapping. If the entire arena is not covered, robots can\n"
                            "\"escape\" the configured physics engines and cause a fatal exception (this is not an\n"
                            "issue when a single physics engine is used, because the engine covers the entire arena\n"
                            "by default). To use multiple physics engines, use the following syntax (all attributes\n"
