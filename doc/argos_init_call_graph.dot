@@ -1,0 +1,156 @@
+digraph G {
+
+rankdir = "LR";
+
+/*
+* FILES AND CLASSES
+*/
+
+main [label="main.cpp"];
+
+CSimulatorLoadExperiment    [label="CSimulator::LoadExperiment()"];
+CSimulatorInit              [label="CSimulator::Init()"];
+CSimulatorInitFramework     [label="CSimulator::InitFramework()"];
+CSimulatorInitControllers   [label="CSimulator::InitControllers()"];
+CSimulatorInitLoopFunctions [label="CSimulator::InitLoopFunctions()"];
+CSimulatorInitPhysics       [label="CSimulator::InitPhysics()"];
+CSimulatorInitMedia         [label="CSimulator::InitMedia()"];
+CSimulatorInitSpace         [label="CSimulator::InitSpace()"];
+CSimulatorInitPhysics2      [label="CSimulator::InitPhysics2()"];
+CSimulatorInitMedia2        [label="CSimulator::InitMedia2()"];
+CSimulatorInitVisualization [label="CSimulator::InitVisualization()"];
+
+CSpaceNoThreadsCSpaceNoThreads                                   [label="CSpaceNoThreads::CSpaceNoThreads()"];
+CSpaceMultiThreadBalanceQuantityCSpaceMultiThreadBalanceQuantity [label="CSpaceMultiThreadBalanceQuantity::CSpaceMultiThreadBalanceQuantity()"];
+CSpaceMultiThreadBalanceLengthCSpaceMultiThreadBalanceLength     [label="CSpaceMultiThreadBalanceLength::CSpaceMultiThreadBalanceLength()"];
+
+CSpaceInit       [label="CSpace::Init()"];
+
+CPhysicsEngineCPhysicsEngine [label="CPhysicsEngine::CPhysicsEngine()"];
+CPhysicsEngineInit           [label="CPhysicsEngine::Init()"];
+CPhysicsEnginePostSpaceInit  [label="CPhysicsEngine::PostSpaceInit()"];
+
+CMediumCMedium       [label="CMedium::CMedium()"];
+CMediumInit          [label="CMedium::Init()"];
+CMediumPostSpaceInit [label="CMedium::PostSpaceInit()"];
+
+CVisualizationCVisualization [label="CVisualization::CVisualization()"];
+CVisualizationInit           [label="CVisualization::Init()"];
+
+CEntityCEntity           [label="CEntity::CEntity()"];
+CEntityInit              [label="CEntity::Init()"];
+CSpaceAddEntity          [label="CSpace::AddEntity()"];
+
+CComposableEntityCComposableEntity        [label="CComposableEntity::CComposableEntity()"];
+CComposableEntityInit                     [label="CComposableEntity::Init()"];
+CSpaceOperationAddEntityCComposableEntity [label="CSpaceOperationAddEntityCComposableEntity"];
+
+CEmbodiedEntityCEmbodiedEntity          [label="CEmbodiedEntity::CEmbodiedEntity()"];
+CEmbodiedEntityInit                     [label="CEmbodiedEntity::Init()"];
+CSpaceOperationAddEntityCEmbodiedEntity [label="CSpaceOperationAddEntityCEmbodiedEntity"]
+CSpaceAddEntityToPhysicsEngine          [label="CSpace::AddEntityToPhysicsEngine()"];
+
+CPhysicsEngineAddEntity [label="CPhysicsEngine::AddEntity()"];
+
+CControllableEntityCControllableEntity      [label="CControllableEntity::CControllableEntity()"];
+CControllableEntityInit                     [label="CControllableEntity::Init()"];
+CControllableEntitySetController            [label="CControllableEntity::SetController()"];
+CSpaceOperationAddEntityCControllableEntity [label="CSpaceOperationAddEntityCControllableEntity"];
+CSpaceAddControllableEntity                 [label="CSpace::AddControllableEntity()"];
+
+CControllerCController [label="CController::CController()"];
+CControllerSetId       [label="CController::SetId()"];
+CActuatorCActuator     [label="CActuator::CActuator()"];
+CActuatorSetRobot      [label="CActuator::SetRobot()"];
+CActuatorInit          [label="CActuator::Init()"];
+CControllerAddActuator [label="CController::AddActuator()"];
+CSensorCSensor         [label="CSensor::CSensor()"];
+CSensorSetRobot        [label="CSensor::SetRobot()"];
+CSensorInit            [label="CSensor::Init()"];
+CControllerAddSensor   [label="CController::AddSensor()"];
+CControllerInit        [label="CController::Init()"];
+
+CComposableEntityGetComponent [label="CComposableEntity::GetComponent()"];
+
+/*
+* CALL GRAPH
+*/
+
+main -> CSimulatorLoadExperiment;
+
+CSimulatorLoadExperiment -> CSimulatorInit;
+CSimulatorInit -> CSimulatorInitFramework;
+CSimulatorInit -> CSimulatorInitControllers;
+CSimulatorInit -> CSimulatorInitLoopFunctions;
+CSimulatorInit -> CSimulatorInitPhysics;
+CSimulatorInit -> CSimulatorInitMedia;
+CSimulatorInit -> CSimulatorInitSpace;
+CSimulatorInit -> CSimulatorInitPhysics2;
+CSimulatorInit -> CSimulatorInitMedia2;
+CSimulatorInit -> CSimulatorInitVisualization;
+
+CSimulatorInitFramework -> CSpaceNoThreadsCSpaceNoThreads;
+CSimulatorInitFramework -> CSpaceMultiThreadBalanceQuantityCSpaceMultiThreadBalanceQuantity;
+CSimulatorInitFramework -> CSpaceMultiThreadBalanceLengthCSpaceMultiThreadBalanceLength;
+
+CSimulatorInitPhysics -> CPhysicsEngineCPhysicsEngine;
+CSimulatorInitPhysics -> CPhysicsEngineInit;
+
+CSimulatorInitMedia -> CMediumCMedium;
+CSimulatorInitMedia -> CMediumInit;
+
+CSimulatorInitSpace -> CSpaceInit;
+
+CSimulatorInitPhysics2 -> CPhysicsEnginePostSpaceInit;
+
+CSimulatorInitMedia2 -> CMediumPostSpaceInit;
+
+CSimulatorInitVisualization -> CVisualizationCVisualization;
+CSimulatorInitVisualization -> CVisualizationInit;
+
+CSpaceInit -> CComposableEntityCComposableEntity;
+CSpaceInit -> CComposableEntityInit;
+CSpaceInit -> CSpaceOperationAddEntityCComposableEntity;
+
+CComposableEntityCComposableEntity -> CEmbodiedEntityCEmbodiedEntity;
+CComposableEntityCComposableEntity -> CEmbodiedEntityInit;
+
+CComposableEntityInit -> CEmbodiedEntityCEmbodiedEntity;
+CComposableEntityInit -> CEmbodiedEntityInit;
+CComposableEntityInit -> CControllableEntityCControllableEntity;
+CComposableEntityInit -> CControllableEntityInit;
+
+CSpaceOperationAddEntityCComposableEntity -> CSpaceAddEntity;
+CSpaceOperationAddEntityCComposableEntity -> CSpaceOperationAddEntityCEmbodiedEntity;
+CSpaceOperationAddEntityCComposableEntity -> CSpaceOperationAddEntityCControllableEntity;
+
+CEmbodiedEntityCEmbodiedEntity -> CEntityCEntity;
+CEmbodiedEntityInit -> CEntityInit;
+CSpaceOperationAddEntityCEmbodiedEntity -> CSpaceAddEntity;
+CSpaceOperationAddEntityCEmbodiedEntity -> CSpaceAddEntityToPhysicsEngine;
+
+CControllableEntityCControllableEntity -> CEntityCEntity;
+CControllableEntityInit -> CEntityInit;
+CControllableEntityInit -> CControllableEntitySetController;
+
+CControllableEntitySetController -> CControllerCController;
+CControllableEntitySetController -> CControllerSetId;
+CControllableEntitySetController -> CActuatorCActuator;
+CControllableEntitySetController -> CActuatorSetRobot;
+CControllableEntitySetController -> CActuatorInit;
+CControllableEntitySetController -> CControllerAddActuator;
+CControllableEntitySetController -> CSensorCSensor;
+CControllableEntitySetController -> CSensorSetRobot;
+CControllableEntitySetController -> CSensorInit;
+CControllableEntitySetController -> CControllerInit;
+CControllableEntitySetController -> CControllerAddSensor;
+
+CActuatorSetRobot -> CComposableEntityGetComponent;
+CSensorSetRobot   -> CComposableEntityGetComponent;
+
+CSpaceOperationAddEntityCControllableEntity -> CSpaceAddEntity;
+CSpaceOperationAddEntityCControllableEntity -> CSpaceAddControllableEntity;
+
+CSpaceAddEntityToPhysicsEngine -> CPhysicsEngineAddEntity;
+
+}
