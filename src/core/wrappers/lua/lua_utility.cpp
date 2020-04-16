@@ -33,16 +33,16 @@ namespace argos {
       CRandom::CRNG* pcRNG = CLuaUtility::GetDeviceInstance<CRandom::CRNG>(pt_state, "random");
       /* Perform wanted action */
       if(lua_gettop(pt_state) == 0) {
-         /* Return random number */
-         lua_pushnumber(pt_state, pcRNG->Bernoulli());
+         /* Return random result */
+         lua_pushboolean(pt_state, pcRNG->Bernoulli());
          return 1;
       }
       else {
          /* Check parameter */
          luaL_checktype(pt_state, 1, LUA_TNUMBER);
          /* Return random number */
-         lua_pushnumber(pt_state,
-                        pcRNG->Bernoulli(lua_tonumber(pt_state, 1)));
+         lua_pushboolean(pt_state,
+                         pcRNG->Bernoulli(lua_tonumber(pt_state, 1)));
          return 1;
       }
       /* Can't reach this point */
