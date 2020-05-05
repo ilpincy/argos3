@@ -134,6 +134,23 @@ namespace argos {
       }
 
       /**
+       * Blends the current color with a background color.
+       * The alpha channel of the current color is used for blending.
+       * When alpha = 1, this color is returned.
+       * When alpha = 0, the background color is returned.
+       * When alpha is in [0,1], the color is calculated as the weighted sum of
+       * the channel values. The weight is the alpha value.
+       */
+      inline CColor Blend(const CColor& c_background) const throw() {
+         Real fAlpha = m_tChannels.m_unAlpha / 255.0;
+         return CColor(
+            static_cast<UInt8>(fAlpha * GetRed()   + (1.0-fAlpha) * c_background.GetRed()),
+            static_cast<UInt8>(fAlpha * GetGreen() + (1.0-fAlpha) * c_background.GetGreen()),
+            static_cast<UInt8>(fAlpha * GetBlue()  + (1.0-fAlpha) * c_background.GetBlue())
+            );
+      }
+
+      /**
        * Sets the RGBA values of the color from a string.
        * The input stringcan contain predefined color names, such as <tt>red</tt>.
        * The color can be also input as a tuple <tt>&lt;r,g,b,a&gt;</tt>.
