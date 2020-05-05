@@ -33,16 +33,16 @@ namespace argos {
       CRandom::CRNG* pcRNG = CLuaUtility::GetDeviceInstance<CRandom::CRNG>(pt_state, "random");
       /* Perform wanted action */
       if(lua_gettop(pt_state) == 0) {
-         /* Return random number */
-         lua_pushnumber(pt_state, pcRNG->Bernoulli());
+         /* Return random result */
+         lua_pushboolean(pt_state, pcRNG->Bernoulli());
          return 1;
       }
       else {
          /* Check parameter */
          luaL_checktype(pt_state, 1, LUA_TNUMBER);
          /* Return random number */
-         lua_pushnumber(pt_state,
-                        pcRNG->Bernoulli(lua_tonumber(pt_state, 1)));
+         lua_pushboolean(pt_state,
+                         pcRNG->Bernoulli(lua_tonumber(pt_state, 1)));
          return 1;
       }
       /* Can't reach this point */
@@ -128,6 +128,21 @@ namespace argos {
       /* Return random number */
       lua_pushnumber(pt_state,
                      pcRNG->Exponential(lua_tonumber(pt_state, 1)));
+      return 1;
+   }
+
+   int LuaRNGPoisson(lua_State* pt_state) {
+      /* Check number of parameters */
+      if(lua_gettop(pt_state) != 1) {
+         return luaL_error(pt_state, "robot.random.poisson() expects 1 argument");
+      }
+      /* Get RNG instance */
+      CRandom::CRNG* pcRNG = CLuaUtility::GetDeviceInstance<CRandom::CRNG>(pt_state, "random");
+      /* Check parameter */
+      luaL_checktype(pt_state, 1, LUA_TNUMBER);
+      /* Return random number */
+      lua_pushinteger(pt_state,
+                     pcRNG->Poisson(lua_tonumber(pt_state, 1)));
       return 1;
    }
 
@@ -290,6 +305,7 @@ namespace argos {
       AddToTable(pt_state, "uniform", &LuaRNGUniform);
       AddToTable(pt_state, "uniform_int", &LuaRNGUniformInt);
       AddToTable(pt_state, "exponential", &LuaRNGExponential);
+      AddToTable(pt_state, "poisson", &LuaRNGPoisson);
       AddToTable(pt_state, "gaussian", &LuaRNGGaussian);
       CloseRobotStateTable(pt_state);
    }
