@@ -230,7 +230,7 @@ namespace argos {
    /****************************************/
 
    void CDynamics2DEngine::AddPhysicsModel(const std::string& str_id,
-                                            CDynamics2DModel& c_model) {
+                                           CDynamics2DModel& c_model) {
       m_tPhysicsModels[str_id] = &c_model;
    }
 
@@ -258,7 +258,6 @@ namespace argos {
                            "A 2D dynamics physics engine.",
                            "This physics engine is a 2D dynamics engine based on the Chipmunk library\n"
                            "(http://code.google.com/p/chipmunk-physics) version 6.0.1.\n\n"
-
                            "REQUIRED XML CONFIGURATION\n\n"
                            "  <physics_engines>\n"
                            "    ...\n"
@@ -267,9 +266,7 @@ namespace argos {
                            "  </physics_engines>\n\n"
                            "The 'id' attribute is necessary and must be unique among the physics engines.\n"
                            "If two engines share the same id, initialization aborts.\n\n"
-
                            "OPTIONAL XML CONFIGURATION\n\n"
-
                            "It is possible to set how many iterations this physics engine performs between\n"
                            "each simulation step. By default, this physics engine performs 10 steps every\n"
                            "two simulation steps. This means that, if the simulation step is 100ms, the\n"
@@ -278,36 +275,30 @@ namespace argos {
                            "the number of iterations, the temporal granularity of the solver increases and\n"
                            "with it its accuracy, at the cost of higher computational cost. To change the\n"
                            "number of iterations per simulation step use this syntax:\n\n"
-
                            "  <physics_engines>\n"
                            "    ...\n"
                            "    <dynamics2d id=\"dyn2d\"\n"
                            "                iterations=\"20\" />\n"
                            "    ...\n"
                            "  </physics_engines>\n\n"
-
                            "The plane of the physics engine can be translated on the Z axis, to simulate\n"
                            "for example hovering objects, such as flying robots. To translate the plane\n"
                            "2m up the Z axis, use the 'elevation' attribute as follows:\n\n"
-
                            "  <physics_engines>\n"
                            "    ...\n"
                            "    <dynamics2d id=\"dyn2d\"\n"
                            "                elevation=\"2.0\" />\n"
                            "    ...\n"
                            "  </physics_engines>\n\n"
-
                            "When not specified, the elevation is zero, which means that the plane\n"
                            "corresponds to the XY plane.\n\n"
-
                            "The friction parameters between the ground and movable boxes and cylinders can\n"
                            "be overridden. You can set both the linear and angular friction parameters.\n"
                            "The default value is 1.49 for each of them. To override the values, use this\n"
                            "syntax (all attributes are optional):\n\n"
-
                            "  <physics_engines>\n"
                            "    ...\n"
-                           "    <dynamics2d id=\"dyn2d\"\n"
+                           "    <dynamics2d id=\"dyn2d\">\n"
                            "      <friction box_linear_friction=\"1.0\"\n"
                            "                box_angular_friction=\"2.0\"\n"
                            "                cylinder_linear_friction=\"3.0\"\n"
@@ -315,12 +306,10 @@ namespace argos {
                            "    </dynamics2d>\n"
                            "    ...\n"
                            "  </physics_engines>\n\n"
-
                            "For the the robots that use velocity-based control, such as ground robots with\n"
                            "the differential_steering actuator (e.g. the foot-bot and the e-puck), it is\n"
                            "possible to customize robot-specific attributes that set the maximum force and\n"
                            "torque the robot has. The syntax is as follows, taking a foot-bot as example:\n\n"
-
                            "  <arena ...>\n"
                            "    ...\n"
                            "    <foot-bot id=\"fb0\">\n"
@@ -333,22 +322,19 @@ namespace argos {
                            "    </foot-bot>\n"
                            "    ...\n"
                            "  </arena>\n\n"
-
                            "The attributes 'max_force' and 'max_torque' are both optional, and they take the\n"
                            "robot-specific default if not set. Check the code of the dynamics2d model of the\n"
                            "robot you're using to know the default values.\n\n"
-
                            "Multiple physics engines can also be used. If multiple physics engines are used,\n"
-                           "the disjoint union of the area within the arena assigned to each engine must cover\n"
-                           "the entire arena without overlapping. If the entire arena is not covered,robots can\n"
-                           "\"escape\" the configured physics engines and cause a fatal exception (this is not an\n"
-                           "issue when a single physics engine is used, because the engine covers the entire arena\n"
-                           "by default). To use multiple physics engines, use the following syntax (all attributes\n"
-                           "are mandatory):\n\n"
-
+                           "the disjoint union of the area within the arena assigned to each engine must\n"
+                           "cover the entire arena without overlapping. If the entire arena is not\n"
+                           "covered,robots can \"escape\" the configured physics engines and cause a fatal\n"
+                           "exception (this is not an issue when a single physics engine is used, because\n"
+                           "the engine covers the entire arena by default). To use multiple physics engines,\n"
+                           "use the following syntax (all attributes are mandatory):\n"
                            "  <physics_engines>\n"
                            "    ...\n"
-                           "    <dynamics2d id=\"dyn2d0\"\n"
+                           "    <dynamics2d id=\"dyn2d0\">\n"
                            "      <boundaries>\n"
                            "        <top height=\"1.0\"/>\n"
                            "        <botton height=\"0.0\"/>\n"
@@ -360,63 +346,54 @@ namespace argos {
                            "        </sides>\n"
                            "      </boundaries>\n"
                            "    </dynamics2d>\n"
-                           "    <dynamics2d id=\"dyn2d1\"\n"
+                           "    <dynamics2d id=\"dyn2d1\">\n"
                            "     ..."
                            "    </dynamics2d>\n"
                            "    ...\n"
                            "  </physics_engines>\n\n"
 
-                           "'Top' and 'Bottom' attributes are more relevant for 3D physics engines, and should\n"
-                           "be generally set to 1.0 and 0.0, respectively, for 2D engines. A physics engine can\n"
-                           "be defined having any number of sides >= 3, as long as the sides from a closed\n"
-                           "polygon in the 2D plane (vertices must be declared in the XML file in\n"
-                           "counter-clockwise order).  In the above example, the physics engine \"dyn2d0\" is\n"
-                           "assigned to the area within the arena with lower left coordinates (0,0) and upper\n"
-                           "right coordinates (4,4) and verticle are specified in counter clockwise order: LL,\n"
-                           "LR, UR, UL.\n\n"
-
+                           "The 'top' and 'bottom' nodes are relevant for 3D physics engines. For 2D\n"
+                           "engines, it safe to set their height to 1.0 and 0.0, respectively. A physics\n"
+                           "engine can be defined having any number of sides >= 3, as long as the sides form\n"
+                           "a closed polygon in the 2D plane. The vertices must be declared in\n"
+                           "counter-clockwise order.  In the above example, the physics engine \"dyn2d0\" is\n"
+                           "assigned to the area within the arena with lower-left coordinates (0,0) and\n"
+                           "upper-right coordinates (4,4) and vertices are specified in counter clockwise\n"
+                           "order: south-east, south-west, north-west, north-east.\n\n"
                            "OPTIMIZATION HINTS\n\n"
-
                            "1. A single physics engine is generally sufficient for small swarms (say <= 50\n"
                            "   robots) within a reasonably small arena to obtain faster than real-time\n"
-                           "   performance with optimized code. For larger swarms and/or large arenas multiple\n"
-                           "   engines should be used for maximum performance.\n\n"
-
-
+                           "   performance with optimized code. For larger swarms and/or large arenas,\n"
+                           "   multiple engines should be used for maximum performance.\n\n"
                            "2. In general, using the same number of ARGoS threads as physics engines gives\n"
                            "   maximum performance (1-thread per engine per CPU core).\n\n"
-
-                           "3. Using multiple engines in simulations with any of the following characteristics\n"
-                           "   generally incurs more overhead due to thread context switching than the\n"
-                           "   performance benefits from multiple engines:\n\n"
-
+                           "3. Using multiple engines in simulations with any of the following\n"
+                           "   characteristics generally incurs more overhead (due to thread context\n"
+                           "   switching) than the performance benefits from multiple engines:\n"
                            "   - Small swarms\n"
                            "   - Small arenas\n"
                            "   - Less available ARGoS threads than assigned physics engines\n"
                            "   - Less available CPU cores than assigned ARGoS threads\n\n"
-
-
                            "4. A good starting strategy for physics engine boundary assignment is to assign\n"
                            "   each physics engine the same amount of area within the arena. This will be\n"
                            "   sufficient for most cases. Depending on the nature of the simulation, using\n"
-                           "   non-homogeneous physics engine sizes may yield increased performance. An example\n"
-                           "   would be a narrow hallway between larger open areas in the arena--the hallway\n"
-                           "   will likely experience increased robot density and assigning more physics\n"
-                           "   engines to that area than the relatively unpopulated open areas may increase\n"
-                           "   performance.\n\n"
-
+                           "   non-homogeneous physics engine sizes may yield increased performance. An\n"
+                           "   example would be a narrow hallway between larger open areas in the arena--the\n"
+                           "   hallway will likely experience increased robot density and assigning more\n"
+                           "   physics engines to that area than the relatively unpopulated open areas may\n"
+                           "   increase performance.\n\n"
                            "5. By default, this engine uses the bounding-box tree method for collision shape\n"
-                           "   indexing. This method is the default in Chipmunk and it works well most of the\n"
-                           "   times. However, if you are running simulations with hundreds or thousands of\n"
-                           "   identical robots, a different shape collision indexing is available: the\n"
+                           "   indexing. This method is the default in Chipmunk and it works well most of\n"
+                           "   the times. However, if you are running simulations with hundreds or thousands\n"
+                           "   of identical robots, a different shape collision indexing is available: the\n"
                            "   spatial hash. The spatial hash is a grid stored in a hashmap. To get the max\n"
-                           "   out of this indexing method, you must set two parameters: the cell size and the\n"
-                           "   suggested minimum number of cells in the space. According to the documentation\n"
-                           "   of Chipmunk, the cell size should correspond to the size of the bounding box of\n"
-                           "   the most common object in the simulation; the minimum number of cells should be\n"
-                           "   at least 10x the number of objects managed by the physics engine. To use\n"
-                           "   this indexing method, use this syntax (all attributes are mandatory):\n\n"
-
+                           "   out of this indexing method, you must set two parameters: the cell size and\n"
+                           "   the suggested minimum number of cells in the space. According to the\n"
+                           "   documentation of Chipmunk, the cell size should correspond to the size of the\n"
+                           "   bounding box of the most common object in the simulation; the minimum number\n"
+                           "   of cells should be at least 10x the number of objects managed by the physics\n"
+                           "   engine. To use this indexing method, use this syntax (all attributes are\n"
+                           "   mandatory):\n\n"
                            "   <physics_engines>\n"
                            "     ...\n"
                            "     <dynamics2d id=\"dyn2d\">\n"
@@ -428,8 +405,7 @@ namespace argos {
                            "     ...\n"
                            "   </physics_engines>\n"
                            ,
-
                            "Usable"
-                           );
+      );
 
 }
