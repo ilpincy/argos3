@@ -215,6 +215,22 @@ namespace argos {
          return m_vecIntersectionPoints;
       }
 
+      /**
+       * Returns a map of actuators indexed by actuator type.
+       * @return a map of actuators indexed by actuator type.
+       */
+      inline const std::map<std::string, CSimulatedActuator*>& GetActuators() const {
+         return m_mapActuators;
+      }
+
+      /**
+       * Returns a map of sensors indexed by sensor type.
+       * @return a map of sensors indexed by sensor type.
+       */
+      inline const std::map<std::string, CSimulatedSensor*>& GetSensors() const {
+         return m_mapSensors;
+      }
+
    protected:
 
       /** The pointer to the associated controller */

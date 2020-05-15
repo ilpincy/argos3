@@ -44,6 +44,22 @@ namespace argos {
 
      void Disable();
 
+      /**
+       * Returns true if the rays must be shown in the GUI.
+       * @return true if the rays must be shown in the GUI.
+       */
+      inline bool IsShowRays() {
+         return m_bShowRays;
+      }
+
+      /**
+       * Sets whether or not the rays must be shown in the GUI.
+       * @param b_show_rays true if the rays must be shown, false otherwise
+       */
+      inline void SetShowRays(bool b_show_rays) {
+         m_bShowRays = b_show_rays;
+      }
+
    protected:
 
       /** Is this sensor currently enabled? */
