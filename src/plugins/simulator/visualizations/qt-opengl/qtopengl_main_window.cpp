@@ -430,7 +430,7 @@ namespace argos {
       m_pcFocalLength->setDecimals(1);
       m_pcFocalLength->setSingleStep(1.0f);
       m_pcFocalLength->setRange(1.0f, 999.0f);
-      m_pcFocalLength->setValue(m_pcOpenGLWidget->GetCamera().GetSetting(0).LensFocalLength * 1000.0f);
+      m_pcFocalLength->setValue(m_pcOpenGLWidget->GetCamera().GetPlacement(0).LensFocalLength * 1000.0f);
       m_pcCameraToolBar->addWidget(m_pcFocalLength);
       addToolBar(Qt::LeftToolBarArea, m_pcCameraToolBar);
    }
@@ -963,10 +963,10 @@ namespace argos {
       CQTOpenGLCamera& cCamera = m_pcOpenGLWidget->GetCamera();
       for(UInt32 i = 0; i < 12; ++i) {
          /* Get its position and target */
-         const CQTOpenGLCamera::SSettings& sSettings = cCamera.GetSetting(i);
-         const CVector3& cPos = sSettings.Position;
-         const CVector3& cLookAt = sSettings.Target;
-         const CVector3& cUp = sSettings.Up;
+         const CQTOpenGLCamera::SPlacement& sPlacement = cCamera.GetPlacement(i);
+         const CVector3& cPos = sPlacement.Position;
+         const CVector3& cLookAt = sPlacement.Target;
+         const CVector3& cUp = sPlacement.Up;
          strResult.append(
             QString("   <placement idx=\"%1\" position=\"%2,%3,%4\" look_at=\"%5,%6,%7\" up=\"%8,%9,%10\" lens_focal_length=\"%11\" />\n")
             .arg(i)
@@ -979,7 +979,7 @@ namespace argos {
             .arg(cUp.GetX())
             .arg(cUp.GetY())
             .arg(cUp.GetZ())
-            .arg(sSettings.LensFocalLength * 1000.0f));
+            .arg(sPlacement.LensFocalLength * 1000.0f));
       }
       strResult.append("</camera>\n");
       return strResult;
@@ -1087,7 +1087,7 @@ namespace argos {
 
    void CQTOpenGLMainWindow::SwitchCamera(QAction* pc_action) {
       emit CameraSwitched(pc_action->data().toInt());
-      m_pcFocalLength->setValue(m_pcOpenGLWidget->GetCamera().GetActiveSettings().LensFocalLength * 1000.0f);
+      m_pcFocalLength->setValue(m_pcOpenGLWidget->GetCamera().GetActivePlacement().LensFocalLength * 1000.0f);
    }
 
    /****************************************/

@@ -34,7 +34,7 @@ namespace argos {
 
    public:
 
-      struct SSettings {
+      struct SPlacement {
          /** The position of the camera in the global reference frame */
          CVector3 Position;
          /** The local Y axis of the camera in the global reference frame */
@@ -54,7 +54,7 @@ namespace argos {
          /** Rotation sensitivity */
          Real RotationSensitivity;
 
-         SSettings() :
+         SPlacement() :
             Position(-2.0f, 0.0f, 2.0f),
             Left(CVector3::Y),
             Up(CVector3(1.0f, 0.0f, 1.0f).Normalize()),
@@ -84,6 +84,15 @@ namespace argos {
          void CalculateSensitivity();
       };
 
+      struct STimelineItem {
+         /** Index of the placement */
+         UInt32 Idx;
+         /** Time step to switch to the indicated placement */
+         UInt32 Step;
+         /** Initialize from XML */
+         void Init(TConfigurationNode& t_tree);
+      };
+
    public:
 
       CQTOpenGLCamera();
@@ -91,20 +100,22 @@ namespace argos {
 
       void Init(TConfigurationNode& t_tree);
 
+      void Reset();
+
       inline void Look() {
-         m_sSettings[m_unActiveSettings].Do();
+         m_sPlacement[m_unActivePlacement].Do();
       }
 
       inline const CVector3& GetPosition() const {
-         return m_sSettings[m_unActiveSettings].Position;
+         return m_sPlacement[m_unActivePlacement].Position;
       }
 
       inline const CVector3& GetTarget() const {
-         return m_sSettings[m_unActiveSettings].Target;
+         return m_sPlacement[m_unActivePlacement].Target;
       }
 
       inline Real GetLensFocalLength() const {
-         return m_sSettings[m_unActiveSettings].LensFocalLength;
+         return m_sPlacement[m_unActivePlacement].LensFocalLength;
       }
 
       void Rotate(const QPoint& c_delta);
@@ -113,26 +124,29 @@ namespace argos {
                 SInt32 n_sideways,
                 SInt32 n_up_down);
 
-      inline SSettings& GetActiveSettings() {
-         return m_sSettings[m_unActiveSettings];
+      inline SPlacement& GetActivePlacement() {
+         return m_sPlacement[m_unActivePlacement];
       }
 
-      inline const SSettings& GetActiveSettings() const {
-         return m_sSettings[m_unActiveSettings];
+      inline const SPlacement& GetActivePlacement() const {
+         return m_sPlacement[m_unActivePlacement];
       }
 
-      inline void SetActiveSettings(UInt32 un_settings) {
-         m_unActiveSettings = un_settings;
+      inline void SetActivePlacement(UInt32 un_placement) {
+         m_unActivePlacement = un_placement;
       }
 
-      inline SSettings& GetSetting(UInt32 n_index) {
-         return m_sSettings[n_index];
+      inline SPlacement& GetPlacement(UInt32 n_index) {
+         return m_sPlacement[n_index];
       }
+
+      void UpdateTimeline();
 
    private:
 
-      UInt32 m_unActiveSettings;
-      SSettings m_sSettings[12];
+      UInt32 m_unActivePlacement;
+      SPlacement m_sPlacement[12];
+      std::list<STimelineItem*> m_listTimeline;
 
    };
 

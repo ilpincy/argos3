@@ -144,7 +144,7 @@ namespace argos {
       /* Calculate the perspective matrix */
       glMatrixMode(GL_PROJECTION);
       glLoadIdentity();
-      gluPerspective(m_cCamera.GetActiveSettings().YFieldOfView.GetValue(),
+      gluPerspective(m_cCamera.GetActivePlacement().YFieldOfView.GetValue(),
                      ASPECT_RATIO,
                      0.1f, 1000.0f);
       /* Place the camera */
@@ -522,6 +522,7 @@ namespace argos {
          } else {
             update();
          }
+         m_cCamera.UpdateTimeline();
          emit StepDone(m_cSpace.GetSimulationClock());
       }
       else {
@@ -535,6 +536,7 @@ namespace argos {
 
    void CQTOpenGLWidget::ResetExperiment() {
       m_cSimulator.Reset();
+      m_cCamera.Reset();
       delete m_pcGroundTexture;
       if(m_bUsingFloorTexture) delete m_pcFloorTexture;
       initializeGL();
@@ -559,7 +561,7 @@ namespace argos {
    /****************************************/
 
    void CQTOpenGLWidget::SetCamera(int n_camera) {
-      m_cCamera.SetActiveSettings(n_camera);
+      m_cCamera.SetActivePlacement(n_camera);
       update();
       QToolTip::showText(pos() + geometry().center(), QString("Current camera: #%1").arg(n_camera+1));
    }
@@ -568,10 +570,10 @@ namespace argos {
    /****************************************/
 
    void CQTOpenGLWidget::SetCameraFocalLength(double f_length) {
-      m_cCamera.GetActiveSettings().LensFocalLength = f_length / 1000.0f;
-      m_cCamera.GetActiveSettings().CalculateYFieldOfView();
-      m_cCamera.GetActiveSettings().CalculateSensitivity();
-      QToolTip::showText(pos() + geometry().center(), QString("Motion sens = %1").arg(m_cCamera.GetActiveSettings().MotionSensitivity));
+      m_cCamera.GetActivePlacement().LensFocalLength = f_length / 1000.0f;
+      m_cCamera.GetActivePlacement().CalculateYFieldOfView();
+      m_cCamera.GetActivePlacement().CalculateSensitivity();
+      QToolTip::showText(pos() + geometry().center(), QString("Motion sens = %1").arg(m_cCamera.GetActivePlacement().MotionSensitivity));
       update();
    }
 

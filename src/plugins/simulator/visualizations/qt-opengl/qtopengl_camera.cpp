@@ -8,6 +8,8 @@
 #include <QPoint>
 #include <argos3/core/utility/math/quaternion.h>
 #include <argos3/core/utility/logging/argos_log.h>
+#include <argos3/core/simulator/simulator.h>
+#include <argos3/core/simulator/space/space.h>
 
 namespace argos {
 
@@ -17,35 +19,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CQTOpenGLCamera::Init(TConfigurationNode& t_tree) {
-      if(NodeExists(t_tree, "camera")) {
-         try {
-            TConfigurationNode tCameraNode;
-            tCameraNode = GetNode(t_tree, "camera");
-            TConfigurationNodeIterator itSettingss;
-            SInt32 nIdx;
-            for(itSettingss = itSettingss.begin(&tCameraNode);
-                itSettingss != itSettingss.end();
-                ++itSettingss) {
-               GetNodeAttribute(*itSettingss, "idx", nIdx);
-               if(nIdx >=0 && nIdx <= 11) {
-                  m_sSettings[nIdx].Init(*itSettingss);
-               }
-               else {
-                  THROW_ARGOSEXCEPTION("Error initializing QTOpenGL camera settings: value given for 'idx' is out of bounds. Value = \"" << nIdx << "\", allowed [0-9].");
-               }
-            }
-         }
-         catch(CARGoSException& ex) {
-            THROW_ARGOSEXCEPTION_NESTED("Error initializing QTOpenGL camera settings", ex);
-         }
-      }
-   }
-
-   /****************************************/
-   /****************************************/
-
-   void CQTOpenGLCamera::SSettings::Init(TConfigurationNode& t_tree) {
+   void CQTOpenGLCamera::SPlacement::Init(TConfigurationNode& t_tree) {
       /* Get positional attributes */
       GetNodeAttribute(t_tree, "position", Position);
       GetNodeAttribute(t_tree, "look_at", Target);
@@ -93,7 +67,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CQTOpenGLCamera::SSettings::RotateUpDown(const CRadians& c_angle) {
+   void CQTOpenGLCamera::SPlacement::RotateUpDown(const CRadians& c_angle) {
       /* Rotate around the local Y axis (Left)
          The rotation matrix corresponding to this rotation is:
          
@@ -148,7 +122,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CQTOpenGLCamera::SSettings::RotateLeftRight(const CRadians& c_angle) {
+   void CQTOpenGLCamera::SPlacement::RotateLeftRight(const CRadians& c_angle) {
       /* Rotate around the local Z axis (Up)
          The rotation matrix corresponding to this rotation is:
          
@@ -180,7 +154,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CQTOpenGLCamera::SSettings::RotateLeftRight2(const CRadians& c_angle) {
+   void CQTOpenGLCamera::SPlacement::RotateLeftRight2(const CRadians& c_angle) {
       /* This rotation is performed around the global Z axis.
          To this aim, along with the global Z axis we project the
          Forward and Left axes onto the XY plane and use these as
@@ -258,7 +232,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CQTOpenGLCamera::SSettings::Translate(const CVector3& c_delta) {
+   void CQTOpenGLCamera::SPlacement::Translate(const CVector3& c_delta) {
       Position += Forward * c_delta.GetX() + Left * c_delta.GetY() + Up * c_delta.GetZ();
       Target = Position;
       Target += Forward;
@@ -267,7 +241,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CQTOpenGLCamera::SSettings::Do() {
+   void CQTOpenGLCamera::SPlacement::Do() {
       gluLookAt(
          Position.GetX(),
          Position.GetY(),
@@ -283,14 +257,14 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CQTOpenGLCamera::SSettings::CalculateYFieldOfView() {
+   void CQTOpenGLCamera::SPlacement::CalculateYFieldOfView() {
       YFieldOfView = ToDegrees(2.0f * ATan2(0.027f * 0.5f, LensFocalLength));
    }
 
    /****************************************/
    /****************************************/
 
-   void CQTOpenGLCamera::SSettings::CalculateSensitivity() {
+   void CQTOpenGLCamera::SPlacement::CalculateSensitivity() {
       MotionSensitivity = MOVE_GAIN * ::exp(LensFocalLength);
       RotationSensitivity = ROTATE_GAIN * ::exp(-LensFocalLength);
    }
@@ -298,28 +272,103 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   void CQTOpenGLCamera::STimelineItem::Init(TConfigurationNode& t_tree) {
+      GetNodeAttribute(t_tree, "idx", Idx);
+      if(Idx > 11) {
+         THROW_ARGOSEXCEPTION("Error initializing QTOpenGL camera timeline: value given for 'idx' is out of bounds. Value = \"" << Idx << "\", allowed [0-11].");
+      }
+      GetNodeAttribute(t_tree, "step", Step);
+   }
+
+   /****************************************/
+   /****************************************/
+
    CQTOpenGLCamera::CQTOpenGLCamera() :
-      m_unActiveSettings(0) {
+      m_unActivePlacement(0) {
    }
 
    /****************************************/
    /****************************************/
 
    CQTOpenGLCamera::~CQTOpenGLCamera() {
+      while(!m_listTimeline.empty()) {
+         delete m_listTimeline.back();
+         m_listTimeline.pop_back();
+      }
    }
    
    /****************************************/
    /****************************************/
 
+   void CQTOpenGLCamera::Init(TConfigurationNode& t_tree) {
+      if(NodeExists(t_tree, "camera")) {
+         try {
+            TConfigurationNode tCameraNode;
+            tCameraNode = GetNode(t_tree, "camera");
+            /* Parse "placement" nodes */
+            TConfigurationNodeIterator itPlacement("placement");
+            SInt32 nIdx;
+            for(itPlacement = itPlacement.begin(&tCameraNode);
+                itPlacement != itPlacement.end();
+                ++itPlacement) {
+               GetNodeAttribute(*itPlacement, "idx", nIdx);
+               if(nIdx >=0 && nIdx <= 11) {
+                  m_sPlacement[nIdx].Init(*itPlacement);
+               }
+               else {
+                  THROW_ARGOSEXCEPTION("Error initializing QTOpenGL camera placement: value given for 'idx' is out of bounds. Value = \"" << nIdx << "\", allowed [0-11].");
+               }
+            }
+            /* Parse "timeline" nodes */
+            TConfigurationNodeIterator itTimeline("timeline");
+            for(itTimeline = itTimeline.begin(&tCameraNode);
+                itTimeline != itTimeline.end();
+                ++itTimeline) {
+               /* Create timeline item */
+               STimelineItem* psTimelineItem = new STimelineItem();
+               psTimelineItem->Init(*itTimeline);
+               /* Sorted insert */
+               if(m_listTimeline.empty())
+                  m_listTimeline.push_back(psTimelineItem);
+               else {
+                  std::list<STimelineItem*>::iterator it = m_listTimeline.begin();
+                  while(it != m_listTimeline.end() && (*it)->Step < psTimelineItem->Step) ++it;
+                  if(it == m_listTimeline.end())
+                     m_listTimeline.push_back(psTimelineItem);
+                  else
+                     m_listTimeline.insert(it, psTimelineItem);
+               }
+            }
+            for(std::list<STimelineItem*>::iterator it = m_listTimeline.begin();
+                it != m_listTimeline.end();
+                ++it) {
+            }
+         }
+         catch(CARGoSException& ex) {
+            THROW_ARGOSEXCEPTION_NESTED("Error initializing QTOpenGL camera placement", ex);
+         }
+      }
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CQTOpenGLCamera::Reset() {
+      m_unActivePlacement = 0;
+   }
+
+   /****************************************/
+   /****************************************/
+
    void CQTOpenGLCamera::Rotate(const QPoint& c_delta) {
-      m_sSettings[m_unActiveSettings]
-         .RotateUpDown(CRadians(m_sSettings[m_unActiveSettings].RotationSensitivity * c_delta.y()));
-      m_sSettings[m_unActiveSettings]
-         .RotateLeftRight2(CRadians(-m_sSettings[m_unActiveSettings].RotationSensitivity * c_delta.x()));
-      m_sSettings[m_unActiveSettings]
-         .Target = m_sSettings[m_unActiveSettings].Position;
-      m_sSettings[m_unActiveSettings]
-         .Target += m_sSettings[m_unActiveSettings].Forward;
+      m_sPlacement[m_unActivePlacement]
+         .RotateUpDown(CRadians(m_sPlacement[m_unActivePlacement].RotationSensitivity * c_delta.y()));
+      m_sPlacement[m_unActivePlacement]
+         .RotateLeftRight2(CRadians(-m_sPlacement[m_unActivePlacement].RotationSensitivity * c_delta.x()));
+      m_sPlacement[m_unActivePlacement]
+         .Target = m_sPlacement[m_unActivePlacement].Position;
+      m_sPlacement[m_unActivePlacement]
+         .Target += m_sPlacement[m_unActivePlacement].Forward;
    }
    
    /****************************************/
@@ -328,10 +377,34 @@ namespace argos {
    void CQTOpenGLCamera::Move(SInt32 n_forwards_backwards,
                               SInt32 n_sideways,
                               SInt32 n_up_down) {
-      m_sSettings[m_unActiveSettings].Translate(
-         CVector3(m_sSettings[m_unActiveSettings].MotionSensitivity * n_forwards_backwards,
-                  m_sSettings[m_unActiveSettings].MotionSensitivity * n_sideways,
-                  m_sSettings[m_unActiveSettings].MotionSensitivity * n_up_down));
+      m_sPlacement[m_unActivePlacement].Translate(
+         CVector3(m_sPlacement[m_unActivePlacement].MotionSensitivity * n_forwards_backwards,
+                  m_sPlacement[m_unActivePlacement].MotionSensitivity * n_sideways,
+                  m_sPlacement[m_unActivePlacement].MotionSensitivity * n_up_down));
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CQTOpenGLCamera::UpdateTimeline() {
+      /* If no timeline, nothing to do */
+      if(m_listTimeline.empty()) return;
+      /* Get current timestep */
+      UInt32 unStep = CSimulator::GetInstance().GetSpace().GetSimulationClock();
+      /* Search for active timeline item */
+      std::list<STimelineItem*>::iterator it = m_listTimeline.begin();
+      /* Is the first item potentially active? */
+      if((*it)->Step <= unStep) {
+         /* Yes, save it and search for subsequent items */
+         STimelineItem* psTimelineItem = *it;
+         ++it;
+         while(it != m_listTimeline.end() && (*it)->Step <= unStep) {
+            psTimelineItem = *it;
+            ++it;
+         }
+         /* Set active placement according to currently active timeline item */
+         m_unActivePlacement = psTimelineItem->Idx;
+      }
    }
 
    /****************************************/
