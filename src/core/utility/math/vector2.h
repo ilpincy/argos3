@@ -28,6 +28,7 @@ namespace argos {
    
    friend class CRotationMatrix2;
    friend class CTransformationMatrix2;
+   friend class CPose2;
 
    public:
 
