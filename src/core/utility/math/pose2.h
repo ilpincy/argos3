@@ -14,138 +14,161 @@ namespace argos
    class CPose2 {
    
    public:
-   ~CPose2() {
-   }
+      ~CPose2() {
+      }
 
-   /**
-    * @brief default constructor
-    */
-   CPose2() : 
-      m_cPosition(0,0),
-      m_cOrientation(0) {
-   }
+      /**
+       * Default constructor.
+       */
+      CPose2() : 
+         m_cPosition(0,0),
+         m_cOrientation(0) {
+      }
 
-   /**
-    * @brief copy constructor
-    * @param[in] the 2D pose to be copied 
-    */
-   CPose2(const CPose2& c_pose) : 
-      m_cPosition(c_pose.m_cPosition),
-      m_cOrientation(c_pose.m_cOrientation) {
-   }
+      /**
+       * Copy constructor.
+       * @param c_pose The 2D pose to be copied. 
+       */
+      CPose2(const CPose2& c_pose) : 
+         m_cPosition(c_pose.m_cPosition),
+         m_cOrientation(c_pose.m_cOrientation) {
+      }
 
-   /**
-    * @brief constructor using input position and angle
-    * @param[in] position of the input pose in CVector2 format
-    * @param[in] orientation of the input pose in CRadians format
-    */
-   CPose2(const CVector2& c_position, const CRadians& c_orientation) : 
-      m_cPosition(c_position),
-      m_cOrientation(c_orientation) {
-   }
+      /**
+       * Constructor using input position and angle.
+       * @param c_position Position of the input pose in CVector2 format.
+       * @param c_orientation Orientation of the input pose in CRadians format.
+       */
+      CPose2(const CVector2& c_position, const CRadians& c_orientation) : 
+         m_cPosition(c_position),
+         m_cOrientation(c_orientation) {
+      }
 
-   /**
-    * @brief constructor using individual coordinate values and angle
-    * @param[in] x-coordinate of the pose
-    * @param[in] y-coordinate of the pose
-    * @param[in] angle of the pose
-    */
-   CPose2(const Real f_x, const Real f_y, const Real f_th) : 
-      m_cPosition(f_x, f_y),
-      m_cOrientation(f_th) {
-   }
+      /**
+       * Constructor using individual coordinate values and angle.
+       * @param f_x X coordinate of the pose.
+       * @param f_y A-coordinate of the pose.
+       * @param f_th Angle of 2D the pose.
+       */
+      CPose2(const Real f_x, const Real f_y, const Real f_th) : 
+         m_cPosition(f_x, f_y),
+         m_cOrientation(f_th) {
+      }
 
-   /**
-    * @brief function returns the position of the pose
-    * @return 2D position of the pose
-    */
-   const CVector2& GetPosition() const
-   { return m_cPosition;}
+      /**
+       * Returns the position of the pose.
+       * @return 2D position of the pose.
+       */
+      inline const CVector2& GetPosition() const
+      { return m_cPosition;}
 
-   /**
-    * @brief function returns the orientation of the pose
-    * @return orientation of the current pose
-    */
-   const CRadians& GetOrientation() const
-   { return m_cOrientation;}
+      /**
+       * Returns the orientation of the pose.
+       * @return Orientation of the current pose.
+       */
+      inline const CRadians& GetOrientation() const
+      { return m_cOrientation;}
 
-   /**
-    * @brief equal to operator overloading
-    * @param[in] input pose with which the current pose needs to be compared
-    * @return returns true if the current pose is equal to the input pose 
-    */
-   bool operator==(const CPose2& c_pose) const {
-      if(m_cPosition.m_fX != c_pose.m_cPosition.m_fX)
-         return false;
-      if(m_cPosition.m_fY != c_pose.m_cPosition.m_fY)
-         return false;
-      if(m_cOrientation != c_pose.m_cOrientation)
-         return false;
-      return true;
-   }
+      /**
+       * Rotates the current pose by the given offset angle.
+       * @param c_offset Offset by which the pose needs to be rotated.
+       */
+      inline void Rotate(const CRadians& c_offset) {
+         m_cOrientation += c_offset;
+      }
 
-   /**
-    * @brief inequality operator overloading
-    * @param[in] input pose with which the current pose needs to be compared
-    * @return returns true if the current pose is not equal to the input pose 
-    */
-   bool operator!=(const CPose2& c_pose) const {
-      if(m_cPosition.m_fX == c_pose.m_cPosition.m_fX)
-         return false;
-      if(m_cPosition.m_fY == c_pose.m_cPosition.m_fY)
-         return false;
-      if(m_cOrientation == c_pose.m_cOrientation)
-         return false;
-      return true;
-   }
+      /**
+       * Translates the current pose by the given vector.
+       * @param c_offset Offset vector by which the pose needs to be moved. 
+       */
+      inline void Translate(const CVector2& c_offset) {
+         m_cPosition += c_offset;
+      }
 
+      /**
+       * Equality operator overloading.
+       * @param c_pose Input pose with which the current pose needs to be compared.
+       * @return True if the current pose is equal to the input pose.
+       */
+      inline bool operator==(const CPose2& c_pose) const {
+         if(m_cPosition.m_fX != c_pose.m_cPosition.m_fX)
+            return false;
+         if(m_cPosition.m_fY != c_pose.m_cPosition.m_fY)
+            return false;
+         if(m_cOrientation != c_pose.m_cOrientation)
+            return false;
+         return true;
+      }
+
+      /**
+       * Inequality operator overloading.
+       * @param c_pose Input pose with which the current pose needs to be compared.
+       * @return True if the current pose is not equal to the input pose.
+       */
+      inline bool operator!=(const CPose2& c_pose) const {
+         if(m_cPosition.m_fX == c_pose.m_cPosition.m_fX)
+            return false;
+         if(m_cPosition.m_fY == c_pose.m_cPosition.m_fY)
+            return false;
+         if(m_cOrientation == c_pose.m_cOrientation)
+            return false;
+         return true;
+      }
+
+      /**
+       * Serialize the contents of the 2D Pose onto a stream.
+       * @param c_os The stream.
+       * @param c_pose The 2D Pose.
+       * @return The new state of the stream.
+       */
+      inline friend std::ostream& operator<<(std::ostream& c_os,
+                                             const CPose2& c_pose) {
+         c_os << "Position("
+              << c_pose.m_cPosition.GetX() << ","
+              << c_pose.m_cPosition.GetY() << ")\n"
+              << "Orientation("
+              << c_pose.m_cOrientation.GetValue()
+              << " radians"
+              << " -> "
+              << c_pose.m_cOrientation.GetValue() * CRadians::RADIANS_TO_DEGREES
+              << " degrees)";
+         return c_os;
+      }
 
    public:
-   /**
-    * @brief constructor using input position and angle
-    * @param[in] position of the input pose in CVector3 format
-    * @param[in] orientation of the input pose in CQuaternion format
-    */
-   CPose2(const CVector3& c_position, const CQuaternion& c_orientation);
+      /**
+       * Constructor using input position and angle.
+       * @param c_position Position of the input pose in CVector3 format.
+       * @param c_orienatation Orientation of the input pose in CQuaternion format.
+       */
+      CPose2(const CVector3& c_position, const CQuaternion& c_orientation);
 
-   /**
-    * @brief function rotates the current pose by the given offset angle
-    * @param[in] offset by which the pose needs to be rotated
-    */
-   void Rotate(const CRadians& c_offset);
+      /**
+       * Computes the returns the inverse of the current pose.
+       * @return Inverse of the current pose.
+       */
+      CPose2 Inverse() const;
 
-   /**
-    * @brief function translates the current pose by the given vector
-    * @param[in] offset vector by which the pose needs to be moved 
-    */
-   void Translate(const CVector2& c_offset);
+      /**
+       * Multiplication operator overloading. Computes and returns the product of the two poses. 
+       * @param c_pose Input pose to be multiplied with the current pose.
+       * @return The product of the two poses.
+       */
+      CPose2 operator*(const CPose2& c_pose) const;
 
-   /**
-    * @brief function computes the returns the inverse of the current pose
-    * @return returns the inverse of the current pose
-    */
-   CPose2 Inverse() const;
+      /**
+       * Multiplication operator overloading. This method can be used to transform any vector with the current pose.
+       * @param c_vec Input vector to be transformed with the current pose.
+       * @return The trasformed vector.
+       */
+      CVector2 operator*(const CVector2& c_vec) const;
 
-   /**
-    * @brief multiplication operator overloading. Computes and returns the product of the two poses 
-    * @param[in] input pose to be multiplied with the current pose
-    * @return returns the product of the two poses
-    */
-   CPose2 operator*(const CPose2& c_pose) const;
-
-   /* edit this comment */
-   /**
-    * @brief multiplication operator overloading. Computes the product of the a pose and a vector ab=nd returns the resulting vector
-    * @param[in] input vector to be multiplied with the current pose
-    * @return returns the product of the two poses
-    */
-   CVector2 operator*(const CVector2& c_vec) const;
-
-   /**
-    * @brief multiplication operator overloading. Multiplies the current pose with the input pose and stores in the current pose
-    * @param[in] input pose to be multiplied with the current pose
-    */
-   CPose2& operator*=(const CPose2& c_pose);
+      /**
+       * Multiplication operator overloading. Multiplies the current pose with the input pose and stores in the current pose.
+       * @param c_pose input pose to be multiplied with the current pose.
+       * @return Current Pose.
+       */
+      CPose2& operator*=(const CPose2& c_pose);
 
    private:
       CVector2 m_cPosition;
