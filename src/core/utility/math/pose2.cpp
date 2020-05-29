@@ -45,7 +45,6 @@ namespace argos
       cResult.m_cPosition.m_fX += c_pose.m_cPosition.m_fX*fCos - c_pose.m_cPosition.m_fY*fSin;
       cResult.m_cPosition.m_fY += c_pose.m_cPosition.m_fX*fSin + c_pose.m_cPosition.m_fY*fCos;
       cResult.m_cOrientation += c_pose.m_cOrientation;
-      cResult.m_cOrientation.SignedNormalize();
       return cResult;
    }
 
@@ -76,7 +75,6 @@ namespace argos
       m_cPosition.m_fX += c_pose.m_cPosition.m_fX*fCos - c_pose.m_cPosition.m_fY*fSin;
       m_cPosition.m_fY += c_pose.m_cPosition.m_fX*fSin + c_pose.m_cPosition.m_fY*fCos;
       m_cOrientation += c_pose.m_cOrientation;
-      m_cOrientation.SignedNormalize();
       return *this;
    }
 

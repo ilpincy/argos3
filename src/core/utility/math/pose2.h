@@ -82,7 +82,7 @@ namespace argos
        * @param c_offset Offset vector by which the pose needs to be moved. 
        */
       inline void Translate(const CVector2& c_offset) {
-         m_cPosition += c_offset;
+         m_cPosition = (*this)*c_offset;
       }
 
       /**
