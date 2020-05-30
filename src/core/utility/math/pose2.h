@@ -1,7 +1,7 @@
 /**
  * @file <argos3/core/utility/math/pose2.h>
  *
- * @author Carlo Pinciroli - <ilpincy@gmail.com>
+ * @author Tyagaraja Ramaswamy - <rtyagaraja@gmail.com>
  */
 
 #ifndef POSE2_H
