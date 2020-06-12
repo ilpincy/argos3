@@ -52,7 +52,6 @@ namespace argos {
    /****************************************/
 
    CFootBotLightRotZOnlySensor::CFootBotLightRotZOnlySensor() :
-      m_bEnabled(true),
       m_pcEmbodiedEntity(NULL),
       m_bShowRays(false),
       m_pcRNG(NULL),
@@ -93,6 +92,9 @@ namespace argos {
             m_pcRNG = CRandom::CreateRNG("argos");
          }
          m_tReadings.resize(m_pcLightEntity->GetNumSensors());
+
+         /* sensor is enabled by default */
+         Enable();
       }
       catch(CARGoSException& ex) {
          THROW_ARGOSEXCEPTION_NESTED("Initialization error in rot_z_only light sensor", ex);
@@ -103,7 +105,8 @@ namespace argos {
    /****************************************/
    
    void CFootBotLightRotZOnlySensor::Update() {
-      if (!m_bEnabled) {
+      /* sensor is disabled--nothing to do */
+      if (IsDisabled()) {
         return;
       }
       /* Erase readings */
@@ -226,20 +229,6 @@ namespace argos {
       for(UInt32 i = 0; i < GetReadings().size(); ++i) {
          m_tReadings[i].Value = 0.0f;
       }
-   }
-
-   /****************************************/
-   /****************************************/
-
-   void CFootBotLightRotZOnlySensor::Enable() {
-     m_bEnabled = true;
-   }
-
-   /****************************************/
-   /****************************************/
-
-   void CFootBotLightRotZOnlySensor::Disable() {
-     m_bEnabled = false;
    }
 
    /****************************************/

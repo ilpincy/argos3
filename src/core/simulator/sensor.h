@@ -43,10 +43,11 @@ namespace argos {
       virtual void SetRobot(CComposableEntity& c_entity) = 0;
 
       /**
-       * Updates the state of the entity associated to this sensor.
+       * Updates the state of the entity associated to this sensor, if the
+       * sensor is currently enabled. If it is disabled, then this function
+       * should do nothing.
        */
       virtual void Update() = 0;
-
    };
 
    /****************************************/

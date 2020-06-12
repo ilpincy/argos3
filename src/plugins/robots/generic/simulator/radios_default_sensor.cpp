@@ -38,6 +38,9 @@ namespace argos {
       catch(CARGoSException& ex) {
          THROW_ARGOSEXCEPTION_NESTED("Can't set robot for the radios default sensor", ex);
       }
+
+      /* sensor is enabled by default */
+      Enable();
    }
 
    /****************************************/
@@ -59,6 +62,10 @@ namespace argos {
    /****************************************/
 
    void CRadiosDefaultSensor::Update() {
+      /* sensor is disabled--nothing to do */
+      if (IsDisabled()) {
+        return;
+      }
       for(size_t i = 0; i < m_pcRadioEquippedEntity->GetInstances().size(); ++i) {
          CRadioEntity& cRadio = m_pcRadioEquippedEntity->GetRadio(i);
          /* Clear data in the interface */
@@ -100,6 +107,8 @@ namespace argos {
                    "implementation is very basic and any concepts such as throughput, addressing,\n"
                    "or formatting of a message's contents is beyond the scope of this sensor's\n"
                    "implementation\n\n"
+
+                   "This sensor is enabled by default.\n\n"
 
                    "REQUIRED XML CONFIGURATION\n\n"
 

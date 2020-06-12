@@ -50,6 +50,9 @@ namespace argos {
             m_bAddNoise = true;
             m_pcRNG = CRandom::CreateRNG("argos");
          }
+
+         /* sensor is enabled by default */
+         Enable();
       }
       catch(CARGoSException& ex) {
          THROW_ARGOSEXCEPTION_NESTED("Initialization error in foot-bot distance scanner rot_z_only sensor.", ex);
@@ -70,6 +73,10 @@ namespace argos {
    /****************************************/
 
    void CFootBotDistanceScannerRotZOnlySensor::Update() {
+      /* sensor is disabled--nothing to do */
+      if (IsDisabled()) {
+        return;
+      }
       /* Clear the maps */
       m_tReadingsMap.clear();
       m_tShortReadingsMap.clear();
@@ -334,6 +341,9 @@ namespace argos {
                    "the foot-bot is always parallel to the XY plane, i.e., it rotates only around\n"
                    "the Z axis. This implementation is faster than a 3D one and should be used\n"
                    "only when the assumption about the foot-bot rotation holds.\n\n"
+
+                   "This sensor is enabled by default.\n\n"
+
                    "REQUIRED XML CONFIGURATION\n\n"
                    "  <controllers>\n"
                    "    ...\n"

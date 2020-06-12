@@ -58,6 +58,8 @@ namespace argos {
             m_pcRNG = CRandom::CreateRNG("argos");
          }
          m_tReadings.resize(8);
+         /* sensor is enabled by default */
+         Enable();
       }
       catch(CARGoSException& ex) {
          THROW_ARGOSEXCEPTION_NESTED("Initialization error in foot-bot rotzonly ground sensor", ex);
@@ -68,6 +70,10 @@ namespace argos {
    /****************************************/
 
    void CFootBotBaseGroundRotZOnlySensor::Update() {
+      /* sensor is disabled--nothing to do */
+      if (IsDisabled()) {
+        return;
+      }
       /*
        * We make the assumption that the robot is rotated only wrt to Z
        */

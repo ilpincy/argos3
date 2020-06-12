@@ -36,9 +36,9 @@ namespace argos {
       virtual void Destroy();
 
       virtual void Enable();
-      
+
       virtual void Disable();
-			
+
       /**
        * Returns true if the rays must be shown in the GUI.
        * @return true if the rays must be shown in the GUI.
@@ -57,7 +57,6 @@ namespace argos {
 
    protected:
 
-      bool                                 m_bEnabled;
       CPerspectiveCameraEquippedEntity*    m_pcCamEntity;
       CControllableEntity*                 m_pcControllableEntity;
       CEmbodiedEntity*                     m_pcEmbodiedEntity;

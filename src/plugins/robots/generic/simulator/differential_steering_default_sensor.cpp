@@ -57,12 +57,18 @@ namespace argos {
       catch(CARGoSException& ex) {
          THROW_ARGOSEXCEPTION_NESTED("Initialization error in default differential steering sensor", ex);
       }
+      /* sensor is enabled by default */
+      Enable();
    }
 
    /****************************************/
    /****************************************/
    
    void CDifferentialSteeringDefaultSensor::Update() {
+      /* sensor is disabled--nothing to do */
+      if (IsDisabled()) {
+        return;
+      }
       m_sReading.VelocityLeftWheel = m_pfWheelVelocities[0] * 100.0f;
       m_sReading.VelocityRightWheel = m_pfWheelVelocities[1] * 100.0f;
       m_sReading.CoveredDistanceLeftWheel = m_sReading.VelocityLeftWheel * CPhysicsEngine::GetSimulationClockTick();
@@ -97,6 +103,8 @@ namespace argos {
                    "This sensor returns the current position and orientation of a robot. This sensor\n"
                    "can be used with any robot, since it accesses only the body component. In\n"
                    "controllers, you must include the ci_differential_steering_sensor.h header.\n\n"
+
+                   "This sensor is enabled by default.\n\n"
 
                    "REQUIRED XML CONFIGURATION\n\n"
 
