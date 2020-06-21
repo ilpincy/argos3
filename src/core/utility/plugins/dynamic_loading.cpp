@@ -33,13 +33,13 @@ namespace argos {
                                                                  std::string& str_msg) {
       /* Try loading without changes to the given path */
       CDynamicLoading::TDLHandle tHandle = ::dlopen(str_lib.c_str(), RTLD_GLOBAL | RTLD_LAZY);
-      str_msg = str_lib + ": ";
+      str_msg += "\n  " + str_lib + ": ";
       if(tHandle == NULL) {
          str_msg += dlerror();
          /* Try adding the shared lib extension to the path */
          std::string strLibWExt = str_lib + "." + ARGOS_SHARED_LIBRARY_EXTENSION;
          tHandle = ::dlopen(strLibWExt.c_str(), RTLD_GLOBAL | RTLD_LAZY);
-         str_msg += "\n" + strLibWExt + ": ";
+         str_msg += "\n\n  " + strLibWExt + ": ";
          if(tHandle != NULL) {
             /* Success */
             str_lib = strLibWExt;
@@ -49,14 +49,20 @@ namespace argos {
             /* Try adding the module lib extension to the path */
             strLibWExt = str_lib + "." + ARGOS_MODULE_LIBRARY_EXTENSION;
             tHandle = ::dlopen(strLibWExt.c_str(), RTLD_GLOBAL | RTLD_LAZY);
-            str_msg += "\n" + strLibWExt + ": ";
+            str_msg += "\n\n  " + strLibWExt + ": ";
             if(tHandle != NULL) {
                /* Success */
                str_lib = strLibWExt;
             }
+            else {
+               str_msg += dlerror();
+               str_msg += "\n";
+            }
          }
       }
-      str_msg += "OK";
+      if(tHandle != NULL) {
+         str_msg += "OK";
+      }
       return tHandle;
    }
 
@@ -83,11 +89,7 @@ namespace argos {
          if(tHandle == NULL) {
             THROW_ARGOSEXCEPTION("Can't load library \""
                                  << str_lib
-                                 << "\" even after trying to add extensions for shared library ("
-                                 << ARGOS_SHARED_LIBRARY_EXTENSION
-                                 << ") and module library ("
-                                 << ARGOS_MODULE_LIBRARY_EXTENSION
-                                 << "): "
+                                 << "\" after trying the following: "
                                  << std::endl
                                  << strMsg);
          }
@@ -145,11 +147,7 @@ namespace argos {
          /* If we get here, it's because no directory worked */
          THROW_ARGOSEXCEPTION("Can't load library \""
                               << str_lib
-                              << "\" even after trying to add extensions for shared library ("
-                              << ARGOS_SHARED_LIBRARY_EXTENSION
-                              << ") and module library ("
-                              << ARGOS_MODULE_LIBRARY_EXTENSION
-                              << "): "
+                              << "\" after trying the following: "
                               << std::endl
                               << strMsg);
       }
