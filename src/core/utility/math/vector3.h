@@ -333,9 +333,8 @@ namespace argos {
        * @return The angle between this vector and the passed vector.
        */
       inline CRadians GetAngleWith(const CVector3& c_other) {
-         return CRadians(ACos(DotProduct(c_other) /
-                              (Length() *
-                               c_other.Length())));
+         return ACos(DotProduct(c_other) /
+                     (Length() * c_other.Length()));
       }
 
       /**

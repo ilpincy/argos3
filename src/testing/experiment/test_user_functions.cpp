@@ -31,7 +31,7 @@ void CTestUserFunctions::DrawInWorld() {
       for(CLEDEquippedEntity::SActuator::TList::iterator it = cLEDs.GetLEDs().begin();
           it != cLEDs.GetLEDs().end();
           ++it) {
-         DrawPoint((*it)->LED.GetPosition(), (*it)->LED.GetColor(), 50.0f);
+        DrawPoint((*it)->LED.GetPosition(), (*it)->LED.GetColor(), 50.0f);
       }
    }
 }

@@ -116,28 +116,28 @@ namespace argos {
       MakeArm();
       /* W->E arm */
       glPushMatrix();
-      glRotatef(90.0f, 0.0f, 0.0f, 1.0f);
+      glRotated(90.0f, 0.0f, 0.0f, 1.0f);
       MakeArm();
       glPopMatrix();
       /* Propellers */
       /* N propeller */
       glPushMatrix();
-      glTranslatef(0.0f, ARM_HALF_LENGTH - PROPELLER_ROD_RADIUS, 0.0f);
+      glTranslated(0.0f, ARM_HALF_LENGTH - PROPELLER_ROD_RADIUS, 0.0f);
       MakePropeller();
       glPopMatrix();
       /* E propeller */
       glPushMatrix();
-      glTranslatef(ARM_HALF_LENGTH - PROPELLER_ROD_RADIUS, 0.0f, 0.0f);
+      glTranslated(ARM_HALF_LENGTH - PROPELLER_ROD_RADIUS, 0.0f, 0.0f);
       MakePropeller();
       glPopMatrix();
       /* S propeller */
       glPushMatrix();
-      glTranslatef(0.0f, -ARM_HALF_LENGTH + PROPELLER_ROD_RADIUS, 0.0f);
+      glTranslated(0.0f, -ARM_HALF_LENGTH + PROPELLER_ROD_RADIUS, 0.0f);
       MakePropeller();
       glPopMatrix();
       /* W propeller */
       glPushMatrix();
-      glTranslatef(-ARM_HALF_LENGTH + PROPELLER_ROD_RADIUS, 0.0f, 0.0f);
+      glTranslated(-ARM_HALF_LENGTH + PROPELLER_ROD_RADIUS, 0.0f, 0.0f);
       MakePropeller();
       glPopMatrix();
    }
@@ -149,42 +149,42 @@ namespace argos {
       SetBoardMaterial();
       glBegin(GL_QUADS);
       /* Bottom face, parallel to XY */
-      glNormal3f(0.0f, 0.0f, -1.0f);
-      glVertex3f(                0.0f,  BOARD_HALF_DIAGONAL, 0.0f        );
-      glVertex3f( BOARD_HALF_DIAGONAL,                 0.0f, 0.0f        );
-      glVertex3f(                0.0f, -BOARD_HALF_DIAGONAL, 0.0f        );
-      glVertex3f(-BOARD_HALF_DIAGONAL,                 0.0f, 0.0f        );
+      glNormal3d(0.0f, 0.0f, -1.0f);
+      glVertex3d(                0.0f,  BOARD_HALF_DIAGONAL, 0.0f        );
+      glVertex3d( BOARD_HALF_DIAGONAL,                 0.0f, 0.0f        );
+      glVertex3d(                0.0f, -BOARD_HALF_DIAGONAL, 0.0f        );
+      glVertex3d(-BOARD_HALF_DIAGONAL,                 0.0f, 0.0f        );
       /* Top face, parallel to XY */
-      glNormal3f(0.0f, 0.0f, 1.0f);
-      glVertex3f(                0.0f,  BOARD_HALF_DIAGONAL, BOARD_HEIGHT);
-      glVertex3f(-BOARD_HALF_DIAGONAL,                 0.0f, BOARD_HEIGHT);
-      glVertex3f(                0.0f, -BOARD_HALF_DIAGONAL, BOARD_HEIGHT);
-      glVertex3f( BOARD_HALF_DIAGONAL,                 0.0f, BOARD_HEIGHT);
+      glNormal3d(0.0f, 0.0f, 1.0f);
+      glVertex3d(                0.0f,  BOARD_HALF_DIAGONAL, BOARD_HEIGHT);
+      glVertex3d(-BOARD_HALF_DIAGONAL,                 0.0f, BOARD_HEIGHT);
+      glVertex3d(                0.0f, -BOARD_HALF_DIAGONAL, BOARD_HEIGHT);
+      glVertex3d( BOARD_HALF_DIAGONAL,                 0.0f, BOARD_HEIGHT);
       /* This part covers the faces (NE, SE, SW, NW) */
       /* NE face */
-      glNormal3f(        ONE_OVER_SR2,         ONE_OVER_SR2, 0.0f        );
-      glVertex3f(                0.0f,  BOARD_HALF_DIAGONAL, 0.0f        );
-      glVertex3f(                0.0f,  BOARD_HALF_DIAGONAL, BOARD_HEIGHT);
-      glVertex3f( BOARD_HALF_DIAGONAL,                 0.0f, BOARD_HEIGHT);
-      glVertex3f( BOARD_HALF_DIAGONAL,                 0.0f, 0.0f        );
+      glNormal3d(        ONE_OVER_SR2,         ONE_OVER_SR2, 0.0f        );
+      glVertex3d(                0.0f,  BOARD_HALF_DIAGONAL, 0.0f        );
+      glVertex3d(                0.0f,  BOARD_HALF_DIAGONAL, BOARD_HEIGHT);
+      glVertex3d( BOARD_HALF_DIAGONAL,                 0.0f, BOARD_HEIGHT);
+      glVertex3d( BOARD_HALF_DIAGONAL,                 0.0f, 0.0f        );
       /* SE face */
-      glNormal3f(        ONE_OVER_SR2,        -ONE_OVER_SR2, 0.0f        );
-      glVertex3f( BOARD_HALF_DIAGONAL,                 0.0f, 0.0f        );
-      glVertex3f( BOARD_HALF_DIAGONAL,                 0.0f, BOARD_HEIGHT);
-      glVertex3f(                0.0f, -BOARD_HALF_DIAGONAL, BOARD_HEIGHT);
-      glVertex3f(                0.0f, -BOARD_HALF_DIAGONAL, 0.0f        );
+      glNormal3d(        ONE_OVER_SR2,        -ONE_OVER_SR2, 0.0f        );
+      glVertex3d( BOARD_HALF_DIAGONAL,                 0.0f, 0.0f        );
+      glVertex3d( BOARD_HALF_DIAGONAL,                 0.0f, BOARD_HEIGHT);
+      glVertex3d(                0.0f, -BOARD_HALF_DIAGONAL, BOARD_HEIGHT);
+      glVertex3d(                0.0f, -BOARD_HALF_DIAGONAL, 0.0f        );
       /* SW face */
-      glNormal3f(       -ONE_OVER_SR2,        -ONE_OVER_SR2, 0.0f        );
-      glVertex3f(                0.0f, -BOARD_HALF_DIAGONAL, 0.0f        );
-      glVertex3f(                0.0f, -BOARD_HALF_DIAGONAL, BOARD_HEIGHT);
-      glVertex3f(-BOARD_HALF_DIAGONAL,                 0.0f, BOARD_HEIGHT);
-      glVertex3f(-BOARD_HALF_DIAGONAL,                 0.0f, 0.0f        );
+      glNormal3d(       -ONE_OVER_SR2,        -ONE_OVER_SR2, 0.0f        );
+      glVertex3d(                0.0f, -BOARD_HALF_DIAGONAL, 0.0f        );
+      glVertex3d(                0.0f, -BOARD_HALF_DIAGONAL, BOARD_HEIGHT);
+      glVertex3d(-BOARD_HALF_DIAGONAL,                 0.0f, BOARD_HEIGHT);
+      glVertex3d(-BOARD_HALF_DIAGONAL,                 0.0f, 0.0f        );
       /* NW face */
-      glNormal3f(       -ONE_OVER_SR2,         ONE_OVER_SR2, 0.0f        );
-      glVertex3f(-BOARD_HALF_DIAGONAL,                 0.0f, 0.0f        );
-      glVertex3f(-BOARD_HALF_DIAGONAL,                 0.0f, BOARD_HEIGHT);
-      glVertex3f(                0.0f,  BOARD_HALF_DIAGONAL, BOARD_HEIGHT);
-      glVertex3f(                0.0f,  BOARD_HALF_DIAGONAL, 0.0f        );
+      glNormal3d(       -ONE_OVER_SR2,         ONE_OVER_SR2, 0.0f        );
+      glVertex3d(-BOARD_HALF_DIAGONAL,                 0.0f, 0.0f        );
+      glVertex3d(-BOARD_HALF_DIAGONAL,                 0.0f, BOARD_HEIGHT);
+      glVertex3d(                0.0f,  BOARD_HALF_DIAGONAL, BOARD_HEIGHT);
+      glVertex3d(                0.0f,  BOARD_HALF_DIAGONAL, 0.0f        );
       glEnd();
    }
 
@@ -195,42 +195,42 @@ namespace argos {
       SetBodyMaterial();
       glBegin(GL_QUADS);
       /* Bottom face, parallel to XY */
-      glNormal3f( 0.0f,            0.0f,            -1.0f      );
-      glVertex3f( ARM_HALF_WIDTH,  ARM_HALF_LENGTH,  ARM_BOTTOM);
-      glVertex3f( ARM_HALF_WIDTH, -ARM_HALF_LENGTH,  ARM_BOTTOM);
-      glVertex3f(-ARM_HALF_WIDTH, -ARM_HALF_LENGTH,  ARM_BOTTOM);
-      glVertex3f(-ARM_HALF_WIDTH,  ARM_HALF_LENGTH,  ARM_BOTTOM);
+      glNormal3d( 0.0f,            0.0f,            -1.0f      );
+      glVertex3d( ARM_HALF_WIDTH,  ARM_HALF_LENGTH,  ARM_BOTTOM);
+      glVertex3d( ARM_HALF_WIDTH, -ARM_HALF_LENGTH,  ARM_BOTTOM);
+      glVertex3d(-ARM_HALF_WIDTH, -ARM_HALF_LENGTH,  ARM_BOTTOM);
+      glVertex3d(-ARM_HALF_WIDTH,  ARM_HALF_LENGTH,  ARM_BOTTOM);
       /* Top face, parallel to XY */
-      glNormal3f( 0.0f,            0.0f,             1.0f      );
-      glVertex3f( ARM_HALF_WIDTH,  ARM_HALF_LENGTH,  ARM_TOP   );
-      glVertex3f(-ARM_HALF_WIDTH,  ARM_HALF_LENGTH,  ARM_TOP   );
-      glVertex3f(-ARM_HALF_WIDTH, -ARM_HALF_LENGTH,  ARM_TOP   );
-      glVertex3f( ARM_HALF_WIDTH, -ARM_HALF_LENGTH,  ARM_TOP   );
+      glNormal3d( 0.0f,            0.0f,             1.0f      );
+      glVertex3d( ARM_HALF_WIDTH,  ARM_HALF_LENGTH,  ARM_TOP   );
+      glVertex3d(-ARM_HALF_WIDTH,  ARM_HALF_LENGTH,  ARM_TOP   );
+      glVertex3d(-ARM_HALF_WIDTH, -ARM_HALF_LENGTH,  ARM_TOP   );
+      glVertex3d( ARM_HALF_WIDTH, -ARM_HALF_LENGTH,  ARM_TOP   );
       /* This part covers the faces (N, E, S, W) */
       /* North face */
-      glNormal3f( 1.0f,            0.0f,             0.0f      );
-      glVertex3f( ARM_HALF_WIDTH,  ARM_HALF_LENGTH,  ARM_TOP   );
-      glVertex3f( ARM_HALF_WIDTH,  ARM_HALF_LENGTH,  ARM_BOTTOM);
-      glVertex3f(-ARM_HALF_WIDTH,  ARM_HALF_LENGTH,  ARM_BOTTOM);
-      glVertex3f(-ARM_HALF_WIDTH,  ARM_HALF_LENGTH,  ARM_TOP   );
+      glNormal3d( 1.0f,            0.0f,             0.0f      );
+      glVertex3d( ARM_HALF_WIDTH,  ARM_HALF_LENGTH,  ARM_TOP   );
+      glVertex3d( ARM_HALF_WIDTH,  ARM_HALF_LENGTH,  ARM_BOTTOM);
+      glVertex3d(-ARM_HALF_WIDTH,  ARM_HALF_LENGTH,  ARM_BOTTOM);
+      glVertex3d(-ARM_HALF_WIDTH,  ARM_HALF_LENGTH,  ARM_TOP   );
       /* East face */
-      glNormal3f( 0.0f,            1.0f,             0.0f      );
-      glVertex3f( ARM_HALF_WIDTH,  ARM_HALF_LENGTH,  ARM_TOP   );
-      glVertex3f( ARM_HALF_WIDTH, -ARM_HALF_LENGTH,  ARM_TOP   );
-      glVertex3f( ARM_HALF_WIDTH, -ARM_HALF_LENGTH,  ARM_BOTTOM);
-      glVertex3f( ARM_HALF_WIDTH,  ARM_HALF_LENGTH,  ARM_BOTTOM);
+      glNormal3d( 0.0f,            1.0f,             0.0f      );
+      glVertex3d( ARM_HALF_WIDTH,  ARM_HALF_LENGTH,  ARM_TOP   );
+      glVertex3d( ARM_HALF_WIDTH, -ARM_HALF_LENGTH,  ARM_TOP   );
+      glVertex3d( ARM_HALF_WIDTH, -ARM_HALF_LENGTH,  ARM_BOTTOM);
+      glVertex3d( ARM_HALF_WIDTH,  ARM_HALF_LENGTH,  ARM_BOTTOM);
       /* South face */
-      glNormal3f(-1.0f,            0.0f,             0.0f      );
-      glVertex3f( ARM_HALF_WIDTH, -ARM_HALF_LENGTH,  ARM_TOP   );
-      glVertex3f(-ARM_HALF_WIDTH, -ARM_HALF_LENGTH,  ARM_TOP   );
-      glVertex3f(-ARM_HALF_WIDTH, -ARM_HALF_LENGTH,  ARM_BOTTOM);
-      glVertex3f( ARM_HALF_WIDTH, -ARM_HALF_LENGTH,  ARM_BOTTOM);
+      glNormal3d(-1.0f,            0.0f,             0.0f      );
+      glVertex3d( ARM_HALF_WIDTH, -ARM_HALF_LENGTH,  ARM_TOP   );
+      glVertex3d(-ARM_HALF_WIDTH, -ARM_HALF_LENGTH,  ARM_TOP   );
+      glVertex3d(-ARM_HALF_WIDTH, -ARM_HALF_LENGTH,  ARM_BOTTOM);
+      glVertex3d( ARM_HALF_WIDTH, -ARM_HALF_LENGTH,  ARM_BOTTOM);
       /* West face */
-      glNormal3f( 0.0f,           -1.0f,             0.0f      );
-      glVertex3f(-ARM_HALF_WIDTH,  ARM_HALF_LENGTH,  ARM_TOP   );
-      glVertex3f(-ARM_HALF_WIDTH,  ARM_HALF_LENGTH,  ARM_BOTTOM);
-      glVertex3f(-ARM_HALF_WIDTH, -ARM_HALF_LENGTH,  ARM_BOTTOM);
-      glVertex3f(-ARM_HALF_WIDTH, -ARM_HALF_LENGTH,  ARM_TOP   );
+      glNormal3d( 0.0f,           -1.0f,             0.0f      );
+      glVertex3d(-ARM_HALF_WIDTH,  ARM_HALF_LENGTH,  ARM_TOP   );
+      glVertex3d(-ARM_HALF_WIDTH,  ARM_HALF_LENGTH,  ARM_BOTTOM);
+      glVertex3d(-ARM_HALF_WIDTH, -ARM_HALF_LENGTH,  ARM_BOTTOM);
+      glVertex3d(-ARM_HALF_WIDTH, -ARM_HALF_LENGTH,  ARM_TOP   );
       glEnd();      
    }
 
@@ -245,20 +245,20 @@ namespace argos {
       CRadians cAngle(CRadians::TWO_PI / m_unVertices);
       glBegin(GL_QUAD_STRIP);
       for(GLuint i = 0; i <= m_unVertices; i++) {
-         glNormal3f(cNormal.GetX(), cNormal.GetY(), 0.0f);
+         glNormal3d(cNormal.GetX(), cNormal.GetY(), 0.0f);
          cVertex = cNormal;
          cVertex *= PROPELLER_ROD_RADIUS;
-         glVertex3f(cVertex.GetX(), cVertex.GetY(), PROPELLER_ROD_TOP);
-         glVertex3f(cVertex.GetX(), cVertex.GetY(), PROPELLER_ROD_BOTTOM);
+         glVertex3d(cVertex.GetX(), cVertex.GetY(), PROPELLER_ROD_TOP);
+         glVertex3d(cVertex.GetX(), cVertex.GetY(), PROPELLER_ROD_BOTTOM);
          cNormal.Rotate(cAngle);
       }
       glEnd();
       /* Rod top disk */
       cVertex.Set(PROPELLER_ROD_RADIUS, 0.0f);
       glBegin(GL_POLYGON);
-      glNormal3f(0.0f, 0.0f, 1.0f);
+      glNormal3d(0.0f, 0.0f, 1.0f);
       for(GLuint i = 0; i <= m_unVertices; i++) {
-         glVertex3f(cVertex.GetX(), cVertex.GetY(), PROPELLER_ROD_TOP);
+         glVertex3d(cVertex.GetX(), cVertex.GetY(), PROPELLER_ROD_TOP);
          cVertex.Rotate(cAngle);
       }
       glEnd();
@@ -266,9 +266,9 @@ namespace argos {
       cVertex.Set(PROPELLER_ROD_RADIUS, 0.0f);
       cAngle = -cAngle;
       glBegin(GL_POLYGON);
-      glNormal3f(0.0f, 0.0f, -1.0f);
+      glNormal3d(0.0f, 0.0f, -1.0f);
       for(GLuint i = 0; i <= m_unVertices; i++) {
-         glVertex3f(cVertex.GetX(), cVertex.GetY(), PROPELLER_ROD_BOTTOM);
+         glVertex3d(cVertex.GetX(), cVertex.GetY(), PROPELLER_ROD_BOTTOM);
          cVertex.Rotate(cAngle);
       }
       glEnd();
@@ -278,9 +278,9 @@ namespace argos {
       cAngle = -cAngle;
       glDisable(GL_CULL_FACE);
       glBegin(GL_POLYGON);
-      glNormal3f(0.0f, 0.0f, 1.0f);
+      glNormal3d(0.0f, 0.0f, 1.0f);
       for(GLuint i = 0; i <= m_unVertices; i++) {
-         glVertex3f(cVertex.GetX(), cVertex.GetY(), PROPELLER_BLADE_ELEVATION);
+         glVertex3d(cVertex.GetX(), cVertex.GetY(), PROPELLER_BLADE_ELEVATION);
          cVertex.Rotate(cAngle);
       }
       glEnd();

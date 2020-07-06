@@ -33,23 +33,23 @@ namespace argos {
 
             cNormal.FromSphericalCoords(1.0f, cInclination, cAzimuth);
             cPoint = m_fRadius * cNormal;
-            glNormal3f(cNormal.GetX(), cNormal.GetY(), cNormal.GetZ());
-            glVertex3f(cPoint.GetX(), cPoint.GetY(), cPoint.GetZ());
+            glNormal3d(cNormal.GetX(), cNormal.GetY(), cNormal.GetZ());
+            glVertex3d(cPoint.GetX(), cPoint.GetY(), cPoint.GetZ());
 
             cNormal.FromSphericalCoords(1.0f, cInclination + cSlice, cAzimuth);
             cPoint = m_fRadius * cNormal;
-            glNormal3f(cNormal.GetX(), cNormal.GetY(), cNormal.GetZ());
-            glVertex3f(cPoint.GetX(), cPoint.GetY(), cPoint.GetZ());
+            glNormal3d(cNormal.GetX(), cNormal.GetY(), cNormal.GetZ());
+            glVertex3d(cPoint.GetX(), cPoint.GetY(), cPoint.GetZ());
 
             cNormal.FromSphericalCoords(1.0f, cInclination, cAzimuth + cSlice);
             cPoint = m_fRadius * cNormal;
-            glNormal3f(cNormal.GetX(), cNormal.GetY(), cNormal.GetZ());
-            glVertex3f(cPoint.GetX(), cPoint.GetY(), cPoint.GetZ());
+            glNormal3d(cNormal.GetX(), cNormal.GetY(), cNormal.GetZ());
+            glVertex3d(cPoint.GetX(), cPoint.GetY(), cPoint.GetZ());
 
             cNormal.FromSphericalCoords(1.0f, cInclination + cSlice, cAzimuth + cSlice);
             cPoint = m_fRadius * cNormal;
-            glNormal3f(cNormal.GetX(), cNormal.GetY(), cNormal.GetZ());
-            glVertex3f(cPoint.GetX(), cPoint.GetY(), cPoint.GetZ());
+            glNormal3d(cNormal.GetX(), cNormal.GetY(), cNormal.GetZ());
+            glVertex3d(cPoint.GetX(), cPoint.GetY(), cPoint.GetZ());
 
          }
       }
@@ -107,7 +107,7 @@ namespace argos {
          static CQTOpenGLLight m_cModel;
          glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
          c_visualization.DrawEntity(c_entity);
-         glScalef(1.1, 1.1, 1.1);
+         glScaled(1.1, 1.1, 1.1);
          m_cModel.Draw(c_entity);
          glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
       }

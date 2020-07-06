@@ -109,8 +109,8 @@ namespace argos {
       template <typename U> void MapValueIntoRange(U& t_output_value,
                                                    const T& t_input_value,
                                                    const CRange<U>& c_range) const {
-         t_output_value = (NormalizeValue(t_input_value) *
-                           c_range.GetSpan()) + c_range.GetMin();
+         t_output_value = static_cast<U>((NormalizeValue(t_input_value) *
+                                          c_range.GetSpan()) + c_range.GetMin());
       }
 
       inline void WrapValue(T& t_value) const {

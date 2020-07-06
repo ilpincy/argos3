@@ -121,8 +121,8 @@ namespace argos {
       std::vector<SMesh> m_vecMeshes;
       std::multimap<SInt32, GLuint> m_mapVertexCache;
       /* low-level primitives */
-      std::vector<GLfloat> m_vecOpenGLPositions;
-      std::vector<GLfloat> m_vecOpenGLNormals;
+      std::vector<GLdouble> m_vecOpenGLPositions;
+      std::vector<GLdouble> m_vecOpenGLNormals;
    };
 
 }

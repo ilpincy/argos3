@@ -489,7 +489,7 @@ namespace argos {
    CByteArray& CByteArray::operator>>(float& f_value) {
       double fDoubleValue;
       *this >> fDoubleValue;
-      f_value = fDoubleValue;
+      f_value = static_cast<float>(fDoubleValue);
       return *this;
    }
 

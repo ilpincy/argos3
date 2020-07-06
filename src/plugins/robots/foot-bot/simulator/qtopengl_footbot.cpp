@@ -191,20 +191,20 @@ namespace argos {
    void CQTOpenGLFootBot::Draw(CFootBotEntity& c_entity) {
       /* Place the wheels */
       glPushMatrix();
-      glTranslatef(0.0f, HALF_INTERWHEEL_DISTANCE, 0.0f);
+      glTranslated(0.0f, HALF_INTERWHEEL_DISTANCE, 0.0f);
       glCallList(m_unWheelList);
       glPopMatrix();
       glPushMatrix();
-      glTranslatef(0.0f, -HALF_INTERWHEEL_DISTANCE, 0.0f);
+      glTranslated(0.0f, -HALF_INTERWHEEL_DISTANCE, 0.0f);
       glCallList(m_unWheelList);
       glPopMatrix();
       /* Place the tracks */
       glPushMatrix();
-      glTranslatef(0.0f, HALF_INTERTRACK_DISTANCE, 0.0f);
+      glTranslated(0.0f, HALF_INTERTRACK_DISTANCE, 0.0f);
       glCallList(m_unTrackList);
       glPopMatrix();
       glPushMatrix();
-      glTranslatef(0.0f, -HALF_INTERTRACK_DISTANCE, 0.0f);
+      glTranslated(0.0f, -HALF_INTERTRACK_DISTANCE, 0.0f);
       glCallList(m_unTrackList);
       glPopMatrix();
       /* Place the tracks */
@@ -212,14 +212,14 @@ namespace argos {
       /* Place the gripper module */
       glPushMatrix();
       /* Read gripper orientation from footbot entity */
-      GLfloat fGripperOrientation = ToDegrees(c_entity.GetTurretEntity().GetRotation()).GetValue();
-      glRotatef(fGripperOrientation, 0.0f, 0.0f, 1.0f);
+      GLdouble fGripperOrientation = ToDegrees(c_entity.GetTurretEntity().GetRotation()).GetValue();
+      glRotated(fGripperOrientation, 0.0f, 0.0f, 1.0f);
       /* Place the grippable part of the gripper module (LEDs) */
       glPushMatrix();
       CLEDEquippedEntity& cLEDEquippedEntity = c_entity.GetLEDEquippedEntity();
       for(UInt32 i = 0; i < 12; i++) {
          const CColor& cColor = cLEDEquippedEntity.GetLED(i).GetColor();
-         glRotatef(m_fLEDAngleSlice, 0.0f, 0.0f, 1.0f);
+         glRotated(m_fLEDAngleSlice, 0.0f, 0.0f, 1.0f);
          SetLEDMaterial(cColor.GetRed()   / 255.0f,
                         cColor.GetGreen() / 255.0f,
                         cColor.GetBlue()  / 255.0f);
@@ -230,14 +230,14 @@ namespace argos {
       glCallList(m_unGripperMechanicsList);
       /* Place the gripper claws */
       /* Read the gripper aperture from footbot entity */
-      GLfloat fGripperAperture = c_entity.GetGripperEquippedEntity().GetLockState() * 90.0f;
-      glTranslatef(GRIPPER_CLAW_OFFSET, 0.0f, GRIPPER_CLAW_ELEVATION);
+      GLdouble fGripperAperture = c_entity.GetGripperEquippedEntity().GetLockState() * 90.0f;
+      glTranslated(GRIPPER_CLAW_OFFSET, 0.0f, GRIPPER_CLAW_ELEVATION);
       glPushMatrix();
-      glRotatef(fGripperAperture, 0.0f, 1.0f, 0.0f);
+      glRotated(fGripperAperture, 0.0f, 1.0f, 0.0f);
       glCallList(m_unGripperClawList);
       glPopMatrix();
       glPushMatrix();
-      glRotatef(-fGripperAperture, 0.0f, 1.0f, 0.0f);
+      glRotated(-fGripperAperture, 0.0f, 1.0f, 0.0f);
       glCallList(m_unGripperClawList);
       glPopMatrix();
       glPopMatrix();
@@ -247,14 +247,14 @@ namespace argos {
       glCallList(m_unDistanceScannerList);
       glPushMatrix();
       /* Read dist scanner orientation from footbot entity */
-      GLfloat fDistanceScannerOrientation = ToDegrees(c_entity.GetDistanceScannerEquippedEntity().GetRotation()).GetValue();
-      glRotatef(fDistanceScannerOrientation, 0.0f, 0.0f, 1.0f);
+      GLdouble fDistanceScannerOrientation = ToDegrees(c_entity.GetDistanceScannerEquippedEntity().GetRotation()).GetValue();
+      glRotated(fDistanceScannerOrientation, 0.0f, 0.0f, 1.0f);
       glCallList(m_unDistanceScannerSensorList);
-      glRotatef(90.0f, 0.0f, 0.0f, 1.0f);
+      glRotated(90.0f, 0.0f, 0.0f, 1.0f);
       glCallList(m_unDistanceScannerSensorList);
-      glRotatef(90.0f, 0.0f, 0.0f, 1.0f);
+      glRotated(90.0f, 0.0f, 0.0f, 1.0f);
       glCallList(m_unDistanceScannerSensorList);
-      glRotatef(90.0f, 0.0f, 0.0f, 1.0f);
+      glRotated(90.0f, 0.0f, 0.0f, 1.0f);
       glCallList(m_unDistanceScannerSensorList);
       glPopMatrix();
       /* Place the iMX module */
@@ -280,8 +280,8 @@ namespace argos {
       cNormal.Normalize();
       glBegin(GL_POLYGON);
       for(GLuint i = 0; i <= m_unVertices; i++) {
-         glNormal3f(cNormal.GetX(), cNormal.GetY(), cNormal.GetZ());
-         glVertex3f(cVertex.GetX(), -HALF_WHEEL_WIDTH, WHEEL_RADIUS + cVertex.GetY());
+         glNormal3d(cNormal.GetX(), cNormal.GetY(), cNormal.GetZ());
+         glVertex3d(cVertex.GetX(), -HALF_WHEEL_WIDTH, WHEEL_RADIUS + cVertex.GetY());
          cVertex.Rotate(cAngle);
          cNormal.RotateY(cAngle);
       }
@@ -293,8 +293,8 @@ namespace argos {
       cAngle = -cAngle;
       glBegin(GL_POLYGON);
       for(GLuint i = 0; i <= m_unVertices; i++) {
-         glNormal3f(cNormal.GetX(), cNormal.GetY(), cNormal.GetZ());
-         glVertex3f(cVertex.GetX(), HALF_WHEEL_WIDTH, WHEEL_RADIUS + cVertex.GetY());
+         glNormal3d(cNormal.GetX(), cNormal.GetY(), cNormal.GetZ());
+         glVertex3d(cVertex.GetX(), HALF_WHEEL_WIDTH, WHEEL_RADIUS + cVertex.GetY());
          cVertex.Rotate(cAngle);
          cNormal.RotateY(cAngle);
       }
@@ -305,9 +305,9 @@ namespace argos {
       cAngle = -cAngle;
       glBegin(GL_QUAD_STRIP);
       for(GLuint i = 0; i <= m_unVertices; i++) {
-         glNormal3f(cNormal.GetX(), cNormal.GetY(), cNormal.GetZ());
-         glVertex3f(cVertex.GetX(), -HALF_WHEEL_WIDTH, WHEEL_RADIUS + cVertex.GetY());
-         glVertex3f(cVertex.GetX(),  HALF_WHEEL_WIDTH, WHEEL_RADIUS + cVertex.GetY());
+         glNormal3d(cNormal.GetX(), cNormal.GetY(), cNormal.GetZ());
+         glVertex3d(cVertex.GetX(), -HALF_WHEEL_WIDTH, WHEEL_RADIUS + cVertex.GetY());
+         glVertex3d(cVertex.GetX(),  HALF_WHEEL_WIDTH, WHEEL_RADIUS + cVertex.GetY());
          cVertex.Rotate(cAngle);
          cNormal.RotateY(cAngle);
       }
@@ -383,8 +383,8 @@ namespace argos {
       cNormal.Normalize();
       glBegin(GL_POLYGON);
       for(GLuint i = 0; i <= m_unVertices; i++) {
-         glNormal3f(cNormal.GetX(), cNormal.GetY(), cNormal.GetZ());
-         glVertex3f(cVertex.GetX(), -HALF_WHEEL_WIDTH, WHEEL_RADIUS + cVertex.GetY());
+         glNormal3d(cNormal.GetX(), cNormal.GetY(), cNormal.GetZ());
+         glVertex3d(cVertex.GetX(), -HALF_WHEEL_WIDTH, WHEEL_RADIUS + cVertex.GetY());
          cVertex.Rotate(cAngle);
          cNormal.RotateY(cAngle);
       }
@@ -396,8 +396,8 @@ namespace argos {
       cNormal.Normalize();
       glBegin(GL_POLYGON);
       for(GLuint i = 0; i <= m_unVertices; i++) {
-         glNormal3f(cNormal.GetX(), cNormal.GetY(), cNormal.GetZ());
-         glVertex3f(cVertex.GetX(), HALF_WHEEL_WIDTH, WHEEL_RADIUS + cVertex.GetY());
+         glNormal3d(cNormal.GetX(), cNormal.GetY(), cNormal.GetZ());
+         glVertex3d(cVertex.GetX(), HALF_WHEEL_WIDTH, WHEEL_RADIUS + cVertex.GetY());
          cVertex.Rotate(cAngle);
          cNormal.RotateY(cAngle);
       }
@@ -409,9 +409,9 @@ namespace argos {
       cAngle = -cAngle;
       glBegin(GL_QUAD_STRIP);
       for(GLuint i = 0; i <= m_unVertices; i++) {
-         glNormal3f(cNormal.GetX(), cNormal.GetY(), cNormal.GetZ());
-         glVertex3f(cVertex.GetX(), -HALF_WHEEL_WIDTH, WHEEL_RADIUS + cVertex.GetY());
-         glVertex3f(cVertex.GetX(),  HALF_WHEEL_WIDTH, WHEEL_RADIUS + cVertex.GetY());
+         glNormal3d(cNormal.GetX(), cNormal.GetY(), cNormal.GetZ());
+         glVertex3d(cVertex.GetX(), -HALF_WHEEL_WIDTH, WHEEL_RADIUS + cVertex.GetY());
+         glVertex3d(cVertex.GetX(),  HALF_WHEEL_WIDTH, WHEEL_RADIUS + cVertex.GetY());
          cVertex.Rotate(cAngle);
          cNormal.RotateY(cAngle);
       }
@@ -426,31 +426,31 @@ namespace argos {
       SetWhitePlasticMaterial();
       /* Place two basic wheels */
       glPushMatrix();
-      glTranslatef(HALF_TRACK_WHEELS_DISTANCE, 0.0f, 0.0f);
+      glTranslated(HALF_TRACK_WHEELS_DISTANCE, 0.0f, 0.0f);
       glCallList(m_unBasicWheelList);
       glPopMatrix();
       glPushMatrix();
-      glTranslatef(-HALF_TRACK_WHEELS_DISTANCE, 0.0f, 0.0f);
+      glTranslated(-HALF_TRACK_WHEELS_DISTANCE, 0.0f, 0.0f);
       glCallList(m_unBasicWheelList);
       glPopMatrix();
       /* Render the track itself */
       /* Set material */
       SetBlackTireMaterial();
       glEnable(GL_POLYGON_OFFSET_FILL); // Correct flickering due to overlapping surfaces
-      glPolygonOffset(-0.1, 1.0);      // Correct flickering due to overlapping surfaces
+      glPolygonOffset(-0.1f, 1.0f);      // Correct flickering due to overlapping surfaces
       /* Top part */
       glBegin(GL_POLYGON);
-      glVertex3f(-HALF_TRACK_WHEELS_DISTANCE, -HALF_WHEEL_WIDTH, WHEEL_DIAMETER);
-      glVertex3f( HALF_TRACK_WHEELS_DISTANCE, -HALF_WHEEL_WIDTH, WHEEL_DIAMETER);
-      glVertex3f( HALF_TRACK_WHEELS_DISTANCE,  HALF_WHEEL_WIDTH, WHEEL_DIAMETER);
-      glVertex3f(-HALF_TRACK_WHEELS_DISTANCE,  HALF_WHEEL_WIDTH, WHEEL_DIAMETER);
+      glVertex3d(-HALF_TRACK_WHEELS_DISTANCE, -HALF_WHEEL_WIDTH, WHEEL_DIAMETER);
+      glVertex3d( HALF_TRACK_WHEELS_DISTANCE, -HALF_WHEEL_WIDTH, WHEEL_DIAMETER);
+      glVertex3d( HALF_TRACK_WHEELS_DISTANCE,  HALF_WHEEL_WIDTH, WHEEL_DIAMETER);
+      glVertex3d(-HALF_TRACK_WHEELS_DISTANCE,  HALF_WHEEL_WIDTH, WHEEL_DIAMETER);
       glEnd();
       /* Bottom part */
       glBegin(GL_POLYGON);
-      glVertex3f(-HALF_TRACK_WHEELS_DISTANCE, -HALF_WHEEL_WIDTH, 0.0f);
-      glVertex3f( HALF_TRACK_WHEELS_DISTANCE, -HALF_WHEEL_WIDTH, 0.0f);
-      glVertex3f( HALF_TRACK_WHEELS_DISTANCE,  HALF_WHEEL_WIDTH, 0.0f);
-      glVertex3f(-HALF_TRACK_WHEELS_DISTANCE,  HALF_WHEEL_WIDTH, 0.0f);
+      glVertex3d(-HALF_TRACK_WHEELS_DISTANCE, -HALF_WHEEL_WIDTH, 0.0f);
+      glVertex3d( HALF_TRACK_WHEELS_DISTANCE, -HALF_WHEEL_WIDTH, 0.0f);
+      glVertex3d( HALF_TRACK_WHEELS_DISTANCE,  HALF_WHEEL_WIDTH, 0.0f);
+      glVertex3d(-HALF_TRACK_WHEELS_DISTANCE,  HALF_WHEEL_WIDTH, 0.0f);
       glEnd();
       /* Round parts */
       CVector2 cVertex(0.0f, WHEEL_RADIUS);
@@ -459,9 +459,9 @@ namespace argos {
       /* Front */
       glBegin(GL_QUAD_STRIP);
       for(GLuint i = 0; i <= m_unVertices / 2; i++) {
-         glNormal3f(cNormal.GetX(), 0.0f, cNormal.GetY());
-         glVertex3f(-HALF_TRACK_WHEELS_DISTANCE + cVertex.GetX(), -HALF_WHEEL_WIDTH, WHEEL_RADIUS + cVertex.GetY());
-         glVertex3f(-HALF_TRACK_WHEELS_DISTANCE + cVertex.GetX(),  HALF_WHEEL_WIDTH, WHEEL_RADIUS + cVertex.GetY());
+         glNormal3d(cNormal.GetX(), 0.0f, cNormal.GetY());
+         glVertex3d(-HALF_TRACK_WHEELS_DISTANCE + cVertex.GetX(), -HALF_WHEEL_WIDTH, WHEEL_RADIUS + cVertex.GetY());
+         glVertex3d(-HALF_TRACK_WHEELS_DISTANCE + cVertex.GetX(),  HALF_WHEEL_WIDTH, WHEEL_RADIUS + cVertex.GetY());
          cVertex.Rotate(cAngle);
          cNormal.Rotate(cAngle);
       }
@@ -469,9 +469,9 @@ namespace argos {
       /* Back */
       glBegin(GL_QUAD_STRIP);
       for(GLuint i = 0; i <= m_unVertices / 2; i++) {
-         glNormal3f(cNormal.GetX(), 0.0f, cNormal.GetY());
-         glVertex3f(HALF_TRACK_WHEELS_DISTANCE + cVertex.GetX(), -HALF_WHEEL_WIDTH, WHEEL_RADIUS + cVertex.GetY());
-         glVertex3f(HALF_TRACK_WHEELS_DISTANCE + cVertex.GetX(),  HALF_WHEEL_WIDTH, WHEEL_RADIUS + cVertex.GetY());
+         glNormal3d(cNormal.GetX(), 0.0f, cNormal.GetY());
+         glVertex3d(HALF_TRACK_WHEELS_DISTANCE + cVertex.GetX(), -HALF_WHEEL_WIDTH, WHEEL_RADIUS + cVertex.GetY());
+         glVertex3d(HALF_TRACK_WHEELS_DISTANCE + cVertex.GetX(),  HALF_WHEEL_WIDTH, WHEEL_RADIUS + cVertex.GetY());
          cVertex.Rotate(cAngle);
          cNormal.Rotate(cAngle);
       }
@@ -489,48 +489,48 @@ namespace argos {
       /* This part covers the top and bottom faces (parallel to XY) */
       glBegin(GL_QUADS);
       /* Bottom face */
-      glNormal3f(0.0f, 0.0f, -1.0f);
-      glVertex3f( HALF_BATTERY_SOCKET_LENGTH,  HALF_BATTERY_SOCKET_WIDTH, BATTERY_SOCKET_ELEVATION);
-      glVertex3f( HALF_BATTERY_SOCKET_LENGTH, -HALF_BATTERY_SOCKET_WIDTH, BATTERY_SOCKET_ELEVATION);
-      glVertex3f(-HALF_BATTERY_SOCKET_LENGTH, -HALF_BATTERY_SOCKET_WIDTH, BATTERY_SOCKET_ELEVATION);
-      glVertex3f(-HALF_BATTERY_SOCKET_LENGTH,  HALF_BATTERY_SOCKET_WIDTH, BATTERY_SOCKET_ELEVATION);
+      glNormal3d(0.0f, 0.0f, -1.0f);
+      glVertex3d( HALF_BATTERY_SOCKET_LENGTH,  HALF_BATTERY_SOCKET_WIDTH, BATTERY_SOCKET_ELEVATION);
+      glVertex3d( HALF_BATTERY_SOCKET_LENGTH, -HALF_BATTERY_SOCKET_WIDTH, BATTERY_SOCKET_ELEVATION);
+      glVertex3d(-HALF_BATTERY_SOCKET_LENGTH, -HALF_BATTERY_SOCKET_WIDTH, BATTERY_SOCKET_ELEVATION);
+      glVertex3d(-HALF_BATTERY_SOCKET_LENGTH,  HALF_BATTERY_SOCKET_WIDTH, BATTERY_SOCKET_ELEVATION);
       /* Top face */
-      glNormal3f(0.0f, 0.0f, 1.0f);
-      glVertex3f(-HALF_BATTERY_SOCKET_LENGTH, -HALF_BATTERY_SOCKET_WIDTH, BATTERY_SOCKET_ELEVATION + WHEEL_DIAMETER);
-      glVertex3f( HALF_BATTERY_SOCKET_LENGTH, -HALF_BATTERY_SOCKET_WIDTH, BATTERY_SOCKET_ELEVATION + WHEEL_DIAMETER);
-      glVertex3f( HALF_BATTERY_SOCKET_LENGTH,  HALF_BATTERY_SOCKET_WIDTH, BATTERY_SOCKET_ELEVATION + WHEEL_DIAMETER);
-      glVertex3f(-HALF_BATTERY_SOCKET_LENGTH,  HALF_BATTERY_SOCKET_WIDTH, BATTERY_SOCKET_ELEVATION + WHEEL_DIAMETER);
+      glNormal3d(0.0f, 0.0f, 1.0f);
+      glVertex3d(-HALF_BATTERY_SOCKET_LENGTH, -HALF_BATTERY_SOCKET_WIDTH, BATTERY_SOCKET_ELEVATION + WHEEL_DIAMETER);
+      glVertex3d( HALF_BATTERY_SOCKET_LENGTH, -HALF_BATTERY_SOCKET_WIDTH, BATTERY_SOCKET_ELEVATION + WHEEL_DIAMETER);
+      glVertex3d( HALF_BATTERY_SOCKET_LENGTH,  HALF_BATTERY_SOCKET_WIDTH, BATTERY_SOCKET_ELEVATION + WHEEL_DIAMETER);
+      glVertex3d(-HALF_BATTERY_SOCKET_LENGTH,  HALF_BATTERY_SOCKET_WIDTH, BATTERY_SOCKET_ELEVATION + WHEEL_DIAMETER);
       glEnd();
       /* This part covers the faces (South, East, North, West) */
       glBegin(GL_QUAD_STRIP);
       /* Starting side */
-      glNormal3f(-1.0f, 0.0f, 0.0f);
-      glVertex3f(-HALF_BATTERY_SOCKET_LENGTH, -HALF_BATTERY_SOCKET_WIDTH, BATTERY_SOCKET_ELEVATION + WHEEL_DIAMETER);
-      glVertex3f(-HALF_BATTERY_SOCKET_LENGTH, -HALF_BATTERY_SOCKET_WIDTH, BATTERY_SOCKET_ELEVATION);
+      glNormal3d(-1.0f, 0.0f, 0.0f);
+      glVertex3d(-HALF_BATTERY_SOCKET_LENGTH, -HALF_BATTERY_SOCKET_WIDTH, BATTERY_SOCKET_ELEVATION + WHEEL_DIAMETER);
+      glVertex3d(-HALF_BATTERY_SOCKET_LENGTH, -HALF_BATTERY_SOCKET_WIDTH, BATTERY_SOCKET_ELEVATION);
       /* South face */
-      glVertex3f( HALF_BATTERY_SOCKET_LENGTH, -HALF_BATTERY_SOCKET_WIDTH, BATTERY_SOCKET_ELEVATION + WHEEL_DIAMETER);
-      glVertex3f( HALF_BATTERY_SOCKET_LENGTH, -HALF_BATTERY_SOCKET_WIDTH, BATTERY_SOCKET_ELEVATION);
+      glVertex3d( HALF_BATTERY_SOCKET_LENGTH, -HALF_BATTERY_SOCKET_WIDTH, BATTERY_SOCKET_ELEVATION + WHEEL_DIAMETER);
+      glVertex3d( HALF_BATTERY_SOCKET_LENGTH, -HALF_BATTERY_SOCKET_WIDTH, BATTERY_SOCKET_ELEVATION);
       /* East face */
-      glNormal3f(0.0f, -1.0f, 0.0f);
-      glVertex3f( HALF_BATTERY_SOCKET_LENGTH,  HALF_BATTERY_SOCKET_WIDTH, BATTERY_SOCKET_ELEVATION + WHEEL_DIAMETER);
-      glVertex3f( HALF_BATTERY_SOCKET_LENGTH,  HALF_BATTERY_SOCKET_WIDTH, BATTERY_SOCKET_ELEVATION);
+      glNormal3d(0.0f, -1.0f, 0.0f);
+      glVertex3d( HALF_BATTERY_SOCKET_LENGTH,  HALF_BATTERY_SOCKET_WIDTH, BATTERY_SOCKET_ELEVATION + WHEEL_DIAMETER);
+      glVertex3d( HALF_BATTERY_SOCKET_LENGTH,  HALF_BATTERY_SOCKET_WIDTH, BATTERY_SOCKET_ELEVATION);
       /* North face */
-      glNormal3f(1.0f, 0.0f, 0.0f);
-      glVertex3f(-HALF_BATTERY_SOCKET_LENGTH,  HALF_BATTERY_SOCKET_WIDTH, BATTERY_SOCKET_ELEVATION + WHEEL_DIAMETER);
-      glVertex3f(-HALF_BATTERY_SOCKET_LENGTH,  HALF_BATTERY_SOCKET_WIDTH, BATTERY_SOCKET_ELEVATION);
+      glNormal3d(1.0f, 0.0f, 0.0f);
+      glVertex3d(-HALF_BATTERY_SOCKET_LENGTH,  HALF_BATTERY_SOCKET_WIDTH, BATTERY_SOCKET_ELEVATION + WHEEL_DIAMETER);
+      glVertex3d(-HALF_BATTERY_SOCKET_LENGTH,  HALF_BATTERY_SOCKET_WIDTH, BATTERY_SOCKET_ELEVATION);
       /* West face */
-      glNormal3f(0.0f, 1.0f, 0.0f);
-      glVertex3f(-HALF_BATTERY_SOCKET_LENGTH, -HALF_BATTERY_SOCKET_WIDTH, BATTERY_SOCKET_ELEVATION + WHEEL_DIAMETER);
-      glVertex3f(-HALF_BATTERY_SOCKET_LENGTH, -HALF_BATTERY_SOCKET_WIDTH, BATTERY_SOCKET_ELEVATION);
+      glNormal3d(0.0f, 1.0f, 0.0f);
+      glVertex3d(-HALF_BATTERY_SOCKET_LENGTH, -HALF_BATTERY_SOCKET_WIDTH, BATTERY_SOCKET_ELEVATION + WHEEL_DIAMETER);
+      glVertex3d(-HALF_BATTERY_SOCKET_LENGTH, -HALF_BATTERY_SOCKET_WIDTH, BATTERY_SOCKET_ELEVATION);
       glEnd();
       /* Circuit board */
       CVector2 cVertex(BASE_MODULE_RADIUS, 0.0f);
       CRadians cAngle(-CRadians::TWO_PI / m_unVertices);
       /* Bottom part */
       glBegin(GL_POLYGON);
-      glNormal3f(0.0f, 0.0f, -1.0f);
+      glNormal3d(0.0f, 0.0f, -1.0f);
       for(GLuint i = 0; i <= m_unVertices; i++) {
-         glVertex3f(cVertex.GetX(), cVertex.GetY(), BATTERY_SOCKET_ELEVATION + WHEEL_DIAMETER);
+         glVertex3d(cVertex.GetX(), cVertex.GetY(), BATTERY_SOCKET_ELEVATION + WHEEL_DIAMETER);
          cVertex.Rotate(cAngle);
       }
       glEnd();
@@ -540,9 +540,9 @@ namespace argos {
       cVertex.Set(BASE_MODULE_RADIUS, 0.0f);
       glBegin(GL_QUAD_STRIP);
       for(GLuint i = 0; i <= m_unVertices; i++) {
-         glNormal3f(cNormal.GetX(), cNormal.GetY(), 0.0f);
-         glVertex3f(cVertex.GetX(), cVertex.GetY(), BATTERY_SOCKET_ELEVATION + WHEEL_DIAMETER + BASE_MODULE_HEIGHT);
-         glVertex3f(cVertex.GetX(), cVertex.GetY(), BATTERY_SOCKET_ELEVATION + WHEEL_DIAMETER);
+         glNormal3d(cNormal.GetX(), cNormal.GetY(), 0.0f);
+         glVertex3d(cVertex.GetX(), cVertex.GetY(), BATTERY_SOCKET_ELEVATION + WHEEL_DIAMETER + BASE_MODULE_HEIGHT);
+         glVertex3d(cVertex.GetX(), cVertex.GetY(), BATTERY_SOCKET_ELEVATION + WHEEL_DIAMETER);
          cVertex.Rotate(cAngle);
          cNormal.Rotate(cAngle);
       }
@@ -551,10 +551,10 @@ namespace argos {
       /* Set material */
       SetCircuitBoardMaterial();
       glBegin(GL_POLYGON);
-      glNormal3f(0.0f, 0.0f, 1.0f);
+      glNormal3d(0.0f, 0.0f, 1.0f);
       cVertex.Set(BASE_MODULE_RADIUS, 0.0f);
       for(GLuint i = 0; i <= m_unVertices; i++) {
-         glVertex3f(cVertex.GetX(), cVertex.GetY(), BATTERY_SOCKET_ELEVATION + WHEEL_DIAMETER + BASE_MODULE_HEIGHT);
+         glVertex3d(cVertex.GetX(), cVertex.GetY(), BATTERY_SOCKET_ELEVATION + WHEEL_DIAMETER + BASE_MODULE_HEIGHT);
          cVertex.Rotate(cAngle);
       }
       glEnd();
@@ -570,10 +570,10 @@ namespace argos {
       cVertex.Rotate(-CRadians::TWO_PI / 12);
       CRadians cAngle(CRadians::TWO_PI / (m_unVertices * 12));
       glBegin(GL_TRIANGLE_FAN);
-      glNormal3f(0.0f, 0.0f, -1.0f);
-      glVertex3f(0.0f, 0.0f, GRIPPER_MODULE_ELEVATION);
+      glNormal3d(0.0f, 0.0f, -1.0f);
+      glVertex3d(0.0f, 0.0f, GRIPPER_MODULE_ELEVATION);
       for(GLuint i = 0; i <= m_unVertices; i++) {
-         glVertex3f(cVertex.GetX(), cVertex.GetY(), GRIPPER_MODULE_ELEVATION);
+         glVertex3d(cVertex.GetX(), cVertex.GetY(), GRIPPER_MODULE_ELEVATION);
          cVertex.Rotate(cAngle);
       }
       glEnd();
@@ -583,9 +583,9 @@ namespace argos {
       cVertex.Set(BASE_MODULE_RADIUS, 0.0f);
       glBegin(GL_QUAD_STRIP);
       for(GLuint i = 0; i <= m_unVertices; i++) {
-         glNormal3f(cVertex.GetX(), cVertex.GetY(), 0.0f);
-         glVertex3f(cVertex.GetX(), cVertex.GetY(), GRIPPER_MODULE_ELEVATION + GRIPPER_MODULE_BARRIER_HEIGHT);
-         glVertex3f(cVertex.GetX(), cVertex.GetY(), GRIPPER_MODULE_ELEVATION);
+         glNormal3d(cVertex.GetX(), cVertex.GetY(), 0.0f);
+         glVertex3d(cVertex.GetX(), cVertex.GetY(), GRIPPER_MODULE_ELEVATION + GRIPPER_MODULE_BARRIER_HEIGHT);
+         glVertex3d(cVertex.GetX(), cVertex.GetY(), GRIPPER_MODULE_ELEVATION);
          cVertex.Rotate(cAngle);
          cNormal.Rotate(cAngle);
       }
@@ -595,9 +595,9 @@ namespace argos {
       cVertex.Set(BASE_MODULE_RADIUS, 0.0f);
       glBegin(GL_QUAD_STRIP);
       for(GLuint i = 0; i <= m_unVertices; i++) {
-         glNormal3f(cVertex.GetX(), cVertex.GetY(), 0.0f);
-         glVertex3f(cVertex.GetX(), cVertex.GetY(), GRIPPER_MODULE_ELEVATION + GRIPPER_MODULE_HEIGHT);
-         glVertex3f(cVertex.GetX(), cVertex.GetY(), GRIPPER_MODULE_ELEVATION + GRIPPER_MODULE_HEIGHT - GRIPPER_MODULE_BARRIER_HEIGHT);
+         glNormal3d(cVertex.GetX(), cVertex.GetY(), 0.0f);
+         glVertex3d(cVertex.GetX(), cVertex.GetY(), GRIPPER_MODULE_ELEVATION + GRIPPER_MODULE_HEIGHT);
+         glVertex3d(cVertex.GetX(), cVertex.GetY(), GRIPPER_MODULE_ELEVATION + GRIPPER_MODULE_HEIGHT - GRIPPER_MODULE_BARRIER_HEIGHT);
          cVertex.Rotate(cAngle);
          cNormal.Rotate(cAngle);
       }
@@ -610,9 +610,9 @@ namespace argos {
       CVector2 cVertex2(GRIPPER_MODULE_INNER_RADIUS, 0.0f);
       glBegin(GL_QUAD_STRIP);
       for(GLuint i = 0; i <= m_unVertices; i++) {
-         glNormal3f(cVertex.GetX(), cVertex.GetY(), 0.0f);
-         glVertex3f(cVertex2.GetX(), cVertex2.GetY(), GRIPPER_MODULE_ELEVATION + GRIPPER_MODULE_HALF_HEIGHT);
-         glVertex3f(cVertex.GetX(), cVertex.GetY(), GRIPPER_MODULE_ELEVATION);
+         glNormal3d(cVertex.GetX(), cVertex.GetY(), 0.0f);
+         glVertex3d(cVertex2.GetX(), cVertex2.GetY(), GRIPPER_MODULE_ELEVATION + GRIPPER_MODULE_HALF_HEIGHT);
+         glVertex3d(cVertex.GetX(), cVertex.GetY(), GRIPPER_MODULE_ELEVATION);
          cVertex.Rotate(cAngle);
          cVertex2.Rotate(cAngle);
          cNormal.Rotate(cAngle);
@@ -626,9 +626,9 @@ namespace argos {
       cVertex2.Set(GRIPPER_MODULE_INNER_RADIUS, 0.0f);
       glBegin(GL_QUAD_STRIP);
       for(GLuint i = 0; i <= m_unVertices; i++) {
-         glNormal3f(cVertex.GetX(), cVertex.GetY(), 0.0f);
-         glVertex3f(cVertex.GetX(), cVertex.GetY(), GRIPPER_MODULE_ELEVATION + GRIPPER_MODULE_HEIGHT);
-         glVertex3f(cVertex2.GetX(), cVertex2.GetY(), GRIPPER_MODULE_ELEVATION + GRIPPER_MODULE_HALF_HEIGHT);
+         glNormal3d(cVertex.GetX(), cVertex.GetY(), 0.0f);
+         glVertex3d(cVertex.GetX(), cVertex.GetY(), GRIPPER_MODULE_ELEVATION + GRIPPER_MODULE_HEIGHT);
+         glVertex3d(cVertex2.GetX(), cVertex2.GetY(), GRIPPER_MODULE_ELEVATION + GRIPPER_MODULE_HALF_HEIGHT);
          cVertex.Rotate(cAngle);
          cVertex2.Rotate(cAngle);
          cNormal.Rotate(cAngle);
@@ -637,10 +637,10 @@ namespace argos {
       /* Top part */
       cVertex.Set(BASE_MODULE_RADIUS, 0.0f);
       glBegin(GL_TRIANGLE_FAN);
-      glNormal3f(0.0f, 0.0f, 1.0f);
-      glVertex3f(0.0f, 0.0f, GRIPPER_MODULE_ELEVATION + GRIPPER_MODULE_HEIGHT);
+      glNormal3d(0.0f, 0.0f, 1.0f);
+      glVertex3d(0.0f, 0.0f, GRIPPER_MODULE_ELEVATION + GRIPPER_MODULE_HEIGHT);
       for(GLuint i = 0; i <= m_unVertices; i++) {
-         glVertex3f(cVertex.GetX(), cVertex.GetY(), GRIPPER_MODULE_ELEVATION + GRIPPER_MODULE_HEIGHT);
+         glVertex3d(cVertex.GetX(), cVertex.GetY(), GRIPPER_MODULE_ELEVATION + GRIPPER_MODULE_HEIGHT);
          cVertex.Rotate(cAngle);
       }
       glEnd();
@@ -662,40 +662,40 @@ namespace argos {
       glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION,            pfEmission);
       /* This part covers the top and bottom faces (parallel to XY) */
       glEnable(GL_POLYGON_OFFSET_FILL); // Correct flickering due to overlapping surfaces
-      glPolygonOffset(-0.1, 1.0);      // Correct flickering due to overlapping surfaces
+      glPolygonOffset(-0.1f, 1.0f);      // Correct flickering due to overlapping surfaces
       glBegin(GL_QUADS);
       /* Bottom face */
-      glNormal3f(0.0f, 0.0f, -1.0f);
-      glVertex3f(GRIPPER_MECHANICS_LENGTH + GRIPPER_MODULE_INNER_RADIUS,  GRIPPER_MECHANICS_HALF_WIDTH, GRIPPER_MODULE_ELEVATION);
-      glVertex3f(GRIPPER_MECHANICS_LENGTH + GRIPPER_MODULE_INNER_RADIUS, -GRIPPER_MECHANICS_HALF_WIDTH, GRIPPER_MODULE_ELEVATION);
-      glVertex3f(                           GRIPPER_MODULE_INNER_RADIUS, -GRIPPER_MECHANICS_HALF_WIDTH, GRIPPER_MODULE_ELEVATION);
-      glVertex3f(                           GRIPPER_MODULE_INNER_RADIUS,  GRIPPER_MECHANICS_HALF_WIDTH, GRIPPER_MODULE_ELEVATION);
+      glNormal3d(0.0f, 0.0f, -1.0f);
+      glVertex3d(GRIPPER_MECHANICS_LENGTH + GRIPPER_MODULE_INNER_RADIUS,  GRIPPER_MECHANICS_HALF_WIDTH, GRIPPER_MODULE_ELEVATION);
+      glVertex3d(GRIPPER_MECHANICS_LENGTH + GRIPPER_MODULE_INNER_RADIUS, -GRIPPER_MECHANICS_HALF_WIDTH, GRIPPER_MODULE_ELEVATION);
+      glVertex3d(                           GRIPPER_MODULE_INNER_RADIUS, -GRIPPER_MECHANICS_HALF_WIDTH, GRIPPER_MODULE_ELEVATION);
+      glVertex3d(                           GRIPPER_MODULE_INNER_RADIUS,  GRIPPER_MECHANICS_HALF_WIDTH, GRIPPER_MODULE_ELEVATION);
       /* Top face */
-      glNormal3f(0.0f, 0.0f, 1.0f);
-      glVertex3f(                           GRIPPER_MODULE_INNER_RADIUS, -GRIPPER_MECHANICS_HALF_WIDTH, GRIPPER_MODULE_ELEVATION + GRIPPER_MODULE_HEIGHT);
-      glVertex3f(GRIPPER_MECHANICS_LENGTH + GRIPPER_MODULE_INNER_RADIUS, -GRIPPER_MECHANICS_HALF_WIDTH, GRIPPER_MODULE_ELEVATION + GRIPPER_MODULE_HEIGHT);
-      glVertex3f(GRIPPER_MECHANICS_LENGTH + GRIPPER_MODULE_INNER_RADIUS,  GRIPPER_MECHANICS_HALF_WIDTH, GRIPPER_MODULE_ELEVATION + GRIPPER_MODULE_HEIGHT);
-      glVertex3f(                           GRIPPER_MODULE_INNER_RADIUS,  GRIPPER_MECHANICS_HALF_WIDTH, GRIPPER_MODULE_ELEVATION + GRIPPER_MODULE_HEIGHT);
+      glNormal3d(0.0f, 0.0f, 1.0f);
+      glVertex3d(                           GRIPPER_MODULE_INNER_RADIUS, -GRIPPER_MECHANICS_HALF_WIDTH, GRIPPER_MODULE_ELEVATION + GRIPPER_MODULE_HEIGHT);
+      glVertex3d(GRIPPER_MECHANICS_LENGTH + GRIPPER_MODULE_INNER_RADIUS, -GRIPPER_MECHANICS_HALF_WIDTH, GRIPPER_MODULE_ELEVATION + GRIPPER_MODULE_HEIGHT);
+      glVertex3d(GRIPPER_MECHANICS_LENGTH + GRIPPER_MODULE_INNER_RADIUS,  GRIPPER_MECHANICS_HALF_WIDTH, GRIPPER_MODULE_ELEVATION + GRIPPER_MODULE_HEIGHT);
+      glVertex3d(                           GRIPPER_MODULE_INNER_RADIUS,  GRIPPER_MECHANICS_HALF_WIDTH, GRIPPER_MODULE_ELEVATION + GRIPPER_MODULE_HEIGHT);
       glEnd();
       glDisable(GL_POLYGON_OFFSET_FILL); // Not needed anymore
       /* This part covers the faces (South, East, North, West) */
       glBegin(GL_QUAD_STRIP);
-      glNormal3f(0.0f, -1.0f, 0.0f);
+      glNormal3d(0.0f, -1.0f, 0.0f);
       /* Starting vertex */
-      glVertex3f(                           GRIPPER_MODULE_INNER_RADIUS, -GRIPPER_MECHANICS_HALF_WIDTH, GRIPPER_MODULE_ELEVATION + GRIPPER_MODULE_HEIGHT);
-      glVertex3f(                           GRIPPER_MODULE_INNER_RADIUS, -GRIPPER_MECHANICS_HALF_WIDTH, GRIPPER_MODULE_ELEVATION);
+      glVertex3d(                           GRIPPER_MODULE_INNER_RADIUS, -GRIPPER_MECHANICS_HALF_WIDTH, GRIPPER_MODULE_ELEVATION + GRIPPER_MODULE_HEIGHT);
+      glVertex3d(                           GRIPPER_MODULE_INNER_RADIUS, -GRIPPER_MECHANICS_HALF_WIDTH, GRIPPER_MODULE_ELEVATION);
       /* East face */
-      glNormal3f(1.0f, 0.0f, 0.0f);
-      glVertex3f(GRIPPER_MECHANICS_LENGTH + GRIPPER_MODULE_INNER_RADIUS, -GRIPPER_MECHANICS_HALF_WIDTH, GRIPPER_MODULE_ELEVATION + GRIPPER_MODULE_HEIGHT);
-      glVertex3f(GRIPPER_MECHANICS_LENGTH + GRIPPER_MODULE_INNER_RADIUS, -GRIPPER_MECHANICS_HALF_WIDTH, GRIPPER_MODULE_ELEVATION);
+      glNormal3d(1.0f, 0.0f, 0.0f);
+      glVertex3d(GRIPPER_MECHANICS_LENGTH + GRIPPER_MODULE_INNER_RADIUS, -GRIPPER_MECHANICS_HALF_WIDTH, GRIPPER_MODULE_ELEVATION + GRIPPER_MODULE_HEIGHT);
+      glVertex3d(GRIPPER_MECHANICS_LENGTH + GRIPPER_MODULE_INNER_RADIUS, -GRIPPER_MECHANICS_HALF_WIDTH, GRIPPER_MODULE_ELEVATION);
       /* North face */
-      glNormal3f(0.0f, 1.0f, 0.0f);
-      glVertex3f(GRIPPER_MECHANICS_LENGTH + GRIPPER_MODULE_INNER_RADIUS,  GRIPPER_MECHANICS_HALF_WIDTH, GRIPPER_MODULE_ELEVATION + GRIPPER_MODULE_HEIGHT);
-      glVertex3f(GRIPPER_MECHANICS_LENGTH + GRIPPER_MODULE_INNER_RADIUS,  GRIPPER_MECHANICS_HALF_WIDTH, GRIPPER_MODULE_ELEVATION);
+      glNormal3d(0.0f, 1.0f, 0.0f);
+      glVertex3d(GRIPPER_MECHANICS_LENGTH + GRIPPER_MODULE_INNER_RADIUS,  GRIPPER_MECHANICS_HALF_WIDTH, GRIPPER_MODULE_ELEVATION + GRIPPER_MODULE_HEIGHT);
+      glVertex3d(GRIPPER_MECHANICS_LENGTH + GRIPPER_MODULE_INNER_RADIUS,  GRIPPER_MECHANICS_HALF_WIDTH, GRIPPER_MODULE_ELEVATION);
       /* West face */
-      glNormal3f(-1.0f, 0.0f, 0.0f);
-      glVertex3f(                           GRIPPER_MODULE_INNER_RADIUS,  GRIPPER_MECHANICS_HALF_WIDTH, GRIPPER_MODULE_ELEVATION + GRIPPER_MODULE_HEIGHT);
-      glVertex3f(                           GRIPPER_MODULE_INNER_RADIUS,  GRIPPER_MECHANICS_HALF_WIDTH, GRIPPER_MODULE_ELEVATION);
+      glNormal3d(-1.0f, 0.0f, 0.0f);
+      glVertex3d(                           GRIPPER_MODULE_INNER_RADIUS,  GRIPPER_MECHANICS_HALF_WIDTH, GRIPPER_MODULE_ELEVATION + GRIPPER_MODULE_HEIGHT);
+      glVertex3d(                           GRIPPER_MODULE_INNER_RADIUS,  GRIPPER_MECHANICS_HALF_WIDTH, GRIPPER_MODULE_ELEVATION);
       glEnd();
    }
 
@@ -714,12 +714,12 @@ namespace argos {
       glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION,            pfEmission);
       /* Draw the claw */
       glDisable(GL_CULL_FACE); // In this way, we can see both sides of the claw
-      glNormal3f(0.0f, 0.0f, 1.0f);
+      glNormal3d(0.0f, 0.0f, 1.0f);
       glBegin(GL_QUADS);
-      glVertex3f(               0.0f,  GRIPPER_CLAW_HALF_WIDTH, 0.0f);
-      glVertex3f(               0.0f, -GRIPPER_CLAW_HALF_WIDTH, 0.0f);
-      glVertex3f(GRIPPER_CLAW_LENGTH, -GRIPPER_CLAW_HALF_WIDTH, 0.0f);
-      glVertex3f(GRIPPER_CLAW_LENGTH,  GRIPPER_CLAW_HALF_WIDTH, 0.0f);
+      glVertex3d(               0.0f,  GRIPPER_CLAW_HALF_WIDTH, 0.0f);
+      glVertex3d(               0.0f, -GRIPPER_CLAW_HALF_WIDTH, 0.0f);
+      glVertex3d(GRIPPER_CLAW_LENGTH, -GRIPPER_CLAW_HALF_WIDTH, 0.0f);
+      glVertex3d(GRIPPER_CLAW_LENGTH,  GRIPPER_CLAW_HALF_WIDTH, 0.0f);
       glEnd();
       glEnable(GL_CULL_FACE); // Restore back face culling
    }
@@ -734,9 +734,9 @@ namespace argos {
       CVector2 cVertex(RAB_MAX_RADIUS, 0.0f);
       CRadians cAngle(-CRadians::TWO_PI / m_unVertices);
       glBegin(GL_POLYGON);
-      glNormal3f(0.0f, 0.0f, -1.0f);
+      glNormal3d(0.0f, 0.0f, -1.0f);
       for(GLuint i = 0; i <= m_unVertices; i++) {
-         glVertex3f(cVertex.GetX(), cVertex.GetY(), RAB_ELEVATION);
+         glVertex3d(cVertex.GetX(), cVertex.GetY(), RAB_ELEVATION);
          cVertex.Rotate(cAngle);
       }
       glEnd();
@@ -748,9 +748,9 @@ namespace argos {
       CVector2 cVertex2(RAB_MIN_RADIUS, 0.0f);
       glBegin(GL_QUAD_STRIP);
       for(GLuint i = 0; i <= m_unVertices; i++) {
-         glNormal3f(cNormal.GetX(), cNormal.GetY(), cNormal.GetZ());
-         glVertex3f(cVertex2.GetX(), cVertex2.GetY(), RAB_ELEVATION + RAB_HEIGHT);
-         glVertex3f(cVertex.GetX(), cVertex.GetY(), RAB_ELEVATION);
+         glNormal3d(cNormal.GetX(), cNormal.GetY(), cNormal.GetZ());
+         glVertex3d(cVertex2.GetX(), cVertex2.GetY(), RAB_ELEVATION + RAB_HEIGHT);
+         glVertex3d(cVertex.GetX(), cVertex.GetY(), RAB_ELEVATION);
          cVertex.Rotate(cAngle);
          cVertex2.Rotate(cAngle);
          cNormal.RotateZ(cAngle);
@@ -761,9 +761,9 @@ namespace argos {
       SetCircuitBoardMaterial();
       cVertex.Set(RAB_MIN_RADIUS, 0.0f);
       glBegin(GL_POLYGON);
-      glNormal3f(0.0f, 0.0f, 1.0f);
+      glNormal3d(0.0f, 0.0f, 1.0f);
       for(GLuint i = 0; i <= m_unVertices; i++) {
-         glVertex3f(cVertex.GetX(), cVertex.GetY(), RAB_ELEVATION + RAB_HEIGHT);
+         glVertex3d(cVertex.GetX(), cVertex.GetY(), RAB_ELEVATION + RAB_HEIGHT);
          cVertex.Rotate(cAngle);
       }
       glEnd();
@@ -785,40 +785,40 @@ namespace argos {
       /* This part covers the top and bottom faces (parallel to XY) */
       glBegin(GL_QUADS);
       /* Bottom face */
-      glNormal3f(0.0f, 0.0f, -1.0f);
-      glVertex3f(DISTANCE_SCANNER_SENSOR_DEPTH + DISTANCE_SCANNER_RADIUS,  DISTANCE_SCANNER_SENSOR_HALF_WIDTH, DISTANCE_SCANNER_ELEVATION);
-      glVertex3f(DISTANCE_SCANNER_SENSOR_DEPTH + DISTANCE_SCANNER_RADIUS, -DISTANCE_SCANNER_SENSOR_HALF_WIDTH, DISTANCE_SCANNER_ELEVATION);
-      glVertex3f(                                DISTANCE_SCANNER_RADIUS, -DISTANCE_SCANNER_SENSOR_HALF_WIDTH, DISTANCE_SCANNER_ELEVATION);
-      glVertex3f(                                DISTANCE_SCANNER_RADIUS,  DISTANCE_SCANNER_SENSOR_HALF_WIDTH, DISTANCE_SCANNER_ELEVATION);
+      glNormal3d(0.0f, 0.0f, -1.0f);
+      glVertex3d(DISTANCE_SCANNER_SENSOR_DEPTH + DISTANCE_SCANNER_RADIUS,  DISTANCE_SCANNER_SENSOR_HALF_WIDTH, DISTANCE_SCANNER_ELEVATION);
+      glVertex3d(DISTANCE_SCANNER_SENSOR_DEPTH + DISTANCE_SCANNER_RADIUS, -DISTANCE_SCANNER_SENSOR_HALF_WIDTH, DISTANCE_SCANNER_ELEVATION);
+      glVertex3d(                                DISTANCE_SCANNER_RADIUS, -DISTANCE_SCANNER_SENSOR_HALF_WIDTH, DISTANCE_SCANNER_ELEVATION);
+      glVertex3d(                                DISTANCE_SCANNER_RADIUS,  DISTANCE_SCANNER_SENSOR_HALF_WIDTH, DISTANCE_SCANNER_ELEVATION);
       /* Top face */
-      glNormal3f(0.0f, 0.0f, 1.0f);
-      glVertex3f(                                DISTANCE_SCANNER_RADIUS, -DISTANCE_SCANNER_SENSOR_HALF_WIDTH, DISTANCE_SCANNER_ELEVATION + DISTANCE_SCANNER_HEIGHT);
-      glVertex3f(DISTANCE_SCANNER_SENSOR_DEPTH + DISTANCE_SCANNER_RADIUS, -DISTANCE_SCANNER_SENSOR_HALF_WIDTH, DISTANCE_SCANNER_ELEVATION + DISTANCE_SCANNER_HEIGHT);
-      glVertex3f(DISTANCE_SCANNER_SENSOR_DEPTH + DISTANCE_SCANNER_RADIUS,  DISTANCE_SCANNER_SENSOR_HALF_WIDTH, DISTANCE_SCANNER_ELEVATION + DISTANCE_SCANNER_HEIGHT);
-      glVertex3f(                                DISTANCE_SCANNER_RADIUS,  DISTANCE_SCANNER_SENSOR_HALF_WIDTH, DISTANCE_SCANNER_ELEVATION + DISTANCE_SCANNER_HEIGHT);
+      glNormal3d(0.0f, 0.0f, 1.0f);
+      glVertex3d(                                DISTANCE_SCANNER_RADIUS, -DISTANCE_SCANNER_SENSOR_HALF_WIDTH, DISTANCE_SCANNER_ELEVATION + DISTANCE_SCANNER_HEIGHT);
+      glVertex3d(DISTANCE_SCANNER_SENSOR_DEPTH + DISTANCE_SCANNER_RADIUS, -DISTANCE_SCANNER_SENSOR_HALF_WIDTH, DISTANCE_SCANNER_ELEVATION + DISTANCE_SCANNER_HEIGHT);
+      glVertex3d(DISTANCE_SCANNER_SENSOR_DEPTH + DISTANCE_SCANNER_RADIUS,  DISTANCE_SCANNER_SENSOR_HALF_WIDTH, DISTANCE_SCANNER_ELEVATION + DISTANCE_SCANNER_HEIGHT);
+      glVertex3d(                                DISTANCE_SCANNER_RADIUS,  DISTANCE_SCANNER_SENSOR_HALF_WIDTH, DISTANCE_SCANNER_ELEVATION + DISTANCE_SCANNER_HEIGHT);
       glEnd();
       glDisable(GL_POLYGON_OFFSET_FILL); // Not needed anymore
       /* This part covers the faces (South, East, North, West) */
       glBegin(GL_QUAD_STRIP);
-      glNormal3f(0.0f, -1.0f, 0.0f);
+      glNormal3d(0.0f, -1.0f, 0.0f);
       /* Starting vertex */
-      glVertex3f(                                DISTANCE_SCANNER_RADIUS,  DISTANCE_SCANNER_SENSOR_HALF_WIDTH, DISTANCE_SCANNER_ELEVATION + DISTANCE_SCANNER_HEIGHT);
-      glVertex3f(                                DISTANCE_SCANNER_RADIUS,  DISTANCE_SCANNER_SENSOR_HALF_WIDTH, DISTANCE_SCANNER_ELEVATION);
+      glVertex3d(                                DISTANCE_SCANNER_RADIUS,  DISTANCE_SCANNER_SENSOR_HALF_WIDTH, DISTANCE_SCANNER_ELEVATION + DISTANCE_SCANNER_HEIGHT);
+      glVertex3d(                                DISTANCE_SCANNER_RADIUS,  DISTANCE_SCANNER_SENSOR_HALF_WIDTH, DISTANCE_SCANNER_ELEVATION);
       /* South face */
-      glVertex3f(                                DISTANCE_SCANNER_RADIUS, -DISTANCE_SCANNER_SENSOR_HALF_WIDTH, DISTANCE_SCANNER_ELEVATION + DISTANCE_SCANNER_HEIGHT);
-      glVertex3f(                                DISTANCE_SCANNER_RADIUS, -DISTANCE_SCANNER_SENSOR_HALF_WIDTH, DISTANCE_SCANNER_ELEVATION);
+      glVertex3d(                                DISTANCE_SCANNER_RADIUS, -DISTANCE_SCANNER_SENSOR_HALF_WIDTH, DISTANCE_SCANNER_ELEVATION + DISTANCE_SCANNER_HEIGHT);
+      glVertex3d(                                DISTANCE_SCANNER_RADIUS, -DISTANCE_SCANNER_SENSOR_HALF_WIDTH, DISTANCE_SCANNER_ELEVATION);
       /* East face */
-      glNormal3f(1.0f, 0.0f, 0.0f);
-      glVertex3f(DISTANCE_SCANNER_SENSOR_DEPTH + DISTANCE_SCANNER_RADIUS, -DISTANCE_SCANNER_SENSOR_HALF_WIDTH, DISTANCE_SCANNER_ELEVATION + DISTANCE_SCANNER_HEIGHT);
-      glVertex3f(DISTANCE_SCANNER_SENSOR_DEPTH + DISTANCE_SCANNER_RADIUS, -DISTANCE_SCANNER_SENSOR_HALF_WIDTH, DISTANCE_SCANNER_ELEVATION);
+      glNormal3d(1.0f, 0.0f, 0.0f);
+      glVertex3d(DISTANCE_SCANNER_SENSOR_DEPTH + DISTANCE_SCANNER_RADIUS, -DISTANCE_SCANNER_SENSOR_HALF_WIDTH, DISTANCE_SCANNER_ELEVATION + DISTANCE_SCANNER_HEIGHT);
+      glVertex3d(DISTANCE_SCANNER_SENSOR_DEPTH + DISTANCE_SCANNER_RADIUS, -DISTANCE_SCANNER_SENSOR_HALF_WIDTH, DISTANCE_SCANNER_ELEVATION);
       /* North face */
-      glNormal3f(0.0f, 1.0f, 0.0f);
-      glVertex3f(DISTANCE_SCANNER_SENSOR_DEPTH + DISTANCE_SCANNER_RADIUS,  DISTANCE_SCANNER_SENSOR_HALF_WIDTH, DISTANCE_SCANNER_ELEVATION + DISTANCE_SCANNER_HEIGHT);
-      glVertex3f(DISTANCE_SCANNER_SENSOR_DEPTH + DISTANCE_SCANNER_RADIUS,  DISTANCE_SCANNER_SENSOR_HALF_WIDTH, DISTANCE_SCANNER_ELEVATION);
+      glNormal3d(0.0f, 1.0f, 0.0f);
+      glVertex3d(DISTANCE_SCANNER_SENSOR_DEPTH + DISTANCE_SCANNER_RADIUS,  DISTANCE_SCANNER_SENSOR_HALF_WIDTH, DISTANCE_SCANNER_ELEVATION + DISTANCE_SCANNER_HEIGHT);
+      glVertex3d(DISTANCE_SCANNER_SENSOR_DEPTH + DISTANCE_SCANNER_RADIUS,  DISTANCE_SCANNER_SENSOR_HALF_WIDTH, DISTANCE_SCANNER_ELEVATION);
       /* West face */
-      glNormal3f(-1.0f, 0.0f, 0.0f);
-      glVertex3f(                                DISTANCE_SCANNER_RADIUS,  DISTANCE_SCANNER_SENSOR_HALF_WIDTH, DISTANCE_SCANNER_ELEVATION + DISTANCE_SCANNER_HEIGHT);
-      glVertex3f(                                DISTANCE_SCANNER_RADIUS,  DISTANCE_SCANNER_SENSOR_HALF_WIDTH, DISTANCE_SCANNER_ELEVATION);
+      glNormal3d(-1.0f, 0.0f, 0.0f);
+      glVertex3d(                                DISTANCE_SCANNER_RADIUS,  DISTANCE_SCANNER_SENSOR_HALF_WIDTH, DISTANCE_SCANNER_ELEVATION + DISTANCE_SCANNER_HEIGHT);
+      glVertex3d(                                DISTANCE_SCANNER_RADIUS,  DISTANCE_SCANNER_SENSOR_HALF_WIDTH, DISTANCE_SCANNER_ELEVATION);
       glEnd();
    }
 
@@ -834,9 +834,9 @@ namespace argos {
       CVector2 cNormal(1.0f, 0.0f);
       glBegin(GL_QUAD_STRIP);
       for(GLuint i = 0; i <= m_unVertices; i++) {
-         glNormal3f(cVertex.GetX(), cVertex.GetY(), 0.0f);
-         glVertex3f(cVertex.GetX(), cVertex.GetY(), DISTANCE_SCANNER_ELEVATION + DISTANCE_SCANNER_HEIGHT);
-         glVertex3f(cVertex.GetX(), cVertex.GetY(), DISTANCE_SCANNER_ELEVATION);
+         glNormal3d(cVertex.GetX(), cVertex.GetY(), 0.0f);
+         glVertex3d(cVertex.GetX(), cVertex.GetY(), DISTANCE_SCANNER_ELEVATION + DISTANCE_SCANNER_HEIGHT);
+         glVertex3d(cVertex.GetX(), cVertex.GetY(), DISTANCE_SCANNER_ELEVATION);
          cVertex.Rotate(cAngle);
          cNormal.Rotate(cAngle);
       }
@@ -853,9 +853,9 @@ namespace argos {
       CRadians cAngle(-CRadians::TWO_PI / m_unVertices);
       /* Bottom part */
       glBegin(GL_POLYGON);
-      glNormal3f(0.0f, 0.0f, -1.0f);
+      glNormal3d(0.0f, 0.0f, -1.0f);
       for(GLuint i = 0; i <= m_unVertices; i++) {
-         glVertex3f(cVertex.GetX(), cVertex.GetY(), IMX_MODULE_ELEVATION);
+         glVertex3d(cVertex.GetX(), cVertex.GetY(), IMX_MODULE_ELEVATION);
          cVertex.Rotate(cAngle);
       }
       glEnd();
@@ -865,9 +865,9 @@ namespace argos {
       cVertex.Set(IMX_MODULE_RADIUS, 0.0f);
       glBegin(GL_QUAD_STRIP);
       for(GLuint i = 0; i <= m_unVertices; i++) {
-         glNormal3f(cNormal.GetX(), cNormal.GetY(), 0.0f);
-         glVertex3f(cVertex.GetX(), cVertex.GetY(), IMX_MODULE_ELEVATION + IMX_MODULE_HEIGHT);
-         glVertex3f(cVertex.GetX(), cVertex.GetY(), IMX_MODULE_ELEVATION);
+         glNormal3d(cNormal.GetX(), cNormal.GetY(), 0.0f);
+         glVertex3d(cVertex.GetX(), cVertex.GetY(), IMX_MODULE_ELEVATION + IMX_MODULE_HEIGHT);
+         glVertex3d(cVertex.GetX(), cVertex.GetY(), IMX_MODULE_ELEVATION);
          cVertex.Rotate(cAngle);
          cNormal.Rotate(cAngle);
       }
@@ -876,10 +876,10 @@ namespace argos {
       /* Set material */
       SetCircuitBoardMaterial();
       glBegin(GL_POLYGON);
-      glNormal3f(0.0f, 0.0f, 1.0f);
+      glNormal3d(0.0f, 0.0f, 1.0f);
       cVertex.Set(IMX_MODULE_RADIUS, 0.0f);
       for(GLuint i = 0; i <= m_unVertices; i++) {
-         glVertex3f(cVertex.GetX(), cVertex.GetY(), IMX_MODULE_ELEVATION + IMX_MODULE_HEIGHT);
+         glVertex3d(cVertex.GetX(), cVertex.GetY(), IMX_MODULE_ELEVATION + IMX_MODULE_HEIGHT);
          cVertex.Rotate(cAngle);
       }
       glEnd();
@@ -893,9 +893,9 @@ namespace argos {
       CRadians cAngle(-CRadians::TWO_PI / m_unVertices);
       /* Bottom part */
       glBegin(GL_POLYGON);
-      glNormal3f(0.0f, 0.0f, -1.0f);
+      glNormal3d(0.0f, 0.0f, -1.0f);
       for(GLuint i = 0; i <= m_unVertices; i++) {
-         glVertex3f(cVertex.GetX(), cVertex.GetY(), BEACON_ELEVATION);
+         glVertex3d(cVertex.GetX(), cVertex.GetY(), BEACON_ELEVATION);
          cVertex.Rotate(cAngle);
       }
       glEnd();
@@ -905,19 +905,19 @@ namespace argos {
       cVertex.Set(BEACON_RADIUS, 0.0f);
       glBegin(GL_QUAD_STRIP);
       for(GLuint i = 0; i <= m_unVertices; i++) {
-         glNormal3f(cNormal.GetX(), cNormal.GetY(), 0.0f);
-         glVertex3f(cVertex.GetX(), cVertex.GetY(), BEACON_ELEVATION + BEACON_HEIGHT);
-         glVertex3f(cVertex.GetX(), cVertex.GetY(), BEACON_ELEVATION);
+         glNormal3d(cNormal.GetX(), cNormal.GetY(), 0.0f);
+         glVertex3d(cVertex.GetX(), cVertex.GetY(), BEACON_ELEVATION + BEACON_HEIGHT);
+         glVertex3d(cVertex.GetX(), cVertex.GetY(), BEACON_ELEVATION);
          cVertex.Rotate(cAngle);
          cNormal.Rotate(cAngle);
       }
       glEnd();
       /* Top part */
       glBegin(GL_POLYGON);
-      glNormal3f(0.0f, 0.0f, 1.0f);
+      glNormal3d(0.0f, 0.0f, 1.0f);
       cVertex.Set(BEACON_RADIUS, 0.0f);
       for(GLuint i = 0; i <= m_unVertices; i++) {
-         glVertex3f(cVertex.GetX(), cVertex.GetY(), BEACON_ELEVATION + BEACON_HEIGHT);
+         glVertex3d(cVertex.GetX(), cVertex.GetY(), BEACON_ELEVATION + BEACON_HEIGHT);
          cVertex.Rotate(cAngle);
       }
       glEnd();
@@ -933,9 +933,9 @@ namespace argos {
       CRadians cAngle(-CRadians::TWO_PI / m_unVertices);
       /* Bottom part */
       glBegin(GL_POLYGON);
-      glNormal3f(0.0f, 0.0f, -1.0f);
+      glNormal3d(0.0f, 0.0f, -1.0f);
       for(GLuint i = 0; i <= m_unVertices; i++) {
-         glVertex3f(cVertex.GetX(), cVertex.GetY(), CAMERA_ELEVATION);
+         glVertex3d(cVertex.GetX(), cVertex.GetY(), CAMERA_ELEVATION);
          cVertex.Rotate(cAngle);
       }
       glEnd();
@@ -945,19 +945,19 @@ namespace argos {
       cVertex.Set(CAMERA_RADIUS, 0.0f);
       glBegin(GL_QUAD_STRIP);
       for(GLuint i = 0; i <= m_unVertices; i++) {
-         glNormal3f(cNormal.GetX(), cNormal.GetY(), 0.0f);
-         glVertex3f(cVertex.GetX(), cVertex.GetY(), CAMERA_ELEVATION + CAMERA_HEIGHT);
-         glVertex3f(cVertex.GetX(), cVertex.GetY(), CAMERA_ELEVATION);
+         glNormal3d(cNormal.GetX(), cNormal.GetY(), 0.0f);
+         glVertex3d(cVertex.GetX(), cVertex.GetY(), CAMERA_ELEVATION + CAMERA_HEIGHT);
+         glVertex3d(cVertex.GetX(), cVertex.GetY(), CAMERA_ELEVATION);
          cVertex.Rotate(cAngle);
          cNormal.Rotate(cAngle);
       }
       glEnd();
       /* Top part */
       glBegin(GL_POLYGON);
-      glNormal3f(0.0f, 0.0f, 1.0f);
+      glNormal3d(0.0f, 0.0f, 1.0f);
       cVertex.Set(CAMERA_RADIUS, 0.0f);
       for(GLuint i = 0; i <= m_unVertices; i++) {
-         glVertex3f(cVertex.GetX(), cVertex.GetY(), CAMERA_ELEVATION + CAMERA_HEIGHT);
+         glVertex3d(cVertex.GetX(), cVertex.GetY(), CAMERA_ELEVATION + CAMERA_HEIGHT);
          cVertex.Rotate(cAngle);
       }
       glEnd();

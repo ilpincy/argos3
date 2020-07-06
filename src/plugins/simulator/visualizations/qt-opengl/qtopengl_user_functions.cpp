@@ -26,11 +26,11 @@ namespace argos {
       CRadians cZAngle, cYAngle, cXAngle;
       c_orientation.ToEulerAngles(cZAngle, cYAngle, cXAngle);
       /* Translate */
-      glTranslatef(c_position.GetX(), c_position.GetY(), c_position.GetZ());
+      glTranslated(c_position.GetX(), c_position.GetY(), c_position.GetZ());
       /* Rotate */
-      glRotatef(ToDegrees(cXAngle).GetValue(), 1.0f, 0.0f, 0.0f);
-      glRotatef(ToDegrees(cYAngle).GetValue(), 0.0f, 1.0f, 0.0f);
-      glRotatef(ToDegrees(cZAngle).GetValue(), 0.0f, 0.0f, 1.0f);
+      glRotated(ToDegrees(cXAngle).GetValue(), 1.0f, 0.0f, 0.0f);
+      glRotated(ToDegrees(cYAngle).GetValue(), 0.0f, 1.0f, 0.0f);
+      glRotated(ToDegrees(cZAngle).GetValue(), 0.0f, 0.0f, 1.0f);
    }
 
    /****************************************/
@@ -135,11 +135,11 @@ namespace argos {
       /* Set color */
       SetColor(c_color);
       /* Set point attributes */
-      glPointSize(f_diameter);
+      glPointSize(static_cast<GLfloat>(f_diameter));
       glEnable(GL_POINT_SMOOTH);
       /* Draw */
       glBegin(GL_POINTS);
-      glVertex3f(c_position.GetX(), c_position.GetY(), c_position.GetZ());
+      glVertex3d(c_position.GetX(), c_position.GetY(), c_position.GetZ());
       glEnd();
       /* Restore saved attributes */
       glPopAttrib();
@@ -168,10 +168,10 @@ namespace argos {
       Rototranslate(c_position, c_orientation);
       /*  Draw */
       glBegin(GL_TRIANGLES);
-      glNormal3f(0.0f, 0.0f, 1.0f);
-      glVertex3f(-f_base * 0.5f,     0.0f, 0.0f);
-      glVertex3f( f_base * 0.5f,     0.0f, 0.0f);
-      glVertex3f(          0.0f, f_height, 0.0f);
+      glNormal3d(0.0f, 0.0f, 1.0f);
+      glVertex3d(-f_base * 0.5f,     0.0f, 0.0f);
+      glVertex3d( f_base * 0.5f,     0.0f, 0.0f);
+      glVertex3d(          0.0f, f_height, 0.0f);
       glEnd();
       /* Restore saved stuff */
       glPopMatrix();
@@ -203,13 +203,13 @@ namespace argos {
       Rototranslate(c_position, c_orientation);
       /*  Draw */
       glBegin(GL_POLYGON);
-      glNormal3f(0.0f, 0.0f, 1.0f);
+      glNormal3d(0.0f, 0.0f, 1.0f);
       for(size_t i = 0; i < vec_points.size(); ++i) {
-         glVertex3f(vec_points[i].GetX(), vec_points[i].GetY(), 0.0f);
+         glVertex3d(vec_points[i].GetX(), vec_points[i].GetY(), 0.0f);
       }
       glEnd();
       /* Reset translation */
-      glTranslatef(-c_position.GetX(), -c_position.GetY(), -c_position.GetZ());
+      glTranslated(-c_position.GetX(), -c_position.GetY(), -c_position.GetZ());
       /* Restore saved stuff */
       glPopAttrib();
    }
@@ -239,9 +239,9 @@ namespace argos {
 	    CVector2 cVertex(f_radius, 0.0f);
 	    CRadians cAngle(CRadians::TWO_PI / un_vertices);
       glBegin(GL_POLYGON);
-      glNormal3f(0.0f, 0.0f, 1.0f);
+      glNormal3d(0.0f, 0.0f, 1.0f);
       for(size_t i = 0; i < un_vertices; ++i) {
-         glVertex3f(cVertex.GetX(), cVertex.GetY(), 0.0f);
+         glVertex3d(cVertex.GetX(), cVertex.GetY(), 0.0f);
          cVertex.Rotate(cAngle);
       }
       glEnd();
@@ -271,18 +271,18 @@ namespace argos {
       CRadians cAngle(CRadians::TWO_PI / un_vertices);
       glBegin(GL_QUAD_STRIP);
       for(GLuint i = 0; i <= un_vertices; i++) {
-         glNormal3f(cVertex.GetX(), cVertex.GetY(), 0.0f);
-         glVertex3f(cVertex.GetX() * f_radius, cVertex.GetY() * f_radius,  fHalfHeight);
-         glVertex3f(cVertex.GetX() * f_radius, cVertex.GetY() * f_radius, -fHalfHeight);
+         glNormal3d(cVertex.GetX(), cVertex.GetY(), 0.0f);
+         glVertex3d(cVertex.GetX() * f_radius, cVertex.GetY() * f_radius,  fHalfHeight);
+         glVertex3d(cVertex.GetX() * f_radius, cVertex.GetY() * f_radius, -fHalfHeight);
          cVertex.Rotate(cAngle);
       }
       glEnd();
       /* Draw top disk */
       cVertex.Set(f_radius, 0.0f);
       glBegin(GL_POLYGON);
-      glNormal3f(0.0f, 0.0f, 1.0f);
+      glNormal3d(0.0f, 0.0f, 1.0f);
       for(GLuint i = 0; i <= un_vertices; i++) {
-         glVertex3f(cVertex.GetX(), cVertex.GetY(), fHalfHeight);
+         glVertex3d(cVertex.GetX(), cVertex.GetY(), fHalfHeight);
          cVertex.Rotate(cAngle);
       }
       glEnd();
@@ -290,9 +290,9 @@ namespace argos {
       cVertex.Set(f_radius, 0.0f);
       cAngle = -cAngle;
       glBegin(GL_POLYGON);
-      glNormal3f(0.0f, 0.0f, -1.0f);
+      glNormal3d(0.0f, 0.0f, -1.0f);
       for(GLuint i = 0; i <= un_vertices; i++) {
-         glVertex3f(cVertex.GetX(), cVertex.GetY(), -fHalfHeight);
+         glVertex3d(cVertex.GetX(), cVertex.GetY(), -fHalfHeight);
          cVertex.Rotate(cAngle);
       }
       glEnd();
@@ -317,44 +317,44 @@ namespace argos {
       CVector3 cHalfSize = c_size * 0.5f;
       glBegin(GL_QUADS);
       /* Bottom face */
-      glNormal3f(0.0f, 0.0f, -1.0f);
-      glVertex3f( cHalfSize.GetX(),  cHalfSize.GetY(), -cHalfSize.GetZ());
-      glVertex3f( cHalfSize.GetX(), -cHalfSize.GetY(), -cHalfSize.GetZ());
-      glVertex3f(-cHalfSize.GetX(), -cHalfSize.GetY(), -cHalfSize.GetZ());
-      glVertex3f(-cHalfSize.GetX(),  cHalfSize.GetY(), -cHalfSize.GetZ());
+      glNormal3d(0.0f, 0.0f, -1.0f);
+      glVertex3d( cHalfSize.GetX(),  cHalfSize.GetY(), -cHalfSize.GetZ());
+      glVertex3d( cHalfSize.GetX(), -cHalfSize.GetY(), -cHalfSize.GetZ());
+      glVertex3d(-cHalfSize.GetX(), -cHalfSize.GetY(), -cHalfSize.GetZ());
+      glVertex3d(-cHalfSize.GetX(),  cHalfSize.GetY(), -cHalfSize.GetZ());
       /* Top face */
-      glNormal3f(0.0f, 0.0f, 1.0f);
-      glVertex3f(-cHalfSize.GetX(), -cHalfSize.GetY(),  cHalfSize.GetZ());
-      glVertex3f( cHalfSize.GetX(), -cHalfSize.GetY(),  cHalfSize.GetZ());
-      glVertex3f( cHalfSize.GetX(),  cHalfSize.GetY(),  cHalfSize.GetZ());
-      glVertex3f(-cHalfSize.GetX(),  cHalfSize.GetY(),  cHalfSize.GetZ());
+      glNormal3d(0.0f, 0.0f, 1.0f);
+      glVertex3d(-cHalfSize.GetX(), -cHalfSize.GetY(),  cHalfSize.GetZ());
+      glVertex3d( cHalfSize.GetX(), -cHalfSize.GetY(),  cHalfSize.GetZ());
+      glVertex3d( cHalfSize.GetX(),  cHalfSize.GetY(),  cHalfSize.GetZ());
+      glVertex3d(-cHalfSize.GetX(),  cHalfSize.GetY(),  cHalfSize.GetZ());
       glEnd();
       /* Draw the other faces (South, East, North, West) */
       glBegin(GL_QUADS);
       /* North face */
-      glNormal3f(1.0f, 0.0f, 0.0f);
-      glVertex3f( cHalfSize.GetX(), -cHalfSize.GetY(), -cHalfSize.GetZ());
-      glVertex3f( cHalfSize.GetX(),  cHalfSize.GetY(), -cHalfSize.GetZ());
-      glVertex3f( cHalfSize.GetX(),  cHalfSize.GetY(),  cHalfSize.GetZ());
-      glVertex3f( cHalfSize.GetX(), -cHalfSize.GetY(),  cHalfSize.GetZ());
+      glNormal3d(1.0f, 0.0f, 0.0f);
+      glVertex3d( cHalfSize.GetX(), -cHalfSize.GetY(), -cHalfSize.GetZ());
+      glVertex3d( cHalfSize.GetX(),  cHalfSize.GetY(), -cHalfSize.GetZ());
+      glVertex3d( cHalfSize.GetX(),  cHalfSize.GetY(),  cHalfSize.GetZ());
+      glVertex3d( cHalfSize.GetX(), -cHalfSize.GetY(),  cHalfSize.GetZ());
       /* South face */
-      glNormal3f(-1.0f, 0.0f, 0.0f);
-      glVertex3f(-cHalfSize.GetX(), -cHalfSize.GetY(), -cHalfSize.GetZ());
-      glVertex3f(-cHalfSize.GetX(), -cHalfSize.GetY(),  cHalfSize.GetZ());
-      glVertex3f(-cHalfSize.GetX(),  cHalfSize.GetY(),  cHalfSize.GetZ());
-      glVertex3f(-cHalfSize.GetX(),  cHalfSize.GetY(), -cHalfSize.GetZ());
+      glNormal3d(-1.0f, 0.0f, 0.0f);
+      glVertex3d(-cHalfSize.GetX(), -cHalfSize.GetY(), -cHalfSize.GetZ());
+      glVertex3d(-cHalfSize.GetX(), -cHalfSize.GetY(),  cHalfSize.GetZ());
+      glVertex3d(-cHalfSize.GetX(),  cHalfSize.GetY(),  cHalfSize.GetZ());
+      glVertex3d(-cHalfSize.GetX(),  cHalfSize.GetY(), -cHalfSize.GetZ());
       /* East face */
-      glNormal3f(0.0f, -1.0f, 0.0f);
-      glVertex3f(-cHalfSize.GetX(), -cHalfSize.GetY(), -cHalfSize.GetZ());
-      glVertex3f( cHalfSize.GetX(), -cHalfSize.GetY(), -cHalfSize.GetZ());
-      glVertex3f( cHalfSize.GetX(), -cHalfSize.GetY(),  cHalfSize.GetZ());
-      glVertex3f(-cHalfSize.GetX(), -cHalfSize.GetY(),  cHalfSize.GetZ());
+      glNormal3d(0.0f, -1.0f, 0.0f);
+      glVertex3d(-cHalfSize.GetX(), -cHalfSize.GetY(), -cHalfSize.GetZ());
+      glVertex3d( cHalfSize.GetX(), -cHalfSize.GetY(), -cHalfSize.GetZ());
+      glVertex3d( cHalfSize.GetX(), -cHalfSize.GetY(),  cHalfSize.GetZ());
+      glVertex3d(-cHalfSize.GetX(), -cHalfSize.GetY(),  cHalfSize.GetZ());
       /* West face */
-      glNormal3f(0.0f, 1.0f, 0.0f);
-      glVertex3f(-cHalfSize.GetX(),  cHalfSize.GetY(), -cHalfSize.GetZ());
-      glVertex3f(-cHalfSize.GetX(),  cHalfSize.GetY(),  cHalfSize.GetZ());
-      glVertex3f( cHalfSize.GetX(),  cHalfSize.GetY(),  cHalfSize.GetZ());
-      glVertex3f( cHalfSize.GetX(),  cHalfSize.GetY(), -cHalfSize.GetZ());
+      glNormal3d(0.0f, 1.0f, 0.0f);
+      glVertex3d(-cHalfSize.GetX(),  cHalfSize.GetY(), -cHalfSize.GetZ());
+      glVertex3d(-cHalfSize.GetX(),  cHalfSize.GetY(),  cHalfSize.GetZ());
+      glVertex3d( cHalfSize.GetX(),  cHalfSize.GetY(),  cHalfSize.GetZ());
+      glVertex3d( cHalfSize.GetX(),  cHalfSize.GetY(), -cHalfSize.GetZ());
       glEnd();
       /* Restore saved matrix */
       glPopMatrix();
@@ -370,7 +370,7 @@ namespace argos {
       glPushAttrib(GL_LINE_BIT | GL_ENABLE_BIT);
       /* Set line attributes */
       glEnable(GL_LINE_SMOOTH);
-      glLineWidth(f_width);
+      glLineWidth(static_cast<GLfloat>(f_width));
       /* Unset lighting */
       glDisable(GL_LIGHTING);
       glDisable(GL_COLOR_MATERIAL);
@@ -378,8 +378,8 @@ namespace argos {
       glColor3ub(c_color.GetRed(), c_color.GetGreen(), c_color.GetBlue());
       /* Draw ray */
       glBegin(GL_LINES);
-      glVertex3f(c_ray.GetStart().GetX(), c_ray.GetStart().GetY(), c_ray.GetStart().GetZ());
-      glVertex3f(c_ray.GetEnd().GetX(), c_ray.GetEnd().GetY(), c_ray.GetEnd().GetZ());
+      glVertex3d(c_ray.GetStart().GetX(), c_ray.GetStart().GetY(), c_ray.GetStart().GetZ());
+      glVertex3d(c_ray.GetEnd().GetX(), c_ray.GetEnd().GetY(), c_ray.GetEnd().GetZ());
       glEnd();
       /* Restore saved stuff */
       glPopAttrib();
@@ -475,7 +475,9 @@ namespace argos {
       /* Set font */
       cPainter.setFont(c_font);
       /* Render text */
-      cPainter.drawText(pf_v2[0], pf_v2[1], str_text.c_str());
+      cPainter.drawText(static_cast<UInt32>(pf_v2[0]),
+                        static_cast<UInt32>(pf_v2[1]),
+                        str_text.c_str());
       /* Dispose of Qt screen painter */
       cPainter.end();
       /* Restore saved attributes */

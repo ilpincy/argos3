@@ -96,23 +96,23 @@ namespace argos {
       SetBodyMaterial();
       /* Place the legs */
       glPushMatrix();
-      glRotatef(45.0f, 0.0f, 0.0f, 1.0f);
-      glTranslatef(RING_OUTER_RADIUS, 0.0f, 0.0f);
+      glRotated(45.0f, 0.0f, 0.0f, 1.0f);
+      glTranslated(RING_OUTER_RADIUS, 0.0f, 0.0f);
       glCallList(m_unLegList);
       glPopMatrix();
       glPushMatrix();
-      glRotatef(135.0f, 0.0f, 0.0f, 1.0f);
-      glTranslatef(RING_OUTER_RADIUS, 0.0f, 0.0f);
+      glRotated(135.0f, 0.0f, 0.0f, 1.0f);
+      glTranslated(RING_OUTER_RADIUS, 0.0f, 0.0f);
       glCallList(m_unLegList);
       glPopMatrix();
       glPushMatrix();
-      glRotatef(225.0f, 0.0f, 0.0f, 1.0f);
-      glTranslatef(RING_OUTER_RADIUS, 0.0f, 0.0f);
+      glRotated(225.0f, 0.0f, 0.0f, 1.0f);
+      glTranslated(RING_OUTER_RADIUS, 0.0f, 0.0f);
       glCallList(m_unLegList);
       glPopMatrix();
       glPushMatrix();
-      glRotatef(315.0f, 0.0f, 0.0f, 1.0f);
-      glTranslatef(RING_OUTER_RADIUS, 0.0f, 0.0f);
+      glRotated(315.0f, 0.0f, 0.0f, 1.0f);
+      glTranslated(RING_OUTER_RADIUS, 0.0f, 0.0f);
       glCallList(m_unLegList);
       glPopMatrix();
       /* Place the body */
@@ -120,32 +120,32 @@ namespace argos {
       /* Place the LEDs */
       glPushMatrix();
       CLEDEquippedEntity& cLEDEquippedEntity = c_entity.GetLEDEquippedEntity();
-      glRotatef(m_fLEDAngleSlice * 0.5f, 0.0f, 0.0f, 1.0f);
-      const CColor& cUpColor = cLEDEquippedEntity.GetLED(0).GetColor();
-      const CColor& cLowColor = cLEDEquippedEntity.GetLED(16).GetColor();
-      SetLEDMaterial(cUpColor.GetRed(),
-                     cUpColor.GetGreen(),
-                     cUpColor.GetBlue());
+      glRotated(m_fLEDAngleSlice * 0.5f, 0.0f, 0.0f, 1.0f);
+      const CColor& cUpColor0 = cLEDEquippedEntity.GetLED(0).GetColor();
+      const CColor& cLowColor16 = cLEDEquippedEntity.GetLED(16).GetColor();
+      SetLEDMaterial(cUpColor0.GetRed(),
+                     cUpColor0.GetGreen(),
+                     cUpColor0.GetBlue());
       glCallList(m_unSideLEDList);
-      SetLEDMaterial(cLowColor.GetRed(),
-                     cLowColor.GetGreen(),
-                     cLowColor.GetBlue());
+      SetLEDMaterial(cLowColor16.GetRed(),
+                     cLowColor16.GetGreen(),
+                     cLowColor16.GetBlue());
       glCallList(m_unBottomLEDList);
       for(UInt32 i = 1; i < 16; i++) {
-         glRotatef(m_fLEDAngleSlice, 0.0f, 0.0f, 1.0f);
-         const CColor& cUpColor = cLEDEquippedEntity.GetLED(i).GetColor();
-         const CColor& cLowColor = cLEDEquippedEntity.GetLED(i+16).GetColor();
-         SetLEDMaterial(cUpColor.GetRed(),
-                        cUpColor.GetGreen(),
-                        cUpColor.GetBlue());
+         glRotated(m_fLEDAngleSlice, 0.0f, 0.0f, 1.0f);
+         const CColor& cUpColori = cLEDEquippedEntity.GetLED(i).GetColor();
+         const CColor& cLowColori = cLEDEquippedEntity.GetLED(i+16).GetColor();
+         SetLEDMaterial(cUpColori.GetRed(),
+                        cUpColori.GetGreen(),
+                        cUpColori.GetBlue());
          glCallList(m_unSideLEDList);
-         SetLEDMaterial(cLowColor.GetRed(),
-                        cLowColor.GetGreen(),
-                        cLowColor.GetBlue());
+         SetLEDMaterial(cLowColori.GetRed(),
+                        cLowColori.GetGreen(),
+                        cLowColori.GetBlue());
          glCallList(m_unBottomLEDList);
       }
-      glRotatef(135.0f, 0.0f, 0.0f, 1.0f);
-      glTranslatef(-0.3*RING_OUTER_RADIUS, 0.0f, 0.0f);
+      glRotated(135.0f, 0.0f, 0.0f, 1.0f);
+      glTranslated(-0.3*RING_OUTER_RADIUS, 0.0f, 0.0f);
       const CColor& cBottomLedColor = cLEDEquippedEntity.GetLED(32).GetColor();
       SetLEDMaterial(cBottomLedColor.GetRed(),
                      cBottomLedColor.GetGreen(),
@@ -188,41 +188,41 @@ namespace argos {
    void CQTOpenGLEyeBot::MakeLeg() {
       /* Top face */
       glBegin(GL_QUADS);
-      glNormal3f(0.0f, 0.0f, 1.0f);
-      glVertex3f(-LEG_HALF_WIDTH, -LEG_HALF_DEPTH, LEG_HEIGHT);
-      glVertex3f( LEG_HALF_WIDTH, -LEG_HALF_DEPTH, LEG_HEIGHT);
-      glVertex3f( LEG_HALF_WIDTH,  LEG_HALF_DEPTH, LEG_HEIGHT);
-      glVertex3f(-LEG_HALF_WIDTH,  LEG_HALF_DEPTH, LEG_HEIGHT);
+      glNormal3d(0.0f, 0.0f, 1.0f);
+      glVertex3d(-LEG_HALF_WIDTH, -LEG_HALF_DEPTH, LEG_HEIGHT);
+      glVertex3d( LEG_HALF_WIDTH, -LEG_HALF_DEPTH, LEG_HEIGHT);
+      glVertex3d( LEG_HALF_WIDTH,  LEG_HALF_DEPTH, LEG_HEIGHT);
+      glVertex3d(-LEG_HALF_WIDTH,  LEG_HALF_DEPTH, LEG_HEIGHT);
       glEnd();
       /* Bottom face */
       glBegin(GL_QUADS);
-      glNormal3f(0.0f, 0.0f, -1.0f);
-      glVertex3f(-LEG_HALF_WIDTH, -LEG_HALF_DEPTH, 0.0f);
-      glVertex3f(-LEG_HALF_WIDTH,  LEG_HALF_DEPTH, 0.0f);
-      glVertex3f( LEG_HALF_WIDTH,  LEG_HALF_DEPTH, 0.0f);
-      glVertex3f( LEG_HALF_WIDTH, -LEG_HALF_DEPTH, 0.0f);
+      glNormal3d(0.0f, 0.0f, -1.0f);
+      glVertex3d(-LEG_HALF_WIDTH, -LEG_HALF_DEPTH, 0.0f);
+      glVertex3d(-LEG_HALF_WIDTH,  LEG_HALF_DEPTH, 0.0f);
+      glVertex3d( LEG_HALF_WIDTH,  LEG_HALF_DEPTH, 0.0f);
+      glVertex3d( LEG_HALF_WIDTH, -LEG_HALF_DEPTH, 0.0f);
       glEnd();
       /* This part covers the faces (South, East, North, West) */
       glBegin(GL_QUAD_STRIP);
       /* Starting vertex */
-      glNormal3f(0.0f, -1.0f, 0.0f);
-      glVertex3f(-LEG_HALF_WIDTH, -LEG_HALF_DEPTH, LEG_HEIGHT);
-      glVertex3f(-LEG_HALF_WIDTH, -LEG_HALF_DEPTH, 0.0f);
+      glNormal3d(0.0f, -1.0f, 0.0f);
+      glVertex3d(-LEG_HALF_WIDTH, -LEG_HALF_DEPTH, LEG_HEIGHT);
+      glVertex3d(-LEG_HALF_WIDTH, -LEG_HALF_DEPTH, 0.0f);
       /* South face */
-      glVertex3f( LEG_HALF_WIDTH, -LEG_HALF_DEPTH, LEG_HEIGHT);
-      glVertex3f( LEG_HALF_WIDTH, -LEG_HALF_DEPTH, 0.0f);
+      glVertex3d( LEG_HALF_WIDTH, -LEG_HALF_DEPTH, LEG_HEIGHT);
+      glVertex3d( LEG_HALF_WIDTH, -LEG_HALF_DEPTH, 0.0f);
       /* East face */
-      glNormal3f(1.0f, 0.0f, 0.0f);
-      glVertex3f( LEG_HALF_WIDTH,  LEG_HALF_DEPTH, LEG_HEIGHT);
-      glVertex3f( LEG_HALF_WIDTH,  LEG_HALF_DEPTH, 0.0f);
+      glNormal3d(1.0f, 0.0f, 0.0f);
+      glVertex3d( LEG_HALF_WIDTH,  LEG_HALF_DEPTH, LEG_HEIGHT);
+      glVertex3d( LEG_HALF_WIDTH,  LEG_HALF_DEPTH, 0.0f);
       /* North face */
-      glNormal3f(0.0f, 1.0f, 0.0f);
-      glVertex3f(-LEG_HALF_WIDTH,  LEG_HALF_DEPTH, LEG_HEIGHT);
-      glVertex3f(-LEG_HALF_WIDTH,  LEG_HALF_DEPTH, 0.0f);
+      glNormal3d(0.0f, 1.0f, 0.0f);
+      glVertex3d(-LEG_HALF_WIDTH,  LEG_HALF_DEPTH, LEG_HEIGHT);
+      glVertex3d(-LEG_HALF_WIDTH,  LEG_HALF_DEPTH, 0.0f);
       /* West face */
-      glNormal3f(-1.0f, 0.0f, 0.0f);
-      glVertex3f(-LEG_HALF_WIDTH, -LEG_HALF_DEPTH, LEG_HEIGHT);
-      glVertex3f(-LEG_HALF_WIDTH, -LEG_HALF_DEPTH, 0.0f);
+      glNormal3d(-1.0f, 0.0f, 0.0f);
+      glVertex3d(-LEG_HALF_WIDTH, -LEG_HALF_DEPTH, LEG_HEIGHT);
+      glVertex3d(-LEG_HALF_WIDTH, -LEG_HALF_DEPTH, 0.0f);
       glEnd();
    }
 
@@ -234,21 +234,21 @@ namespace argos {
          (with no base, cause it's not visible anyway) */
       glBegin(GL_TRIANGLES);
       /* Top */
-      glVertex3f(LED_HEIGHT + RING_OUTER_RADIUS,           0.0f, LED_SIDE_RING_ELEVATION                );
-      glVertex3f(             RING_OUTER_RADIUS,  LED_HALF_SIDE, LED_SIDE_RING_ELEVATION + LED_HALF_SIDE);
-      glVertex3f(             RING_OUTER_RADIUS, -LED_HALF_SIDE, LED_SIDE_RING_ELEVATION + LED_HALF_SIDE);
+      glVertex3d(LED_HEIGHT + RING_OUTER_RADIUS,           0.0f, LED_SIDE_RING_ELEVATION                );
+      glVertex3d(             RING_OUTER_RADIUS,  LED_HALF_SIDE, LED_SIDE_RING_ELEVATION + LED_HALF_SIDE);
+      glVertex3d(             RING_OUTER_RADIUS, -LED_HALF_SIDE, LED_SIDE_RING_ELEVATION + LED_HALF_SIDE);
       /* Bottom */
-      glVertex3f(LED_HEIGHT + RING_OUTER_RADIUS,           0.0f, LED_SIDE_RING_ELEVATION                );
-      glVertex3f(             RING_OUTER_RADIUS, -LED_HALF_SIDE, LED_SIDE_RING_ELEVATION - LED_HALF_SIDE);
-      glVertex3f(             RING_OUTER_RADIUS,  LED_HALF_SIDE, LED_SIDE_RING_ELEVATION - LED_HALF_SIDE);
+      glVertex3d(LED_HEIGHT + RING_OUTER_RADIUS,           0.0f, LED_SIDE_RING_ELEVATION                );
+      glVertex3d(             RING_OUTER_RADIUS, -LED_HALF_SIDE, LED_SIDE_RING_ELEVATION - LED_HALF_SIDE);
+      glVertex3d(             RING_OUTER_RADIUS,  LED_HALF_SIDE, LED_SIDE_RING_ELEVATION - LED_HALF_SIDE);
       /* Left */
-      glVertex3f(LED_HEIGHT + RING_OUTER_RADIUS,           0.0f, LED_SIDE_RING_ELEVATION                );
-      glVertex3f(             RING_OUTER_RADIUS,  LED_HALF_SIDE, LED_SIDE_RING_ELEVATION - LED_HALF_SIDE);
-      glVertex3f(             RING_OUTER_RADIUS,  LED_HALF_SIDE, LED_SIDE_RING_ELEVATION + LED_HALF_SIDE);
+      glVertex3d(LED_HEIGHT + RING_OUTER_RADIUS,           0.0f, LED_SIDE_RING_ELEVATION                );
+      glVertex3d(             RING_OUTER_RADIUS,  LED_HALF_SIDE, LED_SIDE_RING_ELEVATION - LED_HALF_SIDE);
+      glVertex3d(             RING_OUTER_RADIUS,  LED_HALF_SIDE, LED_SIDE_RING_ELEVATION + LED_HALF_SIDE);
       /* Right */
-      glVertex3f(LED_HEIGHT + RING_OUTER_RADIUS,           0.0f, LED_SIDE_RING_ELEVATION                );
-      glVertex3f(             RING_OUTER_RADIUS, -LED_HALF_SIDE, LED_SIDE_RING_ELEVATION + LED_HALF_SIDE);
-      glVertex3f(             RING_OUTER_RADIUS, -LED_HALF_SIDE, LED_SIDE_RING_ELEVATION - LED_HALF_SIDE);
+      glVertex3d(LED_HEIGHT + RING_OUTER_RADIUS,           0.0f, LED_SIDE_RING_ELEVATION                );
+      glVertex3d(             RING_OUTER_RADIUS, -LED_HALF_SIDE, LED_SIDE_RING_ELEVATION + LED_HALF_SIDE);
+      glVertex3d(             RING_OUTER_RADIUS, -LED_HALF_SIDE, LED_SIDE_RING_ELEVATION - LED_HALF_SIDE);
       glEnd();
    }
 
@@ -260,21 +260,21 @@ namespace argos {
          (with no base, cause it's not visible anyway) */
       glBegin(GL_TRIANGLES);
       /* North */
-      glVertex3f(LED_BOTTOM_RING_DISTANCE, 0.0f, LED_BOTTOM_RING_ELEVATION);
-      glVertex3f(RING_OUTER_RADIUS,  LED_HALF_SIDE, RING_ELEVATION);
-      glVertex3f(RING_OUTER_RADIUS, -LED_HALF_SIDE, RING_ELEVATION);
+      glVertex3d(LED_BOTTOM_RING_DISTANCE, 0.0f, LED_BOTTOM_RING_ELEVATION);
+      glVertex3d(RING_OUTER_RADIUS,  LED_HALF_SIDE, RING_ELEVATION);
+      glVertex3d(RING_OUTER_RADIUS, -LED_HALF_SIDE, RING_ELEVATION);
       /* South */
-      glVertex3f(LED_BOTTOM_RING_DISTANCE, 0.0f, LED_BOTTOM_RING_ELEVATION);
-      glVertex3f(RING_OUTER_RADIUS - LED_SIDE, -LED_HALF_SIDE, RING_ELEVATION);
-      glVertex3f(RING_OUTER_RADIUS - LED_SIDE,  LED_HALF_SIDE, RING_ELEVATION);
+      glVertex3d(LED_BOTTOM_RING_DISTANCE, 0.0f, LED_BOTTOM_RING_ELEVATION);
+      glVertex3d(RING_OUTER_RADIUS - LED_SIDE, -LED_HALF_SIDE, RING_ELEVATION);
+      glVertex3d(RING_OUTER_RADIUS - LED_SIDE,  LED_HALF_SIDE, RING_ELEVATION);
       /* West */
-      glVertex3f(LED_BOTTOM_RING_DISTANCE, 0.0f, LED_BOTTOM_RING_ELEVATION);
-      glVertex3f(RING_OUTER_RADIUS - LED_SIDE, LED_HALF_SIDE, RING_ELEVATION);
-      glVertex3f(RING_OUTER_RADIUS           , LED_HALF_SIDE, RING_ELEVATION);
+      glVertex3d(LED_BOTTOM_RING_DISTANCE, 0.0f, LED_BOTTOM_RING_ELEVATION);
+      glVertex3d(RING_OUTER_RADIUS - LED_SIDE, LED_HALF_SIDE, RING_ELEVATION);
+      glVertex3d(RING_OUTER_RADIUS           , LED_HALF_SIDE, RING_ELEVATION);
       /* East */
-      glVertex3f(LED_BOTTOM_RING_DISTANCE, 0.0f, LED_BOTTOM_RING_ELEVATION);
-      glVertex3f(RING_OUTER_RADIUS           , -LED_HALF_SIDE, RING_ELEVATION);
-      glVertex3f(RING_OUTER_RADIUS - LED_SIDE, -LED_HALF_SIDE, RING_ELEVATION);
+      glVertex3d(LED_BOTTOM_RING_DISTANCE, 0.0f, LED_BOTTOM_RING_ELEVATION);
+      glVertex3d(RING_OUTER_RADIUS           , -LED_HALF_SIDE, RING_ELEVATION);
+      glVertex3d(RING_OUTER_RADIUS - LED_SIDE, -LED_HALF_SIDE, RING_ELEVATION);
       glEnd();
    }
 
@@ -287,9 +287,9 @@ namespace argos {
       CRadians cAngle(-CRadians::TWO_PI / m_unVertices);
       /* Bottom part */
       glBegin(GL_POLYGON);
-      glNormal3f(0.0f, 0.0f, -1.0f);
+      glNormal3d(0.0f, 0.0f, -1.0f);
       for(GLuint i = 0; i <= m_unVertices; i++) {
-         glVertex3f(cVertex.GetX(), cVertex.GetY(), RING_ELEVATION);
+         glVertex3d(cVertex.GetX(), cVertex.GetY(), RING_ELEVATION);
          cVertex.Rotate(cAngle);
       }
       glEnd();
@@ -299,52 +299,52 @@ namespace argos {
       cVertex.Set(RING_OUTER_RADIUS, 0.0f);
       glBegin(GL_QUAD_STRIP);
       for(GLuint i = 0; i <= m_unVertices; i++) {
-         glNormal3f(cNormal.GetX(), cNormal.GetY(), 0.0f);
-         glVertex3f(cVertex.GetX(), cVertex.GetY(), RING_ELEVATION + RING_HEIGHT);
-         glVertex3f(cVertex.GetX(), cVertex.GetY(), RING_ELEVATION);
+         glNormal3d(cNormal.GetX(), cNormal.GetY(), 0.0f);
+         glVertex3d(cVertex.GetX(), cVertex.GetY(), RING_ELEVATION + RING_HEIGHT);
+         glVertex3d(cVertex.GetX(), cVertex.GetY(), RING_ELEVATION);
          cVertex.Rotate(cAngle);
          cNormal.Rotate(cAngle);
       }
       glEnd();
       /* Top part */
       glBegin(GL_POLYGON);
-      glNormal3f(0.0f, 0.0f, 1.0f);
+      glNormal3d(0.0f, 0.0f, 1.0f);
       cVertex.Set(RING_OUTER_RADIUS, 0.0f);
       for(GLuint i = 0; i <= m_unVertices; i++) {
-         glVertex3f(cVertex.GetX(), cVertex.GetY(), RING_ELEVATION + RING_HEIGHT);
+         glVertex3d(cVertex.GetX(), cVertex.GetY(), RING_ELEVATION + RING_HEIGHT);
          cVertex.Rotate(cAngle);
       }
       glEnd();
       /* Draw the rod */
       /* Top face */
       glBegin(GL_QUADS);
-      glNormal3f(0.0f, 0.0f, 1.0f);
-      glVertex3f(-ROD_HALF_SIDE, -ROD_HALF_SIDE, ROD_ELEVATION+ROD_HEIGHT);
-      glVertex3f( ROD_HALF_SIDE, -ROD_HALF_SIDE, ROD_ELEVATION+ROD_HEIGHT);
-      glVertex3f( ROD_HALF_SIDE,  ROD_HALF_SIDE, ROD_ELEVATION+ROD_HEIGHT);
-      glVertex3f(-ROD_HALF_SIDE,  ROD_HALF_SIDE, ROD_ELEVATION+ROD_HEIGHT);
+      glNormal3d(0.0f, 0.0f, 1.0f);
+      glVertex3d(-ROD_HALF_SIDE, -ROD_HALF_SIDE, ROD_ELEVATION+ROD_HEIGHT);
+      glVertex3d( ROD_HALF_SIDE, -ROD_HALF_SIDE, ROD_ELEVATION+ROD_HEIGHT);
+      glVertex3d( ROD_HALF_SIDE,  ROD_HALF_SIDE, ROD_ELEVATION+ROD_HEIGHT);
+      glVertex3d(-ROD_HALF_SIDE,  ROD_HALF_SIDE, ROD_ELEVATION+ROD_HEIGHT);
       glEnd();
       /* This part covers the faces (South, East, North, West) */
       glBegin(GL_QUAD_STRIP);
       /* Starting vertex */
-      glNormal3f(0.0f, -1.0f, 0.0f);
-      glVertex3f(-ROD_HALF_SIDE, -ROD_HALF_SIDE, ROD_ELEVATION+ROD_HEIGHT);
-      glVertex3f(-ROD_HALF_SIDE, -ROD_HALF_SIDE, ROD_ELEVATION);
+      glNormal3d(0.0f, -1.0f, 0.0f);
+      glVertex3d(-ROD_HALF_SIDE, -ROD_HALF_SIDE, ROD_ELEVATION+ROD_HEIGHT);
+      glVertex3d(-ROD_HALF_SIDE, -ROD_HALF_SIDE, ROD_ELEVATION);
       /* South face */
-      glVertex3f( ROD_HALF_SIDE, -ROD_HALF_SIDE, ROD_ELEVATION+ROD_HEIGHT);
-      glVertex3f( ROD_HALF_SIDE, -ROD_HALF_SIDE, ROD_ELEVATION);
+      glVertex3d( ROD_HALF_SIDE, -ROD_HALF_SIDE, ROD_ELEVATION+ROD_HEIGHT);
+      glVertex3d( ROD_HALF_SIDE, -ROD_HALF_SIDE, ROD_ELEVATION);
       /* East face */
-      glNormal3f(1.0f, 0.0f, 0.0f);
-      glVertex3f( ROD_HALF_SIDE,  ROD_HALF_SIDE, ROD_ELEVATION+ROD_HEIGHT);
-      glVertex3f( ROD_HALF_SIDE,  ROD_HALF_SIDE, ROD_ELEVATION);
+      glNormal3d(1.0f, 0.0f, 0.0f);
+      glVertex3d( ROD_HALF_SIDE,  ROD_HALF_SIDE, ROD_ELEVATION+ROD_HEIGHT);
+      glVertex3d( ROD_HALF_SIDE,  ROD_HALF_SIDE, ROD_ELEVATION);
       /* North face */
-      glNormal3f(0.0f, 1.0f, 0.0f);
-      glVertex3f(-ROD_HALF_SIDE,  ROD_HALF_SIDE, ROD_ELEVATION+ROD_HEIGHT);
-      glVertex3f(-ROD_HALF_SIDE,  ROD_HALF_SIDE, ROD_ELEVATION);
+      glNormal3d(0.0f, 1.0f, 0.0f);
+      glVertex3d(-ROD_HALF_SIDE,  ROD_HALF_SIDE, ROD_ELEVATION+ROD_HEIGHT);
+      glVertex3d(-ROD_HALF_SIDE,  ROD_HALF_SIDE, ROD_ELEVATION);
       /* West face */
-      glNormal3f(-1.0f, 0.0f, 0.0f);
-      glVertex3f(-ROD_HALF_SIDE, -ROD_HALF_SIDE, ROD_ELEVATION+ROD_HEIGHT);
-      glVertex3f(-ROD_HALF_SIDE, -ROD_HALF_SIDE, ROD_ELEVATION);
+      glNormal3d(-1.0f, 0.0f, 0.0f);
+      glVertex3d(-ROD_HALF_SIDE, -ROD_HALF_SIDE, ROD_ELEVATION+ROD_HEIGHT);
+      glVertex3d(-ROD_HALF_SIDE, -ROD_HALF_SIDE, ROD_ELEVATION);
       glEnd();
    }
 

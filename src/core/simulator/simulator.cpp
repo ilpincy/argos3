@@ -379,7 +379,7 @@ namespace argos {
                                          "length",
                                          fExpLength,
                                          0.0f);
-         m_unMaxSimulationClock = fExpLength * unTicksPerSec;
+         m_unMaxSimulationClock = static_cast<UInt32>(fExpLength * unTicksPerSec);
          LOG << "[INFO] Total experiment length in clock ticks = "
              << (m_unMaxSimulationClock ? ToString(m_unMaxSimulationClock) : "unlimited")
              << std::endl;

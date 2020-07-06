@@ -91,11 +91,11 @@ namespace argos {
       glCallList(m_unBodyList);
       /* Place the wheels */
       glPushMatrix();
-      glTranslatef(0.0f, HALF_INTERWHEEL_DISTANCE, 0.0f);
+      glTranslated(0.0f, HALF_INTERWHEEL_DISTANCE, 0.0f);
       glCallList(m_unWheelList);
       glPopMatrix();
       glPushMatrix();
-      glTranslatef(0.0f, -HALF_INTERWHEEL_DISTANCE, 0.0f);
+      glTranslated(0.0f, -HALF_INTERWHEEL_DISTANCE, 0.0f);
       glCallList(m_unWheelList);
       glPopMatrix();
       /* Place the LEDs */
@@ -103,7 +103,7 @@ namespace argos {
       CLEDEquippedEntity& cLEDEquippedEntity = c_entity.GetLEDEquippedEntity();
       for(UInt32 i = 0; i < 8; i++) {
          const CColor& cColor = cLEDEquippedEntity.GetLED(i).GetColor();
-         glRotatef(-m_fLEDAngleSlice, 0.0f, 0.0f, 1.0f);
+         glRotated(-m_fLEDAngleSlice, 0.0f, 0.0f, 1.0f);
          SetLEDMaterial(cColor.GetRed(),
                         cColor.GetGreen(),
                         cColor.GetBlue());
@@ -183,8 +183,8 @@ namespace argos {
       cNormal.Normalize();
       glBegin(GL_POLYGON);
       for(GLuint i = 0; i <= m_unVertices; i++) {
-         glNormal3f(cNormal.GetX(), cNormal.GetY(), cNormal.GetZ());
-         glVertex3f(cVertex.GetX(), -HALF_WHEEL_WIDTH, WHEEL_RADIUS + cVertex.GetY());
+         glNormal3d(cNormal.GetX(), cNormal.GetY(), cNormal.GetZ());
+         glVertex3d(cVertex.GetX(), -HALF_WHEEL_WIDTH, WHEEL_RADIUS + cVertex.GetY());
          cVertex.Rotate(cAngle);
          cNormal.RotateY(cAngle);
       }
@@ -196,8 +196,8 @@ namespace argos {
       cAngle = -cAngle;
       glBegin(GL_POLYGON);
       for(GLuint i = 0; i <= m_unVertices; i++) {
-         glNormal3f(cNormal.GetX(), cNormal.GetY(), cNormal.GetZ());
-         glVertex3f(cVertex.GetX(), HALF_WHEEL_WIDTH, WHEEL_RADIUS + cVertex.GetY());
+         glNormal3d(cNormal.GetX(), cNormal.GetY(), cNormal.GetZ());
+         glVertex3d(cVertex.GetX(), HALF_WHEEL_WIDTH, WHEEL_RADIUS + cVertex.GetY());
          cVertex.Rotate(cAngle);
          cNormal.RotateY(cAngle);
       }
@@ -208,9 +208,9 @@ namespace argos {
       cAngle = -cAngle;
       glBegin(GL_QUAD_STRIP);
       for(GLuint i = 0; i <= m_unVertices; i++) {
-         glNormal3f(cNormal.GetX(), cNormal.GetY(), cNormal.GetZ());
-         glVertex3f(cVertex.GetX(), -HALF_WHEEL_WIDTH, WHEEL_RADIUS + cVertex.GetY());
-         glVertex3f(cVertex.GetX(),  HALF_WHEEL_WIDTH, WHEEL_RADIUS + cVertex.GetY());
+         glNormal3d(cNormal.GetX(), cNormal.GetY(), cNormal.GetZ());
+         glVertex3d(cVertex.GetX(), -HALF_WHEEL_WIDTH, WHEEL_RADIUS + cVertex.GetY());
+         glVertex3d(cVertex.GetX(),  HALF_WHEEL_WIDTH, WHEEL_RADIUS + cVertex.GetY());
          cVertex.Rotate(cAngle);
          cNormal.RotateY(cAngle);
       }
@@ -226,33 +226,33 @@ namespace argos {
       /* This part covers the bottom face (parallel to XY) */
       glBegin(GL_QUADS);
       /* Bottom face */
-      glNormal3f(0.0f, 0.0f, -1.0f);
-      glVertex3f( HALF_CHASSIS_LENGTH,  HALF_CHASSIS_WIDTH, CHASSIS_ELEVATION);
-      glVertex3f( HALF_CHASSIS_LENGTH, -HALF_CHASSIS_WIDTH, CHASSIS_ELEVATION);
-      glVertex3f(-HALF_CHASSIS_LENGTH, -HALF_CHASSIS_WIDTH, CHASSIS_ELEVATION);
-      glVertex3f(-HALF_CHASSIS_LENGTH,  HALF_CHASSIS_WIDTH, CHASSIS_ELEVATION);
+      glNormal3d(0.0f, 0.0f, -1.0f);
+      glVertex3d( HALF_CHASSIS_LENGTH,  HALF_CHASSIS_WIDTH, CHASSIS_ELEVATION);
+      glVertex3d( HALF_CHASSIS_LENGTH, -HALF_CHASSIS_WIDTH, CHASSIS_ELEVATION);
+      glVertex3d(-HALF_CHASSIS_LENGTH, -HALF_CHASSIS_WIDTH, CHASSIS_ELEVATION);
+      glVertex3d(-HALF_CHASSIS_LENGTH,  HALF_CHASSIS_WIDTH, CHASSIS_ELEVATION);
       glEnd();
       /* This part covers the faces (South, East, North, West) */
       glBegin(GL_QUAD_STRIP);
       /* Starting side */
-      glNormal3f(-1.0f, 0.0f, 0.0f);
-      glVertex3f(-HALF_CHASSIS_LENGTH, -HALF_CHASSIS_WIDTH, CHASSIS_ELEVATION + WHEEL_DIAMETER);
-      glVertex3f(-HALF_CHASSIS_LENGTH, -HALF_CHASSIS_WIDTH, CHASSIS_ELEVATION);
+      glNormal3d(-1.0f, 0.0f, 0.0f);
+      glVertex3d(-HALF_CHASSIS_LENGTH, -HALF_CHASSIS_WIDTH, CHASSIS_ELEVATION + WHEEL_DIAMETER);
+      glVertex3d(-HALF_CHASSIS_LENGTH, -HALF_CHASSIS_WIDTH, CHASSIS_ELEVATION);
       /* South face */
-      glVertex3f( HALF_CHASSIS_LENGTH, -HALF_CHASSIS_WIDTH, CHASSIS_ELEVATION + WHEEL_DIAMETER);
-      glVertex3f( HALF_CHASSIS_LENGTH, -HALF_CHASSIS_WIDTH, CHASSIS_ELEVATION);
+      glVertex3d( HALF_CHASSIS_LENGTH, -HALF_CHASSIS_WIDTH, CHASSIS_ELEVATION + WHEEL_DIAMETER);
+      glVertex3d( HALF_CHASSIS_LENGTH, -HALF_CHASSIS_WIDTH, CHASSIS_ELEVATION);
       /* East face */
-      glNormal3f(0.0f, -1.0f, 0.0f);
-      glVertex3f( HALF_CHASSIS_LENGTH,  HALF_CHASSIS_WIDTH, CHASSIS_ELEVATION + WHEEL_DIAMETER);
-      glVertex3f( HALF_CHASSIS_LENGTH,  HALF_CHASSIS_WIDTH, CHASSIS_ELEVATION);
+      glNormal3d(0.0f, -1.0f, 0.0f);
+      glVertex3d( HALF_CHASSIS_LENGTH,  HALF_CHASSIS_WIDTH, CHASSIS_ELEVATION + WHEEL_DIAMETER);
+      glVertex3d( HALF_CHASSIS_LENGTH,  HALF_CHASSIS_WIDTH, CHASSIS_ELEVATION);
       /* North face */
-      glNormal3f(1.0f, 0.0f, 0.0f);
-      glVertex3f(-HALF_CHASSIS_LENGTH,  HALF_CHASSIS_WIDTH, CHASSIS_ELEVATION + WHEEL_DIAMETER);
-      glVertex3f(-HALF_CHASSIS_LENGTH,  HALF_CHASSIS_WIDTH, CHASSIS_ELEVATION);
+      glNormal3d(1.0f, 0.0f, 0.0f);
+      glVertex3d(-HALF_CHASSIS_LENGTH,  HALF_CHASSIS_WIDTH, CHASSIS_ELEVATION + WHEEL_DIAMETER);
+      glVertex3d(-HALF_CHASSIS_LENGTH,  HALF_CHASSIS_WIDTH, CHASSIS_ELEVATION);
       /* West face */
-      glNormal3f(0.0f, 1.0f, 0.0f);
-      glVertex3f(-HALF_CHASSIS_LENGTH, -HALF_CHASSIS_WIDTH, CHASSIS_ELEVATION + WHEEL_DIAMETER);
-      glVertex3f(-HALF_CHASSIS_LENGTH, -HALF_CHASSIS_WIDTH, CHASSIS_ELEVATION);
+      glNormal3d(0.0f, 1.0f, 0.0f);
+      glVertex3d(-HALF_CHASSIS_LENGTH, -HALF_CHASSIS_WIDTH, CHASSIS_ELEVATION + WHEEL_DIAMETER);
+      glVertex3d(-HALF_CHASSIS_LENGTH, -HALF_CHASSIS_WIDTH, CHASSIS_ELEVATION);
       glEnd();
    }
 
@@ -266,9 +266,9 @@ namespace argos {
       CRadians cAngle(-CRadians::TWO_PI / m_unVertices);
       /* Bottom part */
       glBegin(GL_POLYGON);
-      glNormal3f(0.0f, 0.0f, -1.0f);
+      glNormal3d(0.0f, 0.0f, -1.0f);
       for(GLuint i = 0; i <= m_unVertices; i++) {
-         glVertex3f(cVertex.GetX(), cVertex.GetY(), BODY_ELEVATION);
+         glVertex3d(cVertex.GetX(), cVertex.GetY(), BODY_ELEVATION);
          cVertex.Rotate(cAngle);
       }
       glEnd();
@@ -278,9 +278,9 @@ namespace argos {
       cVertex.Set(BODY_RADIUS, 0.0f);
       glBegin(GL_QUAD_STRIP);
       for(GLuint i = 0; i <= m_unVertices; i++) {
-         glNormal3f(cNormal.GetX(), cNormal.GetY(), 0.0f);
-         glVertex3f(cVertex.GetX(), cVertex.GetY(), BODY_ELEVATION + BODY_HEIGHT);
-         glVertex3f(cVertex.GetX(), cVertex.GetY(), BODY_ELEVATION);
+         glNormal3d(cNormal.GetX(), cNormal.GetY(), 0.0f);
+         glVertex3d(cVertex.GetX(), cVertex.GetY(), BODY_ELEVATION + BODY_HEIGHT);
+         glVertex3d(cVertex.GetX(), cVertex.GetY(), BODY_ELEVATION);
          cVertex.Rotate(cAngle);
          cNormal.Rotate(cAngle);
       }
@@ -288,18 +288,18 @@ namespace argos {
       /* Top part */
       glBegin(GL_POLYGON);
       cVertex.Set(LED_UPPER_RING_INNER_RADIUS, 0.0f);
-      glNormal3f(0.0f, 0.0f, 1.0f);
+      glNormal3d(0.0f, 0.0f, 1.0f);
       for(GLuint i = 0; i <= m_unVertices; i++) {
-         glVertex3f(cVertex.GetX(), cVertex.GetY(), BODY_ELEVATION + BODY_HEIGHT + LED_HEIGHT);
+         glVertex3d(cVertex.GetX(), cVertex.GetY(), BODY_ELEVATION + BODY_HEIGHT + LED_HEIGHT);
          cVertex.Rotate(cAngle);
       }
       glEnd();
       /* Triangle to set the direction */
       SetLEDMaterial(1.0f, 1.0f, 0.0f);
       glBegin(GL_TRIANGLES);
-      glVertex3f( BODY_RADIUS * 0.7,               0.0f, BODY_ELEVATION + BODY_HEIGHT + LED_HEIGHT + 0.001f);
-      glVertex3f(-BODY_RADIUS * 0.7,  BODY_RADIUS * 0.3, BODY_ELEVATION + BODY_HEIGHT + LED_HEIGHT + 0.001f);
-      glVertex3f(-BODY_RADIUS * 0.7, -BODY_RADIUS * 0.3, BODY_ELEVATION + BODY_HEIGHT + LED_HEIGHT + 0.001f);
+      glVertex3d( BODY_RADIUS * 0.7,               0.0f, BODY_ELEVATION + BODY_HEIGHT + LED_HEIGHT + 0.001f);
+      glVertex3d(-BODY_RADIUS * 0.7,  BODY_RADIUS * 0.3, BODY_ELEVATION + BODY_HEIGHT + LED_HEIGHT + 0.001f);
+      glVertex3d(-BODY_RADIUS * 0.7, -BODY_RADIUS * 0.3, BODY_ELEVATION + BODY_HEIGHT + LED_HEIGHT + 0.001f);
       glEnd();
    }
 
@@ -313,9 +313,9 @@ namespace argos {
       CVector2 cNormal(1.0f, 0.0f);
       glBegin(GL_QUAD_STRIP);
       for(GLuint i = 0; i <= m_unVertices / 8; i++) {
-         glNormal3f(cNormal.GetX(), cNormal.GetY(), 0.0f);
-         glVertex3f(cVertex.GetX(), cVertex.GetY(), LED_ELEVATION + LED_HEIGHT);
-         glVertex3f(cVertex.GetX(), cVertex.GetY(), LED_ELEVATION);
+         glNormal3d(cNormal.GetX(), cNormal.GetY(), 0.0f);
+         glVertex3d(cVertex.GetX(), cVertex.GetY(), LED_ELEVATION + LED_HEIGHT);
+         glVertex3d(cVertex.GetX(), cVertex.GetY(), LED_ELEVATION);
          cVertex.Rotate(cAngle);
          cNormal.Rotate(cAngle);
       }
@@ -324,10 +324,10 @@ namespace argos {
       cVertex.Set(BODY_RADIUS, 0.0f);
       CVector2 cVertex2(LED_UPPER_RING_INNER_RADIUS, 0.0f);
       glBegin(GL_QUAD_STRIP);
-      glNormal3f(0.0f, 0.0f, 1.0f);      
+      glNormal3d(0.0f, 0.0f, 1.0f);      
       for(GLuint i = 0; i <= m_unVertices / 8; i++) {         
-         glVertex3f(cVertex2.GetX(), cVertex2.GetY(), BODY_ELEVATION + BODY_HEIGHT + LED_HEIGHT);
-         glVertex3f(cVertex.GetX(), cVertex.GetY(), BODY_ELEVATION + BODY_HEIGHT + LED_HEIGHT);
+         glVertex3d(cVertex2.GetX(), cVertex2.GetY(), BODY_ELEVATION + BODY_HEIGHT + LED_HEIGHT);
+         glVertex3d(cVertex.GetX(), cVertex.GetY(), BODY_ELEVATION + BODY_HEIGHT + LED_HEIGHT);
          cVertex.Rotate(cAngle);
          cVertex2.Rotate(cAngle);
       }

@@ -90,20 +90,20 @@ namespace argos {
          for(CRadians cAzimuth; cAzimuth <= CRadians::TWO_PI; cAzimuth += cSlice) {
             cNormal.FromSphericalCoords(1.0f, cInclination, cAzimuth);
             cPoint = LED_RADIUS * cNormal;
-            glNormal3f(cNormal.GetX(), cNormal.GetY(), cNormal.GetZ());
-            glVertex3f(cPoint.GetX(), cPoint.GetY(), cPoint.GetZ());
+            glNormal3d(cNormal.GetX(), cNormal.GetY(), cNormal.GetZ());
+            glVertex3d(cPoint.GetX(), cPoint.GetY(), cPoint.GetZ());
             cNormal.FromSphericalCoords(1.0f, cInclination + cSlice, cAzimuth);
             cPoint = LED_RADIUS * cNormal;
-            glNormal3f(cNormal.GetX(), cNormal.GetY(), cNormal.GetZ());
-            glVertex3f(cPoint.GetX(), cPoint.GetY(), cPoint.GetZ());
+            glNormal3d(cNormal.GetX(), cNormal.GetY(), cNormal.GetZ());
+            glVertex3d(cPoint.GetX(), cPoint.GetY(), cPoint.GetZ());
             cNormal.FromSphericalCoords(1.0f, cInclination, cAzimuth + cSlice);
             cPoint = LED_RADIUS * cNormal;
-            glNormal3f(cNormal.GetX(), cNormal.GetY(), cNormal.GetZ());
-            glVertex3f(cPoint.GetX(), cPoint.GetY(), cPoint.GetZ());
+            glNormal3d(cNormal.GetX(), cNormal.GetY(), cNormal.GetZ());
+            glVertex3d(cPoint.GetX(), cPoint.GetY(), cPoint.GetZ());
             cNormal.FromSphericalCoords(1.0f, cInclination + cSlice, cAzimuth + cSlice);
             cPoint = LED_RADIUS * cNormal;
-            glNormal3f(cNormal.GetX(), cNormal.GetY(), cNormal.GetZ());
-            glVertex3f(cPoint.GetX(), cPoint.GetY(), cPoint.GetZ());
+            glNormal3d(cNormal.GetX(), cNormal.GetY(), cNormal.GetZ());
+            glVertex3d(cPoint.GetX(), cPoint.GetY(), cPoint.GetZ());
          }
       }
       glEnd();
@@ -124,26 +124,26 @@ namespace argos {
          CRadians cZAngle, cYAngle, cXAngle;
          cOrientation.ToEulerAngles(cZAngle, cYAngle, cXAngle);
          glPushMatrix();
-         glTranslatef(cPosition.GetX(), cPosition.GetY(), cPosition.GetZ());
-         glRotatef(ToDegrees(cXAngle).GetValue(), 1.0f, 0.0f, 0.0f);
-         glRotatef(ToDegrees(cYAngle).GetValue(), 0.0f, 1.0f, 0.0f);
-         glRotatef(ToDegrees(cZAngle).GetValue(), 0.0f, 0.0f, 1.0f);
+         glTranslated(cPosition.GetX(), cPosition.GetY(), cPosition.GetZ());
+         glRotated(ToDegrees(cXAngle).GetValue(), 1.0f, 0.0f, 0.0f);
+         glRotated(ToDegrees(cYAngle).GetValue(), 0.0f, 1.0f, 0.0f);
+         glRotated(ToDegrees(cZAngle).GetValue(), 0.0f, 0.0f, 1.0f);
          /* Draw the link */
          switch(pcLink->GetGeometry()) {
          case CPrototypeLinkEntity::EGeometry::BOX:
-            glScalef(pcLink->GetExtents().GetX(),
+            glScaled(pcLink->GetExtents().GetX(),
                      pcLink->GetExtents().GetY(),
                      pcLink->GetExtents().GetZ());
             glCallList(m_unBoxList);
             break;
          case CPrototypeLinkEntity::EGeometry::CYLINDER:
-            glScalef(pcLink->GetExtents().GetX(),
+            glScaled(pcLink->GetExtents().GetX(),
                      pcLink->GetExtents().GetY(),
                      pcLink->GetExtents().GetZ());
             glCallList(m_unCylinderList);
             break;
          case CPrototypeLinkEntity::EGeometry::SPHERE:
-            glScalef(pcLink->GetExtents().GetX(),
+            glScaled(pcLink->GetExtents().GetX(),
                      pcLink->GetExtents().GetY(),
                      pcLink->GetExtents().GetZ());
             glCallList(m_unSphereList);
@@ -183,7 +183,7 @@ namespace argos {
             glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, pfColor);
             /* Perform rototranslation */
             const CVector3& cPosition = s_instance.LED.GetPosition();
-            glTranslatef(cPosition.GetX(), cPosition.GetY(), cPosition.GetZ());
+            glTranslated(cPosition.GetX(), cPosition.GetY(), cPosition.GetZ());
             /* Draw the LED */
             glCallList(m_unLEDList);
             glPopMatrix();
@@ -209,7 +209,7 @@ namespace argos {
             glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, pfColor);
             /* Perform rototranslation */
             const CVector3& cPosition = ps_actuator->LED.GetPosition();
-            glTranslatef(cPosition.GetX(), cPosition.GetY(), cPosition.GetZ());
+            glTranslated(cPosition.GetX(), cPosition.GetY(), cPosition.GetZ());
             /* Draw the LED */
             glCallList(m_unLEDList);
             glPopMatrix();
@@ -227,13 +227,13 @@ namespace argos {
             cTagOrientation.ToEulerAngles(cZ, cY, cX);
             Real fScaling = s_instance.Tag.GetSideLength();
             glPushMatrix();
-            glTranslatef(cTagPosition.GetX(),
+            glTranslated(cTagPosition.GetX(),
                          cTagPosition.GetY(),
                          cTagPosition.GetZ());
-            glRotatef(ToDegrees(cX).GetValue(), 1.0f, 0.0f, 0.0f);
-            glRotatef(ToDegrees(cY).GetValue(), 0.0f, 1.0f, 0.0f);
-            glRotatef(ToDegrees(cZ).GetValue(), 0.0f, 0.0f, 1.0f);
-            glScalef(fScaling, fScaling, 1.0f);
+            glRotated(ToDegrees(cX).GetValue(), 1.0f, 0.0f, 0.0f);
+            glRotated(ToDegrees(cY).GetValue(), 0.0f, 1.0f, 0.0f);
+            glRotated(ToDegrees(cZ).GetValue(), 0.0f, 0.0f, 1.0f);
+            glScaled(fScaling, fScaling, 1.0f);
             glCallList(m_unTagList);
             glPopMatrix();
          }
@@ -258,13 +258,13 @@ namespace argos {
                                             cFieldOrientationY,
                                             cFieldOrientationX);
             glPushMatrix();
-            glTranslatef(cFieldOrigin.GetX(),
+            glTranslated(cFieldOrigin.GetX(),
                          cFieldOrigin.GetY(),
                          cFieldOrigin.GetZ());
-            glRotatef(ToDegrees(cFieldOrientationX).GetValue(), 1.0f, 0.0f, 0.0f);
-            glRotatef(ToDegrees(cFieldOrientationY).GetValue(), 0.0f, 1.0f, 0.0f);
-            glRotatef(ToDegrees(cFieldOrientationZ).GetValue(), 0.0f, 0.0f, 1.0f);
-            glScalef(1.0f, 1.0f, cField.Length() * FIELD_SCALE_FACTOR);
+            glRotated(ToDegrees(cFieldOrientationX).GetValue(), 1.0f, 0.0f, 0.0f);
+            glRotated(ToDegrees(cFieldOrientationY).GetValue(), 0.0f, 1.0f, 0.0f);
+            glRotated(ToDegrees(cFieldOrientationZ).GetValue(), 0.0f, 0.0f, 1.0f);
+            glScaled(1.0f, 1.0f, cField.Length() * FIELD_SCALE_FACTOR);
             glCallList(m_unPoleList);
             glPopMatrix();
          }
@@ -284,44 +284,44 @@ namespace argos {
       /* This part covers the top and bottom faces (parallel to XY) */
       glBegin(GL_QUADS);
       /* Bottom face */
-      glNormal3f(0.0f, 0.0f, -1.0f);
-      glVertex3f( 0.5f,  0.5f, 0.0f);
-      glVertex3f( 0.5f, -0.5f, 0.0f);
-      glVertex3f(-0.5f, -0.5f, 0.0f);
-      glVertex3f(-0.5f,  0.5f, 0.0f);
+      glNormal3d(0.0f, 0.0f, -1.0f);
+      glVertex3d( 0.5f,  0.5f, 0.0f);
+      glVertex3d( 0.5f, -0.5f, 0.0f);
+      glVertex3d(-0.5f, -0.5f, 0.0f);
+      glVertex3d(-0.5f,  0.5f, 0.0f);
       /* Top face */
-      glNormal3f(0.0f, 0.0f, 1.0f);
-      glVertex3f(-0.5f, -0.5f, 1.0f);
-      glVertex3f( 0.5f, -0.5f, 1.0f);
-      glVertex3f( 0.5f,  0.5f, 1.0f);
-      glVertex3f(-0.5f,  0.5f, 1.0f);
+      glNormal3d(0.0f, 0.0f, 1.0f);
+      glVertex3d(-0.5f, -0.5f, 1.0f);
+      glVertex3d( 0.5f, -0.5f, 1.0f);
+      glVertex3d( 0.5f,  0.5f, 1.0f);
+      glVertex3d(-0.5f,  0.5f, 1.0f);
       glEnd();
       /* This part covers the faces (South, East, North, West) */
       glBegin(GL_QUADS);
       /* South face */
-      glNormal3f(0.0f, -1.0f, 0.0f);
-      glVertex3f(-0.5f, -0.5f, 1.0f);
-      glVertex3f(-0.5f, -0.5f, 0.0f);
-      glVertex3f( 0.5f, -0.5f, 0.0f);
-      glVertex3f( 0.5f, -0.5f, 1.0f);
+      glNormal3d(0.0f, -1.0f, 0.0f);
+      glVertex3d(-0.5f, -0.5f, 1.0f);
+      glVertex3d(-0.5f, -0.5f, 0.0f);
+      glVertex3d( 0.5f, -0.5f, 0.0f);
+      glVertex3d( 0.5f, -0.5f, 1.0f);
       /* East face */
-      glNormal3f(1.0f, 0.0f, 0.0f);
-      glVertex3f( 0.5f, -0.5f, 1.0f);
-      glVertex3f( 0.5f, -0.5f, 0.0f);
-      glVertex3f( 0.5f,  0.5f, 0.0f);
-      glVertex3f( 0.5f,  0.5f, 1.0f);
+      glNormal3d(1.0f, 0.0f, 0.0f);
+      glVertex3d( 0.5f, -0.5f, 1.0f);
+      glVertex3d( 0.5f, -0.5f, 0.0f);
+      glVertex3d( 0.5f,  0.5f, 0.0f);
+      glVertex3d( 0.5f,  0.5f, 1.0f);
       /* North face */
-      glNormal3f(0.0f, 1.0f, 0.0f);
-      glVertex3f( 0.5f,  0.5f, 1.0f);
-      glVertex3f( 0.5f,  0.5f, 0.0f);
-      glVertex3f(-0.5f,  0.5f, 0.0f);
-      glVertex3f(-0.5f,  0.5f, 1.0f);
+      glNormal3d(0.0f, 1.0f, 0.0f);
+      glVertex3d( 0.5f,  0.5f, 1.0f);
+      glVertex3d( 0.5f,  0.5f, 0.0f);
+      glVertex3d(-0.5f,  0.5f, 0.0f);
+      glVertex3d(-0.5f,  0.5f, 1.0f);
       /* West face */
-      glNormal3f(-1.0f, 0.0f, 0.0f);
-      glVertex3f(-0.5f,  0.5f, 1.0f);
-      glVertex3f(-0.5f,  0.5f, 0.0f);
-      glVertex3f(-0.5f, -0.5f, 0.0f);
-      glVertex3f(-0.5f, -0.5f, 1.0f);
+      glNormal3d(-1.0f, 0.0f, 0.0f);
+      glVertex3d(-0.5f,  0.5f, 1.0f);
+      glVertex3d(-0.5f,  0.5f, 0.0f);
+      glVertex3d(-0.5f, -0.5f, 0.0f);
+      glVertex3d(-0.5f, -0.5f, 1.0f);
       glEnd();
       glDisable(GL_NORMALIZE);
    }
@@ -340,18 +340,18 @@ namespace argos {
       CRadians cAngle(CRadians::TWO_PI / m_unVertices);
       glBegin(GL_QUAD_STRIP);
       for(GLuint i = 0; i <= m_unVertices; i++) {
-         glNormal3f(cVertex.GetX(), cVertex.GetY(), 0.0f);
-         glVertex3f(cVertex.GetX(), cVertex.GetY(), 1.0f);
-         glVertex3f(cVertex.GetX(), cVertex.GetY(), 0.0f);
+         glNormal3d(cVertex.GetX(), cVertex.GetY(), 0.0f);
+         glVertex3d(cVertex.GetX(), cVertex.GetY(), 1.0f);
+         glVertex3d(cVertex.GetX(), cVertex.GetY(), 0.0f);
          cVertex.Rotate(cAngle);
       }
       glEnd();
       /* Top disk */
       cVertex.Set(0.5f, 0.0f);
       glBegin(GL_POLYGON);
-      glNormal3f(0.0f, 0.0f, 1.0f);
+      glNormal3d(0.0f, 0.0f, 1.0f);
       for(GLuint i = 0; i <= m_unVertices; i++) {
-         glVertex3f(cVertex.GetX(), cVertex.GetY(), 1.0f);
+         glVertex3d(cVertex.GetX(), cVertex.GetY(), 1.0f);
          cVertex.Rotate(cAngle);
       }
       glEnd();
@@ -359,9 +359,9 @@ namespace argos {
       cVertex.Set(0.5f, 0.0f);
       cAngle = -cAngle;
       glBegin(GL_POLYGON);
-      glNormal3f(0.0f, 0.0f, -1.0f);
+      glNormal3d(0.0f, 0.0f, -1.0f);
       for(GLuint i = 0; i <= m_unVertices; i++) {
-         glVertex3f(cVertex.GetX(), cVertex.GetY(), 0.0f);
+         glVertex3d(cVertex.GetX(), cVertex.GetY(), 0.0f);
          cVertex.Rotate(cAngle);
       }
       glEnd();
@@ -382,17 +382,17 @@ namespace argos {
       for(CRadians cInclination; cInclination <= CRadians::PI; cInclination += cSlice) {
          for(CRadians cAzimuth; cAzimuth <= CRadians::TWO_PI; cAzimuth += cSlice) {
             cPoint.FromSphericalCoords(0.5f, cInclination, cAzimuth);
-            glNormal3f(cPoint.GetX(), cPoint.GetY(), cPoint.GetZ() + 0.5f);
-            glVertex3f(cPoint.GetX(), cPoint.GetY(), cPoint.GetZ() + 0.5f);
+            glNormal3d(cPoint.GetX(), cPoint.GetY(), cPoint.GetZ() + 0.5f);
+            glVertex3d(cPoint.GetX(), cPoint.GetY(), cPoint.GetZ() + 0.5f);
             cPoint.FromSphericalCoords(0.5f, cInclination + cSlice, cAzimuth);
-            glNormal3f(cPoint.GetX(), cPoint.GetY(), cPoint.GetZ() + 0.5f);
-            glVertex3f(cPoint.GetX(), cPoint.GetY(), cPoint.GetZ() + 0.5f);
+            glNormal3d(cPoint.GetX(), cPoint.GetY(), cPoint.GetZ() + 0.5f);
+            glVertex3d(cPoint.GetX(), cPoint.GetY(), cPoint.GetZ() + 0.5f);
             cPoint.FromSphericalCoords(0.5f, cInclination, cAzimuth + cSlice);
-            glNormal3f(cPoint.GetX(), cPoint.GetY(), cPoint.GetZ() + 0.5f);
-            glVertex3f(cPoint.GetX(), cPoint.GetY(), cPoint.GetZ() + 0.5f);
+            glNormal3d(cPoint.GetX(), cPoint.GetY(), cPoint.GetZ() + 0.5f);
+            glVertex3d(cPoint.GetX(), cPoint.GetY(), cPoint.GetZ() + 0.5f);
             cPoint.FromSphericalCoords(0.5f, cInclination + cSlice, cAzimuth + cSlice);
-            glNormal3f(cPoint.GetX(), cPoint.GetY(), cPoint.GetZ() + 0.5f);
-            glVertex3f(cPoint.GetX(), cPoint.GetY(), cPoint.GetZ() + 0.5f);
+            glNormal3d(cPoint.GetX(), cPoint.GetY(), cPoint.GetZ() + 0.5f);
+            glVertex3d(cPoint.GetX(), cPoint.GetY(), cPoint.GetZ() + 0.5f);
          }
       }
       glEnd();
@@ -415,10 +415,10 @@ namespace argos {
          const CVector3& cVertex3 = vec_points[s_face.VertexIndices[2]];
          CVector3 cNormal(cVertex2 - cVertex1);
          cNormal.CrossProduct(cVertex3 - cVertex1);
-         glNormal3f(cNormal.GetX(), cNormal.GetY(), cNormal.GetZ());
-         glVertex3f(cVertex1.GetX(), cVertex1.GetY(), cVertex1.GetZ());
-         glVertex3f(cVertex2.GetX(), cVertex2.GetY(), cVertex2.GetZ());
-         glVertex3f(cVertex3.GetX(), cVertex3.GetY(), cVertex3.GetZ());
+         glNormal3d(cNormal.GetX(), cNormal.GetY(), cNormal.GetZ());
+         glVertex3d(cVertex1.GetX(), cVertex1.GetY(), cVertex1.GetZ());
+         glVertex3d(cVertex2.GetX(), cVertex2.GetY(), cVertex2.GetZ());
+         glVertex3d(cVertex3.GetX(), cVertex3.GetY(), cVertex3.GetZ());
       }
       glEnd();
       glDisable(GL_NORMALIZE);
@@ -446,7 +446,7 @@ namespace argos {
       glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
       glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
       glBegin(GL_QUADS);
-      glNormal3f(0.0f, 0.0f, 1.0f);
+      glNormal3d(0.0f, 0.0f, 1.0f);
       glTexCoord2f(1.0f, 1.0f); glVertex2f( 0.5f,  0.5f);
       glTexCoord2f(0.03f, 1.0f); glVertex2f(-0.5f,  0.5f);
       glTexCoord2f(0.03f, 0.03f); glVertex2f(-0.5f, -0.5f);
@@ -467,12 +467,12 @@ namespace argos {
       glBegin(GL_LINES);
       /* south pole */
       glColor3f(1.0, 0.0, 0.0);
-      glVertex3f(0.0f, 0.0f, 0.0f);
-      glVertex3f(0.0f, 0.0f, 0.5f);
+      glVertex3d(0.0f, 0.0f, 0.0f);
+      glVertex3d(0.0f, 0.0f, 0.5f);
       /* north pole */
       glColor3f(0.0, 0.0, 1.0);
-      glVertex3f(0.0f, 0.0f, 0.0f);
-      glVertex3f(0.0f, 0.0f, -0.5f);
+      glVertex3d(0.0f, 0.0f, 0.0f);
+      glVertex3d(0.0f, 0.0f, -0.5f);
       glEnd();
       glLineWidth(1.0f);
       glEnable(GL_LIGHTING);

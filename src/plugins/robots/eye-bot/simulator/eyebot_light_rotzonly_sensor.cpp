@@ -160,7 +160,7 @@ namespace argos {
                 * Increase magnitude of result of division to ensure correct rounding
                 */
                Real fIdx = (cAngleLightWrtEyebot - SENSOR_HALF_SPACING) / SENSOR_SPACING;
-               SInt32 nReadingIdx = (fIdx > 0) ? fIdx + 0.5f : fIdx - 0.5f;
+               SInt32 nReadingIdx = static_cast<SInt32>((fIdx > 0) ? fIdx + 0.5f : fIdx - 0.5f);
                /* Set the actual readings */
                Real fReading = cRobotToLight.Length();
                /*

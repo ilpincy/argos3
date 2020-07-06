@@ -74,14 +74,14 @@ namespace argos {
                 itDevice != itDevice.end();
                 ++itDevice) {
                if(itDevice->Value() == "directional_leds" ) {
-                  m_pcDirectionalLEDEquippedEntity = 
+                  m_pcDirectionalLEDEquippedEntity =
                      new CDirectionalLEDEquippedEntity(this);
                   m_pcDirectionalLEDEquippedEntity->Init(*itDevice);
                   AddComponent(*m_pcDirectionalLEDEquippedEntity);
                   /* Add the directional LEDs to the medium */
                   std::string strMedium;
                   GetNodeAttribute(*itDevice, "medium", strMedium);
-                  CDirectionalLEDMedium& cDirectionalLEDMedium = 
+                  CDirectionalLEDMedium& cDirectionalLEDMedium =
                      CSimulator::GetInstance().GetMedium<CDirectionalLEDMedium>(strMedium);
                   m_pcDirectionalLEDEquippedEntity->SetMedium(cDirectionalLEDMedium);
                   m_pcDirectionalLEDEquippedEntity->Enable();
@@ -93,7 +93,7 @@ namespace argos {
                   /* Add the LEDs to the medium */
                   std::string strMedium;
                   GetNodeAttribute(*itDevice, "medium", strMedium);
-                  CLEDMedium& cLEDMedium = 
+                  CLEDMedium& cLEDMedium =
                      CSimulator::GetInstance().GetMedium<CLEDMedium>(strMedium);
                   m_pcLEDEquippedEntity->SetMedium(cLEDMedium);
                   m_pcLEDEquippedEntity->Enable();
@@ -111,20 +111,19 @@ namespace argos {
                   /* Add the tags to the medium */
                   std::string strMedium;
                   GetNodeAttribute(*itDevice, "medium", strMedium);
-                  CTagMedium& cTagMedium = 
+                  CTagMedium& cTagMedium =
                      CSimulator::GetInstance().GetMedium<CTagMedium>(strMedium);
                   m_pcTagEquippedEntity->SetMedium(cTagMedium);
                   m_pcTagEquippedEntity->Enable();
                }
                else if(itDevice->Value() == "radios" ) {
-                  CRadioEquippedEntity* m_pcRadioEquippedEntity =
-                     new CRadioEquippedEntity(this);
+                  m_pcRadioEquippedEntity = new CRadioEquippedEntity(this);
                   m_pcRadioEquippedEntity->Init(*itDevice);
                   AddComponent(*m_pcRadioEquippedEntity);
                   /* Add the radios to the medium */
                   std::string strMedium;
                   GetNodeAttribute(*itDevice, "medium", strMedium);
-                  CRadioMedium& cRadioMedium = 
+                  CRadioMedium& cRadioMedium =
                      CSimulator::GetInstance().GetMedium<CRadioMedium>(strMedium);
                   m_pcRadioEquippedEntity->SetMedium(cRadioMedium);
                   m_pcRadioEquippedEntity->Enable();

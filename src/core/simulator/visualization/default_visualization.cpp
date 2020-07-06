@@ -30,7 +30,7 @@ namespace argos {
          /* Use real-time clock and set time structures */
          m_tStepFunction = &CDefaultVisualization::RealTimeStep;
          timerclear(&m_tStepClockTime);
-         m_tStepClockTime.tv_usec = 1e6 * CPhysicsEngine::GetSimulationClockTick();
+         m_tStepClockTime.tv_usec = static_cast<UInt32>(1e6 * CPhysicsEngine::GetSimulationClockTick());
          ::gettimeofday(&m_tStepStartTime, NULL);
       }
       else {
@@ -75,7 +75,7 @@ namespace argos {
          /* Calculate the waiting time */
          timersub(&m_tStepClockTime, &m_tStepElapsedTime, &m_tStepWaitTime);
          /* Wait */
-         ::usleep(m_tStepWaitTime.tv_sec * 1e6 + m_tStepWaitTime.tv_usec);
+         ::usleep(static_cast<UInt32>(m_tStepWaitTime.tv_sec * 1e6 + m_tStepWaitTime.tv_usec));
          /* Get the new step end */
          ::gettimeofday(&m_tStepEndTime, NULL);
       }

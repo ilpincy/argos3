@@ -76,24 +76,24 @@ namespace argos {
                 * To find the pixel (i,j), we need to flip both Y and Z, and translate the origin
                 * So that the origin is up-left, the i axis goes to the right, and the j axis goes down
                 */
-               SInt32 unI =
-                  - m_cCamEntity.GetImagePxWidth() /
+               SInt32 nI =
+                  static_cast<SInt32>(- m_cCamEntity.GetImagePxWidth() /
                   m_cCamEntity.GetImageMtWidth() *
                   (m_cLEDRelative.GetY() -
-                   m_cCamEntity.GetImageMtWidth() * 0.5f);
-               SInt32 unJ =
-                  - m_cCamEntity.GetImagePxHeight() /
+                   m_cCamEntity.GetImageMtWidth() * 0.5f));
+               SInt32 nJ =
+                  static_cast<SInt32>(- m_cCamEntity.GetImagePxHeight() /
                   m_cCamEntity.GetImageMtHeight() *
                   (m_cLEDRelative.GetZ() -
-                   m_cCamEntity.GetImageMtHeight() * 0.5f);
+                   m_cCamEntity.GetImageMtHeight() * 0.5f));
                /* Make sure (i,j) is within the limits */
-               if((unI >= m_cCamEntity.GetImagePxWidth() || unI < 0) ||
-                  (unJ >= m_cCamEntity.GetImagePxHeight() || unJ < 0))
+               if((nI >= m_cCamEntity.GetImagePxWidth() || nI < 0) ||
+                  (nJ >= m_cCamEntity.GetImagePxHeight() || nJ < 0))
                   return true;
                /* Add new blob */
                m_tBlobs.push_back(
                   new CCI_ColoredBlobPerspectiveCameraSensor::SBlob(
-                     c_led.GetColor(), unI, unJ));
+                     c_led.GetColor(), nI, nJ));
                /* Draw ray */
                if(m_bShowRays) {
                   m_cControllableEntity.AddCheckedRay(
