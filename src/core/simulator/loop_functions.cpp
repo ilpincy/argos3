@@ -26,8 +26,9 @@ namespace argos {
    bool CLoopFunctions::MoveEntity(CEmbodiedEntity& c_entity,
                                    const CVector3& c_position,
                                    const CQuaternion& c_orientation,
-                                   bool b_check_only) {
-      return c_entity.MoveTo(c_position, c_orientation, b_check_only);
+                                   bool b_check_only,
+                                   bool b_ignore_collisions) {
+      return c_entity.MoveTo(c_position, c_orientation, b_check_only, b_ignore_collisions);
    }
 
    /****************************************/

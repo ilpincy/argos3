@@ -289,12 +289,14 @@ namespace argos {
        * @param c_position The wanted position.
        * @param c_orientation The wanted orientation.
        * @param b_check_only If <tt>false</tt>, the movement is executed; otherwise, the object is not actually moved.
+       * @param b_ignore_collisions If <tt>false</tt>, collisions are considered; if <tt>true</tt>, collisions are ignored
        * @return <tt>true</tt> if no collisions were detected, <tt>false</tt> otherwise.
        * @see CPhysicsModel::MoveTo()
        */
       virtual bool MoveTo(const CVector3& c_position,
                           const CQuaternion& c_orientation,
-                          bool b_check_only = false);
+                          bool b_check_only = false,
+                          bool b_ignore_collisions = false);
 
       /**
        * Returns <tt>true</tt> if this entity is colliding with another object.

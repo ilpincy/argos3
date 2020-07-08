@@ -320,7 +320,8 @@ namespace argos {
 
    bool CEmbodiedEntity::MoveTo(const CVector3& c_position,
                                 const CQuaternion& c_orientation,
-                                bool b_check_only) {
+                                bool b_check_only,
+                                bool b_ignore_collisions) {
       /* Can't move an entity with no model associated */
       if(GetPhysicsModelsNum() == 0) return false;
       /* Save current position and orientation */
@@ -330,7 +331,7 @@ namespace argos {
       if(m_bMovable) {
          /* Move entity and check for collisions */
          m_tPhysicsModelVector[0]->MoveTo(c_position, c_orientation);
-         bool bNoCollision = ! m_tPhysicsModelVector[0]->IsCollidingWithSomething();
+         bool bNoCollision = b_ignore_collisions || (! m_tPhysicsModelVector[0]->IsCollidingWithSomething());
          /* Depending on the presence of collisions... */
          if(bNoCollision && !b_check_only) {
             /* No collision and not a simple check */
@@ -350,7 +351,7 @@ namespace argos {
          bool bNoCollision = true;
          for(i = 0; i < m_tPhysicsModelVector.size() && bNoCollision; ++i) {
             m_tPhysicsModelVector[i]->MoveTo(c_position, c_orientation);
-            bNoCollision = !m_tPhysicsModelVector[i]->IsCollidingWithSomething();
+            bNoCollision = b_ignore_collisions || !m_tPhysicsModelVector[i]->IsCollidingWithSomething();
          }
          if(bNoCollision && !b_check_only) {
             /* No collision and not a simple check */
