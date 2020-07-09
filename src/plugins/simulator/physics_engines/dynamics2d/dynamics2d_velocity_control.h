@@ -50,6 +50,22 @@ namespace argos {
          return m_fMaxTorque;
       }
 
+      inline cpBody* GetControlBody() {
+         return m_ptControlBody;
+      }
+
+      inline cpBody* GetControlledBody() {
+         return m_ptControlledBody;
+      }
+
+      inline cpConstraint* GetLinearConstraint() {
+         return m_ptLinearConstraint;
+      }
+
+      inline cpConstraint* GetAngularConstraint() {
+         return m_ptAngularConstraint;
+      }
+
    protected:
 
       CDynamics2DEngine& m_cDyn2DEngine;
