@@ -25,7 +25,7 @@ namespace argos {
       m_cWheeledEntity(c_epuck.GetWheeledEntity()) {
       /* get the required collision shapes */
       std::shared_ptr<btCollisionShape> ptrBodyShape =
-         CDynamics3DShapeManager::RequestBox(m_cBodyHalfExtents);
+         CDynamics3DShapeManager::RequestCylinder(m_cBodyHalfExtents);
       std::shared_ptr<btCollisionShape> ptrWheelShape =
          CDynamics3DShapeManager::RequestCylinder(m_cWheelHalfExtents);
       /* calculate the inertia of the collision objects */
