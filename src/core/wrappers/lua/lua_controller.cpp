@@ -43,7 +43,7 @@ namespace argos {
          if(strScriptFileName != "") {
             SetLuaScript(strScriptFileName, t_tree);
             if(! m_bIsOK) {
-               THROW_ARGOSEXCEPTION("Error loading Lua script \"" << strScriptFileName << "\": " << lua_tostring(m_ptLuaState, -1));
+               THROW_ARGOSEXCEPTION("Error setting Lua script");
             }
          }
          else {

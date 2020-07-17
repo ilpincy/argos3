@@ -181,9 +181,15 @@ namespace argos {
    bool CLuaUtility::LoadScript(lua_State* pt_state,
                                 const std::string& str_filename) {
       if(luaL_loadfile(pt_state, str_filename.c_str())) {
+         LOGERR << "[FATAL] Error loading \"" << str_filename
+                << "\"" << std::endl;
          return false;
       }
       if(lua_pcall(pt_state, 0, 0, 0)) {
+         LOGERR << "[FATAL] Error executing \"" << str_filename
+                << "\"" << std::endl;
+         LOGERR << "[FATAL] " << lua_tostring(pt_state, -1)
+                << std::endl;
          return false;
       }
       return true;
@@ -196,6 +202,10 @@ namespace argos {
                                      const std::string& str_function) {
       lua_getglobal(pt_state, str_function.c_str());
       if(lua_pcall(pt_state, 0, 0, 0)) {
+         LOGERR << "[FATAL] Error calling \"" << str_function
+                << "\"" << std::endl;
+         LOGERR << "[FATAL] " << lua_tostring(pt_state, -1)
+                << std::endl;
          return false;
       }
       return true;
