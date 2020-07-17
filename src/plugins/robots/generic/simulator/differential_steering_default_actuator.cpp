@@ -7,6 +7,8 @@
 #include "differential_steering_default_actuator.h"
 #include <argos3/core/utility/logging/argos_log.h>
 #include <argos3/core/utility/plugins/factory.h>
+#include <argos3/plugins/robots/generic/simulator/noise_injector_factory.h>
+#include <argos3/plugins/robots/generic/simulator/noise_injector.h>
 
 namespace argos {
 
@@ -20,6 +22,11 @@ namespace argos {
       m_fNoiseBias[LEFT_WHEEL] = 0.0;
       m_fNoiseBias[RIGHT_WHEEL] = 0.0;
    }
+
+   /****************************************/
+   /****************************************/
+
+   CDifferentialSteeringDefaultActuator::~CDifferentialSteeringDefaultActuator() {}
 
    /****************************************/
    /****************************************/
@@ -55,40 +62,51 @@ namespace argos {
 
    void CDifferentialSteeringDefaultActuator::ParseNoiseInjection(
        TConfigurationNode& t_tree) {
-     CNoiseInjector cBiasGenerator;
+     std::unique_ptr<CNoiseInjector> cBiasGenerator;
      if(NodeExists(t_tree, "noise_bias")) {
        TConfigurationNode& tNode = GetNode(t_tree, "noise_bias");
-       cBiasGenerator.Init(tNode);
-       m_fNoiseBias[LEFT_WHEEL] = cBiasGenerator.InjectNoise();
-       m_fNoiseBias[RIGHT_WHEEL] = cBiasGenerator.InjectNoise();
+       cBiasGenerator = CNoiseInjectorFactory::Create(tNode);
+       cBiasGenerator->Init(tNode);
+       m_fNoiseBias[LEFT_WHEEL] = cBiasGenerator->InjectNoise();
+       m_fNoiseBias[RIGHT_WHEEL] = cBiasGenerator->InjectNoise();
      } else {
        if(NodeExists(t_tree, "noise_bias_left")) {
          TConfigurationNode& tNode = GetNode(t_tree, "noise_bias_left");
-         cBiasGenerator.Init(tNode);
-         m_fNoiseBias[LEFT_WHEEL] = cBiasGenerator.InjectNoise();
+         cBiasGenerator = CNoiseInjectorFactory::Create(tNode);
+         cBiasGenerator->Init(tNode);
+         m_fNoiseBias[LEFT_WHEEL] = cBiasGenerator->InjectNoise();
        }
        if(NodeExists(t_tree, "noise_bias_right")) {
          TConfigurationNode& tNode = GetNode(t_tree, "noise_bias_right");
-         cBiasGenerator.Init(tNode);
-         m_fNoiseBias[RIGHT_WHEEL] = cBiasGenerator.InjectNoise();
+         cBiasGenerator = CNoiseInjectorFactory::Create(tNode);
+         cBiasGenerator->Init(tNode);
+         m_fNoiseBias[RIGHT_WHEEL] = cBiasGenerator->InjectNoise();
        }
      }
      if(NodeExists(t_tree, "noise_factor")) {
        TConfigurationNode& tNode = GetNode(t_tree, "noise_factor");
-       m_cNoiseFactor[LEFT_WHEEL] = std::make_unique<CNoiseInjector>();
-       m_cNoiseFactor[LEFT_WHEEL]->Init(tNode);
-       m_cNoiseFactor[RIGHT_WHEEL] = std::make_unique<CNoiseInjector>();
-       m_cNoiseFactor[RIGHT_WHEEL]->Init(tNode);
+       m_cNoiseFactor[LEFT_WHEEL] = CNoiseInjectorFactory::Create(tNode);
+       if (m_cNoiseFactor[LEFT_WHEEL]) {
+         m_cNoiseFactor[LEFT_WHEEL]->Init(tNode);
+       }
+       m_cNoiseFactor[RIGHT_WHEEL] = CNoiseInjectorFactory::Create(tNode);
+       if (m_cNoiseFactor[RIGHT_WHEEL]) {
+         m_cNoiseFactor[RIGHT_WHEEL]->Init(tNode);
+       }
      } else {
        if(NodeExists(t_tree, "noise_factor_left")) {
          TConfigurationNode& tNode = GetNode(t_tree, "noise_factor_left");
-         m_cNoiseFactor[LEFT_WHEEL] = std::make_unique<CNoiseInjector>();
-         m_cNoiseFactor[LEFT_WHEEL]->Init(tNode);
+         m_cNoiseFactor[LEFT_WHEEL] = CNoiseInjectorFactory::Create(tNode);
+         if (m_cNoiseFactor[LEFT_WHEEL]) {
+           m_cNoiseFactor[LEFT_WHEEL]->Init(tNode);
+         }
        }
        if(NodeExists(t_tree, "noise_factor_right")) {
          TConfigurationNode& tNode = GetNode(t_tree, "noise_factor_right");
-         m_cNoiseFactor[RIGHT_WHEEL] = std::make_unique<CNoiseInjector>();
-         m_cNoiseFactor[RIGHT_WHEEL]->Init(tNode);
+         m_cNoiseFactor[RIGHT_WHEEL] = CNoiseInjectorFactory::Create(tNode);
+         if (m_cNoiseFactor[RIGHT_WHEEL]) {
+           m_cNoiseFactor[RIGHT_WHEEL]->Init(tNode);
+         }
        }
      }
    } /* ParseNoiseInjection() */
@@ -118,7 +136,7 @@ namespace argos {
           fNoiseFactorLeft = m_cNoiseFactor[LEFT_WHEEL]->InjectNoise();
         }
         if (m_cNoiseFactor[RIGHT_WHEEL]) {
-          fNoiseFactorLeft = m_cNoiseFactor[RIGHT_WHEEL]->InjectNoise();
+          fNoiseFactorRight = m_cNoiseFactor[RIGHT_WHEEL]->InjectNoise();
         }
         m_fCurrentVelocity[LEFT_WHEEL] = fNoiseFactorLeft *
                                          (m_fCurrentVelocity[LEFT_WHEEL] + m_fNoiseBias[LEFT_WHEEL]);

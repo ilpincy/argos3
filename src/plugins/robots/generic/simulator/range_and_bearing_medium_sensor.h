@@ -16,13 +16,14 @@ namespace argos {
    class CRABEquippedEntity;
    class CControllableEntity;
    class CRABMedium;
+   class CNoiseInjector;
+   class CUniformNoiseInjector;
 }
 
 #include <argos3/core/simulator/sensor.h>
 #include <argos3/core/utility/math/rng.h>
 #include <argos3/core/simulator/space/space.h>
 #include <argos3/plugins/robots/generic/control_interface/ci_range_and_bearing_sensor.h>
-#include <argos3/plugins/robots/generic/simulator/noise_injector.h>
 
 namespace argos {
 
@@ -32,7 +33,8 @@ namespace argos {
    public:
 
       CRangeAndBearingMediumSensor();
-      virtual ~CRangeAndBearingMediumSensor() {}
+      virtual ~CRangeAndBearingMediumSensor();
+
       virtual void SetRobot(CComposableEntity& c_entity);
       virtual void Init(TConfigurationNode& t_tree);
       virtual void Update();
@@ -57,19 +59,19 @@ namespace argos {
 
    private:
 
-      CRABEquippedEntity*            m_pcRangeAndBearingEquippedEntity;
-      CControllableEntity*           m_pcControllableEntity;
-      CRABMedium*                    m_pcRangeAndBearingMedium;
-      CSpace&                        m_cSpace;
-      bool                           m_bShowRays;
+     CRABEquippedEntity*                    m_pcRangeAndBearingEquippedEntity;
+     CControllableEntity*                   m_pcControllableEntity;
+     CRABMedium*                            m_pcRangeAndBearingMedium;
+     CSpace&                                m_cSpace;
+     bool                                   m_bShowRays;
 
      /* Position noise injectors */
-     std::unique_ptr<CNoiseInjector> m_pcDistanceNoiseInjector;
-     std::unique_ptr<CNoiseInjector> m_pcInclinationNoiseInjector;
-     std::unique_ptr<CNoiseInjector> m_pcAzimuthNoiseInjector;
+     std::unique_ptr<CNoiseInjector>        m_pcDistanceNoiseInjector;
+     std::unique_ptr<CUniformNoiseInjector> m_pcInclinationNoiseInjector;
+     std::unique_ptr<CUniformNoiseInjector> m_pcAzimuthNoiseInjector;
 
      /** Packet drop probability noise injector */
-     std::unique_ptr<CNoiseInjector> m_pcPacketDropNoiseInjector;
+     std::unique_ptr<CNoiseInjector>        m_pcPacketDropNoiseInjector;
    };
 }
 

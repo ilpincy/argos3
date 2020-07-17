@@ -6,6 +6,8 @@
 #include <argos3/plugins/simulator/entities/led_entity.h>
 #include <argos3/plugins/simulator/entities/omnidirectional_camera_equipped_entity.h>
 #include <argos3/plugins/simulator/media/led_medium.h>
+#include <argos3/plugins/robots/generic/simulator/uniform_noise_injector.h>
+#include <argos3/plugins/robots/generic/simulator/noise_injector_factory.h>
 
 namespace argos {
 
@@ -158,13 +160,15 @@ namespace argos {
          /* Init noise injection */
          if(NodeExists(t_tree, "noise")) {
            TConfigurationNode& tNode = GetNode(t_tree, "noise");
-           m_pcDistanceNoiseInjector = std::make_unique<CNoiseInjector>();
-           m_pcDistanceNoiseInjector->Init(tNode);
+           m_pcDistanceNoiseInjector = CNoiseInjectorFactory::Create(tNode);
+           if (m_pcDistanceNoiseInjector) {
+             m_pcDistanceNoiseInjector->Init(tNode);
+           }
 
            /* always uniform noise for angle */
-           m_pcAzimuthNoiseInjector = std::make_unique<CNoiseInjector>();
-           m_pcAzimuthNoiseInjector->InitUniform(CRange<Real>(0.0,
-                                                            CRadians::TWO_PI.GetValue()));
+           m_pcAzimuthNoiseInjector = std::make_unique<CUniformNoiseInjector>();
+           m_pcAzimuthNoiseInjector->InitFromRange(CRange<Real>(0.0,
+                                                                CRadians::TWO_PI.GetValue()));
          }
          /* Get LED medium from id specified in the XML */
          std::string strMedium;

@@ -6,6 +6,8 @@
 #include <argos3/plugins/simulator/entities/led_entity.h>
 #include <argos3/plugins/simulator/entities/perspective_camera_equipped_entity.h>
 #include <argos3/plugins/simulator/media/led_medium.h>
+#include <argos3/plugins/robots/generic/simulator/uniform_noise_injector.h>
+#include <argos3/plugins/robots/generic/simulator/noise_injector_factory.h>
 
 namespace argos {
 
@@ -189,15 +191,17 @@ namespace argos {
          /* Parse noise injection */
          if(NodeExists(t_tree, "noise")) {
            TConfigurationNode& tNode = GetNode(t_tree, "noise");
-           m_pcDistanceNoiseInjector = std::make_unique<CNoiseInjector>();
-           m_pcDistanceNoiseInjector->Init(tNode);
+           m_pcDistanceNoiseInjector = CNoiseInjectorFactory::Create(tNode);
+           if (m_pcDistanceNoiseInjector) {
+             m_pcDistanceNoiseInjector->Init(tNode);
+           }
            /* always uniform noise for azimuth and inclination angles */
-           m_pcInclinationNoiseInjector = std::make_unique<CNoiseInjector>();
-           m_pcInclinationNoiseInjector->InitUniform(CRange<Real>(0.0,
-                                                                  CRadians::PI.GetValue()));
-           m_pcAzimuthNoiseInjector = std::make_unique<CNoiseInjector>();
-           m_pcAzimuthNoiseInjector->InitUniform(CRange<Real>(0.0,
-                                                              CRadians::TWO_PI.GetValue()));
+           m_pcInclinationNoiseInjector = std::make_unique<CUniformNoiseInjector>();
+           m_pcInclinationNoiseInjector->InitFromRange(CRange<Real>(0.0,
+                                                                    CRadians::PI.GetValue()));
+           m_pcAzimuthNoiseInjector = std::make_unique<CUniformNoiseInjector>();
+           m_pcAzimuthNoiseInjector->InitFromRange(CRange<Real>(0.0,
+                                                                CRadians::TWO_PI.GetValue()));
          }
          /* Get LED medium from id specified in the XML */
          std::string strMedium;
@@ -351,7 +355,7 @@ namespace argos {
 
 
                    "Each timestep the camera is enabled, a vector of randomly generated noise\n"
-                   "{'model', Uniform(0, PI), Uniform(0, 2PI)} is added the (distance, inclination,\n"
+                   "('model', Uniform(0, PI), Uniform(0, 2PI)) is added the (distance, inclination,\n"
                    "azimuth) reading for each detected blob before its real position is converted to\n"
                    "a pixel location. That is, the model of noise for the distance measure for the\n"
                    "blob is configurable, and the type for the (inclination, azimuth) measures for the\n"

@@ -14,12 +14,13 @@
 namespace argos {
    class CProximityDefaultSensor;
    class CProximitySensorEquippedEntity;
+   class CNoiseInjector;
+
 }
 
 #include <argos3/plugins/robots/generic/control_interface/ci_proximity_sensor.h>
 #include <argos3/core/simulator/space/space.h>
 #include <argos3/core/simulator/sensor.h>
-#include <argos3/plugins/robots/generic/simulator/noise_injector.h>
 
 namespace argos {
 
@@ -30,7 +31,7 @@ namespace argos {
 
       CProximityDefaultSensor();
 
-      virtual ~CProximityDefaultSensor() {}
+      virtual ~CProximityDefaultSensor();
 
       virtual void SetRobot(CComposableEntity& c_entity);
 

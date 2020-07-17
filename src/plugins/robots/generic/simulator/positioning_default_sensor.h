@@ -14,12 +14,12 @@
 namespace argos {
    class CPositioningDefaultSensor;
    class CEmbodiedEntity;
+   class CNoiseInjector;
 }
 
 #include <argos3/plugins/robots/generic/control_interface/ci_positioning_sensor.h>
 #include <argos3/core/simulator/space/space.h>
 #include <argos3/core/simulator/sensor.h>
-#include <argos3/plugins/robots/generic/simulator/noise_injector.h>
 
 namespace argos {
 
@@ -30,7 +30,7 @@ namespace argos {
 
       CPositioningDefaultSensor();
 
-      virtual ~CPositioningDefaultSensor() {}
+      virtual ~CPositioningDefaultSensor();
 
       virtual void SetRobot(CComposableEntity& c_entity);
 

@@ -15,12 +15,12 @@ namespace argos {
    class CBatteryDefaultSensor;
    class CBatteryEquippedEntity;
    class CPhysicsEngine;
+   class CNoiseInjector;
 }
 
 #include <argos3/plugins/robots/generic/control_interface/ci_battery_sensor.h>
 #include <argos3/core/simulator/space/space.h>
 #include <argos3/core/simulator/sensor.h>
-#include <argos3/plugins/robots/generic/simulator/noise_injector.h>
 
 namespace argos {
 
@@ -31,7 +31,7 @@ namespace argos {
 
       CBatteryDefaultSensor();
 
-      virtual ~CBatteryDefaultSensor() {}
+      virtual ~CBatteryDefaultSensor();
 
       virtual void SetRobot(CComposableEntity& c_entity);
 

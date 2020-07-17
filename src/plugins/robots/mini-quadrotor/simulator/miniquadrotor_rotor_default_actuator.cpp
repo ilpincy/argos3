@@ -8,6 +8,7 @@
 #include <argos3/plugins/simulator/entities/rotor_equipped_entity.h>
 #include <argos3/core/utility/logging/argos_log.h>
 #include <argos3/core/utility/plugins/factory.h>
+#include <argos3/plugins/robots/generic/simulator/noise_injector_factory.h>
 
 namespace argos {
 
@@ -42,7 +43,7 @@ namespace argos {
          /* Parse noise injection */
          if(NodeExists(t_tree, "noise")) {
            TConfigurationNode& tNode = GetNode(t_tree, "noise");
-           m_pcNoiseInjector = std::make_unique<CNoiseInjector>();
+           m_pcNoiseInjector = CNoiseInjectorFactory::Create(tNode);
            m_pcNoiseInjector->Init(tNode);
          }
       }

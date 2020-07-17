@@ -7,6 +7,8 @@ namespace argos {
    class CLEDEntity;
    class CControllableEntity;
    class CPerspectiveCameraLEDCheckOperation;
+   class CNoiseInjector;
+   class CUniformNoiseInjector;
 }
 
 #include <memory>
@@ -15,7 +17,6 @@ namespace argos {
 #include <argos3/core/simulator/space/space.h>
 #include <argos3/core/simulator/sensor.h>
 #include <argos3/plugins/robots/generic/control_interface/ci_colored_blob_perspective_camera_sensor.h>
-#include <argos3/plugins/robots/generic/simulator/noise_injector.h>
 
 namespace argos {
 
@@ -70,9 +71,9 @@ namespace argos {
       bool                                 m_bShowRays;
 
      /* Noise injectors */
-     std::unique_ptr<CNoiseInjector>       m_pcDistanceNoiseInjector;
-     std::unique_ptr<CNoiseInjector>       m_pcAzimuthNoiseInjector;
-     std::unique_ptr<CNoiseInjector>       m_pcInclinationNoiseInjector;
+     std::unique_ptr<CNoiseInjector>        m_pcDistanceNoiseInjector;
+     std::unique_ptr<CUniformNoiseInjector> m_pcAzimuthNoiseInjector;
+     std::unique_ptr<CUniformNoiseInjector> m_pcInclinationNoiseInjector;
 
    };
 }

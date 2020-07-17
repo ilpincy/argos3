@@ -9,6 +9,8 @@
 #include <argos3/core/simulator/entity/composable_entity.h>
 #include <argos3/plugins/simulator/entities/light_entity.h>
 #include <argos3/plugins/simulator/entities/light_sensor_equipped_entity.h>
+#include <argos3/plugins/robots/generic/simulator/noise_injector_factory.h>
+#include <argos3/plugins/robots/generic/simulator/noise_injector.h>
 
 #include "footbot_light_rotzonly_sensor.h"
 
@@ -60,6 +62,11 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   CFootBotLightRotZOnlySensor::~CFootBotLightRotZOnlySensor() {}
+
+   /****************************************/
+   /****************************************/
+
    void CFootBotLightRotZOnlySensor::SetRobot(CComposableEntity& c_entity) {
       try {
          m_pcEmbodiedEntity = &(c_entity.GetComponent<CEmbodiedEntity>("body"));
@@ -82,10 +89,13 @@ namespace argos {
          /* Parse noise injection */
          if(NodeExists(t_tree, "noise")) {
            TConfigurationNode& tNode = GetNode(t_tree, "noise");
-           m_pcNoiseInjector = std::make_unique<CNoiseInjector>();
-           m_pcNoiseInjector->Init(tNode);
+           m_pcNoiseInjector = CNoiseInjectorFactory::Create(tNode);
+           if (m_pcNoiseInjector) {
+             m_pcNoiseInjector->Init(tNode);
+           }
          }
          m_tReadings.resize(m_pcLightEntity->GetNumSensors());
+         /* sensor is enabled by default */
       }
       catch(CARGoSException& ex) {
          THROW_ARGOSEXCEPTION_NESTED("Initialization error in rot_z_only light sensor", ex);

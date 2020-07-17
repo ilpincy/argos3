@@ -14,12 +14,13 @@
 namespace argos {
    class CDifferentialSteeringDefaultSensor;
    class CWheeledEntity;
+   class CNoiseInjector;
+
 }
 
 #include <argos3/plugins/robots/generic/control_interface/ci_differential_steering_sensor.h>
 #include <argos3/core/simulator/space/space.h>
 #include <argos3/core/simulator/sensor.h>
-#include <argos3/plugins/robots/generic/simulator/noise_injector.h>
 
 namespace argos {
 
@@ -30,7 +31,7 @@ namespace argos {
 
       CDifferentialSteeringDefaultSensor();
 
-      virtual ~CDifferentialSteeringDefaultSensor() {}
+      virtual ~CDifferentialSteeringDefaultSensor();
 
       virtual void SetRobot(CComposableEntity& c_entity);
 

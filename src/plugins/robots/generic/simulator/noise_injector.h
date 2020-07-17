@@ -8,36 +8,60 @@
 #define NOISE_INJECTOR_H
 
 #include <string>
+#include <memory>
 
-#include <argos3/core/utility/math/range.h>
 #include <argos3/core/utility/math/rng.h>
-#include <argos3/core/simulator/space/space.h>
-#include <argos3/core/simulator/sensor.h>
+#include <argos3/core/utility/configuration/argos_configuration.h>
 
 namespace argos {
 
 /**
- * @brief Utility class to standardize noise injection in robot sensors and
- * actuators. Has the following noise models:
- *
- * - uniform - A Uniform(a,b) distribution
- * - gaussian - A Guassian(mean, stddev) distribution
+ * @brief Base class for noise injection into robot sensors and
+ * actuators, mainly specifying an interface for derived injectors.
  */
-
 class CNoiseInjector {
 
    public:
 
-  struct SDocumentationQuerySpec {
-    std::string strDocName;
-    std::string strXMLParent;
-    std::string strXMLTag;
-    std::string strSAAType;
-    bool bShowExamples;
-  };
+     /**
+      * @brief Specification for the documentation on how robot sensor/actuators
+      * capable of receiving noise injection should be displayed when it is queried
+      * by the user on the command line.
+      */
+     struct SDocumentationQuerySpec {
+       /**
+        * @brief The spoken word name of the robot facility capable of
+        * receiving noise injection.
+        */
+       std::string strDocName;
+       /**
+        * @brief The XML parent tag of the robot facility capable of
+        * receiving noise injection.
+        */
+       std::string strXMLParent;
+
+       /**
+        * @brief The XML tag of the robot facility capable of receiving noise
+        * injection.
+        */
+       std::string strXMLTag;
+
+       /**
+        * @brief The type of the The XML parent tag of the robot facility
+        * capable of receiving noise injection: [sensor, actuator].
+        */
+       std::string strSAAType;
+
+       /**
+        * @brief Should example XML configurations be shown for the robot
+        * facility?
+        */
+       bool bShowExamples;
+     };
+
      CNoiseInjector();
 
-     ~CNoiseInjector() {}
+     virtual ~CNoiseInjector() {}
 
      /**
       * @brief Get the documentation for this class should appear whenever a
@@ -46,9 +70,13 @@ class CNoiseInjector {
      static std::string GetQueryDocumentation(const SDocumentationQuerySpec& c_spec);
 
      /**
-      * @brief Initialize noise injection by reading XML configuration.
+      * @brief Inject noise according to configuration parameters.
+      *
+      * If noise injection has not been configured it should return 0.0.
       */
-     void Init(TConfigurationNode& t_tree);
+     virtual Real InjectNoise() = 0;
+
+     virtual void Init(TConfigurationNode& t_tree) = 0;
 
      /**
       * @brief Returns \c TRUE if noise injection has been configured, and \c
@@ -57,65 +85,25 @@ class CNoiseInjector {
      inline bool Enabled(void) { return m_bEnabled; }
 
      /**
-      * @brief Inject noise according to configuration parameters.
-      *
-      * If noise injection has not been configured, returns 0.0.
-      */
-     Real InjectNoise();
-
-     /**
-      * @brief Configure Uniform(a,b) noise injection from the specified range.
-      */
-     void InitUniform(const CRange<Real>& c_range);
-
-     /**
-      * @brief Configure Gaussian(mean, stddev) noise injection from the
-      * specified parameters.
-      */
-     void InitGaussian(Real f_mean, Real f_std_dev);
-
-     /**
       * @brief Compute a Bernoulli event based on the configured noise model.
-      *
       */
      bool BernoulliEvent(void);
 
+   protected:
+
+     inline void SetEnable(bool b_state) { m_bEnabled = b_state; }
+
+     inline CRandom::CRNG* GetRNG() {
+       return m_pcRNG;
+     }
+
    private:
-
-     enum model {
-       ekNONE,
-       ekGAUSSIAN,
-       ekUNIFORM
-     };
-     /**
-      * @brief Configure Uniform(a,b) noise injection by reading XML
-      * configuration.
-      */
-     void InitUniform(TConfigurationNode& t_tree);
-
-     /**
-      * @brief Configure Gaussian(mean, stddev) noise injection by reading XML
-      * configuration.
-      */
-     void InitGaussian(TConfigurationNode& t_tree);
 
      /** Random number generator */
      CRandom::CRNG* m_pcRNG;
 
      /** Whether to add noise or not */
      bool m_bEnabled;
-
-     /** The noise model: uniform or gaussian */
-     model m_model;
-
-     /** Uniform noise range */
-     CRange<Real> m_cUniformRange;
-
-     /** Gaussian noise mean */
-     Real m_fGaussianMean;
-
-     /** Gaussian noise standard deviation */
-     Real m_fGaussianStdDev;
    };
 }
 

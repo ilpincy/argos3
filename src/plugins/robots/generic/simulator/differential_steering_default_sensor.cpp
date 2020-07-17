@@ -7,6 +7,8 @@
 #include <argos3/core/simulator/simulator.h>
 #include <argos3/plugins/simulator/entities/wheeled_entity.h>
 #include <argos3/core/simulator/entity/composable_entity.h>
+#include <argos3/plugins/robots/generic/simulator/noise_injector.h>
+#include <argos3/plugins/robots/generic/simulator/noise_injector_factory.h>
 
 #include "differential_steering_default_sensor.h"
 
@@ -17,6 +19,11 @@ namespace argos {
 
    CDifferentialSteeringDefaultSensor::CDifferentialSteeringDefaultSensor() :
       m_pcWheeledEntity(NULL) {}
+
+   /****************************************/
+   /****************************************/
+
+   CDifferentialSteeringDefaultSensor::~CDifferentialSteeringDefaultSensor() {}
 
    /****************************************/
    /****************************************/
@@ -46,13 +53,17 @@ namespace argos {
          /* Parse noise injection */
          if(NodeExists(t_tree, "vel_noise")) {
            TConfigurationNode& tNode = GetNode(t_tree, "vel_noise");
-           m_pcVelNoiseInjector = std::make_unique<CNoiseInjector>();
-           m_pcVelNoiseInjector->Init(tNode);
+           m_pcVelNoiseInjector = CNoiseInjectorFactory::Create(tNode);
+           if (m_pcVelNoiseInjector) {
+             m_pcVelNoiseInjector->Init(tNode);
+           }
          }
          if(NodeExists(t_tree, "dist_noise")) {
            TConfigurationNode& tNode = GetNode(t_tree, "dist_noise");
-           m_pcDistNoiseInjector = std::make_unique<CNoiseInjector>();
-           m_pcDistNoiseInjector->Init(tNode);
+           m_pcDistNoiseInjector = CNoiseInjectorFactory::Create(tNode);
+           if (m_pcDistNoiseInjector) {
+             m_pcDistNoiseInjector->Init(tNode);
+           }
          }
       }
       catch(CARGoSException& ex) {
@@ -123,9 +134,9 @@ namespace argos {
                    "Noise Injection\n"
                    "----------------------------------------\n"
 
-                   "It is possible to one or more of the following NOISE_TYPE child tags\n"
-                   "to differential steering sensor configuration (all noise types are independent):\n"
-                   "['dist_noise', 'vel_noise']. "
+                   "It is possible to one or more of the following NOISE_TYPE child tags to\n"
+                   "differential steering sensor configuration (all noise types are independent):\n"
+                   "['dist_noise', 'vel_noise'].\n\n"
 
                    "Tag 'dist_noise' controls the noise applied to the reading of distance\n"
                    "covered by the wheels. Tag 'vel_noise' controls the noise applied to the\n"

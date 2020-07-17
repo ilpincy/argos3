@@ -15,12 +15,12 @@ namespace argos {
    class CFootBotBaseGroundRotZOnlySensor;
    class CGroundSensorEquippedEntity;
    class CFloorEntity;
+   class CNoiseInjector;
 }
 
 #include <argos3/plugins/robots/foot-bot/control_interface/ci_footbot_base_ground_sensor.h>
 #include <argos3/core/simulator/space/space.h>
 #include <argos3/core/simulator/sensor.h>
-#include <argos3/plugins/robots/generic/simulator/noise_injector.h>
 
 namespace argos {
 
@@ -31,7 +31,7 @@ namespace argos {
 
       CFootBotBaseGroundRotZOnlySensor();
 
-      virtual ~CFootBotBaseGroundRotZOnlySensor() {}
+      virtual ~CFootBotBaseGroundRotZOnlySensor();
 
       virtual void SetRobot(CComposableEntity& c_entity);
 

@@ -13,6 +13,7 @@
 
 namespace argos {
    class CDifferentialSteeringDefaultActuator;
+   class CNoiseInjector;
 }
 
 #include <argos3/plugins/robots/generic/control_interface/ci_differential_steering_actuator.h>
@@ -20,7 +21,6 @@ namespace argos {
 #include <argos3/plugins/simulator/entities/wheeled_entity.h>
 #include <argos3/core/simulator/entity/composable_entity.h>
 #include <argos3/core/utility/math/rng.h>
-#include <argos3/plugins/robots/generic/simulator/noise_injector.h>
 
 namespace argos {
 
@@ -44,7 +44,7 @@ namespace argos {
       /**
        * @brief Destructor.
        */
-      virtual ~CDifferentialSteeringDefaultActuator() {}
+      virtual ~CDifferentialSteeringDefaultActuator();
 
       virtual void SetRobot(CComposableEntity& c_entity);
 

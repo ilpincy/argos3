@@ -15,12 +15,13 @@ namespace argos {
    class CGroundRotZOnlySensor;
    class CGroundSensorEquippedEntity;
    class CFloorEntity;
+   class CNoiseInjector;
+
 }
 
 #include <argos3/plugins/robots/generic/control_interface/ci_ground_sensor.h>
 #include <argos3/core/simulator/space/space.h>
 #include <argos3/core/simulator/sensor.h>
-#include <argos3/plugins/robots/generic/simulator/noise_injector.h>
 
 namespace argos {
 
@@ -31,7 +32,7 @@ namespace argos {
 
       CGroundRotZOnlySensor();
 
-      virtual ~CGroundRotZOnlySensor() {}
+      virtual ~CGroundRotZOnlySensor();
 
       virtual void SetRobot(CComposableEntity& c_entity);
 
@@ -53,7 +54,7 @@ namespace argos {
       CGroundSensorEquippedEntity* m_pcGroundSensorEntity;
 
       /** Noise injector */
-     std::unique_ptr<CNoiseInjector> m_pcNoiseInjector;
+      std::unique_ptr<CNoiseInjector> m_pcNoiseInjector;
 
       /** Reference to the space */
       CSpace& m_cSpace;
