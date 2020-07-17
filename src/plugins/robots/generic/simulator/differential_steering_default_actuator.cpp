@@ -75,16 +75,20 @@ namespace argos {
      }
      if(NodeExists(t_tree, "noise_factor")) {
        TConfigurationNode& tNode = GetNode(t_tree, "noise_factor");
-       m_cNoiseFactor[LEFT_WHEEL].Init(tNode);
-       m_cNoiseFactor[RIGHT_WHEEL].Init(tNode);
+       m_cNoiseFactor[LEFT_WHEEL] = std::make_unique<CNoiseInjector>();
+       m_cNoiseFactor[LEFT_WHEEL]->Init(tNode);
+       m_cNoiseFactor[RIGHT_WHEEL] = std::make_unique<CNoiseInjector>();
+       m_cNoiseFactor[RIGHT_WHEEL]->Init(tNode);
      } else {
        if(NodeExists(t_tree, "noise_factor_left")) {
          TConfigurationNode& tNode = GetNode(t_tree, "noise_factor_left");
-         m_cNoiseFactor[LEFT_WHEEL].Init(tNode);
+         m_cNoiseFactor[LEFT_WHEEL] = std::make_unique<CNoiseInjector>();
+         m_cNoiseFactor[LEFT_WHEEL]->Init(tNode);
        }
        if(NodeExists(t_tree, "noise_factor_right")) {
          TConfigurationNode& tNode = GetNode(t_tree, "noise_factor_right");
-         m_cNoiseFactor[RIGHT_WHEEL].Init(tNode);
+         m_cNoiseFactor[RIGHT_WHEEL] = std::make_unique<CNoiseInjector>();
+         m_cNoiseFactor[RIGHT_WHEEL]->Init(tNode);
        }
      }
    } /* ParseNoiseInjection() */
@@ -100,19 +104,25 @@ namespace argos {
 
       bool bApplyNoise = (m_fNoiseBias[LEFT_WHEEL] > 0.0 ||
                           m_fNoiseBias[RIGHT_WHEEL] > 0.0  ||
-                          m_cNoiseFactor[LEFT_WHEEL].Enabled() ||
-                          m_cNoiseFactor[LEFT_WHEEL].Enabled());
+                          (m_cNoiseFactor[LEFT_WHEEL]) ||
+                          (m_cNoiseFactor[RIGHT_WHEEL]));
 
       /*
        * Apply noise only if the robot is in motion (at least one of the wheels
        * is moving).
        */
       if(((f_left_velocity != 0) || (f_right_velocity != 0)) && bApplyNoise) {
-        m_fCurrentVelocity[LEFT_WHEEL] =
-            m_cNoiseFactor[LEFT_WHEEL].InjectNoise() *
-            (m_fCurrentVelocity[LEFT_WHEEL] + m_fNoiseBias[LEFT_WHEEL]);
-        m_fCurrentVelocity[RIGHT_WHEEL] =
-            m_cNoiseFactor[RIGHT_WHEEL].InjectNoise() *
+        Real fNoiseFactorLeft = 0.0;
+        Real fNoiseFactorRight = 0.0;
+        if (m_cNoiseFactor[LEFT_WHEEL]) {
+          fNoiseFactorLeft = m_cNoiseFactor[LEFT_WHEEL]->InjectNoise();
+        }
+        if (m_cNoiseFactor[RIGHT_WHEEL]) {
+          fNoiseFactorLeft = m_cNoiseFactor[RIGHT_WHEEL]->InjectNoise();
+        }
+        m_fCurrentVelocity[LEFT_WHEEL] = fNoiseFactorLeft *
+                                         (m_fCurrentVelocity[LEFT_WHEEL] + m_fNoiseBias[LEFT_WHEEL]);
+        m_fCurrentVelocity[RIGHT_WHEEL] = fNoiseFactorRight *
             (m_fCurrentVelocity[RIGHT_WHEEL] + m_fNoiseBias[RIGHT_WHEEL]);
 
       }

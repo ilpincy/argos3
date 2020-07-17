@@ -9,6 +9,8 @@ namespace argos {
    class COmnidirectionalCameraLEDCheckOperation;
 }
 
+#include <memory>
+
 #include <argos3/core/utility/math/rng.h>
 #include <argos3/core/simulator/space/space.h>
 #include <argos3/core/simulator/sensor.h>
@@ -68,8 +70,8 @@ namespace argos {
       bool                                     m_bShowRays;
 
       /* Noise injectors */
-    CNoiseInjector m_cDistanceNoiseInjector;
-    CNoiseInjector m_cAzimuthNoiseInjector;
+      std::unique_ptr<CNoiseInjector>          m_pcDistanceNoiseInjector;
+      std::unique_ptr<CNoiseInjector>          m_pcAzimuthNoiseInjector;
    };
 }
 

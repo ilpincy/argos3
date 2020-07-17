@@ -9,6 +9,7 @@
 
 #include <string>
 #include <map>
+#include <memory>
 
 namespace argos {
    class CDifferentialSteeringDefaultActuator;
@@ -66,13 +67,13 @@ namespace argos {
    protected:
       void ParseNoiseInjection(TConfigurationNode& t_tree);
 
-      CWheeledEntity* m_pcWheeledEntity;
+      CWheeledEntity*                m_pcWheeledEntity;
 
       /** Noise bias for each wheel */
-      Real m_fNoiseBias[2];
+      Real                           m_fNoiseBias[2];
 
       /** Noise factor for each wheel  */
-      CNoiseInjector m_cNoiseFactor[2];
+     std::unique_ptr<CNoiseInjector> m_cNoiseFactor[2];
    };
 
 }

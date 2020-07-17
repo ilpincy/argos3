@@ -9,6 +9,7 @@
 
 #include <string>
 #include <map>
+#include <memory>
 
 namespace argos {
    class CDifferentialSteeringDefaultSensor;
@@ -42,16 +43,16 @@ namespace argos {
    protected:
 
       /** Reference to wheeled entity associated to this sensor */
-      CWheeledEntity* m_pcWheeledEntity;
+      CWheeledEntity*                 m_pcWheeledEntity;
 
       /** The wheel velocity taken from the wheeled entity */
-      const Real* m_pfWheelVelocities;
+      const Real*                     m_pfWheelVelocities;
 
       /** Distance noise injector */
-      CNoiseInjector m_cDistNoiseInjector;
+      std::unique_ptr<CNoiseInjector> m_pcDistNoiseInjector;
 
       /** Velocity noise injector */
-      CNoiseInjector m_cVelNoiseInjector;
+      std::unique_ptr<CNoiseInjector> m_pcVelNoiseInjector;
    };
 
 }

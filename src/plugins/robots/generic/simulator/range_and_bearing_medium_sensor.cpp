@@ -23,10 +23,8 @@ namespace argos {
 
    CRangeAndBearingMediumSensor::CRangeAndBearingMediumSensor() :
       m_pcRangeAndBearingEquippedEntity(NULL),
-      m_fPacketDropProb(0.0f),
       m_cSpace(CSimulator::GetInstance().GetSpace()),
-      m_bShowRays(false),
-      m_cPacketDropNoiseInjector() {}
+      m_bShowRays(false) {}
 
    /****************************************/
    /****************************************/
@@ -50,11 +48,21 @@ namespace argos {
          /* Parse noise injection */
          if(NodeExists(t_tree, "distance_noise")) {
            TConfigurationNode& tNode = GetNode(t_tree, "distance_noise");
-           m_cDistanceNoiseInjector.Init(tNode);
+           m_pcDistanceNoiseInjector = std::make_unique<CNoiseInjector>();
+           m_pcDistanceNoiseInjector->Init(tNode);
+           /* always uniform noise for angle and inclination */
+           m_pcInclinationNoiseInjector = std::make_unique<CNoiseInjector>();
+           m_pcInclinationNoiseInjector->InitUniform(CRange<Real>(0.0,
+                                                                  CRadians::PI.GetValue()));
+           m_pcAzimuthNoiseInjector = std::make_unique<CNoiseInjector>();
+           m_pcAzimuthNoiseInjector->InitUniform(CRange<Real>(0.0,
+                                                              CRadians::TWO_PI.GetValue()));
+
          }
          if(NodeExists(t_tree, "packet_drop_noise")) {
            TConfigurationNode& tNode = GetNode(t_tree, "packet_drop_noise");
-           m_cPacketDropNoiseInjector.Init(tNode);
+           m_pcPacketDropNoiseInjector = std::make_unique<CNoiseInjector>();
+           m_pcPacketDropNoiseInjector->Init(tNode);
          }
 
          /* Get RAB medium from id specified in the XML */
@@ -88,8 +96,8 @@ namespace argos {
       for(CSet<CRABEquippedEntity*>::iterator it = setRABs.begin();
           it != setRABs.end(); ++it) {
         /* Should we drop this packet? */
-        if(m_cPacketDropNoiseInjector.Enabled() &&
-           !m_cPacketDropNoiseInjector.BernoulliEvent()) {
+        if(m_pcPacketDropNoiseInjector &&
+           m_pcPacketDropNoiseInjector->BernoulliEvent()) {
           continue;
         }
         /* Create a reference to the RAB entity to process */
@@ -104,10 +112,13 @@ namespace argos {
         cVectorRobotToMessage = cRABEntity.GetPosition();
         cVectorRobotToMessage -= m_pcRangeAndBearingEquippedEntity->GetPosition();
         /* If noise was setup, add it */
-        if(m_cDistanceNoiseInjector.Enabled()) {
-          cVectorRobotToMessage += CVector3(m_cDistanceNoiseInjector.InjectNoise(),
-                                            CRadians(m_cInclinationNoiseInjector.InjectNoise()),
-                                            CRadians(m_cAzimuthNoiseInjector.InjectNoise()));
+        bool bApplyNoise = (m_pcDistanceNoiseInjector &&
+                            m_pcInclinationNoiseInjector &&
+                            m_pcAzimuthNoiseInjector);
+        if(bApplyNoise) {
+          cVectorRobotToMessage += CVector3(m_pcDistanceNoiseInjector->InjectNoise(),
+                                            CRadians(m_pcInclinationNoiseInjector->InjectNoise()),
+                                            CRadians(m_pcAzimuthNoiseInjector->InjectNoise()));
         }
         /*
          * Set range and bearing from cVectorRobotToMessage

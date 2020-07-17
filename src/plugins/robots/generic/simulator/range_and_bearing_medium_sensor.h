@@ -9,6 +9,7 @@
 
 #include <string>
 #include <map>
+#include <memory>
 
 namespace argos {
    class CRangeAndBearingMediumSensor;
@@ -56,21 +57,19 @@ namespace argos {
 
    private:
 
-      CRABEquippedEntity*  m_pcRangeAndBearingEquippedEntity;
-      CControllableEntity* m_pcControllableEntity;
-      CRABMedium*          m_pcRangeAndBearingMedium;
-      Real                 m_fPacketDropProb;
-      CRandom::CRNG*       m_pcRNG;
-      CSpace&              m_cSpace;
-      bool                 m_bShowRays;
+      CRABEquippedEntity*            m_pcRangeAndBearingEquippedEntity;
+      CControllableEntity*           m_pcControllableEntity;
+      CRABMedium*                    m_pcRangeAndBearingMedium;
+      CSpace&                        m_cSpace;
+      bool                           m_bShowRays;
 
      /* Position noise injectors */
-     CNoiseInjector m_cDistanceNoiseInjector;
-     CNoiseInjector m_cAzimuthNoiseInjector;
-     CNoiseInjector m_cInclinationNoiseInjector;
+     std::unique_ptr<CNoiseInjector> m_pcDistanceNoiseInjector;
+     std::unique_ptr<CNoiseInjector> m_pcInclinationNoiseInjector;
+     std::unique_ptr<CNoiseInjector> m_pcAzimuthNoiseInjector;
 
      /** Packet drop probability noise injector */
-     CNoiseInjector m_cPacketDropNoiseInjector;
+     std::unique_ptr<CNoiseInjector> m_pcPacketDropNoiseInjector;
    };
 }
 

@@ -9,6 +9,7 @@
 
 #include <string>
 #include <map>
+#include <memory>
 
 namespace argos {
    class CLightDefaultSensor;
@@ -69,19 +70,19 @@ namespace argos {
    protected:
 
       /** Reference to light sensor equipped entity associated to this sensor */
-      CLightSensorEquippedEntity* m_pcLightEntity;
+      CLightSensorEquippedEntity*    m_pcLightEntity;
 
       /** Reference to controllable entity associated to this sensor */
-      CControllableEntity* m_pcControllableEntity;
+      CControllableEntity*           m_pcControllableEntity;
 
       /** Flag to show rays in the simulator */
-      bool m_bShowRays;
+      bool                           m_bShowRays;
 
       /** Noise injector */
-      CNoiseInjector m_cNoiseInjector;
+     std::unique_ptr<CNoiseInjector> m_pcNoiseInjector;
 
       /** Reference to the space */
-      CSpace& m_cSpace;
+      CSpace&                        m_cSpace;
    };
 
 }

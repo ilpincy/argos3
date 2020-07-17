@@ -9,6 +9,7 @@
 
 #include <string>
 #include <map>
+#include <memory>
 
 namespace argos {
    class CProximityDefaultSensor;
@@ -65,22 +66,22 @@ namespace argos {
    protected:
 
       /** Reference to embodied entity associated to this sensor */
-      CEmbodiedEntity* m_pcEmbodiedEntity;
+      CEmbodiedEntity*                m_pcEmbodiedEntity;
 
       /** Reference to proximity sensor equipped entity associated to this sensor */
       CProximitySensorEquippedEntity* m_pcProximityEntity;
 
       /** Reference to controllable entity associated to this sensor */
-      CControllableEntity* m_pcControllableEntity;
+      CControllableEntity*            m_pcControllableEntity;
 
       /** Flag to show rays in the simulator */
-      bool m_bShowRays;
+      bool                            m_bShowRays;
 
       /** Reference to the space */
-      CSpace& m_cSpace;
+      CSpace&                         m_cSpace;
 
-     /** Noise injector */
-      CNoiseInjector m_cNoiseInjector;
+      /** Noise injector */
+     std::unique_ptr<CNoiseInjector>  m_pcNoiseInjector;
    };
 
 }

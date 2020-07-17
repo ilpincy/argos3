@@ -22,15 +22,17 @@ namespace argos {
          CEmbodiedEntity& c_embodied_entity,
          CControllableEntity& c_controllable_entity,
          bool b_show_rays,
-         CNoiseInjector& c_distance_noise_injector,
-         CNoiseInjector& c_azimuth_noise_injector,
-         CNoiseInjector& c_inclination) :
+         CNoiseInjector* pc_distance_noise_injector,
+         CNoiseInjector* pc_azimuth_noise_injector,
+         CNoiseInjector* pc_inclination_noise_injector) :
          m_tBlobs(t_blobs),
          m_cCamEntity(c_cam_entity),
          m_cEmbodiedEntity(c_embodied_entity),
          m_cControllableEntity(c_controllable_entity),
          m_bShowRays(b_show_rays),
-         m_cDistanceNoiseInjector(c_distance_noise_injector) {
+         m_pcDistanceNoiseInjector(pc_distance_noise_injector),
+         m_pcAzimuthNoiseInjector(pc_azimuth_noise_injector),
+         m_pcInclinationNoiseInjector(pc_inclination_noise_injector) {
          m_pcRootSensingEntity = &m_cEmbodiedEntity.GetRootEntity();
       }
       virtual ~CPerspectiveCameraLEDCheckOperation() {
@@ -70,10 +72,13 @@ namespace argos {
                m_cLEDRelative *= m_cCamEntity.GetFocalLength() / m_cLEDRelative.GetX();
 
                /* If noise was setup, add it */
-               if(m_cDistanceNoiseInjector.Enabled()) {
-                 m_cLEDRelative += CVector3(m_cLEDRelative.Length() * m_cDistanceNoiseInjector.InjectNoise(),
-                                            CRadians(m_cInclinationNoiseInjector.InjectNoise()),
-                                            CRadians(m_cAzimuthNoiseInjector.InjectNoise()));
+               bool bAddNoise = (nullptr != m_pcDistanceNoiseInjector &&
+                                 nullptr != m_pcInclinationNoiseInjector &&
+                                 nullptr != m_pcAzimuthNoiseInjector);
+               if(bAddNoise) {
+                 m_cLEDRelative += CVector3(m_cLEDRelative.Length() * m_pcDistanceNoiseInjector->InjectNoise(),
+                                            CRadians(m_pcInclinationNoiseInjector->InjectNoise()),
+                                            CRadians(m_pcAzimuthNoiseInjector->InjectNoise()));
                }
                /*
                 * The image plane is perpendicular to the local X axis
@@ -136,9 +141,9 @@ namespace argos {
       CVector3 m_cLEDRelative;
       SEmbodiedEntityIntersectionItem m_sIntersectionItem;
       CRay3 m_cOcclusionCheckRay;
-      CNoiseInjector& m_cDistanceNoiseInjector;
-     CNoiseInjector m_cAzimuthNoiseInjector;
-     CNoiseInjector m_cInclinationNoiseInjector;
+      CNoiseInjector* m_pcDistanceNoiseInjector;
+      CNoiseInjector* m_pcAzimuthNoiseInjector;
+      CNoiseInjector* m_pcInclinationNoiseInjector;
    };
 
    /****************************************/
@@ -184,10 +189,15 @@ namespace argos {
          /* Parse noise injection */
          if(NodeExists(t_tree, "noise")) {
            TConfigurationNode& tNode = GetNode(t_tree, "noise");
-           m_cDistanceNoiseInjector.Init(tNode);
+           m_pcDistanceNoiseInjector = std::make_unique<CNoiseInjector>();
+           m_pcDistanceNoiseInjector->Init(tNode);
            /* always uniform noise for azimuth and inclination angles */
-           m_cInclinationNoiseInjector.InitUniform(CRange<Real>(0.0, CRadians::PI.GetValue()));
-           m_cAzimuthNoiseInjector.InitUniform(CRange<Real>(0.0, CRadians::TWO_PI.GetValue()));
+           m_pcInclinationNoiseInjector = std::make_unique<CNoiseInjector>();
+           m_pcInclinationNoiseInjector->InitUniform(CRange<Real>(0.0,
+                                                                  CRadians::PI.GetValue()));
+           m_pcAzimuthNoiseInjector = std::make_unique<CNoiseInjector>();
+           m_pcAzimuthNoiseInjector->InitUniform(CRange<Real>(0.0,
+                                                              CRadians::TWO_PI.GetValue()));
          }
          /* Get LED medium from id specified in the XML */
          std::string strMedium;
@@ -200,9 +210,9 @@ namespace argos {
             *m_pcEmbodiedEntity,
             *m_pcControllableEntity,
             m_bShowRays,
-            m_cDistanceNoiseInjector,
-            m_cAzimuthNoiseInjector,
-            m_cInclinationNoiseInjector);
+            m_pcDistanceNoiseInjector.get(),
+            m_pcAzimuthNoiseInjector.get(),
+            m_pcInclinationNoiseInjector.get());
       }
       catch(CARGoSException& ex) {
          THROW_ARGOSEXCEPTION_NESTED("Error initializing the colored blob perspective camera default sensor", ex);

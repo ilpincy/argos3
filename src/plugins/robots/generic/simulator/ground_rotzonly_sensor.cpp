@@ -47,7 +47,8 @@ namespace argos {
          /* Parse noise injection */
          if(NodeExists(t_tree, "noise")) {
            TConfigurationNode& tNode = GetNode(t_tree, "noise");
-           m_cNoiseInjector.Init(tNode);
+           m_pcNoiseInjector = std::make_unique<CNoiseInjector>();
+           m_pcNoiseInjector->Init(tNode);
          }
          m_tReadings.resize(m_pcGroundSensorEntity->GetNumSensors());
       }
@@ -85,8 +86,8 @@ namespace argos {
          /* Set the reading */
          m_tReadings[i] = cColor.ToGrayScale() / 255.0f;
          /* Apply noise to the sensor */
-         if(m_cNoiseInjector.Enabled()) {
-           m_tReadings[i] += m_cNoiseInjector.InjectNoise();
+         if(m_pcNoiseInjector) {
+           m_tReadings[i] += m_pcNoiseInjector->InjectNoise();
          }
          /* Is it a BW sensor? */
          if(sSens.Type == CGroundSensorEquippedEntity::TYPE_BLACK_WHITE) {

@@ -9,6 +9,7 @@
 
 #include <string>
 #include <map>
+#include <memory>
 
 namespace argos {
    class CGroundRotZOnlySensor;
@@ -52,7 +53,7 @@ namespace argos {
       CGroundSensorEquippedEntity* m_pcGroundSensorEntity;
 
       /** Noise injector */
-      CNoiseInjector m_cNoiseInjector;
+     std::unique_ptr<CNoiseInjector> m_pcNoiseInjector;
 
       /** Reference to the space */
       CSpace& m_cSpace;

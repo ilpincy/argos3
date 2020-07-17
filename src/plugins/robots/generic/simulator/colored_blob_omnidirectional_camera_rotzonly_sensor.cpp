@@ -21,15 +21,15 @@ namespace argos {
          COmnidirectionalCameraEquippedEntity& c_omnicam_entity,
          CEmbodiedEntity& c_embodied_entity,
          CControllableEntity& c_controllable_entity,
-         CNoiseInjector& c_distance_injector,
-         CNoiseInjector& c_azimuth_injector,
+         CNoiseInjector* pc_distance_injector,
+         CNoiseInjector* pc_azimuth_injector,
          bool b_show_rays) :
          m_tBlobs(t_blobs),
          m_cOmnicamEntity(c_omnicam_entity),
          m_cEmbodiedEntity(c_embodied_entity),
          m_cControllableEntity(c_controllable_entity),
-         m_cDistanceNoiseInjector(c_distance_injector),
-         m_cAzimuthNoiseInjector(c_azimuth_injector),
+         m_pcDistanceNoiseInjector(pc_distance_injector),
+         m_pcAzimuthNoiseInjector(pc_azimuth_injector),
          m_bShowRays(b_show_rays) {
          m_pcRootSensingEntity = &m_cEmbodiedEntity.GetParent();
       }
@@ -65,10 +65,11 @@ namespace argos {
                                                          m_cOcclusionCheckRay,
                                                          m_cEmbodiedEntity)) {
                /* If noise was setup, add it */
-              if(m_cDistanceNoiseInjector.Enabled()) {
-                  m_cLEDRelativePosXY += CVector2(
-                     m_cLEDRelativePosXY.Length() * m_cDistanceNoiseInjector.InjectNoise(),
-                     CRadians(m_cAzimuthNoiseInjector.InjectNoise()));
+               bool bAddNoise = (nullptr != m_pcDistanceNoiseInjector) &&
+                                (nullptr != m_pcAzimuthNoiseInjector);
+               if(bAddNoise) {
+                 m_cLEDRelativePosXY += CVector2(m_cLEDRelativePosXY.Length() * m_pcDistanceNoiseInjector->InjectNoise(),
+                                                 CRadians(m_pcAzimuthNoiseInjector->InjectNoise()));
                }
                m_tBlobs.push_back(new CCI_ColoredBlobOmnidirectionalCameraSensor::SBlob(
                                      c_led.GetColor(),
@@ -101,8 +102,8 @@ namespace argos {
       CEmbodiedEntity& m_cEmbodiedEntity;
       CControllableEntity& m_cControllableEntity;
       Real m_fGroundHalfRange;
-      CNoiseInjector& m_cDistanceNoiseInjector;
-      CNoiseInjector& m_cAzimuthNoiseInjector;
+      CNoiseInjector* m_pcDistanceNoiseInjector;
+      CNoiseInjector* m_pcAzimuthNoiseInjector;
       bool m_bShowRays;
       CEntity* m_pcRootSensingEntity;
       CEntity* m_pcRootOfLEDEntity;
@@ -157,9 +158,12 @@ namespace argos {
          /* Init noise injection */
          if(NodeExists(t_tree, "noise")) {
            TConfigurationNode& tNode = GetNode(t_tree, "noise");
-           m_cDistanceNoiseInjector.Init(tNode);
+           m_pcDistanceNoiseInjector = std::make_unique<CNoiseInjector>();
+           m_pcDistanceNoiseInjector->Init(tNode);
+
            /* always uniform noise for angle */
-           m_cAzimuthNoiseInjector.InitUniform(CRange<Real>(0.0,
+           m_pcAzimuthNoiseInjector = std::make_unique<CNoiseInjector>();
+           m_pcAzimuthNoiseInjector->InitUniform(CRange<Real>(0.0,
                                                             CRadians::TWO_PI.GetValue()));
          }
          /* Get LED medium from id specified in the XML */
@@ -172,8 +176,8 @@ namespace argos {
             *m_pcOmnicamEntity,
             *m_pcEmbodiedEntity,
             *m_pcControllableEntity,
-            m_cDistanceNoiseInjector,
-            m_cAzimuthNoiseInjector,
+            m_pcDistanceNoiseInjector.get(),
+            m_pcAzimuthNoiseInjector.get(),
             m_bShowRays);
       }
       catch(CARGoSException& ex) {

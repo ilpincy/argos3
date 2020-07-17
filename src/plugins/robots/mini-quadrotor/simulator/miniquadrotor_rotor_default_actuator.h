@@ -9,6 +9,7 @@
 
 #include <string>
 #include <map>
+#include <memory>
 
 namespace argos {
    class CMiniQuadrotorRotorDefaultActuator;
@@ -56,7 +57,7 @@ namespace argos {
       CRotorEquippedEntity* m_pcRotorEquippedEntity;
 
       /** Noise injector */
-      CNoiseInjector m_cNoiseInjector;
+      std::unique_ptr<CNoiseInjector> m_pcNoiseInjector;
    };
 
 }

@@ -46,11 +46,13 @@ namespace argos {
          /* Parse noise injection */
          if(NodeExists(t_tree, "vel_noise")) {
            TConfigurationNode& tNode = GetNode(t_tree, "vel_noise");
-           m_cVelNoiseInjector.Init(tNode);
+           m_pcVelNoiseInjector = std::make_unique<CNoiseInjector>();
+           m_pcVelNoiseInjector->Init(tNode);
          }
          if(NodeExists(t_tree, "dist_noise")) {
            TConfigurationNode& tNode = GetNode(t_tree, "dist_noise");
-           m_cDistNoiseInjector.Init(tNode);
+           m_pcDistNoiseInjector = std::make_unique<CNoiseInjector>();
+           m_pcDistNoiseInjector->Init(tNode);
          }
       }
       catch(CARGoSException& ex) {
@@ -66,13 +68,13 @@ namespace argos {
       m_sReading.VelocityRightWheel = m_pfWheelVelocities[1] * 100.0f;
       m_sReading.CoveredDistanceLeftWheel = m_sReading.VelocityLeftWheel * CPhysicsEngine::GetSimulationClockTick();
       m_sReading.CoveredDistanceRightWheel = m_sReading.VelocityRightWheel * CPhysicsEngine::GetSimulationClockTick();
-      if (m_cDistNoiseInjector.Enabled()) {
-        m_sReading.CoveredDistanceLeftWheel  += m_cDistNoiseInjector.InjectNoise();
-        m_sReading.CoveredDistanceRightWheel += m_cDistNoiseInjector.InjectNoise();
+      if (m_pcDistNoiseInjector) {
+        m_sReading.CoveredDistanceLeftWheel  += m_pcDistNoiseInjector->InjectNoise();
+        m_sReading.CoveredDistanceRightWheel += m_pcDistNoiseInjector->InjectNoise();
       }
-      if (m_cVelNoiseInjector.Enabled()) {
-        m_sReading.VelocityLeftWheel  += m_cVelNoiseInjector.InjectNoise();
-        m_sReading.VelocityRightWheel += m_cVelNoiseInjector.InjectNoise();
+      if (m_pcVelNoiseInjector) {
+        m_sReading.VelocityLeftWheel  += m_pcVelNoiseInjector->InjectNoise();
+        m_sReading.VelocityRightWheel += m_pcVelNoiseInjector->InjectNoise();
       }
    }
 

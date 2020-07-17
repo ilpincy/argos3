@@ -42,7 +42,8 @@ namespace argos {
          /* Parse noise injection */
          if(NodeExists(t_tree, "noise")) {
            TConfigurationNode& tNode = GetNode(t_tree, "noise");
-           m_cNoiseInjector.Init(tNode);
+           m_pcNoiseInjector = std::make_unique<CNoiseInjector>();
+           m_pcNoiseInjector->Init(tNode);
          }
       }
       catch(CARGoSException& ex) {
@@ -57,11 +58,11 @@ namespace argos {
       /* Set velocities */
       m_sCurrentVelocities = s_velocities;
       /* Apply noise */
-      if(m_cNoiseInjector.Enabled()) {
-        m_sCurrentVelocities.Velocities[0] += m_sCurrentVelocities.Velocities[0] * m_cNoiseInjector.InjectNoise();
-        m_sCurrentVelocities.Velocities[1] += m_sCurrentVelocities.Velocities[1] * m_cNoiseInjector.InjectNoise();
-        m_sCurrentVelocities.Velocities[2] += m_sCurrentVelocities.Velocities[2] * m_cNoiseInjector.InjectNoise();
-        m_sCurrentVelocities.Velocities[3] += m_sCurrentVelocities.Velocities[3] * m_cNoiseInjector.InjectNoise();
+      if(m_pcNoiseInjector) {
+        m_sCurrentVelocities.Velocities[0] += m_sCurrentVelocities.Velocities[0] * m_pcNoiseInjector->InjectNoise();
+        m_sCurrentVelocities.Velocities[1] += m_sCurrentVelocities.Velocities[1] * m_pcNoiseInjector->InjectNoise();
+        m_sCurrentVelocities.Velocities[2] += m_sCurrentVelocities.Velocities[2] * m_pcNoiseInjector->InjectNoise();
+        m_sCurrentVelocities.Velocities[3] += m_sCurrentVelocities.Velocities[3] * m_pcNoiseInjector->InjectNoise();
       }
    }
 
@@ -111,9 +112,12 @@ REGISTER_ACTUATOR(CMiniQuadrotorRotorDefaultActuator,
                    "Noise Injection\n"
                    "----------------------------------------\n" +
 
-                   CNoiseInjector::GetQueryDocumentation("Mini-quadrotor rotor",
-                                                         "miniquadrotor_rotor",
-                                                         "noise") +
+                   CNoiseInjector::GetQueryDocumentation({
+                       .strDocName = "Mini-quadrotor rotor",
+                           .strXMLParent = "miniquadrotor_rotor",
+                           .strXMLTag = "noise",
+                           .strSAAType = "actuator",
+                           .bShowExamples = true}) +
 
                   "The final actuation value is not clamped after noise has been added.\n\n",
 

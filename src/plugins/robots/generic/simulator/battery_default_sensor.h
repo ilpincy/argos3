@@ -9,6 +9,7 @@
 
 #include <string>
 #include <map>
+#include <memory>
 
 namespace argos {
    class CBatteryDefaultSensor;
@@ -43,13 +44,13 @@ namespace argos {
    protected:
 
       /** Reference to embodied entity associated to this sensor */
-      CEmbodiedEntity* m_pcEmbodiedEntity;
+      CEmbodiedEntity*                m_pcEmbodiedEntity;
 
       /** Reference to battery sensor equipped entity associated to this sensor */
-      CBatteryEquippedEntity* m_pcBatteryEntity;
+      CBatteryEquippedEntity*         m_pcBatteryEntity;
 
-     /** Noise injector */
-      CNoiseInjector m_cNoiseInjector;
+      /** Noise injector */
+      std::unique_ptr<CNoiseInjector> m_pcNoiseInjector;
    };
 
 }

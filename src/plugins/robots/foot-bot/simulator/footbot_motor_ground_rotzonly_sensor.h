@@ -9,6 +9,7 @@
 
 #include <string>
 #include <map>
+#include <memory>
 
 namespace argos {
    class CFootBotMotorGroundRotZOnlySensor;
@@ -43,18 +44,19 @@ namespace argos {
    protected:
 
       /** Reference to embodied entity associated to this sensor */
-      CEmbodiedEntity* m_pcEmbodiedEntity;
+      CEmbodiedEntity*                m_pcEmbodiedEntity;
 
       /** Reference to floor entity */
-      CFloorEntity* m_pcFloorEntity;
+      CFloorEntity*                   m_pcFloorEntity;
 
       /** Reference to ground sensor equipped entity associated to this sensor */
-      CGroundSensorEquippedEntity* m_pcGroundSensorEntity;
+      CGroundSensorEquippedEntity*    m_pcGroundSensorEntity;
 
       /** Reference to the space */
-      CSpace& m_cSpace;
+      CSpace&                         m_cSpace;
+
       /** Noise injector */
-      CNoiseInjector m_cNoiseInjector;
+      std::unique_ptr<CNoiseInjector> m_pcNoiseInjector;
    };
 
 }

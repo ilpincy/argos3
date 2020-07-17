@@ -51,7 +51,8 @@ namespace argos {
          /* Parse noise injection */
          if(NodeExists(t_tree, "noise")) {
            TConfigurationNode& tNode = GetNode(t_tree, "noise");
-           m_cNoiseInjector.Init(tNode);
+           m_pcNoiseInjector = std::make_unique<CNoiseInjector>();
+           m_pcNoiseInjector->Init(tNode);
          }
 
          m_tReadings.resize(m_pcLightEntity->GetNumSensors());
@@ -116,20 +117,20 @@ namespace argos {
                }
             }
             /* Apply noise to the sensor */
-            if(m_cNoiseInjector.Enabled()) {
-                m_tReadings[i] += m_cNoiseInjector.InjectNoise();
+            if(m_pcNoiseInjector) {
+                m_tReadings[i] += m_pcNoiseInjector->InjectNoise();
             }
             /* Trunc the reading between 0 and 1 */
             UNIT.TruncValue(m_tReadings[i]);
          }
       }
       else {
-         /* There are no lights in the environment */
-         if(m_cNoiseInjector.Enabled()) {
+          /* There are no lights in the environment */
+          if(m_pcNoiseInjector) {
             /* Go through the sensors */
             for(UInt32 i = 0; i < m_tReadings.size(); ++i) {
                /* Apply noise to the sensor */
-               m_tReadings[i] += m_cNoiseInjector.InjectNoise();
+               m_tReadings[i] += m_pcNoiseInjector->InjectNoise();
                /* Trunc the reading between 0 and 1 */
                UNIT.TruncValue(m_tReadings[i]);
             }

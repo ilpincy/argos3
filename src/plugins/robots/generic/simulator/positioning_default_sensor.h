@@ -9,6 +9,7 @@
 
 #include <string>
 #include <map>
+#include <memory>
 
 namespace argos {
    class CPositioningDefaultSensor;
@@ -42,16 +43,16 @@ namespace argos {
    protected:
 
       /** Reference to embodied entity associated to this sensor */
-      CEmbodiedEntity* m_pcEmbodiedEntity;
+      CEmbodiedEntity*                m_pcEmbodiedEntity;
 
       /** Position noise injector */
-      CNoiseInjector m_cPosNoiseInjector;
+      std::unique_ptr<CNoiseInjector> m_pcPosNoiseInjector;
 
       /** Angle noise injector */
-      CNoiseInjector m_cAngleNoiseInjector;
+      std::unique_ptr<CNoiseInjector> m_pcAngleNoiseInjector;
 
       /** Axis noise injector */
-      CNoiseInjector m_cAxisNoiseInjector;
+      std::unique_ptr<CNoiseInjector> m_pcAxisNoiseInjector;
    };
 
 }

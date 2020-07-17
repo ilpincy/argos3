@@ -37,15 +37,18 @@ namespace argos {
          /* Parse noise injection */
          if(NodeExists(t_tree, "pos_noise")) {
            TConfigurationNode& tNode = GetNode(t_tree, "pos_noise");
-           m_cPosNoiseInjector.Init(tNode);
+           m_pcPosNoiseInjector = std::make_unique<CNoiseInjector>();
+           m_pcPosNoiseInjector->Init(tNode);
          }
          if(NodeExists(t_tree, "angle_noise")) {
            TConfigurationNode& tNode = GetNode(t_tree, "angle_noise");
-           m_cAngleNoiseInjector.Init(tNode);
+           m_pcAngleNoiseInjector = std::make_unique<CNoiseInjector>();
+           m_pcAngleNoiseInjector->Init(tNode);
          }
          if(NodeExists(t_tree, "axis_noise")) {
            TConfigurationNode& tNode = GetNode(t_tree, "axis_noise");
-           m_cAxisNoiseInjector.Init(tNode);
+           m_pcAxisNoiseInjector = std::make_unique<CNoiseInjector>();
+           m_pcAxisNoiseInjector->Init(tNode);
          }
       }
       catch(CARGoSException& ex) {
@@ -58,22 +61,31 @@ namespace argos {
 
    void CPositioningDefaultSensor::Update() {
       m_sReading.Position = m_pcEmbodiedEntity->GetOriginAnchor().Position;
-      if (m_cPosNoiseInjector.Enabled() ||
-          m_cAngleNoiseInjector.Enabled() ||
-          m_cAxisNoiseInjector.Enabled()) {
-        m_sReading.Position += CVector3(m_cPosNoiseInjector.InjectNoise(),
-                                        m_cPosNoiseInjector.InjectNoise(),
-                                        m_cPosNoiseInjector.InjectNoise());
+      bool bApplyNoise = (m_pcPosNoiseInjector ||
+                          m_pcAngleNoiseInjector ||
+                          m_pcAxisNoiseInjector);
+
+      if (bApplyNoise) {
+        if (m_pcPosNoiseInjector) {
+          m_sReading.Position += CVector3(m_pcPosNoiseInjector->InjectNoise(),
+                                          m_pcPosNoiseInjector->InjectNoise(),
+                                          m_pcPosNoiseInjector->InjectNoise());
+        }
+
         m_pcEmbodiedEntity->GetOriginAnchor().Orientation.ToAngleAxis(m_cAngle,
                                                                       m_cAxis);
-        m_cAngle += CRadians(ToRadians(CDegrees(m_cPosNoiseInjector.InjectNoise())));
-        m_cAxis += CVector3(m_cAxisNoiseInjector.InjectNoise(),
-                            m_cAxisNoiseInjector.InjectNoise(),
-                            m_cAxisNoiseInjector.InjectNoise());
+        if (m_pcAngleNoiseInjector) {
+          m_cAngle += CRadians(ToRadians(CDegrees(m_pcAngleNoiseInjector->InjectNoise())));
+        }
+
+        if (m_pcAxisNoiseInjector) {
+          m_cAxis += CVector3(m_pcAxisNoiseInjector->InjectNoise(),
+                              m_pcAxisNoiseInjector->InjectNoise(),
+                              m_pcAxisNoiseInjector->InjectNoise());
+        }
         m_sReading.Orientation.FromAngleAxis(m_cAngle, m_cAxis);
-      }
-      else {
-         m_sReading.Orientation = m_pcEmbodiedEntity->GetOriginAnchor().Orientation;
+      } else {
+        m_sReading.Orientation = m_pcEmbodiedEntity->GetOriginAnchor().Orientation;
       }
    }
 
