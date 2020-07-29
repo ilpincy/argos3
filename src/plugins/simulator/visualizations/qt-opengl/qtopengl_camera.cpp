@@ -73,7 +73,31 @@ namespace argos {
 
    CQTOpenGLCamera::CQTOpenGLCamera() :
       m_bEnableTimeline(false),
+      m_bHasTimeline(false),
       m_unLoop(0) {
+      /* automatically place the cameras at 30 degree increments
+         around the arena */
+      const CVector3& cArenaSize = 
+         CSimulator::GetInstance().GetSpace().GetArenaSize();
+      const CVector3& cArenaCenter = 
+         CSimulator::GetInstance().GetSpace().GetArenaCenter(); 
+      for(UInt32 un_index = 0; 
+            un_index < m_arrPlacements.size();
+            ++un_index) {
+         CRadians cAngle(CRadians::PI_OVER_SIX);
+         cAngle *= static_cast<Real>(un_index);
+         m_arrPlacements[un_index].Position = 
+            CVector3::X * cArenaSize.Length();
+         m_arrPlacements[un_index].Position.RotateZ(cAngle);
+         m_arrPlacements[un_index].Position += cArenaCenter;
+         m_arrPlacements[un_index].Target = cArenaCenter;
+         m_arrPlacements[un_index].Target.SetZ(0);
+         m_arrPlacements[un_index].Up = 
+            /* position - target? */
+            CVector3(0.0, 0.0, 1.0).Normalize();
+         m_arrPlacements[un_index].LensFocalLength = 0.08;
+         m_arrPlacements[un_index].CalculateYFieldOfView();
+      }
    }
 
    /****************************************/
@@ -103,34 +127,9 @@ namespace argos {
                }
             }
          }
-         else {
-            const CVector3& cArenaSize = 
-               CSimulator::GetInstance().GetSpace().GetArenaSize();
-            const CVector3& cArenaCenter = 
-               CSimulator::GetInstance().GetSpace().GetArenaCenter(); 
-            for(UInt32 un_index = 0; 
-                un_index < m_arrPlacements.size();
-                ++un_index) {
-               CRadians cAngle(CRadians::PI_OVER_SIX);
-               cAngle *= static_cast<Real>(un_index);
-               m_arrPlacements[un_index].Position = 
-                  CVector3::X * cArenaSize.Length();
-               m_arrPlacements[un_index].Position.RotateZ(cAngle);
-               m_arrPlacements[un_index].Position += cArenaCenter;
-               m_arrPlacements[un_index].Target = cArenaCenter;
-               m_arrPlacements[un_index].Target.SetZ(0);
-               m_arrPlacements[un_index].Up = 
-                  /* position - target? */
-                  CVector3(0.0, 0.0, 1.0).Normalize();
-               m_arrPlacements[un_index].LensFocalLength = 0.08;
-               m_arrPlacements[un_index].CalculateYFieldOfView();
-            }
-         }
-         /* Reset the camera */
-         Reset();
          /* Parse the timeline nodes */
          if(NodeExists(t_tree, "timeline")) {
-            m_bEnableTimeline = true;
+            m_bHasTimeline = true;
             TConfigurationNode& tTimelineNode = GetNode(t_tree, "timeline");
             /* When does the timeline loop */
             GetNodeAttributeOrDefault(tTimelineNode, "loop", m_unLoop, m_unLoop);
@@ -166,6 +165,8 @@ namespace argos {
                }
             }
          }
+         /* Reset the camera */
+         Reset();
       }
       catch(CARGoSException& ex) {
          THROW_ARGOSEXCEPTION_NESTED("Error initializing QTOpenGL camera", ex);
@@ -176,8 +177,11 @@ namespace argos {
    /****************************************/
 
    void CQTOpenGLCamera::Reset() {
-      m_sActivePlacement = m_arrPlacements[0];
-      m_bEnableTimeline = true;
+      if(m_bHasTimeline) {
+         m_bEnableTimeline = true;
+         UpdateTimeline();
+      }
+      SetActivePlacement(0);
    }
 
    /****************************************/

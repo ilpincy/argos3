@@ -125,6 +125,7 @@ namespace argos {
 
    private:
       bool m_bEnableTimeline;
+      bool m_bHasTimeline;
       UInt32 m_unLoop;
       SPlacement m_sActivePlacement;
       std::array<SPlacement, 12> m_arrPlacements;
