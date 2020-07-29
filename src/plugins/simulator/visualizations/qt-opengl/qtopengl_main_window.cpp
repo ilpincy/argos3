@@ -447,7 +447,10 @@ namespace argos {
       m_pcOpenGLWidget = new CQTOpenGLWidget(pcPlaceHolder, *this, *m_pcUserFunctions);
       m_pcOpenGLWidget->setFormat(cFormat);
       m_pcOpenGLWidget->setCursor(QCursor(Qt::OpenHandCursor));
-      m_pcOpenGLWidget->GetCamera().Init(t_tree);
+      if(NodeExists(t_tree, "camera")) {
+         TConfigurationNode& tCameraNode = GetNode(t_tree, "camera");
+         m_pcOpenGLWidget->GetCamera().Init(tCameraNode);
+      }
       m_pcOpenGLWidget->GetFrameGrabData().Init(t_tree);
 
       /* Set headless grabbing frame size after it has been parsed */

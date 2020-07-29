@@ -13,8 +13,8 @@
 
 namespace argos {
 
-   static const Real MOVE_GAIN = 0.005f / ::exp(0.02f);
-   static const Real ROTATE_GAIN = 0.01f / ::exp(-0.02f);
+   static const Real MOVE_GAIN = 0.005 / Exp(0.02);
+   static const Real ROTATE_GAIN = 0.01 / Exp(-0.02);
 
    /****************************************/
    /****************************************/
@@ -23,19 +23,19 @@ namespace argos {
       /* Get positional attributes */
       GetNodeAttribute(t_tree, "position", Position);
       GetNodeAttribute(t_tree, "look_at", Target);
-      /* Calculate the Forward vector */
-      Forward = (Target - Position).Normalize();
       /* Was the up vector specified? */
       if(!NodeAttributeExists(t_tree, "up")) {
          /* Calculate the Left vector
             It is located on a plane parallel to XY
             It is perpendicular to the projection of Forward on that plane
          */
-         if(Forward.GetX() != 0 || Forward.GetY() != 0) {
-            CVector2 cLeftXY(Forward.GetX(), Forward.GetY());
+         CVector3 cForward((Target - Position).Normalize());
+         CVector3 cLeft;
+         if(cForward.GetX() != 0 || cForward.GetY() != 0) {
+            CVector2 cLeftXY(cForward.GetX(), cForward.GetY());
             cLeftXY.Perpendicularize();
-            Left.Set(cLeftXY.GetX(), cLeftXY.GetY(), 0.0f);
-            Left.Normalize();
+            cLeft.Set(cLeftXY.GetX(), cLeftXY.GetY(), 0.0f);
+            cLeft.Normalize();
          }
          else {
             LOGERR << "[WARNING] The given camera position is ambiguous, "
@@ -43,215 +43,22 @@ namespace argos {
                    << "Consider specifying the \"up\" vector in the .argos file "
                    << "for more precise placement."
                    << std::endl;
-            Left.Set(0.0f, 1.0f, 0.0f);
+            cLeft.Set(0.0f, 1.0f, 0.0f);
          }
          /* Calculate the Up vector with a cross product */
-         Up = Forward;
-         Up.CrossProduct(Left).Normalize();
+         Up = cForward;
+         Up.CrossProduct(cLeft).Normalize();
       }
       else {
          /* Get Up vector */
          GetNodeAttribute(t_tree, "up", Up);
          Up.Normalize();
-         /* Calculate the Left vector with a cross product */
-         Left = Up;
-         Left.CrossProduct(Forward).Normalize();
       }
-      /* Get optional optics parameters */
+      /* Get focal length */
       Real fValue;
       GetNodeAttributeOrDefault<Real>(t_tree, "lens_focal_length", fValue, 20.0f);
       LensFocalLength = fValue * 0.001f;
       CalculateYFieldOfView();
-   }
-
-   /****************************************/
-   /****************************************/
-
-   void CQTOpenGLCamera::SPlacement::RotateUpDown(const CRadians& c_angle) {
-      /* Rotate around the local Y axis (Left)
-         The rotation matrix corresponding to this rotation is:
-         
-         | Fcos(a)-Usin(a)   L   Ucos(a)+Fsin(a) |
-         
-         where a is c_angle
-         L is the Left vector (local Y)
-         U is the Up vector (local Z)
-         F is the Forward vector (local X)
-      */
-      /* Calculate the new Up vector, given by:
-         Ucos(a)+Fsin(a)
-      */
-      /* Same, but faster than
-         cNewUp = Up * Cos(c_angle) + Forward * Sin(c_angle);
-      */
-      CVector3 cNewUp(Up);
-      cNewUp *= Cos(c_angle);
-      cNewUp += Forward * Sin(c_angle);
-      /* Check whether the rotation exceeds the limits */
-      if(cNewUp.GetAngleWith(CVector3::Z) > CRadians::PI_OVER_TWO) {
-         /*
-          * The rotation exceeds the limits
-          * The camera Up vector would form an angle bigger than 90 degrees with
-          * the global Z axis
-          */
-         /* We force the Up vector to lie on the XY plane */
-         Up.SetZ(0.0f);
-         Up.Normalize();
-         if(Forward.GetZ() < 0.0f) {
-            /* Forward was looking down, set it to -Z */
-            Forward = -CVector3::Z;
-         }
-         else {
-            /* Forward was looking up, set it to Z */
-            Forward = CVector3::Z;
-         }
-      }
-      else {
-         /* The rotation is OK */
-         Up = cNewUp;
-         Up.Normalize();
-         /* Now calculate the new Forward vector with a cross product
-            NOTE: the Left vector, being the rotation axis, remains
-            unchanged!
-         */
-         Forward = Left;
-         Forward.CrossProduct(Up).Normalize();
-      }
-   }
-
-   /****************************************/
-   /****************************************/
-
-   void CQTOpenGLCamera::SPlacement::RotateLeftRight(const CRadians& c_angle) {
-      /* Rotate around the local Z axis (Up)
-         The rotation matrix corresponding to this rotation is:
-         
-         | Fcos(a)+Lsin(a)   -Fsin(a)+Lcos(a)   U |
-         
-         where a is c_angle
-         L is the Left vector (local Y)
-         U is the Up vector (local Z)
-         F is the Forward vector (local X)
-      */
-
-      /* Calculate the new Forward vector, given by:
-         Fcos(a)+Lsin(a)
-      */
-      /* Same, but faster than
-         Forward = Forward * Cos(c_angle) + Left * Sin(c_angle);
-      */
-      Forward *= Cos(c_angle);
-      Forward += Left * Sin(c_angle);
-      Forward.Normalize();
-      /* Now calculate the new Left vector with a cross product
-         NOTE: the Up vector, being the rotation axis, remains
-         unchanged!
-      */
-      Left = Up;
-      Left.CrossProduct(Forward).Normalize();
-   }
-
-   /****************************************/
-   /****************************************/
-
-   void CQTOpenGLCamera::SPlacement::RotateLeftRight2(const CRadians& c_angle) {
-      /* This rotation is performed around the global Z axis.
-         To this aim, along with the global Z axis we project the
-         Forward and Left axes onto the XY plane and use these as
-         additional axis to build up the rotation matrix.
-         With the matrix, we rotate the projected Forward and Left vectors.
-         We then transform the projected vectors into the final ones.
-         Finally, we cross-product the two vectors to obtain the new Up vector.
-      */
-      if(Forward.GetX() != 0 || Forward.GetY() != 0) {
-         /* Project Forward onto the XY axis */
-         CVector3 cForwardXY(Forward.GetX(), Forward.GetY(), 0.0f);
-         /* Save its length: it will be used to restore the Z coordinate correctly */
-         Real cForwardXYLength = cForwardXY.Length();
-         /* Normalize the projection */
-         cForwardXY.Normalize();
-         
-         /* Project Left onto the XY axis and normalize the result */
-         CVector3 cLeftXY = CVector3::Z;
-         cLeftXY.CrossProduct(cForwardXY).Normalize();
-         
-         /* The rotation matrix corresponding to this rotation is:
-            
-            | Fcos(a)+Lsin(a)   -Fsin(a)+Lcos(a)   Z |
-            
-            where a is c_angle
-            L is the Left vector projected on XY
-            F is the Forward vector projected on XY
-            Z is the global Z vector
-         */
-         
-         /* Calculate the new cForwardXY vector, given by:
-            Fcos(a)+Lsin(a)
-            We keep the unrotated cForwardXY vector, because we will
-            need it for rotating Left too.
-         */
-         /* Same, but faster than
-            CVector3 cNewForwardXY = cForwardXY * Cos(c_angle) + cLeftXY * Sin(c_angle);
-         */
-         CVector3 cNewForwardXY(cForwardXY);
-         cNewForwardXY *= Cos(c_angle);
-         cNewForwardXY += cLeftXY * Sin(c_angle);
-         cNewForwardXY.Normalize();
-         /* Update Forward from cNewForwardXY: we want to keep the Z coordinate
-            of Forward unchanged cause we rotated around the global Z, but we
-            need to update the X and Y coordinates. Right now, cNewForwardXY has
-            zero Z coordinate and length 1, which means that its X and Y are wrong.
-            To get the right values, we need to scale it back to the length of the
-            projection of Forward onto the XY plane. Once this is done, the X and Y
-            coordinates are right.
-         */
-         /* Scale the vector back to the right length */
-         cNewForwardXY *= cForwardXYLength;
-         /* Finally, update Forward */
-         Forward.SetX(cNewForwardXY.GetX());
-         Forward.SetY(cNewForwardXY.GetY());
-         Forward.Normalize();
-         
-         /* Calculate the new Left vector, given by:
-            -Fsin(a)+Lcos(a)
-         */
-         /* Same, but faster than
-            Left = cLeftXY * Cos(c_angle) - cForwardXY * Sin(c_angle);
-         */
-         Left = cLeftXY;
-         Left *= Cos(c_angle);
-         Left -= cForwardXY * Sin(c_angle);
-         Left.Normalize();
-         
-         /* To calculate the new Up vector, a cross-product is enough */
-         Up = Forward;
-         Up.CrossProduct(Left).Normalize();
-      }
-   }
-
-   /****************************************/
-   /****************************************/
-
-   void CQTOpenGLCamera::SPlacement::Translate(const CVector3& c_delta) {
-      Position += Forward * c_delta.GetX() + Left * c_delta.GetY() + Up * c_delta.GetZ();
-      Target = Position;
-      Target += Forward;
-   }
-
-   /****************************************/
-   /****************************************/
-
-   void CQTOpenGLCamera::SPlacement::Do() {
-      gluLookAt(
-         Position.GetX(),
-         Position.GetY(),
-         Position.GetZ(),
-         Target.GetX(),
-         Target.GetY(),
-         Target.GetZ(),
-         Up.GetX(),
-         Up.GetY(),
-         Up.GetZ());
    }
 
    /****************************************/
@@ -264,89 +71,104 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CQTOpenGLCamera::SPlacement::CalculateSensitivity() {
-      MotionSensitivity = MOVE_GAIN * ::exp(LensFocalLength);
-      RotationSensitivity = ROTATE_GAIN * ::exp(-LensFocalLength);
-   }
-
-   /****************************************/
-   /****************************************/
-
-   void CQTOpenGLCamera::STimelineItem::Init(TConfigurationNode& t_tree) {
-      GetNodeAttribute(t_tree, "idx", Idx);
-      if(Idx > 11) {
-         THROW_ARGOSEXCEPTION("Error initializing QTOpenGL camera timeline: value given for 'idx' is out of bounds. Value = \"" << Idx << "\", allowed [0-11].");
-      }
-      GetNodeAttribute(t_tree, "step", Step);
-   }
-
-   /****************************************/
-   /****************************************/
-
    CQTOpenGLCamera::CQTOpenGLCamera() :
-      m_unActivePlacement(0) {
+      m_bEnableTimeline(false),
+      m_unLoop(0) {
    }
 
    /****************************************/
    /****************************************/
 
-   CQTOpenGLCamera::~CQTOpenGLCamera() {
-      while(!m_listTimeline.empty()) {
-         delete m_listTimeline.back();
-         m_listTimeline.pop_back();
-      }
-   }
+   CQTOpenGLCamera::~CQTOpenGLCamera() {}
    
    /****************************************/
    /****************************************/
 
    void CQTOpenGLCamera::Init(TConfigurationNode& t_tree) {
-      if(NodeExists(t_tree, "camera")) {
-         try {
-            TConfigurationNode tCameraNode;
-            tCameraNode = GetNode(t_tree, "camera");
-            /* Parse "placement" nodes */
+      try {
+         if(NodeExists(t_tree, "placements")) {
+            TConfigurationNode& tPlacementsNode = GetNode(t_tree, "placements");
+            /* Parse the placement nodes */
             TConfigurationNodeIterator itPlacement("placement");
-            SInt32 nIdx;
-            for(itPlacement = itPlacement.begin(&tCameraNode);
-                itPlacement != itPlacement.end();
-                ++itPlacement) {
-               GetNodeAttribute(*itPlacement, "idx", nIdx);
-               if(nIdx >=0 && nIdx <= 11) {
-                  m_sPlacement[nIdx].Init(*itPlacement);
+            for(itPlacement = itPlacement.begin(&tPlacementsNode);
+                  itPlacement != itPlacement.end();
+                  ++itPlacement) {
+               UInt32 unIndex = 0;
+               GetNodeAttribute(*itPlacement, "index", unIndex);
+               if(unIndex < m_arrPlacements.size()) {
+                  m_arrPlacements[unIndex].Init(*itPlacement);
                }
                else {
-                  THROW_ARGOSEXCEPTION("Error initializing QTOpenGL camera placement: value given for 'idx' is out of bounds. Value = \"" << nIdx << "\", allowed [0-11].");
+                  THROW_ARGOSEXCEPTION("Placement index is out of bounds");
                }
             }
-            /* Parse "timeline" nodes */
-            TConfigurationNodeIterator itTimeline("timeline");
-            for(itTimeline = itTimeline.begin(&tCameraNode);
-                itTimeline != itTimeline.end();
-                ++itTimeline) {
+         }
+         else {
+            const CVector3& cArenaSize = 
+               CSimulator::GetInstance().GetSpace().GetArenaSize();
+            const CVector3& cArenaCenter = 
+               CSimulator::GetInstance().GetSpace().GetArenaCenter(); 
+            for(UInt32 un_index = 0; 
+                un_index < m_arrPlacements.size();
+                ++un_index) {
+               CRadians cAngle(CRadians::PI_OVER_SIX);
+               cAngle *= static_cast<Real>(un_index);
+               m_arrPlacements[un_index].Position = 
+                  CVector3::X * cArenaSize.Length();
+               m_arrPlacements[un_index].Position.RotateZ(cAngle);
+               m_arrPlacements[un_index].Position += cArenaCenter;
+               m_arrPlacements[un_index].Target = cArenaCenter;
+               m_arrPlacements[un_index].Target.SetZ(0);
+               m_arrPlacements[un_index].Up = 
+                  /* position - target? */
+                  CVector3(0.0, 0.0, 1.0).Normalize();
+               m_arrPlacements[un_index].LensFocalLength = 0.08;
+               m_arrPlacements[un_index].CalculateYFieldOfView();
+            }
+         }
+         /* Reset the camera */
+         Reset();
+         /* Parse the timeline nodes */
+         if(NodeExists(t_tree, "timeline")) {
+            m_bEnableTimeline = true;
+            TConfigurationNode& tTimelineNode = GetNode(t_tree, "timeline");
+            /* When does the timeline loop */
+            GetNodeAttributeOrDefault(tTimelineNode, "loop", m_unLoop, m_unLoop);
+            /* Parse the placement nodes */
+            TConfigurationNodeIterator itTimelineElement;
+            UInt32 unLastStep = 0;
+            UInt32 unKeyframeStep = 0;
+            UInt32 unKeyframePlacement = 0;
+            for(itTimelineElement = itTimelineElement.begin(&tTimelineNode);
+               itTimelineElement != itTimelineElement.end();
+               ++itTimelineElement) {
                /* Create timeline item */
-               STimelineItem* psTimelineItem = new STimelineItem();
-               psTimelineItem->Init(*itTimeline);
-               /* Sorted insert */
-               if(m_listTimeline.empty())
-                  m_listTimeline.push_back(psTimelineItem);
-               else {
-                  std::list<STimelineItem*>::iterator it = m_listTimeline.begin();
-                  while(it != m_listTimeline.end() && (*it)->Step < psTimelineItem->Step) ++it;
-                  if(it == m_listTimeline.end())
-                     m_listTimeline.push_back(psTimelineItem);
-                  else
-                     m_listTimeline.insert(it, psTimelineItem);
+               if(itTimelineElement->Value() == "keyframe") {
+                  GetNodeAttribute(*itTimelineElement, "placement", unKeyframePlacement);
+                  GetNodeAttribute(*itTimelineElement, "step", unKeyframeStep);
+                  if(unKeyframeStep < unLastStep) {
+                     THROW_ARGOSEXCEPTION("Keyframes must be in increasing order");
+                  }
+                  if(m_unLoop && unKeyframeStep > m_unLoop) {
+                     THROW_ARGOSEXCEPTION("Keyframe step must be less than the loop period");
+                  }
+                  else {
+                     unLastStep = unKeyframeStep;
+                     m_vecKeyframes.emplace_back(unKeyframeStep,
+                                                 unKeyframePlacement,
+                                                 false);
+                  }
+               }
+               else if(itTimelineElement->Value() == "interpolate") {
+                  if(!m_vecKeyframes.empty()) {
+                     m_vecKeyframes.back().InterpolateToNext = true;
+                  }
                }
             }
-            for(std::list<STimelineItem*>::iterator it = m_listTimeline.begin();
-                it != m_listTimeline.end();
-                ++it) {
-            }
          }
-         catch(CARGoSException& ex) {
-            THROW_ARGOSEXCEPTION_NESTED("Error initializing QTOpenGL camera placement", ex);
-         }
+      }
+      catch(CARGoSException& ex) {
+         THROW_ARGOSEXCEPTION_NESTED("Error initializing QTOpenGL camera", ex);
       }
    }
 
@@ -354,21 +176,95 @@ namespace argos {
    /****************************************/
 
    void CQTOpenGLCamera::Reset() {
-      m_unActivePlacement = 0;
+      m_sActivePlacement = m_arrPlacements[0];
+      m_bEnableTimeline = true;
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CQTOpenGLCamera::Look() {
+      const CVector3& cPosition = GetActivePlacement().Position;
+      const CVector3& cTarget = GetActivePlacement().Target;
+      const CVector3& cUp = GetActivePlacement().Up;
+      gluLookAt(cPosition.GetX(),
+                cPosition.GetY(),
+                cPosition.GetZ(),
+                cTarget.GetX(),
+                cTarget.GetY(),
+                cTarget.GetZ(),
+                cUp.GetX(),
+                cUp.GetY(),
+                cUp.GetZ());
    }
 
    /****************************************/
    /****************************************/
 
    void CQTOpenGLCamera::Rotate(const QPoint& c_delta) {
-      m_sPlacement[m_unActivePlacement]
-         .RotateUpDown(CRadians(m_sPlacement[m_unActivePlacement].RotationSensitivity * c_delta.y()));
-      m_sPlacement[m_unActivePlacement]
-         .RotateLeftRight2(CRadians(-m_sPlacement[m_unActivePlacement].RotationSensitivity * c_delta.x()));
-      m_sPlacement[m_unActivePlacement]
-         .Target = m_sPlacement[m_unActivePlacement].Position;
-      m_sPlacement[m_unActivePlacement]
-         .Target += m_sPlacement[m_unActivePlacement].Forward;
+      /* disable timeline on rotate */
+      m_bEnableTimeline = false;
+      /* Calculate cForward and cLeft */
+      CVector3 cForward((m_sActivePlacement.Target - m_sActivePlacement.Position).Normalize());
+      CVector3 cLeft = m_sActivePlacement.Up;
+      cLeft.CrossProduct(cForward).Normalize();
+      /* Calculate fRotationSensitivity */
+      Real fRotationSensitivity = 
+         ROTATE_GAIN * ::exp(-m_sActivePlacement.LensFocalLength);
+      /* rotate the camera */
+      CRadians cUpDownRotation(fRotationSensitivity * c_delta.y());
+      CVector3 cNewUp(m_sActivePlacement.Up);
+      cNewUp *= Cos(cUpDownRotation);
+      cNewUp += cForward * Sin(cUpDownRotation);
+      /* Check whether the rotation exceeds the limits */
+      if(cNewUp.GetAngleWith(CVector3::Z) > CRadians::PI_OVER_TWO) {
+         m_sActivePlacement.Up.SetZ(0.0f);
+         m_sActivePlacement.Up.Normalize();
+         if(cForward.GetZ() < 0.0f) {
+            cForward = -CVector3::Z;
+         }
+         else {
+            cForward = CVector3::Z;
+         }
+      }
+      else {
+         /* The rotation is OK */
+         m_sActivePlacement.Up = cNewUp;
+         m_sActivePlacement.Up.Normalize();
+         cForward = cLeft;
+         cForward.CrossProduct(m_sActivePlacement.Up).Normalize();
+      }
+      if(cForward.GetX() != 0 || cForward.GetY() != 0) {
+         CRadians cLeftRightRotation(-fRotationSensitivity * c_delta.x());
+         /* Project Forward onto the XY axis */
+         CVector3 cForwardXY(cForward.GetX(), cForward.GetY(), 0.0f);
+         /* Save its length: it will be used to restore the Z coordinate correctly */
+         Real cForwardXYLength = cForwardXY.Length();
+         /* Normalize the projection */
+         cForwardXY.Normalize();
+         /* Project Left onto the XY axis and normalize the result */
+         CVector3 cLeftXY = CVector3::Z;
+         cLeftXY.CrossProduct(cForwardXY).Normalize();
+         CVector3 cNewForwardXY(cForwardXY);
+         cNewForwardXY *= Cos(cLeftRightRotation);
+         cNewForwardXY += cLeftXY * Sin(cLeftRightRotation);
+         cNewForwardXY.Normalize();
+         /* Scale the vector back to the right length */
+         cNewForwardXY *= cForwardXYLength;
+         /* Finally, update Forward */
+         cForward.SetX(cNewForwardXY.GetX());
+         cForward.SetY(cNewForwardXY.GetY());
+         cForward.Normalize();
+         cLeft = cLeftXY;
+         cLeft *= Cos(cLeftRightRotation);
+         cLeft -= cForwardXY * Sin(cLeftRightRotation);
+         cLeft.Normalize();
+         /* To calculate the new Up vector, a cross-product is enough */
+         m_sActivePlacement.Up = cForward;
+         m_sActivePlacement.Up.CrossProduct(cLeft).Normalize();
+      }
+      m_sActivePlacement.Target = m_sActivePlacement.Position;
+      m_sActivePlacement.Target += cForward;
    }
    
    /****************************************/
@@ -377,33 +273,161 @@ namespace argos {
    void CQTOpenGLCamera::Move(SInt32 n_forwards_backwards,
                               SInt32 n_sideways,
                               SInt32 n_up_down) {
-      m_sPlacement[m_unActivePlacement].Translate(
-         CVector3(m_sPlacement[m_unActivePlacement].MotionSensitivity * n_forwards_backwards,
-                  m_sPlacement[m_unActivePlacement].MotionSensitivity * n_sideways,
-                  m_sPlacement[m_unActivePlacement].MotionSensitivity * n_up_down));
+      /* disable timeline on move */
+      m_bEnableTimeline = false;
+      /* Get cUp and calculate cForward and cLeft */
+      const CVector3& cUp = m_sActivePlacement.Up;
+      CVector3 cForward((m_sActivePlacement.Target - m_sActivePlacement.Position).Normalize());
+      CVector3 cLeft = m_sActivePlacement.Up;
+      cLeft.CrossProduct(cForward).Normalize();
+      /* Calculate motion sensitivity */
+      Real fMotionSensitivity = MOVE_GAIN * ::exp(m_sActivePlacement.LensFocalLength);
+      /* Apply translation */
+      m_sActivePlacement.Position += 
+         cForward * (fMotionSensitivity * n_forwards_backwards) +
+         cLeft * (fMotionSensitivity * n_sideways) +
+         cUp * (fMotionSensitivity * n_up_down);
+      m_sActivePlacement.Target = m_sActivePlacement.Position;
+      m_sActivePlacement.Target += cForward;
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CQTOpenGLCamera::Interpolate(UInt32 un_start_placement,
+                                     UInt32 un_end_placement,
+                                     Real f_time_fraction) {
+      const SPlacement& sStart = m_arrPlacements[un_start_placement];
+      const SPlacement& sEnd = m_arrPlacements[un_end_placement];
+      /* Linear interpolate position vector */
+      m_sActivePlacement.Position = (sEnd.Position - sStart.Position);
+      m_sActivePlacement.Position *= f_time_fraction;
+      m_sActivePlacement.Position += sStart.Position;
+      /* Linear interpolate look at vector */
+      m_sActivePlacement.Target = (sEnd.Target - sStart.Target);
+      m_sActivePlacement.Target *= f_time_fraction;
+      m_sActivePlacement.Target += sStart.Target;
+      /* Linear interpolate up vector */
+      m_sActivePlacement.Up = (sEnd.Up - sStart.Up);
+      m_sActivePlacement.Up *= f_time_fraction;
+      m_sActivePlacement.Up += sStart.Up;
+      /* Linear interpolate the focal length */
+      m_sActivePlacement.LensFocalLength = (sEnd.LensFocalLength - sStart.LensFocalLength);
+      m_sActivePlacement.LensFocalLength *= f_time_fraction;
+      m_sActivePlacement.LensFocalLength += sStart.LensFocalLength;
+      /* Calculate the Y field-of-view */
+      m_sActivePlacement.CalculateYFieldOfView();
    }
 
    /****************************************/
    /****************************************/
 
    void CQTOpenGLCamera::UpdateTimeline() {
-      /* If no timeline, nothing to do */
-      if(m_listTimeline.empty()) return;
-      /* Get current timestep */
-      UInt32 unStep = CSimulator::GetInstance().GetSpace().GetSimulationClock();
-      /* Search for active timeline item */
-      std::list<STimelineItem*>::iterator it = m_listTimeline.begin();
-      /* Is the first item potentially active? */
-      if((*it)->Step <= unStep) {
-         /* Yes, save it and search for subsequent items */
-         STimelineItem* psTimelineItem = *it;
-         ++it;
-         while(it != m_listTimeline.end() && (*it)->Step <= unStep) {
-            psTimelineItem = *it;
-            ++it;
+      if(!m_bEnableTimeline)
+         return;
+      /* initialize two iterators to the first keyframe */
+      std::vector<SKeyframe>::const_iterator itCurrent = 
+         std::cbegin(m_vecKeyframes);
+      std::vector<SKeyframe>::const_iterator itNext = 
+         std::cbegin(m_vecKeyframes);
+      if(itCurrent == std::cend(m_vecKeyframes)) {
+         /* no keyframes defined: nothing to do */
+         return;
+      }
+      UInt32 unStep = 
+         CSimulator::GetInstance().GetSpace().GetSimulationClock();
+      /* wrap unStep if we are looping */
+      if(m_unLoop) {
+         unStep %= m_unLoop;
+      }
+      /* search for the current and next keyframes */
+      while(itNext != std::cend(m_vecKeyframes) &&
+         itNext->Step < unStep) {
+         itCurrent = itNext++;
+      }
+      if(m_unLoop == 0) {
+         if(itCurrent == itNext) {
+            /* no keyframes have been defined yet */
+            return;
          }
-         /* Set active placement according to currently active timeline item */
-         m_unActivePlacement = psTimelineItem->Idx;
+         else if(itNext == std::cend(m_vecKeyframes)) {
+            if(itCurrent->Step == unStep - 1) {
+               SetActivePlacement(itCurrent->PlacementIndex);
+            }
+         }
+         else {
+            /* general case */
+            if(itCurrent->InterpolateToNext) {
+               Real fSegmentTimeFraction =
+                  (unStep - itCurrent->Step) / 
+                  static_cast<Real>(itNext->Step - itCurrent->Step);
+               Interpolate(itCurrent->PlacementIndex,
+                           itNext->PlacementIndex,
+                           fSegmentTimeFraction);
+            }
+            else {
+               if(itCurrent->Step == unStep - 1) {
+                  SetActivePlacement(itCurrent->PlacementIndex);
+               }
+            }
+         }
+      }
+      else /* m_unLoop != 0 */ {
+         if(itCurrent == itNext) {
+            /* no keyframes have been defined yet, since we are looping
+               wrap itCurrent around to the last keyframe */
+            itCurrent = std::prev(std::cend(m_vecKeyframes));
+            if(itCurrent == itNext) {
+               /* we are looping with a single keyframe, apply it once
+                  and disable the timeline */
+               SetActivePlacement(itCurrent->PlacementIndex);
+               m_bEnableTimeline = false;
+            }
+            else if(itCurrent->InterpolateToNext) {
+               Real fSegmentTimeFraction =
+                  (m_unLoop - itCurrent->Step + unStep) / 
+                  static_cast<Real>(m_unLoop - itCurrent->Step + itNext->Step);
+               Interpolate(itCurrent->PlacementIndex,
+                           itNext->PlacementIndex,
+                           fSegmentTimeFraction);
+            }
+            else /* itCurrent->InterpolateToNext == false */ {
+               SetActivePlacement(itCurrent->PlacementIndex);
+            }
+         }
+         else if(itNext == std::cend(m_vecKeyframes)) {
+            itNext = std::cbegin(m_vecKeyframes);
+            if(itCurrent == itNext) {
+               /* we are looping with a single keyframe, apply it once
+                  and disable the timeline */
+               SetActivePlacement(itCurrent->PlacementIndex);
+               m_bEnableTimeline = false;
+            }
+            else if(itCurrent->InterpolateToNext) {
+               Real fSegmentTimeFraction =
+                  (unStep - itCurrent->Step) /
+                  static_cast<Real>(m_unLoop - itCurrent->Step + itNext->Step);
+               Interpolate(itCurrent->PlacementIndex,
+                           itNext->PlacementIndex,
+                           fSegmentTimeFraction);
+            }
+            else /* itCurrent->InterpolateToNext == false */ {
+               SetActivePlacement(itCurrent->PlacementIndex);
+            }
+         }
+         else {
+            if(itCurrent->InterpolateToNext) {
+               Real fSegmentTimeFraction =
+                  (unStep - itCurrent->Step) / 
+                  static_cast<Real>(itNext->Step - itCurrent->Step);
+               Interpolate(itCurrent->PlacementIndex,
+                           itNext->PlacementIndex,
+                           fSegmentTimeFraction);
+            }
+            else {
+               SetActivePlacement(itCurrent->PlacementIndex);
+            }
+         }
       }
    }
 

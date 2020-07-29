@@ -572,8 +572,6 @@ namespace argos {
    void CQTOpenGLWidget::SetCameraFocalLength(double f_length) {
       m_cCamera.GetActivePlacement().LensFocalLength = f_length / 1000.0f;
       m_cCamera.GetActivePlacement().CalculateYFieldOfView();
-      m_cCamera.GetActivePlacement().CalculateSensitivity();
-      QToolTip::showText(pos() + geometry().center(), QString("Motion sens = %1").arg(m_cCamera.GetActivePlacement().MotionSensitivity));
       update();
    }
 
