@@ -43,7 +43,7 @@ namespace argos {
                    << "Consider specifying the \"up\" vector in the .argos file "
                    << "for more precise placement."
                    << std::endl;
-            cLeft.Set(0.0f, 1.0f, 0.0f);
+            cLeft = CVector3::Y;
          }
          /* Calculate the Up vector with a cross product */
          Up = cForward;
@@ -92,9 +92,8 @@ namespace argos {
          m_arrPlacements[un_index].Position += cArenaCenter;
          m_arrPlacements[un_index].Target = cArenaCenter;
          m_arrPlacements[un_index].Target.SetZ(0);
-         m_arrPlacements[un_index].Up = 
-            /* position - target? */
-            CVector3(0.0, 0.0, 1.0).Normalize();
+         /* (position - target).Normalize() ? */
+         m_arrPlacements[un_index].Up = CVector3::Z;
          m_arrPlacements[un_index].LensFocalLength = 0.08;
          m_arrPlacements[un_index].CalculateYFieldOfView();
       }
@@ -216,7 +215,7 @@ namespace argos {
       cLeft.CrossProduct(cForward).Normalize();
       /* Calculate fRotationSensitivity */
       Real fRotationSensitivity = 
-         ROTATE_GAIN * ::exp(-m_sActivePlacement.LensFocalLength);
+         ROTATE_GAIN * Exp(-m_sActivePlacement.LensFocalLength);
       /* rotate the camera */
       CRadians cUpDownRotation(fRotationSensitivity * c_delta.y());
       CVector3 cNewUp(m_sActivePlacement.Up);
@@ -287,7 +286,7 @@ namespace argos {
       CVector3 cLeft = m_sActivePlacement.Up;
       cLeft.CrossProduct(cForward).Normalize();
       /* Calculate motion sensitivity */
-      Real fMotionSensitivity = MOVE_GAIN * ::exp(m_sActivePlacement.LensFocalLength);
+      Real fMotionSensitivity = MOVE_GAIN * Exp(m_sActivePlacement.LensFocalLength);
       /* Apply translation */
       m_sActivePlacement.Position += 
          cForward * (fMotionSensitivity * n_forwards_backwards) +

@@ -58,8 +58,11 @@ namespace argos {
             Step(un_step),
             PlacementIndex(un_placement_index),
             InterpolateToNext(b_interpolate_to_next) {}
+         /** The step at which this keyframe should be applied */
          UInt32 Step;
+         /** An index into the camera placements array [0-12) */
          UInt32 PlacementIndex;
+         /** Whether or not linear interpolation should be applied */
          bool InterpolateToNext;
       };
 
