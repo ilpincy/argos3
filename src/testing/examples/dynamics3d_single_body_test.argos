@@ -77,12 +77,14 @@
           <placement index="7" position="-1.25,-1.25,0.6" look_at="0,0,0.05" lens_focal_length="92" />
           <placement index="8" position="0,0,0.5" look_at="0.0,0.0,0.125" up="0,1,0" lens_focal_length="40"/>
         </placements>
-        <timeline loop="120">
+        <timeline loop="160">
           <keyframe placement="2" step="20" />
           <interpolate />
           <keyframe placement="8" step="60" />
           <interpolate />
-          <keyframe placement="2" step="100" />
+          <keyframe placement="6" step="100" />
+          <interpolate />
+          <keyframe placement="8" step="140" />
           <interpolate />
         </timeline>
       </camera>

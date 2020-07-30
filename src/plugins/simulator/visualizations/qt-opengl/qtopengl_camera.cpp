@@ -181,7 +181,9 @@ namespace argos {
          m_bEnableTimeline = true;
          UpdateTimeline();
       }
-      SetActivePlacement(0);
+      else {
+         SetActivePlacement(0);
+      }
    }
 
    /****************************************/
