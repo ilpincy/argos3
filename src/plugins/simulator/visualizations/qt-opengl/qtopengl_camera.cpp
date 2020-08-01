@@ -207,71 +207,149 @@ namespace argos {
    /****************************************/
 
    void CQTOpenGLCamera::Rotate(const QPoint& c_delta) {
-      /* disable timeline on rotate */
+      /* Disable timeline on rotate */
       m_bEnableTimeline = false;
-      /* Calculate cForward and cLeft */
-      CVector3 cForward((m_sActivePlacement.Target - m_sActivePlacement.Position).Normalize());
-      CVector3 cLeft = m_sActivePlacement.Up;
-      cLeft.CrossProduct(cForward).Normalize();
       /* Calculate fRotationSensitivity */
-      Real fRotationSensitivity = 
+      Real fRotationSensitivity =
          ROTATE_GAIN * Exp(-m_sActivePlacement.LensFocalLength);
-      /* rotate the camera */
-      CRadians cUpDownRotation(fRotationSensitivity * c_delta.y());
-      CVector3 cNewUp(m_sActivePlacement.Up);
-      cNewUp *= Cos(cUpDownRotation);
-      cNewUp += cForward * Sin(cUpDownRotation);
-      /* Check whether the rotation exceeds the limits */
-      if(cNewUp.GetAngleWith(CVector3::Z) > CRadians::PI_OVER_TWO) {
-         m_sActivePlacement.Up.SetZ(0.0f);
-         m_sActivePlacement.Up.Normalize();
-         if(cForward.GetZ() < 0.0f) {
-            cForward = -CVector3::Z;
+      /* Rotate the camera */
+      Rotate(CRadians(fRotationSensitivity * c_delta.y()),
+             CRadians(-fRotationSensitivity * c_delta.x()));
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CQTOpenGLCamera::Rotate(const CRadians& c_up_down = CRadians::ZERO,
+                                const CRadians& c_left_right = CRadians::ZERO) {
+      CVector3& cUp = m_sActivePlacement.Up;
+      /* Calculate the forward and left vectors */
+      CVector3 cForward((m_sActivePlacement.Target - m_sActivePlacement.Position).Normalize());
+      CVector3 cLeft(cUp);
+      cLeft.CrossProduct(cForward).Normalize();
+      /* Apply up/down rotation */
+      if(c_up_down != CRadians::ZERO) {
+         /* Rotate around the local Y axis (Left)
+            The rotation matrix corresponding to this rotation is:
+            | Fcos(a)-Usin(a)   L   Ucos(a)+Fsin(a) |
+            where a is c_angle
+            L is the Left vector (local Y)
+            U is the Up vector (local Z)
+            F is the Forward vector (local X)
+         */
+         /* Calculate the new Up vector, given by:
+            Ucos(a)+Fsin(a)
+         */
+         /* Same, but faster than
+            cNewUp = Up * Cos(c_angle) + Forward * Sin(c_angle);
+         */
+         CVector3 cNewUp(m_sActivePlacement.Up);
+         /* Calculate the forward and left vector */
+         cNewUp *= Cos(c_up_down);
+         cNewUp += cForward * Sin(c_up_down);
+         /* Check whether the rotation exceeds the limits */
+         if(cNewUp.GetAngleWith(CVector3::Z) > CRadians::PI_OVER_TWO) {
+            /*
+            * The rotation exceeds the limits
+            * The camera Up vector would form an angle bigger than 90 degrees with
+            * the global Z axis
+            */
+            /* We force the Up vector to lie on the XY plane */
+            cUp.SetZ(0.0f);
+            cUp.Normalize();
+            if(cForward.GetZ() < 0.0f) {
+               /* Forward was looking down, set it to -Z */
+               cForward = -CVector3::Z;
+            }
+            else {
+               /* Forward was looking up, set it to Z */
+               cForward = CVector3::Z;
+            }
          }
          else {
-            cForward = CVector3::Z;
+            /* The rotation is OK */
+            cUp = cNewUp;
+            cUp.Normalize();
+            /* Now calculate the new Forward vector with a cross product
+               NOTE: the Left vector, being the rotation axis, remains
+               unchanged!
+            */
+            cForward = cLeft;
+            cForward.CrossProduct(cUp).Normalize();
          }
       }
-      else {
-         /* The rotation is OK */
-         m_sActivePlacement.Up = cNewUp;
-         m_sActivePlacement.Up.Normalize();
-         cForward = cLeft;
-         cForward.CrossProduct(m_sActivePlacement.Up).Normalize();
-      }
-      if(cForward.GetX() != 0 || cForward.GetY() != 0) {
-         CRadians cLeftRightRotation(-fRotationSensitivity * c_delta.x());
-         /* Project Forward onto the XY axis */
-         CVector3 cForwardXY(cForward.GetX(), cForward.GetY(), 0.0f);
-         /* Save its length: it will be used to restore the Z coordinate correctly */
-         Real cForwardXYLength = cForwardXY.Length();
-         /* Normalize the projection */
-         cForwardXY.Normalize();
-         /* Project Left onto the XY axis and normalize the result */
-         CVector3 cLeftXY = CVector3::Z;
-         cLeftXY.CrossProduct(cForwardXY).Normalize();
-         CVector3 cNewForwardXY(cForwardXY);
-         cNewForwardXY *= Cos(cLeftRightRotation);
-         cNewForwardXY += cLeftXY * Sin(cLeftRightRotation);
-         cNewForwardXY.Normalize();
-         /* Scale the vector back to the right length */
-         cNewForwardXY *= cForwardXYLength;
-         /* Finally, update Forward */
-         cForward.SetX(cNewForwardXY.GetX());
-         cForward.SetY(cNewForwardXY.GetY());
-         cForward.Normalize();
-         cLeft = cLeftXY;
-         cLeft *= Cos(cLeftRightRotation);
-         cLeft -= cForwardXY * Sin(cLeftRightRotation);
-         cLeft.Normalize();
-         /* To calculate the new Up vector, a cross-product is enough */
-         m_sActivePlacement.Up = cForward;
-         m_sActivePlacement.Up.CrossProduct(cLeft).Normalize();
+      /* Apply left/right rotation */
+      if(c_left_right != CRadians::ZERO) {
+         /* This rotation is performed around the global Z axis.
+            To this aim, along with the global Z axis we project the
+            Forward and Left axes onto the XY plane and use these as
+            additional axis to build up the rotation matrix.
+            With the matrix, we rotate the projected Forward and Left vectors.
+            We then transform the projected vectors into the final ones.
+            Finally, we cross-product the two vectors to obtain the new Up vector.
+         */
+         if(cForward.GetX() != 0 || cForward.GetY() != 0) {
+            /* Project Forward onto the XY axis */
+            CVector3 cForwardXY(cForward.GetX(), cForward.GetY(), 0.0f);
+            /* Save its length: it will be used to restore the Z coordinate correctly */
+            Real cForwardXYLength = cForwardXY.Length();
+            /* Normalize the projection */
+            cForwardXY.Normalize();
+            /* Project Left onto the XY axis and normalize the result */
+            CVector3 cLeftXY = CVector3::Z;
+            cLeftXY.CrossProduct(cForwardXY).Normalize();
+            /* The rotation matrix corresponding to this rotation is:
+               | Fcos(a)+Lsin(a)   -Fsin(a)+Lcos(a)   Z |
+               where a is c_angle
+               L is the Left vector projected on XY
+               F is the Forward vector projected on XY
+               Z is the global Z vector
+            */
+            /* Calculate the new cForwardXY vector, given by:
+               Fcos(a)+Lsin(a)
+               We keep the unrotated cForwardXY vector, because we will
+               need it for rotating Left too.
+            */
+            /* Same, but faster than
+               CVector3 cNewForwardXY = cForwardXY * Cos(c_angle) + cLeftXY * Sin(c_angle);
+            */
+            CVector3 cNewForwardXY(cForwardXY);
+            cNewForwardXY *= Cos(c_left_right);
+            cNewForwardXY += cLeftXY * Sin(c_left_right);
+            cNewForwardXY.Normalize();
+            /* Update Forward from cNewForwardXY: we want to keep the Z coordinate
+               of Forward unchanged cause we rotated around the global Z, but we
+               need to update the X and Y coordinates. Right now, cNewForwardXY has
+               zero Z coordinate and length 1, which means that its X and Y are wrong.
+               To get the right values, we need to scale it back to the length of the
+               projection of Forward onto the XY plane. Once this is done, the X and Y
+               coordinates are right.
+            */
+            /* Scale the vector back to the right length */
+            cNewForwardXY *= cForwardXYLength;
+            /* Finally, update Forward */
+            cForward.SetX(cNewForwardXY.GetX());
+            cForward.SetY(cNewForwardXY.GetY());
+            cForward.Normalize();
+            /* Calculate the new Left vector, given by:
+               -Fsin(a)+Lcos(a)
+            */
+            /* Same, but faster than
+               Left = cLeftXY * Cos(c_angle) - cForwardXY * Sin(c_angle);
+            */
+            cLeft = cLeftXY;
+            cLeft *= Cos(c_left_right);
+            cLeft -= cForwardXY * Sin(c_left_right);
+            cLeft.Normalize();
+            /* To calculate the new Up vector, a cross-product is enough */
+            cUp = cForward;
+            cUp.CrossProduct(cLeft).Normalize();
+         }
       }
       m_sActivePlacement.Target = m_sActivePlacement.Position;
       m_sActivePlacement.Target += cForward;
    }
-   
+
    /****************************************/
    /****************************************/
 

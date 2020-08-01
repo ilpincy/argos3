@@ -92,6 +92,9 @@ namespace argos {
 
       void Rotate(const QPoint& c_delta);
 
+      void Rotate(const CRadians& c_up_down,
+                  const CRadians& c_left_right);
+
       void Move(SInt32 n_forwards_backwards,
                 SInt32 n_sideways,
                 SInt32 n_up_down);
