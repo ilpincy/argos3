@@ -97,6 +97,7 @@ namespace argos {
          m_arrPlacements[un_index].LensFocalLength = 0.08;
          m_arrPlacements[un_index].CalculateYFieldOfView();
       }
+      SetActivePlacement(0);
    }
 
    /****************************************/
@@ -189,9 +190,9 @@ namespace argos {
    /****************************************/
 
    void CQTOpenGLCamera::Look() {
-      const CVector3& cPosition = GetActivePlacement().Position;
-      const CVector3& cTarget = GetActivePlacement().Target;
-      const CVector3& cUp = GetActivePlacement().Up;
+      const CVector3& cPosition = m_sActivePlacement.Position;
+      const CVector3& cTarget = m_sActivePlacement.Target;
+      const CVector3& cUp = m_sActivePlacement.Up;
       gluLookAt(cPosition.GetX(),
                 cPosition.GetY(),
                 cPosition.GetZ(),
