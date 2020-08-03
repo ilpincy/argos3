@@ -77,15 +77,20 @@ namespace argos {
          UNIT.TruncValue(m_sReading.AvailableCharge);
       }
       /* Update time left */
-      Real fDiff = fOldCharge - m_sReading.AvailableCharge;
-      if(Abs(fDiff) > 1e-6) {
-         m_sReading.TimeLeft =
-            fOldCharge *
-            CPhysicsEngine::GetSimulationClockTick() /
-            fDiff;
+      if(m_sReading.AvailableCharge > 0.0) {
+         Real fDiff = fOldCharge - m_sReading.AvailableCharge;
+         if(Abs(fDiff) > 1e-6) {
+            m_sReading.TimeLeft =
+               fOldCharge *
+               CPhysicsEngine::GetSimulationClockTick() /
+               fDiff;
+         }
+         else {
+            m_sReading.TimeLeft = std::numeric_limits<Real>::infinity();
+         }
       }
       else {
-         m_sReading.TimeLeft = std::numeric_limits<Real>::infinity();
+         m_sReading.TimeLeft = 0.0;
       }
    }
 

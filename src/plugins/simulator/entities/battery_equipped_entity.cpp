@@ -4,6 +4,7 @@
  * @author Adhavan Jayabalan <jadhu94@gmail.com>
  */
 #include "battery_equipped_entity.h"
+#include <argos3/core/simulator/simulator.h>
 #include <argos3/core/simulator/space/space.h>
 #include <argos3/core/simulator/entity/composable_entity.h>
 
@@ -86,9 +87,11 @@ namespace argos {
    /****************************************/
 
    void CBatteryEquippedEntity::Update() {
-      if(m_pcDischargeModel)
-         /* Call the discharge model */
-         (*m_pcDischargeModel)();
+      if(CSimulator::GetInstance().GetSpace().GetSimulationClock() > 0) {
+         if(m_pcDischargeModel)
+            /* Call the discharge model */
+            (*m_pcDischargeModel)();
+      }
    }
 
    /****************************************/
@@ -136,7 +139,7 @@ namespace argos {
    /****************************************/
 
    void CBatteryDischargeModelTime::Init(TConfigurationNode& t_tree) {
-      GetNodeAttributeOrDefault(t_tree, "factor", m_fDelta, m_fDelta);
+      GetNodeAttributeOrDefault(t_tree, "delta", m_fDelta, m_fDelta);
    }
 
    /****************************************/
@@ -154,8 +157,8 @@ namespace argos {
    /****************************************/
 
    void CBatteryDischargeModelMotion::Init(TConfigurationNode& t_tree) {
-      GetNodeAttributeOrDefault(t_tree, "pos_factor", m_fPosFactor, m_fPosFactor);
-      GetNodeAttributeOrDefault(t_tree, "orient_factor", m_fOrientFactor, m_fOrientFactor);
+      GetNodeAttributeOrDefault(t_tree, "pos_delta", m_fPosFactor, m_fPosFactor);
+      GetNodeAttributeOrDefault(t_tree, "orient_delta", m_fOrientFactor, m_fOrientFactor);
    }
 
    /****************************************/
