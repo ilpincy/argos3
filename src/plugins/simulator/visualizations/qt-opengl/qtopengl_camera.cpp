@@ -15,6 +15,8 @@ namespace argos {
 
    static const Real MOVE_GAIN = 0.005 / Exp(0.02);
    static const Real ROTATE_GAIN = 0.01 / Exp(-0.02);
+   static const Real FOCAL_LENGTH_GAIN = 0.0075;
+   static const Real FOCAL_LENGTH_OFFSET = 0.0575;
 
    /****************************************/
    /****************************************/
@@ -89,12 +91,14 @@ namespace argos {
          m_arrPlacements[un_index].Position = 
             CVector3::X * cArenaSize.Length();
          m_arrPlacements[un_index].Position.RotateZ(cAngle);
-         m_arrPlacements[un_index].Position += cArenaCenter;
+         m_arrPlacements[un_index].Position += 
+            (cArenaCenter + CVector3::Z * cArenaSize.GetZ());
          m_arrPlacements[un_index].Target = cArenaCenter;
          m_arrPlacements[un_index].Target.SetZ(0);
          /* (position - target).Normalize() ? */
          m_arrPlacements[un_index].Up = CVector3::Z;
-         m_arrPlacements[un_index].LensFocalLength = 0.08;
+         m_arrPlacements[un_index].LensFocalLength =
+            (FOCAL_LENGTH_GAIN * Cos(4.0 * cAngle) + FOCAL_LENGTH_OFFSET);
          m_arrPlacements[un_index].CalculateYFieldOfView();
       }
       SetActivePlacement(0);
