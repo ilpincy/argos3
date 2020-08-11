@@ -1,0 +1,56 @@
+<?xml version="1.0" ?>
+<argos-configuration>
+
+  <!-- ************************* -->
+  <!-- * General configuration * -->
+  <!-- ************************* -->
+  <framework>
+    <experiment length="0" ticks_per_second="10" random_seed="0"/>
+  </framework>
+
+  <!-- *************** -->
+  <!-- * Controllers * -->
+  <!-- *************** -->
+  <controllers />
+
+  <!-- *********************** -->
+  <!-- * Arena configuration * -->
+  <!-- *********************** -->
+  <arena size="0.5, 0.5, 0.5" center="0, 0, 0.1875">
+    <box id="bn" size="0.0125,0.4875,0.025" movable="false" mass="10">
+      <body position="0.24375,0.00625,0"  orientation="0,0,0" />
+    </box>
+    <box id="be" size="0.4875,0.0125,0.025" movable="false" mass="10">
+      <body position="0.00625,-0.24375,0"  orientation="0,0,0" />
+    </box>
+    <box id="bs" size="0.0125,0.4875,0.025" movable="false" mass="10">
+      <body position="-0.24375,-0.00625,0"  orientation="0,0,0" />
+    </box>
+    <box id="bw" size="0.4875,0.0125,0.025" movable="false" mass="10">
+      <body position="-0.00625,0.24375,0"  orientation="0,0,0" />
+    </box>
+    <box id="test_box" size="0.03125,0.03125,0.03125" movable="true" mass="0.25">
+      <body position="0.1875,0.1875,0"  orientation="0,0,0" />
+    </box>
+  </arena>
+
+  <!-- ******************* -->
+  <!-- * Physics engines * -->
+  <!-- ******************* -->
+  <physics_engines>
+    <dynamics2d id="dyn2d" iterations="5"/>
+  </physics_engines>
+
+  <!-- ********* -->
+  <!-- * Media * -->
+  <!-- ********* -->
+  <media/>
+
+  <!-- ****************** -->
+  <!-- * Visualization * -->
+  <!-- ****************** -->
+  <visualization>
+    <qt-opengl lua_editor="false" show_boundary="false"/>
+  </visualization>
+
+</argos-configuration>
