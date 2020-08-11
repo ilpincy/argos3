@@ -74,7 +74,7 @@
   <!-- * Visualization * -->
   <!-- ***************** -->
   <visualization>
-    <qt-opengl lua_editor="true" />
+    <qt-opengl lua_editor="false" show_boundary="false"/>
   </visualization>
 
 </argos-configuration>

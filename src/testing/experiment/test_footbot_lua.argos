@@ -140,13 +140,7 @@
     <!-- ************************************************************************ -->
     <!-- * To activate the Lua editor, just use the 'lua_editor' flag attribute * -->
     <!-- ************************************************************************ -->
-    <!-- <qt-opengl lua_editor="true"> -->
-    <qt-opengl>
-      <camera>
-        <placement idx="0" position="0.451899,0.170544,0.909823" look_at="1.08317,0.903804,0.657193" lens_focal_length="20" />
-      </camera>
-      <!-- <user_functions label="test_user_functions" /> -->
-    </qt-opengl>
+    <qt-opengl lua_editor="false" show_boundary="false"/>
 
   </visualization>
 
