@@ -98,8 +98,8 @@ namespace argos {
    virtual ~CPointMass3DOperationAdd ## SPACE_ENTITY() {}               \
    SOperationOutcome ApplyTo(CPointMass3DEngine& c_engine,              \
                              SPACE_ENTITY& c_entity) {                  \
-      PM3D_MODEL* pcPhysModel = new PM3D_MODEL(c_engine,                \
-                                               c_entity);               \
+      auto* pcPhysModel = new PM3D_MODEL(c_engine,                      \
+                                         c_entity);                     \
       c_engine.AddPhysicsModel(c_entity.GetId(),                        \
                                *pcPhysModel);                           \
       c_entity.                                                         \

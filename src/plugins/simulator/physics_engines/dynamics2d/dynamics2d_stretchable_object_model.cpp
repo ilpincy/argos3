@@ -10,20 +10,20 @@ namespace argos {
                                                                         CComposableEntity& c_entity) :
       CDynamics2DSingleBodyObjectModel(c_engine, c_entity),
       m_fMass(0.0f),
-      m_pcGrippable(NULL),
-      m_ptLinearFriction(NULL),
-      m_ptAngularFriction(NULL) {}
+      m_pcGrippable(nullptr),
+      m_ptLinearFriction(nullptr),
+      m_ptAngularFriction(nullptr) {}
 
    /****************************************/
    /****************************************/
 
    CDynamics2DStretchableObjectModel::~CDynamics2DStretchableObjectModel() {
-      if(m_pcGrippable != NULL) delete m_pcGrippable;
-      if(m_ptLinearFriction != NULL) {
+      if(m_pcGrippable != nullptr) delete m_pcGrippable;
+      if(m_ptLinearFriction != nullptr) {
          cpSpaceRemoveConstraint(GetDynamics2DEngine().GetPhysicsSpace(), m_ptLinearFriction);
          cpConstraintFree(m_ptLinearFriction);
       }
-      if(m_ptAngularFriction != NULL) {
+      if(m_ptAngularFriction != nullptr) {
          cpSpaceRemoveConstraint(GetDynamics2DEngine().GetPhysicsSpace(), m_ptAngularFriction);
          cpConstraintFree(m_ptAngularFriction);
       }
@@ -34,7 +34,7 @@ namespace argos {
 
    void CDynamics2DStretchableObjectModel::MoveTo(const CVector3& c_position,
                                                   const CQuaternion& c_orientation) {
-      if(m_pcGrippable != NULL) {
+      if(m_pcGrippable != nullptr) {
          /* Release all attached entities */
          m_pcGrippable->ReleaseAll();
       }
@@ -45,7 +45,7 @@ namespace argos {
    /****************************************/
 
    void CDynamics2DStretchableObjectModel::Reset() {
-      if(m_pcGrippable != NULL) {
+      if(m_pcGrippable != nullptr) {
          /* Release all attached entities */
          m_pcGrippable->ReleaseAll();
       }

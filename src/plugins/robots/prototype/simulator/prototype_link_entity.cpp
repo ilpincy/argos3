@@ -80,7 +80,7 @@ namespace argos {
          CQuaternion cOffsetOrientation;
          GetNodeAttributeOrDefault(t_tree, "orientation", cOffsetOrientation, cOffsetOrientation);
          /* Create an anchor for this link */
-         CEmbodiedEntity& cBody = GetParent().GetParent().GetComponent<CEmbodiedEntity>("body");
+         auto& cBody = GetParent().GetParent().GetComponent<CEmbodiedEntity>("body");
          m_psAnchor = &(cBody.AddAnchor(GetId(), cOffsetPosition, cOffsetOrientation));
          /* Enable the anchor */
          m_psAnchor->Enable();

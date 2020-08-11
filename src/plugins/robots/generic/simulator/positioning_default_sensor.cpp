@@ -16,8 +16,8 @@ namespace argos {
    /****************************************/
 
    CPositioningDefaultSensor::CPositioningDefaultSensor() :
-      m_pcEmbodiedEntity(NULL),
-      m_pcRNG(NULL),
+      m_pcEmbodiedEntity(nullptr),
+      m_pcRNG(nullptr),
       m_bAddNoise(false) {}
 
    /****************************************/

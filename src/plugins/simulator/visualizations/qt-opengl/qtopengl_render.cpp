@@ -91,7 +91,7 @@ namespace argos {
    /****************************************/
 
    CQTOpenGLMainWindow& CQTOpenGLRender::GetMainWindow() {
-      if(m_pcMainWindow == NULL) {
+      if(m_pcMainWindow == nullptr) {
          THROW_ARGOSEXCEPTION("CQTOpenGLRender::GetMainWindow(): no main window created");
       }
       return *m_pcMainWindow;

@@ -66,7 +66,7 @@ namespace argos {
              * 3. the "body" is an embodied entity
              * If any of the above is false, this line will bomb out.
              */
-            CEmbodiedEntity& cBody = GetParent().GetComponent<CEmbodiedEntity>("body");
+            auto& cBody = GetParent().GetComponent<CEmbodiedEntity>("body");
             if(it->Value() == "sensor") {
                CVector2 cOffset;
                GetNodeAttribute(*it, "offset", cOffset);

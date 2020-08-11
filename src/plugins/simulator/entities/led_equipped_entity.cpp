@@ -63,7 +63,7 @@ namespace argos {
              itLED != itLED.end();
              ++itLED) {
             /* Initialise the LED using the XML */
-            CLEDEntity* pcLED = new CLEDEntity(this);
+            auto* pcLED = new CLEDEntity(this);
             pcLED->Init(*itLED);
             /* Parse the offset */
             CVector3 cOffset;
@@ -79,7 +79,7 @@ namespace argos {
              * 3. the "body" is an embodied entity
              * If any of the above is false, this line will bomb out.
              */
-            CEmbodiedEntity& cBody = GetParent().GetComponent<CEmbodiedEntity>("body");
+            auto& cBody = GetParent().GetComponent<CEmbodiedEntity>("body");
             /* Add the LED to this container */
             m_tLEDs.push_back(new SActuator(*pcLED, cOffset, cBody.GetAnchor(strAnchorId)));
             AddComponent(*pcLED);
@@ -95,7 +95,7 @@ namespace argos {
    /****************************************/
 
    void CLEDEquippedEntity::Reset() {
-      for(SActuator::TList::iterator it = m_tLEDs.begin();
+      for(auto it = m_tLEDs.begin();
           it != m_tLEDs.end();
           ++it) {
          (*it)->LED.Reset();

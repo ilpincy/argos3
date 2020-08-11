@@ -53,7 +53,7 @@ namespace argos {
              itTag != itTag.end();
              ++itTag) {
             /* Initialise the Tag using the XML */
-            CTagEntity* pcTag = new CTagEntity(this);
+            auto* pcTag = new CTagEntity(this);
             pcTag->Init(*itTag);
             CVector3 cPositionOffset;
             GetNodeAttribute(*itTag, "position", cPositionOffset);
@@ -70,7 +70,7 @@ namespace argos {
              * 3. the "body" is an embodied entity
              * If any of the above is false, this line will bomb out.
              */
-            CEmbodiedEntity& cBody = GetParent().GetComponent<CEmbodiedEntity>("body");
+            auto& cBody = GetParent().GetComponent<CEmbodiedEntity>("body");
             /* Add the tag to this container */
             m_vecInstances.emplace_back(*pcTag,
                                         cBody.GetAnchor(strAnchorId),
@@ -121,7 +121,7 @@ namespace argos {
                                    Real f_side_length,
                                    const std::string& str_payload) {
       /* create the new tag entity */
-      CTagEntity* pcTag =
+      auto* pcTag =
          new CTagEntity(this,
                         str_id,
                         c_position,

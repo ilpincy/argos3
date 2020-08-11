@@ -34,13 +34,13 @@ namespace argos {
    /****************************************/
 
    CSpiriEntity::CSpiriEntity() :
-      CComposableEntity(NULL),
-      m_pcControllableEntity(NULL),
-      m_pcEmbodiedEntity(NULL),
-      m_pcQuadRotorEntity(NULL),
-      m_pcRABEquippedEntity(NULL),
-      m_pcPerspectiveCameraEquippedEntity(NULL),
-      m_pcBatteryEquippedEntity(NULL) {
+      CComposableEntity(nullptr),
+      m_pcControllableEntity(nullptr),
+      m_pcEmbodiedEntity(nullptr),
+      m_pcQuadRotorEntity(nullptr),
+      m_pcRABEquippedEntity(nullptr),
+      m_pcPerspectiveCameraEquippedEntity(nullptr),
+      m_pcBatteryEquippedEntity(nullptr) {
    }
 
    /****************************************/
@@ -55,13 +55,13 @@ namespace argos {
                               const std::string& str_bat_model,
                               const CRadians& c_cam_aperture,
                               Real f_cam_range) :
-      CComposableEntity(NULL, str_id),
-      m_pcControllableEntity(NULL),
-      m_pcEmbodiedEntity(NULL),
-      m_pcQuadRotorEntity(NULL),
-      m_pcRABEquippedEntity(NULL),
-      m_pcPerspectiveCameraEquippedEntity(NULL),
-      m_pcBatteryEquippedEntity(NULL) {
+      CComposableEntity(nullptr, str_id),
+      m_pcControllableEntity(nullptr),
+      m_pcEmbodiedEntity(nullptr),
+      m_pcQuadRotorEntity(nullptr),
+      m_pcRABEquippedEntity(nullptr),
+      m_pcPerspectiveCameraEquippedEntity(nullptr),
+      m_pcBatteryEquippedEntity(nullptr) {
       try {
          /*
           * Create and init components

@@ -325,13 +325,13 @@ namespace argos {
                 itTimeline != itTimeline.end();
                 ++itTimeline) {
                /* Create timeline item */
-               STimelineItem* psTimelineItem = new STimelineItem();
+               auto* psTimelineItem = new STimelineItem();
                psTimelineItem->Init(*itTimeline);
                /* Sorted insert */
                if(m_listTimeline.empty())
                   m_listTimeline.push_back(psTimelineItem);
                else {
-                  std::list<STimelineItem*>::iterator it = m_listTimeline.begin();
+                  auto it = m_listTimeline.begin();
                   while(it != m_listTimeline.end() && (*it)->Step < psTimelineItem->Step) ++it;
                   if(it == m_listTimeline.end())
                      m_listTimeline.push_back(psTimelineItem);
@@ -339,7 +339,7 @@ namespace argos {
                      m_listTimeline.insert(it, psTimelineItem);
                }
             }
-            for(std::list<STimelineItem*>::iterator it = m_listTimeline.begin();
+            for(auto it = m_listTimeline.begin();
                 it != m_listTimeline.end();
                 ++it) {
             }
@@ -392,7 +392,7 @@ namespace argos {
       /* Get current timestep */
       UInt32 unStep = CSimulator::GetInstance().GetSpace().GetSimulationClock();
       /* Search for active timeline item */
-      std::list<STimelineItem*>::iterator it = m_listTimeline.begin();
+      auto it = m_listTimeline.begin();
       /* Is the first item potentially active? */
       if((*it)->Step <= unStep) {
          /* Yes, save it and search for subsequent items */

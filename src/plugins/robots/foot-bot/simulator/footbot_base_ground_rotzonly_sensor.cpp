@@ -23,10 +23,10 @@ namespace argos {
    /****************************************/
 
    CFootBotBaseGroundRotZOnlySensor::CFootBotBaseGroundRotZOnlySensor() :
-      m_pcEmbodiedEntity(NULL),
-      m_pcFloorEntity(NULL),
-      m_pcGroundSensorEntity(NULL),
-      m_pcRNG(NULL),
+      m_pcEmbodiedEntity(nullptr),
+      m_pcFloorEntity(nullptr),
+      m_pcGroundSensorEntity(nullptr),
+      m_pcRNG(nullptr),
       m_bAddNoise(false),
       m_cSpace(CSimulator::GetInstance().GetSpace()) {}
 

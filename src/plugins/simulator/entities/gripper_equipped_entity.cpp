@@ -21,7 +21,7 @@ namespace argos {
       CEntity(pc_parent),
       m_fLockState(0.0f),
       m_fLockThreshold(0.5f),
-      m_pcGrippedEntity(NULL) {
+      m_pcGrippedEntity(nullptr) {
       Disable();
    }
          
@@ -41,7 +41,7 @@ namespace argos {
       m_cInitDirection(c_direction),
       m_fLockState(0.0f),
       m_fLockThreshold(f_lock_threshold),
-      m_pcGrippedEntity(NULL) {
+      m_pcGrippedEntity(nullptr) {
       Disable();
    }
          
@@ -94,7 +94,7 @@ namespace argos {
    /****************************************/
          
    CEmbodiedEntity& CGripperEquippedEntity::GetGrippedEntity() {
-      if(m_pcGrippedEntity != NULL) {
+      if(m_pcGrippedEntity != nullptr) {
          return *m_pcGrippedEntity;
       }
       else {

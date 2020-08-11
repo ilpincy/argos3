@@ -41,7 +41,7 @@ namespace argos {
 
    bool CPointMass3DModel::IsCollidingWithSomething() const {
       /* Go through other objects and check if the BB intersect */
-      for(std::map<std::string, CPointMass3DModel*>::const_iterator it = GetPM3DEngine().GetPhysicsModels().begin();
+      for(auto it = GetPM3DEngine().GetPhysicsModels().begin();
           it != GetPM3DEngine().GetPhysicsModels().end(); ++it) {
          if((it->second != this) &&
             GetBoundingBox().Intersects(it->second->GetBoundingBox()))

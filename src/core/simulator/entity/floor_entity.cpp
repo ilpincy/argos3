@@ -168,9 +168,9 @@ namespace argos {
    /****************************************/
 
    CFloorEntity::CFloorEntity() :
-      CEntity(NULL),
+      CEntity(nullptr),
       m_eColorSource(UNSET),
-      m_pcColorSource(NULL),
+      m_pcColorSource(nullptr),
       m_bHasChanged(true) {}
 
    /****************************************/
@@ -179,9 +179,9 @@ namespace argos {
 #ifdef ARGOS_WITH_FREEIMAGE
    CFloorEntity::CFloorEntity(const std::string& str_id,
                               const std::string& str_file_name) :
-      CEntity(NULL, str_id),
+      CEntity(nullptr, str_id),
       m_eColorSource(FROM_IMAGE),
-      m_pcColorSource(NULL),
+      m_pcColorSource(nullptr),
       m_bHasChanged(true) {
       std::string strFileName = str_file_name;
       ExpandEnvVariables(strFileName);
@@ -194,7 +194,7 @@ namespace argos {
 
    CFloorEntity::CFloorEntity(const std::string& str_id,
                               UInt32 un_pixels_per_meter) :
-      CEntity(NULL, str_id),
+      CEntity(nullptr, str_id),
       m_eColorSource(FROM_LOOP_FUNCTIONS),
       m_pcColorSource(new CFloorColorFromLoopFunctions(un_pixels_per_meter)),
       m_bHasChanged(true) {}
@@ -203,7 +203,7 @@ namespace argos {
    /****************************************/
 
    CFloorEntity::~CFloorEntity() {
-      if(m_pcColorSource != NULL) {
+      if(m_pcColorSource != nullptr) {
          delete m_pcColorSource;
       }
    }

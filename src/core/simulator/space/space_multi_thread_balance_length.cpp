@@ -40,10 +40,10 @@ namespace argos {
       LOG.AddThreadSafeBuffer();
       LOGERR.AddThreadSafeBuffer();
       /* Make this thread cancellable */
-      pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
-      pthread_setcanceltype(PTHREAD_CANCEL_DEFERRED, NULL);
+      pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, nullptr);
+      pthread_setcanceltype(PTHREAD_CANCEL_DEFERRED, nullptr);
       /* Get a handle to the thread launch data */
-      CSpaceMultiThreadBalanceLength::SThreadLaunchData* psData = reinterpret_cast<CSpaceMultiThreadBalanceLength::SThreadLaunchData*>(p_data);
+      auto* psData = reinterpret_cast<CSpaceMultiThreadBalanceLength::SThreadLaunchData*>(p_data);
       /* Create cancellation data */
       SCleanupThreadData sCancelData;
       sCancelData.StartSenseControlPhaseMutex = &(psData->Space->m_tStartSenseControlPhaseMutex);
@@ -55,7 +55,7 @@ namespace argos {
       psData->Space->SlaveThread();
       /* Dispose of cancellation data */
       pthread_cleanup_pop(1);
-      return NULL;
+      return nullptr;
    }
 
    /****************************************/
@@ -67,19 +67,19 @@ namespace argos {
       /* Initialize thread related structures */
       int nErrors;
       /* Init mutexes */
-      if((nErrors = pthread_mutex_init(&m_tStartSenseControlPhaseMutex, NULL)) ||
-         (nErrors = pthread_mutex_init(&m_tStartActPhaseMutex, NULL)) ||
-         (nErrors = pthread_mutex_init(&m_tStartPhysicsPhaseMutex, NULL)) ||
-         (nErrors = pthread_mutex_init(&m_tStartMediaPhaseMutex, NULL)) ||
-         (nErrors = pthread_mutex_init(&m_tFetchTaskMutex, NULL))) {
+      if((nErrors = pthread_mutex_init(&m_tStartSenseControlPhaseMutex, nullptr)) ||
+         (nErrors = pthread_mutex_init(&m_tStartActPhaseMutex, nullptr)) ||
+         (nErrors = pthread_mutex_init(&m_tStartPhysicsPhaseMutex, nullptr)) ||
+         (nErrors = pthread_mutex_init(&m_tStartMediaPhaseMutex, nullptr)) ||
+         (nErrors = pthread_mutex_init(&m_tFetchTaskMutex, nullptr))) {
          THROW_ARGOSEXCEPTION("Error creating thread mutexes " << ::strerror(nErrors));
       }
       /* Init conditionals */
-      if((nErrors = pthread_cond_init(&m_tStartSenseControlPhaseCond, NULL)) ||
-         (nErrors = pthread_cond_init(&m_tStartActPhaseCond, NULL)) ||
-         (nErrors = pthread_cond_init(&m_tStartPhysicsPhaseCond, NULL)) ||
-         (nErrors = pthread_cond_init(&m_tStartMediaPhaseCond, NULL)) ||
-         (nErrors = pthread_cond_init(&m_tFetchTaskCond, NULL))) {
+      if((nErrors = pthread_cond_init(&m_tStartSenseControlPhaseCond, nullptr)) ||
+         (nErrors = pthread_cond_init(&m_tStartActPhaseCond, nullptr)) ||
+         (nErrors = pthread_cond_init(&m_tStartPhysicsPhaseCond, nullptr)) ||
+         (nErrors = pthread_cond_init(&m_tStartMediaPhaseCond, nullptr)) ||
+         (nErrors = pthread_cond_init(&m_tFetchTaskCond, nullptr))) {
          THROW_ARGOSEXCEPTION("Error creating thread conditionals " << ::strerror(nErrors));
       }
       /* Reset the idle thread count */
@@ -97,13 +97,13 @@ namespace argos {
    void CSpaceMultiThreadBalanceLength::Destroy() {
       /* Destroy the threads to update the controllable entities */
       int nErrors;
-      if(m_ptThreads != NULL) {
+      if(m_ptThreads != nullptr) {
          for(UInt32 i = 0; i < CSimulator::GetInstance().GetNumThreads(); ++i) {
             if((nErrors = pthread_cancel(m_ptThreads[i]))) {
                THROW_ARGOSEXCEPTION("Error canceling threads " << ::strerror(nErrors));
             }
          }
-         void** ppJoinResult = new void*[CSimulator::GetInstance().GetNumThreads()];
+         auto** ppJoinResult = new void*[CSimulator::GetInstance().GetNumThreads()];
          for(UInt32 i = 0; i < CSimulator::GetInstance().GetNumThreads(); ++i) {
             if((nErrors = pthread_join(m_ptThreads[i], ppJoinResult + i))) {
                THROW_ARGOSEXCEPTION("Error joining threads " << ::strerror(nErrors));
@@ -116,7 +116,7 @@ namespace argos {
       }
       delete[] m_ptThreads;
       /* Destroy the thread launch info */
-      if(m_psThreadData != NULL) {
+      if(m_psThreadData != nullptr) {
          for(UInt32 i = 0; i < CSimulator::GetInstance().GetNumThreads(); ++i) {
             delete m_psThreadData[i];
          }
@@ -219,7 +219,7 @@ namespace argos {
          m_psThreadData[i] = new SThreadLaunchData(i, this);
          /* Create the thread */
          if((nErrors = pthread_create(m_ptThreads + i,
-                                      NULL,
+                                      nullptr,
                                       LaunchThreadBalanceLength,
                                       reinterpret_cast<void*>(m_psThreadData[i])))) {
             THROW_ARGOSEXCEPTION("Error creating thread: " << ::strerror(nErrors));

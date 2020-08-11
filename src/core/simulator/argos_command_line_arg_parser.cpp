@@ -14,8 +14,8 @@ namespace argos {
 
    CARGoSCommandLineArgParser::CARGoSCommandLineArgParser() :
       m_eAction(ACTION_UNKNOWN),
-      m_pcInitLogStream(NULL),
-      m_pcInitLogErrStream(NULL) {
+      m_pcInitLogStream(nullptr),
+      m_pcInitLogErrStream(nullptr) {
       AddFlag(
          'h',
          "help",

@@ -93,7 +93,7 @@ namespace argos {
 
    void CRABMedium::Destroy() {
       delete m_pcRABEquippedEntityIndex;
-      if(m_pcRABEquippedEntityGridUpdateOperation != NULL) {
+      if(m_pcRABEquippedEntityGridUpdateOperation != nullptr) {
          delete m_pcRABEquippedEntityGridUpdateOperation;
       }
    }

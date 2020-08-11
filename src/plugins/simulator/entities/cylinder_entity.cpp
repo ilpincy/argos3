@@ -16,11 +16,11 @@ namespace argos {
    /****************************************/
 
    CCylinderEntity::CCylinderEntity() :
-      CComposableEntity(NULL),
-      m_pcEmbodiedEntity(NULL),
-      m_pcLEDEquippedEntity(NULL),
+      CComposableEntity(nullptr),
+      m_pcEmbodiedEntity(nullptr),
+      m_pcLEDEquippedEntity(nullptr),
       m_fMass(1.0f),
-      m_pcLEDMedium(NULL) {
+      m_pcLEDMedium(nullptr) {
    }
 
    /****************************************/
@@ -33,7 +33,7 @@ namespace argos {
                                     Real f_radius,
                                     Real f_height,
                                     Real f_mass) :
-      CComposableEntity(NULL, str_id),
+      CComposableEntity(nullptr, str_id),
       m_pcEmbodiedEntity(
          new CEmbodiedEntity(this,
                              "body_0",

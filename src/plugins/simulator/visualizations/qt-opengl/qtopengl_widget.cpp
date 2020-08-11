@@ -53,8 +53,8 @@ namespace argos {
       m_cSpace(m_cSimulator.GetSpace()),
       m_bShowBoundary(true),
       m_bUsingFloorTexture(false),
-      m_pcFloorTexture(NULL),
-      m_pcGroundTexture(NULL) {
+      m_pcFloorTexture(nullptr),
+      m_pcGroundTexture(nullptr) {
       /* Set the widget's size policy */
       QSizePolicy cSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
       cSizePolicy.setHeightForWidth(true);
@@ -155,7 +155,7 @@ namespace argos {
       DrawArena();
       /* Draw the objects */
       CEntity::TVector& vecEntities = m_cSpace.GetRootEntityVector();
-      for(CEntity::TVector::iterator itEntities = vecEntities.begin();
+      for(auto itEntities = vecEntities.begin();
           itEntities != vecEntities.end();
           ++itEntities) {
          glPushMatrix();
@@ -198,7 +198,7 @@ namespace argos {
          grabFramebuffer()
             .save(
                strFileName,
-               0,
+               nullptr,
                m_sFrameGrabData.Quality);
       }
    }
@@ -297,7 +297,7 @@ namespace argos {
    CEntity* CQTOpenGLWidget::GetSelectedEntity() {
       return (m_sSelectionInfo.IsSelected ?
               m_sSelectionInfo.Entity :
-              NULL);
+              nullptr);
    }
 
    /****************************************/
@@ -824,11 +824,11 @@ namespace argos {
          m_sSelectionInfo.IsSelected &&
          (pc_event->modifiers() & Qt::ControlModifier)) {
          /* Treat selected entity as an embodied entity */
-         CEmbodiedEntity* pcEntity = dynamic_cast<CEmbodiedEntity*>(m_sSelectionInfo.Entity);
-         if(pcEntity == NULL) {
+         auto* pcEntity = dynamic_cast<CEmbodiedEntity*>(m_sSelectionInfo.Entity);
+         if(pcEntity == nullptr) {
             /* Treat selected entity as a composable entity with an embodied component */
-            CComposableEntity* pcCompEntity = dynamic_cast<CComposableEntity*>(m_sSelectionInfo.Entity);
-            if(pcCompEntity != NULL && pcCompEntity->HasComponent("body")) {
+            auto* pcCompEntity = dynamic_cast<CComposableEntity*>(m_sSelectionInfo.Entity);
+            if(pcCompEntity != nullptr && pcCompEntity->HasComponent("body")) {
                pcEntity = &pcCompEntity->GetComponent<CEmbodiedEntity>("body");
             }
             else {
@@ -911,11 +911,11 @@ namespace argos {
    void CQTOpenGLWidget::wheelEvent(QWheelEvent *pc_event) {
       if(m_sSelectionInfo.IsSelected && (pc_event->modifiers() & Qt::ControlModifier)) {
          /* Treat selected entity as an embodied entity */
-         CEmbodiedEntity* pcEntity = dynamic_cast<CEmbodiedEntity*>(m_sSelectionInfo.Entity);
-         if(pcEntity == NULL) {
+         auto* pcEntity = dynamic_cast<CEmbodiedEntity*>(m_sSelectionInfo.Entity);
+         if(pcEntity == nullptr) {
             /* Treat selected entity as a composable entity with an embodied component */
-            CComposableEntity* pcCompEntity = dynamic_cast<CComposableEntity*>(m_sSelectionInfo.Entity);
-            if(pcCompEntity != NULL && pcCompEntity->HasComponent("body")) {
+            auto* pcCompEntity = dynamic_cast<CComposableEntity*>(m_sSelectionInfo.Entity);
+            if(pcCompEntity != nullptr && pcCompEntity->HasComponent("body")) {
                pcEntity = &pcCompEntity->GetComponent<CEmbodiedEntity>("body");
             }
             else {

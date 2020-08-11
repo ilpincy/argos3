@@ -38,7 +38,7 @@ namespace argos {
    /****************************************/
 
    void CPointMass3DEngine::Reset() {
-      for(CPointMass3DModel::TMap::iterator it = m_tPhysicsModels.begin();
+      for(auto it = m_tPhysicsModels.begin();
           it != m_tPhysicsModels.end(); ++it) {
          it->second->Reset();
       }
@@ -49,7 +49,7 @@ namespace argos {
 
    void CPointMass3DEngine::Destroy() {
       /* Empty the physics entity map */
-      for(CPointMass3DModel::TMap::iterator it = m_tPhysicsModels.begin();
+      for(auto it = m_tPhysicsModels.begin();
           it != m_tPhysicsModels.end(); ++it) {
          delete it->second;
       }
@@ -61,23 +61,23 @@ namespace argos {
 
    void CPointMass3DEngine::Update() {
       /* Update the physics state from the entities */
-      for(CPointMass3DModel::TMap::iterator it = m_tPhysicsModels.begin();
+      for(auto it = m_tPhysicsModels.begin();
           it != m_tPhysicsModels.end(); ++it) {
          it->second->UpdateFromEntityStatus();
       }
       for(size_t i = 0; i < GetIterations(); ++i) {
          /* Perform the step */
-         for(CPointMass3DModel::TMap::iterator it = m_tPhysicsModels.begin();
+         for(auto it = m_tPhysicsModels.begin();
              it != m_tPhysicsModels.end(); ++it) {
             it->second->UpdatePhysics();
          }
       }
-      for(CPointMass3DModel::TMap::iterator it = m_tPhysicsModels.begin();
+      for(auto it = m_tPhysicsModels.begin();
           it != m_tPhysicsModels.end(); ++it) {
          it->second->Step();
       }
       /* Update the simulated space */
-      for(CPointMass3DModel::TMap::iterator it = m_tPhysicsModels.begin();
+      for(auto it = m_tPhysicsModels.begin();
           it != m_tPhysicsModels.end(); ++it) {
          it->second->UpdateEntityStatus();
       }
@@ -136,7 +136,7 @@ namespace argos {
    void CPointMass3DEngine::CheckIntersectionWithRay(TEmbodiedEntityIntersectionData& t_data,
                                                      const CRay3& c_ray) const {
       Real fTOnRay;
-      for(CPointMass3DModel::TMap::const_iterator it = m_tPhysicsModels.begin();
+      for(auto it = m_tPhysicsModels.begin();
           it != m_tPhysicsModels.end();
           ++it) {
          if(it->second->CheckIntersectionWithRay(fTOnRay, c_ray)) {
@@ -160,7 +160,7 @@ namespace argos {
    /****************************************/
 
    void CPointMass3DEngine::RemovePhysicsModel(const std::string& str_id) {
-      CPointMass3DModel::TMap::iterator it = m_tPhysicsModels.find(str_id);
+      auto it = m_tPhysicsModels.find(str_id);
       if(it != m_tPhysicsModels.end()) {
          delete it->second;
          m_tPhysicsModels.erase(it);

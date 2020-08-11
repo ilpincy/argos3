@@ -48,7 +48,7 @@ namespace argos {
              itMagnet != itMagnet.end();
              ++itMagnet) {
             /* Initialise the Magnet using the XML */
-            CMagnetEntity* pcMagnet = new CMagnetEntity(this);
+            auto* pcMagnet = new CMagnetEntity(this);
             pcMagnet->Init(*itMagnet);
             CVector3 cOffset;
             GetNodeAttribute(*itMagnet, "offset", cOffset);
@@ -63,7 +63,7 @@ namespace argos {
              * 3. the "body" is an embodied entity
              * If any of the above is false, this line will bomb out.
              */
-            CEmbodiedEntity& cBody = GetParent().GetComponent<CEmbodiedEntity>("body");
+            auto& cBody = GetParent().GetComponent<CEmbodiedEntity>("body");
             /* Add the magnet to this container */
             m_vecInstances.emplace_back(*pcMagnet,
                                         cBody.GetAnchor(strAnchorId),
@@ -119,7 +119,7 @@ namespace argos {
                                                    const CVector3& c_position_offset,
                                                    const CVector3& c_passive_field,
                                                    const CVector3& c_active_field) {
-      CMagnetEntity* pcMagnet = new CMagnetEntity(this, str_id, c_passive_field, c_active_field);
+      auto* pcMagnet = new CMagnetEntity(this, str_id, c_passive_field, c_active_field);
       m_vecInstances.emplace_back(*pcMagnet, s_anchor, c_position_offset);
       AddComponent(*pcMagnet);
       return *pcMagnet;

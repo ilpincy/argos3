@@ -82,7 +82,7 @@ namespace argos {
 
    void CLEDMedium::Destroy() {
       delete m_pcLEDEntityIndex;
-      if(m_pcLEDEntityGridUpdateOperation != NULL) {
+      if(m_pcLEDEntityGridUpdateOperation != nullptr) {
          delete m_pcLEDEntityGridUpdateOperation;
       }
    }

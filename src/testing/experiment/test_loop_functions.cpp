@@ -14,9 +14,9 @@
 void CTestLoopFunctions::Init(TConfigurationNode& t_tree) {
    LOG << "CTestLoopFunctions init running!\n";
    CFootBotEntity& fb = dynamic_cast<CFootBotEntity&>(GetSpace().GetEntity("fb"));
-   CLEDEntity& cLedA = fb.GetComponent<CLEDEntity>("leds.led[led_2]");
-   CLEDEntity& cLedB = fb.GetComponent<CLEDEntity>("leds.led[led_3]");
-   CLEDEntity& cLedC = fb.GetComponent<CLEDEntity>("leds.led[led_4]");
+   auto& cLedA = fb.GetComponent<CLEDEntity>("leds.led[led_2]");
+   auto& cLedB = fb.GetComponent<CLEDEntity>("leds.led[led_3]");
+   auto& cLedC = fb.GetComponent<CLEDEntity>("leds.led[led_4]");
    
    cLedA.SetColor(CColor::GREEN);
    cLedB.SetColor(CColor::BLUE);

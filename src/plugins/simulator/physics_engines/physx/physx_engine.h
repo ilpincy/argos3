@@ -364,8 +364,8 @@ namespace argos {
    virtual ~CPhysXOperationAdd ## SPACE_ENTITY() {}                     \
    SOperationOutcome ApplyTo(CPhysXEngine& c_engine,                    \
                              SPACE_ENTITY& c_entity) {                  \
-      PHYSX_MODEL* pcPhysModel = new PHYSX_MODEL(c_engine,              \
-                                                 c_entity);             \
+      auto* pcPhysModel = new PHYSX_MODEL(c_engine,                     \
+                                          c_entity);                    \
       c_engine.AddPhysicsModel(c_entity.GetId(),                        \
                                *pcPhysModel);                           \
       c_entity.                                                         \

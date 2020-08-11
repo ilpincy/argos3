@@ -16,8 +16,8 @@ namespace argos {
    /****************************************/
 
    CDifferentialSteeringDefaultSensor::CDifferentialSteeringDefaultSensor() :
-      m_pcWheeledEntity(NULL),
-      m_pcRNG(NULL),
+      m_pcWheeledEntity(nullptr),
+      m_pcRNG(nullptr),
       m_bAddNoise(false) {}
 
    /****************************************/

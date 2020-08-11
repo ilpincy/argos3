@@ -14,7 +14,7 @@ namespace argos {
    /****************************************/
 
    CFootBotTurretDefaultActuator::CFootBotTurretDefaultActuator() :
-      m_pcTurretEntity(NULL),
+      m_pcTurretEntity(nullptr),
       m_unDesiredMode(CFootBotTurretEntity::MODE_OFF) {}
 
    /****************************************/

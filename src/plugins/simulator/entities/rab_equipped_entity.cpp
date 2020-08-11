@@ -19,10 +19,10 @@ namespace argos {
 
    CRABEquippedEntity::CRABEquippedEntity(CComposableEntity* pc_parent) :
       CPositionalEntity(pc_parent),
-      m_psAnchor(NULL),
+      m_psAnchor(nullptr),
       m_fRange(0.0f),
-      m_pcEntityBody(NULL),
-      m_pcMedium(NULL) {
+      m_pcEntityBody(nullptr),
+      m_pcMedium(nullptr) {
       Disable();
    }
 
@@ -45,7 +45,7 @@ namespace argos {
       m_cData(un_msg_size),
       m_fRange(f_range),
       m_pcEntityBody(&c_entity_body),
-      m_pcMedium(NULL) {
+      m_pcMedium(nullptr) {
       Disable();
       CVector3 cPos = c_pos_offset;
       cPos.Rotate(s_anchor.Orientation);

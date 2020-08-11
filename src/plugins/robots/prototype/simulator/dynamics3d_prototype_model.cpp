@@ -129,7 +129,7 @@ namespace argos {
       /* While there are joints to be added */
       while(! vecJointsToAdd.empty()) {
          size_t unRemainingJoints = vecJointsToAdd.size();
-         for(CPrototypeJointEntity::TVectorIterator it_joint = std::begin(vecJointsToAdd);
+         for(auto it_joint = std::begin(vecJointsToAdd);
              it_joint != std::end(vecJointsToAdd);
              ++it_joint) {
             /* Get a reference to the joint */
@@ -137,7 +137,7 @@ namespace argos {
             /* Get a reference to the parent link entity */
             const CPrototypeLinkEntity& cParentLink = cJoint.GetParentLink();
             /* Check if the parent link has been added */
-            CAbstractBody::TVectorIterator itParentLinkBody =
+            auto itParentLinkBody =
                std::find_if(std::begin(m_vecBodies),
                             std::end(m_vecBodies),
                             [&cParentLink] (const std::shared_ptr<CAbstractBody>& ptr_body) {

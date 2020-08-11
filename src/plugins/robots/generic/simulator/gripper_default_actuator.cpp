@@ -14,7 +14,7 @@ namespace argos {
    /****************************************/
 
    CGripperDefaultActuator::CGripperDefaultActuator() :
-      m_pcGripperEquippedEntity(NULL) {}
+      m_pcGripperEquippedEntity(nullptr) {}
 
    /****************************************/
    /****************************************/

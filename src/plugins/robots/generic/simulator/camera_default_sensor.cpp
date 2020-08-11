@@ -96,7 +96,7 @@ namespace argos {
                CCameraSensorSimulatedAlgorithm* pcAlgorithm = 
                   CFactory<CCameraSensorSimulatedAlgorithm>::New(itAlgorithm->Value());
                /* check that algorithm inherits from a control interface */
-               CCI_CameraSensorAlgorithm* pcCIAlgorithm = 
+               auto* pcCIAlgorithm = 
                   dynamic_cast<CCI_CameraSensorAlgorithm*>(pcAlgorithm);
                if(pcCIAlgorithm == nullptr) {
                   THROW_ARGOSEXCEPTION("Algorithm \"" << itAlgorithm->Value() << 

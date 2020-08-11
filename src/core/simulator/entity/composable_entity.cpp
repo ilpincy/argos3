@@ -27,7 +27,7 @@ namespace argos {
    /****************************************/
 
    void CComposableEntity::Reset() {
-      for(CEntity::TMultiMap::iterator it = m_mapComponents.begin();
+      for(auto it = m_mapComponents.begin();
           it != m_mapComponents.end();
           ++it) {
          it->second->Reset();
@@ -46,7 +46,7 @@ namespace argos {
 
    void CComposableEntity::SetEnabled(bool b_enabled) {
       CEntity::SetEnabled(b_enabled);
-      for(CEntity::TMultiMap::iterator it = m_mapComponents.begin();
+      for(auto it = m_mapComponents.begin();
           it != m_mapComponents.end();
           ++it) {
          it->second->SetEnabled(b_enabled);
@@ -57,7 +57,7 @@ namespace argos {
    /****************************************/
 
    void CComposableEntity::UpdateComponents() {
-      for(CEntity::TMultiMap::iterator it = m_mapComponents.begin();
+      for(auto it = m_mapComponents.begin();
           it != m_mapComponents.end();
           ++it) {
          if(it->second->IsEnabled()) {
@@ -82,7 +82,7 @@ namespace argos {
 
    CEntity& CComposableEntity::RemoveComponent(const std::string& str_component) {
       try {
-         CEntity::TMultiMap::iterator it = FindComponent(str_component);
+         auto it = FindComponent(str_component);
          if(it == m_mapComponents.end()) {
             THROW_ARGOSEXCEPTION("Element \"" << str_component << "\" not found in the component map.");
          }
@@ -114,7 +114,7 @@ namespace argos {
          if(unFirstSeparatorIdx == std::string::npos) strFrontIdentifier = str_path;
          else strFrontIdentifier = str_path.substr(0, unFirstSeparatorIdx);
          /* Try to find the relevant component in this context */
-         CEntity::TMultiMap::iterator itComponent = FindComponent(strFrontIdentifier);
+         auto itComponent = FindComponent(strFrontIdentifier);
          if(itComponent != m_mapComponents.end()) {
             if(unFirstSeparatorIdx == std::string::npos) {
                /* Path separator not found, found component in the current context is the one we want */
@@ -122,8 +122,8 @@ namespace argos {
             }
             /* Path separator found, try to cast the found component to a composable entity */
             else {
-               CComposableEntity* pcComposableEntity = dynamic_cast<CComposableEntity*>(itComponent->second);
-               if(pcComposableEntity != NULL) {
+               auto* pcComposableEntity = dynamic_cast<CComposableEntity*>(itComponent->second);
+               if(pcComposableEntity != nullptr) {
                   /* Dynamic cast of component to composable entity was successful, re-execute this function in the new context */
                   return pcComposableEntity->GetComponent(str_path.substr(unFirstSeparatorIdx + 1, std::string::npos));
                }
@@ -154,7 +154,7 @@ namespace argos {
       if(unFirstSeparatorIdx == std::string::npos) strFrontIdentifier = str_path;
       else strFrontIdentifier = str_path.substr(0, unFirstSeparatorIdx);
       /* Try to find the relevant component in this context */
-      CEntity::TMultiMap::iterator itComponent = FindComponent(strFrontIdentifier);
+      auto itComponent = FindComponent(strFrontIdentifier);
       if(itComponent != m_mapComponents.end()) {
          if(unFirstSeparatorIdx == std::string::npos) {
             /* Path separator not found, found component in the current context is the one we want */
@@ -162,8 +162,8 @@ namespace argos {
          }
          else {
             /* Path separator found, try to cast the found component to a composable entity */
-            CComposableEntity* pcComposableEntity = dynamic_cast<CComposableEntity*>(itComponent->second);
-            if(pcComposableEntity != NULL) {
+            auto* pcComposableEntity = dynamic_cast<CComposableEntity*>(itComponent->second);
+            if(pcComposableEntity != nullptr) {
                /* Dynamic cast of component to composable entity was sucessful, re-execute this function in the new context */
                return pcComposableEntity->HasComponent(str_path.substr(unFirstSeparatorIdx + 1, std::string::npos));
             }

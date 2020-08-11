@@ -22,9 +22,9 @@ namespace argos {
    /****************************************/
 
    CBatteryDefaultSensor::CBatteryDefaultSensor() :
-      m_pcEmbodiedEntity(NULL),
-      m_pcBatteryEntity(NULL),
-      m_pcRNG(NULL),
+      m_pcEmbodiedEntity(nullptr),
+      m_pcBatteryEntity(nullptr),
+      m_pcRNG(nullptr),
       m_bAddNoise(false) {}
 
    /****************************************/

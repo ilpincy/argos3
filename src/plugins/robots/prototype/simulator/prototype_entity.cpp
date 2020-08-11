@@ -81,7 +81,7 @@ namespace argos {
                   /* Add the directional LEDs to the medium */
                   std::string strMedium;
                   GetNodeAttribute(*itDevice, "medium", strMedium);
-                  CDirectionalLEDMedium& cDirectionalLEDMedium = 
+                  auto& cDirectionalLEDMedium = 
                      CSimulator::GetInstance().GetMedium<CDirectionalLEDMedium>(strMedium);
                   m_pcDirectionalLEDEquippedEntity->SetMedium(cDirectionalLEDMedium);
                   m_pcDirectionalLEDEquippedEntity->Enable();
@@ -93,7 +93,7 @@ namespace argos {
                   /* Add the LEDs to the medium */
                   std::string strMedium;
                   GetNodeAttribute(*itDevice, "medium", strMedium);
-                  CLEDMedium& cLEDMedium = 
+                  auto& cLEDMedium = 
                      CSimulator::GetInstance().GetMedium<CLEDMedium>(strMedium);
                   m_pcLEDEquippedEntity->SetMedium(cLEDMedium);
                   m_pcLEDEquippedEntity->Enable();
@@ -111,20 +111,20 @@ namespace argos {
                   /* Add the tags to the medium */
                   std::string strMedium;
                   GetNodeAttribute(*itDevice, "medium", strMedium);
-                  CTagMedium& cTagMedium = 
+                  auto& cTagMedium = 
                      CSimulator::GetInstance().GetMedium<CTagMedium>(strMedium);
                   m_pcTagEquippedEntity->SetMedium(cTagMedium);
                   m_pcTagEquippedEntity->Enable();
                }
                else if(itDevice->Value() == "radios" ) {
-                  CRadioEquippedEntity* m_pcRadioEquippedEntity =
+                  auto* m_pcRadioEquippedEntity =
                      new CRadioEquippedEntity(this);
                   m_pcRadioEquippedEntity->Init(*itDevice);
                   AddComponent(*m_pcRadioEquippedEntity);
                   /* Add the radios to the medium */
                   std::string strMedium;
                   GetNodeAttribute(*itDevice, "medium", strMedium);
-                  CRadioMedium& cRadioMedium = 
+                  auto& cRadioMedium = 
                      CSimulator::GetInstance().GetMedium<CRadioMedium>(strMedium);
                   m_pcRadioEquippedEntity->SetMedium(cRadioMedium);
                   m_pcRadioEquippedEntity->Enable();
