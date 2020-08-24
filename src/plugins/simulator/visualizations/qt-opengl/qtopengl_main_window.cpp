@@ -447,7 +447,10 @@ namespace argos {
       m_pcOpenGLWidget = new CQTOpenGLWidget(pcPlaceHolder, *this, *m_pcUserFunctions);
       m_pcOpenGLWidget->setFormat(cFormat);
       m_pcOpenGLWidget->setCursor(QCursor(Qt::OpenHandCursor));
-      m_pcOpenGLWidget->GetCamera().Init(t_tree);
+      if(NodeExists(t_tree, "camera")) {
+         TConfigurationNode& tCameraNode = GetNode(t_tree, "camera");
+         m_pcOpenGLWidget->GetCamera().Init(tCameraNode);
+      }
       m_pcOpenGLWidget->GetFrameGrabData().Init(t_tree);
 
       /* Set headless grabbing frame size after it has been parsed */
@@ -894,8 +897,8 @@ namespace argos {
       /* You can't modify its contents (but can copy-paste them) */
       pcXMLOutput->setReadOnly(true);
       /* Set nice document name and window title */
-      pcXMLOutput->setDocumentTitle("ARGoS XML camera config");
-      pcXMLOutput->setWindowTitle("ARGoS XML camera config");
+      pcXMLOutput->setDocumentTitle("Active camera configuration");
+      pcXMLOutput->setWindowTitle("Active camera configuration");
       /* Set the actual text to visualize */
       pcXMLOutput->setPlainText(GetCameraXMLData());
       /* Finally, show the resulting window */
@@ -931,30 +934,27 @@ namespace argos {
    /****************************************/
 
    QString CQTOpenGLMainWindow::GetCameraXMLData() {
-      QString strResult("<camera>\n");
+      QString strResult("<camera>\n  <placements>\n");
       /* Get a reference to the camera */
       CQTOpenGLCamera& cCamera = m_pcOpenGLWidget->GetCamera();
-      for(UInt32 i = 0; i < 12; ++i) {
-         /* Get its position and target */
-         const CQTOpenGLCamera::SPlacement& sPlacement = cCamera.GetPlacement(i);
-         const CVector3& cPos = sPlacement.Position;
-         const CVector3& cLookAt = sPlacement.Target;
-         const CVector3& cUp = sPlacement.Up;
-         strResult.append(
-            QString("   <placement idx=\"%1\" position=\"%2,%3,%4\" look_at=\"%5,%6,%7\" up=\"%8,%9,%10\" lens_focal_length=\"%11\" />\n")
-            .arg(i)
-            .arg(cPos.GetX())
-            .arg(cPos.GetY())
-            .arg(cPos.GetZ())
-            .arg(cLookAt.GetX())
-            .arg(cLookAt.GetY())
-            .arg(cLookAt.GetZ())
-            .arg(cUp.GetX())
-            .arg(cUp.GetY())
-            .arg(cUp.GetZ())
-            .arg(sPlacement.LensFocalLength * 1000.0f));
-      }
-      strResult.append("</camera>\n");
+      /* Get its position and target */
+      const CQTOpenGLCamera::SPlacement& sPlacement = cCamera.GetActivePlacement();
+      const CVector3& cPos = sPlacement.Position;
+      const CVector3& cLookAt = sPlacement.Target;
+      const CVector3& cUp = sPlacement.Up;
+      strResult.append(
+         QString("    <placement index=\"0\" position=\"%2,%3,%4\" look_at=\"%5,%6,%7\" up=\"%8,%9,%10\" lens_focal_length=\"%11\" />\n")
+         .arg(cPos.GetX())
+         .arg(cPos.GetY())
+         .arg(cPos.GetZ())
+         .arg(cLookAt.GetX())
+         .arg(cLookAt.GetY())
+         .arg(cLookAt.GetZ())
+         .arg(cUp.GetX())
+         .arg(cUp.GetY())
+         .arg(cUp.GetZ())
+         .arg(sPlacement.LensFocalLength * 1000.0f));
+      strResult.append("  </placements>\n</camera>\n");
       return strResult;
    }
 

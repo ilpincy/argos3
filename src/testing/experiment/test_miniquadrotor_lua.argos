@@ -75,10 +75,7 @@
     <!-- ************************************************************************ -->
     <!-- * To activate the Lua editor, just use the 'lua_editor' flag attribute * -->
     <!-- ************************************************************************ -->
-    <qt-opengl lua_editor="true">
-      <camera />
-      <!-- <user_functions label="test_user_functions" /> -->
-    </qt-opengl>
+    <qt-opengl lua_editor="false" show_boundary="false"/>
 
   </visualization>
 

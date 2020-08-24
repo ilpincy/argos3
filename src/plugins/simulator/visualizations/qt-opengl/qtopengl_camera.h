@@ -37,117 +37,105 @@ namespace argos {
       struct SPlacement {
          /** The position of the camera in the global reference frame */
          CVector3 Position;
-         /** The local Y axis of the camera in the global reference frame */
-         CVector3 Left;
+         /** What we are looking at in the global reference frame */
+         CVector3 Target;
          /** The local Z axis of the camera in the global reference frame */
          CVector3 Up;
-         /** The local X axis of the camera in the global reference frame */
-         CVector3 Forward;
-         /** The direction of sight of the camera in the global reference frame */
-         CVector3 Target;
          /** The focal length of the lens (if this was a real camera) */
          Real LensFocalLength;
          /** The focal length of the camera */
          CDegrees YFieldOfView;
-         /** Motion sensitivity */
-         Real MotionSensitivity;
-         /** Rotation sensitivity */
-         Real RotationSensitivity;
-
-         SPlacement() :
-            Position(-2.0f, 0.0f, 2.0f),
-            Left(CVector3::Y),
-            Up(CVector3(1.0f, 0.0f, 1.0f).Normalize()),
-            Forward(CVector3(1.0f, 0.0f, -1.0f).Normalize()),
-            Target(),
-            LensFocalLength(0.02f),
-            MotionSensitivity(0.005),
-            RotationSensitivity(0.01) {
-            CalculateYFieldOfView();
-         }
-
          /** Initialize from XML */
          void Init(TConfigurationNode& t_tree);
-         /** Rotation around the local Y axis */
-         void RotateUpDown(const CRadians& c_angle);
-         /** Rotation around the local Z axis */
-         void RotateLeftRight(const CRadians& c_angle);
-         /** Rotation around the global Z axis */
-         void RotateLeftRight2(const CRadians& c_angle);
-         /** c_delta is expressed in the camera local coordinates */
-         void Translate(const CVector3& c_delta);
-         /** Places this camera in the right position */
-         void Do();
          /** Calculates the value of YFieldOfView */
          void CalculateYFieldOfView();
-         /** Calculate the sensitivity of the camera */
-         void CalculateSensitivity();
       };
-
-      struct STimelineItem {
-         /** Index of the placement */
-         UInt32 Idx;
-         /** Time step to switch to the indicated placement */
+ 
+      struct SKeyframe {
+         SKeyframe(UInt32 un_step,
+                   UInt32 un_placement_index,
+                   bool b_interpolate_to_next) :
+            Step(un_step),
+            PlacementIndex(un_placement_index),
+            InterpolateToNext(b_interpolate_to_next) {}
+         /** The step at which this keyframe should be applied */
          UInt32 Step;
-         /** Initialize from XML */
-         void Init(TConfigurationNode& t_tree);
+         /** An index into the camera placements array [0-12) */
+         UInt32 PlacementIndex;
+         /** Whether or not linear interpolation should be applied */
+         bool InterpolateToNext;
       };
 
    public:
 
       CQTOpenGLCamera();
+
       ~CQTOpenGLCamera();
 
       void Init(TConfigurationNode& t_tree);
 
       void Reset();
 
-      inline void Look() {
-         m_sPlacement[m_unActivePlacement].Do();
-      }
+      void Look();
 
       inline const CVector3& GetPosition() const {
-         return m_sPlacement[m_unActivePlacement].Position;
+         return m_sActivePlacement.Position;
       }
 
       inline const CVector3& GetTarget() const {
-         return m_sPlacement[m_unActivePlacement].Target;
+         return m_sActivePlacement.Target;
       }
 
       inline Real GetLensFocalLength() const {
-         return m_sPlacement[m_unActivePlacement].LensFocalLength;
+         return m_sActivePlacement.LensFocalLength;
       }
 
       void Rotate(const QPoint& c_delta);
+
+      void Rotate(const CRadians& c_up_down,
+                  const CRadians& c_left_right);
 
       void Move(SInt32 n_forwards_backwards,
                 SInt32 n_sideways,
                 SInt32 n_up_down);
 
+      void Interpolate(UInt32 un_start_placement,
+                       UInt32 un_end_placement,
+                       Real f_time_fraction);
+
       inline SPlacement& GetActivePlacement() {
-         return m_sPlacement[m_unActivePlacement];
+         return m_sActivePlacement;
       }
 
       inline const SPlacement& GetActivePlacement() const {
-         return m_sPlacement[m_unActivePlacement];
+         return m_sActivePlacement;
       }
 
-      inline void SetActivePlacement(UInt32 un_placement) {
-         m_unActivePlacement = un_placement;
+      inline void SetActivePlacement(UInt32 n_index) {
+         ARGOS_ASSERT(n_index < m_arrPlacements.size(),
+            "CQTOpenGLCamera::SetActivePlacement():"
+            " index out of bounds: n_index = " << n_index <<
+            ", m_arrPlacements.size() = " << m_arrPlacements.size());
+         m_sActivePlacement = m_arrPlacements[n_index];
       }
 
       inline SPlacement& GetPlacement(UInt32 n_index) {
-         return m_sPlacement[n_index];
+         ARGOS_ASSERT(n_index < m_arrPlacements.size(),
+            "CQTOpenGLCamera::GetPlacement():"
+            " index out of bounds: n_index = " << n_index <<
+            ", m_arrPlacements.size() = " << m_arrPlacements.size());
+         return m_arrPlacements[n_index];
       }
 
       void UpdateTimeline();
 
    private:
-
-      UInt32 m_unActivePlacement;
-      SPlacement m_sPlacement[12];
-      std::list<STimelineItem*> m_listTimeline;
-
+      bool m_bEnableTimeline;
+      bool m_bHasTimeline;
+      UInt32 m_unLoop;
+      SPlacement m_sActivePlacement;
+      std::array<SPlacement, 12> m_arrPlacements;
+      std::vector<SKeyframe> m_vecKeyframes;
    };
 
 }

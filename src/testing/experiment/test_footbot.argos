@@ -9,7 +9,7 @@
     <experiment length="600" ticks_per_second="10" random_seed="12345" />
   </framework>
   
-  <loop_functions label="test_lf" />
+  <!--loop_functions label="test_lf" /-->
 
   <!-- ****************** -->
   <!-- * Loop functions * -->
@@ -51,11 +51,11 @@
 
     <box id="bn" size="0.1, 20, 0.2" movable="false">
       <body position="10,0,0" orientation="0,0,0"/>
-      <leds>
-        <led position="0.0,0.0,0.2" color="yellow"/>
-        <led position="0.0,0.1,0.2" color="green"/>
-        <led position="0.0,0.2,0.2" color="blue"/>
-        <led position="0.0,0.3,0.2" color="red"/>
+      <leds medium="leds">
+        <led anchor="origin" offset="0.0,0.0,0.2" color="yellow"/>
+        <led anchor="origin" offset="0.0,0.1,0.2" color="green"/>
+        <led anchor="origin" offset="0.0,0.2,0.2" color="blue"/>
+        <led anchor="origin" offset="0.0,0.3,0.2" color="red"/>
       </leds>
     </box>
     
@@ -97,18 +97,14 @@
   <!-- ********* -->
   <media>
     <range_and_bearing id="rab" index="grid" grid_size="3,3,3" />
+    <led id="leds" index="grid" grid_size="3,3,3" />
   </media>
 
   <!-- ****************** -->
   <!-- * Visualization * -->
   <!-- ****************** -->
   <visualization>
-    <qt-opengl>
-      <camera>
-        <placement idx="0" position="-2,0,2" look_at="0,0,0" lens_focal_length="20" />
-        <placement idx="1" position="0.884183,0.359128,0.490269" look_at="0.924486,-0.486744,-0.0415919" lens_focal_length="20" />
-      </camera>
-    </qt-opengl>
+    <qt-opengl lua_editor="false" show_boundary="false"/>
   </visualization>
 
 </argos-configuration>

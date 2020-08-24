@@ -5,7 +5,7 @@
   <!-- * General configuration * -->
   <!-- ************************* -->
   <framework>
-    <experiment ticks_per_second="10" />
+    <experiment ticks_per_second="10" length="10" />
   </framework>
 
   <!-- *************** -->

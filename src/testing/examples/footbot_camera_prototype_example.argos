@@ -44,7 +44,7 @@
   <!-- *********************** -->
   <!-- * Arena configuration * -->
   <!-- *********************** -->
-  <arena size="1, 1, 0.5" center="0, 0, 0.25">
+  <arena size="1, 1, 1" center="0, 0, 0.375">
     <box id="bn" size="0.025,0.975,0.05" movable="false" mass="10">
       <body position="0.4875,0.0125,0"  orientation="0,0,0" />
     </box>
@@ -108,19 +108,7 @@
   <!-- * Visualization * -->
   <!-- ****************** -->
   <visualization>
-    <qt-opengl lua_editor="false">
-      <camera>
-        <placement idx="0" position=" 0,  -2.5,1" look_at="0,0,0.05" lens_focal_length="78" />
-        <placement idx="1" position=" 2.5,-2.5,1" look_at="0,0,0.05" lens_focal_length="92" />
-        <placement idx="2" position=" 2.5, 0,  1" look_at="0,0,0.05" lens_focal_length="78" />
-        <placement idx="3" position=" 2.5, 2.5,1" look_at="0,0,0.05" lens_focal_length="92" />
-        <placement idx="4" position=" 0,   2.5,1" look_at="0,0,0.05" lens_focal_length="78" />
-        <placement idx="5" position="-2.5, 2.5,1" look_at="0,0,0.05" lens_focal_length="92" />
-        <placement idx="6" position="-2.5, 0,  1" look_at="0,0,0.05" lens_focal_length="78" />
-        <placement idx="7" position="-2.5,-2.5,1" look_at="0,0,0.05" lens_focal_length="92" />
-        <placement idx="8" position="0,0,0.5" look_at="0.0,0.0,0.125" up="1,0,0" lens_focal_length="40" />
-      </camera>
-    </qt-opengl>
+    <qt-opengl lua_editor="false" show_boundary="false"/>
   </visualization>
 
 </argos-configuration>
