@@ -17,6 +17,7 @@ set(ARGOS3_HEADERS_PLUGINS_ROBOTS_GENERIC_CONTROLINTERFACE
   control_interface/ci_directional_leds_actuator.h
   control_interface/ci_gripper_actuator.h
   control_interface/ci_ground_sensor.h
+  control_interface/ci_lidar_sensor.h
   control_interface/ci_leds_actuator.h
   control_interface/ci_light_sensor.h
   control_interface/ci_magnets_actuator.h
@@ -48,6 +49,7 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
     simulator/gripper_default_actuator.h
     simulator/ground_rotzonly_sensor.h
     simulator/leds_default_actuator.h
+    simulator/lidar_default_sensor.h
     simulator/light_default_sensor.h
     simulator/magnets_default_actuator.h
     simulator/positioning_default_sensor.h
@@ -80,6 +82,7 @@ set(ARGOS3_SOURCES_PLUGINS_ROBOTS_GENERIC
   control_interface/ci_gripper_actuator.cpp
   control_interface/ci_ground_sensor.cpp
   control_interface/ci_leds_actuator.cpp
+  control_interface/ci_lidar_sensor.cpp
   control_interface/ci_light_sensor.cpp
   control_interface/ci_magnets_actuator.cpp
   control_interface/ci_pan_tilt_camera_actuator.cpp
@@ -109,6 +112,7 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
     simulator/gripper_default_actuator.cpp
     simulator/ground_rotzonly_sensor.cpp
     simulator/leds_default_actuator.cpp
+    simulator/lidar_default_sensor.cpp
     simulator/light_default_sensor.cpp
     simulator/magnets_default_actuator.cpp
     simulator/positioning_default_sensor.cpp
