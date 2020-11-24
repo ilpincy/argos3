@@ -260,6 +260,7 @@ set(ARGOS3_HEADERS_PLUGINS_SIMULATOR_PHYSICS_ENGINES_DYNAMICS3D_BULLET_LINEARMAT
    bullet/LinearMath/btMatrix3x3.h
    bullet/LinearMath/btMatrixX.h
    bullet/LinearMath/btMinMax.h
+   bullet/LinearMath/btModifiedGramSchmidt.h
    bullet/LinearMath/btMotionState.h
    bullet/LinearMath/btPolarDecomposition.h
    bullet/LinearMath/btPoolAllocator.h
@@ -267,6 +268,7 @@ set(ARGOS3_HEADERS_PLUGINS_SIMULATOR_PHYSICS_ENGINES_DYNAMICS3D_BULLET_LINEARMAT
    bullet/LinearMath/btQuaternion.h
    bullet/LinearMath/btQuickprof.h
    bullet/LinearMath/btRandom.h
+   bullet/LinearMath/btReducedVector.h
    bullet/LinearMath/btScalar.h
    bullet/LinearMath/btSerializer.h
    bullet/LinearMath/btSpatialAlgebra.h
@@ -443,6 +445,7 @@ set(ARGOS3_SOURCES_PLUGINS_SIMULATOR_PHYSICS_ENGINES_DYNAMICS3D_BULLET
    bullet/LinearMath/btGeometryUtil.cpp
    bullet/LinearMath/btPolarDecomposition.cpp
    bullet/LinearMath/btQuickprof.cpp
+   bullet/LinearMath/btReducedVector.cpp
    bullet/LinearMath/btSerializer.cpp
    bullet/LinearMath/btSerializer64.cpp
    bullet/LinearMath/btThreads.cpp
