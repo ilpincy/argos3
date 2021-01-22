@@ -100,11 +100,13 @@ find_package(ASCIIDoc)
 #
 # Check for Lua 5.3
 #
-find_package(Lua53)
-if(LUA53_FOUND)
+FIND_PACKAGE(Lua "5.3" EXACT REQUIRED)
+if(LUA_FOUND)
   set(ARGOS_WITH_LUA ON)
   include_directories(${LUA_INCLUDE_DIR})
-endif(LUA53_FOUND)
+else(LUA_FOUND)
+  message(FATAL_ERROR "Lua 5.3 not found")
+endif(LUA_FOUND)
 
 #
 # Configure PhysX library linking

@@ -298,7 +298,6 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
   install(
     FILES
     ${CMAKE_SOURCE_DIR}/cmake/ARGoSCheckQTOpenGL.cmake
-    ${CMAKE_SOURCE_DIR}/cmake/FindLua53.cmake
     DESTINATION
     share/argos3/cmake)
   #
