@@ -46,8 +46,8 @@ namespace argos {
       m_cEngine(c_engine),
       m_cEmbodiedEntity(c_entity),
       m_sBoundingBox(),
-      m_vecAnchorMethodHolders(c_entity.GetAnchors().size(), NULL),
-      m_vecThunks(c_entity.GetAnchors().size(), NULL) {}
+      m_vecAnchorMethodHolders(c_entity.GetAnchors().size(), nullptr),
+      m_vecThunks(c_entity.GetAnchors().size(), nullptr) {}
 
    /****************************************/
    /****************************************/
@@ -61,7 +61,7 @@ namespace argos {
       /* Get a reference to the root entity */
       /* NOTE: here the cast is static because we know that an embodied entity MUST have a parent
        * which, by definition, is a composable entity */
-      CComposableEntity& cRoot = static_cast<CComposableEntity&>(m_cEmbodiedEntity.GetRootEntity());
+      auto& cRoot = static_cast<CComposableEntity&>(m_cEmbodiedEntity.GetRootEntity());
       /* Update its components */
       cRoot.UpdateComponents();
       /*
@@ -77,7 +77,7 @@ namespace argos {
    void CPhysicsModel::CalculateAnchors() {
       std::vector<SAnchor*>& vecAnchors = m_cEmbodiedEntity.GetEnabledAnchors();
       for(size_t i = 0; i < vecAnchors.size(); ++i) {
-         if(m_vecThunks[vecAnchors[i]->Index] != NULL) {
+         if(m_vecThunks[vecAnchors[i]->Index] != nullptr) {
             TThunk tThunk = m_vecThunks[vecAnchors[i]->Index];
             (this->*tThunk)(*vecAnchors[i]);
          }

@@ -173,8 +173,8 @@ namespace argos {
    virtual ~CDynamics2DOperationAdd ## SPACE_ENTITY() {}                \
    SOperationOutcome ApplyTo(CDynamics2DEngine& c_engine,               \
                 SPACE_ENTITY& c_entity) {                               \
-      DYN2D_MODEL* pcPhysModel = new DYN2D_MODEL(c_engine,              \
-                                                 c_entity);             \
+      auto* pcPhysModel = new DYN2D_MODEL(c_engine,                     \
+                                          c_entity);                    \
       c_engine.AddPhysicsModel(c_entity.GetId(),                        \
                                *pcPhysModel);                           \
       c_entity.                                                         \

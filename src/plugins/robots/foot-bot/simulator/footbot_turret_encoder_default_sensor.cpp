@@ -13,7 +13,7 @@ namespace argos {
    /****************************************/
 
    CFootBotTurretEncoderDefaultSensor::CFootBotTurretEncoderDefaultSensor() :
-      m_pcTurretEntity(NULL) {}
+      m_pcTurretEntity(nullptr) {}
 
    /****************************************/
    /****************************************/

@@ -41,7 +41,7 @@ namespace argos {
    bool GetClosestEmbodiedEntityIntersectedByRay(SEmbodiedEntityIntersectionItem& s_item,
                                                  const CRay3& c_ray) {
       /* Initialize s_item */
-      s_item.IntersectedEntity = NULL;
+      s_item.IntersectedEntity = nullptr;
       s_item.TOnRay = 1.0f;
       /* Perform full ray query */
       TEmbodiedEntityIntersectionData tData;
@@ -52,7 +52,7 @@ namespace argos {
             s_item = tData[i];
       }
       /* Return true if an intersection was found */
-      return (s_item.IntersectedEntity != NULL);
+      return (s_item.IntersectedEntity != nullptr);
    }
 
    /****************************************/
@@ -62,7 +62,7 @@ namespace argos {
                                                  const CRay3& c_ray,
                                                  CEmbodiedEntity& c_entity) {
       /* Initialize s_item */
-      s_item.IntersectedEntity = NULL;
+      s_item.IntersectedEntity = nullptr;
       s_item.TOnRay = 1.0f;
       /* Perform full ray query */
       TEmbodiedEntityIntersectionData tData;
@@ -75,7 +75,7 @@ namespace argos {
          }
       }
       /* Return true if an intersection was found */
-      return (s_item.IntersectedEntity != NULL);
+      return (s_item.IntersectedEntity != nullptr);
    }
 
    /****************************************/
@@ -89,8 +89,8 @@ namespace argos {
    /****************************************/
 
    CPhysicsEngine::SVolume::SVolume() :
-      TopFace(NULL),
-      BottomFace(NULL) {
+      TopFace(nullptr),
+      BottomFace(nullptr) {
    }
 
    /****************************************/
@@ -128,7 +128,7 @@ namespace argos {
             while(tVertexIt != tVertexIt.end()) {
                /* Read vertex data and fill in segment struct */
                GetNodeAttribute(*tVertexIt, "point", cCurPoint);
-               SVerticalFace* psFace = new SVerticalFace;
+               auto* psFace = new SVerticalFace;
                psFace->BaseSegment.SetStart(cLastPoint);
                psFace->BaseSegment.SetEnd(cCurPoint);
                SideFaces.push_back(psFace);
@@ -141,7 +141,7 @@ namespace argos {
                THROW_ARGOSEXCEPTION("The <sides> path is not closed; at least 3 segments must be specified");
             }
             if(cLastPoint != cFirstPoint) {
-               SVerticalFace* psFace = new SVerticalFace;
+               auto* psFace = new SVerticalFace;
                psFace->BaseSegment.SetStart(cLastPoint);
                psFace->BaseSegment.SetEnd(cFirstPoint);
                SideFaces.push_back(psFace);

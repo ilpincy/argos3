@@ -16,7 +16,7 @@ namespace argos {
 
    CFootBotTurretEntity::CFootBotTurretEntity(CComposableEntity* pc_parent) :
       CEntity(pc_parent),
-      m_psAnchor(NULL) {
+      m_psAnchor(nullptr) {
       Reset();
       Disable();
    }

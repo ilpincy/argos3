@@ -29,7 +29,7 @@ namespace argos {
          m_cControllableEntity(c_controllable_entity),
          m_bShowRays(b_show_rays),
          m_fNoiseStdDev(f_noise_std_dev),
-         m_pcRNG(NULL) {
+         m_pcRNG(nullptr) {
          m_pcRootSensingEntity = &m_cEmbodiedEntity.GetRootEntity();
          if(m_fNoiseStdDev > 0.0f) {
             m_pcRNG = CRandom::CreateRNG("argos");
@@ -140,11 +140,11 @@ namespace argos {
 
    CColoredBlobPerspectiveCameraDefaultSensor::CColoredBlobPerspectiveCameraDefaultSensor() :
       m_bEnabled(false),
-      m_pcCamEntity(NULL),
-      m_pcControllableEntity(NULL),
-      m_pcEmbodiedEntity(NULL),
-      m_pcLEDIndex(NULL),
-      m_pcEmbodiedIndex(NULL),
+      m_pcCamEntity(nullptr),
+      m_pcControllableEntity(nullptr),
+      m_pcEmbodiedEntity(nullptr),
+      m_pcLEDIndex(nullptr),
+      m_pcEmbodiedIndex(nullptr),
       m_bShowRays(false) {
    }
 

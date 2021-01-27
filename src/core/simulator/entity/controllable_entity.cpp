@@ -18,7 +18,7 @@ namespace argos {
 
    CControllableEntity::CControllableEntity(CComposableEntity* pc_parent) :
       CEntity(pc_parent),
-      m_pcController(NULL) {}
+      m_pcController(nullptr) {}
 
    /****************************************/
    /****************************************/
@@ -26,14 +26,14 @@ namespace argos {
    CControllableEntity::CControllableEntity(CComposableEntity* pc_parent,
                                             const std::string& str_id) :
       CEntity(pc_parent, str_id),
-      m_pcController(NULL) {
+      m_pcController(nullptr) {
    }
 
    /****************************************/
    /****************************************/
 
    CControllableEntity::~CControllableEntity() {
-      if(m_pcController != NULL) {
+      if(m_pcController != nullptr) {
          delete m_pcController;
       }
    }
@@ -73,12 +73,12 @@ namespace argos {
       m_vecCheckedRays.clear();
       m_vecIntersectionPoints.clear();
       /* Reset sensors */
-      for(CCI_Sensor::TMap::iterator it = m_pcController->GetAllSensors().begin();
+      for(auto it = m_pcController->GetAllSensors().begin();
           it != m_pcController->GetAllSensors().end(); ++it) {
          it->second->Reset();
       }
       /* Reset actuators */
-      for(CCI_Actuator::TMap::iterator it = m_pcController->GetAllActuators().begin();
+      for(auto it = m_pcController->GetAllActuators().begin();
           it != m_pcController->GetAllActuators().end(); ++it) {
          it->second->Reset();
       }
@@ -95,12 +95,12 @@ namespace argos {
       m_vecIntersectionPoints.clear();
       if(m_pcController) {
          /* Destroy sensors */
-         for(CCI_Sensor::TMap::iterator it = m_pcController->GetAllSensors().begin();
+         for(auto it = m_pcController->GetAllSensors().begin();
              it != m_pcController->GetAllSensors().end(); ++it) {
             it->second->Destroy();
          }
          /* Destroy actuators */
-         for(CCI_Actuator::TMap::iterator it = m_pcController->GetAllActuators().begin();
+         for(auto it = m_pcController->GetAllActuators().begin();
              it != m_pcController->GetAllActuators().end(); ++it) {
             it->second->Destroy();
          }
@@ -113,7 +113,7 @@ namespace argos {
    /****************************************/
    
    const CCI_Controller& CControllableEntity::GetController() const {
-      if(m_pcController != NULL) {
+      if(m_pcController != nullptr) {
          return *m_pcController;
       }
       else {
@@ -125,7 +125,7 @@ namespace argos {
    /****************************************/
    
    CCI_Controller& CControllableEntity::GetController() {
-      if(m_pcController != NULL) {
+      if(m_pcController != nullptr) {
          return *m_pcController;
       }
       else {
@@ -164,8 +164,8 @@ namespace argos {
             /* itAct->Value() is the name of the current actuator */
             GetNodeAttribute(*itAct, "implementation", strImpl);
             CSimulatedActuator* pcAct = CFactory<CSimulatedActuator>::New(itAct->Value() + " (" + strImpl + ")");
-            CCI_Actuator* pcCIAct = dynamic_cast<CCI_Actuator*>(pcAct);
-            if(pcCIAct == NULL) {
+            auto* pcCIAct = dynamic_cast<CCI_Actuator*>(pcAct);
+            if(pcCIAct == nullptr) {
                THROW_ARGOSEXCEPTION("BUG: actuator \"" << itAct->Value() << "\" does not inherit from CCI_Actuator");
             }
             pcAct->SetRobot(GetParent());
@@ -182,8 +182,8 @@ namespace argos {
             /* itSens->Value() is the name of the current actuator */
             GetNodeAttribute(*itSens, "implementation", strImpl);
             CSimulatedSensor* pcSens = CFactory<CSimulatedSensor>::New(itSens->Value() + " (" + strImpl + ")");
-            CCI_Sensor* pcCISens = dynamic_cast<CCI_Sensor*>(pcSens);
-            if(pcCISens == NULL) {
+            auto* pcCISens = dynamic_cast<CCI_Sensor*>(pcSens);
+            if(pcCISens == nullptr) {
                THROW_ARGOSEXCEPTION("BUG: sensor \"" << itSens->Value() << "\" does not inherit from CCI_Sensor");
             }
             pcSens->SetRobot(GetParent());
@@ -205,7 +205,7 @@ namespace argos {
    void CControllableEntity::Sense() {
       m_vecCheckedRays.clear();
       m_vecIntersectionPoints.clear();
-      for(std::map<std::string, CSimulatedSensor*>::iterator it = m_mapSensors.begin();
+      for(auto it = m_mapSensors.begin();
           it != m_mapSensors.end(); ++it) {
          it->second->Update();
       }
@@ -215,7 +215,7 @@ namespace argos {
    /****************************************/
 
    void CControllableEntity::ControlStep() {
-      if(m_pcController != NULL) {
+      if(m_pcController != nullptr) {
          m_pcController->ControlStep();
       }
       else {
@@ -227,7 +227,7 @@ namespace argos {
    /****************************************/
 
    void CControllableEntity::Act() {
-      for(std::map<std::string, CSimulatedActuator*>::iterator it = m_mapActuators.begin();
+      for(auto it = m_mapActuators.begin();
           it != m_mapActuators.end(); ++it) {
          it->second->Update();
       }

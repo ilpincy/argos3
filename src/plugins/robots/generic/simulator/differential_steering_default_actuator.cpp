@@ -14,8 +14,8 @@ namespace argos {
    /****************************************/
 
    CDifferentialSteeringDefaultActuator::CDifferentialSteeringDefaultActuator() :
-      m_pcWheeledEntity(NULL),
-      m_pcRNG(NULL) {
+      m_pcWheeledEntity(nullptr),
+      m_pcRNG(nullptr) {
       m_fCurrentVelocity[LEFT_WHEEL] = 0.0;
       m_fCurrentVelocity[RIGHT_WHEEL] = 0.0;
       m_fNoiseBias[LEFT_WHEEL] = 1.0;

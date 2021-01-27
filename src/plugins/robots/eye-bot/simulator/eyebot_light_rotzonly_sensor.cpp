@@ -52,9 +52,9 @@ namespace argos {
    /****************************************/
 
    CEyeBotLightRotZOnlySensor::CEyeBotLightRotZOnlySensor() :
-      m_pcEmbodiedEntity(NULL),
+      m_pcEmbodiedEntity(nullptr),
       m_bShowRays(false),
-      m_pcRNG(NULL),
+      m_pcRNG(nullptr),
       m_bAddNoise(false),
       m_cSpace(CSimulator::GetInstance().GetSpace()) {}
 
@@ -126,7 +126,7 @@ namespace argos {
        *    NOTE: the readings are additive
        * 4. go through the sensors and clamp their values
        */
-      for(CSpace::TMapPerType::iterator it = mapLights.begin();
+      for(auto it = mapLights.begin();
           it != mapLights.end();
           ++it) {
          /* Get a reference to the light */

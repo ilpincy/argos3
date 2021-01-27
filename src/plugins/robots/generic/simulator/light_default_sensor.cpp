@@ -24,7 +24,7 @@ namespace argos {
 
    CLightDefaultSensor::CLightDefaultSensor() :
       m_bShowRays(false),
-      m_pcRNG(NULL),
+      m_pcRNG(nullptr),
       m_bAddNoise(false),
       m_cSpace(CSimulator::GetInstance().GetSpace()) {}
 
@@ -81,7 +81,7 @@ namespace argos {
       /* Buffers to contain data about the intersection */
       SEmbodiedEntityIntersectionItem sIntersection;
       /* Get the map of light entities */
-      CSpace::TMapPerTypePerId::iterator itLights = m_cSpace.GetEntityMapPerTypePerId().find("light");
+      auto itLights = m_cSpace.GetEntityMapPerTypePerId().find("light");
       if (itLights != m_cSpace.GetEntityMapPerTypePerId().end()) {
          CSpace::TMapPerType& mapLights = itLights->second;
          /* Go through the sensors */
@@ -91,7 +91,7 @@ namespace argos {
             cRayStart.Rotate(m_pcLightEntity->GetSensor(i).Anchor.Orientation);
             cRayStart += m_pcLightEntity->GetSensor(i).Anchor.Position;
             /* Go through all the light entities */
-            for(CSpace::TMapPerType::iterator it = mapLights.begin();
+            for(auto it = mapLights.begin();
                 it != mapLights.end();
                 ++it) {
                /* Get a reference to the light */

@@ -38,8 +38,8 @@ namespace argos {
 
    CQTOpenGLUserFunctions::CQTOpenGLUserFunctions() :
       m_vecFunctionHolders(1),
-      m_pcQTOpenGLMainWindow(NULL) {
-      m_cThunks.Add<CEntity>((TThunk)NULL);
+      m_pcQTOpenGLMainWindow(nullptr) {
+      m_cThunks.Add<CEntity>((TThunk)nullptr);
    }
 
    /****************************************/

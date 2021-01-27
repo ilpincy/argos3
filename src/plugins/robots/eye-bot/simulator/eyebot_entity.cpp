@@ -38,16 +38,16 @@ namespace argos {
    /****************************************/
 
    CEyeBotEntity::CEyeBotEntity() :
-      CComposableEntity(NULL),
-      m_pcControllableEntity(NULL),
-      m_pcEmbodiedEntity(NULL),
-      m_pcLEDEquippedEntity(NULL),
-      m_pcLightSensorEquippedEntity(NULL),
-      m_pcPerspectiveCameraEquippedEntity(NULL),
-      m_pcProximitySensorEquippedEntity(NULL),
-      m_pcQuadRotorEntity(NULL),
-      m_pcRABEquippedEntity(NULL),
-      m_pcBatteryEquippedEntity(NULL) {
+      CComposableEntity(nullptr),
+      m_pcControllableEntity(nullptr),
+      m_pcEmbodiedEntity(nullptr),
+      m_pcLEDEquippedEntity(nullptr),
+      m_pcLightSensorEquippedEntity(nullptr),
+      m_pcPerspectiveCameraEquippedEntity(nullptr),
+      m_pcProximitySensorEquippedEntity(nullptr),
+      m_pcQuadRotorEntity(nullptr),
+      m_pcRABEquippedEntity(nullptr),
+      m_pcBatteryEquippedEntity(nullptr) {
    }
 
    /****************************************/
@@ -63,16 +63,16 @@ namespace argos {
                                 const CRadians& c_perspcam_aperture,
                                 Real f_perspcam_focal_length,
                                 Real f_perspcam_range) :
-      CComposableEntity(NULL, str_id),
-      m_pcControllableEntity(NULL),
-      m_pcEmbodiedEntity(NULL),
-      m_pcLEDEquippedEntity(NULL),
-      m_pcLightSensorEquippedEntity(NULL),
-      m_pcPerspectiveCameraEquippedEntity(NULL),
-      m_pcProximitySensorEquippedEntity(NULL),
-      m_pcQuadRotorEntity(NULL),
-      m_pcRABEquippedEntity(NULL),
-      m_pcBatteryEquippedEntity(NULL) {
+      CComposableEntity(nullptr, str_id),
+      m_pcControllableEntity(nullptr),
+      m_pcEmbodiedEntity(nullptr),
+      m_pcLEDEquippedEntity(nullptr),
+      m_pcLightSensorEquippedEntity(nullptr),
+      m_pcPerspectiveCameraEquippedEntity(nullptr),
+      m_pcProximitySensorEquippedEntity(nullptr),
+      m_pcQuadRotorEntity(nullptr),
+      m_pcRABEquippedEntity(nullptr),
+      m_pcBatteryEquippedEntity(nullptr) {
       try {
          /*
           * Create and init components

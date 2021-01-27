@@ -31,7 +31,7 @@ namespace argos {
          m_tStepFunction = &CDefaultVisualization::RealTimeStep;
          timerclear(&m_tStepClockTime);
          m_tStepClockTime.tv_usec = 1e6 * CPhysicsEngine::GetSimulationClockTick();
-         ::gettimeofday(&m_tStepStartTime, NULL);
+         ::gettimeofday(&m_tStepStartTime, nullptr);
       }
       else {
          /* Use normal clock */
@@ -67,7 +67,7 @@ namespace argos {
       /* m_tStepStartTime has already been set */
       m_cSimulator.UpdateSpace();
       /* Take the time now */
-      ::gettimeofday(&m_tStepEndTime, NULL);
+      ::gettimeofday(&m_tStepEndTime, nullptr);
       /* Calculate the elapsed time */
       timersub(&m_tStepEndTime, &m_tStepStartTime, &m_tStepElapsedTime);
       /* If the elapsed time is lower than the tick length, wait */
@@ -77,7 +77,7 @@ namespace argos {
          /* Wait */
          ::usleep(m_tStepWaitTime.tv_sec * 1e6 + m_tStepWaitTime.tv_usec);
          /* Get the new step end */
-         ::gettimeofday(&m_tStepEndTime, NULL);
+         ::gettimeofday(&m_tStepEndTime, nullptr);
       }
       else {
          LOGERR << "[WARNING] Clock tick took "

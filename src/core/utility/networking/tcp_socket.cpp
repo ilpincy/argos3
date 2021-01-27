@@ -75,9 +75,9 @@ namespace argos {
       }
       /* Bind on the first interface available */
       m_nStream = -1;
-      ::addrinfo* ptInterface = NULL;
+      ::addrinfo* ptInterface = nullptr;
       for(ptInterface = ptInterfaceInfo;
-          (ptInterface != NULL) && (m_nStream == -1);
+          (ptInterface != nullptr) && (m_nStream == -1);
           ptInterface = ptInterface->ai_next) {
          m_nStream = ::socket(ptInterface->ai_family,
                               ptInterface->ai_socktype,
@@ -107,7 +107,7 @@ namespace argos {
       tHints.ai_family = AF_INET;       /* Only IPv4 is accepted */
       tHints.ai_socktype = SOCK_STREAM; /* TCP socket */
       tHints.ai_flags = AI_PASSIVE;     /* Necessary for bind() later on */
-      nRetVal = ::getaddrinfo(NULL,
+      nRetVal = ::getaddrinfo(nullptr,
                               ToString(n_port).c_str(),
                               &tHints,
                               &ptInterfaceInfo);
@@ -116,9 +116,9 @@ namespace argos {
       }
       /* Bind on the first interface available */
       m_nStream = -1;
-      ::addrinfo* ptInterface = NULL;
+      ::addrinfo* ptInterface = nullptr;
       for(ptInterface = ptInterfaceInfo;
-          (ptInterface != NULL) && (m_nStream == -1);
+          (ptInterface != nullptr) && (m_nStream == -1);
           ptInterface = ptInterface->ai_next) {
          m_nStream = ::socket(ptInterface->ai_family,
                               ptInterface->ai_socktype,

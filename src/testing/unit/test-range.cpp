@@ -18,7 +18,7 @@ int main(int argc, char** argv) {
       std::cerr << "Usage: test-range <seed>" << std::endl;
       abort();
    }
-   UInt32 unSeed = FromString<UInt32>(argv[1]);
+   auto unSeed = FromString<UInt32>(argv[1]);
    CRandom::CreateCategory("argos", unSeed);
    CRandom::CRNG* pcRNG = CRandom::CreateRNG("argos");
    UInt32 unMax = 2;

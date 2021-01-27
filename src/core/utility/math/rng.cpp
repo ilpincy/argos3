@@ -298,7 +298,7 @@ namespace argos {
    bool CRandom::CreateCategory(const std::string& str_category,
                                 UInt32 un_seed) {
       /* Is there a category already? */
-      std::map<std::string, CCategory*>::iterator itCategory = m_mapCategories.find(str_category);
+      auto itCategory = m_mapCategories.find(str_category);
       if(itCategory == m_mapCategories.end()) {
          /* No, create it */
          m_mapCategories.insert(
@@ -370,7 +370,7 @@ namespace argos {
    /****************************************/
 
    void CRandom::Reset() {
-      for(std::map<std::string, CCategory*>::iterator itCategory = m_mapCategories.begin();
+      for(auto itCategory = m_mapCategories.begin();
           itCategory != m_mapCategories.end();
           ++itCategory) {
          itCategory->second->ResetRNGs();

@@ -22,8 +22,8 @@ namespace argos {
       m_cEngine(c_engine),
       m_cGripperEntity(c_gripper_entity),
       m_ptGripperShape(pt_gripper_shape),
-      m_pcGrippee(NULL),
-      m_tConstraint(NULL) {
+      m_pcGrippee(nullptr),
+      m_tConstraint(nullptr) {
       m_ptGripperShape->sensor = 1;
       m_ptGripperShape->collision_type = CDynamics2DEngine::SHAPE_GRIPPER;
       m_ptGripperShape->data = this;
@@ -74,10 +74,10 @@ namespace argos {
       if(IsGripping()) {
          cpSpaceRemoveConstraint(m_cEngine.GetPhysicsSpace(), m_tConstraint);
          cpConstraintFree(m_tConstraint);
-         m_tConstraint = NULL;
+         m_tConstraint = nullptr;
          m_cGripperEntity.ClearGrippedEntity();
          m_pcGrippee->Remove(*this);
-         m_pcGrippee = NULL;
+         m_pcGrippee = nullptr;
       }
    }
 
@@ -110,7 +110,7 @@ namespace argos {
    /****************************************/
 
    void CDynamics2DGrippable::Remove(CDynamics2DGripper& c_gripper) {
-      CDynamics2DGripper::TList::iterator it =
+      auto it =
          std::find(m_listGrippers.begin(), m_listGrippers.end(), &c_gripper);
       if(it != m_listGrippers.end()) {
          m_listGrippers.erase(it);
@@ -121,7 +121,7 @@ namespace argos {
    /****************************************/
 
    void CDynamics2DGrippable::Release(CDynamics2DGripper& c_gripper) {
-      CDynamics2DGripper::TList::iterator it =
+      auto it =
          std::find(m_listGrippers.begin(), m_listGrippers.end(), &c_gripper);
       if(it != m_listGrippers.end()) {
          (*it)->Release();
@@ -146,9 +146,9 @@ namespace argos {
       /* Get the shapes involved */
       CP_ARBITER_GET_SHAPES(pt_arb, ptGripperShape, ptGrippableShape);
       /* Get a reference to the gripper data */
-      CDynamics2DGripper* pcGripper = reinterpret_cast<CDynamics2DGripper*>(ptGripperShape->data);
+      auto* pcGripper = reinterpret_cast<CDynamics2DGripper*>(ptGripperShape->data);
       /* Get a reference to the grippable entity */
-      CDynamics2DGrippable* pcGrippable = reinterpret_cast<CDynamics2DGrippable*>(ptGrippableShape->data);
+      auto* pcGrippable = reinterpret_cast<CDynamics2DGrippable*>(ptGrippableShape->data);
       /* If the entities match, ignore the collision forever */
       return (&(pcGripper->GetGripperEntity().GetParent()) != &(pcGrippable->GetEmbodiedEntity().GetParent()));
    }
@@ -162,7 +162,7 @@ namespace argos {
       /* Get the shapes involved */
       CP_ARBITER_GET_SHAPES(pt_arb, ptGripperShape, ptGrippableShape);
       /* Get a reference to the gripper data */
-      CDynamics2DGripper* pcGripper = reinterpret_cast<CDynamics2DGripper*>(ptGripperShape->data);
+      auto* pcGripper = reinterpret_cast<CDynamics2DGripper*>(ptGripperShape->data);
       /*
        * When to process gripping:
        * 1. when the robot was gripping and it just unlocked the gripper
@@ -200,8 +200,8 @@ namespace argos {
                                                 void* p_obj,
                                                 void* p_data) {
       /* Get the objects involved */
-      CDynamics2DGripper*   pcGripper   = reinterpret_cast<CDynamics2DGripper*>  (p_obj);
-      CDynamics2DGrippable* pcGrippable = reinterpret_cast<CDynamics2DGrippable*>(p_data);
+      auto*   pcGripper   = reinterpret_cast<CDynamics2DGripper*>  (p_obj);
+      auto* pcGrippable = reinterpret_cast<CDynamics2DGrippable*>(p_data);
       /* Connect the objects */
       pcGripper->Grip(pcGrippable);
    }
@@ -213,7 +213,7 @@ namespace argos {
                                                    void* p_obj,
                                                    void* p_data) {
       /* Get the gripper objects */
-      CDynamics2DGripper* pcGripper   = reinterpret_cast<CDynamics2DGripper*>  (p_obj);
+      auto* pcGripper   = reinterpret_cast<CDynamics2DGripper*>  (p_obj);
       /* Disconnect the objects */
       pcGripper->Release();
    }

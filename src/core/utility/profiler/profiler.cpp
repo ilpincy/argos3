@@ -124,7 +124,7 @@ namespace argos {
                          std::ios::app | std::ios::out);
       }
       LOG << "[INFO] Opened file \"" << str_file_name << "\" for profiling." << std::endl;
-      int nError = pthread_mutex_init(&m_tThreadResourceUsageMutex, NULL);
+      int nError = pthread_mutex_init(&m_tThreadResourceUsageMutex, nullptr);
       if(nError) {
          THROW_ARGOSEXCEPTION("Error creating thread profiler mutex " << ::strerror(nError));
       }
@@ -253,14 +253,14 @@ namespace argos {
    /****************************************/
 
    void CProfiler::StartWallClock() {
-      ::gettimeofday(&m_tWallClockStart, NULL);
+      ::gettimeofday(&m_tWallClockStart, nullptr);
    }
 
    /****************************************/
    /****************************************/
 
    void CProfiler::StopWallClock() {
-      ::gettimeofday(&m_tWallClockEnd, NULL);
+      ::gettimeofday(&m_tWallClockEnd, nullptr);
    }
 
    /****************************************/

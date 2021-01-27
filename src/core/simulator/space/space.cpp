@@ -27,9 +27,9 @@ namespace argos {
    CSpace::CSpace() :
       m_cSimulator(CSimulator::GetInstance()),
       m_unSimulationClock(0),
-      m_pcFloorEntity(NULL),
-      m_ptPhysicsEngines(NULL),
-      m_ptMedia(NULL) {}
+      m_pcFloorEntity(nullptr),
+      m_ptPhysicsEngines(nullptr),
+      m_ptMedia(nullptr) {}
 
    /****************************************/
    /****************************************/
@@ -94,7 +94,7 @@ namespace argos {
 
    void CSpace::GetEntitiesMatching(CEntity::TVector& t_buffer,
                                     const std::string& str_pattern) {
-      for(CEntity::TVector::iterator it = m_vecEntities.begin();
+      for(auto it = m_vecEntities.begin();
           it != m_vecEntities.end(); ++it) {
          if(MatchPattern((*it)->GetId(), str_pattern)) {
             t_buffer.push_back(*it);
@@ -106,7 +106,7 @@ namespace argos {
    /****************************************/
 
    CSpace::TMapPerType& CSpace::GetEntitiesByTypeImpl(const std::string& str_type) const {
-     TMapPerTypePerId::const_iterator itEntities = m_mapEntitiesPerTypePerId.find(str_type);
+     auto itEntities = m_mapEntitiesPerTypePerId.find(str_type);
      if(itEntities != m_mapEntitiesPerTypePerId.end()){
        return const_cast<CSpace::TMapPerType&>(itEntities->second);
      } else {
@@ -147,7 +147,7 @@ namespace argos {
    /****************************************/
 
    void CSpace::RemoveControllableEntity(CControllableEntity& c_entity) {
-      CControllableEntity::TVector::iterator it = find(m_vecControllableEntities.begin(),
+      auto it = find(m_vecControllableEntities.begin(),
                                                        m_vecControllableEntities.end(),
                                                        &c_entity);
       if(it != m_vecControllableEntities.end()) {
@@ -367,19 +367,19 @@ namespace argos {
 
    static CEmbodiedEntity* GetEmbodiedEntity(CEntity* pc_entity) {
       /* Is the entity embodied itself? */
-      CEmbodiedEntity* pcEmbodiedTest = dynamic_cast<CEmbodiedEntity*>(pc_entity);
-      if(pcEmbodiedTest != NULL) {
+      auto* pcEmbodiedTest = dynamic_cast<CEmbodiedEntity*>(pc_entity);
+      if(pcEmbodiedTest != nullptr) {
          return pcEmbodiedTest;
       }
       /* Is the entity composable with an embodied component? */
-      CComposableEntity* pcComposableTest = dynamic_cast<CComposableEntity*>(pc_entity);
-      if(pcComposableTest != NULL) {
+      auto* pcComposableTest = dynamic_cast<CComposableEntity*>(pc_entity);
+      if(pcComposableTest != nullptr) {
          if(pcComposableTest->HasComponent("body")) {
             return &(pcComposableTest->GetComponent<CEmbodiedEntity>("body"));
          }
       }
       /* No embodied entity found */
-      return NULL;
+      return nullptr;
    }
 
    /****************************************/
@@ -387,19 +387,19 @@ namespace argos {
 
    static CPositionalEntity* GetPositionalEntity(CEntity* pc_entity) {
       /* Is the entity positional itself? */
-      CPositionalEntity* pcPositionalTest = dynamic_cast<CPositionalEntity*>(pc_entity);
-      if(pcPositionalTest != NULL) {
+      auto* pcPositionalTest = dynamic_cast<CPositionalEntity*>(pc_entity);
+      if(pcPositionalTest != nullptr) {
          return pcPositionalTest;
       }
       /* Is the entity composable with a positional component? */
-      CComposableEntity* pcComposableTest = dynamic_cast<CComposableEntity*>(pc_entity);
-      if(pcComposableTest != NULL) {
+      auto* pcComposableTest = dynamic_cast<CComposableEntity*>(pc_entity);
+      if(pcComposableTest != nullptr) {
          if(pcComposableTest->HasComponent("position")) {
             return &(pcComposableTest->GetComponent<CPositionalEntity>("position"));
          }
       }
       /* No positional entity found */
-      return NULL;
+      return nullptr;
    }
 
    /****************************************/
@@ -470,7 +470,7 @@ namespace argos {
                 */
                /* Check whether the entity is positional */
                CPositionalEntity* pcPositionalEntity = GetPositionalEntity(pcEntity);
-               if(pcPositionalEntity != NULL) {
+               if(pcPositionalEntity != nullptr) {
                   /* Set the position */
                   SetNodeAttribute(tEntityTree, "position", (*pcPositionGenerator)(bRetry));
                   /* Set the orientation */
@@ -498,7 +498,7 @@ namespace argos {
                   pcEntity->Init(tEntityTree);
                   /* Check whether the entity is indeed embodied */
                   CEmbodiedEntity* pcEmbodiedEntity = GetEmbodiedEntity(pcEntity);
-                  if(pcEmbodiedEntity != NULL) {
+                  if(pcEmbodiedEntity != nullptr) {
                      /* Yes, the entity is embodied */
                      /* Add it to the space and to the designated physics engine */
                      CallEntityOperation<CSpaceOperationAddEntity, CSpace, void>(*this, *pcEntity);

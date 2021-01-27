@@ -15,7 +15,7 @@ namespace argos {
    /****************************************/
 
    CLEDsDefaultActuator::CLEDsDefaultActuator() :
-      m_pcLEDEquippedEntity(NULL) {}
+      m_pcLEDEquippedEntity(nullptr) {}
 
    /****************************************/
    /****************************************/

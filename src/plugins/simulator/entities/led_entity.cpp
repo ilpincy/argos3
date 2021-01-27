@@ -16,7 +16,7 @@ namespace argos {
 
    CLEDEntity::CLEDEntity(CComposableEntity* pc_parent) :
       CPositionalEntity(pc_parent),
-      m_pcMedium(NULL) {
+      m_pcMedium(nullptr) {
       Disable();
    }
 
@@ -30,7 +30,7 @@ namespace argos {
       CPositionalEntity(pc_parent, str_id, c_position, CQuaternion()),
       m_cColor(c_color),
       m_cInitColor(c_color),
-      m_pcMedium(NULL) {
+      m_pcMedium(nullptr) {
       SetColor(c_color);
    }
 
@@ -92,7 +92,7 @@ namespace argos {
    /****************************************/
 
    CLEDMedium& CLEDEntity::GetMedium() const {
-      if(m_pcMedium == NULL) {
+      if(m_pcMedium == nullptr) {
          THROW_ARGOSEXCEPTION("LED entity \"" << GetContext() << GetId() << "\" has no medium associated.");
       }
       return *m_pcMedium;
@@ -102,7 +102,7 @@ namespace argos {
    /****************************************/
 
    void CLEDEntity::SetMedium(CLEDMedium& c_medium) {
-      if(m_pcMedium != NULL && m_pcMedium != &c_medium)
+      if(m_pcMedium != nullptr && m_pcMedium != &c_medium)
          m_pcMedium->RemoveEntity(*this);
       m_pcMedium = &c_medium;
    }
