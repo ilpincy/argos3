@@ -30,7 +30,8 @@ namespace argos {
       virtual void UpdatePhysics();
       virtual void UpdateMedia();
       virtual void UpdateControllableEntitiesSenseStep();
-
+      virtual void IterateOverControllableEntities(
+          const TControllableEntityIterCBType& c_cb);
    };
 
 }

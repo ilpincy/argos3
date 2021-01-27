@@ -16,6 +16,9 @@ namespace argos {
    class CSimulator;
 }
 
+#include <functional>
+#include <string>
+
 #include <argos3/core/utility/datatypes/any.h>
 #include <argos3/core/simulator/medium/medium.h>
 #include <argos3/core/simulator/entity/embodied_entity.h>
@@ -74,6 +77,17 @@ namespace argos {
        * @see any_cast()
        */
       typedef std::map <std::string, TMapPerType, std::less <std::string> > TMapPerTypePerId;
+
+     /**
+      * The callback type for iteration over controllable entities within
+      * the PreStep() and/or PostStep() parts of the CLoopFunctions, making the
+      * threads used by ARGoS accessible therein.
+      *
+      * @see CLoopFunctions::PreStep()
+      * @see CLoopFunctions::PostStep()
+      * @see IterateOverControllableEntities()
+      */
+      typedef std::function<void(CControllableEntity*)> TControllableEntityIterCBType;
 
       /****************************************/
       /****************************************/
@@ -386,7 +400,7 @@ namespace argos {
                             m_cArenaCenter + m_cArenaSize);
       }
 
-      /*
+      /**
        * Returns the arena limits.
        * The arena limits are defined by <tt>arena center - arena size</tt> and
        * <tt>arena center - arena size</tt>.
@@ -400,6 +414,14 @@ namespace argos {
       virtual void RemoveControllableEntity(CControllableEntity& c_entity);
       virtual void AddEntityToPhysicsEngine(CEmbodiedEntity& c_entity);
 
+     /**
+      * \brief Given a callback specified in the loop functions, iterate over
+      * all controllable entities currently present in the arena (including
+      * those that are currently disabled).
+      */
+      virtual void IterateOverControllableEntities(
+          const TControllableEntityIterCBType& c_cb) = 0;
+
    protected:
 
       virtual void UpdateControllableEntitiesAct() = 0;
@@ -407,9 +429,26 @@ namespace argos {
       virtual void UpdateMedia() = 0;
       virtual void UpdateControllableEntitiesSenseStep() = 0;
 
+      /**
+       * \brief If the loop functions do not perform entity iteration in either
+       * of the PreStep() or PostStep() functions, then the threads which are
+       * currently waiting for the "go" signal from the loop functions need to
+       * be told in CSpace::Update() that they should stop waiting and start the
+       * next phase of the per-timestep updates.
+       *
+       * Unused if ARGoS was not configured to use threads in the input file.
+       *
+       * @see Update()
+       */
+      virtual void ControllableEntityIterationWaitAbort() {}
+
       void Distribute(TConfigurationNode& t_tree);
 
       void AddBoxStrip(TConfigurationNode& t_tree);
+
+      bool ControllableEntityIterationEnabled() const {
+        return nullptr != m_cbControllableEntityIter;
+      }
 
    protected:
 
@@ -460,8 +499,12 @@ namespace argos {
       /** A pointer to the list of media */
       CMedium::TVector* m_ptMedia;
 
+      /** Callback for iterating over entities from within the loop functions */
+      TControllableEntityIterCBType m_cbControllableEntityIter{nullptr};
+
   private:
       TMapPerType& GetEntitiesByTypeImpl(const std::string& str_type) const;
+
    };
 
    /****************************************/

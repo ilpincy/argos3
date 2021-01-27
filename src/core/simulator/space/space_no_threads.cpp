@@ -63,4 +63,14 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   void CSpaceNoThreads::IterateOverControllableEntities(
+       const TControllableEntityIterCBType& c_cb) {
+     for (size_t i = 0; i < m_vecControllableEntities.size(); ++i) {
+       c_cb(m_vecControllableEntities[i]);
+     } /* for(i..) */
+   } /* IterateOverControllableEntities() */
+
+   /****************************************/
+   /****************************************/
+
 }
