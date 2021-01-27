@@ -334,6 +334,9 @@ namespace argos {
 
                            "The 'id' attribute is necessary and must be unique among the physics engines.\n\n"
 
+                           "Multiple physics engines of this type cannot be used, and defining '<boundaries>'\n"
+                           "as a child tag under the '<dynamics3d>' tree will result in an initialization error.\n\n"
+
                            "OPTIONAL XML CONFIGURATION\n\n"
 
                            "It is possible to change the default friction used in the simulation from\n"
@@ -376,7 +379,7 @@ namespace argos {
                            "    ...\n"
                            "  </physics_engines>\n\n",
 
-                           "Usable"
+                           "Usable (multiple engines not supported)"
       );
 
    /****************************************/
