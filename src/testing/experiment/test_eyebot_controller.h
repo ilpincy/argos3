@@ -17,7 +17,7 @@ public:
 
 private:
 
-   CCI_RangeAndBearingActuator* m_pcRABAct;
-   CCI_RangeAndBearingSensor* m_pcRABSens;
+   // CCI_RangeAndBearingActuator* m_pcRABAct;
+   // CCI_RangeAndBearingSensor* m_pcRABSens;
 
 };

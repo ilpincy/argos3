@@ -118,13 +118,18 @@ namespace argos {
       catch(CARGoSException& ex) {
          THROW_ARGOSEXCEPTION_NESTED("Error initializing camera sensor", ex);
       }
-      Update();
+      /* sensor is disabled by default */
+      Disable();
    }
 
    /****************************************/
    /****************************************/
 
    void CCameraDefaultSensor::Update() {
+      /* sensor is disabled--nothing to do */
+      if (IsDisabled()) {
+        return;
+      }
       /* vector of controller rays */
       std::vector<std::pair<bool, CRay3> >& vecCheckedRays =
          m_pcControllableEntity->GetCheckedRays();
@@ -254,6 +259,9 @@ namespace argos {
                    "that algorithms can project a feature in the simulation on to the virtual\n"
                    "sensor and store its 2D pixel coordinates as a reading. The implementation\n"
                    "of algorithms that behave differently, however, is also possible.\n\n"
+
+                   "This sensor is disabled by default, and must be enabled before it can be\n"
+                   "used.\n\n"
 
                    "REQUIRED XML CONFIGURATION\n\n"
                    "  <controllers>\n"

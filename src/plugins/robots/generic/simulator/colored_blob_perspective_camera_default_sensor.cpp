@@ -139,7 +139,6 @@ namespace argos {
    /****************************************/
 
    CColoredBlobPerspectiveCameraDefaultSensor::CColoredBlobPerspectiveCameraDefaultSensor() :
-      m_bEnabled(false),
       m_pcCamEntity(nullptr),
       m_pcControllableEntity(nullptr),
       m_pcEmbodiedEntity(nullptr),
@@ -194,35 +193,39 @@ namespace argos {
       catch(CARGoSException& ex) {
          THROW_ARGOSEXCEPTION_NESTED("Error initializing the colored blob perspective camera default sensor", ex);
       }
+      /* sensor is disabled by default */
+      Disable();
    }
 
    /****************************************/
    /****************************************/
 
    void CColoredBlobPerspectiveCameraDefaultSensor::Update() {
-      if(m_bEnabled) {
-         /* Increase data counter */
-         ++m_sReadings.Counter;
-         /* Prepare the operation */
-         m_pcOperation->Setup();
-         /* Calculate the sensing box */
-         Real fHalfRange  = m_pcCamEntity->GetRange() * 0.5f;
-         Real fHalfSide   = fHalfRange * Tan(m_pcCamEntity->GetAperture());
-         /* Box center */
-         CVector3 cCenter(fHalfRange, 0.0f, 0.0f);
-         cCenter.Rotate(m_pcCamEntity->GetAnchor().Orientation);
-         cCenter += m_pcCamEntity->GetAnchor().Position;
-         /* Box half size */
-         CVector3 cCorner(fHalfRange, fHalfSide, fHalfSide);
-         cCorner.Rotate(m_pcCamEntity->GetAnchor().Orientation);
-         CVector3 cHalfSize(
-            Abs(cCorner.GetX()),
-            Abs(cCorner.GetY()),
-            Abs(cCorner.GetZ()));
-         /* Go through LED entities in box range */
-         m_pcLEDIndex->ForEntitiesInBoxRange(
-            cCenter, cHalfSize, *m_pcOperation);
+      /* sensor is disabled--nothing to do */
+      if (IsDisabled()) {
+        return;
       }
+      /* Increase data counter */
+      ++m_sReadings.Counter;
+      /* Prepare the operation */
+      m_pcOperation->Setup();
+      /* Calculate the sensing box */
+      Real fHalfRange  = m_pcCamEntity->GetRange() * 0.5f;
+      Real fHalfSide   = fHalfRange * Tan(m_pcCamEntity->GetAperture());
+      /* Box center */
+      CVector3 cCenter(fHalfRange, 0.0f, 0.0f);
+      cCenter.Rotate(m_pcCamEntity->GetAnchor().Orientation);
+      cCenter += m_pcCamEntity->GetAnchor().Position;
+      /* Box half size */
+      CVector3 cCorner(fHalfRange, fHalfSide, fHalfSide);
+      cCorner.Rotate(m_pcCamEntity->GetAnchor().Orientation);
+      CVector3 cHalfSize(
+         Abs(cCorner.GetX()),
+         Abs(cCorner.GetY()),
+         Abs(cCorner.GetZ()));
+      /* Go through LED entities in box range */
+      m_pcLEDIndex->ForEntitiesInBoxRange(
+         cCenter, cHalfSize, *m_pcOperation);
    }
 
    /****************************************/
@@ -245,7 +248,8 @@ namespace argos {
 
    void CColoredBlobPerspectiveCameraDefaultSensor::Enable() {
       m_pcCamEntity->Enable();
-      m_bEnabled = true;
+      CCI_Sensor::Enable();
+
    }
 
    /****************************************/
@@ -253,7 +257,8 @@ namespace argos {
 
    void CColoredBlobPerspectiveCameraDefaultSensor::Disable() {
       m_pcCamEntity->Disable();
-      m_bEnabled = false;
+      CCI_Sensor::Disable();
+
    }
 
    /****************************************/
@@ -269,6 +274,9 @@ namespace argos {
                    "sensor returns a list of blobs, each defined by a color and a position with\n"
                    "respect to the robot reference point on the ground. In controllers, you must\n"
                    "include the ci_colored_blob_perspective_camera_sensor.h header.\n\n"
+
+                   "This sensor is disabled by default, and must be enabled before it can be\n"
+                   "used.\n\n"
 
                    "REQUIRED XML CONFIGURATION\n\n"
 

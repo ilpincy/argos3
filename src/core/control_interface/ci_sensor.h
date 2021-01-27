@@ -70,6 +70,22 @@ namespace argos {
        */
       virtual void Destroy() {}
 
+      /**
+       * Enables updating of sensor information in the event loop. For some
+       * sensors, this must be called before using them, others are enabled by
+       * default.
+       */
+      virtual void Enable() { m_bEnabled = true; }
+
+      /**
+       * Disables updating of sensor information in the event loop.
+       */
+      virtual void Disable() { m_bEnabled = false; }
+
+      bool IsEnabled() const { return m_bEnabled; }
+      bool IsDisabled() const { return !m_bEnabled; }
+
+
 #ifdef ARGOS_WITH_LUA
       /**
        * Creates the Lua state for this sensor.
@@ -87,6 +103,10 @@ namespace argos {
       virtual void ReadingsToLuaState(lua_State* pt_lua_state) = 0;
 #endif
 
+   private:
+
+     /** Is this sensor currently enabled? */
+     bool m_bEnabled{false};
    };
 
 }

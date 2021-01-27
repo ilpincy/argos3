@@ -12,8 +12,7 @@ namespace argos {
    /****************************************/
 
    CPrototypeJointsDefaultSensor::CPrototypeJointsDefaultSensor() :
-      m_pcJointEquippedEntity(nullptr) {
-   }
+      m_pcJointEquippedEntity(nullptr) {}
 
    /****************************************/
    /****************************************/
@@ -59,12 +58,18 @@ namespace argos {
          /* add joint actuators to the base class */
          m_vecSensors.push_back(&s_sensor);
       }
+      /* sensor is enabled by default */
+      Enable();
    }
 
    /****************************************/
    /****************************************/
 
    void CPrototypeJointsDefaultSensor::Update() {
+      /* sensor is disabled--nothing to do */
+      if (IsDisabled()) {
+        return;
+      }
       for(SSimulatedSensor& s_sensor : m_vecSimulatedSensors) {
          s_sensor.Value = s_sensor.Instance.Value;
       }
@@ -90,7 +95,12 @@ namespace argos {
                    "This sensor is used to monitor the joints inside a prototype entity. To monitor\n"
                    "a joint, add a joint child node to the joints node. Each child node has two\n"
                    "required attributes.\n\n"
+
+                   "This sensor is enabled by default.\n\n"
+
+
                    "REQUIRED XML CONFIGURATION\n\n"
+
                    "  <controllers>\n"
                    "    ...\n"
                    "    <my_controller ...>\n"

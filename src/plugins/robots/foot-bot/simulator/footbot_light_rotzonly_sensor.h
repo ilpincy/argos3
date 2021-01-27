@@ -40,10 +40,6 @@ namespace argos {
 
       virtual void Reset();
 
-     void Enable();
-
-     void Disable();
-
       /**
        * Returns true if the rays must be shown in the GUI.
        * @return true if the rays must be shown in the GUI.
@@ -62,8 +58,6 @@ namespace argos {
 
    protected:
 
-      /** Is this sensor currently enabled? */
-      bool             m_bEnabled;
       /** Reference to embodied entity associated to this sensor */
       CEmbodiedEntity* m_pcEmbodiedEntity;
 

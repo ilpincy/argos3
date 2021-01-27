@@ -53,8 +53,8 @@ namespace argos {
    protected:
 
       CRadioEquippedEntity* m_pcRadioEquippedEntity;
-      CControllableEntity* m_pcControllableEntity;
-      bool m_bShowRays;
+      CControllableEntity*  m_pcControllableEntity;
+      bool                  m_bShowRays;
 
    };
 }

@@ -66,12 +66,18 @@ namespace argos {
       catch(CARGoSException& ex) {
          THROW_ARGOSEXCEPTION_NESTED("Initialization error in default light sensor", ex);
       }
+      /* sensor is enabled by default */
+      Enable();
    }
 
    /****************************************/
    /****************************************/
    
    void CLightDefaultSensor::Update() {
+      /* sensor is disabled--nothing to do */
+      if (IsDisabled()) {
+        return;
+      }
       /* Erase readings */
       for(size_t i = 0; i < m_tReadings.size(); ++i)  m_tReadings[i] = 0.0f;
       /* Ray used for scanning the environment for obstacles */
@@ -181,6 +187,8 @@ namespace argos {
                    "reading is calculated as the sum of the individual readings due to each light.\n"
                    "In other words, light wave interference is not taken into account. In\n"
                    "controllers, you must include the ci_light_sensor.h header.\n\n"
+
+                   "This sensor is enabled by default.\n\n"
 
                    "REQUIRED XML CONFIGURATION\n\n"
                    "  <controllers>\n"

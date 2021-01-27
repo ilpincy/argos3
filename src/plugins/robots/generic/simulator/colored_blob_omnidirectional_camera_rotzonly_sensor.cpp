@@ -120,7 +120,6 @@ namespace argos {
    /****************************************/
 
    CColoredBlobOmnidirectionalCameraRotZOnlySensor::CColoredBlobOmnidirectionalCameraRotZOnlySensor() :
-      m_bEnabled(false),
       m_pcOmnicamEntity(nullptr),
       m_pcControllableEntity(nullptr),
       m_pcEmbodiedEntity(nullptr),
@@ -175,29 +174,34 @@ namespace argos {
       catch(CARGoSException& ex) {
          THROW_ARGOSEXCEPTION_NESTED("Error initializing the colored blob omnidirectional camera rotzonly sensor", ex);
       }
+      /* sensor is disabled by default */
+      Disable();
    }
 
    /****************************************/
    /****************************************/
 
    void CColoredBlobOmnidirectionalCameraRotZOnlySensor::Update() {
-      if(m_bEnabled) {
-         /* Increase data counter */
-         ++m_sReadings.Counter;
-         /* Calculate range on the ground */
-         CVector3 cCameraPos = m_pcOmnicamEntity->GetOffset();
-         cCameraPos += m_pcEmbodiedEntity->GetOriginAnchor().Position;
-         Real fGroundHalfRange = cCameraPos.GetZ() * Tan(m_pcOmnicamEntity->GetAperture());
-         /* Prepare the operation */
-         m_pcOperation->Setup(fGroundHalfRange);
-         /* Go through LED entities in box range */
-         m_pcLEDIndex->ForEntitiesInBoxRange(
-            CVector3(cCameraPos.GetX(),
-                     cCameraPos.GetY(),
-                     cCameraPos.GetZ() * 0.5f),
-            CVector3(fGroundHalfRange, fGroundHalfRange, cCameraPos.GetZ() * 0.5f),
-            *m_pcOperation);
+      /* sensor is disabled--nothing to do */
+      if (IsDisabled()) {
+        return;
       }
+
+      /* Increase data counter */
+      ++m_sReadings.Counter;
+      /* Calculate range on the ground */
+      CVector3 cCameraPos = m_pcOmnicamEntity->GetOffset();
+      cCameraPos += m_pcEmbodiedEntity->GetOriginAnchor().Position;
+      Real fGroundHalfRange = cCameraPos.GetZ() * Tan(m_pcOmnicamEntity->GetAperture());
+      /* Prepare the operation */
+      m_pcOperation->Setup(fGroundHalfRange);
+      /* Go through LED entities in box range */
+      m_pcLEDIndex->ForEntitiesInBoxRange(
+         CVector3(cCameraPos.GetX(),
+                  cCameraPos.GetY(),
+                  cCameraPos.GetZ() * 0.5f),
+         CVector3(fGroundHalfRange, fGroundHalfRange, cCameraPos.GetZ() * 0.5f),
+         *m_pcOperation);
    }
 
    /****************************************/
@@ -220,7 +224,7 @@ namespace argos {
 
    void CColoredBlobOmnidirectionalCameraRotZOnlySensor::Enable() {
       m_pcOmnicamEntity->Enable();
-      m_bEnabled = true;
+      CCI_Sensor::Enable();
    }
 
    /****************************************/
@@ -228,7 +232,7 @@ namespace argos {
 
    void CColoredBlobOmnidirectionalCameraRotZOnlySensor::Disable() {
       m_pcOmnicamEntity->Disable();
-      m_bEnabled = false;
+      CCI_Sensor::Disable();
    }
 
    /****************************************/
@@ -244,6 +248,9 @@ namespace argos {
                    "sensor returns a list of blobs, each defined by a color and a position with\n"
                    "respect to the robot reference point on the ground. In controllers, you must\n"
                    "include the ci_colored_blob_omnidirectional_camera_sensor.h header.\n\n"
+
+                   "This sensor is disabled by default, and must be enabled before it can be\n"
+                   "used.\n\n"
 
                    "REQUIRED XML CONFIGURATION\n\n"
 

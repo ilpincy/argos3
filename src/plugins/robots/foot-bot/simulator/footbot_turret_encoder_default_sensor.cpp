@@ -20,14 +20,36 @@ namespace argos {
 
    void CFootBotTurretEncoderDefaultSensor::SetRobot(CComposableEntity& c_entity) {
       m_pcTurretEntity = &(c_entity.GetComponent<CFootBotTurretEntity>("turret"));
-      m_pcTurretEntity->Enable();
+
+      /* sensor is enabled by default */
+      Enable();
    }
 
    /****************************************/
    /****************************************/
 
    void CFootBotTurretEncoderDefaultSensor::Update() {
+      /* sensor is disabled--nothing to do */
+      if (IsDisabled()) {
+        return;
+      }
       m_cRotation = m_pcTurretEntity->GetRotation();
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CFootBotTurretEncoderDefaultSensor::Enable() {
+     m_pcTurretEntity->Enable();
+     CCI_Sensor::Enable();
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CFootBotTurretEncoderDefaultSensor::Disable() {
+     m_pcTurretEntity->Disable();
+     CCI_Sensor::Disable();
    }
 
    /****************************************/
@@ -48,7 +70,11 @@ namespace argos {
                    "This sensor accesses the foot-bot turret encoder. For a complete\n"
                    "description of its usage, refer to the ci_footbot_turret_encoder_sensor\n"
                    "file.\n\n"
+
+                   "This sensor is enabled by default.\n\n"
+
                    "REQUIRED XML CONFIGURATION\n\n"
+
                    "  <controllers>\n"
                    "    ...\n"
                    "    <my_controller ...>\n"
