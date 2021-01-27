@@ -143,12 +143,12 @@ ARGoS sources under Eclipse
 To use Eclipse with the ARGoS sources, you must have the
 http://www.eclipse.org/cdt/[CDT] installed. Optionally, you can also
 install http://cmakeed.sourceforge.net/[CMakeEd] to modify the
-+CMakeLists.txt+ files comfortably within Eclipse.   
++CMakeLists.txt+ files comfortably within Eclipse.
 
 To configure the ARGoS sources for Eclipse, it is better to avoid
 compiling the code in a separate build directory (for more details, see
 http://www.vtk.org/Wiki/Eclipse_CDT4_Generator#Out-Of-Source_Builds[here]).
-Thus, execute CMake as follows:  
+Thus, execute CMake as follows:
 
  $ cd argos3
  $ cmake -G "Eclipse CDT4 - Unix Makefiles" src/
