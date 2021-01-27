@@ -75,7 +75,7 @@ namespace argos {
          /* Calculate the waiting time */
          timersub(&m_tStepClockTime, &m_tStepElapsedTime, &m_tStepWaitTime);
          /* Wait */
-         ::usleep(m_tStepWaitTime.tv_sec * 1e6 + m_tStepWaitTime.tv_usec);
+         ::usleep(static_cast<UInt32>(m_tStepWaitTime.tv_sec * 1e6 + m_tStepWaitTime.tv_usec));
          /* Get the new step end */
          ::gettimeofday(&m_tStepEndTime, nullptr);
       }

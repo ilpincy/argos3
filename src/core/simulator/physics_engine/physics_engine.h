@@ -45,7 +45,11 @@ namespace argos {
       SEmbodiedEntityIntersectionItem(const SEmbodiedEntityIntersectionItem& s_item) :
          IntersectedEntity(s_item.IntersectedEntity),
          TOnRay(s_item.TOnRay) {}
-
+      SEmbodiedEntityIntersectionItem& operator=(const SEmbodiedEntityIntersectionItem& s_item) {
+         IntersectedEntity = s_item.IntersectedEntity;
+         TOnRay = s_item.TOnRay;
+         return *this;
+      }
       inline bool operator<(const SEmbodiedEntityIntersectionItem& s_item) {
          return TOnRay < s_item.TOnRay;
       }

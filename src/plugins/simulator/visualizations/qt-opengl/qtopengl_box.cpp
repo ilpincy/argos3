@@ -75,7 +75,7 @@ namespace argos {
          glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, pfColor);
          /* Perform rototranslation */
          const CVector3& cPosition = cLEDEquippedEntity.GetLEDOffset(i);
-         glTranslatef(cPosition.GetX(), cPosition.GetY(), cPosition.GetZ());
+         glTranslated(cPosition.GetX(), cPosition.GetY(), cPosition.GetZ());
          /* Draw the LED */
          glCallList(m_unLEDList);
          glPopMatrix();
@@ -94,7 +94,7 @@ namespace argos {
          glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, NONMOVABLE_COLOR);
       }
       glPushMatrix();
-      glScalef(c_entity.GetSize().GetX(), c_entity.GetSize().GetY(), c_entity.GetSize().GetZ());
+      glScaled(c_entity.GetSize().GetX(), c_entity.GetSize().GetY(), c_entity.GetSize().GetZ());
       glCallList(m_unBodyList);
       glPopMatrix();
    }
@@ -117,44 +117,44 @@ namespace argos {
 	      /* This part covers the top and bottom faces (parallel to XY) */
 	      glBegin(GL_QUADS);
 	      /* Bottom face */
-	      glNormal3f(0.0f, 0.0f, -1.0f);
-	      glVertex3f( 0.5f,  0.5f, 0.0f);
-	      glVertex3f( 0.5f, -0.5f, 0.0f);
-	      glVertex3f(-0.5f, -0.5f, 0.0f);
-	      glVertex3f(-0.5f,  0.5f, 0.0f);
+	      glNormal3d(0.0f, 0.0f, -1.0f);
+	      glVertex3d( 0.5f,  0.5f, 0.0f);
+	      glVertex3d( 0.5f, -0.5f, 0.0f);
+	      glVertex3d(-0.5f, -0.5f, 0.0f);
+	      glVertex3d(-0.5f,  0.5f, 0.0f);
 	      /* Top face */
-	      glNormal3f(0.0f, 0.0f, 1.0f);
-	      glVertex3f(-0.5f, -0.5f, 1.0f);
-	      glVertex3f( 0.5f, -0.5f, 1.0f);
-	      glVertex3f( 0.5f,  0.5f, 1.0f);
-	      glVertex3f(-0.5f,  0.5f, 1.0f);
+	      glNormal3d(0.0f, 0.0f, 1.0f);
+	      glVertex3d(-0.5f, -0.5f, 1.0f);
+	      glVertex3d( 0.5f, -0.5f, 1.0f);
+	      glVertex3d( 0.5f,  0.5f, 1.0f);
+	      glVertex3d(-0.5f,  0.5f, 1.0f);
 	      glEnd();
 	      /* This part covers the faces (South, East, North, West) */
 	      glBegin(GL_QUADS);
 	      /* South face */
-        glNormal3f(0.0f, -1.0f, 0.0f);
-        glVertex3f(-0.5f, -0.5f, 1.0f);
-        glVertex3f(-0.5f, -0.5f, 0.0f);
-        glVertex3f( 0.5f, -0.5f, 0.0f);
-        glVertex3f( 0.5f, -0.5f, 1.0f);
+        glNormal3d(0.0f, -1.0f, 0.0f);
+        glVertex3d(-0.5f, -0.5f, 1.0f);
+        glVertex3d(-0.5f, -0.5f, 0.0f);
+        glVertex3d( 0.5f, -0.5f, 0.0f);
+        glVertex3d( 0.5f, -0.5f, 1.0f);
         /* East face */
-        glNormal3f(1.0f, 0.0f, 0.0f);
-        glVertex3f( 0.5f, -0.5f, 1.0f);
-        glVertex3f( 0.5f, -0.5f, 0.0f);
-        glVertex3f( 0.5f,  0.5f, 0.0f);
-        glVertex3f( 0.5f,  0.5f, 1.0f);
+        glNormal3d(1.0f, 0.0f, 0.0f);
+        glVertex3d( 0.5f, -0.5f, 1.0f);
+        glVertex3d( 0.5f, -0.5f, 0.0f);
+        glVertex3d( 0.5f,  0.5f, 0.0f);
+        glVertex3d( 0.5f,  0.5f, 1.0f);
         /* North face */
-        glNormal3f(0.0f, 1.0f, 0.0f);
-        glVertex3f( 0.5f,  0.5f, 1.0f);
-        glVertex3f( 0.5f,  0.5f, 0.0f);
-        glVertex3f(-0.5f,  0.5f, 0.0f);
-        glVertex3f(-0.5f,  0.5f, 1.0f);
+        glNormal3d(0.0f, 1.0f, 0.0f);
+        glVertex3d( 0.5f,  0.5f, 1.0f);
+        glVertex3d( 0.5f,  0.5f, 0.0f);
+        glVertex3d(-0.5f,  0.5f, 0.0f);
+        glVertex3d(-0.5f,  0.5f, 1.0f);
         /* West face */
-        glNormal3f(-1.0f, 0.0f, 0.0f);
-        glVertex3f(-0.5f,  0.5f, 1.0f);
-        glVertex3f(-0.5f,  0.5f, 0.0f);
-        glVertex3f(-0.5f, -0.5f, 0.0f);
-        glVertex3f(-0.5f, -0.5f, 1.0f);
+        glNormal3d(-1.0f, 0.0f, 0.0f);
+        glVertex3d(-0.5f,  0.5f, 1.0f);
+        glVertex3d(-0.5f,  0.5f, 0.0f);
+        glVertex3d(-0.5f, -0.5f, 0.0f);
+        glVertex3d(-0.5f, -0.5f, 1.0f);
 	      glEnd();
 	      /* The shape definitions is finished */
 
@@ -175,23 +175,23 @@ namespace argos {
 
             cNormal.FromSphericalCoords(1.0f, cInclination, cAzimuth);
             cPoint = LED_RADIUS * cNormal;
-            glNormal3f(cNormal.GetX(), cNormal.GetY(), cNormal.GetZ());
-            glVertex3f(cPoint.GetX(), cPoint.GetY(), cPoint.GetZ());
+            glNormal3d(cNormal.GetX(), cNormal.GetY(), cNormal.GetZ());
+            glVertex3d(cPoint.GetX(), cPoint.GetY(), cPoint.GetZ());
 
             cNormal.FromSphericalCoords(1.0f, cInclination + cSlice, cAzimuth);
             cPoint = LED_RADIUS * cNormal;
-            glNormal3f(cNormal.GetX(), cNormal.GetY(), cNormal.GetZ());
-            glVertex3f(cPoint.GetX(), cPoint.GetY(), cPoint.GetZ());
+            glNormal3d(cNormal.GetX(), cNormal.GetY(), cNormal.GetZ());
+            glVertex3d(cPoint.GetX(), cPoint.GetY(), cPoint.GetZ());
 
             cNormal.FromSphericalCoords(1.0f, cInclination, cAzimuth + cSlice);
             cPoint = LED_RADIUS * cNormal;
-            glNormal3f(cNormal.GetX(), cNormal.GetY(), cNormal.GetZ());
-            glVertex3f(cPoint.GetX(), cPoint.GetY(), cPoint.GetZ());
+            glNormal3d(cNormal.GetX(), cNormal.GetY(), cNormal.GetZ());
+            glVertex3d(cPoint.GetX(), cPoint.GetY(), cPoint.GetZ());
 
             cNormal.FromSphericalCoords(1.0f, cInclination + cSlice, cAzimuth + cSlice);
             cPoint = LED_RADIUS * cNormal;
-            glNormal3f(cNormal.GetX(), cNormal.GetY(), cNormal.GetZ());
-            glVertex3f(cPoint.GetX(), cPoint.GetY(), cPoint.GetZ());
+            glNormal3d(cNormal.GetX(), cNormal.GetY(), cNormal.GetZ());
+            glVertex3d(cPoint.GetX(), cPoint.GetY(), cPoint.GetZ());
 
          }
       }

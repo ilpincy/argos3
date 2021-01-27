@@ -115,9 +115,9 @@ namespace argos {
       glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
       glHint(GL_TEXTURE_COMPRESSION_HINT, GL_NICEST);
       /* Setup lighting */
-      GLfloat pfLightAmbient[]  = {   .2,   .2,  .2, 1. };
-      GLfloat pfLightDiffuse[]  = {   .8,   .8,  .8, 1. };
-      GLfloat pfLightPosition[] = { 50. , 50. , 2. , 1. };
+      GLfloat pfLightAmbient[]  = {   .2f,   .2f,  .2f, 1.0f };
+      GLfloat pfLightDiffuse[]  = {   .8f,   .8f,  .8f, 1.0f };
+      GLfloat pfLightPosition[] = { 50.0f , 50.0f , 2.0f , 1.0f };
       glLightfv(GL_LIGHT0, GL_AMBIENT,  pfLightAmbient);
       glLightfv(GL_LIGHT0, GL_DIFFUSE,  pfLightDiffuse);
       glLightfv(GL_LIGHT0, GL_POSITION, pfLightPosition);
@@ -363,11 +363,11 @@ namespace argos {
       CRadians cZAngle, cYAngle, cXAngle;
       cOrientation.ToEulerAngles(cZAngle, cYAngle, cXAngle);
       /* First, translate the entity */
-      glTranslatef(cPosition.GetX(), cPosition.GetY(), cPosition.GetZ());
+      glTranslated(cPosition.GetX(), cPosition.GetY(), cPosition.GetZ());
       /* Second, rotate the entity */
-      glRotatef(ToDegrees(cXAngle).GetValue(), 1.0f, 0.0f, 0.0f);
-      glRotatef(ToDegrees(cYAngle).GetValue(), 0.0f, 1.0f, 0.0f);
-      glRotatef(ToDegrees(cZAngle).GetValue(), 0.0f, 0.0f, 1.0f);
+      glRotated(ToDegrees(cXAngle).GetValue(), 1.0f, 0.0f, 0.0f);
+      glRotated(ToDegrees(cYAngle).GetValue(), 0.0f, 1.0f, 0.0f);
+      glRotated(ToDegrees(cZAngle).GetValue(), 0.0f, 0.0f, 1.0f);
    }
 
    /****************************************/
@@ -381,11 +381,11 @@ namespace argos {
       CRadians cZAngle, cYAngle, cXAngle;
       cOrientation.ToEulerAngles(cZAngle, cYAngle, cXAngle);
       /* First, translate the entity */
-      glTranslatef(cPosition.GetX(), cPosition.GetY(), cPosition.GetZ());
+      glTranslated(cPosition.GetX(), cPosition.GetY(), cPosition.GetZ());
       /* Second, rotate the entity */
-      glRotatef(ToDegrees(cXAngle).GetValue(), 1.0f, 0.0f, 0.0f);
-      glRotatef(ToDegrees(cYAngle).GetValue(), 0.0f, 1.0f, 0.0f);
-      glRotatef(ToDegrees(cZAngle).GetValue(), 0.0f, 0.0f, 1.0f);
+      glRotated(ToDegrees(cXAngle).GetValue(), 1.0f, 0.0f, 0.0f);
+      glRotated(ToDegrees(cYAngle).GetValue(), 0.0f, 1.0f, 0.0f);
+      glRotated(ToDegrees(cZAngle).GetValue(), 0.0f, 0.0f, 1.0f);
    }
 
    /****************************************/
@@ -405,8 +405,8 @@ namespace argos {
             }
             const CVector3& cStart = c_entity.GetCheckedRays()[i].second.GetStart();
             const CVector3& cEnd = c_entity.GetCheckedRays()[i].second.GetEnd();
-            glVertex3f(cStart.GetX(), cStart.GetY(), cStart.GetZ());
-            glVertex3f(cEnd.GetX(), cEnd.GetY(), cEnd.GetZ());
+            glVertex3d(cStart.GetX(), cStart.GetY(), cStart.GetZ());
+            glVertex3d(cEnd.GetX(), cEnd.GetY(), cEnd.GetZ());
          }
          glEnd();
          glPointSize(5.0);
@@ -414,7 +414,7 @@ namespace argos {
          glBegin(GL_POINTS);
          for(UInt32 i = 0; i < c_entity.GetIntersectionPoints().size(); ++i) {
             const CVector3& cPoint = c_entity.GetIntersectionPoints()[i];
-            glVertex3f(cPoint.GetX(), cPoint.GetY(), cPoint.GetZ());
+            glVertex3d(cPoint.GetX(), cPoint.GetY(), cPoint.GetZ());
          }
          glEnd();
          glPointSize(1.0);
@@ -434,44 +434,44 @@ namespace argos {
       /* This part covers the top and bottom faces (parallel to XY) */
       glBegin(GL_QUADS);
       /* Bottom face */
-      glNormal3f(0.0f, 0.0f, -1.0f);
-      glVertex3f(sBBox.MinCorner.GetX(), sBBox.MinCorner.GetY(), sBBox.MinCorner.GetZ());
-      glVertex3f(sBBox.MinCorner.GetX(), sBBox.MaxCorner.GetY(), sBBox.MinCorner.GetZ());
-      glVertex3f(sBBox.MaxCorner.GetX(), sBBox.MaxCorner.GetY(), sBBox.MinCorner.GetZ());
-      glVertex3f(sBBox.MaxCorner.GetX(), sBBox.MinCorner.GetY(), sBBox.MinCorner.GetZ());
+      glNormal3d(0.0f, 0.0f, -1.0f);
+      glVertex3d(sBBox.MinCorner.GetX(), sBBox.MinCorner.GetY(), sBBox.MinCorner.GetZ());
+      glVertex3d(sBBox.MinCorner.GetX(), sBBox.MaxCorner.GetY(), sBBox.MinCorner.GetZ());
+      glVertex3d(sBBox.MaxCorner.GetX(), sBBox.MaxCorner.GetY(), sBBox.MinCorner.GetZ());
+      glVertex3d(sBBox.MaxCorner.GetX(), sBBox.MinCorner.GetY(), sBBox.MinCorner.GetZ());
       /* Top face */
-      glNormal3f(0.0f, 0.0f, 1.0f);
-      glVertex3f(sBBox.MinCorner.GetX(), sBBox.MinCorner.GetY(), sBBox.MaxCorner.GetZ());
-      glVertex3f(sBBox.MaxCorner.GetX(), sBBox.MinCorner.GetY(), sBBox.MaxCorner.GetZ());
-      glVertex3f(sBBox.MaxCorner.GetX(), sBBox.MaxCorner.GetY(), sBBox.MaxCorner.GetZ());
-      glVertex3f(sBBox.MinCorner.GetX(), sBBox.MaxCorner.GetY(), sBBox.MaxCorner.GetZ());
+      glNormal3d(0.0f, 0.0f, 1.0f);
+      glVertex3d(sBBox.MinCorner.GetX(), sBBox.MinCorner.GetY(), sBBox.MaxCorner.GetZ());
+      glVertex3d(sBBox.MaxCorner.GetX(), sBBox.MinCorner.GetY(), sBBox.MaxCorner.GetZ());
+      glVertex3d(sBBox.MaxCorner.GetX(), sBBox.MaxCorner.GetY(), sBBox.MaxCorner.GetZ());
+      glVertex3d(sBBox.MinCorner.GetX(), sBBox.MaxCorner.GetY(), sBBox.MaxCorner.GetZ());
       glEnd();
       /* This part covers the faces (South, East, North, West) */
       glBegin(GL_QUADS);
       /* South face */
-      glNormal3f(-1.0f, 0.0f, 0.0f);
-      glVertex3f(sBBox.MinCorner.GetX(), sBBox.MinCorner.GetY(), sBBox.MinCorner.GetZ());
-      glVertex3f(sBBox.MinCorner.GetX(), sBBox.MinCorner.GetY(), sBBox.MaxCorner.GetZ());
-      glVertex3f(sBBox.MinCorner.GetX(), sBBox.MaxCorner.GetY(), sBBox.MaxCorner.GetZ());
-      glVertex3f(sBBox.MinCorner.GetX(), sBBox.MaxCorner.GetY(), sBBox.MinCorner.GetZ());
+      glNormal3d(-1.0f, 0.0f, 0.0f);
+      glVertex3d(sBBox.MinCorner.GetX(), sBBox.MinCorner.GetY(), sBBox.MinCorner.GetZ());
+      glVertex3d(sBBox.MinCorner.GetX(), sBBox.MinCorner.GetY(), sBBox.MaxCorner.GetZ());
+      glVertex3d(sBBox.MinCorner.GetX(), sBBox.MaxCorner.GetY(), sBBox.MaxCorner.GetZ());
+      glVertex3d(sBBox.MinCorner.GetX(), sBBox.MaxCorner.GetY(), sBBox.MinCorner.GetZ());
       /* East face */
-      glNormal3f(0.0f, -1.0f, 0.0f);
-      glVertex3f(sBBox.MinCorner.GetX(), sBBox.MinCorner.GetY(), sBBox.MinCorner.GetZ());
-      glVertex3f(sBBox.MaxCorner.GetX(), sBBox.MinCorner.GetY(), sBBox.MinCorner.GetZ());
-      glVertex3f(sBBox.MaxCorner.GetX(), sBBox.MinCorner.GetY(), sBBox.MaxCorner.GetZ());
-      glVertex3f(sBBox.MinCorner.GetX(), sBBox.MinCorner.GetY(), sBBox.MaxCorner.GetZ());
+      glNormal3d(0.0f, -1.0f, 0.0f);
+      glVertex3d(sBBox.MinCorner.GetX(), sBBox.MinCorner.GetY(), sBBox.MinCorner.GetZ());
+      glVertex3d(sBBox.MaxCorner.GetX(), sBBox.MinCorner.GetY(), sBBox.MinCorner.GetZ());
+      glVertex3d(sBBox.MaxCorner.GetX(), sBBox.MinCorner.GetY(), sBBox.MaxCorner.GetZ());
+      glVertex3d(sBBox.MinCorner.GetX(), sBBox.MinCorner.GetY(), sBBox.MaxCorner.GetZ());
       /* North face */
-      glNormal3f(1.0f, 0.0f, 0.0f);
-      glVertex3f(sBBox.MaxCorner.GetX(), sBBox.MinCorner.GetY(), sBBox.MinCorner.GetZ());
-      glVertex3f(sBBox.MaxCorner.GetX(), sBBox.MaxCorner.GetY(), sBBox.MinCorner.GetZ());
-      glVertex3f(sBBox.MaxCorner.GetX(), sBBox.MaxCorner.GetY(), sBBox.MaxCorner.GetZ());
-      glVertex3f(sBBox.MaxCorner.GetX(), sBBox.MinCorner.GetY(), sBBox.MaxCorner.GetZ());
+      glNormal3d(1.0f, 0.0f, 0.0f);
+      glVertex3d(sBBox.MaxCorner.GetX(), sBBox.MinCorner.GetY(), sBBox.MinCorner.GetZ());
+      glVertex3d(sBBox.MaxCorner.GetX(), sBBox.MaxCorner.GetY(), sBBox.MinCorner.GetZ());
+      glVertex3d(sBBox.MaxCorner.GetX(), sBBox.MaxCorner.GetY(), sBBox.MaxCorner.GetZ());
+      glVertex3d(sBBox.MaxCorner.GetX(), sBBox.MinCorner.GetY(), sBBox.MaxCorner.GetZ());
       /* West face */
-      glNormal3f(0.0f, 1.0f, 0.0f);
-      glVertex3f(sBBox.MinCorner.GetX(), sBBox.MaxCorner.GetY(), sBBox.MinCorner.GetZ());
-      glVertex3f(sBBox.MinCorner.GetX(), sBBox.MaxCorner.GetY(), sBBox.MaxCorner.GetZ());
-      glVertex3f(sBBox.MaxCorner.GetX(), sBBox.MaxCorner.GetY(), sBBox.MaxCorner.GetZ());
-      glVertex3f(sBBox.MaxCorner.GetX(), sBBox.MaxCorner.GetY(), sBBox.MinCorner.GetZ());
+      glNormal3d(0.0f, 1.0f, 0.0f);
+      glVertex3d(sBBox.MinCorner.GetX(), sBBox.MaxCorner.GetY(), sBBox.MinCorner.GetZ());
+      glVertex3d(sBBox.MinCorner.GetX(), sBBox.MaxCorner.GetY(), sBBox.MaxCorner.GetZ());
+      glVertex3d(sBBox.MaxCorner.GetX(), sBBox.MaxCorner.GetY(), sBBox.MaxCorner.GetZ());
+      glVertex3d(sBBox.MaxCorner.GetX(), sBBox.MaxCorner.GetY(), sBBox.MinCorner.GetZ());
       glEnd();
       glEnable(GL_LIGHTING);
       glLineWidth(1.0f);
@@ -484,7 +484,7 @@ namespace argos {
    void CQTOpenGLWidget::PlayExperiment() {
       m_bFastForwarding = false;
       if(nTimerId != -1) killTimer(nTimerId);
-      nTimerId = startTimer(CPhysicsEngine::GetSimulationClockTick() * 1000.0f);
+      nTimerId = startTimer(static_cast<UInt32>(CPhysicsEngine::GetSimulationClockTick() * 1000.0f));
    }
 
    /****************************************/
@@ -702,10 +702,10 @@ namespace argos {
          /* Draw the floor entity along with its texture */
          m_pcFloorTexture->bind();
          glBegin(GL_QUADS);
-         glTexCoord2d(0.0f, 1.0f); glVertex3f(cArenaMinCorner.GetX(), cArenaMinCorner.GetY(), 0.0f);
-         glTexCoord2d(1.0f, 1.0f); glVertex3f(cArenaMaxCorner.GetX(), cArenaMinCorner.GetY(), 0.0f);
-         glTexCoord2d(1.0f, 0.0f); glVertex3f(cArenaMaxCorner.GetX(), cArenaMaxCorner.GetY(), 0.0f);
-         glTexCoord2d(0.0f, 0.0f); glVertex3f(cArenaMinCorner.GetX(), cArenaMaxCorner.GetY(), 0.0f);
+         glTexCoord2d(0.0f, 1.0f); glVertex3d(cArenaMinCorner.GetX(), cArenaMinCorner.GetY(), 0.0f);
+         glTexCoord2d(1.0f, 1.0f); glVertex3d(cArenaMaxCorner.GetX(), cArenaMinCorner.GetY(), 0.0f);
+         glTexCoord2d(1.0f, 0.0f); glVertex3d(cArenaMaxCorner.GetX(), cArenaMaxCorner.GetY(), 0.0f);
+         glTexCoord2d(0.0f, 0.0f); glVertex3d(cArenaMinCorner.GetX(), cArenaMaxCorner.GetY(), 0.0f);
          glEnd();
       }
       else {
@@ -716,10 +716,10 @@ namespace argos {
          m_pcGroundTexture->bind();
          /* Draw the floor along with its texture */
          glBegin(GL_QUADS);
-         glTexCoord2f(0.0f, cArenaSize.GetY());              glVertex3f(cArenaMinCorner.GetX(), cArenaMinCorner.GetY(), 0.0f);
-         glTexCoord2f(cArenaSize.GetX(), cArenaSize.GetY()); glVertex3f(cArenaMaxCorner.GetX(), cArenaMinCorner.GetY(), 0.0f);
-         glTexCoord2f(cArenaSize.GetX(), 0.0f);              glVertex3f(cArenaMaxCorner.GetX(), cArenaMaxCorner.GetY(), 0.0f);
-         glTexCoord2f(0.0f, 0.0f);                           glVertex3f(cArenaMinCorner.GetX(), cArenaMaxCorner.GetY(), 0.0f);
+         glTexCoord2d(0.0f, cArenaSize.GetY());              glVertex3d(cArenaMinCorner.GetX(), cArenaMinCorner.GetY(), 0.0f);
+         glTexCoord2d(cArenaSize.GetX(), cArenaSize.GetY()); glVertex3d(cArenaMaxCorner.GetX(), cArenaMinCorner.GetY(), 0.0f);
+         glTexCoord2d(cArenaSize.GetX(), 0.0f);              glVertex3d(cArenaMaxCorner.GetX(), cArenaMaxCorner.GetY(), 0.0f);
+         glTexCoord2d(0.0f, 0.0f);                           glVertex3d(cArenaMinCorner.GetX(), cArenaMaxCorner.GetY(), 0.0f);
          glEnd();
 #ifdef ARGOS_WITH_FREEIMAGE
       }
@@ -735,33 +735,33 @@ namespace argos {
          /* This part covers the top and bottom faces (parallel to XY) */
          glBegin(GL_QUADS);
          /* Top face */
-         glVertex3f(cArenaMinCorner.GetX(), cArenaMinCorner.GetY(), cArenaMaxCorner.GetZ());
-         glVertex3f(cArenaMaxCorner.GetX(), cArenaMinCorner.GetY(), cArenaMaxCorner.GetZ());
-         glVertex3f(cArenaMaxCorner.GetX(), cArenaMaxCorner.GetY(), cArenaMaxCorner.GetZ());
-         glVertex3f(cArenaMinCorner.GetX(), cArenaMaxCorner.GetY(), cArenaMaxCorner.GetZ());
+         glVertex3d(cArenaMinCorner.GetX(), cArenaMinCorner.GetY(), cArenaMaxCorner.GetZ());
+         glVertex3d(cArenaMaxCorner.GetX(), cArenaMinCorner.GetY(), cArenaMaxCorner.GetZ());
+         glVertex3d(cArenaMaxCorner.GetX(), cArenaMaxCorner.GetY(), cArenaMaxCorner.GetZ());
+         glVertex3d(cArenaMinCorner.GetX(), cArenaMaxCorner.GetY(), cArenaMaxCorner.GetZ());
          glEnd();
          /* This part covers the faces (South, East, North, West) */
          glBegin(GL_QUADS);
          /* South face */
-         glVertex3f(cArenaMinCorner.GetX(), cArenaMinCorner.GetY(), cArenaMinCorner.GetZ());
-         glVertex3f(cArenaMinCorner.GetX(), cArenaMinCorner.GetY(), cArenaMaxCorner.GetZ());
-         glVertex3f(cArenaMinCorner.GetX(), cArenaMaxCorner.GetY(), cArenaMaxCorner.GetZ());
-         glVertex3f(cArenaMinCorner.GetX(), cArenaMaxCorner.GetY(), cArenaMinCorner.GetZ());
+         glVertex3d(cArenaMinCorner.GetX(), cArenaMinCorner.GetY(), cArenaMinCorner.GetZ());
+         glVertex3d(cArenaMinCorner.GetX(), cArenaMinCorner.GetY(), cArenaMaxCorner.GetZ());
+         glVertex3d(cArenaMinCorner.GetX(), cArenaMaxCorner.GetY(), cArenaMaxCorner.GetZ());
+         glVertex3d(cArenaMinCorner.GetX(), cArenaMaxCorner.GetY(), cArenaMinCorner.GetZ());
          /* East face */
-         glVertex3f(cArenaMinCorner.GetX(), cArenaMinCorner.GetY(), cArenaMinCorner.GetZ());
-         glVertex3f(cArenaMaxCorner.GetX(), cArenaMinCorner.GetY(), cArenaMinCorner.GetZ());
-         glVertex3f(cArenaMaxCorner.GetX(), cArenaMinCorner.GetY(), cArenaMaxCorner.GetZ());
-         glVertex3f(cArenaMinCorner.GetX(), cArenaMinCorner.GetY(), cArenaMaxCorner.GetZ());
+         glVertex3d(cArenaMinCorner.GetX(), cArenaMinCorner.GetY(), cArenaMinCorner.GetZ());
+         glVertex3d(cArenaMaxCorner.GetX(), cArenaMinCorner.GetY(), cArenaMinCorner.GetZ());
+         glVertex3d(cArenaMaxCorner.GetX(), cArenaMinCorner.GetY(), cArenaMaxCorner.GetZ());
+         glVertex3d(cArenaMinCorner.GetX(), cArenaMinCorner.GetY(), cArenaMaxCorner.GetZ());
          /* North face */
-         glVertex3f(cArenaMaxCorner.GetX(), cArenaMinCorner.GetY(), cArenaMinCorner.GetZ());
-         glVertex3f(cArenaMaxCorner.GetX(), cArenaMaxCorner.GetY(), cArenaMinCorner.GetZ());
-         glVertex3f(cArenaMaxCorner.GetX(), cArenaMaxCorner.GetY(), cArenaMaxCorner.GetZ());
-         glVertex3f(cArenaMaxCorner.GetX(), cArenaMinCorner.GetY(), cArenaMaxCorner.GetZ());
+         glVertex3d(cArenaMaxCorner.GetX(), cArenaMinCorner.GetY(), cArenaMinCorner.GetZ());
+         glVertex3d(cArenaMaxCorner.GetX(), cArenaMaxCorner.GetY(), cArenaMinCorner.GetZ());
+         glVertex3d(cArenaMaxCorner.GetX(), cArenaMaxCorner.GetY(), cArenaMaxCorner.GetZ());
+         glVertex3d(cArenaMaxCorner.GetX(), cArenaMinCorner.GetY(), cArenaMaxCorner.GetZ());
          /* West face */
-         glVertex3f(cArenaMinCorner.GetX(), cArenaMaxCorner.GetY(), cArenaMinCorner.GetZ());
-         glVertex3f(cArenaMinCorner.GetX(), cArenaMaxCorner.GetY(), cArenaMaxCorner.GetZ());
-         glVertex3f(cArenaMaxCorner.GetX(), cArenaMaxCorner.GetY(), cArenaMaxCorner.GetZ());
-         glVertex3f(cArenaMaxCorner.GetX(), cArenaMaxCorner.GetY(), cArenaMinCorner.GetZ());
+         glVertex3d(cArenaMinCorner.GetX(), cArenaMaxCorner.GetY(), cArenaMinCorner.GetZ());
+         glVertex3d(cArenaMinCorner.GetX(), cArenaMaxCorner.GetY(), cArenaMaxCorner.GetZ());
+         glVertex3d(cArenaMaxCorner.GetX(), cArenaMaxCorner.GetY(), cArenaMaxCorner.GetZ());
+         glVertex3d(cArenaMaxCorner.GetX(), cArenaMaxCorner.GetY(), cArenaMinCorner.GetZ());
          glEnd();
          glLineWidth(1.0f);
          glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);

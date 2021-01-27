@@ -74,7 +74,7 @@ namespace argos {
                 itDevice != itDevice.end();
                 ++itDevice) {
                if(itDevice->Value() == "directional_leds" ) {
-                  m_pcDirectionalLEDEquippedEntity = 
+                  m_pcDirectionalLEDEquippedEntity =
                      new CDirectionalLEDEquippedEntity(this);
                   m_pcDirectionalLEDEquippedEntity->Init(*itDevice);
                   AddComponent(*m_pcDirectionalLEDEquippedEntity);

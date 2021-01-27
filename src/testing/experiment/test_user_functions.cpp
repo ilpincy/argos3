@@ -31,7 +31,7 @@ void CTestUserFunctions::DrawInWorld() {
       for(auto it = cLEDs.GetLEDs().begin();
           it != cLEDs.GetLEDs().end();
           ++it) {
-         DrawPoint((*it)->LED.GetPosition(), (*it)->LED.GetColor(), 50.0f);
+        DrawPoint((*it)->LED.GetPosition(), (*it)->LED.GetColor(), 50.0f);
       }
    }
 }
