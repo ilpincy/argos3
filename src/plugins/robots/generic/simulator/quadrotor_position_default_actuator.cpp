@@ -13,7 +13,7 @@ namespace argos {
    /****************************************/
 
    CQuadRotorPositionDefaultActuator::CQuadRotorPositionDefaultActuator() :
-      m_pcQuadRotorEntity(NULL) {
+      m_pcQuadRotorEntity(nullptr) {
    }
 
    /****************************************/

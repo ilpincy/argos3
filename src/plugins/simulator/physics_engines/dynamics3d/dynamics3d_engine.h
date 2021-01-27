@@ -147,8 +147,8 @@ namespace argos {
    virtual ~CDynamics3DOperationAdd ## SPACE_ENTITY() {}                \
    SOperationOutcome ApplyTo(CDynamics3DEngine& c_engine,               \
                 SPACE_ENTITY& c_entity) {                               \
-      DYN3D_MODEL* pcPhysModel = new DYN3D_MODEL(c_engine,              \
-                                                 c_entity);             \
+      auto* pcPhysModel = new DYN3D_MODEL(c_engine,                     \
+                                          c_entity);                    \
       c_engine.AddPhysicsModel(c_entity.GetId(),                        \
                                *pcPhysModel);                           \
       c_entity.                                                         \

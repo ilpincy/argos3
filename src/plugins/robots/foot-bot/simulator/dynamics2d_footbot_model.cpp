@@ -51,8 +51,8 @@ namespace argos {
                       FOOTBOT_MAX_TORQUE,
                       FOOTBOT_INTERWHEEL_DISTANCE,
                       c_entity.GetConfigurationNode()),
-      m_pcGripper(NULL),
-      m_pcGrippable(NULL),
+      m_pcGripper(nullptr),
+      m_pcGrippable(nullptr),
       m_fMass(1.6f),
       m_fCurrentWheelVelocity(m_cWheeledEntity.GetWheelVelocities()),
       m_unLastTurretMode(m_cFootBotEntity.GetTurretEntity().GetMode()) {

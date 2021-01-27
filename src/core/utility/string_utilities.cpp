@@ -43,7 +43,7 @@ namespace argos {
    /****************************************/
 
    std::string StringToUpperCase(const std::string& str_string) {
-      char* buf = new char[str_string.length()];
+      auto* buf = new char[str_string.length()];
       str_string.copy(buf, str_string.length());
 
       for(unsigned int i = 0; i < str_string.length(); ++i)
@@ -60,7 +60,7 @@ namespace argos {
    /****************************************/
 
    std::string StringToLowerCase(const std::string& str_string) {
-      char* buf = new char[str_string.length()];
+      auto* buf = new char[str_string.length()];
       str_string.copy(buf, str_string.length());
 
       for(unsigned int i = 0; i < str_string.length(); ++i)
@@ -113,7 +113,7 @@ namespace argos {
       if(::regcomp(&tRegExp, str_pattern.c_str(), REG_EXTENDED | REG_NOSUB) != 0) {
          return false;
       }
-      nStatus = ::regexec(&tRegExp, str_input.c_str(), 0, NULL, 0);
+      nStatus = ::regexec(&tRegExp, str_input.c_str(), 0, nullptr, 0);
       ::regfree(&tRegExp);
       if (nStatus != 0) {
          return false;
@@ -150,7 +150,7 @@ namespace argos {
             /* Get the variable value */
             pchVarValue = ::getenv(strVarName.c_str());
             /* Was the value found? */
-            if(pchVarValue != NULL) {
+            if(pchVarValue != nullptr) {
                /* Yes, it was */
                /* Replace the variable name with its value */
                str_buffer.replace(unStart, strVarName.length()+1, pchVarValue);

@@ -22,10 +22,10 @@ namespace argos {
    /****************************************/
 
    CRangeAndBearingMediumSensor::CRangeAndBearingMediumSensor() :
-      m_pcRangeAndBearingEquippedEntity(NULL),
+      m_pcRangeAndBearingEquippedEntity(nullptr),
       m_fDistanceNoiseStdDev(0.0f),
       m_fPacketDropProb(0.0f),
-      m_pcRNG(NULL),
+      m_pcRNG(nullptr),
       m_cSpace(CSimulator::GetInstance().GetSpace()),
       m_bShowRays(false) {}
 
@@ -86,7 +86,7 @@ namespace argos {
       for(CSet<CRABEquippedEntity*>::iterator it = setRABs.begin();
           it != setRABs.end(); ++it) {
          /* Should we drop this packet? */
-         if(m_pcRNG == NULL || /* No noise to apply */
+         if(m_pcRNG == nullptr || /* No noise to apply */
             !(m_fPacketDropProb > 0.0f &&
               m_pcRNG->Bernoulli(m_fPacketDropProb)) /* Packet is not dropped */
             ) {

@@ -47,38 +47,38 @@ namespace argos {
    public:
 
       CQTOpenGLLayout() :
-         m_pcQTOpenGLItem(NULL) {
+         m_pcQTOpenGLItem(nullptr) {
          setContentsMargins(0, 0, 0, 0);
       }
 
       virtual ~CQTOpenGLLayout() {
-         if(m_pcQTOpenGLItem != NULL) {
+         if(m_pcQTOpenGLItem != nullptr) {
             delete m_pcQTOpenGLItem;
          }
       }
 
       virtual void addItem(QLayoutItem* item) {
-         if(m_pcQTOpenGLItem != NULL) {
+         if(m_pcQTOpenGLItem != nullptr) {
             delete m_pcQTOpenGLItem;
          }
          m_pcQTOpenGLItem = item;
       }
       virtual int count() const {
-         return (m_pcQTOpenGLItem != NULL) ? 1 : 0;
+         return (m_pcQTOpenGLItem != nullptr) ? 1 : 0;
       }
 
       virtual QLayoutItem* itemAt(int index) const {
-         return (index == 0) ? m_pcQTOpenGLItem : NULL;
+         return (index == 0) ? m_pcQTOpenGLItem : nullptr;
       }
 
       virtual QLayoutItem* takeAt(int index) {
          if(index == 0) {
             QLayoutItem* pcRetVal = m_pcQTOpenGLItem;
-            m_pcQTOpenGLItem = NULL;
+            m_pcQTOpenGLItem = nullptr;
             return pcRetVal;
          }
          else {
-            return NULL;
+            return nullptr;
          }
       }
 
@@ -88,7 +88,7 @@ namespace argos {
       virtual void setGeometry(const QRect& r) {
          /* Set the layout geometry */
          QLayout::setGeometry(r);
-         if(m_pcQTOpenGLItem != NULL) {
+         if(m_pcQTOpenGLItem != nullptr) {
             /* Calculate the candidate sizes for the QTOpenGL widget */
             /* One is height-driven */
             QRect cCandidate1(r.x(), r.y(), (r.height() * 4) / 3, r.height());
@@ -120,7 +120,7 @@ namespace argos {
    /****************************************/
 
    CQTOpenGLMainWindow::CQTOpenGLMainWindow(TConfigurationNode& t_tree) :
-      m_pcUserFunctions(NULL) {
+      m_pcUserFunctions(nullptr) {
       /* Main window settings */
       std::string strTitle;
       GetNodeAttributeOrDefault<std::string>(t_tree, "title", strTitle, "ARGoS v" ARGOS_VERSION "-" ARGOS_RELEASE);
@@ -470,7 +470,7 @@ namespace argos {
       GetNodeAttributeOrDefault(t_tree, "show_boundary", bShowBoundary, true);
       m_pcOpenGLWidget->SetShowBoundary(bShowBoundary);
       /* Set the window as the central widget */
-      CQTOpenGLLayout* pcQTOpenGLLayout = new CQTOpenGLLayout();
+      auto* pcQTOpenGLLayout = new CQTOpenGLLayout();
       pcQTOpenGLLayout->addWidget(m_pcOpenGLWidget);
       pcPlaceHolder->setLayout(pcQTOpenGLLayout);
       setCentralWidget(pcPlaceHolder);
@@ -885,7 +885,7 @@ namespace argos {
 
    void CQTOpenGLMainWindow::CameraXMLPopUp() {
       /* Set the text window up */
-      QTextEdit* pcXMLOutput = new QTextEdit();
+      auto* pcXMLOutput = new QTextEdit();
       /* Calculate the geometry of the window so that it's 1/4 of the main window
          and placed in the exact center of it */
       QRect cGeom = geometry();

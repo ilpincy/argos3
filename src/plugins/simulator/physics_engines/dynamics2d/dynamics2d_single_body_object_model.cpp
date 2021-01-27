@@ -10,7 +10,7 @@ namespace argos {
                                                                       CComposableEntity& c_entity) :
       CDynamics2DModel(c_engine, c_entity.GetComponent<CEmbodiedEntity>("body")),
       m_cEntity(c_entity),
-      m_ptBody(NULL) {}
+      m_ptBody(nullptr) {}
 
    /****************************************/
    /****************************************/
@@ -85,7 +85,7 @@ namespace argos {
    void CDynamics2DSingleBodyObjectModel::CalculateBoundingBox() {
       cpBB tBoundingBox = cpShapeGetBB(m_ptBody->shapeList);
       for(cpShape* pt_shape = m_ptBody->shapeList->next;
-          pt_shape != NULL;
+          pt_shape != nullptr;
           pt_shape = pt_shape->next) {
          cpBB* ptBB = &pt_shape->bb;
          if(ptBB->l < tBoundingBox.l) tBoundingBox.l = ptBB->l;
@@ -114,12 +114,12 @@ namespace argos {
 
    bool CDynamics2DSingleBodyObjectModel::IsCollidingWithSomething() const {
       for(cpShape* pt_shape = m_ptBody->shapeList;
-          pt_shape != NULL;
+          pt_shape != nullptr;
           pt_shape = pt_shape->next) {
          if(cpSpaceShapeQuery(
                const_cast<CDynamics2DSingleBodyObjectModel*>(this)->
                GetDynamics2DEngine().GetPhysicsSpace(),
-               pt_shape, NULL, NULL) > 0) {
+               pt_shape, nullptr, nullptr) > 0) {
             return true;
          }
       }

@@ -48,7 +48,7 @@ namespace argos {
    /****************************************/
 
    CQTOpenGLObjModel::SMaterial& CQTOpenGLObjModel::GetMaterial(const std::string& str_material) {
-      SMaterial::TMapIterator tIter = m_mapMaterials.find(str_material);
+      auto tIter = m_mapMaterials.find(str_material);
       if(tIter == std::end(m_mapMaterials)) {
          THROW_ARGOSEXCEPTION("Material \"" << str_material << "\" is undefined");
       }
@@ -102,7 +102,7 @@ namespace argos {
    const QString& CQTOpenGLObjModel::GetModelDir() const {
       /* get a reference to the visualization */
       CVisualization& cVisualization = CSimulator::GetInstance().GetVisualization();
-      CQTOpenGLRender& cQtOpenGLRender = dynamic_cast<CQTOpenGLRender&>(cVisualization);
+      auto& cQtOpenGLRender = dynamic_cast<CQTOpenGLRender&>(cVisualization);
       /* return the model directory */
       return cQtOpenGLRender.GetMainWindow().GetModelDir();
    }
@@ -112,7 +112,7 @@ namespace argos {
 
    void CQTOpenGLObjModel::ImportGeometry(QTextStream& c_text_stream) {
       /* select the default material */
-      SMaterial::TMapIterator itSelectedMaterial =
+      auto itSelectedMaterial =
          m_mapMaterials.find("__default_material");
       /* define a functor for adjusting negative indices found in the obj model */
       struct {
@@ -294,7 +294,7 @@ namespace argos {
 
    void CQTOpenGLObjModel::ImportMaterials(QTextStream& c_text_stream) {
       /* select the default material */
-      SMaterial::TMapIterator itMaterial =
+      auto itMaterial =
          m_mapMaterials.find("__default_material");
       /* create a buffer for parsing the input */
       QString strLineBuffer;
@@ -372,7 +372,7 @@ namespace argos {
       std::pair<TCacheIterator, TCacheIterator> cRange =
          m_mapVertexCache.equal_range(n_key);
       /* check if the vertex already exists in the cache */
-      TCacheIterator itVertex =
+      auto itVertex =
          std::find_if(cRange.first,
                       cRange.second,
                       [this, &c_position, &c_normal, &c_texture] (const TCacheEntry& c_entry) {
@@ -392,7 +392,7 @@ namespace argos {
    /****************************************/
 
    void CQTOpenGLObjModel::BuildMeshes() {
-      SMaterial::TMapIterator itCurrentMaterial = std::end(m_mapMaterials);
+      auto itCurrentMaterial = std::end(m_mapMaterials);
       for(const STriangle& s_triangle : m_vecTriangles) {
          if(s_triangle.Material != itCurrentMaterial) {
             /* select the current material */

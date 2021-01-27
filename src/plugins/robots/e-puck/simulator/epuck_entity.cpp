@@ -43,16 +43,16 @@ namespace argos {
    /****************************************/
 
    CEPuckEntity::CEPuckEntity() :
-      CComposableEntity(NULL),
-      m_pcControllableEntity(NULL),
-      m_pcEmbodiedEntity(NULL),
-      m_pcGroundSensorEquippedEntity(NULL),
-      m_pcLEDEquippedEntity(NULL),
-      m_pcLightSensorEquippedEntity(NULL),
-      m_pcProximitySensorEquippedEntity(NULL),
-      m_pcRABEquippedEntity(NULL),
-      m_pcWheeledEntity(NULL),
-      m_pcBatteryEquippedEntity(NULL) {
+      CComposableEntity(nullptr),
+      m_pcControllableEntity(nullptr),
+      m_pcEmbodiedEntity(nullptr),
+      m_pcGroundSensorEquippedEntity(nullptr),
+      m_pcLEDEquippedEntity(nullptr),
+      m_pcLightSensorEquippedEntity(nullptr),
+      m_pcProximitySensorEquippedEntity(nullptr),
+      m_pcRABEquippedEntity(nullptr),
+      m_pcWheeledEntity(nullptr),
+      m_pcBatteryEquippedEntity(nullptr) {
    }
 
    /****************************************/
@@ -65,16 +65,16 @@ namespace argos {
                               Real f_rab_range,
                               size_t un_rab_data_size,
                               const std::string& str_bat_model) :
-      CComposableEntity(NULL, str_id),
-      m_pcControllableEntity(NULL),
-      m_pcEmbodiedEntity(NULL),
-      m_pcGroundSensorEquippedEntity(NULL),
-      m_pcLEDEquippedEntity(NULL),
-      m_pcLightSensorEquippedEntity(NULL),
-      m_pcProximitySensorEquippedEntity(NULL),
-      m_pcRABEquippedEntity(NULL),
-      m_pcWheeledEntity(NULL),
-      m_pcBatteryEquippedEntity(NULL) {
+      CComposableEntity(nullptr, str_id),
+      m_pcControllableEntity(nullptr),
+      m_pcEmbodiedEntity(nullptr),
+      m_pcGroundSensorEquippedEntity(nullptr),
+      m_pcLEDEquippedEntity(nullptr),
+      m_pcLightSensorEquippedEntity(nullptr),
+      m_pcProximitySensorEquippedEntity(nullptr),
+      m_pcRABEquippedEntity(nullptr),
+      m_pcWheeledEntity(nullptr),
+      m_pcBatteryEquippedEntity(nullptr) {
       try {
          /*
           * Create and init components

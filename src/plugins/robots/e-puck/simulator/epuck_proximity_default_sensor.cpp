@@ -22,9 +22,9 @@ namespace argos {
    /****************************************/
 
    CEPuckProximityDefaultSensor::CEPuckProximityDefaultSensor() :
-      m_pcEmbodiedEntity(NULL),
+      m_pcEmbodiedEntity(nullptr),
       m_bShowRays(false),
-      m_pcRNG(NULL),
+      m_pcRNG(nullptr),
       m_bAddNoise(false),
       m_cSpace(CSimulator::GetInstance().GetSpace()) {}
 

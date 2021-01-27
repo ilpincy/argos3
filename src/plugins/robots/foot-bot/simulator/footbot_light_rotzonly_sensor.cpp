@@ -53,9 +53,9 @@ namespace argos {
 
    CFootBotLightRotZOnlySensor::CFootBotLightRotZOnlySensor() :
       m_bEnabled(true),
-      m_pcEmbodiedEntity(NULL),
+      m_pcEmbodiedEntity(nullptr),
       m_bShowRays(false),
-      m_pcRNG(NULL),
+      m_pcRNG(nullptr),
       m_bAddNoise(false),
       m_cSpace(CSimulator::GetInstance().GetSpace()) {}
 
@@ -122,7 +122,7 @@ namespace argos {
       /* Buffers to contain data about the intersection */
       SEmbodiedEntityIntersectionItem sIntersection;
       /* List of light entities */
-      CSpace::TMapPerTypePerId::iterator itLights = m_cSpace.GetEntityMapPerTypePerId().find("light");
+      auto itLights = m_cSpace.GetEntityMapPerTypePerId().find("light");
       if (itLights != m_cSpace.GetEntityMapPerTypePerId().end()) {
          CSpace::TMapPerType& mapLights = itLights->second;
          /*
@@ -132,7 +132,7 @@ namespace argos {
        *    NOTE: the readings are additive
        * 4. go through the sensors and clamp their values
        */
-         for(CSpace::TMapPerType::iterator it = mapLights.begin();
+         for(auto it = mapLights.begin();
              it != mapLights.end();
              ++it) {
             /* Get a reference to the light */

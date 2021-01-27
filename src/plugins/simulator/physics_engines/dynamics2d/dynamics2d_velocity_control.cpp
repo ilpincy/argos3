@@ -17,10 +17,10 @@ namespace argos {
                                                           Real f_max_torque,
                                                           TConfigurationNode* t_node) :
       m_cDyn2DEngine(c_engine),
-      m_ptControlBody(NULL),
-      m_ptControlledBody(NULL),
-      m_ptLinearConstraint(NULL),
-      m_ptAngularConstraint(NULL),
+      m_ptControlBody(nullptr),
+      m_ptControlledBody(nullptr),
+      m_ptLinearConstraint(nullptr),
+      m_ptAngularConstraint(nullptr),
       m_fMaxForce(f_max_force),
       m_fMaxTorque(f_max_torque) {
       m_ptControlBody = cpBodyNew(INFINITY, INFINITY);
@@ -47,7 +47,7 @@ namespace argos {
 
    void CDynamics2DVelocityControl::AttachTo(cpBody* pt_body) {
       /* If we are already controlling a body, detach from it first */
-      if(m_ptControlledBody != NULL) {
+      if(m_ptControlledBody != nullptr) {
          Detach();
       }
       /* Set the wanted body as the new controlled one */
@@ -76,7 +76,7 @@ namespace argos {
    /****************************************/
 
    void CDynamics2DVelocityControl::Detach() {
-      if(m_ptControlledBody != NULL) {
+      if(m_ptControlledBody != nullptr) {
          /* Remove constraints */
          cpSpaceRemoveConstraint(m_cDyn2DEngine.GetPhysicsSpace(), m_ptLinearConstraint);
          cpSpaceRemoveConstraint(m_cDyn2DEngine.GetPhysicsSpace(), m_ptAngularConstraint);
@@ -84,7 +84,7 @@ namespace argos {
          cpConstraintFree(m_ptLinearConstraint);
          cpConstraintFree(m_ptAngularConstraint);
          /* Erase pointer to controlled body */
-         m_ptControlledBody = NULL;
+         m_ptControlledBody = nullptr;
       }
    }
 

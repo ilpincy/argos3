@@ -71,11 +71,11 @@ namespace argos {
 
    void CDynamics3DEngine::Reset() {
       /* Remove and reset all physics models */
-      for(CDynamics3DModel::TMap::iterator itModel = std::begin(m_tPhysicsModels);
+      for(auto itModel = std::begin(m_tPhysicsModels);
           itModel != std::end(m_tPhysicsModels);
           ++itModel) {
          /* Remove model from plugins */
-         for(CDynamics3DPlugin::TMap::iterator itPlugin = std::begin(m_tPhysicsPlugins);
+         for(auto itPlugin = std::begin(m_tPhysicsPlugins);
              itPlugin != std::end(m_tPhysicsPlugins);
              ++itPlugin) {
             itPlugin->second->UnregisterModel(*itModel->second);
@@ -103,14 +103,14 @@ namespace argos {
       /* Provide the same random seed to the solver */
       m_cSolver.setRandSeed(m_pcRNG->Uniform(m_cRandomSeedRange));
       /* Reset the plugins */
-      for(CDynamics3DPlugin::TMap::iterator itPlugin = std::begin(m_tPhysicsPlugins);
+      for(auto itPlugin = std::begin(m_tPhysicsPlugins);
           itPlugin != std::end(m_tPhysicsPlugins);
           ++itPlugin) {
          itPlugin->second->Reset();
       }
       /* Set up the call back for the plugins */
       m_cWorld.setInternalTickCallback([] (btDynamicsWorld* pc_world, btScalar f_time_step) {
-         CDynamics3DEngine* pc_engine = static_cast<CDynamics3DEngine*>(pc_world->getWorldUserInfo());
+         auto* pc_engine = static_cast<CDynamics3DEngine*>(pc_world->getWorldUserInfo());
          pc_world->clearForces();
          for(std::pair<const std::string, CDynamics3DPlugin*>& c_plugin :
              pc_engine->GetPhysicsPlugins()) {
@@ -118,11 +118,11 @@ namespace argos {
          }
       }, static_cast<void*>(this), true);
       /* Add the models back into the engine */
-      for(CDynamics3DModel::TMap::iterator itModel = std::begin(m_tPhysicsModels);
+      for(auto itModel = std::begin(m_tPhysicsModels);
           itModel != std::end(m_tPhysicsModels);
           ++itModel) {
          /* Add model to plugins */
-         for(CDynamics3DPlugin::TMap::iterator itPlugin = std::begin(m_tPhysicsPlugins);
+         for(auto itPlugin = std::begin(m_tPhysicsPlugins);
              itPlugin != std::end(m_tPhysicsPlugins);
              ++itPlugin) {
             itPlugin->second->RegisterModel(*itModel->second);
@@ -141,11 +141,11 @@ namespace argos {
 
    void CDynamics3DEngine::Destroy() {
       /* Destroy all physics models */
-      for(CDynamics3DModel::TMap::iterator itModel = std::begin(m_tPhysicsModels);
+      for(auto itModel = std::begin(m_tPhysicsModels);
           itModel != std::end(m_tPhysicsModels);
           ++itModel) {
          /* Remove model from the plugins first */
-         for(CDynamics3DPlugin::TMap::iterator itPlugin = std::begin(m_tPhysicsPlugins);
+         for(auto itPlugin = std::begin(m_tPhysicsPlugins);
              itPlugin != std::end(m_tPhysicsPlugins);
              ++itPlugin) {
             itPlugin->second->UnregisterModel(*itModel->second);
@@ -155,7 +155,7 @@ namespace argos {
          delete itModel->second;
       }
       /* Destroy all plug-ins */
-      for(CDynamics3DPlugin::TMap::iterator itPlugin = std::begin(m_tPhysicsPlugins);
+      for(auto itPlugin = std::begin(m_tPhysicsPlugins);
           itPlugin != std::end(m_tPhysicsPlugins);
           ++itPlugin) {
          itPlugin->second->Destroy();
@@ -171,7 +171,7 @@ namespace argos {
 
    void CDynamics3DEngine::Update() {
       /* Update the physics state from the entities */
-      for(CDynamics3DModel::TMap::iterator it = m_tPhysicsModels.begin();
+      for(auto it = m_tPhysicsModels.begin();
           it != std::end(m_tPhysicsModels); ++it) {
          it->second->UpdateFromEntityStatus();
       }
@@ -180,7 +180,7 @@ namespace argos {
                               GetIterations(),
                               GetPhysicsClockTick());
       /* Update the simulated space */
-      for(CDynamics3DModel::TMap::iterator it = std::begin(m_tPhysicsModels);
+      for(auto it = std::begin(m_tPhysicsModels);
           it != std::end(m_tPhysicsModels);
           ++it) {
          it->second->UpdateEntityStatus();
@@ -214,7 +214,7 @@ namespace argos {
       /* Examine the results */
       if (cResult.hasHit() && cResult.m_collisionObject->getUserPointer() != nullptr) {
          Real f_t = (cResult.m_hitPointWorld - cRayStart).length() / c_ray.GetLength();
-         CDynamics3DModel* pcModel =
+         auto* pcModel =
             static_cast<CDynamics3DModel*>(cResult.m_collisionObject->getUserPointer());
          t_data.push_back(SEmbodiedEntityIntersectionItem(&(pcModel->GetEmbodiedEntity()), f_t));
       }
@@ -255,7 +255,7 @@ namespace argos {
       /* Add model to world */
       c_model.AddToWorld(m_cWorld);
       /* Notify the plugins of the added model */
-      for(CDynamics3DPlugin::TMap::iterator itPlugin = std::begin(m_tPhysicsPlugins);
+      for(auto itPlugin = std::begin(m_tPhysicsPlugins);
           itPlugin != std::end(m_tPhysicsPlugins);
           ++itPlugin) {
          itPlugin->second->RegisterModel(c_model);
@@ -268,10 +268,10 @@ namespace argos {
    /****************************************/
 
    void CDynamics3DEngine::RemovePhysicsModel(const std::string& str_id) {
-      CDynamics3DModel::TMap::iterator itModel = m_tPhysicsModels.find(str_id);
+      auto itModel = m_tPhysicsModels.find(str_id);
       if(itModel != std::end(m_tPhysicsModels)) {
          /* Notify the plugins of model removal */
-         for(CDynamics3DPlugin::TMap::iterator itPlugin = std::begin(m_tPhysicsPlugins);
+         for(auto itPlugin = std::begin(m_tPhysicsPlugins);
              itPlugin != std::end(m_tPhysicsPlugins);
              ++itPlugin) {
             itPlugin->second->UnregisterModel(*(itModel->second));
@@ -302,7 +302,7 @@ namespace argos {
    /****************************************/
 
    void CDynamics3DEngine::RemovePhysicsPlugin(const std::string& str_id) {
-      CDynamics3DPlugin::TMap::iterator it = m_tPhysicsPlugins.find(str_id);
+      auto it = m_tPhysicsPlugins.find(str_id);
       if(it != std::end(m_tPhysicsPlugins)) {
          delete it->second;
          m_tPhysicsPlugins.erase(it);

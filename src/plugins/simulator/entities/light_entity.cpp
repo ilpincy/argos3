@@ -15,7 +15,7 @@ namespace argos {
    /****************************************/
 
    CLightEntity::CLightEntity() :
-      CLEDEntity(NULL),
+      CLEDEntity(nullptr),
       m_fIntensity(1.0f) {}
       
    /****************************************/
@@ -25,7 +25,7 @@ namespace argos {
                               const CVector3& c_position,
                               const CColor& c_color,
                               Real f_intensity) :
-      CLEDEntity(NULL,
+      CLEDEntity(nullptr,
                  str_id,
                  c_position,
                  c_color),
@@ -42,7 +42,7 @@ namespace argos {
          GetNodeAttribute(t_tree, "intensity", m_fIntensity);
          std::string strMedium;
          GetNodeAttribute(t_tree, "medium", strMedium);
-         CLEDMedium& cLEDMedium = CSimulator::GetInstance().GetMedium<CLEDMedium>(strMedium);
+         auto& cLEDMedium = CSimulator::GetInstance().GetMedium<CLEDMedium>(strMedium);
          cLEDMedium.AddEntity(*this);
       }
       catch(CARGoSException& ex) {

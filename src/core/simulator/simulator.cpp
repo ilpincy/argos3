@@ -30,13 +30,13 @@ namespace argos {
    /****************************************/
 
    CSimulator::CSimulator() :
-      m_pcVisualization(NULL),
-      m_pcSpace(NULL),
-      m_pcLoopFunctions(NULL),
+      m_pcVisualization(nullptr),
+      m_pcSpace(nullptr),
+      m_pcLoopFunctions(nullptr),
       m_unMaxSimulationClock(0),
       m_bWasRandomSeedSet(false),
       m_unThreads(0),
-      m_pcProfiler(NULL),
+      m_pcProfiler(nullptr),
       m_bHumanReadableProfile(true),
       m_bRealTimeClock(false),
       m_bTerminated(false) {}
@@ -49,23 +49,23 @@ namespace argos {
          delete m_pcProfiler;
       }
       /* Delete the visualization */
-      if(m_pcVisualization != NULL) delete m_pcVisualization;
+      if(m_pcVisualization != nullptr) delete m_pcVisualization;
       /* Delete all the media */
-      for(CMedium::TMap::iterator it = m_mapMedia.begin();
+      for(auto it = m_mapMedia.begin();
           it != m_mapMedia.end(); ++it) {
          delete it->second;
       }
       m_mapMedia.clear();
       m_vecMedia.clear();
       /* Delete all the physics engines */
-      for(CPhysicsEngine::TMap::iterator it = m_mapPhysicsEngines.begin();
+      for(auto it = m_mapPhysicsEngines.begin();
           it != m_mapPhysicsEngines.end(); ++it) {
          delete it->second;
       }
       m_mapPhysicsEngines.clear();
       m_vecPhysicsEngines.clear();
       /* Delete the space and the dynamic linking manager */
-      if(m_pcSpace != NULL) {
+      if(m_pcSpace != nullptr) {
          delete m_pcSpace;
       }
       /* Get rid of all libraries */
@@ -84,7 +84,7 @@ namespace argos {
    /****************************************/
 
    CPhysicsEngine& CSimulator::GetPhysicsEngine(const std::string& str_id) const {
-      CPhysicsEngine::TMap::const_iterator it = m_mapPhysicsEngines.find(str_id);
+      auto it = m_mapPhysicsEngines.find(str_id);
       ARGOS_ASSERT(it != m_mapPhysicsEngines.end(), "Physics engine \"" << str_id << "\" not found.")
          return *(it->second);
    }
@@ -93,7 +93,7 @@ namespace argos {
    /****************************************/
 
    TConfigurationNode& CSimulator::GetConfigForController(const std::string& str_id) {
-      TControllerConfigurationMap::iterator it = m_mapControllerConfig.find(str_id);
+      auto it = m_mapControllerConfig.find(str_id);
       if(it == m_mapControllerConfig.end()) {
          THROW_ARGOSEXCEPTION("Can't find XML configuration for controller id \"" << str_id << "\"");
       }
@@ -186,8 +186,8 @@ namespace argos {
       else {
          /* Prepare the default value based on the current clock time */
          struct timeval sTimeValue;
-         ::gettimeofday(&sTimeValue, NULL);
-         UInt32 unSeed = static_cast<UInt32>(sTimeValue.tv_usec);
+         ::gettimeofday(&sTimeValue, nullptr);
+         auto unSeed = static_cast<UInt32>(sTimeValue.tv_usec);
          CRandom::SetSeedOf("argos", unSeed);
          m_unRandomSeed = unSeed;
          LOG << "[INFO] Using random seed = " << m_unRandomSeed << std::endl;
@@ -196,12 +196,12 @@ namespace argos {
       /* Reset the space */
       m_pcSpace->Reset();
       /* Reset the media */
-      for(CMedium::TMap::iterator it = m_mapMedia.begin();
+      for(auto it = m_mapMedia.begin();
           it != m_mapMedia.end(); ++it) {
          it->second->Reset();
       }
       /* Reset the physics engines */
-      for(CPhysicsEngine::TMap::iterator it = m_mapPhysicsEngines.begin();
+      for(auto it = m_mapPhysicsEngines.begin();
           it != m_mapPhysicsEngines.end(); ++it) {
          it->second->Reset();
       }
@@ -216,21 +216,21 @@ namespace argos {
 
    void CSimulator::Destroy() {
       /* Call user destroy function */
-      if (m_pcLoopFunctions != NULL) {
+      if (m_pcLoopFunctions != nullptr) {
          m_pcLoopFunctions->Destroy();
          delete m_pcLoopFunctions;
-         m_pcLoopFunctions = NULL;
+         m_pcLoopFunctions = nullptr;
       }
       /* Destroy the visualization */
-      if(m_pcVisualization != NULL) {
+      if(m_pcVisualization != nullptr) {
          m_pcVisualization->Destroy();
       }
       /* Destroy simulated space */
-      if(m_pcSpace != NULL) {
+      if(m_pcSpace != nullptr) {
          m_pcSpace->Destroy();
       }
       /* Destroy media */
-      for(CMedium::TMap::iterator it = m_mapMedia.begin();
+      for(auto it = m_mapMedia.begin();
           it != m_mapMedia.end(); ++it) {
          it->second->Destroy();
          delete it->second;
@@ -238,7 +238,7 @@ namespace argos {
       m_mapMedia.clear();
       m_vecMedia.clear();
       /* Destroy physics engines */
-      for(CPhysicsEngine::TMap::iterator it = m_mapPhysicsEngines.begin();
+      for(auto it = m_mapPhysicsEngines.begin();
           it != m_mapPhysicsEngines.end(); ++it) {
          it->second->Destroy();
          delete it->second;
@@ -360,8 +360,8 @@ namespace argos {
             /* Prepare the default value based on the current clock time */
             m_bWasRandomSeedSet = false;
             struct timeval sTimeValue;
-            ::gettimeofday(&sTimeValue, NULL);
-            UInt32 unSeed = static_cast<UInt32>(sTimeValue.tv_usec);
+            ::gettimeofday(&sTimeValue, nullptr);
+            auto unSeed = static_cast<UInt32>(sTimeValue.tv_usec);
             m_unRandomSeed = unSeed;
             CRandom::CreateCategory("argos", unSeed);
             LOG << "[INFO] Using random seed = " << unSeed << std::endl;

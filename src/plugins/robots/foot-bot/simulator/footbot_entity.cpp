@@ -57,22 +57,22 @@ namespace argos {
    /****************************************/
 
    CFootBotEntity::CFootBotEntity() :
-      CComposableEntity(NULL),
-      m_pcControllableEntity(NULL),
-      m_pcDistanceScannerEquippedEntity(NULL),
-      m_pcTurretEntity(NULL),
-      m_pcEmbodiedEntity(NULL),
-      m_pcGripperEquippedEntity(NULL),
-      m_pcGroundSensorEquippedEntity(NULL),
-      m_pcLEDEquippedEntity(NULL),
-      m_pcLightSensorEquippedEntity(NULL),
-      m_pcOmnidirectionalCameraEquippedEntity(NULL),
-      m_pcPerspectiveCameraEquippedEntity(NULL),
-      m_pcProximitySensorEquippedEntity(NULL),
-      m_pcRABEquippedEntity(NULL),
-      m_pcWheeledEntity(NULL),
-      m_pcWiFiEquippedEntity(NULL),
-      m_pcBatteryEquippedEntity(NULL) {
+      CComposableEntity(nullptr),
+      m_pcControllableEntity(nullptr),
+      m_pcDistanceScannerEquippedEntity(nullptr),
+      m_pcTurretEntity(nullptr),
+      m_pcEmbodiedEntity(nullptr),
+      m_pcGripperEquippedEntity(nullptr),
+      m_pcGroundSensorEquippedEntity(nullptr),
+      m_pcLEDEquippedEntity(nullptr),
+      m_pcLightSensorEquippedEntity(nullptr),
+      m_pcOmnidirectionalCameraEquippedEntity(nullptr),
+      m_pcPerspectiveCameraEquippedEntity(nullptr),
+      m_pcProximitySensorEquippedEntity(nullptr),
+      m_pcRABEquippedEntity(nullptr),
+      m_pcWheeledEntity(nullptr),
+      m_pcWiFiEquippedEntity(nullptr),
+      m_pcBatteryEquippedEntity(nullptr) {
    }
 
    /****************************************/
@@ -90,22 +90,22 @@ namespace argos {
                                   const CRadians& c_perspcam_aperture,
                                   Real f_perspcam_focal_length,
                                   Real f_perspcam_range) :
-      CComposableEntity(NULL, str_id),
-      m_pcControllableEntity(NULL),
-      m_pcDistanceScannerEquippedEntity(NULL),
-      m_pcTurretEntity(NULL),
-      m_pcEmbodiedEntity(NULL),
-      m_pcGripperEquippedEntity(NULL),
-      m_pcGroundSensorEquippedEntity(NULL),
-      m_pcLEDEquippedEntity(NULL),
-      m_pcLightSensorEquippedEntity(NULL),
-      m_pcOmnidirectionalCameraEquippedEntity(NULL),
-      m_pcPerspectiveCameraEquippedEntity(NULL),
-      m_pcProximitySensorEquippedEntity(NULL),
-      m_pcRABEquippedEntity(NULL),
-      m_pcWheeledEntity(NULL),
-      m_pcWiFiEquippedEntity(NULL),
-      m_pcBatteryEquippedEntity(NULL) {
+      CComposableEntity(nullptr, str_id),
+      m_pcControllableEntity(nullptr),
+      m_pcDistanceScannerEquippedEntity(nullptr),
+      m_pcTurretEntity(nullptr),
+      m_pcEmbodiedEntity(nullptr),
+      m_pcGripperEquippedEntity(nullptr),
+      m_pcGroundSensorEquippedEntity(nullptr),
+      m_pcLEDEquippedEntity(nullptr),
+      m_pcLightSensorEquippedEntity(nullptr),
+      m_pcOmnidirectionalCameraEquippedEntity(nullptr),
+      m_pcPerspectiveCameraEquippedEntity(nullptr),
+      m_pcProximitySensorEquippedEntity(nullptr),
+      m_pcRABEquippedEntity(nullptr),
+      m_pcWheeledEntity(nullptr),
+      m_pcWiFiEquippedEntity(nullptr),
+      m_pcBatteryEquippedEntity(nullptr) {
       try {
          /*
           * Create and init components

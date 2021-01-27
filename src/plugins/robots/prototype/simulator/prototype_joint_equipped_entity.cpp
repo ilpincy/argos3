@@ -27,7 +27,7 @@ namespace argos {
              itJoint != itJoint.end();
              ++itJoint) {
             /* for each <joint/> node */
-            CPrototypeJointEntity* pcJointEntity = new CPrototypeJointEntity(this);
+            auto* pcJointEntity = new CPrototypeJointEntity(this);
             pcJointEntity->Init(*itJoint);
             AddComponent(*pcJointEntity);
             m_vecJoints.push_back(pcJointEntity);
@@ -42,7 +42,7 @@ namespace argos {
    /****************************************/
 
    CPrototypeJointEntity& CPrototypeJointEquippedEntity::GetJoint(const std::string& str_id) {
-      CPrototypeJointEntity::TVectorIterator itJoint =
+      auto itJoint =
          std::find_if(std::begin(m_vecJoints),
                       std::end(m_vecJoints),
                       [str_id] (const CPrototypeJointEntity* pc_joint) {

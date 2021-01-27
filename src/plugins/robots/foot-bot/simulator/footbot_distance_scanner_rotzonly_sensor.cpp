@@ -31,7 +31,7 @@ namespace argos {
    /****************************************/
 
    CFootBotDistanceScannerRotZOnlySensor::CFootBotDistanceScannerRotZOnlySensor() :
-      m_pcRNG(NULL),
+      m_pcRNG(nullptr),
       m_bAddNoise(false),
       m_cSpace(CSimulator::GetInstance().GetSpace()),
       m_bShowRays(false) {}

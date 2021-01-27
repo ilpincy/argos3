@@ -23,12 +23,12 @@ CTestUserFunctions::~CTestUserFunctions() {
 void CTestUserFunctions::DrawInWorld() {
    CSpace& cSpace = CSimulator::GetInstance().GetSpace();
    CSpace::TMapPerType& tFBMap = cSpace.GetEntitiesByType("foot-bot");
-   for(CSpace::TMapPerType::iterator it = tFBMap.begin();
+   for(auto it = tFBMap.begin();
        it != tFBMap.end();
        ++it) {
       CFootBotEntity& cFB = *any_cast<CFootBotEntity*>(it->second);
       CLEDEquippedEntity& cLEDs = cFB.GetLEDEquippedEntity();
-      for(CLEDEquippedEntity::SActuator::TList::iterator it = cLEDs.GetLEDs().begin();
+      for(auto it = cLEDs.GetLEDs().begin();
           it != cLEDs.GetLEDs().end();
           ++it) {
          DrawPoint((*it)->LED.GetPosition(), (*it)->LED.GetColor(), 50.0f);

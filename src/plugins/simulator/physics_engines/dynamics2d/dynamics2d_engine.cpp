@@ -23,8 +23,8 @@ namespace argos {
       m_fBoxAngularFriction(1.49),
       m_fCylinderLinearFriction(1.49),
       m_fCylinderAngularFriction(1.49),
-      m_ptSpace(NULL),
-      m_ptGroundBody(NULL),
+      m_ptSpace(nullptr),
+      m_ptGroundBody(nullptr),
       m_fElevation(0.0f) {
    }
 
@@ -76,9 +76,9 @@ namespace argos {
             SHAPE_GRIPPABLE,
             BeginCollisionBetweenGripperAndGrippable,
             ManageCollisionBetweenGripperAndGrippable,
-            NULL,
-            NULL,
-            NULL);
+            nullptr,
+            nullptr,
+            nullptr);
       }
       catch(CARGoSException& ex) {
          THROW_ARGOSEXCEPTION_NESTED("Error initializing the dynamics 2D engine \"" << GetId() << "\"", ex);
@@ -89,7 +89,7 @@ namespace argos {
    /****************************************/
 
    void CDynamics2DEngine::Reset() {
-      for(CDynamics2DModel::TMap::iterator it = m_tPhysicsModels.begin();
+      for(auto it = m_tPhysicsModels.begin();
           it != m_tPhysicsModels.end(); ++it) {
          it->second->Reset();
       }
@@ -101,20 +101,20 @@ namespace argos {
 
    void CDynamics2DEngine::Update() {
       /* Update the physics state from the entities */
-      for(CDynamics2DModel::TMap::iterator it = m_tPhysicsModels.begin();
+      for(auto it = m_tPhysicsModels.begin();
           it != m_tPhysicsModels.end(); ++it) {
          it->second->UpdateFromEntityStatus();
       }
       /* Perform the step */
       for(size_t i = 0; i < GetIterations(); ++i) {
-         for(CDynamics2DModel::TMap::iterator it = m_tPhysicsModels.begin();
+         for(auto it = m_tPhysicsModels.begin();
              it != m_tPhysicsModels.end(); ++it) {
             it->second->UpdatePhysics();
          }
          cpSpaceStep(m_ptSpace, GetPhysicsClockTick());
       }
       /* Update the simulated space */
-      for(CDynamics2DModel::TMap::iterator it = m_tPhysicsModels.begin();
+      for(auto it = m_tPhysicsModels.begin();
           it != m_tPhysicsModels.end(); ++it) {
          it->second->UpdateEntityStatus();
       }
@@ -125,7 +125,7 @@ namespace argos {
 
    void CDynamics2DEngine::Destroy() {
       /* Empty the physics model map */
-      for(CDynamics2DModel::TMap::iterator it = m_tPhysicsModels.begin();
+      for(auto it = m_tPhysicsModels.begin();
           it != m_tPhysicsModels.end(); ++it) {
          delete it->second;
       }
@@ -238,7 +238,7 @@ namespace argos {
    /****************************************/
 
    void CDynamics2DEngine::RemovePhysicsModel(const std::string& str_id) {
-      CDynamics2DModel::TMap::iterator it = m_tPhysicsModels.find(str_id);
+      auto it = m_tPhysicsModels.find(str_id);
       if(it != m_tPhysicsModels.end()) {
          delete it->second;
          m_tPhysicsModels.erase(it);

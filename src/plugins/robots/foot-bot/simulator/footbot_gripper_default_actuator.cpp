@@ -14,7 +14,7 @@ namespace argos {
    /****************************************/
 
    CFootBotGripperDefaultActuator::CFootBotGripperDefaultActuator() :
-      m_pcGripperEquippedEntity(NULL) {}
+      m_pcGripperEquippedEntity(nullptr) {}
 
    /****************************************/
    /****************************************/

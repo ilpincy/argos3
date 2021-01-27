@@ -16,7 +16,7 @@ CRate::CRate(Real f_rate) {
 UInt64 CRate::ElapsedUS() const {
   /* Get current time */
   ::timeval tNow;
-  ::gettimeofday(&tNow, NULL);
+  ::gettimeofday(&tNow, nullptr);
   /* Calculate difference between past call and now */
   ::timeval tDiff;
   timersub(&tNow, &m_tPast, &tDiff);
@@ -42,7 +42,7 @@ void CRate::Sleep() {
     ::timespec tSleepPeriod;
     tSleepPeriod.tv_sec = (m_unNominalPeriod - unMicroSecDiff) / 1e6;
     tSleepPeriod.tv_nsec = (m_unNominalPeriod - unMicroSecDiff) * 1000;
-    ::nanosleep(&tSleepPeriod, NULL);
+    ::nanosleep(&tSleepPeriod, nullptr);
   }
   else {
     LOGERR << "[WARNING] Nominal rate "
@@ -53,7 +53,7 @@ void CRate::Sleep() {
 	   << std::endl;
   }
   /* Update past for next call */
-  ::gettimeofday(&m_tPast, NULL);
+  ::gettimeofday(&m_tPast, nullptr);
 }
 
 /****************************************/
@@ -62,7 +62,7 @@ void CRate::Sleep() {
 void CRate::SetRate(Real f_rate) {
   m_fNominalRate = Abs(f_rate);
   m_unNominalPeriod = 1e6 / m_fNominalRate;
-  ::gettimeofday(&m_tPast, NULL);
+  ::gettimeofday(&m_tPast, nullptr);
 }
 
 /****************************************/

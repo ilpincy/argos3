@@ -115,9 +115,9 @@ namespace argos {
       for(SInt32 i = 0; i < cDispatcher.getNumManifolds(); i++) {
          const btPersistentManifold* pcContactManifold =
             cDispatcher.getManifoldByIndexInternal(i);
-         const CDynamics3DModel* pcModelA =
+         const auto* pcModelA =
             static_cast<const CDynamics3DModel*>(pcContactManifold->getBody0()->getUserPointer());
-         const CDynamics3DModel* pcModelB =
+         const auto* pcModelB =
             static_cast<const CDynamics3DModel*>(pcContactManifold->getBody1()->getUserPointer());
          /* Ignore self-collisions */
          if(pcModelA == pcModelB) {

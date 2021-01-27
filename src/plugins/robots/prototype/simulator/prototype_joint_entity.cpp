@@ -33,7 +33,7 @@ namespace argos {
          /* Init parent */
          CComposableEntity::Init(t_tree);
          /* Get parent and child links */
-         CPrototypeLinkEquippedEntity& cLinkEquippedEntity = 
+         auto& cLinkEquippedEntity = 
             GetParent().GetParent().GetComponent<CPrototypeLinkEquippedEntity>("links");
          /* Get the disable collisions with parent flag */
          GetNodeAttributeOrDefault(t_tree,

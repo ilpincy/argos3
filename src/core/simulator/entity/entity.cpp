@@ -19,7 +19,7 @@ namespace argos {
       m_pcParent(pc_parent),
       m_nIndex(-1),
       m_bEnabled(true),
-      m_ptConfNode(NULL) {
+      m_ptConfNode(nullptr) {
    }
 
    /****************************************/
@@ -31,7 +31,7 @@ namespace argos {
       m_strId(str_id),
       m_nIndex(-1),
       m_bEnabled(true),
-      m_ptConfNode(NULL) {
+      m_ptConfNode(nullptr) {
    }
 
    /****************************************/
@@ -53,7 +53,7 @@ namespace argos {
          }
          else {
             /* No, derive it from the parent */
-            if(m_pcParent != NULL) {
+            if(m_pcParent != nullptr) {
                UInt32 unIdCount = 0;
                while(GetParent().HasComponent(GetTypeDescription() +
                                               "[" + GetTypeDescription() +
@@ -77,7 +77,7 @@ namespace argos {
    /****************************************/
 
    std::string CEntity::GetContext() const {
-      if(m_pcParent != NULL) {
+      if(m_pcParent != nullptr) {
          return GetParent().GetContext() + GetParent().GetId() + ".";
       }
       else {
@@ -89,7 +89,7 @@ namespace argos {
    /****************************************/
    
    CComposableEntity& CEntity::GetParent() {
-      if(m_pcParent != NULL) {
+      if(m_pcParent != nullptr) {
          return *m_pcParent;
       }
       else {
@@ -101,7 +101,7 @@ namespace argos {
    /****************************************/
 
    const CComposableEntity& CEntity::GetParent() const {
-      if(m_pcParent != NULL) {
+      if(m_pcParent != nullptr) {
          return *m_pcParent;
       }
       else {
@@ -113,7 +113,7 @@ namespace argos {
    /****************************************/
 
    CEntity& CEntity::GetRootEntity() {
-      if(m_pcParent != NULL) {
+      if(m_pcParent != nullptr) {
          return m_pcParent->GetRootEntity();
       }
       else {
@@ -125,7 +125,7 @@ namespace argos {
    /****************************************/
    
    const CEntity& CEntity::GetRootEntity() const {
-      if(m_pcParent != NULL) {
+      if(m_pcParent != nullptr) {
          return m_pcParent->GetRootEntity();
       }
       else {

@@ -33,7 +33,7 @@ namespace argos {
    /****************************************/
 
    void CDynamics3DGravityPlugin::UnregisterModel(CDynamics3DModel& c_model) {
-      std::vector<std::shared_ptr<CDynamics3DModel::CAbstractBody> >::iterator itRemove =
+      auto itRemove =
          std::remove_if(std::begin(m_vecTargets),
                         std::end(m_vecTargets),
                         [&c_model] (const std::shared_ptr<CDynamics3DModel::CAbstractBody>& ptr_body) {

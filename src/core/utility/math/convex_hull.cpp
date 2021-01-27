@@ -42,7 +42,7 @@ namespace argos {
                   vec_edges[arr_vertices[un_idx_i]][arr_vertices[un_idx_j]];
                for(UInt32 un_idx_k = 0; un_idx_k < arr_vertices.size(); un_idx_k++) {
                   if(un_idx_k != un_idx_i && un_idx_k != un_idx_j) {
-                     std::vector<UInt32>::iterator itErase =
+                     auto itErase =
                         std::find(std::begin(tEdge), std::end(tEdge), arr_vertices[un_idx_k]);
                      if(itErase != std::end(tEdge)) {
                         tEdge.erase(itErase);
@@ -116,7 +116,7 @@ namespace argos {
          const CVector3& cPoint = m_vecPoints[un_idx_point];
 
          /* check if this point was already used */
-         std::array<UInt32, 4>::iterator itPoint =
+         auto itPoint =
             std::find(std::begin(arrInitialPoints), std::end(arrInitialPoints), un_idx_point);
          if(itPoint != std::end(arrInitialPoints)) {
             continue;
@@ -127,7 +127,7 @@ namespace argos {
                Erase(m_vecEdge, s_face.VertexIndices);
             }
          }       
-         std::vector<SFace>::iterator itEraseFrom = 
+         auto itEraseFrom = 
             std::remove_if(std::begin(m_vecFaces), std::end(m_vecFaces), [cPoint] (const SFace& s_face) {
                return (s_face.Normal.DotProduct(cPoint) > s_face.Direction + 0.000001);
             });

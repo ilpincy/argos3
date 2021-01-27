@@ -26,7 +26,7 @@ namespace argos {
          for(itLink = itLink.begin(&t_tree);
              itLink != itLink.end();
              ++itLink) {
-            CPrototypeLinkEntity* pcLinkEntity = new CPrototypeLinkEntity(this);
+            auto* pcLinkEntity = new CPrototypeLinkEntity(this);
             pcLinkEntity->Init(*itLink);
             AddComponent(*pcLinkEntity);            
             m_vecLinks.push_back(pcLinkEntity);
@@ -34,7 +34,7 @@ namespace argos {
          /* Get the reference link */
          std::string strReferenceLink;
          GetNodeAttribute(t_tree, "ref", strReferenceLink);
-         CPrototypeLinkEntity::TVectorIterator itReferenceLink =
+         auto itReferenceLink =
             std::find_if(std::begin(m_vecLinks),
                          std::end(m_vecLinks),
                          [strReferenceLink] (const CPrototypeLinkEntity* pc_link) {
@@ -61,7 +61,7 @@ namespace argos {
    /****************************************/
 
    CPrototypeLinkEntity& CPrototypeLinkEquippedEntity::GetLink(const std::string& str_id) {
-      CPrototypeLinkEntity::TVectorIterator itLink =
+      auto itLink =
          std::find_if(std::begin(m_vecLinks),
                       std::end(m_vecLinks),
                       [str_id] (const CPrototypeLinkEntity* pc_link) {

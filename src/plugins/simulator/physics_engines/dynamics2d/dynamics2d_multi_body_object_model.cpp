@@ -92,7 +92,7 @@ namespace argos {
       for(size_t i = 0; i < m_vecBodies.size(); ++i) {
          tBoundingBox = cpShapeGetBB(m_vecBodies[i].Body->shapeList);
          for(cpShape* pt_shape = m_vecBodies[i].Body->shapeList->next;
-             pt_shape != NULL;
+             pt_shape != nullptr;
              pt_shape = pt_shape->next) {
             cpBB* ptBB = &pt_shape->bb;
             if(ptBB->l < tBoundingBox.l) tBoundingBox.l = ptBB->l;
@@ -117,12 +117,12 @@ namespace argos {
       if(m_vecBodies.empty()) return false;
       for(size_t i = 0; i < m_vecBodies.size(); ++i) {
          for(cpShape* pt_shape = m_vecBodies[i].Body->shapeList;
-             pt_shape != NULL;
+             pt_shape != nullptr;
              pt_shape = pt_shape->next) {
             if(cpSpaceShapeQuery(
                   const_cast<CDynamics2DMultiBodyObjectModel*>(this)->
                   GetDynamics2DEngine().GetPhysicsSpace(),
-                  pt_shape, NULL, NULL) > 0) {
+                  pt_shape, nullptr, nullptr) > 0) {
                return true;
             }
          }

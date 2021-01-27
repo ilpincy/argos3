@@ -13,7 +13,7 @@ namespace argos {
       m_fRange(0.0f),
       m_nImagePxWidth(0),
       m_nImagePxHeight(0),
-      m_psAnchor(NULL) {
+      m_psAnchor(nullptr) {
       Disable();
    }
 
@@ -61,7 +61,7 @@ namespace argos {
           * 3. the "body" is an embodied entity
           * If any of the above is false, this line will bomb out.
           */
-         CEmbodiedEntity& cBody = GetParent().GetComponent<CEmbodiedEntity>("body");
+         auto& cBody = GetParent().GetComponent<CEmbodiedEntity>("body");
          m_psAnchor = &cBody.GetAnchor(strAnchorId);
       }
       catch(CARGoSException& ex) {

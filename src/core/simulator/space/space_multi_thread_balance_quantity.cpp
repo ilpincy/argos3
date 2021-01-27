@@ -38,17 +38,17 @@ namespace argos {
    void* LaunchUpdateThreadBalanceQuantity(void* p_data) {
       LOG.AddThreadSafeBuffer();
       LOGERR.AddThreadSafeBuffer();
-      CSpaceMultiThreadBalanceQuantity::SUpdateThreadData* psData = reinterpret_cast<CSpaceMultiThreadBalanceQuantity::SUpdateThreadData*>(p_data);
+      auto* psData = reinterpret_cast<CSpaceMultiThreadBalanceQuantity::SUpdateThreadData*>(p_data);
       psData->Space->UpdateThread(psData->ThreadId);
-      return NULL;
+      return nullptr;
    }
 
    /****************************************/
    /****************************************/
 
    CSpaceMultiThreadBalanceQuantity::CSpaceMultiThreadBalanceQuantity() :
-      m_psUpdateThreadData(NULL),
-      m_ptUpdateThreads(NULL),
+      m_psUpdateThreadData(nullptr),
+      m_ptUpdateThreads(nullptr),
       m_bIsControllableEntityAssignmentRecalculationNeeded(true) {}
 
    /****************************************/
@@ -65,17 +65,17 @@ namespace argos {
       m_unPhysicsPhaseDoneCounter = CSimulator::GetInstance().GetNumThreads();
       m_unMediaPhaseDoneCounter = CSimulator::GetInstance().GetNumThreads();
       /* Then the mutexes */
-      if((nErrors = pthread_mutex_init(&m_tSenseControlStepConditionalMutex, NULL)) ||
-         (nErrors = pthread_mutex_init(&m_tActConditionalMutex, NULL)) ||
-         (nErrors = pthread_mutex_init(&m_tPhysicsConditionalMutex, NULL)) ||
-         (nErrors = pthread_mutex_init(&m_tMediaConditionalMutex, NULL))) {
+      if((nErrors = pthread_mutex_init(&m_tSenseControlStepConditionalMutex, nullptr)) ||
+         (nErrors = pthread_mutex_init(&m_tActConditionalMutex, nullptr)) ||
+         (nErrors = pthread_mutex_init(&m_tPhysicsConditionalMutex, nullptr)) ||
+         (nErrors = pthread_mutex_init(&m_tMediaConditionalMutex, nullptr))) {
          THROW_ARGOSEXCEPTION("Error creating thread mutexes " << ::strerror(nErrors));
       }
       /* Finally the conditionals */
-      if((nErrors = pthread_cond_init(&m_tSenseControlStepConditional, NULL)) ||
-         (nErrors = pthread_cond_init(&m_tActConditional, NULL)) ||
-         (nErrors = pthread_cond_init(&m_tPhysicsConditional, NULL)) ||
-         (nErrors = pthread_cond_init(&m_tMediaConditional, NULL))) {
+      if((nErrors = pthread_cond_init(&m_tSenseControlStepConditional, nullptr)) ||
+         (nErrors = pthread_cond_init(&m_tActConditional, nullptr)) ||
+         (nErrors = pthread_cond_init(&m_tPhysicsConditional, nullptr)) ||
+         (nErrors = pthread_cond_init(&m_tMediaConditional, nullptr))) {
          THROW_ARGOSEXCEPTION("Error creating thread conditionals " << ::strerror(nErrors));
       }
       /* Start threads */
@@ -95,7 +95,7 @@ namespace argos {
          m_psUpdateThreadData[i] = new SUpdateThreadData(i, this);
          /* Create the thread */
          if((nErrors = pthread_create(m_ptUpdateThreads + i,
-                                      NULL,
+                                      nullptr,
                                       LaunchUpdateThreadBalanceQuantity,
                                       reinterpret_cast<void*>(m_psUpdateThreadData[i])))) {
             THROW_ARGOSEXCEPTION("Error creating thread: " << ::strerror(nErrors));
@@ -109,13 +109,13 @@ namespace argos {
    void CSpaceMultiThreadBalanceQuantity::Destroy() {
       /* Destroy the threads to update the controllable entities */
       int nErrors;
-      if(m_ptUpdateThreads != NULL) {
+      if(m_ptUpdateThreads != nullptr) {
          for(UInt32 i = 0; i < CSimulator::GetInstance().GetNumThreads(); ++i) {
             if((nErrors = pthread_cancel(m_ptUpdateThreads[i]))) {
                THROW_ARGOSEXCEPTION("Error canceling controllable entities update threads " << ::strerror(nErrors));
             }
          }
-         void** ppJoinResult = new void*[CSimulator::GetInstance().GetNumThreads()];
+         auto** ppJoinResult = new void*[CSimulator::GetInstance().GetNumThreads()];
          for(UInt32 i = 0; i < CSimulator::GetInstance().GetNumThreads(); ++i) {
             if((nErrors = pthread_join(m_ptUpdateThreads[i], ppJoinResult + i))) {
                THROW_ARGOSEXCEPTION("Error joining controllable entities update threads " << ::strerror(nErrors));
@@ -128,7 +128,7 @@ namespace argos {
       }
       delete[] m_ptUpdateThreads;
       /* Destroy the thread launch info */
-      if(m_psUpdateThreadData != NULL) {
+      if(m_psUpdateThreadData != nullptr) {
          for(UInt32 i = 0; i < CSimulator::GetInstance().GetNumThreads(); ++i) {
             delete m_psUpdateThreadData[i];
          }
