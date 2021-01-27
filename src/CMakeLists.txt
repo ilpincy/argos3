@@ -29,7 +29,6 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
 # Set CMake policies to select wanted behaviors
 #
 # Use new policies introduced up to this version
-cmake_policy(VERSION 3.19)
 if(POLICY CMP0042)
   cmake_policy(SET CMP0042 NEW)
 endif(POLICY CMP0042)
