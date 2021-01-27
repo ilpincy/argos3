@@ -1,9 +1,4 @@
 #
-# Project name
-#
-project(argos3_${ARGOS_BUILD_FOR})
-
-#
 # General CPack configuration
 #
 # Version information

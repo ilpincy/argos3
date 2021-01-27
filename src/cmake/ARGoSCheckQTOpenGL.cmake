@@ -17,6 +17,14 @@
 # AUTHOR: Carlo Pinciroli <ilpincy@gmail.com>
 
 #
+# Set CMake policies to select wanted behaviors
+#
+# Use new policies introduced up to this version
+if(POLICY CMP0072)
+  cmake_policy(SET CMP0072 NEW)
+endif(POLICY CMP0072)
+
+#
 # Force avoidance of ARGoS Qt-OpenGL compilation
 #
 if(NOT DEFINED ARGOS_FORCE_NO_QTOPENGL)
@@ -59,9 +67,6 @@ if(NOT ARGOS_FORCE_NO_QTOPENGL)
     if(Qt5Widgets_FOUND AND Qt5Gui_FOUND)
       # QT5 found, is it the minimum required version?
       if(Qt5_VERSION VERSION_GREATER 5.4)
-        if (POLICY CMP0072)
-          cmake_policy (SET CMP0072 OLD)
-        endif(POLICY CMP0072)
         # QT is OK, now check for OpenGL
         find_package(OpenGL)
         if(OPENGL_FOUND)

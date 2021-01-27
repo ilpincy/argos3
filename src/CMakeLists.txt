@@ -4,23 +4,14 @@
 cmake_minimum_required(VERSION 3.5.1)
 
 #
-# Set the path additional cmake files must be searched for
+# Set build options
 #
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
+include(${CMAKE_SOURCE_DIR}/cmake/ARGoSBuildOptions.cmake)
 
 #
-# Set CMake policies to select wanted behaviors
+# Project name
 #
-# Use new policies introduced up to this version
-cmake_policy(VERSION 2.8.12)
-if(POLICY CMP0042)
-  cmake_policy(SET CMP0042 NEW)
-endif(POLICY CMP0042)
-
-#
-# Include path points to the base source dir
-#
-include_directories(${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR})
+project(argos3_${ARGOS_BUILD_FOR})
 
 #
 # Make sure we are under Unix
@@ -30,9 +21,23 @@ if(NOT UNIX)
 endif(NOT UNIX)
 
 #
-# Set build options
+# Set the path additional cmake files must be searched for
 #
-include(${CMAKE_SOURCE_DIR}/cmake/ARGoSBuildOptions.cmake)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
+
+#
+# Set CMake policies to select wanted behaviors
+#
+# Use new policies introduced up to this version
+cmake_policy(VERSION 3.19)
+if(POLICY CMP0042)
+  cmake_policy(SET CMP0042 NEW)
+endif(POLICY CMP0042)
+
+#
+# Include path points to the base source dir
+#
+include_directories(${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR})
 
 #
 # Set compiler flags

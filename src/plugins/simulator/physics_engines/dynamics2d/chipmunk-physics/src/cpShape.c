@@ -263,7 +263,7 @@ cpSegmentShapePointQuery(cpSegmentShape *seg, cpVect p){
 	return cpTrue;	
 }
 
-static inline cpBool inUnitRange(cpFloat t){return (0.0f < t && t < 1.0f);}
+/* static inline cpBool inUnitRange(cpFloat t){return (0.0f < t && t < 1.0f);} */
 
 static void
 cpSegmentShapeSegmentQuery(cpSegmentShape *seg, cpVect a, cpVect b, cpSegmentQueryInfo *info)

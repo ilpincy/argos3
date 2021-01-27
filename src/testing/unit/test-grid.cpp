@@ -7,11 +7,6 @@ using namespace argos;
 /****************************************/
 /****************************************/
 
-const size_t NUM_LEDS = 10;
-
-/****************************************/
-/****************************************/
-
 class CLEDEntityGridPrint : public CGrid<CLEDEntity>::COperation {
 
 public:

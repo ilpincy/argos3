@@ -100,12 +100,16 @@ find_package(ASCIIDoc)
 #
 # Check for Lua 5.3
 #
-FIND_PACKAGE(Lua "5.3" EXACT REQUIRED)
+find_package(Lua)
 if(LUA_FOUND)
-  set(ARGOS_WITH_LUA ON)
-  include_directories(${LUA_INCLUDE_DIR})
+  if(${LUA_VERSION_STRING} VERSION_GREATER_EQUAL "5.3")
+    set(ARGOS_WITH_LUA ON)
+    include_directories(${LUA_INCLUDE_DIR})
+  else()
+    message(FATAL_ERROR "Lua >=5.3 not found")
+  endif()
 else(LUA_FOUND)
-  message(FATAL_ERROR "Lua 5.3 not found")
+  message(FATAL_ERROR "Lua >=5.3 not found")
 endif(LUA_FOUND)
 
 #
