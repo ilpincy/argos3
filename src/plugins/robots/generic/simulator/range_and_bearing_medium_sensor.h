@@ -31,11 +31,20 @@ namespace argos {
 
       CRangeAndBearingMediumSensor();
       virtual ~CRangeAndBearingMediumSensor() {}
+
       virtual void SetRobot(CComposableEntity& c_entity);
+
       virtual void Init(TConfigurationNode& t_tree);
+
       virtual void Update();
+
       virtual void Reset();
+
       virtual void Destroy();
+
+      virtual void Enable();
+
+      virtual void Disable();
 
       /**
        * Returns true if the rays must be shown in the GUI.

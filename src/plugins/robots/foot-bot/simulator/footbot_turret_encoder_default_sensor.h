@@ -36,6 +36,10 @@ namespace argos {
 
       virtual void Reset();
 
+      virtual void Enable();
+
+      virtual void Disable();
+
    private:
 
       CFootBotTurretEntity* m_pcTurretEntity;

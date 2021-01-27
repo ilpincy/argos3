@@ -45,6 +45,8 @@ namespace argos {
             m_bAddNoise = true;
             m_pcRNG = CRandom::CreateRNG("argos");
          }
+         /* sensor is enabled by default */
+         Enable();
       }
       catch(CARGoSException& ex) {
          THROW_ARGOSEXCEPTION_NESTED("Initialization error in default positioning sensor", ex);
@@ -55,6 +57,10 @@ namespace argos {
    /****************************************/
    
    void CPositioningDefaultSensor::Update() {
+      /* sensor is disabled--nothing to do */
+      if (IsDisabled()) {
+        return;
+      }
       m_sReading.Position = m_pcEmbodiedEntity->GetOriginAnchor().Position;
       if(m_bAddNoise) {
          m_sReading.Position += CVector3(m_pcRNG->Uniform(m_cPosNoiseRange),
@@ -92,6 +98,8 @@ namespace argos {
                    "This sensor returns the current position and orientation of a robot. This sensor\n"
                    "can be used with any robot, since it accesses only the body component. In\n"
                    "controllers, you must include the ci_positioning_sensor.h header.\n\n"
+
+                   "This sensor is enabled by default.\n\n"
 
                    "REQUIRED XML CONFIGURATION\n\n"
                    "  <controllers>\n"

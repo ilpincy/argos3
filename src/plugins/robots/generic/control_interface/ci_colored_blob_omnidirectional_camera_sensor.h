@@ -117,16 +117,6 @@ namespace argos {
        */
       const SReadings& GetReadings() const;
 
-      /**
-       * Enables image acquisition and processing.
-       */
-      virtual void Enable() = 0;
-
-      /**
-       * Disables image acquisition and processing.
-       */
-      virtual void Disable() = 0;
-
 #ifdef ARGOS_WITH_LUA
       virtual void CreateLuaState(lua_State* pt_lua_state);
 

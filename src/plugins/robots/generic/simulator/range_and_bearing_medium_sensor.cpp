@@ -61,18 +61,22 @@ namespace argos {
          m_pcRangeAndBearingMedium = &(CSimulator::GetInstance().GetMedium<CRABMedium>(strMedium));
          /* Assign RAB entity to the medium */
          m_pcRangeAndBearingEquippedEntity->SetMedium(*m_pcRangeAndBearingMedium);
-         /* Enable the RAB equipped entity */
-         m_pcRangeAndBearingEquippedEntity->Enable();
       }
       catch(CARGoSException& ex) {
          THROW_ARGOSEXCEPTION_NESTED("Error initializing the range and bearing medium sensor", ex);
       }
+      /* sensor is enabled by default */
+      Enable();
    }
 
    /****************************************/
    /****************************************/
 
    void CRangeAndBearingMediumSensor::Update() {
+      /* sensor is disabled--nothing to do */
+      if (IsDisabled()) {
+        return;
+      }
       /** TODO: there's a more efficient way to implement this */
       /* Delete old readings */
       m_tReadings.clear();
@@ -149,6 +153,22 @@ namespace argos {
       m_tReadings.clear();
    }
 
+
+   /****************************************/
+   /****************************************/
+   void CRangeAndBearingMediumSensor::Enable() {
+     m_pcRangeAndBearingEquippedEntity->Enable();
+     CCI_Sensor::Enable();
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CRangeAndBearingMediumSensor::Disable() {
+     m_pcRangeAndBearingEquippedEntity->Disable();
+     CCI_Sensor::Disable();
+   }
+
    /****************************************/
    /****************************************/
 
@@ -175,6 +195,8 @@ namespace argos {
                    "range-and-bearing actuator.\n"
                    "To use this sensor, in controllers you must include the\n"
                    "ci_range_and_bearing_sensor.h header.\n\n"
+
+                   "This sensor is enabled by default.\n\n"
 
                    "REQUIRED XML CONFIGURATION\n\n"
                    "  <controllers>\n"

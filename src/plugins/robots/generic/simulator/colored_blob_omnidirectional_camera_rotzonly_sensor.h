@@ -56,8 +56,6 @@ namespace argos {
       }
 
    protected:
-
-      bool                                     m_bEnabled;
       COmnidirectionalCameraEquippedEntity*    m_pcOmnicamEntity;
       CControllableEntity*                     m_pcControllableEntity;
       CEmbodiedEntity*                         m_pcEmbodiedEntity;
