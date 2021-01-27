@@ -99,6 +99,7 @@ namespace argos {
 
    void CLEDMedium::AddEntity(CLEDEntity& c_entity) {
       m_pcLEDEntityIndex->AddEntity(c_entity);
+      m_pcLEDEntityIndex->Update();
    }
 
    /****************************************/
@@ -106,6 +107,7 @@ namespace argos {
 
    void CLEDMedium::RemoveEntity(CLEDEntity& c_entity) {
       m_pcLEDEntityIndex->RemoveEntity(c_entity);
+      m_pcLEDEntityIndex->Update();
    }
 
    /****************************************/

@@ -204,6 +204,7 @@ namespace argos {
          std::make_pair<ssize_t, CSet<CRABEquippedEntity*,SEntityComparator> >(
             c_entity.GetIndex(), CSet<CRABEquippedEntity*,SEntityComparator>()));
       m_pcRABEquippedEntityIndex->AddEntity(c_entity);
+      m_pcRABEquippedEntityIndex->Update();
    }
 
    /****************************************/
@@ -211,6 +212,7 @@ namespace argos {
 
    void CRABMedium::RemoveEntity(CRABEquippedEntity& c_entity) {
       m_pcRABEquippedEntityIndex->RemoveEntity(c_entity);
+      m_pcRABEquippedEntityIndex->Update();
       TRoutingTable::iterator it = m_tRoutingTable.find(c_entity.GetIndex());
       if(it != m_tRoutingTable.end())
          m_tRoutingTable.erase(it);
