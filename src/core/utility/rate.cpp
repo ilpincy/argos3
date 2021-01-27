@@ -40,7 +40,7 @@ void CRate::Sleep() {
   /* Sleep if necessary */
   if(unMicroSecDiff < m_unNominalPeriod) {
     ::timespec tSleepPeriod;
-    tSleepPeriod.tv_sec = (m_unNominalPeriod - unMicroSecDiff) / 1e6;
+    tSleepPeriod.tv_sec = static_cast<UInt32>((m_unNominalPeriod - unMicroSecDiff) / 1e6);
     tSleepPeriod.tv_nsec = (m_unNominalPeriod - unMicroSecDiff) * 1000;
     ::nanosleep(&tSleepPeriod, nullptr);
   }
