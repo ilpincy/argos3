@@ -24,6 +24,14 @@ namespace argos {
          InvalidRequest
       };
 
+      struct __attribute__((__packed__)) SMsg {
+         UInt16 PayloadSize;
+         UInt8 More;
+
+         SMsg(UInt16 un_payload_size = 0, UInt8 un_more = 0);
+         static SMsg Parse(const UInt8* pch_buf);
+      };
+
    public:
 
       CTCPSocket(int n_stream = -1);
@@ -166,6 +174,10 @@ namespace argos {
        * @see SendByteArray
        */
       bool ReceiveByteArray(CByteArray& c_byte_array);
+
+      void SendMsg(CByteArray& c_payload, bool b_more = false);
+
+      void RecvMsg(CByteArray& c_payload);
 
    private:
 

@@ -10,8 +10,22 @@
 #include <sys/socket.h>
 #include <poll.h>
 #include <unistd.h>
+#include <arpa/inet.h>
 
 namespace argos {
+
+   /****************************************/
+   /****************************************/
+
+   CTCPSocket::SMsg::SMsg(UInt16 un_payload_size, UInt8 un_more) :
+      PayloadSize(un_payload_size),
+      More(un_more) {}
+
+   CTCPSocket::SMsg CTCPSocket::SMsg::Parse(const UInt8* pch_buf) {
+      UInt16 unPS = ntohs(*reinterpret_cast<const UInt16*>(pch_buf));
+      UInt8 unMore = pch_buf[2];
+      return SMsg(unPS, unMore);
+   }
 
    /****************************************/
    /****************************************/
@@ -249,6 +263,37 @@ namespace argos {
          }
       }
       return false;
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CTCPSocket::SendMsg(CByteArray& c_payload, bool b_more) {
+      SMsg sMsg(c_payload.Size(), b_more);
+      /* Send header */
+      SendBuffer(reinterpret_cast<UInt8*>(&sMsg), sizeof(SMsg));
+      /* Send payload */
+      SendBuffer(c_payload.ToCArray(), c_payload.Size());
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CTCPSocket::RecvMsg(CByteArray& c_payload) {
+      bool bMore = true;
+      UInt8 pchHeader[sizeof(SMsg)];
+      while(bMore) {
+         /* Receive header */
+         ReceiveBuffer(pchHeader, sizeof(SMsg));
+         SMsg sMsg = SMsg::Parse(pchHeader);
+         bMore = sMsg.More;
+         /* Receive the payload */
+         UInt8* pchBuf = new UInt8[sMsg.PayloadSize];
+         ReceiveBuffer(pchBuf, sMsg.PayloadSize);
+         /* Append payload to buffer */
+         c_payload.AddBuffer(pchBuf, sMsg.PayloadSize);
+         delete[] pchBuf;
+      }
    }
 
    /****************************************/
