@@ -167,7 +167,7 @@ namespace argos {
        */
       bool ReceiveByteArray(CByteArray& c_byte_array);
 
-      void SendMsg(CByteArray& c_payload, bool b_more = false);
+      void SendMsg(const CByteArray& c_payload, bool b_more = false);
 
       void RecvMsg(CByteArray& c_payload);
 

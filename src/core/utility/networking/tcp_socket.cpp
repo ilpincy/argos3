@@ -255,7 +255,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CTCPSocket::SendMsg(CByteArray& c_payload, bool b_more) {
+   void CTCPSocket::SendMsg(const CByteArray& c_payload, bool b_more) {
       /* Make header */
       UInt8 punHead[3];
       *reinterpret_cast<UInt16*>(punHead) = htons(c_payload.Size());
