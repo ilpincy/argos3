@@ -192,7 +192,7 @@ namespace argos {
          QString strFileName = QString("%1/%2%3.%4")
             .arg(m_sFrameGrabData.Directory)
             .arg(m_sFrameGrabData.BaseName)
-            .arg(m_cSpace.GetSimulationClock(), 5, 10, QChar('0'))
+            .arg(m_cSpace.GetSimulationClock(), 10, 10, QChar('0'))
             .arg(m_sFrameGrabData.Format);
          QToolTip::showText(pos() + geometry().center(), "Stored frame to \"" + strFileName);
          grabFramebuffer()
