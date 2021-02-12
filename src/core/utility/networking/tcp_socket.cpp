@@ -17,19 +17,6 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   CTCPSocket::SMsg::SMsg(UInt16 un_payload_size, UInt8 un_more) :
-      PayloadSize(un_payload_size),
-      More(un_more) {}
-
-   CTCPSocket::SMsg CTCPSocket::SMsg::Parse(const UInt8* pch_buf) {
-      UInt16 unPS = ntohs(*reinterpret_cast<const UInt16*>(pch_buf));
-      UInt8 unMore = pch_buf[2];
-      return SMsg(unPS, unMore);
-   }
-
-   /****************************************/
-   /****************************************/
-
    CTCPSocket::CTCPSocket(int n_stream) :
       m_nStream(n_stream) {
    }
@@ -269,9 +256,12 @@ namespace argos {
    /****************************************/
 
    void CTCPSocket::SendMsg(CByteArray& c_payload, bool b_more) {
-      SMsg sMsg(c_payload.Size(), b_more);
+      /* Make header */
+      UInt8 punHead[3];
+      *reinterpret_cast<UInt16*>(punHead) = htons(c_payload.Size());
+      punHead[2] = b_more;
       /* Send header */
-      SendBuffer(reinterpret_cast<UInt8*>(&sMsg), sizeof(SMsg));
+      SendBuffer(punHead, 3);
       /* Send payload */
       SendBuffer(c_payload.ToCArray(), c_payload.Size());
    }
@@ -281,17 +271,18 @@ namespace argos {
 
    void CTCPSocket::RecvMsg(CByteArray& c_payload) {
       bool bMore = true;
-      UInt8 pchHeader[sizeof(SMsg)];
+      UInt8 pchHead[3];
+      UInt16 unPayloadSize;
       while(bMore) {
          /* Receive header */
-         ReceiveBuffer(pchHeader, sizeof(SMsg));
-         SMsg sMsg = SMsg::Parse(pchHeader);
-         bMore = sMsg.More;
+         ReceiveBuffer(pchHead, 3);
+         unPayloadSize = ntohs(*reinterpret_cast<UInt16*>(pchHead));
+         bMore = (pchHead[2] == 1);
          /* Receive the payload */
-         UInt8* pchBuf = new UInt8[sMsg.PayloadSize];
-         ReceiveBuffer(pchBuf, sMsg.PayloadSize);
+         UInt8* pchBuf = new UInt8[unPayloadSize];
+         ReceiveBuffer(pchBuf, unPayloadSize);
          /* Append payload to buffer */
-         c_payload.AddBuffer(pchBuf, sMsg.PayloadSize);
+         c_payload.AddBuffer(pchBuf, unPayloadSize);
          delete[] pchBuf;
       }
    }
