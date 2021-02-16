@@ -207,7 +207,7 @@ namespace argos {
 
       /**
        * Returns the dot product between this vector and the passed one.
-       * @param c_vector3 The other vector.
+       * @param c_vector2 The other vector.
        * @return The dot product between this vector and the passed one.
        */
       inline Real DotProduct(const CVector2& c_vector2) const {
@@ -216,11 +216,11 @@ namespace argos {
 
       /**
        * Returns the cross product between this vector and the passed one.
-       * @param c_vector3 The other vector.
+       * @param c_vector2 The other vector.
        * @return The cross product between this vector and the passed one.
        */
       inline Real CrossProduct(const CVector2& c_vector2) const {
-         return m_fX * c_vector2.m_fY + m_fY * c_vector2.m_fX;
+         return m_fX * c_vector2.m_fY - m_fY * c_vector2.m_fX;
       }
 
       /**
@@ -293,7 +293,7 @@ namespace argos {
 
       /**
        * Subtracts the passed vector from this vector.
-       * @param c_vector3 The other vector.
+       * @param c_vector2 The other vector.
        * @returns A reference to this vector.
        */
       inline CVector2& operator-=(const CVector2& c_vector2) {
@@ -391,7 +391,7 @@ namespace argos {
       /**
        * Returns a new vector containing the multiplication between the passed value and the passed vector.
        * @param f_value The value.
-       * @param c_vector3 The vector.
+       * @param c_vector2 The vector.
        * @return A new vector containing the multiplication between the passed value and the passed vector.
        */
       inline friend CVector2 operator*(Real f_value,
