@@ -220,7 +220,7 @@ namespace argos {
        * @return The cross product between this vector and the passed one.
        */
       inline Real CrossProduct(const CVector2& c_vector2) const {
-         return m_fX * c_vector2.m_fY + m_fY * c_vector2.m_fX;
+         return m_fX * c_vector2.m_fY - m_fY * c_vector2.m_fX;
       }
 
       /**
