@@ -74,11 +74,11 @@ namespace argos {
          /* enable client states, set pointers */
          if (!m_vecOpenGLPositions.empty()) {
             glEnableClientState(GL_VERTEX_ARRAY);
-            glVertexPointer(3, GL_FLOAT, sizeof(GLfloat) * 3, m_vecOpenGLPositions.data());
+            glVertexPointer(3, GL_DOUBLE, sizeof(GLdouble) * 3, m_vecOpenGLPositions.data());
          }
          if (!m_vecOpenGLNormals.empty()) {
             glEnableClientState(GL_NORMAL_ARRAY);
-            glNormalPointer(GL_FLOAT, sizeof(GLfloat) * 3, m_vecOpenGLNormals.data());
+            glNormalPointer(GL_DOUBLE, sizeof(GLdouble) * 3, m_vecOpenGLNormals.data());
          }
          /* draw the triangles */
          glDrawElements(GL_TRIANGLES, s_mesh.Triangles.size(), GL_UNSIGNED_INT, s_mesh.Triangles.data());
@@ -273,18 +273,35 @@ namespace argos {
             }
          }
          else if(cLineBufferSplit[0] == "v") {
+#ifdef ARGOS_USE_DOUBLE
+            m_vecVertexCoords.emplace_back(cLineBufferSplit.value(1).toDouble(),
+                                           cLineBufferSplit.value(2).toDouble(),
+                                           cLineBufferSplit.value(3).toDouble());
+#else
             m_vecVertexCoords.emplace_back(cLineBufferSplit.value(1).toFloat(),
                                            cLineBufferSplit.value(2).toFloat(),
                                            cLineBufferSplit.value(3).toFloat());
+#endif
          }
          else if(cLineBufferSplit[0] == "vn") {
+#ifdef ARGOS_USE_DOUBLE
+            m_vecNormals.emplace_back(cLineBufferSplit.value(1).toDouble(),
+                                      cLineBufferSplit.value(2).toDouble(),
+                                      cLineBufferSplit.value(3).toDouble());
+#else
             m_vecNormals.emplace_back(cLineBufferSplit.value(1).toFloat(),
                                       cLineBufferSplit.value(2).toFloat(),
                                       cLineBufferSplit.value(3).toFloat());
+#endif
          }
          else if(cLineBufferSplit[0] == "vt") {
+#ifdef ARGOS_USE_DOUBLE
+            m_vecTextureCoords.emplace_back(cLineBufferSplit.value(1).toDouble(),
+                                            cLineBufferSplit.value(2).toDouble());
+#else
             m_vecTextureCoords.emplace_back(cLineBufferSplit.value(1).toFloat(),
                                             cLineBufferSplit.value(2).toFloat());
+#endif
          }
       }
    }
