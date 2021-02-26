@@ -14,6 +14,7 @@
 #include <argos3/plugins/simulator/entities/magnet_equipped_entity.h>
 #include <argos3/core/utility/datatypes/datatypes.h>
 #include <functional>
+#include <limits>
 #include <vector>
 
 namespace argos {
