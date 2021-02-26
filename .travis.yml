@@ -1,0 +1,232 @@
+language: cpp
+
+os:
+  - linux
+
+dist:
+  - focal
+
+addons:
+  homebrew:
+    packages:
+      - pkg-config
+      - cmake
+      - libpng
+      - freeimage
+      - lua
+      - qt
+      - docbook
+      - asciidoc
+      - graphviz
+      - doxygen
+
+  apt:
+    packages: &argos_deps_linux
+      - cmake
+      - libfreeimage-dev
+      - libfreeimageplus-dev
+      - qt5-default
+      - freeglut3-dev
+      - libxi-dev
+      - libxmu-dev
+      - liblua5.3-dev
+      - lua5.3
+      - doxygen
+      - graphviz
+      - libgraphviz-dev
+      - asciidoc
+
+branches:
+  only:
+    - enh/27-travis-ci
+
+jobs:
+  include:
+    # First, testing with GCC 7-10 on linux
+    - os: linux
+      env: ARGOS_CC=gcc-7 ARGOS_CXX=g++-7
+      addons:
+        apt:
+          sources:
+            - sourceline: 'ppa:ubuntu-toolchain-r/test'
+          packages:
+            - *argos_deps_linux
+            - g++-7
+    - os: linux
+      env: ARGOS_CC=gcc-8 ARGOS_CXX=g++-8
+      addons:
+        apt:
+          sources:
+            - sourceline: 'ppa:ubuntu-toolchain-r/test'
+          packages:
+            - *argos_deps_linux
+            - g++-8
+    - os: linux
+      env: ARGOS_CC=gcc-9 ARGOS_CXX=g++-9
+      addons:
+        apt:
+          sources:
+            - sourceline: 'ppa:ubuntu-toolchain-r/test'
+          packages:
+            - *argos_deps_linux
+            - g++-9
+
+    - os: linux
+      env: ARGOS_CC=gcc-9 ARGOS_CXX=g++-9
+      addons:
+        apt:
+          sources:
+            - sourceline: 'ppa:ubuntu-toolchain-r/test'
+          packages:
+            - *argos_deps_linux
+            - g++-9
+
+    - os: linux
+      env: ARGOS_CC=gcc-10 ARGOS_CXX=g++-10
+      addons:
+        apt:
+          sources:
+            - sourceline: 'ppa:ubuntu-toolchain-r/test'
+          packages:
+            - *argos_deps_linux
+            - g++-10
+
+    # Next, testing clang 6-12 on linux
+    - os: linux
+      env: ARGOS_CC=clang-6.0 ARGOS_CXX=clang++-6.0
+      addons:
+        apt:
+          sources:
+            - sourceline: 'deb http://apt.llvm.org/focal/ llvm-toolchain-$TRAVIS_DIST-6 main'
+              key_url: 'https://apt.llvm.org/llvm-snapshot.gpg.key'
+          packages:
+            - *argos_deps_linux
+            - clang++-6
+
+    - os: linux
+      env: ARGOS_CC=clang-7 ARGOS_CXX=clang++-7
+      addons:
+        apt:
+          sources:
+            - sourceline: 'deb http://apt.llvm.org/focal/ llvm-toolchain-$TRAVIS_DIST-7 main'
+              key_url: 'https://apt.llvm.org/llvm-snapshot.gpg.key'
+          packages:
+            - *argos_deps_linux
+            - clang++-7
+    - os: linux
+      env: ARGOS_CC=clang-8 ARGOS_CXX=clang++-8
+      addons:
+        apt:
+          sources:
+            - sourceline: 'deb http://apt.llvm.org/focal/ llvm-toolchain-$TRAVIS_DIST-8 main'
+              key_url: 'https://apt.llvm.org/llvm-snapshot.gpg.key'
+          packages:
+            - *argos_deps_linux
+            - clang++-8
+    - os: linux
+      env: ARGOS_CC=clang-9 ARGOS_CXX=clang++-9
+      addons:
+        apt:
+          sources:
+            - sourceline: 'deb http://apt.llvm.org/focal/ llvm-toolchain-$TRAVIS_DIST-9 main'
+              key_url: 'https://apt.llvm.org/llvm-snapshot.gpg.key'
+          packages:
+            - *argos_deps_linux
+            - clang++-9
+    - os: linux
+      env: ARGOS_CC=clang-10 ARGOS_CXX=clang++-10
+      addons:
+        apt:
+          sources:
+            - sourceline: 'deb http://apt.llvm.org/focal/ llvm-toolchain-$TRAVIS_DIST-10 main'
+              key_url: 'https://apt.llvm.org/llvm-snapshot.gpg.key'
+          packages:
+            - *argos_deps_linux
+            - clang++-10
+    - os: linux
+      env: ARGOS_CC=clang-11 ARGOS_CXX=clang++-11
+      addons:
+        apt:
+          sources:
+            - sourceline: 'deb http://apt.llvm.org/focal/ llvm-toolchain-$TRAVIS_DIST-11 main'
+              key_url: 'https://apt.llvm.org/llvm-snapshot.gpg.key'
+          packages:
+            - *argos_deps_linux
+            - clang++-11
+    - os: linux
+      env: ARGOS_CC=clang-12 ARGOS_CXX=clang++-12
+      addons:
+        apt:
+          sources:
+            - sourceline: 'deb http://apt.llvm.org/focal/ llvm-toolchain-$TRAVIS_DIST-12 main'
+              key_url: 'https://apt.llvm.org/llvm-snapshot.gpg.key'
+          packages:
+            - *argos_deps_linux
+            - clang++-12
+
+    # Next, testing clang 10-12 on OSX
+    - os: osx
+      env: ARGOS_CC=clang ARGOS_CXX=clang++
+      osx_image: xcode10
+
+    - os: osx
+      env: ARGOS_CC=clang ARGOS_CXX=clang++
+      osx_image: xcode11
+
+    - os: osx
+      env: ARGOS_CC=clang ARGOS_CXX=clang++
+      osx_image: xcode12
+
+    # Next, test GCC 7-10 on OpenSUSE. Notes:
+    #
+    # - We have to have two scripts for openSUSE+docker, because the 'su'
+    #   command does not exist in the image. The first script sets up the ARGoS
+    #   build environment, and the second one builds and tests ARGoS.
+    #
+    # - We need the 'unconfined' security policy because otherwise we can't
+    #   properly mock openssh server installs and therefore cannot install git.
+    - os: linux
+      env:
+        - ARGOS_COMPILER_VERSION=7
+        - ARGOS_CC_PKG=gcc$ARGOS_COMPILER_VERSION
+        - ARGOS_CXX_PKG=gcc$ARGOS_COMPILER_VERSION-c++
+        - ARGOS_CC=gcc-$ARGOS_COMPILER_VERSION
+        - ARGOS_CXX=g++-$ARGOS_COMPILER_VERSION
+        - ARGOS_OPENSUSE=1
+      services:
+        - docker
+
+    - os: linux
+      env:
+        - ARGOS_COMPILER_VERSION=9
+        - ARGOS_CC_PKG=gcc$ARGOS_COMPILER_VERSION
+        - ARGOS_CXX_PKG=gcc$ARGOS_COMPILER_VERSION-c++
+        - ARGOS_CC=gcc-$ARGOS_COMPILER_VERSION
+        - ARGOS_CXX=g++-$ARGOS_COMPILER_VERSION
+        - ARGOS_OPENSUSE=1
+      services:
+        - docker
+
+    - os: linux
+      env:
+        - ARGOS_COMPILER_VERSION=10
+        - ARGOS_CC_PKG=gcc$ARGO_COMPILER_VERSION
+        - ARGOS_CXX_PKG=gcc$ARGOS_COMPILER_VERSION-c++
+        - ARGOS_CC=gcc-$ARGOS_COMPILER_VERSION
+        - ARGOS_CXX=g++-$ARGOS_COMPILER_VERSION
+        - ARGOS_OPENSUSE=1
+      services:
+        - docker
+
+
+script:
+  - if [ -n "$ARGOS_OPENSUSE" ]; then
+    sudo docker pull opensuse/tumbleweed;
+    sudo docker run --security-opt seccomp:unconfined -dit --name=opensuse opensuse/tumbleweed;
+    sudo docker exec -i -e ARGOS_CC_PKG=$ARGOS_CC_PKG -e ARGOS_CXX_PKG=$ARGOS_CXX_PKG opensuse bash < src/scripts/travis-opensuse-setup.sh;
+    sudo docker exec -u argos-user -e ARGOS_CC=$ARGOS_CC -e ARGOS_CXX=$ARGOS_CXX -i opensuse bash < src/scripts/travis-opensuse-test.sh;
+    else
+    mkdir -p build && cd build;
+    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=$ARGOS_CC -DCMAKE_CXX_COMPILER=$ARGOS_CXX -DARGOS_INSTALL_LDSOCONF=OFF -DCMAKE_INSTALL_PREFIX=$HOME/.local ../src;
+    make;
+    fi;
