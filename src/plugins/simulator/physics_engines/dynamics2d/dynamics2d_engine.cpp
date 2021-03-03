@@ -25,7 +25,7 @@ namespace argos {
       m_fCylinderAngularFriction(1.49),
       m_ptSpace(nullptr),
       m_ptGroundBody(nullptr),
-      m_fGrippingRigidity(1000.0),
+      m_fGrippingRigidity(10000.0),
       m_fElevation(0.0f) {
    }
 
