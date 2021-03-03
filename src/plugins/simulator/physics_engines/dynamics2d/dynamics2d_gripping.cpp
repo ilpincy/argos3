@@ -68,7 +68,6 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   static cpFloat GRIPPING_SPRING_STIFFNESS = 100.0;
    static cpFloat GRIPPING_SPRING_DAMPING = 0.99;
    
    void CDynamics2DGripper::Grip(CDynamics2DGrippable* pc_grippee) {
@@ -81,7 +80,7 @@ namespace argos {
                                  cpBodyWorld2Local(cpShapeGetBody(pc_grippee->GetShape()),
                                                    m_tGrippeeAnchor),
                                  m_fRestLength,
-                                 GRIPPING_SPRING_STIFFNESS,
+                                 m_cEngine.GetGrippingRigidity(),
                                  GRIPPING_SPRING_DAMPING));
       m_tConstraint->maxBias = 0.95f;     // Correct overlap
       m_tConstraint->maxForce = 10000.0f; // Max correction speed

@@ -118,6 +118,14 @@ namespace argos {
          m_ptSpace->gravity = cpv(c_gravity.GetX(), c_gravity.GetY());
       }
 
+      inline Real GetGrippingRigidity() const {
+         return m_fGrippingRigidity;
+      }
+
+      inline void SetGrippingRigidity(Real f_gripping_rigidity) {
+         m_fGrippingRigidity = f_gripping_rigidity;
+      }
+
       void PositionPhysicsToSpace(CVector3& c_new_pos,
                                   const CVector3& c_original_pos,
                                   const cpBody* pt_body);
@@ -137,6 +145,7 @@ namespace argos {
       cpFloat m_fCylinderAngularFriction;
       cpSpace* m_ptSpace;
       cpBody* m_ptGroundBody;
+      Real m_fGrippingRigidity;
       Real m_fElevation;
 
       CControllableEntity::TMap m_tControllableEntities;

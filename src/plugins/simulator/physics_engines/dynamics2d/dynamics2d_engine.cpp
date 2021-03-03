@@ -25,6 +25,7 @@ namespace argos {
       m_fCylinderAngularFriction(1.49),
       m_ptSpace(nullptr),
       m_ptGroundBody(nullptr),
+      m_fGrippingRigidity(1000.0),
       m_fElevation(0.0f) {
    }
 
@@ -44,6 +45,7 @@ namespace argos {
             GetNodeAttributeOrDefault(tNode, "cylinder_linear_friction",  m_fCylinderLinearFriction,  m_fCylinderLinearFriction);
             GetNodeAttributeOrDefault(tNode, "cylinder_angular_friction", m_fCylinderAngularFriction, m_fCylinderAngularFriction);
          }
+         GetNodeAttributeOrDefault(t_tree, "gripping_rigidity", m_fGrippingRigidity, m_fGrippingRigidity);
          /* Override volume top and bottom with the value of m_fElevation */
          if(!GetVolume().TopFace)    GetVolume().TopFace    = new SHorizontalFace;
          if(!GetVolume().BottomFace) GetVolume().BottomFace = new SHorizontalFace;
