@@ -147,6 +147,8 @@ namespace argos {
       for(size_t i = 0; i < m_pcEmbodiedEntity->GetPhysicsModelsNum(); ++i) {
          dynamic_cast<CPhysicsCylinderModel&>(m_pcEmbodiedEntity->GetPhysicsModel(i)).Resize(f_radius, f_height);
       }
+      /* Update bounding box */
+      m_pcEmbodiedEntity->CalculateBoundingBox();
    }
 
    /****************************************/

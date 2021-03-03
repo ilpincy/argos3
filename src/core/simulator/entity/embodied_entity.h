@@ -308,8 +308,6 @@ namespace argos {
          return "body";
       }
 
-   protected:
-
       /**
        * Calculates the bounding box of this entity.
        * In case of association to multiple models, the resulting bounding
