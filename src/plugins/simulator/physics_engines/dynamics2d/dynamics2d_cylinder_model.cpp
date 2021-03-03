@@ -100,8 +100,8 @@ namespace argos {
          /* This shape is normal (not grippable, not gripper) */
          ptShape->collision_type = CDynamics2DEngine::SHAPE_NORMAL;
       }
-      /* Update bounding box */
-      CalculateBoundingBox();
+      /* Set the body so that the default methods work as expected */
+      SetBody(GetBody(), f_height);
    }
    
    /****************************************/
