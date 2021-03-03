@@ -62,13 +62,13 @@ namespace argos {
       /* Calculate rest length */
       CP_ARBITER_GET_BODIES(pt_arb, ptGripperBody, ptGrippeeBody);
       m_fRestLength = cpvdist(cpBodyGetPos(ptGripperBody),
-                              cpBodyGetPos(ptGrippeeBody));
+                              m_tGrippeeAnchor);
    }
 
    /****************************************/
    /****************************************/
 
-   static cpFloat GRIPPING_SPRING_STIFFNESS = 10.0;
+   static cpFloat GRIPPING_SPRING_STIFFNESS = 100.0;
    static cpFloat GRIPPING_SPRING_DAMPING = 0.99;
    
    void CDynamics2DGripper::Grip(CDynamics2DGrippable* pc_grippee) {
