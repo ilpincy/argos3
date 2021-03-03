@@ -10,9 +10,11 @@
 namespace argos {
    class CDynamics2DGrippable;
    class CDynamics2DCylinderModel;
+   class CPhysicsCylinderModel;
 }
 
 #include <argos3/plugins/simulator/physics_engines/dynamics2d/dynamics2d_stretchable_object_model.h>
+#include <argos3/plugins/simulator/physics_engines/physics_cylinder_model.h>
 #include <argos3/plugins/simulator/entities/cylinder_entity.h>
 
 namespace argos {
@@ -23,7 +25,9 @@ namespace argos {
 
       CDynamics2DCylinderModel(CDynamics2DEngine& c_engine,
                                CCylinderEntity& c_entity);
-      virtual ~CDynamics2DCylinderModel() {}      
+      virtual ~CDynamics2DCylinderModel() {}
+
+      void Resize(Real f_radius, Real f_height);
    };
 
 }

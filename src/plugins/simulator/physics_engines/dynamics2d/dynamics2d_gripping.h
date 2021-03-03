@@ -61,6 +61,16 @@ namespace argos {
          return m_tConstraint;
       }
 
+      /**
+       * Returns the extension of the constraint.
+       * It is calculated as
+       *
+       * AnchorDistance / RestLength
+       *
+       * where AnchorDistance is the current distance between the anchors attached to the gripper and the grippee.
+       */
+      Real GetExtension() const;
+
       void CalculateAnchor(cpArbiter* pt_arb);
 
       void Grip(CDynamics2DGrippable* pc_grippee);
@@ -73,8 +83,9 @@ namespace argos {
       CGripperEquippedEntity& m_cGripperEntity;
       cpShape*                m_ptGripperShape;
       CDynamics2DGrippable*   m_pcGrippee;
-      cpVect                  m_tAnchor;
+      cpVect                  m_tGrippeeAnchor;
       cpConstraint*           m_tConstraint;
+      cpFloat                 m_fRestLength;
 
    };
 

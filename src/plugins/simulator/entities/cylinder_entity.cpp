@@ -9,6 +9,7 @@
 #include <argos3/core/simulator/space/space.h>
 #include <argos3/core/simulator/simulator.h>
 #include <argos3/plugins/simulator/media/led_medium.h>
+#include <argos3/plugins/simulator/physics_engines/physics_cylinder_model.h>
 
 namespace argos {
 
@@ -133,6 +134,19 @@ namespace argos {
                                     GetEmbodiedEntity().GetOriginAnchor(),
                                     c_color);
       UpdateComponents();
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CCylinderEntity::Resize(Real f_radius, Real f_height) {
+      /* Store size */
+      m_fRadius = f_radius;
+      m_fHeight = f_height;
+      /* Go through the physics box models and call resize on them */
+      for(size_t i = 0; i < m_pcEmbodiedEntity->GetPhysicsModelsNum(); ++i) {
+         dynamic_cast<CPhysicsCylinderModel&>(m_pcEmbodiedEntity->GetPhysicsModel(i)).Resize(f_radius, f_height);
+      }
    }
 
    /****************************************/

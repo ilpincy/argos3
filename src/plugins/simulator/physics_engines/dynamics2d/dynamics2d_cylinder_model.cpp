@@ -76,6 +76,35 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   void CDynamics2DCylinderModel::Resize(Real f_radius, Real f_height) {
+      /* Remove existing shape */
+      cpSpaceRemoveShape(GetDynamics2DEngine().GetPhysicsSpace(),
+                         GetBody()->shapeList);
+      /* Create the shape */
+      cpShape* ptShape = cpSpaceAddShape(GetDynamics2DEngine().GetPhysicsSpace(),
+                                         cpCircleShapeNew(GetBody(), f_radius, cpvzero));
+      if(GetEmbodiedEntity().IsMovable()) {
+         /* The box is movable */
+         ptShape->e = 0.0; // no elasticity
+         ptShape->u = 0.7; // lots contact friction to help pushing
+         /* The shape is grippable */
+         GetGrippable()->ReleaseAll();
+         delete GetGrippable();
+         SetGrippable(new CDynamics2DGrippable(GetEmbodiedEntity(),
+                                               ptShape));
+      }
+      else {
+         /* The box is not movable */
+         ptShape->e = 0.0; // No elasticity
+         ptShape->u = 0.1; // Little contact friction to help sliding away
+         /* This shape is normal (not grippable, not gripper) */
+         ptShape->collision_type = CDynamics2DEngine::SHAPE_NORMAL;
+      }
+   }
+   
+   /****************************************/
+   /****************************************/
+
    REGISTER_STANDARD_DYNAMICS2D_OPERATIONS_ON_ENTITY(CCylinderEntity, CDynamics2DCylinderModel);
 
    /****************************************/

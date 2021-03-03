@@ -81,9 +81,7 @@ namespace argos {
          return m_cSize;
       }
 
-      inline void SetSize(const CVector3& c_size) {
-         m_cSize = c_size;
-      }
+      void Resize(const CVector3& c_size);
 
       inline Real GetMass() const {
          return m_fMass;

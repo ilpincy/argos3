@@ -27,7 +27,7 @@ namespace argos {
       m_ptGripperShape->sensor = 1;
       m_ptGripperShape->collision_type = CDynamics2DEngine::SHAPE_GRIPPER;
       m_ptGripperShape->data = this;
-      m_tAnchor = cpvzero;
+      m_tGrippeeAnchor = cpvzero;
    }
 
    /****************************************/
@@ -40,26 +40,49 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CDynamics2DGripper::CalculateAnchor(cpArbiter* pt_arb) {
-      /* Calculate the anchor point on the grippable body
-         as the centroid of the contact points */
-      m_tAnchor = cpvzero;
-      for(SInt32 i = 0; i < cpArbiterGetCount(pt_arb); ++i) {
-         m_tAnchor = cpvadd(m_tAnchor, cpArbiterGetPoint(pt_arb, i));
-      }
-      m_tAnchor = cpvmult(m_tAnchor, 1.0f / cpArbiterGetCount(pt_arb));
+   Real CDynamics2DGripper::GetExtension() const {
+      return
+         cpvdist(cpBodyGetPos(cpShapeGetBody(m_ptGripperShape)),
+                 cpBodyGetPos(cpShapeGetBody(m_pcGrippee->GetShape()))) /
+         m_fRestLength - 1.0;
+      
    }
 
    /****************************************/
    /****************************************/
+
+   void CDynamics2DGripper::CalculateAnchor(cpArbiter* pt_arb) {
+      /* Calculate the anchor point on the grippable body
+         as the centroid of the contact points */
+      m_tGrippeeAnchor = cpvzero;
+      for(SInt32 i = 0; i < cpArbiterGetCount(pt_arb); ++i) {
+         m_tGrippeeAnchor = cpvadd(m_tGrippeeAnchor, cpArbiterGetPoint(pt_arb, i));
+      }
+      m_tGrippeeAnchor = cpvmult(m_tGrippeeAnchor, 1.0f / cpArbiterGetCount(pt_arb));
+      /* Calculate rest length */
+      CP_ARBITER_GET_BODIES(pt_arb, ptGripperBody, ptGrippeeBody);
+      m_fRestLength = cpvdist(cpBodyGetPos(ptGripperBody),
+                              cpBodyGetPos(ptGrippeeBody));
+   }
+
+   /****************************************/
+   /****************************************/
+
+   static cpFloat GRIPPING_SPRING_STIFFNESS = 1.0;
+   static cpFloat GRIPPING_SPRING_DAMPING = 0.99;
    
    void CDynamics2DGripper::Grip(CDynamics2DGrippable* pc_grippee) {
       m_tConstraint =
          cpSpaceAddConstraint(m_cEngine.GetPhysicsSpace(),
-                              cpPivotJointNew(
-                                 m_ptGripperShape->body,
-                                 pc_grippee->GetShape()->body,
-                                 m_tAnchor));
+                              cpDampedSpringNew(
+                                 cpShapeGetBody(m_ptGripperShape),
+                                 cpShapeGetBody(pc_grippee->GetShape()),
+                                 cpvzero,
+                                 cpBodyWorld2Local(cpShapeGetBody(pc_grippee->GetShape()),
+                                                   m_tGrippeeAnchor),
+                                 m_fRestLength,
+                                 GRIPPING_SPRING_STIFFNESS,
+                                 GRIPPING_SPRING_DAMPING));
       m_tConstraint->maxBias = 0.95f;     // Correct overlap
       m_tConstraint->maxForce = 10000.0f; // Max correction speed
       m_cGripperEntity.SetGrippedEntity(pc_grippee->GetEmbodiedEntity());
@@ -200,8 +223,8 @@ namespace argos {
                                                 void* p_obj,
                                                 void* p_data) {
       /* Get the objects involved */
-      auto*   pcGripper   = reinterpret_cast<CDynamics2DGripper*>  (p_obj);
-      auto* pcGrippable = reinterpret_cast<CDynamics2DGrippable*>(p_data);
+      auto pcGripper   = reinterpret_cast<CDynamics2DGripper*>  (p_obj);
+      auto pcGrippable = reinterpret_cast<CDynamics2DGrippable*>(p_data);
       /* Connect the objects */
       pcGripper->Grip(pcGrippable);
    }
@@ -213,7 +236,7 @@ namespace argos {
                                                    void* p_obj,
                                                    void* p_data) {
       /* Get the gripper objects */
-      auto* pcGripper   = reinterpret_cast<CDynamics2DGripper*>  (p_obj);
+      auto pcGripper = reinterpret_cast<CDynamics2DGripper*>  (p_obj);
       /* Disconnect the objects */
       pcGripper->Release();
    }

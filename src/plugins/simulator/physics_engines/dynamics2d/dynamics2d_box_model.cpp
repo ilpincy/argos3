@@ -87,6 +87,47 @@ namespace argos {
          SetBody(ptBody, c_entity.GetSize().GetZ());
       }
    }
+
+   /****************************************/
+   /****************************************/
+
+   void CDynamics2DBoxModel::Resize(const CVector3& c_size) {
+      /* Remove existing shape */
+      cpSpaceRemoveShape(GetDynamics2DEngine().GetPhysicsSpace(),
+                         GetBody()->shapeList);
+      /* Calculate new shape size */
+      CVector3 cHalfSize = c_size * 0.5f;
+      cpVect tVertices[] = {
+         cpv(-cHalfSize.GetX(), -cHalfSize.GetY()),
+         cpv(-cHalfSize.GetX(),  cHalfSize.GetY()),
+         cpv( cHalfSize.GetX(),  cHalfSize.GetY()),
+         cpv( cHalfSize.GetX(), -cHalfSize.GetY())
+      };
+      /* Create the shape */
+      cpShape* ptShape =
+         cpSpaceAddShape(GetDynamics2DEngine().GetPhysicsSpace(),
+                         cpPolyShapeNew(GetBody(),
+                                        4,
+                                        tVertices,
+                                        cpvzero));
+      if(GetEmbodiedEntity().IsMovable()) {
+         /* The box is movable */
+         ptShape->e = 0.0; // no elasticity
+         ptShape->u = 0.7; // lots contact friction to help pushing
+         /* The shape is grippable */
+         GetGrippable()->ReleaseAll();
+         delete GetGrippable();
+         SetGrippable(new CDynamics2DGrippable(GetEmbodiedEntity(),
+                                               ptShape));
+      }
+      else {
+         /* The box is not movable */
+         ptShape->e = 0.0; // No elasticity
+         ptShape->u = 0.1; // Little contact friction to help sliding away
+         /* This shape is normal (not grippable, not gripper) */
+         ptShape->collision_type = CDynamics2DEngine::SHAPE_NORMAL;
+      }
+   }
    
    /****************************************/
    /****************************************/

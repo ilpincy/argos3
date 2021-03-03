@@ -77,17 +77,11 @@ namespace argos {
          return m_fRadius;
       }
 
-      inline void SetRadius(Real c_radius) {
-         m_fRadius = c_radius;
-      }
-
       inline Real GetHeight() const {
          return m_fHeight;
       }
 
-      inline void SetHeight(Real c_height) {
-         m_fHeight = c_height;
-      }
+      void Resize(Real f_radius, Real f_height);
 
       inline Real GetMass() const {
          return m_fMass;

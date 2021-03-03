@@ -53,6 +53,10 @@ namespace argos {
          m_fMass = f_mass;
       }
 
+      inline CDynamics2DGrippable* GetGrippable() {
+         return m_pcGrippable;
+      }
+      
       inline void SetGrippable(CDynamics2DGrippable* pc_grippable) {
          m_pcGrippable = pc_grippable;
       }
