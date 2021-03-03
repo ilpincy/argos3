@@ -68,7 +68,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   static cpFloat GRIPPING_SPRING_STIFFNESS = 1.0;
+   static cpFloat GRIPPING_SPRING_STIFFNESS = 10.0;
    static cpFloat GRIPPING_SPRING_DAMPING = 0.99;
    
    void CDynamics2DGripper::Grip(CDynamics2DGrippable* pc_grippee) {
