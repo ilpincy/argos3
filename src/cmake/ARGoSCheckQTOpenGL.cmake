@@ -1,4 +1,4 @@
-# Checks whether QT5, OpenGL and GLUT are present and correctly configured
+# Checks whether QT, OpenGL and GLUT are present and correctly configured
 #
 # Usage:
 #
@@ -31,10 +31,25 @@ if(NOT DEFINED ARGOS_FORCE_NO_QTOPENGL)
   option(ARGOS_FORCE_NO_QTOPENGL "ON -> avoid trying to compile Qt-OpenGL, OFF -> try to compile Qt-OpenGL" OFF)
 endif(NOT DEFINED ARGOS_FORCE_NO_QTOPENGL)
 
+# By default, do not compile Qt
+set(ARGOS_COMPILE_QTOPENGL OFF)
+# Check for Qt, OpenGL, and GLUT unless 
 if(NOT ARGOS_FORCE_NO_QTOPENGL)
-  #
-  # Qt 5.8 is not linked automatically by HomeBrew on MacOSX
-  # So we must find where it is
+  
+  # Look for OpenGL
+  find_package(OpenGL)
+  if(NOT OPENGL_FOUND)
+    message(STATUS "OpenGL not found.")
+  endif(NOT OPENGL_FOUND)
+
+  # Look for GLUT
+  find_package(GLUT)
+  if(NOT GLUT_FOUND)
+    message(STATUS "GLUT not found.")
+  endif(NOT GLUT_FOUND)
+
+  # The CMake files for Qt are not automatically installed
+  # system-wide on Mac, so we use brew to search for them
   if(APPLE AND (NOT ARGOS_BREW_QT_CELLAR))
     # Get Qt cellar path
     execute_process(
@@ -60,55 +75,24 @@ if(NOT ARGOS_FORCE_NO_QTOPENGL)
     endif(NOT ARGOS_BREW_QT_CELLAR STREQUAL "")
   endif(APPLE AND (NOT ARGOS_BREW_QT_CELLAR))
 
-  if((NOT APPLE) OR ARGOS_BREW_QT_CELLAR)
-    # Check for QT5
-    set(ARGOS_COMPILE_QTOPENGL false) 
-    find_package(Qt5 COMPONENTS Widgets Gui)
-    if(Qt5Widgets_FOUND AND Qt5Gui_FOUND)
-      # QT5 found, is it the minimum required version?
-      if(Qt5_VERSION VERSION_GREATER 5.4)
-        # QT is OK, now check for OpenGL
-        find_package(OpenGL)
-        if(OPENGL_FOUND)
-          # OpenGL is ok, now check for GLUT
-          find_package(GLUT)
-          if(GLUT_FOUND)
-            # GLUT is ok
-            
-            # All the required libraries are OK
-            set(ARGOS_COMPILE_QTOPENGL ON)
-            if(APPLE)
-              add_definitions(-DGL_SILENCE_DEPRECATION)
-              include_directories(${OPENGL_INCLUDE_DIR}/Headers)
-            endif(APPLE)
-            # These are required by Qt5
-            set(CMAKE_AUTOMOC ON)
-            set(CMAKE_CXX_STANDARD 14)
-            set(CMAKE_INCLUDE_CURRENT_DIR ON)
-            # Paths
-            add_definitions(${Qt5Widgets_DEFINITIONS} ${Qt5Gui_DEFINITIONS})
-            include_directories(${Qt5Widgets_INCLUDE_DIRS} ${Qt5Gui_INCLUDE_DIRS})
-            set(ARGOS_QTOPENGL_LIBRARIES ${Qt5Widgets_LIBRARIES} ${Qt5Gui_LIBRARIES} ${GLUT_LIBRARY} ${OPENGL_LIBRARY})
+  # Now look for either Qt6 or Qt5
+  find_package(Qt6 COMPONENTS Widgets Gui OpenGLWidgets)
+  if(NOT Qt6_FOUND)
+    find_package(Qt5 COMPONENTS Widgets Gui OpenGLWidgets)
+    if(NOT Qt5_FOUND)
+      message(STATUS "Qt not found.")
+    endif(NOT Qt5_FOUND)
+  endif(NOT Qt6_FOUND)
 
-          else(GLUT_FOUND)
-            message(STATUS "GLUT not found. Skipping compilation of QT-OpenGL visualization.")
-          endif(GLUT_FOUND)
-
-        else(OPENGL_FOUND)
-          message(STATUS "OpenGL not found. Skipping compilation of QT-OpenGL visualization.")
-        endif(OPENGL_FOUND)
-
-      else(Qt5_VERSION VERSION_GREATER 5.4)
-        message(STATUS "Minimum required version for Qt (>= 5.5) not found. Skipping compilation of QT-OpenGL visualization.")
-      endif(Qt5_VERSION VERSION_GREATER 5.4)
-      
-    else(Qt5Widgets_FOUND AND Qt5Gui_FOUND)
-      if(NOT Qt5Widgets_FOUND)
-        message(STATUS "Qt5Widgets not found, skipping compilation of QT-OpenGL visualization.")
-      endif(NOT Qt5Widgets_FOUND)
-      if(NOT Qt5Gui_FOUND)
-        message(STATUS "Qt5Gui not found, skipping compilation of QT-OpenGL visualization.")
-      endif(NOT Qt5Gui_FOUND)
-    endif(Qt5Widgets_FOUND AND Qt5Gui_FOUND)
-  endif((NOT APPLE) OR ARGOS_BREW_QT_CELLAR)
+  if(OPENGL_FOUND AND GLUT_FOUND AND (Qt6_FOUND OR Qt5_FOUND))
+    set(ARGOS_COMPILE_QTOPENGL ON)
+    add_definitions(-DGL_SILENCE_DEPRECATION)
+    set(ARGOS_QTOPENGL_INCLUDE_DIR ${OPENGL_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR}/Headers ${GLUT_INCLUDE_DIR})
+    set(ARGOS_QTOPENGL_LIBRARIES ${GLUT_LIBRARIES} ${OPENGL_LIBRARIES} Qt::Widgets Qt::Gui Qt::OpenGLWidgets)
+    set(CMAKE_AUTOMOC ON)
+    set(CMAKE_INCLUDE_CURRENT_DIR ON)
+  else(OPENGL_FOUND AND GLUT_FOUND AND (Qt6_FOUND OR Qt5_FOUND))
+    message(STATUS "Skipping compilation of Qt-OpenGL visualization.")
+  endif(OPENGL_FOUND AND GLUT_FOUND AND (Qt6_FOUND OR Qt5_FOUND))
+  
 endif(NOT ARGOS_FORCE_NO_QTOPENGL)

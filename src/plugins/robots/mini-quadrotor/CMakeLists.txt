@@ -35,6 +35,7 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
     simulator/miniquadrotor_rotor_default_actuator.cpp)
   # Compile the graphical visualization only if the necessary libraries have been found
   if(ARGOS_COMPILE_QTOPENGL)
+    include_directories(${ARGOS_QTOPENGL_INCLUDE_DIR})
     set(ARGOS3_SOURCES_PLUGINS_ROBOTS_MINIQUADROTOR
       ${ARGOS3_SOURCES_PLUGINS_ROBOTS_MINIQUADROTOR}
       simulator/qtopengl_miniquadrotor.cpp)

@@ -70,8 +70,8 @@ namespace argos {
 
    bool ItemLessThan(const CQTOpenGLLuaStateTreeItem* pc_i1,
                      const CQTOpenGLLuaStateTreeItem* pc_i2) {
-      if(pc_i1->GetData(0).type() == QVariant::Double &&
-         pc_i2->GetData(0).type() == QVariant::Double) {
+      if(pc_i1->GetData(0).metaType().id() == QMetaType::Double &&
+         pc_i2->GetData(0).metaType().id() == QMetaType::Double) {
          return pc_i1->GetData(0).toDouble() < pc_i2->GetData(0).toDouble();
       }
       else {
@@ -80,7 +80,7 @@ namespace argos {
    }
 
    void CQTOpenGLLuaStateTreeItem::SortChildren() {
-      qSort(m_listChildren.begin(), m_listChildren.end(), ItemLessThan);
+      std::sort(m_listChildren.begin(), m_listChildren.end(), ItemLessThan);
       foreach(CQTOpenGLLuaStateTreeItem* pcItem, m_listChildren) {
          pcItem->SortChildren();
       }

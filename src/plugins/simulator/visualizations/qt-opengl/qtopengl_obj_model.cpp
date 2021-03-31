@@ -14,6 +14,7 @@
 
 #include <QFile>
 #include <QTextStream>
+#include <QRegularExpression>
 
 namespace argos {
 
@@ -125,7 +126,7 @@ namespace argos {
       /* loop over the lines from the text stream */
       while(c_text_stream.readLineInto(&strLineBuffer)) {
          const QStringList& cLineBufferSplit =
-            strLineBuffer.split(QRegExp("\\s+"), QString::SkipEmptyParts);
+            strLineBuffer.split(QRegularExpression("\\s+"), Qt::SkipEmptyParts);
          if(cLineBufferSplit.empty()) {
             /* skip blank lines */
             continue;
@@ -318,7 +319,7 @@ namespace argos {
       /* load the materials in the MTL file */
       while(c_text_stream.readLineInto(&strLineBuffer)) {
          const QStringList& cLineBufferSplit =
-            strLineBuffer.split(QRegExp("\\s+"), QString::SkipEmptyParts);
+            strLineBuffer.split(QRegularExpression("\\s+"), Qt::SkipEmptyParts);
          if(cLineBufferSplit.empty()) {
             /* skip blank lines */
             continue;

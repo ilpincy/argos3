@@ -28,26 +28,26 @@ namespace argos {
                        << "\\bin\\b"     << "\\blocal\\b"  << "\\bnil\\b"  << "\\bnot\\b"      << "\\bor\\b"
                        << "\\brepeat\\b" << "\\breturn\\b" << "\\bthen\\b" << "\\btrue\\b"     << "\\buntil\\b" << "\\bwhile\\b";
       foreach (const QString& cPattern, cKeywordPatterns) {
-         sRule.Pattern = QRegExp(cPattern);
+         sRule.Pattern = QRegularExpression(cPattern);
          sRule.Format = m_cKeywordFormat;
          m_vecHighlightingRules.append(sRule);
       }
 
       m_cQuotationFormat.setForeground(Qt::darkGreen);
-      sRule.Pattern = QRegExp("\".*\"");
+      sRule.Pattern = QRegularExpression("\".*\"");
       sRule.Format = m_cQuotationFormat;
       m_vecHighlightingRules.append(sRule);
 
       m_cSingleLineCommentFormat.setForeground(Qt::darkGray);
       m_cSingleLineCommentFormat.setFontItalic(true);
-      sRule.Pattern = QRegExp("--[^[\n]*");
+      sRule.Pattern = QRegularExpression("--[^[\n]*");
       sRule.Format = m_cSingleLineCommentFormat;
       m_vecHighlightingRules.append(sRule);
 
       m_cMultiLineCommentFormat.setForeground(Qt::darkGray);
       m_cMultiLineCommentFormat.setFontItalic(true);
-      m_cCommentStartExpression = QRegExp("--\\[\\[");
-      m_cCommentEndExpression = QRegExp("\\]\\]");      
+      m_cCommentStartExpression = QRegularExpression("--\\[\\[");
+      m_cCommentEndExpression = QRegularExpression("\\]\\]");      
    }
 
    /****************************************/
@@ -58,12 +58,11 @@ namespace argos {
        * Apply normal rules
        */
       foreach (const SHighlightingRule& sRule, m_vecHighlightingRules) {
-         QRegExp cExpression(sRule.Pattern);
-         int i = cExpression.indexIn(str_text);
-         while(i >= 0) {
-            int nLength = cExpression.matchedLength();
-            setFormat(i, nLength, sRule.Format);
-            i = cExpression.indexIn(str_text, i + nLength);
+         QRegularExpression cExpression(sRule.Pattern);
+         QRegularExpressionMatchIterator cMatchIt = cExpression.globalMatch(str_text);
+         while(cMatchIt.hasNext()) {
+            QRegularExpressionMatch cMatch = cMatchIt.next();
+            setFormat(cMatch.capturedStart(), cMatch.capturedLength(), sRule.Format);
          }
       }
       /*
@@ -72,20 +71,20 @@ namespace argos {
       setCurrentBlockState(NOT_MULTILINE_COMMENT);
       int nStartIndex = 0;
       if (previousBlockState() != MULTILINE_COMMENT) {
-         nStartIndex = m_cCommentStartExpression.indexIn(str_text);
+         nStartIndex = str_text.indexOf(m_cCommentStartExpression);
       }
       while(nStartIndex >= 0) {
-         int nEndIndex = m_cCommentEndExpression.indexIn(str_text, nStartIndex);
+         QRegularExpressionMatch cEndMatch;
+         int nEndIndex = str_text.indexOf(m_cCommentEndExpression, nStartIndex, &cEndMatch);
          int nCommentLength;
          if (nEndIndex == -1) {
             setCurrentBlockState(MULTILINE_COMMENT);
             nCommentLength = str_text.length() - nStartIndex;
          } else {
-            nCommentLength = nEndIndex - nStartIndex
-               + m_cCommentEndExpression.matchedLength();
+            nCommentLength = nEndIndex - nStartIndex + cEndMatch.capturedLength();
          }
          setFormat(nStartIndex, nCommentLength, m_cMultiLineCommentFormat);
-         nStartIndex = m_cCommentStartExpression.indexIn(str_text, nStartIndex + nCommentLength);
+         nStartIndex = str_text.indexOf(m_cCommentStartExpression, nStartIndex + nCommentLength);
       }
    }
 

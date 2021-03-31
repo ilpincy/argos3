@@ -16,7 +16,8 @@
 #include <argos3/core/simulator/loop_functions.h>
 
 #include <QtCore/QVariant>
-#include <QtWidgets/QAction>
+#include <QAction>
+#include <QActionGroup>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QDockWidget>
 #include <QtWidgets/QHeaderView>

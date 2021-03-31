@@ -890,7 +890,7 @@ namespace argos {
                m_cMouseGrabPos = pc_event->pos();
                update();
             }
-            else if(pc_event->buttons() == Qt::MidButton) {
+            else if(pc_event->buttons() == Qt::MiddleButton) {
                QPoint cDelta(pc_event->pos() - m_cMouseGrabPos);
                m_cCamera.Move(0, 0, cDelta.y());
                m_cMouseGrabPos = pc_event->pos();

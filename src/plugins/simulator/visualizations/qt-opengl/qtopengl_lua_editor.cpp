@@ -25,7 +25,7 @@ namespace argos {
       setFont(cFont);
       /* Set tab width to 3 */
       QFontMetrics cFontMetrics(cFont);
-      setTabStopWidth(3 * cFontMetrics.width(' '));
+      setTabStopDistance(3 * cFontMetrics.horizontalAdvance(' '));
       /* Set syntax highlighting */
       new CQTOpenGLLuaSyntaxHighlighter(document());
       /* Set line numbering */
@@ -81,7 +81,7 @@ namespace argos {
          nMax /= 10;
          ++nDigits;
       }
-      int nSpace = 3 + fontMetrics().width(QLatin1Char('9')) * nDigits;
+      int nSpace = 3 + fontMetrics().horizontalAdvance(QLatin1Char('9')) * nDigits;
       return nSpace;
    }
 

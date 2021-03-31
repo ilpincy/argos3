@@ -55,6 +55,7 @@ endif(ARGOS_WITH_LUA)
 #
 # Create Qt-OpenGL visualization
 #
+include_directories(${ARGOS_QTOPENGL_INCLUDE_DIR})
 add_library(argos3plugin_${ARGOS_BUILD_FOR}_qtopengl SHARED
   ${ARGOS3_SOURCES_PLUGINS_SIMULATOR_VISUALIZATIONS_QTOPENGL})
 target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_qtopengl argos3plugin_${ARGOS_BUILD_FOR}_entities ${ARGOS_QTOPENGL_LIBRARIES})

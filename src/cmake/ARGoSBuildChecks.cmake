@@ -40,7 +40,7 @@ if(ARGOS_DYNAMIC_LIBRARY_LOADING)
   if(NOT DLFCN_FOUND)
     message(FATAL_ERROR "Required library dl not found.")
   endif(NOT DLFCN_FOUND)
-  include_directories(${DLFCN_INCLUDE_DIR})
+  include_directories(AFTER ${DLFCN_INCLUDE_DIR})
 endif(ARGOS_DYNAMIC_LIBRARY_LOADING)
 
 #
@@ -53,7 +53,7 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
     message(FATAL_ERROR "Required library pthreads not found.")
   endif(NOT PTHREADS_FOUND)
   add_definitions(${PTHREADS_DEFINITIONS})
-  include_directories(${PTHREADS_INCLUDE_DIR})
+  include_directories(AFTER ${PTHREADS_INCLUDE_DIR})
 endif(ARGOS_BUILD_FOR_SIMULATOR)
 
 #
@@ -64,7 +64,7 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
   find_package(FreeImage)
   if(FREEIMAGE_FOUND)
     set(ARGOS_WITH_FREEIMAGE ON)
-    include_directories(${FREEIMAGE_INCLUDE_PATH})
+    include_directories(AFTER ${FREEIMAGE_INCLUDE_PATH})
   else(FREEIMAGE_FOUND)
     message(STATUS "FreeImage not found, image source and OpenGL drawing for the floor entity won't be available")
   endif(FREEIMAGE_FOUND)
@@ -98,13 +98,20 @@ endif(ARGOS_DOCUMENTATION)
 find_package(ASCIIDoc)
 
 #
+# Check whether Qt and OpenGL are installed
+#
+if(ARGOS_BUILD_FOR_SIMULATOR)
+  include(ARGoSCheckQTOpenGL)
+endif(ARGOS_BUILD_FOR_SIMULATOR)
+
+#
 # Check for Lua 5.3
 #
 find_package(Lua)
 if(LUA_FOUND)
   if(${LUA_VERSION_STRING} VERSION_GREATER_EQUAL "5.3")
     set(ARGOS_WITH_LUA ON)
-    include_directories(${LUA_INCLUDE_DIR})
+    include_directories(AFTER ${LUA_INCLUDE_DIR})
   else()
     message(FATAL_ERROR "Lua >=5.3 not found")
   endif()
@@ -136,11 +143,4 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
     endif(APPLE)
   endif(CMAKE_SIZEOF_VOID_P EQUAL 4)
   link_directories(${CMAKE_SOURCE_DIR}/plugins/simulator/physics_engines/physx/physx_dist/lib/${PHYSX_ARCH})
-endif(ARGOS_BUILD_FOR_SIMULATOR)
-
-#
-# Check whether Qt and OpenGL are installed
-#
-if(ARGOS_BUILD_FOR_SIMULATOR)
-  include(ARGoSCheckQTOpenGL)
 endif(ARGOS_BUILD_FOR_SIMULATOR)

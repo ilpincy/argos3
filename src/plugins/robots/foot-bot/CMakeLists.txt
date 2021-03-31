@@ -70,6 +70,7 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
     simulator/footbot_turret_entity.cpp)
   # Compile the graphical visualization only if the necessary libraries have been found
   if(ARGOS_COMPILE_QTOPENGL)
+    include_directories(${ARGOS_QTOPENGL_INCLUDE_DIR})
     set(ARGOS3_HEADERS_PLUGINS_ROBOTS_FOOTBOT_SIMULATOR
       ${ARGOS3_HEADERS_PLUGINS_ROBOTS_FOOTBOT_SIMULATOR}
       simulator/qtopengl_footbot.h)

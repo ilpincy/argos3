@@ -51,7 +51,7 @@ namespace argos {
               m_pcExtension, SLOT(setVisible(bool)));
 
       QVBoxLayout* m_pcExtensionLayout = new QVBoxLayout();
-      m_pcExtensionLayout->setMargin(0);
+      //m_pcExtensionLayout->setMargin(0);
       m_pcExtensionLayout->addWidget(m_pcWholeWordsCheckBox);
       m_pcExtensionLayout->addWidget(m_pcBackwardCheckBox);
       m_pcExtensionLayout->addWidget(m_pcSearchSelectionCheckBox);

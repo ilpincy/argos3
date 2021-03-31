@@ -14,6 +14,7 @@ namespace argos {
 #include <QHash>
 #include <QSyntaxHighlighter>
 #include <QTextCharFormat>
+#include <QRegularExpression>
 
 class QTextDocument;
 
@@ -36,13 +37,13 @@ namespace argos {
       
       struct SHighlightingRule
       {
-         QRegExp Pattern;
+         QRegularExpression Pattern;
          QTextCharFormat Format;
       };
       QVector<SHighlightingRule> m_vecHighlightingRules;
 
-      QRegExp m_cCommentStartExpression;
-      QRegExp m_cCommentEndExpression;
+      QRegularExpression m_cCommentStartExpression;
+      QRegularExpression m_cCommentEndExpression;
 
       QTextCharFormat m_cKeywordFormat;
       QTextCharFormat m_cSingleLineCommentFormat;

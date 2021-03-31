@@ -40,8 +40,8 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
     simulator/prototype_link_entity.cpp
     simulator/prototype_link_equipped_entity.cpp)
   # Compile the graphical visualization only if the necessary libraries have been found
-  include(ARGoSCheckQTOpenGL)
   if(ARGOS_COMPILE_QTOPENGL)
+    include_directories(${ARGOS_QTOPENGL_INCLUDE_DIR})
     set(ARGOS3_HEADERS_PLUGINS_ROBOTS_PROTOTYPE_SIMULATOR
       ${ARGOS3_HEADERS_PLUGINS_ROBOTS_PROTOTYPE_SIMULATOR}
       simulator/qtopengl_prototype.h)
@@ -54,6 +54,7 @@ endif(ARGOS_BUILD_FOR_SIMULATOR)
 #
 # Create the prototype plugin
 #
+include_directories(${ARGOS_QTOPENGL_INCLUDE_DIR})
 add_library(argos3plugin_${ARGOS_BUILD_FOR}_prototype SHARED ${ARGOS3_SOURCES_PLUGINS_ROBOTS_PROTOTYPE})
 target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_prototype
   argos3plugin_${ARGOS_BUILD_FOR}_genericrobot

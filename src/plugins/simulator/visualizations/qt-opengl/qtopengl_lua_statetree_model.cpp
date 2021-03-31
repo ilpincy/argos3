@@ -56,7 +56,7 @@ namespace argos {
 
    Qt::ItemFlags CQTOpenGLLuaStateTreeModel::flags(const QModelIndex& c_index) const {
       if (!c_index.isValid()) {
-         return 0;
+         return Qt::NoItemFlags;
       }
       else {
          return Qt::ItemIsEnabled;

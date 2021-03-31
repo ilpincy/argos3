@@ -809,7 +809,7 @@ namespace argos {
                                            const QString& str_robot_id,
                                            const QString& str_message) {
       QStringList listFields = str_message.split(":",
-                                                 QString::KeepEmptyParts,
+                                                 Qt::KeepEmptyParts,
                                                  Qt::CaseInsensitive);
       m_pcLuaMessageTable->setItem(
          n_row, 0,

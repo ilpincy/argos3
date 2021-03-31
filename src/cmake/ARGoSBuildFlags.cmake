@@ -9,9 +9,15 @@ execute_process(
 #
 # Select ISO C++11
 #
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+
+#
+# Import C/C++ Flags from the environment
+#
+set(CMAKE_C_FLAGS "$ENV{CFLAGS}")
+set(CMAKE_CXX_FLAGS "$ENV{CPPFLAGS} $ENV{CXXFLAGS}")
 
 #
 # General compilation flags
