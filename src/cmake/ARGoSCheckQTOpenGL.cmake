@@ -11,8 +11,9 @@
 #
 # This module defines this variable:
 #
-#  ARGOS_COMPILE_QTOPENGL   - True if QT5, OpenGL and GLUT are present and correctly configured
-#  ARGOS_QTOPENGL_LIBRARIES - The list of libraries to link
+#  ARGOS_COMPILE_QTOPENGL      - True if Qt, OpenGL and GLUT are present and correctly configured
+#  ARGOS_QTOPENGL_INCLUDE_DIRS - The list of directories to include
+#  ARGOS_QTOPENGL_LIBRARIES    - The list of libraries to link
 #
 # AUTHOR: Carlo Pinciroli <ilpincy@gmail.com>
 
@@ -38,15 +39,21 @@ if(NOT ARGOS_FORCE_NO_QTOPENGL)
   
   # Look for OpenGL
   find_package(OpenGL)
-  if(NOT OPENGL_FOUND)
+  if(OPENGL_FOUND)
+    set(ARGOS_QTOPENGL_INCLUDE_DIRS ${OPENGL_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR}/Headers)
+    set(ARGOS_QTOPENGL_LIBRARIES ${OPENGL_LIBRARIES})
+  else(OPENGL_FOUND)
     message(STATUS "OpenGL not found.")
-  endif(NOT OPENGL_FOUND)
+  endif(OPENGL_FOUND)
 
   # Look for GLUT
   find_package(GLUT)
-  if(NOT GLUT_FOUND)
+  if(GLUT_FOUND)
+    list(APPEND ARGOS_QTOPENGL_INCLUDE_DIRS ${GLUT_INCLUDE_DIR})
+    list(APPEND ARGOS_QTOPENGL_LIBRARIES ${GLUT_LIBRARIES})
+  else(GLUT_FOUND)
     message(STATUS "GLUT not found.")
-  endif(NOT GLUT_FOUND)
+  endif(GLUT_FOUND)
 
   # The CMake files for Qt are not automatically installed
   # system-wide on Mac, so we use brew to search for them
@@ -76,22 +83,42 @@ if(NOT ARGOS_FORCE_NO_QTOPENGL)
   endif(APPLE AND (NOT ARGOS_BREW_QT_CELLAR))
 
   # Now look for either Qt6 or Qt5
-  find_package(Qt6 COMPONENTS Widgets Gui OpenGLWidgets)
-  if(NOT Qt6_FOUND)
-    find_package(Qt5 COMPONENTS Widgets Gui OpenGLWidgets)
-    if(NOT Qt5_FOUND)
+  find_package(Qt6 QUIET COMPONENTS Core Widgets Gui OpenGLWidgets)
+  if(Qt6_FOUND)
+    message(STATUS "Found Qt6: version ${Qt6Core_VERSION}")
+    message(STATUS "Found Qt6Widgets: version ${Qt6Widgets_VERSION}")
+    message(STATUS "Found Qt6Gui: version ${Qt6Gui_VERSION}")
+    message(STATUS "Found Qt6OpenGLWidgets: version ${Qt6OpenGLWidgets_VERSION}")
+    list(APPEND ARGOS_QTOPENGL_INCLUDE_DIRS ${Qt6Widgets_INCLUDE_DIRS} ${Qt6Gui_INCLUDE_DIRS} ${Qt6OpenGLWidgets_INCLUDE_DIRS})
+    list(APPEND ARGOS_QTOPENGL_LIBRARIES Qt6::Widgets Qt6::Gui Qt6::OpenGLWidgets)
+  else(Qt6_FOUND)
+    find_package(Qt5 QUIET COMPONENTS Widgets Gui OPTIONAL_COMPONENTS OpenGLWidgets)
+    if(Qt5_FOUND)
+      message(STATUS "Found Qt5: version ${Qt5Core_VERSION_}")
+      message(STATUS "Found Qt5Widgets: version ${Qt5Widgets_VERSION}")
+      message(STATUS "Found Qt5Gui: version ${Qt5Gui_VERSION}")
+      list(APPEND ARGOS_QTOPENGL_INCLUDE_DIRS ${Qt5Widgets_INCLUDE_DIRS} ${Qt5Gui_INCLUDE_DIRS})
+      list(APPEND ARGOS_QTOPENGL_LIBRARIES Qt5::Widgets Qt5::Gui)
+      if(Qt5OpenGLWidgets_FOUND)
+        message(STATUS "Found Qt5OpenGLWidgets: version ${Qt5OpenGLWidgets_VERSION}")
+        list(APPEND ARGOS_QTOPENGL_INCLUDE_DIRS ${Qt5OpenGLWidgets_INCLUDE_DIRS})
+        list(APPEND ARGOS_QTOPENGL_LIBRARIES Qt5::OpenGLWidgets)
+      endif(Qt5OpenGLWidgets_FOUND)
+    else(Qt5_FOUND)
       message(STATUS "Qt not found.")
-    endif(NOT Qt5_FOUND)
-  endif(NOT Qt6_FOUND)
+    endif(Qt5_FOUND)
+  endif(Qt6_FOUND)
 
   if(OPENGL_FOUND AND GLUT_FOUND AND (Qt6_FOUND OR Qt5_FOUND))
     set(ARGOS_COMPILE_QTOPENGL ON)
     add_definitions(-DGL_SILENCE_DEPRECATION)
-    set(ARGOS_QTOPENGL_INCLUDE_DIR ${OPENGL_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR}/Headers ${GLUT_INCLUDE_DIR})
-    set(ARGOS_QTOPENGL_LIBRARIES ${GLUT_LIBRARIES} ${OPENGL_LIBRARIES} Qt::Widgets Qt::Gui Qt::OpenGLWidgets)
+    list(REMOVE_DUPLICATES ARGOS_QTOPENGL_INCLUDE_DIRS)
+    list(REMOVE_DUPLICATES ARGOS_QTOPENGL_LIBRARIES)
     set(CMAKE_AUTOMOC ON)
     set(CMAKE_INCLUDE_CURRENT_DIR ON)
   else(OPENGL_FOUND AND GLUT_FOUND AND (Qt6_FOUND OR Qt5_FOUND))
+    unset(ARGOS_QTOPENGL_INCLUDE_DIRS)
+    unset(ARGOS_QTOPENGL_LIBRARIES)
     message(STATUS "Skipping compilation of Qt-OpenGL visualization.")
   endif(OPENGL_FOUND AND GLUT_FOUND AND (Qt6_FOUND OR Qt5_FOUND))
   

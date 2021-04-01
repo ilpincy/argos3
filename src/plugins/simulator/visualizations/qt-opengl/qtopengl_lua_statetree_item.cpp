@@ -70,8 +70,13 @@ namespace argos {
 
    bool ItemLessThan(const CQTOpenGLLuaStateTreeItem* pc_i1,
                      const CQTOpenGLLuaStateTreeItem* pc_i2) {
-      if(pc_i1->GetData(0).metaType().id() == QMetaType::Double &&
-         pc_i2->GetData(0).metaType().id() == QMetaType::Double) {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+      if(pc_i1->GetData(0).typeId() == QMetaType::Double &&
+         pc_i2->GetData(0).typeId() == QMetaType::Double) {
+#else
+      if(pc_i1->GetData(0).type() == QVariant::Double &&
+         pc_i2->GetData(0).type() == QVariant::Double) {
+#endif
          return pc_i1->GetData(0).toDouble() < pc_i2->GetData(0).toDouble();
       }
       else {

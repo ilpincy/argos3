@@ -19,7 +19,7 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
     simulator/pointmass3d_spiri_model.cpp)
   # Compile the graphical visualization only if the necessary libraries have been found
   if(ARGOS_COMPILE_QTOPENGL)
-    include_directories(${ARGOS_QTOPENGL_INCLUDE_DIR})
+    include_directories(${ARGOS_QTOPENGL_INCLUDE_DIRS})
     set(ARGOS3_HEADERS_PLUGINS_ROBOTS_SPIRI_SIMULATOR
       ${ARGOS3_HEADERS_PLUGINS_ROBOTS_SPIRI_SIMULATOR}
       simulator/qtopengl_spiri.h)

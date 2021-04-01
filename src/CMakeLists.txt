@@ -1,7 +1,7 @@
 #
 # Set minimum required version
 #
-cmake_minimum_required(VERSION 3.5.1)
+cmake_minimum_required(VERSION 3.10.2)
 
 #
 # Set build options

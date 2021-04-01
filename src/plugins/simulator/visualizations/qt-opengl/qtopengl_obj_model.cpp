@@ -126,7 +126,11 @@ namespace argos {
       /* loop over the lines from the text stream */
       while(c_text_stream.readLineInto(&strLineBuffer)) {
          const QStringList& cLineBufferSplit =
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
             strLineBuffer.split(QRegularExpression("\\s+"), Qt::SkipEmptyParts);
+#else
+            strLineBuffer.split(QRegularExpression("\\s+"), QString::SkipEmptyParts);
+#endif
          if(cLineBufferSplit.empty()) {
             /* skip blank lines */
             continue;
@@ -319,7 +323,11 @@ namespace argos {
       /* load the materials in the MTL file */
       while(c_text_stream.readLineInto(&strLineBuffer)) {
          const QStringList& cLineBufferSplit =
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
             strLineBuffer.split(QRegularExpression("\\s+"), Qt::SkipEmptyParts);
+#else
+            strLineBuffer.split(QRegularExpression("\\s+"), QString::SkipEmptyParts);
+#endif
          if(cLineBufferSplit.empty()) {
             /* skip blank lines */
             continue;
