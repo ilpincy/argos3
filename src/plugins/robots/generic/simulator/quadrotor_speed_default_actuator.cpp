@@ -63,7 +63,7 @@ namespace argos {
    /****************************************/
 
    void CQuadRotorSpeedDefaultActuator::SetRotationalSpeed(const CRadians& c_speed) {
-      m_sDesiredSpeedData.RotSpeed = c_speed;      
+      m_sDesiredSpeedData.RotSpeed = c_speed;
    }
 
    /****************************************/

@@ -13,6 +13,9 @@
 
 namespace argos {
 
+   /****************************************/
+   /****************************************/
+
    static Real SymmetricClamp(Real f_max,
                               Real f_value) {
       if(f_value >  f_max) return  f_max;
