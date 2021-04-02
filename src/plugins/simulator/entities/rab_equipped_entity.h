@@ -33,6 +33,38 @@ namespace argos {
       typedef CSet<CRABEquippedEntity*> TSet;
 
    public:
+      /**
+       * @brief Specification for the documentation on how robot RAB
+       * configuration should be displayed when it is queried by the user on the
+       * command line.
+       */
+      struct SDocumentationQuerySpec {
+        /**
+         * @brief The name of the robot equipped with a RAB system
+         * (e.g., "foot-bot").
+         */
+        std::string strEntityName;
+
+        /**
+         * @brief The default emission range.
+         */
+        Real fRangeDefault;
+
+        /**
+         * @brief The default message length.
+         */
+        size_t fMsgSizeDefault;
+
+        CVector3 cPosOffsetDefault;
+
+        CQuaternion cRotOffsetDefault;
+      };
+
+      /**
+       * @brief Get the documentation for this class which should appear whenever
+       * a query involving a RAB-equipped entity is requested.
+       */
+      static std::string GetQueryDocumentation(const SDocumentationQuerySpec& c_spec);
 
       CRABEquippedEntity(CComposableEntity* pc_parent);
 

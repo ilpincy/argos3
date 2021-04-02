@@ -43,7 +43,6 @@ namespace argos {
    static const Real PROXIMITY_SENSOR_RING_RANGE           = 0.1f;
 
    static const Real LED_RING_ELEVATION         = 0.085f;
-   static const Real RAB_ELEVATION              = 0.1f;
    static const Real BEACON_ELEVATION           = 0.174249733f;
 
    static const Real GRIPPER_ELEVATION          = LED_RING_ELEVATION;
@@ -51,7 +50,19 @@ namespace argos {
    static const CRadians LED_ANGLE_SLICE        = CRadians(ARGOS_PI / 6.0);
    static const CRadians HALF_LED_ANGLE_SLICE   = LED_ANGLE_SLICE * 0.5f;
 
-   static const Real OMNIDIRECTIONAL_CAMERA_ELEVATION = 0.288699733f;
+   const Real CFootBotEntity::OMNIDIRECTIONAL_CAMERA_DEFAULT_ELEVATION = 0.288699733f;
+   const CDegrees CFootBotEntity::OMNIDIRECTIONAL_CAMERA_DEFAULT_APERTURE = CDegrees(70.0f);
+
+   const CDegrees CFootBotEntity::PERSPECTIVE_CAMERA_DEFAULT_APERTURE = CDegrees(30.0f);
+   const Real CFootBotEntity::PERSPECTIVE_CAMERA_DEFAULT_FOCAL_LENGTH = 0.035f;
+   const Real CFootBotEntity::PERSPECTIVE_CAMERA_DEFAULT_RANGE = 2.0f;
+   const UInt32 CFootBotEntity::PERSPECTIVE_CAMERA_DEFAULT_IMAGE_HEIGHT = 480;
+   const UInt32 CFootBotEntity::PERSPECTIVE_CAMERA_DEFAULT_IMAGE_WIDTH = 640;
+
+   const Real CFootBotEntity::RAB_DEFAULT_RANGE = 3.0f;
+   const size_t CFootBotEntity::RAB_DEFAULT_MSG_SIZE = 10;
+   const Real CFootBotEntity::RAB_DEFAULT_ELEVATION = 0.1f;
+   const CQuaternion CFootBotEntity::RAB_DEFAULT_ROT_OFFSET = CQuaternion();
 
    /****************************************/
    /****************************************/
@@ -220,16 +231,15 @@ namespace argos {
                                    f_rab_range,
                                    m_pcEmbodiedEntity->GetOriginAnchor(),
                                    *m_pcEmbodiedEntity,
-                                   CVector3(0.0f, 0.0f, RAB_ELEVATION));
+                                   CVector3(0.0f, 0.0f, RAB_DEFAULT_ELEVATION),
+                                   RAB_DEFAULT_ROT_OFFSET);
          AddComponent(*m_pcRABEquippedEntity);
          /* Omnidirectional camera equipped entity */
          m_pcOmnidirectionalCameraEquippedEntity =
             new COmnidirectionalCameraEquippedEntity(this,
                                                      "omnidirectional_camera_0",
-                                                     c_omnicam_aperture,
-                                                     CVector3(0.0f,
-                                                              0.0f,
-                                                              OMNIDIRECTIONAL_CAMERA_ELEVATION));
+                                                     ToRadians(OMNIDIRECTIONAL_CAMERA_DEFAULT_APERTURE),
+                                                     CVector3(0.0f, 0.0f, OMNIDIRECTIONAL_CAMERA_DEFAULT_ELEVATION));
          AddComponent(*m_pcOmnidirectionalCameraEquippedEntity);
          /* Perspective camera equipped entity */
          m_pcPerspectiveCameraEquippedEntity =
@@ -238,8 +248,9 @@ namespace argos {
                                                  c_perspcam_aperture,
                                                  f_perspcam_focal_length,
                                                  f_perspcam_range,
-                                                 640, 480,
-                                                 cPerspCamAnchor);
+                                                 PERSPECTIVE_CAMERA_DEFAULT_IMAGE_WIDTH,
+                                                 PERSPECTIVE_CAMERA_DEFAULT_IMAGE_HEIGHT,
+                                                 &cPerspCamAnchor);
          AddComponent(*m_pcPerspectiveCameraEquippedEntity);
          /* Turret equipped entity */
          m_pcTurretEntity = new CFootBotTurretEntity(this, "turret_0", cTurretAnchor);
@@ -374,52 +385,50 @@ namespace argos {
             new CFootBotDistanceScannerEquippedEntity(this, "distance_scanner_0");
          AddComponent(*m_pcDistanceScannerEquippedEntity);
          /* RAB equipped entity */
-         Real fRange = 3.0f;
-         GetNodeAttributeOrDefault(t_tree, "rab_range", fRange, fRange);
-         UInt32 unDataSize = 10;
-         GetNodeAttributeOrDefault(t_tree, "rab_data_size", unDataSize, unDataSize);
          m_pcRABEquippedEntity =
-            new CRABEquippedEntity(this,
-                                   "rab_0",
-                                   unDataSize,
-                                   fRange,
-                                   m_pcEmbodiedEntity->GetOriginAnchor(),
-                                   *m_pcEmbodiedEntity,
-                                   CVector3(0.0f, 0.0f, RAB_ELEVATION));
+             new CRABEquippedEntity(this,
+                                    "rab_0",
+                                    RAB_DEFAULT_MSG_SIZE,
+                                    RAB_DEFAULT_RANGE,
+                                    m_pcEmbodiedEntity->GetOriginAnchor(),
+                                    *m_pcEmbodiedEntity,
+                                    CVector3(0.0f, 0.0f, RAB_DEFAULT_ELEVATION),
+                                    RAB_DEFAULT_ROT_OFFSET);
+         if(NodeExists(t_tree, "range_and_bearing")) {
+           m_pcRABEquippedEntity->Init(GetNode(t_tree, "range_and_bearing"));
+         }
          AddComponent(*m_pcRABEquippedEntity);
          /* Omnidirectional camera equipped entity */
-         CDegrees cAperture(70.0f);
-         GetNodeAttributeOrDefault(t_tree, "omnidirectional_camera_aperture", cAperture, cAperture);
          m_pcOmnidirectionalCameraEquippedEntity =
-            new COmnidirectionalCameraEquippedEntity(this,
-                                                     "omnidirectional_camera_0",
-                                                     ToRadians(cAperture),
-                                                     CVector3(0.0f,
-                                                              0.0f,
-                                                              OMNIDIRECTIONAL_CAMERA_ELEVATION));
+             new COmnidirectionalCameraEquippedEntity(this,
+                                                      "omnidirectional_camera_0",
+                                                      ToRadians(OMNIDIRECTIONAL_CAMERA_DEFAULT_APERTURE),
+                                                      CVector3(0.0f, 0.0f, OMNIDIRECTIONAL_CAMERA_DEFAULT_ELEVATION));
+
+         if(NodeExists(t_tree, "omnidirectional_camera")) {
+           m_pcOmnidirectionalCameraEquippedEntity->Init(GetNode(t_tree, "omnidirectional_camera"));
+         }
          AddComponent(*m_pcOmnidirectionalCameraEquippedEntity);
          /* Perspective camera equipped entity */
-         bool bPerspCamFront = true;
-         GetNodeAttributeOrDefault(t_tree, "perspective_camera_front", bPerspCamFront, bPerspCamFront);
-         Real fPerspCamFocalLength = 0.035;
-         GetNodeAttributeOrDefault(t_tree, "perspective_camera_focal_length", fPerspCamFocalLength, fPerspCamFocalLength);
-         Real fPerspCamRange = 2.0;
-         GetNodeAttributeOrDefault(t_tree, "perspective_camera_range", fPerspCamRange, fPerspCamRange);
-         cAperture.SetValue(30.0f);
-         GetNodeAttributeOrDefault(t_tree, "perspective_camera_aperture", cAperture, cAperture);
-         CQuaternion cPerspCamOrient(bPerspCamFront ? CRadians::ZERO : -CRadians::PI_OVER_TWO,
+         m_pcPerspectiveCameraEquippedEntity =
+             new CPerspectiveCameraEquippedEntity(this,
+                                                  "perspective_camera_0",
+                                                  ToRadians(PERSPECTIVE_CAMERA_DEFAULT_APERTURE),
+                                                  PERSPECTIVE_CAMERA_DEFAULT_FOCAL_LENGTH,
+                                                  PERSPECTIVE_CAMERA_DEFAULT_RANGE,
+                                                  PERSPECTIVE_CAMERA_DEFAULT_IMAGE_WIDTH,
+                                                  PERSPECTIVE_CAMERA_DEFAULT_IMAGE_HEIGHT,
+                                                  nullptr); /* anchor set after initialization */
+         if(NodeExists(t_tree, "perspective_camera")) {
+           m_pcPerspectiveCameraEquippedEntity->Init(GetNode(t_tree, "perspective_camera"));
+         }
+
+         CQuaternion cPerspCamOrient(m_pcPerspectiveCameraEquippedEntity->CameraLooksFront() ? CRadians::ZERO : -CRadians::PI_OVER_TWO,
                                      CVector3::Y);
          SAnchor& cPerspCamAnchor = m_pcEmbodiedEntity->AddAnchor("perspective_camera",
                                                                   CVector3(BODY_RADIUS, 0.0, BEACON_ELEVATION),
                                                                   cPerspCamOrient);
-         m_pcPerspectiveCameraEquippedEntity =
-            new CPerspectiveCameraEquippedEntity(this,
-                                                 "perspective_camera_0",
-                                                 ToRadians(cAperture),
-                                                 fPerspCamFocalLength,
-                                                 fPerspCamRange,
-                                                 640, 480,
-                                                 cPerspCamAnchor);
+         m_pcPerspectiveCameraEquippedEntity->SetAnchor(cPerspCamAnchor);
          AddComponent(*m_pcPerspectiveCameraEquippedEntity);
          /* Turret equipped entity */
          m_pcTurretEntity = new CFootBotTurretEntity(this, "turret_0", cTurretAnchor);
@@ -509,100 +518,51 @@ namespace argos {
                    "The 'controller/config' attribute is used to assign a controller to the\n"
                    "foot-bot. The value of the attribute must be set to the id of a previously\n"
                    "defined controller. Controllers are defined in the <controllers> XML subtree.\n\n"
+
                    "OPTIONAL XML CONFIGURATION\n\n"
-                   "You can set the emission range of the range-and-bearing system. By default, a\n"
-                   "message sent by a foot-bot can be received up to 3m. By using the 'rab_range'\n"
-                   "attribute, you can change it to, i.e., 4m as follows:\n\n"
-                   "  <arena ...>\n"
-                   "    ...\n"
-                   "    <foot-bot id=\"fb0\" rab_range=\"4\">\n"
-                   "      <body position=\"0.4,2.3,0.25\" orientation=\"45,0,0\" />\n"
-                   "      <controller config=\"mycntrl\" />\n"
-                   "    </foot-bot>\n"
-                   "    ...\n"
-                   "  </arena>\n\n"
-                   "You can also set the data sent at each time step through the range-and-bearing\n"
-                   "system. By default, a message sent by a foot-bot is 10 bytes long. By using the\n"
-                   "'rab_data_size' attribute, you can change it to, i.e., 20 bytes as follows:\n\n"
-                   "  <arena ...>\n"
-                   "    ...\n"
-                   "    <foot-bot id=\"fb0\" rab_data_size=\"20\">\n"
-                   "      <body position=\"0.4,2.3,0.25\" orientation=\"45,0,0\" />\n"
-                   "      <controller config=\"mycntrl\" />\n"
-                   "    </foot-bot>\n"
-                   "    ...\n"
-                   "  </arena>\n\n"
-                   "You can also configure the battery of the robot. By default, the battery never\n"
-                   "depletes. You can choose among several battery discharge models, such as\n"
-                   "- time: the battery depletes by a fixed amount at each time step\n"
-                   "- motion: the battery depletes according to how the robot moves\n"
-                   "- time_motion: a combination of the above models.\n"
-                   "You can define your own models too. Follow the examples in the file\n"
-                   "argos3/src/plugins/simulator/entities/battery_equipped_entity.cpp.\n\n"
-                   "  <arena ...>\n"
-                   "    ...\n"
-                   "    <foot-bot id=\"fb0\"\n"
-                   "      <body position=\"0.4,2.3,0.25\" orientation=\"45,0,0\" />\n"
-                   "      <controller config=\"mycntrl\" />\n"
-                   "      <battery model=\"time\" factor=\"1e-5\"/>\n"
-                   "    </foot-bot>\n"
-                   "    ...\n"
-                   "  </arena>\n\n"
-                   "  <arena ...>\n"
-                   "    ...\n"
-                   "    <foot-bot id=\"fb0\"\n"
-                   "      <body position=\"0.4,2.3,0.25\" orientation=\"45,0,0\" />\n"
-                   "      <controller config=\"mycntrl\" />\n"
-                   "      <battery model=\"motion\" pos_factor=\"1e-3\"\n"
-                   "                              orient_factor=\"1e-3\"/>\n"
-                   "    </foot-bot>\n"
-                   "    ...\n"
-                   "  </arena>\n\n"
-                   "  <arena ...>\n"
-                   "    ...\n"
-                   "    <foot-bot id=\"fb0\"\n"
-                   "      <body position=\"0.4,2.3,0.25\" orientation=\"45,0,0\" />\n"
-                   "      <controller config=\"mycntrl\" />\n"
-                   "      <battery model=\"time_motion\" time_factor=\"1e-5\"\n"
-                   "                                   pos_factor=\"1e-3\"\n"
-                   "                                   orient_factor=\"1e-3\"/>\n"
-                   "    </foot-bot>\n"
-                   "    ...\n"
-                   "  </arena>\n\n"
-                   "You can also change the aperture of the omnidirectional camera. The aperture is\n"
-                   "set to 70 degrees by default. The tip of the omnidirectional camera is placed on\n"
-                   "top of the robot (h=0.289), and with an aperture of 70 degrees the range on the\n"
-                   "ground is r=h*tan(aperture)=0.289*tan(70)=0.794m. To change the aperture to 80\n"
-                   "degrees, use the 'omnidirectional_camera_aperture' as follows:\n\n"
-                   "  <arena ...>\n"
-                   "    ...\n"
-                   "    <foot-bot id=\"fb0\" omnidirectional_camera_aperture=\"80\">\n"
-                   "      <body position=\"0.4,2.3,0.25\" orientation=\"45,0,0\" />\n"
-                   "      <controller config=\"mycntrl\" />\n"
-                   "    </foot-bot>\n"
-                   "    ...\n"
-                   "  </arena>\n\n"
-                   "Finally, you can change the parameters of the perspective camera. You can set\n"
-                   "its direction, aperture, focal length, and range with the attributes\n"
-                   "'perspective_camera_front', 'perspective_camera_aperture',\n"
-                   "'perspective_camera_focal_length', and 'perspective_camera_range', respectively.\n"
-                   "The default values are: 'true' for front direction, 30 degrees for aperture,\n"
-                   "0.035 for focal length, and 2 meters for range. When the direction is set to\n"
-                   "'false', the camera looks up. This can be useful to see the eye-bot LEDs. Check\n"
-                   "the following example:\n\n"
-                   "  <arena ...>\n"
-                   "    ...\n"
-                   "    <foot-bot id=\"fb0\"\n"
-                   "              perspective_camera_front=\"false\"\n"
-                   "              perspective_camera_aperture=\"45\"\n"
-                   "              perspective_camera_focal_length=\"0.07\"\n"
-                   "              perspective_camera_range=\"10\">\n"
-                   "      <body position=\"0.4,2.3,0.25\" orientation=\"45,0,0\" />\n"
-                   "      <controller config=\"mycntrl\" />\n"
-                   "    </foot-bot>\n"
-                   "    ...\n"
-                   "  </arena>\n\n"
-                   ,
+
+                   "----------------------------------------\n"
+                   "Range And Bearing (RAB) Configuration\n"
+                   "----------------------------------------\n" +
+
+                   CRABEquippedEntity::GetQueryDocumentation({
+                       .strEntityName = "foot-bot",
+                       .fRangeDefault = CFootBotEntity::RAB_DEFAULT_RANGE,
+                       .fMsgSizeDefault = CFootBotEntity::RAB_DEFAULT_MSG_SIZE,
+                       .cPosOffsetDefault = CVector3(0.0f, 0.0f, CFootBotEntity::RAB_DEFAULT_ELEVATION),
+                       .cRotOffsetDefault = CFootBotEntity::RAB_DEFAULT_ROT_OFFSET}) +
+
+
+                   "----------------------------------------\n"
+                   "Battery Configuration\n"
+                   "----------------------------------------\n" +
+
+                   CBatteryEquippedEntity::GetQueryDocumentation({
+                       .strEntityName = "foot-bot"}) +
+
+
+                   "----------------------------------------\n"
+                   "Omnidirectional Camera Configuration\n"
+                   "----------------------------------------\n" +
+
+                   COmnidirectionalCameraEquippedEntity::GetQueryDocumentation({
+                       .strEntityName = "foot-bot",
+                       .fOffsetDefault = CFootBotEntity::OMNIDIRECTIONAL_CAMERA_DEFAULT_ELEVATION,
+                       .cApertureDefault = CFootBotEntity::OMNIDIRECTIONAL_CAMERA_DEFAULT_APERTURE}) +
+
+                   "----------------------------------------\n"
+                   "Perspective Camera Configuration\n"
+                   "----------------------------------------\n" +
+
+                   CPerspectiveCameraEquippedEntity::GetQueryDocumentation({
+                       .strEntityName = "foot-bot",
+                       .bCanSetLooksAt = true,
+                       .strLooksAtDefault = "front",
+                       .cApertureDefault = CFootBotEntity::PERSPECTIVE_CAMERA_DEFAULT_APERTURE,
+                       .fRangeDefault = CFootBotEntity::PERSPECTIVE_CAMERA_DEFAULT_RANGE,
+                       .fFocalLengthDefault = CFootBotEntity::PERSPECTIVE_CAMERA_DEFAULT_FOCAL_LENGTH,
+                       .nImageHeightDefault = CFootBotEntity::PERSPECTIVE_CAMERA_DEFAULT_IMAGE_HEIGHT,
+                       .nImageWidthDefault = CFootBotEntity::PERSPECTIVE_CAMERA_DEFAULT_IMAGE_WIDTH}),
                    "Under development"
       );
 

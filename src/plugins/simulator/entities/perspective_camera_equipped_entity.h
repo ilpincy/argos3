@@ -28,6 +28,68 @@ namespace argos {
 
    public:
 
+     /**
+      * @brief Specification for the documentation on how robot perspective
+      * camera configuration should be displayed when it is queried by the user
+      * on the command line.
+      */
+     struct SDocumentationQuerySpec {
+       /**
+        * @brief The name of the robot equipped with a omndirectional camera
+        * (e.g., "foot-bot").
+        */
+       std::string strEntityName;
+
+       /**
+        * @brief Can the direction of the camera pointing be set for this robot
+        * ?
+        */
+       bool bCanSetLooksAt;
+
+       /**
+        * @brief The default camera pointing direction.
+        */
+       std::string strLooksAtDefault;
+
+       /**
+        * @brief The camera aperture default.
+        */
+       CDegrees cApertureDefault;
+
+
+       /**
+        * @brief The default camera range.
+        */
+       Real fRangeDefault;
+
+       /**
+        * @brief The default camera focal length.
+        */
+       Real fFocalLengthDefault;
+
+       /**
+        * @brief The default camera image height.
+        */
+       UInt32 nImageHeightDefault;
+
+       /**
+        * @brief The default camera image width.
+        */
+       UInt32 nImageWidthDefault;
+     };
+
+     enum ELookDirection {
+       LOOKS_UP,
+       LOOKS_DOWN,
+       LOOKS_FRONT
+     };
+
+     /**
+      * @brief Get the documentation for this class which should appear whenever
+      * a query involving a omnidirectional camera-equipped entity is requested.
+      */
+     static std::string GetQueryDocumentation(const SDocumentationQuerySpec& c_spec);
+
       /**
        * Class constructor.
        * This constructor is meant to be used with the Init() method.
@@ -37,9 +99,7 @@ namespace argos {
 
       /**
        * Class constructor.
-       * This constructor is meant to be standalone.
-       * You should not call Init() after using this constructor, or
-       * memory leaks are likely to happen.
+       *
        * @param pc_parent The parent of this entity.
        * @param str_id The id of this entity.
        * @param c_aperture The aperture of the visibility cone.
@@ -56,7 +116,7 @@ namespace argos {
                                        Real f_range,
                                        SInt32 n_width,
                                        SInt32 n_height,
-                                       SAnchor& s_anchor);
+                                       SAnchor* s_anchor = nullptr);
 
       /**
        * Initializes the state of the entity from the XML configuration tree.
@@ -67,6 +127,10 @@ namespace argos {
       virtual void Enable();
 
       virtual void Disable();
+
+      inline const bool CameraLooksFront() const {
+        return ELookDirection::LOOKS_FRONT == m_eLookDir;
+      }
 
       /**
        * Returns the aperture of the visibility cone of the camera.
@@ -187,6 +251,9 @@ namespace argos {
       }
 
    private:
+
+     /** Where is the camera pointing ?*/
+     enum ELookDirection m_eLookDir;
 
       /** The aperture of the visibility cone */
       CRadians m_cAperture;

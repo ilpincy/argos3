@@ -79,19 +79,6 @@ namespace argos {
                                          ToRadians(cRotOffsetEuler[1]),
                                          ToRadians(cRotOffsetEuler[2]));
          }
-         /* Parse and look up the anchor */
-         std::string strAnchorId;
-         GetNodeAttribute(t_tree, "anchor", strAnchorId);
-         /*
-          * NOTE: here we get a reference to the embodied entity
-          * This line works under the assumption that:
-          * 1. the RABEquippedEntity has a parent;
-          * 2. the parent has a child whose id is "body"
-          * 3. the "body" is an embodied entity
-          * If any of the above is false, this line will bomb out.
-          */
-         m_pcEntityBody = &GetParent().GetComponent<CEmbodiedEntity>("body");
-         m_psAnchor = &m_pcEntityBody->GetAnchor(strAnchorId);
          /* Get message size */
          size_t unMsgSize;
          GetNodeAttribute(t_tree, "msg_size", unMsgSize);
@@ -104,7 +91,7 @@ namespace argos {
          SetInitOrientation(GetOrientation());
       }
       catch(CARGoSException& ex) {
-         THROW_ARGOSEXCEPTION_NESTED("Error initializing a range and bearing entity \"" << GetId() << "\"", ex);
+        THROW_ARGOSEXCEPTION_NESTED("Error initializing a range and bearing entity \"" << GetId() << "\"", ex);
       }
    }
 
@@ -294,7 +281,7 @@ namespace argos {
                         c_space_hash.UpdateCell(m_nCenterI, m_nCenterJ - j, m_nCenterK, c_element);
                      }
                   }
-                  else {                     
+                  else {
                      /*
                       * i == 0
                       * j == 0
@@ -357,7 +344,7 @@ namespace argos {
 
    CRABEquippedEntityGridCellUpdater::CRABEquippedEntityGridCellUpdater(CGrid<CRABEquippedEntity>& c_grid) :
       m_cGrid(c_grid) {}
-   
+
    bool CRABEquippedEntityGridCellUpdater::operator()(SInt32 n_i,
                                                       SInt32 n_j,
                                                       SInt32 n_k,
@@ -367,7 +354,7 @@ namespace argos {
       /* Continue with other cells */
       return true;
    }
-   
+
    void CRABEquippedEntityGridCellUpdater::SetEntity(CRABEquippedEntity& c_entity) {
       m_pcEntity = &c_entity;
    }
@@ -390,6 +377,54 @@ namespace argos {
       catch(CARGoSException& ex) {
          THROW_ARGOSEXCEPTION_NESTED("While updating the RAB entity grid for RAB entity \"" << c_entity.GetContext() << c_entity.GetId() << "\"", ex);
       }
+   }
+
+   std::string CRABEquippedEntity::GetQueryDocumentation(const SDocumentationQuerySpec& c_spec) {
+     std::stringstream cPosOffsetDefault;
+     std::stringstream cRotOffsetDefault;
+     cPosOffsetDefault << c_spec.cPosOffsetDefault;
+     cRotOffsetDefault << c_spec.cRotOffsetDefault;
+     std::string strDoc =
+         "You configure the parameters of the range-and-bearing (RAB) system of the " + c_spec.strEntityName + ".\n"
+         "The following parameters are available:\n\n"
+
+         "- 'range' - The emission range (the maximum distance from message source) of the\n"
+         "            "  + c_spec.strEntityName + " that another robot can receive a message, specified in meters.\n"
+         "            Defaults to " + std::to_string(c_spec.fRangeDefault) + " meters if omitted.\n\n"
+
+         " - 'msg_size' - The length of the message sent at each timestep by the " + c_spec.strEntityName + "\n"
+         "                specified in bytes. Defaults to " + std::to_string(c_spec.fMsgSizeDefault) + " if ommited.\n\n"
+
+         " - 'pos_offset' - The displacement from the center of the "  + c_spec.strEntityName + " to place the RAB\n"
+         "                  sensor and/or actuator at in X,Y,Z. Units of meters. Defaults to\n"
+         "                  " + cPosOffsetDefault.str() + " if omitted.\n\n"
+
+         " - 'rot_offset' - The rotational offset of the "  + c_spec.strEntityName + " to place the RAB sensor\n"
+         "                  and/or actuator at in along the Z,Y,X axes. Units of\n"
+         "                  degrees. Defaults to " + cRotOffsetDefault.str() + " if omitted.\n\n";
+
+     std::string strExamples =
+         "Example XML range-and-bearing system configurations:\n\n"
+
+         "  <arena>\n"
+         "    ...\n"
+         "    <" + c_spec.strEntityName + " ...>\n"
+         "      ...\n"
+         "        <!-- Default values -->\n"
+         "      <range_and_bearing range='" + std::to_string(c_spec.fRangeDefault) + "'\n"
+         "                         msg_size=\"" + std::to_string(c_spec.fMsgSizeDefault) + "\"\n"
+         "                         pos_offset=\""+ cPosOffsetDefault.str()  + "\"\n"
+         "                         rot_offset=\""+ cRotOffsetDefault.str() + "\"/>\n"
+         "        <!-- 10 bytes messages, 10 cm elevated position, 20 degree Z rotation, extended 20m range -->\n"
+         "      <range_and_bearing range=\"20\"\n"
+         "                         msg_size=\"10\"\n"
+         "                         pos_offset=\"0,0,0.1\"\n"
+         "                         rot_offset=\"20,0,0\"/>\n"
+         "      ...\n"
+         "    </" + c_spec.strEntityName + ">\n"
+         "    ...\n"
+         "  </arena>\n\n";
+     return strDoc + strExamples;
    }
 
    /****************************************/

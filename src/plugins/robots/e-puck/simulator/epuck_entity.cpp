@@ -37,7 +37,11 @@ namespace argos {
    static const CRadians LED_RING_START_ANGLE   = CRadians((ARGOS_PI / 8.0f) * 0.5f);
    static const Real LED_RING_RADIUS            = BODY_RADIUS + 0.007;
    static const Real LED_RING_ELEVATION         = 0.086f;
-   static const Real RAB_ELEVATION              = LED_RING_ELEVATION;
+
+  const Real CEPuckEntity::RAB_DEFAULT_RANGE = 0.8;
+  const size_t CEPuckEntity::RAB_DEFAULT_MSG_SIZE = 2;
+  const Real CEPuckEntity::RAB_DEFAULT_ELEVATION = LED_RING_ELEVATION;
+  const CQuaternion CEPuckEntity::RAB_DEFAULT_ROT_OFFSET = CQuaternion();
 
    /****************************************/
    /****************************************/
@@ -102,7 +106,7 @@ namespace argos {
                                                "proximity_0");
          AddComponent(*m_pcProximitySensorEquippedEntity);
 
-	 
+
          /*m_pcProximitySensorEquippedEntity->AddSensorRing(
             CVector3(0.0f, 0.0f, PROXIMITY_SENSOR_RING_ELEVATION),
             PROXIMITY_SENSOR_RING_RADIUS,
@@ -134,7 +138,7 @@ namespace argos {
             m_pcProximitySensorEquippedEntity->AddSensor(cOff, cDir, PROXIMITY_SENSOR_RING_RANGE, m_pcEmbodiedEntity->GetOriginAnchor());
          }
 
-	 
+
          /* Light sensor equipped entity */
          m_pcLightSensorEquippedEntity =
             new CLightSensorEquippedEntity(this,
@@ -168,7 +172,8 @@ namespace argos {
                                                         f_rab_range,
                                                         m_pcEmbodiedEntity->GetOriginAnchor(),
                                                         *m_pcEmbodiedEntity,
-                                                        CVector3(0.0f, 0.0f, RAB_ELEVATION));
+                                                        CVector3(0.0f, 0.0f, RAB_DEFAULT_ELEVATION),
+                                                        RAB_DEFAULT_ROT_OFFSET);
          AddComponent(*m_pcRABEquippedEntity);
          /* Battery equipped entity */
          m_pcBatteryEquippedEntity = new CBatteryEquippedEntity(this, "battery_0", str_bat_model);
@@ -216,7 +221,7 @@ namespace argos {
             LED_RING_START_ANGLE,
             8,
             m_pcEmbodiedEntity->GetOriginAnchor());
-	 
+
          /* Proximity sensor equipped entity */
          m_pcProximitySensorEquippedEntity =
             new CProximitySensorEquippedEntity(this,
@@ -255,7 +260,7 @@ namespace argos {
          }
 
 
-	 
+
          /* Light sensor equipped entity */
          m_pcLightSensorEquippedEntity =
             new CLightSensorEquippedEntity(this,
@@ -283,17 +288,17 @@ namespace argos {
                                                    CGroundSensorEquippedEntity::TYPE_GRAYSCALE,
                                                    m_pcEmbodiedEntity->GetOriginAnchor());
          /* RAB equipped entity */
-         Real fRange = 0.8f;
-         GetNodeAttributeOrDefault(t_tree, "rab_range", fRange, fRange);
-         UInt32 unDataSize = 2;
-         GetNodeAttributeOrDefault(t_tree, "rab_data_size", unDataSize, unDataSize);
          m_pcRABEquippedEntity = new CRABEquippedEntity(this,
                                                         "rab_0",
-                                                        unDataSize,
-                                                        fRange,
+                                                        RAB_DEFAULT_MSG_SIZE,
+                                                        RAB_DEFAULT_RANGE,
                                                         m_pcEmbodiedEntity->GetOriginAnchor(),
                                                         *m_pcEmbodiedEntity,
-                                                        CVector3(0.0f, 0.0f, RAB_ELEVATION));
+                                                        CVector3(0.0f, 0.0f, RAB_DEFAULT_ELEVATION),
+                                                        RAB_DEFAULT_ROT_OFFSET);
+         if(NodeExists(t_tree, "range_and_bearing")) {
+           m_pcRABEquippedEntity->Init(GetNode(t_tree, "range_and_bearing"));
+         }
          AddComponent(*m_pcRABEquippedEntity);
          /* Battery equipped entity */
          m_pcBatteryEquippedEntity = new CBatteryEquippedEntity(this, "battery_0");
@@ -343,7 +348,7 @@ namespace argos {
 
    /****************************************/
    /****************************************/
-   
+
    REGISTER_ENTITY(CEPuckEntity,
                    "e-puck",
                    "Carlo Pinciroli [ilpincy@gmail.com]",
@@ -380,66 +385,27 @@ namespace argos {
                    "The 'controller/config' attribute is used to assign a controller to the\n"
                    "e-puck. The value of the attribute must be set to the id of a previously\n"
                    "defined controller. Controllers are defined in the <controllers> XML subtree.\n\n"
+
                    "OPTIONAL XML CONFIGURATION\n\n"
-                   "You can set the emission range of the range-and-bearing system. By default, a\n"
-                   "message sent by an e-puck can be received up to 80cm. By using the 'rab_range'\n"
-                   "attribute, you can change it to, i.e., 4m as follows:\n\n"
-                   "  <arena ...>\n"
-                   "    ...\n"
-                   "    <e-puck id=\"eb0\" rab_range=\"4\">\n"
-                   "      <body position=\"0.4,2.3,0.25\" orientation=\"45,90,0\" />\n"
-                   "      <controller config=\"mycntrl\" />\n"
-                   "    </e-puck>\n"
-                   "    ...\n"
-                   "  </arena>\n\n"
-                   "You can also set the data sent at each time step through the range-and-bearing\n"
-                   "system. By default, a message sent by an e-puck is 2 bytes long. By using the\n"
-                   "'rab_data_size' attribute, you can change it to, i.e., 20 bytes as follows:\n\n"
-                   "  <arena ...>\n"
-                   "    ...\n"
-                   "    <e-puck id=\"eb0\" rab_data_size=\"20\">\n"
-                   "      <body position=\"0.4,2.3,0.25\" orientation=\"45,90,0\" />\n"
-                   "      <controller config=\"mycntrl\" />\n"
-                   "    </e-puck>\n"
-                   "    ...\n"
-                   "  </arena>\n\n"
-                   "You can also configure the battery of the robot. By default, the battery never\n"
-                   "depletes. You can choose among several battery discharge models, such as\n"
-                   "- time: the battery depletes by a fixed amount at each time step\n"
-                   "- motion: the battery depletes according to how the robot moves\n"
-                   "- time_motion: a combination of the above models.\n"
-                   "You can define your own models too. Follow the examples in the file\n"
-                   "argos3/src/plugins/simulator/entities/battery_equipped_entity.cpp.\n\n"
-                   "  <arena ...>\n"
-                   "    ...\n"
-                   "    <e-puck id=\"eb0\"\n"
-                   "      <body position=\"0.4,2.3,0.25\" orientation=\"45,0,0\" />\n"
-                   "      <controller config=\"mycntrl\" />\n"
-                   "      <battery model=\"time\" factor=\"1e-5\"/>\n"
-                   "    </e-puck>\n"
-                   "    ...\n"
-                   "  </arena>\n\n"
-                   "  <arena ...>\n"
-                   "    ...\n"
-                   "    <e-puck id=\"eb0\"\n"
-                   "      <body position=\"0.4,2.3,0.25\" orientation=\"45,0,0\" />\n"
-                   "      <controller config=\"mycntrl\" />\n"
-                   "      <battery model=\"motion\" pos_factor=\"1e-3\"\n"
-                   "                              orient_factor=\"1e-3\"/>\n"
-                   "    </e-puck>\n"
-                   "    ...\n"
-                   "  </arena>\n\n"
-                   "  <arena ...>\n"
-                   "    ...\n"
-                   "    <e-puck id=\"eb0\"\n"
-                   "      <body position=\"0.4,2.3,0.25\" orientation=\"45,0,0\" />\n"
-                   "      <controller config=\"mycntrl\" />\n"
-                   "      <battery model=\"time_motion\" time_factor=\"1e-5\"\n"
-                   "                                   pos_factor=\"1e-3\"\n"
-                   "                                   orient_factor=\"1e-3\"/>\n"
-                   "    </e-puck>\n"
-                   "    ...\n"
-                   "  </arena>\n\n",
+
+                   "----------------------------------------\n"
+                   "Range And Bearing (RAB) Configuration\n"
+                   "----------------------------------------\n" +
+
+                   CRABEquippedEntity::GetQueryDocumentation({
+                       .strEntityName = "e-puck",
+                       .fRangeDefault = CEPuckEntity::RAB_DEFAULT_RANGE,
+                       .fMsgSizeDefault = CEPuckEntity::RAB_DEFAULT_MSG_SIZE,
+                       .cPosOffsetDefault = CVector3(0.0f, 0.0f, CEPuckEntity::RAB_DEFAULT_ELEVATION),
+                       .cRotOffsetDefault = CEPuckEntity::RAB_DEFAULT_ROT_OFFSET}) +
+
+
+                   "----------------------------------------\n"
+                   "Battery Configuration\n"
+                   "----------------------------------------\n" +
+
+                   CBatteryEquippedEntity::GetQueryDocumentation({
+                       .strEntityName = "e-puck"}),
                    "Under development"
       );
 

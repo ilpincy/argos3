@@ -21,7 +21,7 @@ namespace argos {
 
    /****************************************/
    /****************************************/
-   
+
    /**
     * The battery entity.
     *
@@ -37,6 +37,24 @@ namespace argos {
       ENABLE_VTABLE();
 
    public:
+     /**
+      * @brief Specification for the documentation on how robot battery
+      * configuration should be displayed when it is queried by the user on the
+      * command line.
+      */
+     struct SDocumentationQuerySpec {
+       /**
+        * @brief The name of the robot equipped with a battery (e.g.,
+        * "foot-bot").
+        */
+       std::string strEntityName;
+     };
+
+      /**
+       * @brief Get the documentation for this class which should appear
+       * whenever a query involving a battery-equipped entity is requested.
+       */
+      static std::string GetQueryDocumentation(const SDocumentationQuerySpec& c_spec);
 
       CBatteryEquippedEntity(CComposableEntity* pc_parent);
 
@@ -64,6 +82,10 @@ namespace argos {
 
       Real GetFullCharge() const {
          return m_fFullCharge;
+      }
+
+      void ResetToFullCharge() {
+         m_fAvailableCharge = m_fFullCharge;
       }
 
       void SetFullCharge(Real f_full_charge) {
@@ -94,15 +116,15 @@ namespace argos {
 
    /****************************************/
    /****************************************/
-   
+
    /**
     * The discharge model dictates how the battery discharges over
     * time.
     */
    class CBatteryDischargeModel : public CBaseConfigurableResource {
-         
+
    public:
-         
+
       CBatteryDischargeModel();
 
       virtual ~CBatteryDischargeModel();
@@ -114,22 +136,22 @@ namespace argos {
       virtual void Destroy() {}
 
       virtual void SetBattery(CBatteryEquippedEntity* pc_battery);
-         
+
       virtual void operator()() = 0;
-         
+
    protected:
-         
+
       CBatteryEquippedEntity* m_pcBattery;
    };
 
    /****************************************/
    /****************************************/
-   
+
    /**
     * For dynamic loading of battery discharge models.
     */
    typedef CFactory<CBatteryDischargeModel> TFactoryBatteryDischargeModel;
-   
+
 #define REGISTER_BATTERY_DISCHARGE_MODEL(CLASSNAME, LABEL)  \
    REGISTER_SYMBOL(CBatteryDischargeModel,                  \
                    CLASSNAME,                               \
@@ -146,30 +168,30 @@ namespace argos {
    /**
     * A battery discharge model based only on time.
     *
-    * In this model, the charge is calculated as follows:
+    * In this model, the charge is calculated as follows each timestep:
     *
-    * new charge = old charge - delta
+    * new charge = old charge - time_factor
     */
    class CBatteryDischargeModelTime : public CBatteryDischargeModel {
-      
+
    public:
 
       CBatteryDischargeModelTime() :
-         m_fDelta(1e-5) {}
+         m_fTimeFactor(1e-5) {}
 
       virtual void Init(TConfigurationNode& t_tree);
-      
-      void SetDelta(Real f_delta) {
-         m_fDelta = f_delta;
+
+      void SetTimeFactor(Real f_factor) {
+         m_fTimeFactor = f_factor;
       }
-      
+
       virtual void operator()();
-      
+
    protected:
-      
+
       const SAnchor* m_psAnchor;
       CVector3 m_cOldPosition;
-      Real m_fDelta;
+      Real m_fTimeFactor;
    };
 
    /****************************************/
@@ -178,14 +200,14 @@ namespace argos {
    /**
     * A battery discharge model based only on motion.
     *
-    * In this model, the charge is calculated as follows:
+    * In this model, the charge is calculated as follows each timestep:
     *
     * new charge = old charge - pos_factor * (delta position) - orient_factor * (delta orientation)
     */
    class CBatteryDischargeModelMotion : public CBatteryDischargeModel {
-      
+
    public:
-      
+
       CBatteryDischargeModelMotion() :
          m_psAnchor(NULL),
          m_fPosFactor(1e-3),
@@ -196,17 +218,17 @@ namespace argos {
       void SetPosFactor(Real f_factor) {
          m_fPosFactor = f_factor;
       }
-      
+
       void SetOrientFactor(Real f_factor) {
          m_fOrientFactor = f_factor;
       }
-      
+
       virtual void SetBattery(CBatteryEquippedEntity* pc_battery);
-      
+
       virtual void operator()();
-      
+
    protected:
-      
+
       const SAnchor* m_psAnchor;
       CVector3 m_cOldPosition;
       CQuaternion m_cOldOrientation;
@@ -216,55 +238,56 @@ namespace argos {
 
    /****************************************/
    /****************************************/
-   
+
    /**
-    * A battery discharge model in which the charge decreases with both time and motion.
+    * A battery discharge model in which the charge decreases with both time and
+    * motion.
     *
-    * In this model, the charge is calculated as follows:
+    * In this model, the charge is calculated as follows each timestep:
     *
-    * new charge = old charge - delta - pos_factor * (delta position) - orient_factor * (delta orientation)
+    * new charge = old charge - time_factor - pos_factor * (delta position) - orient_factor * (delta orientation)
     */
    class CBatteryDischargeModelTimeMotion : public CBatteryDischargeModel {
-      
+
    public:
-      
+
       CBatteryDischargeModelTimeMotion() :
          m_psAnchor(NULL),
-         m_fDelta(1e-5),
+         m_fTimeFactor(1e-5),
          m_fPosFactor(1e-3),
          m_fOrientFactor(1e-3) {}
 
       virtual void Init(TConfigurationNode& t_tree);
-      
-      void SetDelta(Real f_delta) {
-         m_fDelta = f_delta;
+
+      void SetTimeFactor(Real f_factor) {
+         m_fTimeFactor = f_factor;
       }
-      
+
       void SetPosFactor(Real f_factor) {
          m_fPosFactor = f_factor;
       }
-      
+
       void SetOrientFactor(Real f_factor) {
          m_fOrientFactor = f_factor;
       }
-      
+
       virtual void SetBattery(CBatteryEquippedEntity* pc_battery);
-      
+
       virtual void operator()();
-      
+
    protected:
-      
+
       const SAnchor* m_psAnchor;
       CVector3 m_cOldPosition;
       CQuaternion m_cOldOrientation;
-      Real m_fDelta;
+      Real m_fTimeFactor;
       Real m_fPosFactor;
       Real m_fOrientFactor;
    };
 
    /****************************************/
    /****************************************/
-   
+
 }
 
 #endif

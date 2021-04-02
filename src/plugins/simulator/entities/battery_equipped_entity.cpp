@@ -139,7 +139,7 @@ namespace argos {
    /****************************************/
 
    void CBatteryDischargeModelTime::Init(TConfigurationNode& t_tree) {
-      GetNodeAttributeOrDefault(t_tree, "delta", m_fDelta, m_fDelta);
+      GetNodeAttributeOrDefault(t_tree, "time_factor", m_fTimeFactor, m_fTimeFactor);
    }
 
    /****************************************/
@@ -149,7 +149,7 @@ namespace argos {
       if(m_pcBattery->GetAvailableCharge() > 0.0) {
          m_pcBattery->SetAvailableCharge(
             Max<Real>(0.0,
-                      m_pcBattery->GetAvailableCharge() - m_fDelta));
+                      m_pcBattery->GetAvailableCharge() - m_fTimeFactor));
       }
    }
 
@@ -157,8 +157,8 @@ namespace argos {
    /****************************************/
 
    void CBatteryDischargeModelMotion::Init(TConfigurationNode& t_tree) {
-      GetNodeAttributeOrDefault(t_tree, "pos_delta", m_fPosFactor, m_fPosFactor);
-      GetNodeAttributeOrDefault(t_tree, "orient_delta", m_fOrientFactor, m_fOrientFactor);
+      GetNodeAttributeOrDefault(t_tree, "pos_factor", m_fPosFactor, m_fPosFactor);
+      GetNodeAttributeOrDefault(t_tree, "orient_factor", m_fOrientFactor, m_fOrientFactor);
    }
 
    /****************************************/
@@ -187,7 +187,7 @@ namespace argos {
 
    /****************************************/
    /****************************************/
-      
+
    void CBatteryDischargeModelMotion::operator()() {
       if(m_pcBattery->GetAvailableCharge() > 0.0) {
          /* Calculate delta position */
@@ -213,12 +213,12 @@ namespace argos {
          m_cOldOrientation = m_psAnchor->Orientation;
       }
    }
-   
+
    /****************************************/
    /****************************************/
 
    void CBatteryDischargeModelTimeMotion::Init(TConfigurationNode& t_tree) {
-      GetNodeAttributeOrDefault(t_tree, "time_factor", m_fDelta, m_fDelta);
+      GetNodeAttributeOrDefault(t_tree, "time_factor", m_fTimeFactor, m_fTimeFactor);
       GetNodeAttributeOrDefault(t_tree, "pos_factor", m_fPosFactor, m_fPosFactor);
       GetNodeAttributeOrDefault(t_tree, "orient_factor", m_fOrientFactor, m_fOrientFactor);
    }
@@ -249,7 +249,7 @@ namespace argos {
 
    /****************************************/
    /****************************************/
-      
+
    void CBatteryDischargeModelTimeMotion::operator()() {
       if(m_pcBattery->GetAvailableCharge() > 0.0) {
          /* Calculate delta position */
@@ -267,7 +267,7 @@ namespace argos {
             Max<Real>(
                0.0,
                m_pcBattery->GetAvailableCharge() -
-               m_fDelta -
+               m_fTimeFactor -
                m_fPosFactor * fDeltaPos -
                m_fOrientFactor * cDeltaAngle.GetValue()
                ));
@@ -276,7 +276,65 @@ namespace argos {
          m_cOldOrientation = m_psAnchor->Orientation;
       }
    }
-   
+   /****************************************/
+   /****************************************/
+
+   std::string CBatteryEquippedEntity::GetQueryDocumentation(const SDocumentationQuerySpec& c_spec) {
+     std::string strDoc =
+         "You can configure the battery of the " + c_spec.strEntityName + ". By default, the"
+         " battery never\ndepletes. The following battery discharge models are available:\n\n"
+
+         "- 'time' - The battery depletes by a 'time_factor' amount at each time step. The\n"
+         "           'time_factor' attribute is optional, and defaults to 1e-5 if omitted.\n"
+         "           Units of charge/timestep.\n\n"
+
+         "- 'motion' - The battery depletes according to how the " + c_spec.strEntityName + " moves. The 'pos_factor'\n"
+         "             and 'orient_factor' attributes can be used to specify how much the\n"
+         "             battery should deplete to to changes in position and orientation,\n"
+         "             respectively. Units of charge/meter and charge/radian, respectively.\n"
+         "             They both default to 1e-3 if omitted.\n\n"
+
+         "- 'time_motion' - A combination of the 'time' and 'motion' models.\n\n"
+
+         "You can define your own models too. Follow the examples in the file\n"
+         "argos3/src/plugins/simulator/entities/battery_equipped_entity.cpp.\n\n"
+
+         "You can also specify the initial battery charge with the 'start_charge' attribute\n"
+         "and the maximum battery charge wth the 'full_charge' attribute. These both default\n"
+         "to 1.0 if omitted.\n\n";
+
+         std::string strExamples =
+         "Example XML battery configurations (default values shown):\n\n"
+
+         "  <arena>\n"
+         "    ...\n"
+         "    <" + c_spec.strEntityName + " ...>\n"
+         "      ...\n"
+         "      <!-- Time model -->\n"
+         "      <battery discharge_model=\"time\"\n"
+         "               time_factor=\"1e-3\"\n"
+         "               start_charge=\"1.0\"\n"
+         "               full_charge=\"1.0\">\n\n"
+         "      <!-- Motion model -->\n"
+         "      <battery discharge_model=\"motion\"\n"
+         "               pos_factor=\"1e-3\"\n"
+         "               orient_factor=\"1e-3\"\n"
+         "               start_charge=\"1.0\"\n"
+         "               full_charge=\"1.0\">\n\n"
+         "      <!-- Time-motion model -->\n"
+         "      <battery discharge_model=\"time_motion\"\n"
+         "               time_factor=\"1e-5\"\n"
+         "               pos_factor=\"1e-3\"\n"
+         "               orient_factor=\"1e-3\"\n"
+         "               start_charge=\"1.0\"\n"
+         "               full_charge=\"1.0\">\n\n"
+         "      ...\n"
+         "    </" + c_spec.strEntityName + ">\n"
+         "    ...\n"
+         "  </arena>\n\n";
+         return strDoc + strExamples;
+   }
+
    /****************************************/
    /****************************************/
 

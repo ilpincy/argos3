@@ -34,6 +34,17 @@ namespace argos {
    static const CRadians PROXIMITY_SENSOR_RING_START_ANGLE = CRadians((ARGOS_PI / 12.0f) * 0.5f);
    static const Real PROXIMITY_SENSOR_RING_RANGE           = 3.0f;
 
+   const CDegrees CEyeBotEntity::PERSPECTIVE_CAMERA_DEFAULT_APERTURE = CDegrees(30.0f);
+   const Real CEyeBotEntity::PERSPECTIVE_CAMERA_DEFAULT_FOCAL_LENGTH = 0.035f;
+   const Real CEyeBotEntity::PERSPECTIVE_CAMERA_DEFAULT_RANGE = 2.0f;
+   const UInt32 CEyeBotEntity::PERSPECTIVE_CAMERA_DEFAULT_IMAGE_HEIGHT = 480;
+   const UInt32 CEyeBotEntity::PERSPECTIVE_CAMERA_DEFAULT_IMAGE_WIDTH = 640;
+
+   const Real CEyeBotEntity::RAB_DEFAULT_RANGE = 3.0f;
+   const size_t CEyeBotEntity::RAB_DEFAULT_MSG_SIZE = 10;
+   const Real CEyeBotEntity::RAB_DEFAULT_ELEVATION = 0.1f;
+   const CQuaternion CEyeBotEntity::RAB_DEFAULT_ROT_OFFSET = CQuaternion();
+
    /****************************************/
    /****************************************/
 
@@ -139,7 +150,9 @@ namespace argos {
             un_rab_data_size,
             f_rab_range,
             m_pcEmbodiedEntity->GetOriginAnchor(),
-            *m_pcEmbodiedEntity);
+            *m_pcEmbodiedEntity,
+            CVector3(0.0f, 0.0f, RAB_DEFAULT_ELEVATION),
+            RAB_DEFAULT_ROT_OFFSET);
          AddComponent(*m_pcRABEquippedEntity);
          /* Perspective camera equipped entity */
          CQuaternion cPerspCamOrient(CRadians::PI_OVER_TWO, CVector3::Y);
@@ -152,8 +165,9 @@ namespace argos {
                                                  c_perspcam_aperture,
                                                  f_perspcam_focal_length,
                                                  f_perspcam_range,
-                                                 640, 480,
-                                                 cPerspCamAnchor);
+                                                 PERSPECTIVE_CAMERA_DEFAULT_IMAGE_WIDTH,
+                                                 PERSPECTIVE_CAMERA_DEFAULT_IMAGE_HEIGHT,
+                                                 &cPerspCamAnchor);
          AddComponent(*m_pcPerspectiveCameraEquippedEntity);
          /* Battery senesor equipped entity */
          m_pcBatteryEquippedEntity = new CBatteryEquippedEntity(this, "battery_0", str_bat_model);
@@ -240,39 +254,36 @@ namespace argos {
             24,
             m_pcEmbodiedEntity->GetOriginAnchor());
          /* RAB equipped entity */
-         Real fRange = 3.0f;
-         GetNodeAttributeOrDefault(t_tree, "rab_range", fRange, fRange);
-         UInt32 unDataSize = 10;
-         GetNodeAttributeOrDefault(t_tree, "rab_data_size", unDataSize, unDataSize);
          m_pcRABEquippedEntity = new CRABEquippedEntity(
             this,
             "rab_0",
-            unDataSize,
-            fRange,
+            RAB_DEFAULT_MSG_SIZE,
+            RAB_DEFAULT_RANGE,
             m_pcEmbodiedEntity->GetOriginAnchor(),
-            *m_pcEmbodiedEntity);
+            *m_pcEmbodiedEntity,
+            CVector3(0.0f, 0.0f, RAB_DEFAULT_ELEVATION),
+            RAB_DEFAULT_ROT_OFFSET);
+         if(NodeExists(t_tree, "range_and_bearing")) {
+           m_pcRABEquippedEntity->Init(GetNode(t_tree, "range_and_bearing"));
+         }
          AddComponent(*m_pcRABEquippedEntity);
          /* Perspective camera equipped entity */
-         bool bPerspCamFront = true;
-         GetNodeAttributeOrDefault(t_tree, "camera_front", bPerspCamFront, bPerspCamFront);
-         Real fPerspCamFocalLength = 0.035;
-         GetNodeAttributeOrDefault(t_tree, "camera_focal_length", fPerspCamFocalLength, fPerspCamFocalLength);
-         Real fPerspCamRange = 2.0;
-         GetNodeAttributeOrDefault(t_tree, "camera_range", fPerspCamRange, fPerspCamRange);
-         CDegrees cAperture(30.0f);
-         GetNodeAttributeOrDefault(t_tree, "camera_aperture", cAperture, cAperture);
          CQuaternion cPerspCamOrient(CRadians::PI_OVER_TWO, CVector3::Y);
          SAnchor& cPerspCamAnchor = m_pcEmbodiedEntity->AddAnchor("perspective_camera",
                                                                   CVector3(0.0, 0.0, 0.0),
                                                                   cPerspCamOrient);
          m_pcPerspectiveCameraEquippedEntity =
-            new CPerspectiveCameraEquippedEntity(this,
-                                                 "perspective_camera_0",
-                                                 ToRadians(cAperture),
-                                                 fPerspCamFocalLength,
-                                                 fPerspCamRange,
-                                                 640, 480,
-                                                 cPerspCamAnchor);
+             new CPerspectiveCameraEquippedEntity(this,
+                                                  "perspective_camera_0",
+                                                  ToRadians(PERSPECTIVE_CAMERA_DEFAULT_APERTURE),
+                                                  PERSPECTIVE_CAMERA_DEFAULT_FOCAL_LENGTH,
+                                                  PERSPECTIVE_CAMERA_DEFAULT_RANGE,
+                                                  PERSPECTIVE_CAMERA_DEFAULT_IMAGE_WIDTH,
+                                                  PERSPECTIVE_CAMERA_DEFAULT_IMAGE_HEIGHT,
+                                                  &cPerspCamAnchor);
+         if(NodeExists(t_tree, "perspective_camera")) {
+           m_pcPerspectiveCameraEquippedEntity->Init(GetNode(t_tree, "perspective_camera"));
+         }
          AddComponent(*m_pcPerspectiveCameraEquippedEntity);
          /* Battery equipped entity */
          m_pcBatteryEquippedEntity = new CBatteryEquippedEntity(this, "battery_0");
@@ -352,83 +363,41 @@ namespace argos {
                    "The 'controller/config' attribute is used to assign a controller to the\n"
                    "eye-bot. The value of the attribute must be set to the id of a previously\n"
                    "defined controller. Controllers are defined in the <controllers> XML subtree.\n\n"
+
                    "OPTIONAL XML CONFIGURATION\n\n"
-                   "You can set the emission range of the range-and-bearing system. By default, a\n"
-                   "message sent by an eye-bot can be received up to 3m. By using the 'rab_range'\n"
-                   "attribute, you can change it to, i.e., 4m as follows:\n\n"
-                   "  <arena ...>\n"
-                   "    ...\n"
-                   "    <eye-bot id=\"eb0\" rab_range=\"4\">\n"
-                   "      <body position=\"0.4,2.3,0.25\" orientation=\"45,0,0\" />\n"
-                   "      <controller config=\"mycntrl\" />\n"
-                   "    </eye-bot>\n"
-                   "    ...\n"
-                   "  </arena>\n\n"
-                   "You can also set the data sent at each time step through the range-and-bearing\n"
-                   "system. By default, a message sent by a eye-bot is 10 bytes long. By using the\n"
-                   "'rab_data_size' attribute, you can change it to, i.e., 20 bytes as follows:\n\n"
-                   "  <arena ...>\n"
-                   "    ...\n"
-                   "    <eye-bot id=\"eb0\" rab_data_size=\"20\">\n"
-                   "      <body position=\"0.4,2.3,0.25\" orientation=\"45,0,0\" />\n"
-                   "      <controller config=\"mycntrl\" />\n"
-                   "    </eye-bot>\n"
-                   "    ...\n"
-                   "  </arena>\n\n"
-                   "You can also configure the battery of the robot. By default, the battery never\n"
-                   "depletes. You can choose among several battery discharge models, such as\n"
-                   "- time: the battery depletes by a fixed amount at each time step\n"
-                   "- motion: the battery depletes according to how the robot moves\n"
-                   "- time_motion: a combination of the above models.\n"
-                   "You can define your own models too. Follow the examples in the file\n"
-                   "argos3/src/plugins/simulator/entities/battery_equipped_entity.cpp.\n\n"
-                   "  <arena ...>\n"
-                   "    ...\n"
-                   "    <eye-bot id=\"eb0\"\n"
-                   "      <body position=\"0.4,2.3,0.25\" orientation=\"45,0,0\" />\n"
-                   "      <controller config=\"mycntrl\" />\n"
-                   "      <battery model=\"time\" factor=\"1e-5\"/>\n"
-                   "    </eye-bot>\n"
-                   "    ...\n"
-                   "  </arena>\n\n"
-                   "  <arena ...>\n"
-                   "    ...\n"
-                   "    <eye-bot id=\"eb0\"\n"
-                   "      <body position=\"0.4,2.3,0.25\" orientation=\"45,0,0\" />\n"
-                   "      <controller config=\"mycntrl\" />\n"
-                   "      <battery model=\"motion\" pos_factor=\"1e-3\"\n"
-                   "                              orient_factor=\"1e-3\"/>\n"
-                   "    </eye-bot>\n"
-                   "    ...\n"
-                   "  </arena>\n\n"
-                   "  <arena ...>\n"
-                   "    ...\n"
-                   "    <eye-bot id=\"eb0\"\n"
-                   "      <body position=\"0.4,2.3,0.25\" orientation=\"45,0,0\" />\n"
-                   "      <controller config=\"mycntrl\" />\n"
-                   "      <battery model=\"time_motion\" time_factor=\"1e-5\"\n"
-                   "                                   pos_factor=\"1e-3\"\n"
-                   "                                   orient_factor=\"1e-3\"/>\n"
-                   "    </eye-bot>\n"
-                   "    ...\n"
-                   "  </arena>\n\n"
-                   "Finally, you can change the parameters of the camera. You can set its aperture,\n"
-                   "focal length, and range with the attributes 'camera_aperture',\n"
-                   "'camera_focal_length', and 'camera_range', respectively. The default values are:\n"
-                   "30 degrees for aperture, 0.035 for focal length, and 2 meters for range. Check\n"
-                   "the following example:\n\n"
-                   "  <arena ...>\n"
-                   "    ...\n"
-                   "    <eye-bot id=\"eb0\"\n"
-                   "             camera_aperture=\"45\"\n"
-                   "             camera_focal_length=\"0.07\"\n"
-                   "             camera_range=\"10\">\n"
-                   "      <body position=\"0.4,2.3,0.25\" orientation=\"45,0,0\" />\n"
-                   "      <controller config=\"mycntrl\" />\n"
-                   "    </eye-bot>\n"
-                   "    ...\n"
-                   "  </arena>\n\n"
-                   ,
+
+                   "----------------------------------------\n"
+                   "Range And Bearing (RAB) Configuration\n"
+                   "----------------------------------------\n" +
+
+                   CRABEquippedEntity::GetQueryDocumentation({
+                       .strEntityName = "eye-bot",
+                       .fRangeDefault = CEyeBotEntity::RAB_DEFAULT_RANGE,
+                       .fMsgSizeDefault = CEyeBotEntity::RAB_DEFAULT_MSG_SIZE,
+                       .cPosOffsetDefault = CVector3(0.0f, 0.0f, CEyeBotEntity::RAB_DEFAULT_ELEVATION),
+                       .cRotOffsetDefault = CEyeBotEntity::RAB_DEFAULT_ROT_OFFSET}) +
+
+                   "----------------------------------------\n"
+                   "Battery Configuration\n"
+                   "----------------------------------------\n" +
+
+                   CBatteryEquippedEntity::GetQueryDocumentation({
+                       .strEntityName = "eye-bot"}) +
+
+                   "----------------------------------------\n"
+                   "Perspective Camera Configuration\n"
+                   "----------------------------------------\n" +
+
+                   CPerspectiveCameraEquippedEntity::GetQueryDocumentation({
+                       .strEntityName = "eye-bot",
+                       .bCanSetLooksAt = false,
+                       .strLooksAtDefault = "down",
+                       .cApertureDefault = CEyeBotEntity::PERSPECTIVE_CAMERA_DEFAULT_APERTURE,
+                       .fRangeDefault = CEyeBotEntity::PERSPECTIVE_CAMERA_DEFAULT_RANGE,
+                       .fFocalLengthDefault = CEyeBotEntity::PERSPECTIVE_CAMERA_DEFAULT_FOCAL_LENGTH,
+                       .nImageHeightDefault = CEyeBotEntity::PERSPECTIVE_CAMERA_DEFAULT_IMAGE_HEIGHT,
+                       .nImageWidthDefault = CEyeBotEntity::PERSPECTIVE_CAMERA_DEFAULT_IMAGE_WIDTH}),
+
                    "Usable"
       );
 

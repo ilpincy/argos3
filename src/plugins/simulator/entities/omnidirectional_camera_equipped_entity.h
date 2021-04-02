@@ -25,6 +25,35 @@ namespace argos {
       ENABLE_VTABLE();
 
    public:
+     /**
+      * @brief Specification for the documentation on how robot omnidirectional
+      * camera configuration should be displayed when it is queried by the user
+      * on the command line.
+      */
+     struct SDocumentationQuerySpec {
+       /**
+        * @brief The name of the robot equipped with a omndirectional camera
+        * (e.g., "foot-bot").
+        */
+       std::string strEntityName;
+
+       /**
+        * @brief The default offset of the camera from the center of the robot
+        * in Z.
+        */
+       Real fOffsetDefault;
+
+       /**
+        * @brief The default camera aperture.
+        */
+       CDegrees cApertureDefault;
+     };
+
+     /**
+      * @brief Get the documentation for this class which should appear whenever
+      * a query involving a omnidirectional camera-equipped entity is requested.
+      */
+     static std::string GetQueryDocumentation(const SDocumentationQuerySpec& c_spec);
 
       /**
        * Class constructor.
@@ -35,13 +64,12 @@ namespace argos {
 
       /**
        * Class constructor.
-       * This constructor is meant to be standalone.
-       * You should not call Init() after using this constructor, or
-       * memory leaks are likely to happen.
+       *
        * @param pc_parent The parent of this entity.
        * @param str_id The id of this entity.
        * @param c_aperture The aperture of the visibility cone
-       * @param c_offset The positional offset of this omnidirectionalcamera with respect to the robot reference point.
+       * @param c_offset The positional offset of this omnidirectionalcamera
+       *                 with respect to the robot reference point.
        */
       COmnidirectionalCameraEquippedEntity(CComposableEntity* pc_parent,
                                            const std::string& str_id,

@@ -21,13 +21,18 @@ namespace argos {
    public:
 
       struct SReading {
-         /** Available charge, between 0 and 1 */
+         /** Available charge, between 0 and full charge */
          Real AvailableCharge;
+
+        /** The maxmimum battery charge */
+         Real FullCharge;
+
          /** Time left in seconds */
          Real TimeLeft;
 
          SReading() :
             AvailableCharge(1.0),
+            FullCharge(1.0),
             TimeLeft(std::numeric_limits<Real>::infinity()) {}
       };
 

@@ -16,11 +16,6 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   static CRange<Real> UNIT(0.0f, 1.0f);
-
-   /****************************************/
-   /****************************************/
-
    CBatteryDefaultSensor::CBatteryDefaultSensor() :
       m_pcEmbodiedEntity(nullptr),
       m_pcBatteryEntity(nullptr),
@@ -70,6 +65,11 @@ namespace argos {
       if (IsDisabled()) {
         return;
       }
+      /* Get the current full charge--could have been change by the user */
+      m_sReading.FullCharge = m_pcBatteryEntity->GetFullCharge();
+      /* Final noise-injected readings will be clamped to this range */
+      static CRange<Real> cChargeRange(0.0f, m_sReading.FullCharge);
+
       /* Save old charge value (used later for time left estimation) */
       Real fOldCharge = m_sReading.AvailableCharge;
       /* Update available charge as seen by the robot */
