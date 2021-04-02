@@ -19,3 +19,4 @@ doinst.sh
 slack-desc
 TAGS
 .dir-locals.el
+.vscode*
