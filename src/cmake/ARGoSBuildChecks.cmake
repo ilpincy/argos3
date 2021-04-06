@@ -43,6 +43,8 @@ if(ARGOS_DYNAMIC_LIBRARY_LOADING)
     endif(NOT DLFCN_FOUND)
   endif(NOT DLFCN_INCLUDE_DIR)
   include_directories(AFTER ${DLFCN_INCLUDE_DIR})
+  set(ARGOS_PC_CFLAGS "${ARGOS_PC_CFLAGS} -I${DLFCN_INCLUDE_DIR}")
+  set(ARGOS_PC_LDFLAGS "${ARGOS_PC_LDFLAGS} ${DLFCN_LIBRARY}")
 endif(ARGOS_DYNAMIC_LIBRARY_LOADING)
 
 #
@@ -58,6 +60,8 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
   endif(NOT PTHREADS_INCLUDE_DIR)
   add_definitions(${PTHREADS_DEFINITIONS})
   include_directories(AFTER ${PTHREADS_INCLUDE_DIR})
+  set(ARGOS_PC_CFLAGS "${ARGOS_PC_CFLAGS} -I${PTHREADS_INCLUDE_DIR}")
+  set(ARGOS_PC_LDFLAGS "${ARGOS_PC_LDFLAGS} ${PTHREADS_LIBRARY}")
 endif(ARGOS_BUILD_FOR_SIMULATOR)
 
 #
@@ -68,7 +72,9 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
   find_package(FreeImage)
   if(FREEIMAGE_FOUND)
     set(ARGOS_WITH_FREEIMAGE ON)
-    include_directories(AFTER ${FREEIMAGE_INCLUDE_PATH})
+    include_directories(AFTER ${FREEIMAGE_BASE_INCLUDE_DIR} ${FREEIMAGE_PLUS_INCLUDE_DIR})
+    set(ARGOS_PC_CFLAGS "${ARGOS_PC_CFLAGS} -I${FREEIMAGE_BASE_INCLUDE_DIR} -I${FREEIMAGE_PLUS_INCLUDE_DIR}")
+    set(ARGOS_PC_LDFLAGS "${ARGOS_PC_LDFLAGS} ${FREEIMAGE_BASE_LIBRARY} ${FREEIMAGE_PLUS_LIBRARY}")
   else(FREEIMAGE_FOUND)
     message(STATUS "FreeImage not found, image source and OpenGL drawing for the floor entity won't be available")
   endif(FREEIMAGE_FOUND)
@@ -78,6 +84,10 @@ endif(ARGOS_BUILD_FOR_SIMULATOR)
 # Check for Google Perftools
 #
 find_package(GooglePerfTools)
+if(GOOGLEPERFTOOLS_FOUND)
+  set(ARGOS_PC_CFLAGS "${ARGOS_PC_CFLAGS} -I${GOOGLEPERFTOOLS_INCLUDE_DIR}")
+  set(ARGOS_PC_LDFLAGS "${ARGOS_PC_LDFLAGS} ${GOOGLEPERFTOOLS_LIBRARY}")
+endif(GOOGLEPERFTOOLS_FOUND)
 
 #
 # Check for Doxygen
@@ -105,7 +115,7 @@ find_package(ASCIIDoc)
 # Check whether Qt and OpenGL are installed
 #
 if(ARGOS_BUILD_FOR_SIMULATOR)
-  include(ARGoSCheckQTOpenGL)
+  find_package(ARGoSQTOpenGL)
 endif(ARGOS_BUILD_FOR_SIMULATOR)
 
 #
@@ -116,11 +126,13 @@ if(LUA_FOUND)
   if(${LUA_VERSION_STRING} VERSION_GREATER_EQUAL "5.3")
     set(ARGOS_WITH_LUA ON)
     include_directories(AFTER ${LUA_INCLUDE_DIR})
+    set(ARGOS_PC_CFLAGS "${ARGOS_PC_CFLAGS} -I${LUA_INCLUDE_DIR}")
+    set(ARGOS_PC_LDFLAGS "${ARGOS_PC_LDFLAGS} ${LUA_LIBRARIES}")
   else()
-    message(FATAL_ERROR "Lua >=5.3 not found")
+    message(STATUS "Lua >=5.3 not found")
   endif()
 else(LUA_FOUND)
-  message(FATAL_ERROR "Lua >=5.3 not found")
+  message(STATUS "Lua >=5.3 not found")
 endif(LUA_FOUND)
 
 #

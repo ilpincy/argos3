@@ -59,10 +59,6 @@ include_directories(${ARGOS_QTOPENGL_INCLUDE_DIRS})
 add_library(argos3plugin_${ARGOS_BUILD_FOR}_qtopengl SHARED
   ${ARGOS3_SOURCES_PLUGINS_SIMULATOR_VISUALIZATIONS_QTOPENGL})
 target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_qtopengl argos3plugin_${ARGOS_BUILD_FOR}_entities ${ARGOS_QTOPENGL_LIBRARIES})
-# Link SDL if necessary
-# if(SDL_FOUND)
-#  target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_qtopengl ${SDL_LIBRARY})
-# endif(SDL_FOUND)
 
 install(DIRECTORY icons textures models DESTINATION include/argos3/plugins/simulator/visualizations/qt-opengl)
 install(FILES ${ARGOS3_HEADERS_PLUGINS_SIMULATOR_VISUALIZATIONS_QTOPENGL} DESTINATION include/argos3/plugins/simulator/visualizations/qt-opengl)

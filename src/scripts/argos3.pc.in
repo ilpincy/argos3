@@ -7,4 +7,4 @@ Name: argos3_@ARGOS_BUILD_FOR@
 Description: ARGoS (multi-physics multi-robot simulator)
 Version: @CPACK_PACKAGE_VERSION@-@CPACK_PACKAGE_RELEASE@
 Cflags: -I${includedir} -Wno-unknown-pragmas @ARGOS_PC_CFLAGS@
-Libs: @CMAKE_SHARED_LINKER_FLAGS@ -L${libdir} -largos3core_@ARGOS_BUILD_FOR@
+Libs: @ARGOS_PC_LDFLAGS@ -L${libdir} -largos3core_@ARGOS_BUILD_FOR@

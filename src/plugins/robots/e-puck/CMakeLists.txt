@@ -30,7 +30,7 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
     simulator/epuck_entity.cpp
     simulator/epuck_proximity_default_sensor.cpp)
   # Compile the graphical visualization only if the necessary libraries have been found
-  if(ARGOS_COMPILE_QTOPENGL)
+  if(ARGOS_QTOPENGL_FOUND)
     include_directories(${ARGOS_QTOPENGL_INCLUDE_DIRS})
     set(ARGOS3_HEADERS_PLUGINS_ROBOTS_EPUCK_SIMULATOR
       ${ARGOS3_HEADERS_PLUGINS_ROBOTS_EPUCK_SIMULATOR}
@@ -39,7 +39,7 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
       ${ARGOS3_SOURCES_PLUGINS_ROBOTS_EPUCK}
       simulator/qtopengl_epuck.h
       simulator/qtopengl_epuck.cpp)
-  endif(ARGOS_COMPILE_QTOPENGL)
+  endif(ARGOS_QTOPENGL_FOUND)
 endif(ARGOS_BUILD_FOR_SIMULATOR)
 
 #
@@ -51,9 +51,9 @@ target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_epuck
   argos3plugin_${ARGOS_BUILD_FOR}_dynamics2d
   argos3plugin_${ARGOS_BUILD_FOR}_dynamics3d)
   # argos3plugin_${ARGOS_BUILD_FOR}_physx)
-if(ARGOS_BUILD_FOR_SIMULATOR AND ARGOS_COMPILE_QTOPENGL)
+if(ARGOS_BUILD_FOR_SIMULATOR AND ARGOS_QTOPENGL_FOUND)
   target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_epuck argos3plugin_${ARGOS_BUILD_FOR}_qtopengl)
-endif(ARGOS_BUILD_FOR_SIMULATOR AND ARGOS_COMPILE_QTOPENGL)
+endif(ARGOS_BUILD_FOR_SIMULATOR AND ARGOS_QTOPENGL_FOUND)
 
 install(FILES ${ARGOS3_HEADERS_PLUGINS_ROBOTS_EPUCK_CONTROLINTERFACE} DESTINATION include/argos3/plugins/robots/e-puck/control_interface)
 

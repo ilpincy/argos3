@@ -40,7 +40,7 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
     simulator/prototype_link_entity.cpp
     simulator/prototype_link_equipped_entity.cpp)
   # Compile the graphical visualization only if the necessary libraries have been found
-  if(ARGOS_COMPILE_QTOPENGL)
+  if(ARGOS_QTOPENGL_FOUND)
     include_directories(${ARGOS_QTOPENGL_INCLUDE_DIRS})
     set(ARGOS3_HEADERS_PLUGINS_ROBOTS_PROTOTYPE_SIMULATOR
       ${ARGOS3_HEADERS_PLUGINS_ROBOTS_PROTOTYPE_SIMULATOR}
@@ -48,7 +48,7 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
     set(ARGOS3_SOURCES_PLUGINS_ROBOTS_PROTOTYPE
       ${ARGOS3_SOURCES_PLUGINS_ROBOTS_PROTOTYPE}
       simulator/qtopengl_prototype.cpp)
-  endif(ARGOS_COMPILE_QTOPENGL)
+  endif(ARGOS_QTOPENGL_FOUND)
 endif(ARGOS_BUILD_FOR_SIMULATOR)
 
 #
@@ -59,9 +59,9 @@ add_library(argos3plugin_${ARGOS_BUILD_FOR}_prototype SHARED ${ARGOS3_SOURCES_PL
 target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_prototype
   argos3plugin_${ARGOS_BUILD_FOR}_genericrobot
   argos3plugin_${ARGOS_BUILD_FOR}_dynamics3d)
-if(ARGOS_COMPILE_QTOPENGL)
+if(ARGOS_QTOPENGL_FOUND)
   target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_prototype argos3plugin_${ARGOS_BUILD_FOR}_qtopengl)
-endif(ARGOS_COMPILE_QTOPENGL)
+endif(ARGOS_QTOPENGL_FOUND)
 
 install(FILES ${ARGOS3_HEADERS_PLUGINS_ROBOTS_PROTOTYPE_CONTROLINTERFACE}
         DESTINATION include/argos3/plugins/robots/prototype/control_interface)

@@ -24,6 +24,7 @@ endif(NOT UNIX)
 # Set the path additional cmake files must be searched for
 #
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
+set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${CMAKE_SOURCE_DIR}/cmake)
 
 #
 # Set CMake policies to select wanted behaviors
@@ -120,6 +121,6 @@ configure_file(
   ${CMAKE_SOURCE_DIR}/scripts/argos3.pc.in
   ${CMAKE_BINARY_DIR}/argos3_${ARGOS_BUILD_FOR}.pc
   @ONLY)
-install(FILES ${CMAKE_BINARY_DIR}/argos3_${ARGOS_BUILD_FOR}.pc DESTINATION lib/pkgconfig)
+ install(FILES ${CMAKE_BINARY_DIR}/argos3_${ARGOS_BUILD_FOR}.pc DESTINATION lib/pkgconfig)
 # Bash completion file
 install(FILES ${CMAKE_SOURCE_DIR}/scripts/argos3_bash_completion.sh DESTINATION share/argos3)

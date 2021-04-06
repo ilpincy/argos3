@@ -1,29 +1,12 @@
-# Checks whether QT, OpenGL and GLUT are present and correctly configured
+# Find ARGoS Qt OpenGL components
 #
-# Usage:
+# This module defines these variables:
 #
-#   INCLUDE(ARGoSCheckQTOpenGL)
-#   IF(ARGOS_COMPILE_QTOPENGL)
+#  ARGOS_QTOPENGL_FOUND        - True if all the ARGoS Qt OpenGL components were found
+#  ARGOS_QTOPENGL_LIBRARIES    - The location of the Qt OpenGL libraries
+#  ARGOS_QTOPENGL_INCLUDE_DIRS - The include directories of the ARGoS Qt OpenGL components
 #
-#      your qt-opengl-dependent code here
-#
-#   ENDIF(ARGOS_COMPILE_QTOPENGL)
-#
-# This module defines this variable:
-#
-#  ARGOS_COMPILE_QTOPENGL      - True if Qt, OpenGL and GLUT are present and correctly configured
-#  ARGOS_QTOPENGL_INCLUDE_DIRS - The list of directories to include
-#  ARGOS_QTOPENGL_LIBRARIES    - The list of libraries to link
-#
-# AUTHOR: Carlo Pinciroli <ilpincy@gmail.com>
-
-#
-# Set CMake policies to select wanted behaviors
-#
-# Use new policies introduced up to this version
-if(POLICY CMP0072)
-  cmake_policy(SET CMP0072 NEW)
-endif(POLICY CMP0072)
+# AUTHOR: Carlo Pinciroli <cpinciro@ulb.ac.be>
 
 #
 # Force avoidance of ARGoS Qt-OpenGL compilation
@@ -32,11 +15,8 @@ if(NOT DEFINED ARGOS_FORCE_NO_QTOPENGL)
   option(ARGOS_FORCE_NO_QTOPENGL "ON -> avoid trying to compile Qt-OpenGL, OFF -> try to compile Qt-OpenGL" OFF)
 endif(NOT DEFINED ARGOS_FORCE_NO_QTOPENGL)
 
-# By default, do not compile Qt
-set(ARGOS_COMPILE_QTOPENGL OFF)
 # Check for Qt, OpenGL, and GLUT unless 
 if(NOT ARGOS_FORCE_NO_QTOPENGL)
-  
   # Look for OpenGL
   find_package(OpenGL)
   if(OPENGL_FOUND)
@@ -90,7 +70,7 @@ if(NOT ARGOS_FORCE_NO_QTOPENGL)
     message(STATUS "Found Qt6Gui: version ${Qt6Gui_VERSION}")
     message(STATUS "Found Qt6OpenGLWidgets: version ${Qt6OpenGLWidgets_VERSION}")
     list(APPEND ARGOS_QTOPENGL_INCLUDE_DIRS ${Qt6Widgets_INCLUDE_DIRS} ${Qt6Gui_INCLUDE_DIRS} ${Qt6OpenGLWidgets_INCLUDE_DIRS})
-    list(APPEND ARGOS_QTOPENGL_LIBRARIES Qt6::Widgets Qt6::Gui Qt6::OpenGLWidgets)
+    list(APPEND ARGOS_QTOPENGL_LIBRARIES Qt::Widgets Qt::Gui Qt::OpenGLWidgets)
   else(Qt6_FOUND)
     find_package(Qt5 QUIET COMPONENTS Widgets Gui OPTIONAL_COMPONENTS OpenGLWidgets)
     if(Qt5_FOUND)
@@ -98,11 +78,11 @@ if(NOT ARGOS_FORCE_NO_QTOPENGL)
       message(STATUS "Found Qt5Widgets: version ${Qt5Widgets_VERSION}")
       message(STATUS "Found Qt5Gui: version ${Qt5Gui_VERSION}")
       list(APPEND ARGOS_QTOPENGL_INCLUDE_DIRS ${Qt5Widgets_INCLUDE_DIRS} ${Qt5Gui_INCLUDE_DIRS})
-      list(APPEND ARGOS_QTOPENGL_LIBRARIES Qt5::Widgets Qt5::Gui)
+      list(APPEND ARGOS_QTOPENGL_LIBRARIES Qt::Widgets Qt::Gui)
       if(Qt5OpenGLWidgets_FOUND)
         message(STATUS "Found Qt5OpenGLWidgets: version ${Qt5OpenGLWidgets_VERSION}")
         list(APPEND ARGOS_QTOPENGL_INCLUDE_DIRS ${Qt5OpenGLWidgets_INCLUDE_DIRS})
-        list(APPEND ARGOS_QTOPENGL_LIBRARIES Qt5::OpenGLWidgets)
+        list(APPEND ARGOS_QTOPENGL_LIBRARIES Qt::OpenGLWidgets)
       endif(Qt5OpenGLWidgets_FOUND)
     else(Qt5_FOUND)
       message(STATUS "Qt not found.")
@@ -110,16 +90,24 @@ if(NOT ARGOS_FORCE_NO_QTOPENGL)
   endif(Qt6_FOUND)
 
   if(OPENGL_FOUND AND GLUT_FOUND AND (Qt6_FOUND OR Qt5_FOUND))
-    set(ARGOS_COMPILE_QTOPENGL ON)
+    set(ARGOS_QTOPENGL_FOUND ON CACHE BOOL "Qt-OpenGL components found?" FORCE)
     add_definitions(-DGL_SILENCE_DEPRECATION)
     list(REMOVE_DUPLICATES ARGOS_QTOPENGL_INCLUDE_DIRS)
     list(REMOVE_DUPLICATES ARGOS_QTOPENGL_LIBRARIES)
+    set(ARGOS_QTOPENGL_INCLUDE_DIRS "${ARGOS_QTOPENGL_INCLUDE_DIRS}" CACHE STRING "Include directories for Qt-OpenGL components" FORCE)
+    set(ARGOS_QTOPENGL_LIBRARIES "${ARGOS_QTOPENGL_LIBRARIES}" CACHE STRING "Libraries for Qt-OpenGL components" FORCE)
     set(CMAKE_AUTOMOC ON)
     set(CMAKE_INCLUDE_CURRENT_DIR ON)
   else(OPENGL_FOUND AND GLUT_FOUND AND (Qt6_FOUND OR Qt5_FOUND))
+    set(ARGOS_QTOPENGL_FOUND OFF CACHE BOOL "Qt-OpenGL components found?" FORCE)
     unset(ARGOS_QTOPENGL_INCLUDE_DIRS)
     unset(ARGOS_QTOPENGL_LIBRARIES)
     message(STATUS "Skipping compilation of Qt-OpenGL visualization.")
   endif(OPENGL_FOUND AND GLUT_FOUND AND (Qt6_FOUND OR Qt5_FOUND))
   
 endif(NOT ARGOS_FORCE_NO_QTOPENGL)
+
+mark_as_advanced(ARGOS_BREW_QT_CELLAR)
+mark_as_advanced(ARGOS_QTOPENGL_FOUND)
+mark_as_advanced(ARGOS_QTOPENGL_INCLUDE_DIRS)
+mark_as_advanced(ARGOS_QTOPENGL_LIBRARIES)

@@ -59,18 +59,18 @@ if(ARGOS_BUILD_FOR_SIMULATOR OR ARGOS_BUILD_FOR STREQUAL "foot-bot")
     experiment/test_eyebot_controller.cpp)
   target_link_libraries(test_eyebot_controller
     argos3plugin_${ARGOS_BUILD_FOR}_eyebot)
-  if(ARGOS_COMPILE_QTOPENGL)
+  if(ARGOS_QTOPENGL_FOUND)
     include_directories(${ARGOS_QTOPENGL_INCLUDE_DIRS})
     add_library(test_loop_functions MODULE
       experiment/test_loop_functions.h
       experiment/test_loop_functions.cpp
       experiment/test_user_functions.h
       experiment/test_user_functions.cpp)
-  else(ARGOS_COMPILE_QTOPENGL)
+  else(ARGOS_QTOPENGL_FOUND)
     add_library(test_loop_functions MODULE
       experiment/test_loop_functions.h
       experiment/test_loop_functions.cpp)
-  endif(ARGOS_COMPILE_QTOPENGL)
+  endif(ARGOS_QTOPENGL_FOUND)
   target_link_libraries(test_loop_functions
     argos3core_${ARGOS_BUILD_FOR}
     argos3plugin_${ARGOS_BUILD_FOR}_footbot)

@@ -12,11 +12,11 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
     simulator/physx_miniquadrotor_model.h
     simulator/miniquadrotor_rotor_default_actuator.h
     )
-  if(ARGOS_COMPILE_QTOPENGL)
+  if(ARGOS_QTOPENGL_FOUND)
     set(ARGOS3_HEADERS_PLUGINS_ROBOTS_MINIQUADROTOR_SIMULATOR
       ${ARGOS3_HEADERS_PLUGINS_ROBOTS_MINIQUADROTOR_SIMULATOR}
       simulator/qtopengl_miniquadrotor.h)
-  endif(ARGOS_COMPILE_QTOPENGL)
+  endif(ARGOS_QTOPENGL_FOUND)
 endif(ARGOS_BUILD_FOR_SIMULATOR)
 
 #
@@ -34,12 +34,12 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
     simulator/physx_miniquadrotor_model.cpp
     simulator/miniquadrotor_rotor_default_actuator.cpp)
   # Compile the graphical visualization only if the necessary libraries have been found
-  if(ARGOS_COMPILE_QTOPENGL)
+  if(ARGOS_QTOPENGL_FOUND)
     include_directories(${ARGOS_QTOPENGL_INCLUDE_DIRS})
     set(ARGOS3_SOURCES_PLUGINS_ROBOTS_MINIQUADROTOR
       ${ARGOS3_SOURCES_PLUGINS_ROBOTS_MINIQUADROTOR}
       simulator/qtopengl_miniquadrotor.cpp)
-  endif(ARGOS_COMPILE_QTOPENGL)
+  endif(ARGOS_QTOPENGL_FOUND)
 endif(ARGOS_BUILD_FOR_SIMULATOR)
 
 #
@@ -52,9 +52,9 @@ target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_miniquadrotor
   argos3plugin_${ARGOS_BUILD_FOR}_sensors)
 if(ARGOS_BUILD_FOR_SIMULATOR)
   target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_miniquadrotor argos3plugin_${ARGOS_BUILD_FOR}_physx)
-  if(ARGOS_COMPILE_QTOPENGL)
+  if(ARGOS_QTOPENGL_FOUND)
     target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_miniquadrotor argos3plugin_${ARGOS_BUILD_FOR}_qtopengl)
-  endif(ARGOS_COMPILE_QTOPENGL)
+  endif(ARGOS_QTOPENGL_FOUND)
 endif(ARGOS_BUILD_FOR_SIMULATOR)
 
 install(FILES ${ARGOS3_HEADERS_PLUGINS_ROBOTS_MINIQUADROTOR_CONTROLINTERFACE} DESTINATION include/argos3/plugins/robots/mini-quadrotor/control_interface)

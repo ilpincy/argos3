@@ -9,6 +9,7 @@ else(NOT DEFINED ARGOS_BUILD_FOR)
   # Variable was set, make it public
   set(ARGOS_BUILD_FOR ${ARGOS_BUILD_FOR} CACHE STRING "What is ARGoS being built for? \"simulator\" or a robot name (lowercase)")
 endif(NOT DEFINED ARGOS_BUILD_FOR)
+mark_as_advanced(ARGOS_BUILD_FOR)
 # Set a macro according to value set in ARGOS_BUILD_FOR
 add_definitions(-DARGOS_${ARGOS_BUILD_FOR}_BUILD)
 # Create a convenience variable for checks in the CMake files
@@ -27,6 +28,7 @@ if(NOT DEFINED ARGOS_INSTALL_LDSOCONF)
   else(APPLE)
     option(ARGOS_INSTALL_LDSOCONF "ON -> install argos3.conf in /etc/ld.so.conf/, OFF -> don't" ON)
   endif(APPLE)
+  mark_as_advanced(ARGOS_INSTALL_LDSOCONF)
 endif(NOT DEFINED ARGOS_INSTALL_LDSOCONF)
 
 #
@@ -55,10 +57,11 @@ endif((NOT ARGOS_THREADSAFE_LOG) AND (ARGOS_BUILD_FOR STREQUAL "SIMULATOR"))
 #
 if(NOT DEFINED ARGOS_DYNAMIC_LIBRARY_LOADING)
   option(ARGOS_DYNAMIC_LIBRARY_LOADING "ON -> compile support for dynamic library loading, OFF -> no support for dynamic library loading" ON)
+  mark_as_advanced(ARGOS_DYNAMIC_LIBRARY_LOADING)
 endif(NOT DEFINED ARGOS_DYNAMIC_LIBRARY_LOADING)
-if((NOT ARGOS_DYNAMIC_LIBRARY_LOADING) AND (ARGOS_BUILD_FOR STREQUAL "SIMULATOR"))
+if((NOT ARGOS_DYNAMIC_LIBRARY_LOADING) AND (ARGOS_BUILD_FOR STREQUAL "simulator"))
   message(FATAL_ERROR "When compiling for the simulator, ARGOS_DYNAMIC_LIBRARY_LOADING must be ON")
-endif((NOT ARGOS_DYNAMIC_LIBRARY_LOADING) AND (ARGOS_BUILD_FOR STREQUAL "SIMULATOR"))
+endif((NOT ARGOS_DYNAMIC_LIBRARY_LOADING) AND (ARGOS_BUILD_FOR STREQUAL "simulator"))
 
 #
 # Whether to use double or float for the Real type

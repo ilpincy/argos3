@@ -33,7 +33,7 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
     simulator/eyebot_proximity_default_sensor.cpp
     simulator/pointmass3d_eyebot_model.cpp)
   # Compile the graphical visualization only if the necessary libraries have been found
-  if(ARGOS_COMPILE_QTOPENGL)
+  if(ARGOS_QTOPENGL_FOUND)
     include_directories(${ARGOS_QTOPENGL_INCLUDE_DIRS})
     set(ARGOS3_HEADERS_PLUGINS_ROBOTS_EYEBOT_SIMULATOR
       ${ARGOS3_HEADERS_PLUGINS_ROBOTS_EYEBOT_SIMULATOR}
@@ -42,7 +42,7 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
       ${ARGOS3_SOURCES_PLUGINS_ROBOTS_EYEBOT}
       simulator/qtopengl_eyebot.h
       simulator/qtopengl_eyebot.cpp)
-  endif(ARGOS_COMPILE_QTOPENGL)
+  endif(ARGOS_QTOPENGL_FOUND)
 endif(ARGOS_BUILD_FOR_SIMULATOR)
 
 #
@@ -52,9 +52,9 @@ add_library(argos3plugin_${ARGOS_BUILD_FOR}_eyebot SHARED ${ARGOS3_SOURCES_PLUGI
 target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_eyebot
   argos3plugin_${ARGOS_BUILD_FOR}_genericrobot
   argos3plugin_${ARGOS_BUILD_FOR}_pointmass3d)
-if(ARGOS_COMPILE_QTOPENGL)
+if(ARGOS_QTOPENGL_FOUND)
   target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_eyebot argos3plugin_${ARGOS_BUILD_FOR}_qtopengl)
-endif(ARGOS_COMPILE_QTOPENGL)
+endif(ARGOS_QTOPENGL_FOUND)
 
 install(FILES ${ARGOS3_HEADERS_PLUGINS_ROBOTS_EYEBOT_CONTROLINTERFACE} DESTINATION include/argos3/plugins/robots/eye-bot/control_interface)
 

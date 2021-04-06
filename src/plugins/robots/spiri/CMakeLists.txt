@@ -18,7 +18,7 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
     simulator/spiri_entity.cpp
     simulator/pointmass3d_spiri_model.cpp)
   # Compile the graphical visualization only if the necessary libraries have been found
-  if(ARGOS_COMPILE_QTOPENGL)
+  if(ARGOS_QTOPENGL_FOUND)
     include_directories(${ARGOS_QTOPENGL_INCLUDE_DIRS})
     set(ARGOS3_HEADERS_PLUGINS_ROBOTS_SPIRI_SIMULATOR
       ${ARGOS3_HEADERS_PLUGINS_ROBOTS_SPIRI_SIMULATOR}
@@ -27,7 +27,7 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
       ${ARGOS3_SOURCES_PLUGINS_ROBOTS_SPIRI}
       simulator/qtopengl_spiri.h
       simulator/qtopengl_spiri.cpp)
-  endif(ARGOS_COMPILE_QTOPENGL)
+  endif(ARGOS_QTOPENGL_FOUND)
 endif(ARGOS_BUILD_FOR_SIMULATOR)
 
 #
@@ -37,9 +37,9 @@ add_library(argos3plugin_${ARGOS_BUILD_FOR}_spiri SHARED ${ARGOS3_SOURCES_PLUGIN
 target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_spiri
   argos3plugin_${ARGOS_BUILD_FOR}_genericrobot
   argos3plugin_${ARGOS_BUILD_FOR}_pointmass3d)
-if(ARGOS_COMPILE_QTOPENGL)
+if(ARGOS_QTOPENGL_FOUND)
   target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_spiri argos3plugin_${ARGOS_BUILD_FOR}_qtopengl)
-endif(ARGOS_COMPILE_QTOPENGL)
+endif(ARGOS_QTOPENGL_FOUND)
 
 install(FILES ${ARGOS3_HEADERS_PLUGINS_ROBOTS_SPIRI_CONTROLINTERFACE} DESTINATION include/argos3/plugins/robots/spiri/control_interface)
 
