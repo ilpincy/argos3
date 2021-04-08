@@ -13,7 +13,7 @@ sudo rm -rf @CMAKE_INSTALL_PREFIX@/bin/argos3
 sudo rm -rf @CMAKE_INSTALL_PREFIX@/doc/argos3
 sudo rm -rf @CMAKE_INSTALL_PREFIX@/include/argos3
 sudo rm -rf @CMAKE_INSTALL_PREFIX@/lib/argos3
-sudo rm -rf @CMAKE_INSTALL_PREFIX@/lib/pkgconfig/argos3_@ARGOS_BUILD_FOR@.pc
 sudo rm -rf @CMAKE_INSTALL_PREFIX@/libexec/argos3
 sudo rm -rf @CMAKE_INSTALL_PREFIX@/share/man/man1/argos3.1.gz
 sudo rm -rf @CMAKE_INSTALL_PREFIX@/share/argos3
+sudo rm -rf /etc/ld.so.conf.d/argos3.conf

@@ -77,17 +77,16 @@ if(APPLE)
   configure_file(${CMAKE_SOURCE_DIR}/scripts/argos3_macos_wrapper.sh.in
     ${CMAKE_BINARY_DIR}/core/argos3_macos_wrapper.sh
     @ONLY)
-  configure_file(${CMAKE_SOURCE_DIR}/scripts/macos_uninstall_argos3.sh.in
-    ${CMAKE_BINARY_DIR}/macos_uninstall_argos3.sh
+  configure_file(${CMAKE_SOURCE_DIR}/scripts/uninstall_argos3.sh.in
+    ${CMAKE_BINARY_DIR}/uninstall_argos3.sh
     @ONLY)
   install(FILES ${CMAKE_BINARY_DIR}/core/argos3_macos_wrapper.sh
     DESTINATION bin/
     PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
     RENAME argos3)
-  install(FILES ${CMAKE_BINARY_DIR}/macos_uninstall_argos3.sh
+  install(FILES ${CMAKE_BINARY_DIR}/uninstall_argos3.sh
     DESTINATION share/argos3/
-    PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
-    RENAME uninstall_argos3.sh)
+    PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
 endif(APPLE)
 
 #

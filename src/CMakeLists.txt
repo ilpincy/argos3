@@ -1,7 +1,7 @@
 #
 # Set minimum required version
 #
-cmake_minimum_required(VERSION 3.10.2)
+cmake_minimum_required(VERSION 3.8.0)
 
 #
 # Set build options
@@ -106,6 +106,29 @@ configure_file(
   @ONLY)
 
 #
+# Create CMake configuration file
+#
+configure_file(
+  ${CMAKE_SOURCE_DIR}/scripts/argos3_cmake_config.cmake.in
+  ${CMAKE_BINARY_DIR}/scripts/ARGoSSettings.cmake
+  @ONLY)
+install(FILES ${CMAKE_BINARY_DIR}/scripts/ARGoSSettings.cmake DESTINATION share/argos3/cmake)
+
+  #
+  # Installation of CMake scripts useful for the simulator
+  #
+  install(
+    FILES
+    ${CMAKE_SOURCE_DIR}/cmake/ARGoSConfig.cmake
+    ${CMAKE_SOURCE_DIR}/cmake/FindARGoSQTOpenGL.cmake
+    ${CMAKE_SOURCE_DIR}/cmake/FindDLFCN.cmake
+    ${CMAKE_SOURCE_DIR}/cmake/FindFreeImage.cmake
+    ${CMAKE_SOURCE_DIR}/cmake/FindGooglePerfTools.cmake
+    ${CMAKE_SOURCE_DIR}/cmake/FindPthreads.cmake
+    DESTINATION
+    share/argos3/cmake)
+
+#
 # Install extra stuff
 #
 if(ARGOS_INSTALL_LDSOCONF)
@@ -116,11 +139,5 @@ if(ARGOS_INSTALL_LDSOCONF)
     @ONLY)
   install(FILES ${CMAKE_BINARY_DIR}/argos3.conf DESTINATION /etc/ld.so.conf.d)
 endif(ARGOS_INSTALL_LDSOCONF)
-# Configuration file for pkg-config
-configure_file(
-  ${CMAKE_SOURCE_DIR}/scripts/argos3.pc.in
-  ${CMAKE_BINARY_DIR}/argos3_${ARGOS_BUILD_FOR}.pc
-  @ONLY)
- install(FILES ${CMAKE_BINARY_DIR}/argos3_${ARGOS_BUILD_FOR}.pc DESTINATION lib/pkgconfig)
 # Bash completion file
 install(FILES ${CMAKE_SOURCE_DIR}/scripts/argos3_bash_completion.sh DESTINATION share/argos3)

@@ -232,7 +232,7 @@ if(PTHREADS_FOUND)
 endif(PTHREADS_FOUND)
 # Link FreeImage library if necessary
 if(FREEIMAGE_FOUND)
-  target_link_libraries(argos3core_${ARGOS_BUILD_FOR} ${FREEIMAGE_LIBRARIES})
+  target_link_libraries(argos3core_${ARGOS_BUILD_FOR} ${FREEIMAGE_BASE_LIBRARY} ${FREEIMAGE_PLUS_LIBRARY})
 endif(FREEIMAGE_FOUND)
 # Link Lua library if necessary
 if(ARGOS_WITH_LUA)
@@ -294,14 +294,6 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
       LIBRARY DESTINATION lib/argos3
       ARCHIVE DESTINATION lib/argos3)
   endif(APPLE)
-  #
-  # Installation of CMake scripts useful for the simulator
-  #
-  install(
-    FILES
-    ${CMAKE_SOURCE_DIR}/cmake/ARGoSQTOpenGLConfig.cmake
-    DESTINATION
-    share/argos3/cmake)
   #
   # Creation and installation of desktop file and MIME entry
   #
