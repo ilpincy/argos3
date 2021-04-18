@@ -181,17 +181,34 @@ namespace argos {
    static void Dynamics2DSegmentQueryFunc(cpShape* pt_shape, cpFloat f_t, cpVect, void* pt_data) {
       /* Get the data associated to this query */
       SDynamics2DSegmentHitData& sData = *reinterpret_cast<SDynamics2DSegmentHitData*>(pt_data);
-      /* Hit found, is it within the limits? */
+      /* Hit found, is f_t it within the limits on Z? */
       CDynamics2DModel& cModel = *reinterpret_cast<CDynamics2DModel*>(pt_shape->body->data);
       CVector3 cIntersectionPoint;
       sData.Ray.GetPoint(cIntersectionPoint, f_t);
       if((cIntersectionPoint.GetZ() >= cModel.GetBoundingBox().MinCorner.GetZ()) &&
          (cIntersectionPoint.GetZ() <= cModel.GetBoundingBox().MaxCorner.GetZ()) ) {
-         /* Yes, a real hit */
+         /* Side hit */
          sData.Intersections.push_back(
             SEmbodiedEntityIntersectionItem(
                &cModel.GetEmbodiedEntity(),
                f_t));
+      }
+      else {
+         /* Check top surface */
+         if(cIntersectionPoint.GetZ() > cModel.GetBoundingBox().MaxCorner.GetZ()) {
+            Real fZDiff = sData.Ray.GetStart().GetZ() - cModel.GetBoundingBox().MaxCorner.GetZ();
+            Real fRayZDiff = sData.Ray.GetStart().GetZ() - sData.Ray.GetEnd().GetZ();
+            f_t = fZDiff / fRayZDiff;
+            sData.Ray.GetPoint(cIntersectionPoint, f_t);
+            if(cpShapePointQuery(pt_shape, cpv(cIntersectionPoint.GetX(), cIntersectionPoint.GetY()))) {
+               sData.Intersections.push_back(
+                  SEmbodiedEntityIntersectionItem(
+                     &cModel.GetEmbodiedEntity(),
+                     f_t));
+            }
+         }
+         /* Technically I should check the bottom surface, too, but this case never came up so far */
+         /* TODO */
       }
    }
 
