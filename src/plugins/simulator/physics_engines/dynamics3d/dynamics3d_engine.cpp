@@ -206,9 +206,14 @@ namespace argos {
       btVector3 cRayStart(c_ray.GetStart().GetX(), c_ray.GetStart().GetZ(), -c_ray.GetStart().GetY());
       btVector3 cRayEnd(c_ray.GetEnd().GetX(), c_ray.GetEnd().GetZ(), -c_ray.GetEnd().GetY());
       btCollisionWorld::ClosestRayResultCallback cResult(cRayStart, cRayEnd);
-      /* The default flag/algorithm 'kF_UseSubSimplexConvexCastRaytest' is too approximate for
-         our purposes */
-      cResult.m_flags |= btTriangleRaycastCallback::kF_UseGjkConvexCastRaytest;
+      /* In the first version of this plugin, Bullet's kF_UseSubSimplexConvexCastRaytest (the default
+         ray test) was too approximate and would miss some intersections. For that reason, we used
+         kF_UseGjkConvexCastRaytest instead. In the latest version of Bullet, it seems that
+         kF_UseSubSimplexConvexCastRaytest has been improved while kF_UseGjkConvexCastRaytest fails
+         to reliably find intersections with convex hulls. For this reason, the flag is no longer
+         set and we just use the default ray test.
+         cResult.m_flags |= btTriangleRaycastCallback::kF_UseGjkConvexCastRaytest;
+      */
       /* Run the ray test */
       m_cWorld.rayTest(cRayStart, cRayEnd, cResult);
       /* Examine the results */
