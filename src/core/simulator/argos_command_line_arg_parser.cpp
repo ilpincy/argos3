@@ -34,6 +34,12 @@ namespace argos {
          "do not use colored output [OPTIONAL]",
          m_bNonColoredLog
          );
+      AddFlag(
+         'z',
+         "no-visualization",
+         "ignore the <visualization> tag [OPTIONAL]",
+         m_bForceNoViz
+         );
       AddArgument<std::string>(
          'c',
          "config-file",
@@ -152,7 +158,8 @@ namespace argos {
       c_log << "   -q QUERY | --query QUERY           query the available plugins." << std::endl;
       c_log << "   -n       | --no-color              do not use colored output [OPTIONAL]" << std::endl;
       c_log << "   -l       | --log-file FILE         redirect LOG to FILE [OPTIONAL]" << std::endl;
-      c_log << "   -e       | --logerr-file FILE      redirect LOGERR to FILE [OPTIONAL]" << std::endl << std::endl;
+      c_log << "   -e       | --logerr-file FILE      redirect LOGERR to FILE [OPTIONAL]" << std::endl;
+      c_log << "   -z       | --no-visualization      ignore the <visualization> tag [OPTIONAL]" << std::endl << std::endl;
       c_log << "The options --config-file and --query are mutually exclusive. Either you use" << std::endl;
       c_log << "the first, and thus you run an experiment, or you use the second to query the" << std::endl;
       c_log << "plugins." << std::endl << std::endl;

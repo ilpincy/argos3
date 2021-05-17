@@ -310,8 +310,9 @@ namespace argos {
        * Loads the XML configuration file.
        * The XML configuration file is parsed by this function.
        * The variable m_tConfigurationRoot is set here.
+       * @param b_force_no_viz Whether to ignore the <tt>&lt;visualization&gt;</tt> tag.
        */
-      void LoadExperiment();
+      void LoadExperiment(bool b_force_no_viz = false);
 
       /**
        * Initializes the experiment.
@@ -489,6 +490,11 @@ namespace argos {
        * <tt>true</tt> if the simulation must be terminated now.
        */
       bool m_bTerminated;
+
+      /**
+       * <tt>true</tt> if the <tt>&lt;visualization&gt;</tt> tag should be ignored.
+       */
+      bool m_bForceNoViz;
 
    };
 

@@ -116,11 +116,12 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CSimulator::LoadExperiment() {
+   void CSimulator::LoadExperiment(bool b_force_no_viz) {
       /* Build configuration tree */
       m_tConfiguration.LoadFile(m_strExperimentConfigFileName);
       m_tConfigurationRoot = *m_tConfiguration.FirstChildElement();
       /* Init the experiment */
+      m_bForceNoViz = b_force_no_viz;
       Init();
       LOG.Flush();
       LOGERR.Flush();
@@ -159,7 +160,7 @@ namespace argos {
       InitMedia2();
       /* Initialise visualization */
       TConfigurationNodeIterator itVisualization;
-      if(NodeExists(m_tConfigurationRoot, "visualization") &&
+      if((!m_bForceNoViz) && NodeExists(m_tConfigurationRoot, "visualization") &&
          ((itVisualization = itVisualization.begin(&GetNode(m_tConfigurationRoot, "visualization"))) != itVisualization.end())) {
          InitVisualization(GetNode(m_tConfigurationRoot, "visualization"));
       }

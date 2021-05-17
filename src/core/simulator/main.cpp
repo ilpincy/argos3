@@ -34,7 +34,7 @@ int main(int n_argc, char** ppch_argv) {
          case CARGoSCommandLineArgParser::ACTION_RUN_EXPERIMENT:
             CDynamicLoading::LoadAllLibraries();
             cSimulator.SetExperimentFileName(cACLAP.GetExperimentConfigFile());
-            cSimulator.LoadExperiment();
+            cSimulator.LoadExperiment(cACLAP.IsForceNoViz());
             cSimulator.Execute();
             break;
          case CARGoSCommandLineArgParser::ACTION_QUERY:

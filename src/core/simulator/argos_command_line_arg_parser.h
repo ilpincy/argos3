@@ -129,6 +129,13 @@ namespace argos {
          return m_bHelpWanted;
       }
 
+      /**
+       * Returns <tt>true</tt> if the <tt>&lt;visualization&gt;</tt> should be ignored.
+       */
+      inline bool IsForceNoViz() {
+         return m_bForceNoViz;
+      }
+
    private:
 
       EAction m_eAction;
@@ -143,6 +150,7 @@ namespace argos {
       bool m_bNonColoredLog;
       bool m_bHelpWanted;
       bool m_bVersionWanted;
+      bool m_bForceNoViz;
 
    };
 
