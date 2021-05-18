@@ -16,6 +16,13 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   CSpaceNoThreads::CSpaceNoThreads() {
+     LOG << "[INFO] Not using threads" << std::endl;
+   }
+
+   /****************************************/
+   /****************************************/
+
    void CSpaceNoThreads::UpdateControllableEntitiesAct() {
       for(size_t i = 0; i < m_vecControllableEntities.size(); ++i) {
          if(m_vecControllableEntities[i]->IsEnabled())
