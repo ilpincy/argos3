@@ -82,6 +82,23 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   void CFootBotProximityDefaultSensor::Enable() {
+     CCI_Sensor::Enable();
+     m_pcProximityImpl->Enable();
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CFootBotProximityDefaultSensor::Disable() {
+     CCI_Sensor::Disable();
+     m_pcProximityImpl->Disable();
+   }
+
+
+   /****************************************/
+   /****************************************/
+
    REGISTER_SENSOR(CFootBotProximityDefaultSensor,
                    "footbot_proximity", "default",
                    "Carlo Pinciroli [ilpincy@gmail.com]",

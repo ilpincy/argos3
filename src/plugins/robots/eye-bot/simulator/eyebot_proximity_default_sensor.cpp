@@ -82,6 +82,22 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   void CEyeBotProximityDefaultSensor::Enable() {
+     CCI_Sensor::Enable();
+     m_pcProximityImpl->Enable();
+   }
+
+   /****************************************/
+   /****************************************/
+
+   void CEyeBotProximityDefaultSensor::Disable() {
+     CCI_Sensor::Disable();
+     m_pcProximityImpl->Disable();
+   }
+
+   /****************************************/
+   /****************************************/
+
    REGISTER_SENSOR(CEyeBotProximityDefaultSensor,
                    "eyebot_proximity", "default",
                    "Carlo Pinciroli [ilpincy@gmail.com]",
