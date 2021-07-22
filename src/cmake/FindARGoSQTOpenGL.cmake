@@ -37,13 +37,15 @@ if(NOT ARGOS_FORCE_NO_QTOPENGL)
 
   # The CMake files for Qt are not automatically installed
   # system-wide on Mac, so we use brew to search for them
-  if(APPLE AND (NOT ARGOS_BREW_QT_CELLAR))
-    # Get Qt cellar path
-    execute_process(
-      COMMAND brew --cellar qt
-      OUTPUT_VARIABLE ARGOS_BREW_QT_CELLAR
-      ERROR_QUIET
-      OUTPUT_STRIP_TRAILING_WHITESPACE)
+  if(APPLE)
+    if(NOT ARGOS_BREW_QT_CELLAR)
+      # Get Qt cellar path
+      execute_process(
+        COMMAND brew --cellar qt
+        OUTPUT_VARIABLE ARGOS_BREW_QT_CELLAR
+        ERROR_QUIET
+        OUTPUT_STRIP_TRAILING_WHITESPACE)
+    endif(NOT ARGOS_BREW_QT_CELLAR)
     if(NOT ARGOS_BREW_QT_CELLAR STREQUAL "")
       set(ARGOS_BREW_QT_CELLAR ${ARGOS_BREW_QT_CELLAR} CACHE STRING "HomeBrew cellar for Qt")
       # Get latest Qt version installed
@@ -60,8 +62,8 @@ if(NOT ARGOS_FORCE_NO_QTOPENGL)
     else(NOT ARGOS_BREW_QT_CELLAR STREQUAL "")
       message(STATUS "Could not find HomeBrew cellar for Qt")
     endif(NOT ARGOS_BREW_QT_CELLAR STREQUAL "")
-  endif(APPLE AND (NOT ARGOS_BREW_QT_CELLAR))
-
+  endif(APPLE)
+    
   # Now look for either Qt6 or Qt5
   find_package(Qt6 QUIET COMPONENTS Core Widgets Gui OpenGLWidgets)
   if(Qt6_FOUND)
