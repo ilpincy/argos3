@@ -1,17 +1,17 @@
 #
 # Set minimum required version
 #
-cmake_minimum_required(VERSION 3.8.0)
-
-#
-# Set build options
-#
-include(${CMAKE_SOURCE_DIR}/cmake/ARGoSBuildOptions.cmake)
+cmake_minimum_required(VERSION 3.5.1)
 
 #
 # Project name
 #
 project(argos3_${ARGOS_BUILD_FOR})
+
+#
+# Set build options
+#
+include(${CMAKE_SOURCE_DIR}/cmake/ARGoSBuildOptions.cmake)
 
 #
 # Make sure we are under Unix
