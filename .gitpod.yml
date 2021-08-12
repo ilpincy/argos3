@@ -1,0 +1,8 @@
+image:
+  file: .gitpod.Dockerfile
+tasks:
+  - init: |
+    cd src/argos3
+    mkdir build_simulator && cd build_simulator
+    cmake ..
+    make
