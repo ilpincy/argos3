@@ -54,6 +54,7 @@ set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${CMAKE_SOURCE_DIR}/cmake)
 if(POLICY CMP0042)
   cmake_policy(SET CMP0042 NEW)
 endif(POLICY CMP0042)
+set(OpenGL_GL_PREFERENCE "LEGACY")
 
 #
 # Include path points to the base source dir
