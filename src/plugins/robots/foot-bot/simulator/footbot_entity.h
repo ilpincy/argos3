@@ -22,7 +22,6 @@ namespace argos {
    class CPerspectiveCameraEquippedEntity;
    class CProximitySensorEquippedEntity;
    class CRABEquippedEntity;
-   class CWiFiEquippedEntity;
 }
 
 #include <argos3/core/simulator/entity/composable_entity.h>
@@ -113,10 +112,6 @@ namespace argos {
          return *m_pcWheeledEntity;
       }
 
-      inline CWiFiEquippedEntity& GetWiFiEquippedEntity() {
-         return *m_pcWiFiEquippedEntity;
-      }
-
       inline CBatteryEquippedEntity& GetBatterySensorEquippedEntity() {
           return *m_pcBatteryEquippedEntity;
       }
@@ -140,7 +135,6 @@ namespace argos {
       CProximitySensorEquippedEntity*        m_pcProximitySensorEquippedEntity;
       CRABEquippedEntity*                    m_pcRABEquippedEntity;
       CWheeledEntity*                        m_pcWheeledEntity;
-      CWiFiEquippedEntity*                   m_pcWiFiEquippedEntity;
       CBatteryEquippedEntity*                m_pcBatteryEquippedEntity;
    };
 

@@ -19,7 +19,6 @@
 #include <argos3/plugins/simulator/entities/omnidirectional_camera_equipped_entity.h>
 #include <argos3/plugins/simulator/entities/perspective_camera_equipped_entity.h>
 #include <argos3/plugins/simulator/entities/proximity_sensor_equipped_entity.h>
-#include <argos3/plugins/simulator/entities/wifi_equipped_entity.h>
 #include "footbot_distance_scanner_equipped_entity.h"
 #include "footbot_turret_entity.h"
 
@@ -71,7 +70,6 @@ namespace argos {
       m_pcProximitySensorEquippedEntity(nullptr),
       m_pcRABEquippedEntity(nullptr),
       m_pcWheeledEntity(nullptr),
-      m_pcWiFiEquippedEntity(nullptr),
       m_pcBatteryEquippedEntity(nullptr) {
    }
 
@@ -104,7 +102,6 @@ namespace argos {
       m_pcProximitySensorEquippedEntity(nullptr),
       m_pcRABEquippedEntity(nullptr),
       m_pcWheeledEntity(nullptr),
-      m_pcWiFiEquippedEntity(nullptr),
       m_pcBatteryEquippedEntity(nullptr) {
       try {
          /*
@@ -244,9 +241,6 @@ namespace argos {
          /* Turret equipped entity */
          m_pcTurretEntity = new CFootBotTurretEntity(this, "turret_0", cTurretAnchor);
          AddComponent(*m_pcTurretEntity);
-         /* WiFi equipped entity */
-         m_pcWiFiEquippedEntity = new CWiFiEquippedEntity(this, "wifi_0");
-         AddComponent(*m_pcWiFiEquippedEntity);
          /* Battery equipped entity */
          m_pcBatteryEquippedEntity = new CBatteryEquippedEntity(this, "battery_0", str_bat_model);
          AddComponent(*m_pcBatteryEquippedEntity);
@@ -424,9 +418,6 @@ namespace argos {
          /* Turret equipped entity */
          m_pcTurretEntity = new CFootBotTurretEntity(this, "turret_0", cTurretAnchor);
          AddComponent(*m_pcTurretEntity);
-         /* WiFi equipped entity */
-         m_pcWiFiEquippedEntity = new CWiFiEquippedEntity(this, "wifi_0");
-         AddComponent(*m_pcWiFiEquippedEntity);
          /* Battery equipped entity */
          m_pcBatteryEquippedEntity = new CBatteryEquippedEntity(this, "battery_0");
          if(NodeExists(t_tree, "battery"))

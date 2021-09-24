@@ -26,8 +26,7 @@ set(ARGOS3_HEADERS_PLUGINS_SIMULATOR_ENTITIES
   rotor_equipped_entity.h
   tag_entity.h
   tag_equipped_entity.h
-  wheeled_entity.h
-  wifi_equipped_entity.h)
+  wheeled_entity.h)
 
 #
 # Source files
@@ -57,8 +56,7 @@ set(ARGOS3_SOURCES_PLUGINS_SIMULATOR_ENTITIES
   rotor_equipped_entity.cpp
   tag_entity.cpp
   tag_equipped_entity.cpp
-  wheeled_entity.cpp
-  wifi_equipped_entity.cpp)
+  wheeled_entity.cpp)
 
 #
 # Create entity plugin library
