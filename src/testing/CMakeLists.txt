@@ -91,5 +91,4 @@ if(ARGOS_BUILD_FOR_SIMULATOR AND GOOGLEPERFTOOLS_FOUND)
     argos3plugin_simulator_entities
     argos3plugin_simulator_dynamics2d
     argos3plugin_simulator_pointmass3d)
-#    argos3plugin_simulator_physx
 endif(ARGOS_BUILD_FOR_SIMULATOR AND GOOGLEPERFTOOLS_FOUND)

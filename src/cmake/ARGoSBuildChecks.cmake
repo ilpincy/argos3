@@ -123,28 +123,3 @@ else(LUA_FOUND)
   message(STATUS "Lua >=5.3 not found")
 endif(LUA_FOUND)
 
-#
-# Configure PhysX library linking
-#
-if(ARGOS_BUILD_FOR_SIMULATOR)
-  if(CMAKE_SIZEOF_VOID_P EQUAL 4)
-    # 32 bits
-    if(APPLE)
-      # Mac OSX
-      set(PHYSX_ARCH osx32)
-    else(APPLE)
-      # Linux
-      set(PHYSX_ARCH linux32)
-    endif(APPLE)
-  else(CMAKE_SIZEOF_VOID_P EQUAL 4)
-    # 64 bits
-    if(APPLE)
-      # Mac OSX
-      set(PHYSX_ARCH osx64)
-    else(APPLE)
-      # Linux
-      set(PHYSX_ARCH linux64)
-    endif(APPLE)
-  endif(CMAKE_SIZEOF_VOID_P EQUAL 4)
-  link_directories(${CMAKE_SOURCE_DIR}/plugins/simulator/physics_engines/physx/physx_dist/lib/${PHYSX_ARCH})
-endif(ARGOS_BUILD_FOR_SIMULATOR)
