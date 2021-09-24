@@ -513,6 +513,11 @@ endif(ARGOS_USE_DOUBLE)
 # Disable Bullet's inbuilt profiler
 target_compile_definitions(argos3plugin_${ARGOS_BUILD_FOR}_dynamics3d PUBLIC BT_NO_PROFILE=1)
 
+#
+# Add plugin to ARGOS_PLUGIN_PATH
+#
+set(ARGOS_PLUGIN_PATH "${ARGOS_PLUGIN_PATH}:${CMAKE_CURRENT_BINARY_DIR}" CACHE INTERNAL "ARGoS plugin path")
+
 target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_dynamics3d
   argos3core_${ARGOS_BUILD_FOR}
   argos3plugin_${ARGOS_BUILD_FOR}_entities)

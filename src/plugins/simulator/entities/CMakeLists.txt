@@ -65,6 +65,11 @@ add_library(argos3plugin_${ARGOS_BUILD_FOR}_entities SHARED ${ARGOS3_SOURCES_PLU
 target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_entities argos3plugin_${ARGOS_BUILD_FOR}_media)
 
 #
+# Add plugin to ARGOS_PLUGIN_PATH
+#
+set(ARGOS_PLUGIN_PATH "${ARGOS_PLUGIN_PATH}:${CMAKE_CURRENT_BINARY_DIR}" CACHE INTERNAL "ARGoS plugin path")
+
+#
 # Core library installation
 #
 install(FILES ${ARGOS3_HEADERS_PLUGINS_SIMULATOR_ENTITIES} DESTINATION include/argos3/plugins/simulator/entities/)

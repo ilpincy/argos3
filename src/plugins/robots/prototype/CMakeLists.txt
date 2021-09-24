@@ -63,6 +63,11 @@ if(ARGOS_QTOPENGL_FOUND)
   target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_prototype argos3plugin_${ARGOS_BUILD_FOR}_qtopengl)
 endif(ARGOS_QTOPENGL_FOUND)
 
+#
+# Add plugin to ARGOS_PLUGIN_PATH
+#
+set(ARGOS_PLUGIN_PATH "${ARGOS_PLUGIN_PATH}:${CMAKE_CURRENT_BINARY_DIR}" CACHE INTERNAL "ARGoS plugin path")
+
 install(FILES ${ARGOS3_HEADERS_PLUGINS_ROBOTS_PROTOTYPE_CONTROLINTERFACE}
         DESTINATION include/argos3/plugins/robots/prototype/control_interface)
 

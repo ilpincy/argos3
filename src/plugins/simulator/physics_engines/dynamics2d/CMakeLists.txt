@@ -110,6 +110,11 @@ add_library(argos3plugin_${ARGOS_BUILD_FOR}_dynamics2d SHARED
   ${ARGOS3_SOURCES_PLUGINS_SIMULATOR_PHYSICS_ENGINES_DYNAMICS2D})
 target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_dynamics2d argos3core_${ARGOS_BUILD_FOR})
 
+#
+# Add plugin to ARGOS_PLUGIN_PATH
+#
+set(ARGOS_PLUGIN_PATH "${ARGOS_PLUGIN_PATH}:${CMAKE_CURRENT_BINARY_DIR}" CACHE INTERNAL "ARGoS plugin path")
+
 install(
   FILES
   ${CMAKE_SOURCE_DIR}/plugins/simulator/physics_engines/dynamics2d/chipmunk-physics/CHIPMUNK_LICENSE.txt
