@@ -1,0 +1,57 @@
+<?xml version="1.0" ?>
+<argos-configuration>
+
+  <!-- ************************* -->
+  <!-- * General configuration * -->
+  <!-- ************************* -->
+  <framework>
+    <system threads="0" />
+    <experiment length="0" ticks_per_second="10" random_seed="0" />
+  </framework>
+  
+  <!-- *************** -->
+  <!-- * Controllers * -->
+  <!-- *************** -->
+  <controllers>
+    <test_controller library="@CMAKE_CURRENT_BINARY_DIR@/libfootbot_drive_forward_dynamics2d_controller"
+                     id="test_controller">
+      <actuators>
+        <differential_steering implementation="default" />
+      </actuators>
+      <sensors />
+      <params />
+    </test_controller>
+  </controllers>
+
+  <!-- ****************** -->
+  <!-- * Loop functions * -->
+  <!-- ****************** -->
+  <loop_functions library="@CMAKE_CURRENT_BINARY_DIR@/libfootbot_drive_forward_dynamics2d_loop_functions"
+                  label="test_loop_functions" />
+
+  <!-- *********************** -->
+  <!-- * Arena configuration * -->
+  <!-- *********************** -->
+  <arena size="2, 1, 1" positional_index="grid" positional_grid_size="25,25,1">
+    <foot-bot id="fb">
+      <body position="-0.5,0,0" orientation="0,0,0"/>
+      <controller config="test_controller"/>
+    </foot-bot>
+  </arena>
+
+  <!-- ******************* -->
+  <!-- * Physics engines * -->
+  <!-- ******************* -->
+  <physics_engines>
+    <dynamics2d id="dyn2d" />
+  </physics_engines>
+
+  <!-- ********* -->
+  <!-- * Media * -->
+  <!-- ********* -->
+  <media>
+    <range_and_bearing id="rab" index="grid" grid_size="3,3,3" />
+    <led id="leds" index="grid" grid_size="3,3,3" />
+  </media>
+
+</argos-configuration>
