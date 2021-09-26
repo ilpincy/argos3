@@ -33,9 +33,9 @@ jobs:
     - uses: actions/checkout@v2
     - name: Install dependencies
       run: |
-        sudo brew update
-        sudo brew upgrade
-        sudo brew install cmake libpng freeimage lua
+        brew update
+        brew upgrade
+        brew install cmake libpng freeimage lua
     - name: Configure ARGoS
       run: cmake -S ${{github.workspace}}/src -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
     - name: Build ARGoS
