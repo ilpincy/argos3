@@ -5,37 +5,18 @@ env:
   BUILD_TYPE: Release
 
 jobs:
-  build:
-    runs-on: ${{ matrix.target }}
+  ubuntu:
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        include:
-          - target: ubuntu-18.04
-          - update: apt-get update
-          - upgrade: apt-get upgrade
-          - install: apt-get install cmake libfreeimage-dev libfreeimageplus-dev liblua5.3-dev lua5.3
-        include:
-          - target: ubuntu-20.04
-          - update: apt-get update
-          - upgrade: apt-get upgrade
-          - install: apt-get install cmake libfreeimage-dev libfreeimageplus-dev liblua5.3-dev lua5.3
-        include:
-          - target: macos-10.15
-          - update: brew update
-          - upgrade: brew upgrade
-          - install: brew install cmake libpng freeimage lua
-        include:
-          - target: macos-11
-          - update: brew update
-          - upgrade: brew upgrade
-          - install: brew install cmake libpng freeimage lua
+        os: [ubuntu-18.04, ubuntu-20.04]
     steps:
     - uses: actions/checkout@v2
     - name: Install dependencies
       run: |
-      	${{ matrix.update }}
-      	${{ matrix.upgrade }}
-      	${{ matrix.install }}
+      	apt-get update
+	apt-get upgrade
+      	apt-get install cmake libfreeimage-dev libfreeimageplus-dev liblua5.3-dev lua5.3
     - name: Configure ARGoS
       run: cmake -S ${{github.workspace}}/src -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
     - name: Build ARGoS
