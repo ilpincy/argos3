@@ -6,17 +6,41 @@ env:
 
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.target }}
     strategy:
       matrix:
-        os: [ubuntu-18.04, ubuntu-20.04, macos-11, macos-10.15]
+        include:
+          - target: ubuntu-18.04
+          - update: apt-get update
+          - upgrade: apt-get upgrade
+          - install: apt-get install cmake libfreeimage-dev libfreeimageplus-dev liblua5.3-dev lua5.3
+        include:
+          - target: ubuntu-20.04
+          - update: apt-get update
+          - upgrade: apt-get upgrade
+          - install: apt-get install cmake libfreeimage-dev libfreeimageplus-dev liblua5.3-dev lua5.3
+        include:
+          - target: macos-10.15
+          - update: brew update
+          - upgrade: brew upgrade
+          - install: brew install cmake libpng freeimage lua
+        include:
+          - target: macos-11
+          - update: brew update
+          - upgrade: brew upgrade
+          - install: brew install cmake libpng freeimage lua
     steps:
     - uses: actions/checkout@v2
-    - name: Configure CMake
+    - name: Install dependencies
+      run: |
+      	${{ matrix.update }}
+      	${{ matrix.upgrade }}
+      	${{ matrix.install }}
+    - name: Configure ARGoS
       run: cmake -S ${{github.workspace}}/src -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
-    - name: Build
+    - name: Build ARGoS
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
-    - name: Test
+    - name: Run tests
       working-directory: ${{github.workspace}}/build
       run: ctest -C ${{env.BUILD_TYPE}}
 
