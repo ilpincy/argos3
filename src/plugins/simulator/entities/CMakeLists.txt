@@ -26,8 +26,7 @@ set(ARGOS3_HEADERS_PLUGINS_SIMULATOR_ENTITIES
   rotor_equipped_entity.h
   tag_entity.h
   tag_equipped_entity.h
-  wheeled_entity.h
-  wifi_equipped_entity.h)
+  wheeled_entity.h)
 
 #
 # Source files
@@ -57,14 +56,18 @@ set(ARGOS3_SOURCES_PLUGINS_SIMULATOR_ENTITIES
   rotor_equipped_entity.cpp
   tag_entity.cpp
   tag_equipped_entity.cpp
-  wheeled_entity.cpp
-  wifi_equipped_entity.cpp)
+  wheeled_entity.cpp)
 
 #
 # Create entity plugin library
 #
 add_library(argos3plugin_${ARGOS_BUILD_FOR}_entities SHARED ${ARGOS3_SOURCES_PLUGINS_SIMULATOR_ENTITIES})
 target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_entities argos3plugin_${ARGOS_BUILD_FOR}_media)
+
+#
+# Add plugin to ARGOS_PLUGIN_PATH
+#
+set(ARGOS_PLUGIN_PATH "${ARGOS_PLUGIN_PATH}:${CMAKE_CURRENT_BINARY_DIR}" CACHE INTERNAL "ARGoS plugin path")
 
 #
 # Core library installation

@@ -5,7 +5,6 @@ set(ARGOS3_HEADERS_PLUGINS_SIMULATOR_PHYSICS_ENGINES
 add_subdirectory(dynamics2d)
 add_subdirectory(dynamics3d)
 add_subdirectory(pointmass3d)
-#add_subdirectory(physx)
 
 install(FILES
   ${ARGOS3_HEADERS_PLUGINS_SIMULATOR_PHYSICS_ENGINES}

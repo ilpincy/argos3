@@ -18,7 +18,6 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
   set(ARGOS3_HEADERS_PLUGINS_ROBOTS_FOOTBOT_SIMULATOR
     simulator/dynamics2d_footbot_model.h
     simulator/pointmass3d_footbot_model.h
-    # simulator/physx_footbot_model.h
     simulator/footbot_base_ground_rotzonly_sensor.h
     simulator/footbot_distance_scanner_default_actuator.h
     simulator/footbot_distance_scanner_equipped_entity.h
@@ -55,7 +54,6 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
     ${ARGOS3_HEADERS_PLUGINS_ROBOTS_FOOTBOT_SIMULATOR}
     simulator/dynamics2d_footbot_model.cpp
     simulator/pointmass3d_footbot_model.cpp
-    # simulator/physx_footbot_model.cpp
     simulator/footbot_base_ground_rotzonly_sensor.cpp
     simulator/footbot_distance_scanner_default_actuator.cpp
     simulator/footbot_distance_scanner_equipped_entity.cpp
@@ -89,10 +87,14 @@ target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_footbot
   argos3plugin_${ARGOS_BUILD_FOR}_genericrobot
   argos3plugin_${ARGOS_BUILD_FOR}_dynamics2d
   argos3plugin_${ARGOS_BUILD_FOR}_pointmass3d)
-  # argos3plugin_${ARGOS_BUILD_FOR}_physx)
 if(ARGOS_QTOPENGL_FOUND)
   target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_footbot argos3plugin_${ARGOS_BUILD_FOR}_qtopengl)
 endif(ARGOS_QTOPENGL_FOUND)
+
+#
+# Add plugin to ARGOS_PLUGIN_PATH
+#
+set(ARGOS_PLUGIN_PATH "${ARGOS_PLUGIN_PATH}:${CMAKE_CURRENT_BINARY_DIR}" CACHE INTERNAL "ARGoS plugin path")
 
 install(FILES ${ARGOS3_HEADERS_PLUGINS_ROBOTS_FOOTBOT_CONTROLINTERFACE} DESTINATION include/argos3/plugins/robots/foot-bot/control_interface)
 

@@ -54,6 +54,7 @@ set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${CMAKE_SOURCE_DIR}/cmake)
 if(POLICY CMP0042)
   cmake_policy(SET CMP0042 NEW)
 endif(POLICY CMP0042)
+set(OpenGL_GL_PREFERENCE "LEGACY")
 
 #
 # Include path points to the base source dir
@@ -95,11 +96,23 @@ if(NOT EXISTS ${CMAKE_BINARY_DIR}/argos3)
 endif(NOT EXISTS ${CMAKE_BINARY_DIR}/argos3)
 
 #
+# This variable will accumulate the paths for all enabled plugins. It
+# is used for testing and for creating the setup_env.sh and .gdbinit
+# files
+#
+set(ARGOS_PLUGIN_PATH "${CMAKE_BINARY_DIR}/core" CACHE INTERNAL "ARGoS plugin path")
+
+#
 # Compile stuff
 #
 add_subdirectory(core)
 add_subdirectory(plugins)
+
+#
+# Enable testing if we are building the simulator
+#
 if(ARGOS_BUILD_FOR_SIMULATOR)
+  enable_testing()
   add_subdirectory(testing)
 endif(ARGOS_BUILD_FOR_SIMULATOR)
 

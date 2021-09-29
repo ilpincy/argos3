@@ -15,10 +15,4 @@ core/*.so
 plugins/robots/*/*.so
 plugins/simulator/*/*.so
 plugins/simulator/*/*/*.so
-testing/*.so
-testing/*.dylib
-testing/test-client
-testing/test-grid
-testing/test-list
-testing/test-range
-testing/test-server
+

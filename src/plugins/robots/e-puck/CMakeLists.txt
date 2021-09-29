@@ -9,7 +9,6 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
   set(ARGOS3_HEADERS_PLUGINS_ROBOTS_EPUCK_SIMULATOR
     simulator/dynamics2d_epuck_model.h
     simulator/dynamics3d_epuck_model.h
-    # simulator/physx_epuck_model.h
     simulator/epuck_entity.h
     simulator/epuck_proximity_default_sensor.h)
 endif(ARGOS_BUILD_FOR_SIMULATOR)
@@ -26,7 +25,6 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
     ${ARGOS3_HEADERS_PLUGINS_ROBOTS_EPUCK_SIMULATOR}
     simulator/dynamics3d_epuck_model.cpp
     simulator/dynamics2d_epuck_model.cpp
-    # simulator/physx_epuck_model.cpp
     simulator/epuck_entity.cpp
     simulator/epuck_proximity_default_sensor.cpp)
   # Compile the graphical visualization only if the necessary libraries have been found
@@ -50,10 +48,14 @@ target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_epuck
   argos3plugin_${ARGOS_BUILD_FOR}_genericrobot
   argos3plugin_${ARGOS_BUILD_FOR}_dynamics2d
   argos3plugin_${ARGOS_BUILD_FOR}_dynamics3d)
-  # argos3plugin_${ARGOS_BUILD_FOR}_physx)
 if(ARGOS_BUILD_FOR_SIMULATOR AND ARGOS_QTOPENGL_FOUND)
   target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_epuck argos3plugin_${ARGOS_BUILD_FOR}_qtopengl)
 endif(ARGOS_BUILD_FOR_SIMULATOR AND ARGOS_QTOPENGL_FOUND)
+
+#
+# Add plugin to ARGOS_PLUGIN_PATH
+#
+set(ARGOS_PLUGIN_PATH "${ARGOS_PLUGIN_PATH}:${CMAKE_CURRENT_BINARY_DIR}" CACHE INTERNAL "ARGoS plugin path")
 
 install(FILES ${ARGOS3_HEADERS_PLUGINS_ROBOTS_EPUCK_CONTROLINTERFACE} DESTINATION include/argos3/plugins/robots/e-puck/control_interface)
 

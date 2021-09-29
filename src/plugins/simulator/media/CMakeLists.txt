@@ -27,6 +27,11 @@ add_library(argos3plugin_${ARGOS_BUILD_FOR}_media SHARED ${ARGOS3_SOURCES_PLUGIN
 target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_media argos3core_${ARGOS_BUILD_FOR})
 
 #
+# Add plugin to ARGOS_PLUGIN_PATH
+#
+set(ARGOS_PLUGIN_PATH "${ARGOS_PLUGIN_PATH}:${CMAKE_CURRENT_BINARY_DIR}" CACHE INTERNAL "ARGoS plugin path")
+
+#
 # Core library installation
 #
 install(FILES ${ARGOS3_HEADERS_PLUGINS_SIMULATOR_MEDIA} DESTINATION include/argos3/plugins/simulator/media/)
