@@ -5,6 +5,8 @@
 
 #include "controller.h"
 
+#include <argos3/plugins/robots/generic/control_interface/ci_differential_steering_actuator.h>
+
 namespace argos {
 
    /****************************************/
