@@ -12,10 +12,20 @@ namespace argos {
          return false;
       }
       else {
-         CFootBotEntity& cFootBot = dynamic_cast<CFootBotEntity&>(GetSpace().GetEntity("fb"));
-         CEmbodiedEntity& cEmbodiedEntity = cFootBot.GetEmbodiedEntity();
-         if(Distance(cEmbodiedEntity.GetOriginAnchor().Position, TARGET_POSITION) > THRESHOLD) {
-            THROW_ARGOSEXCEPTION("Foot-Bot did not drive forwards to the target position");
+         CFootBotEntity* pcFootBot = nullptr;
+         try {
+            CEntity& cEntity = GetSpace().GetEntity("fb");
+            pcFootBot = dynamic_cast<CFootBotEntity*>(&cEntity);
+         }
+         catch(CARGoSException& ex) {
+            THROW_ARGOSEXCEPTION_NESTED("Robot was not added to the simulator", ex);
+         }
+         if(pcFootBot == nullptr) {
+            THROW_ARGOSEXCEPTION("Robot was not a Foot-Bot");
+         }
+         const CVector3& cFootBotPosition = pcFootBot->GetEmbodiedEntity().GetOriginAnchor().Position;
+         if(Distance(cFootBotPosition, TARGET_POSITION) > THRESHOLD) {
+            THROW_ARGOSEXCEPTION("Robot did not drive forwards to the target position");
          }
          return true;
       }
