@@ -179,11 +179,6 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-
-
-   /****************************************/
-   /****************************************/
-
    bool CLuaUtility::LoadScript(lua_State* pt_state,
                                 const std::string& str_filename) {
       if(luaL_loadfile(pt_state, str_filename.c_str())) {
