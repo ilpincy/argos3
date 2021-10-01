@@ -13,6 +13,7 @@ namespace argos {
    class CVector3;
    class CQuaternion;
    class CColor;
+   class CByteArray;
 }
 
 #include <argos3/core/utility/logging/argos_log.h>
@@ -387,6 +388,19 @@ namespace argos {
          return ptRetVal;
       }
       
+      static void LuaSerializeTable(CByteArray& c_data,
+                                    lua_State* pt_lua_state,
+                                    SInt32 n_table_offset);
+
+      static void LuaDeserializeTable(CByteArray& c_data,
+                                      lua_State* pt_lua_state);
+
+   private:
+
+      static const UInt8 LUA_TUSERDATA_VECTOR2 = 1;
+      static const UInt8 LUA_TUSERDATA_VECTOR3 = 2;
+      static const UInt8 LUA_TUSERDATA_QUATERNION = 3;
+
    private:
       
       static int LOGWrapper(lua_State* pt_state);

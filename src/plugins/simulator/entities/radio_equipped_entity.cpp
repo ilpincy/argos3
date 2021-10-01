@@ -109,11 +109,13 @@ namespace argos {
    void CRadioEquippedEntity::AddRadio(const std::string& str_id,
                                        const CVector3& c_offset,
                                        SAnchor& s_anchor,
+                                       CRadioMedium& c_medium,
                                        Real f_transmit_range) {
       /* create the new radio entity */
       auto* pcRadio =
          new CRadioEntity(this,
                           str_id,
+                          c_medium,
                           f_transmit_range);
       /* add it to the instances vector */
       m_vecInstances.emplace_back(*pcRadio,
@@ -151,15 +153,6 @@ namespace argos {
             cPosition += s_instance.Anchor.Position;
             s_instance.Radio.SetPosition(cPosition);
          }
-      }
-   }
-
-   /****************************************/
-   /****************************************/
-
-   void CRadioEquippedEntity::SetMedium(CRadioMedium& c_medium) {
-      for(SInstance& s_instance : m_vecInstances) {
-         s_instance.Radio.SetMedium(c_medium);
       }
    }
 

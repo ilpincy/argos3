@@ -39,18 +39,20 @@ namespace argos {
 
       CRadioEquippedEntity* m_pcRadioEquippedEntity;
 
-      class CTxOperation : public CPositionalIndex<CRadioEntity>::COperation {
+      class CSendOperation : public CPositionalIndex<CRadioEntity>::COperation {
       public:
 
-         CTxOperation(const CRadioEntity& c_tx_radio,
-                      const std::vector<CByteArray>& c_tx_data);
+         CSendOperation(const CRadioEntity& c_radio,
+                        const std::vector<CByteArray>& c_messages) :
+            m_cRadio(c_radio),
+            m_cMessages(c_messages) {}
 
-         virtual bool operator()(CRadioEntity& c_rx_radio);
+         virtual bool operator()(CRadioEntity& c_radio);
 
       private:
 
-         const CRadioEntity& m_cTxRadio;
-         const std::vector<CByteArray>& m_cTxData;
+         const CRadioEntity& m_cRadio;
+         const std::vector<CByteArray>& m_cMessages;
       };
    };
 }
