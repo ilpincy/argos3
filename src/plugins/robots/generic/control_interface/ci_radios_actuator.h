@@ -22,11 +22,11 @@ namespace argos {
 
       struct SInterface {
          SInterface(const std::string& str_id,
-                    const std::vector<CByteArray>& vec_data = {}) :
+                    const std::vector<CByteArray>& vec_messages = {}) :
             Id(str_id),
-            Data(vec_data) {}
+            Messages(vec_messages) {}
          std::string Id;
-         std::vector<CByteArray> Data;
+         std::vector<CByteArray> Messages;
          using TVector = std::vector<SInterface>;
       };
 

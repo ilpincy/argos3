@@ -27,7 +27,7 @@ namespace argos {
       CLuaUtility::OpenRobotStateTable(pt_lua_state, "radios"); // radios
       for(size_t i = 0; i < m_vecInterfaces.size(); ++i) {
          CLuaUtility::OpenRobotStateTable(pt_lua_state, m_vecInterfaces[i].Id); // interfaces
-         CLuaUtility::StartTable(pt_lua_state, "rx_data");
+         CLuaUtility::StartTable(pt_lua_state, "recv");
          CLuaUtility::EndTable(pt_lua_state);
          CLuaUtility::CloseRobotStateTable(pt_lua_state); // interfaces
       }
@@ -42,25 +42,27 @@ namespace argos {
    void CCI_RadiosSensor::ReadingsToLuaState(lua_State* pt_lua_state) {
       lua_getfield(pt_lua_state, -1, "radios"); // radios
       for(size_t i = 0; i < m_vecInterfaces.size(); i++) {
-         lua_getfield(pt_lua_state, -1, (m_vecInterfaces[i].Id).c_str()); // interface
-         lua_getfield(pt_lua_state, -1, "rx_data"); // data
+         const std::string& strId = m_vecInterfaces[i].Id;
+         std::vector<CByteArray>& vecMessages = m_vecInterfaces[i].Messages;
+         lua_getfield(pt_lua_state, -1, strId.c_str()); // interface
+         lua_getfield(pt_lua_state, -1, "recv"); // messages
          size_t unLastMessageCount = lua_rawlen(pt_lua_state, -1);
-         for(size_t j = 0; j < m_vecInterfaces[i].Data.size(); ++j) {
-            CLuaUtility::StartTable(pt_lua_state, j + 1); // messages
-            for(size_t k = 0; k < m_vecInterfaces[i].Data[j].Size(); ++k) {
-               CLuaUtility::AddToTable(pt_lua_state, k + 1, m_vecInterfaces[i].Data[j][k]); // bytes
-            }
-            CLuaUtility::EndTable(pt_lua_state); // messages
+         for(size_t j = 0; j < vecMessages.size(); ++j) {
+            CLuaUtility::StartTable(pt_lua_state, j + 1);
+            /* Copy CByteArray here since it consumes itself during deserialization */
+            CByteArray cMessage(vecMessages[j]);
+            CLuaUtility::LuaDeserializeTable(cMessage, pt_lua_state);
+            CLuaUtility::EndTable(pt_lua_state);
          }
-         if(m_vecInterfaces[i].Data.size() < unLastMessageCount) {
+         if(vecMessages.size() < unLastMessageCount) {
             /* Remove the extra entries from the table */
-            for(size_t j = m_vecInterfaces[i].Data.size() + 1; j <= unLastMessageCount; ++j) {
+            for(size_t j = vecMessages.size() + 1; j <= unLastMessageCount; ++j) {
                lua_pushnumber(pt_lua_state, j);
                lua_pushnil(pt_lua_state);
                lua_settable(pt_lua_state, -3);
             }
          }
-         lua_pop(pt_lua_state, 1); // data
+         lua_pop(pt_lua_state, 1); // messages
          lua_pop(pt_lua_state, 1); // interface       
       }
       lua_pop(pt_lua_state, 1); // radios

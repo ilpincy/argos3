@@ -54,4 +54,11 @@
     <led id="leds" index="grid" grid_size="3,3,3" />
   </media>
 
+  <!-- ****************** -->
+  <!-- * Visualization * -->
+  <!-- ****************** -->
+  <visualization>
+    <qt-opengl show_boundary="false"/>
+  </visualization>
+
 </argos-configuration>

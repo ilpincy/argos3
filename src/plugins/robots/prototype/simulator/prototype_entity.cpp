@@ -121,12 +121,6 @@ namespace argos {
                      new CRadioEquippedEntity(this);
                   m_pcRadioEquippedEntity->Init(*itDevice);
                   AddComponent(*m_pcRadioEquippedEntity);
-                  /* Add the radios to the medium */
-                  std::string strMedium;
-                  GetNodeAttribute(*itDevice, "medium", strMedium);
-                  auto& cRadioMedium = 
-                     CSimulator::GetInstance().GetMedium<CRadioMedium>(strMedium);
-                  m_pcRadioEquippedEntity->SetMedium(cRadioMedium);
                   m_pcRadioEquippedEntity->Enable();
                }
                else if(itDevice->Value() == "magnets" ) {

@@ -29,7 +29,7 @@ namespace argos {
          /* For each radio, create an interface */
          for(CRadioEquippedEntity::SInstance& s_instance :
              m_pcRadioEquippedEntity->GetInstances()) {
-            /* Clear the existing data */
+            /* Clear the existing message */
             m_vecInterfaces.emplace_back(s_instance.Radio.GetId());
          }
          /* Get controllable entity */
@@ -68,18 +68,18 @@ namespace argos {
       }
       for(size_t i = 0; i < m_pcRadioEquippedEntity->GetInstances().size(); ++i) {
          CRadioEntity& cRadio = m_pcRadioEquippedEntity->GetRadio(i);
-         /* Clear data in the interface */
-         m_vecInterfaces[i].Data.clear();
-         /* Move data from the radio entity to the control interface */
-         for(const std::pair<CVector3, CByteArray>& c_data : cRadio.GetData()) {
-            m_vecInterfaces[i].Data.emplace_back(c_data.second);
+         /* Clear messages in the interface */
+         m_vecInterfaces[i].Messages.clear();
+         /* Copy messages from the radio entity to the control interface */
+         for(const std::pair<CVector3, CByteArray>& c_message : cRadio.GetMessages()) {
+            m_vecInterfaces[i].Messages.emplace_back(c_message.second);
             if(m_bShowRays) {
-               CRay3 cRay(c_data.first, cRadio.GetPosition());
-               m_pcControllableEntity->GetCheckedRays().emplace_back(!c_data.second.Empty(), cRay);
+               CRay3 cRay(c_message.first, cRadio.GetPosition());
+               m_pcControllableEntity->GetCheckedRays().emplace_back(!c_message.second.Empty(), cRay);
             }
          }
-         /* Clear data in the radio entity */
-         cRadio.GetData().clear();
+         /* Clear messages in the radio entity */
+         cRadio.GetMessages().clear();
       }
    }
 
@@ -88,8 +88,8 @@ namespace argos {
 
    void CRadiosDefaultSensor::Reset() {
       for(SInterface& s_interface : m_vecInterfaces) {
-         /* Clear the existing data */
-         s_interface.Data.clear();
+         /* Clear the existing message */
+         s_interface.Messages.clear();
       }
    }
 
@@ -118,16 +118,13 @@ namespace argos {
                    "      ...\n"
                    "      <sensors>\n"
                    "        ...\n"
-                   "        <radios implementation=\"default\" medium=\"radios\" />\n"
+                   "        <radios implementation=\"default\" />\n"
                    "        ...\n"
                    "      </sensors>\n"
                    "      ...\n"
                    "    </my_controller>\n"
                    "    ...\n"
                    "  </controllers>\n\n"
-
-                   "The 'medium' attribute sets the id of the radio medium declared in the <media>\n"
-                   "XML section.\n\n"
 
                    "OPTIONAL XML CONFIGURATION\n\n"
 

@@ -2,8 +2,12 @@
  *
  * @author Michael Allwright <mallwright@learnrobotics.io>
  */
+
+namespace argos {
+   class CCI_RadiosActuator;
+}
+
 #include <argos3/core/control_interface/ci_controller.h>
-#include <argos3/plugins/robots/generic/control_interface/ci_differential_steering_actuator.h>
 
 namespace argos {
 
@@ -11,11 +15,18 @@ namespace argos {
 
    public:
 
-      CTestController() {}
+      CTestController() :
+         m_pcRadioActuator(nullptr) {}
 
       virtual ~CTestController() {}
 
+      virtual void Init(TConfigurationNode& t_tree);
+
+      virtual void ControlStep() override;
+
    private:
+
+      CCI_RadiosActuator* m_pcRadioActuator;
 
    };
 }

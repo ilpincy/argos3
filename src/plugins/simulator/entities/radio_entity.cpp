@@ -16,18 +16,19 @@ namespace argos {
 
    CRadioEntity::CRadioEntity(CComposableEntity* pc_parent) :
       CPositionalEntity(pc_parent),
-      m_fRange(0.0f),
-      m_pcMedium(nullptr) {}
+      m_pcMedium(nullptr),
+      m_fRange(0.0f) {}
 
    /****************************************/
    /****************************************/
 
    CRadioEntity::CRadioEntity(CComposableEntity* pc_parent,
                               const std::string& str_id,
+                              CRadioMedium& c_medium,
                               Real f_range) :
       CPositionalEntity(pc_parent, str_id, CVector3(), CQuaternion()),
-      m_fRange(f_range),
-      m_pcMedium(nullptr) {}
+      m_pcMedium(&c_medium),
+      m_fRange(f_range) {}
 
    /****************************************/
    /****************************************/
@@ -37,6 +38,9 @@ namespace argos {
          /* Parse XML */
          CPositionalEntity::Init(t_tree);
          GetNodeAttribute(t_tree, "range", m_fRange);
+         std::string strMedium;
+         GetNodeAttribute(t_tree, "medium", strMedium);
+         m_pcMedium = &CSimulator::GetInstance().GetMedium<CRadioMedium>(strMedium);
       }
       catch(CARGoSException& ex) {
          THROW_ARGOSEXCEPTION_NESTED("Error while initializing radio entity", ex);
@@ -48,7 +52,7 @@ namespace argos {
 
    void CRadioEntity::Reset() {
       /* Erase received messages */
-      m_vecData.clear();
+      m_vecMessages.clear();
    }
 
    /****************************************/

@@ -42,7 +42,7 @@ namespace argos {
          SInstance(CRadioEntity& c_radio,
                    SAnchor& s_anchor,
                    const CVector3& c_offset);
-         using TVector = std::vector<SInstance>;         
+         using TVector = std::vector<SInstance>;
       };
 
    public:
@@ -74,6 +74,7 @@ namespace argos {
        * @param str_id The identifier of the radio.
        * @param c_offset The position of the radio.
        * @param s_anchor The anchor of the radio.
+       * @param c_medium The medium of the radio.
        * @param f_transmit_range The transmit range of the radio.
        * @see GetInstances()
        * @see GetRadio()
@@ -81,6 +82,7 @@ namespace argos {
       void AddRadio(const std::string& str_id,
                     const CVector3& c_offset,
                     SAnchor& s_anchor,
+                    CRadioMedium& c_medium,
                     Real f_transmit_range);
 
       /**
@@ -110,13 +112,6 @@ namespace argos {
       inline const SInstance::TVector& GetInstances() const {
          return m_vecInstances;
       }
-
-      /**
-       * Sets the medium associated to this entity.
-       * @param c_medium The medium to associate to this entity.
-       * @see CRadioMedium
-       */
-      void SetMedium(CRadioMedium& c_medium);
 
       virtual std::string GetTypeDescription() const {
          return "radios";

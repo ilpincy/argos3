@@ -56,17 +56,17 @@ namespace argos {
       for(size_t i = 0; i < m_vecInterfaces.size(); ++i) {
          CRadioEntity& cRadio = m_pcRadioEquippedEntity->GetRadio(i);
          /* Create operation instance */
-         CTxOperation cTxOperation(cRadio, m_vecInterfaces[i].Data);
-         /* Calculate the range of the transmitting radio */
-         CVector3 cTxRange(1.0f,1.0f,1.0f);
-         cTxRange *= (cRadio.GetRange() * 0.5f);
+         CSendOperation cSendOperation(cRadio, m_vecInterfaces[i].Messages);
+         /* Calculate the coarse range of the transmitting radio */
+         CVector3 cRange(1.0f, 1.0f, 1.0f);
+         cRange *= cRadio.GetRange();
          /* Get positional index */
          CPositionalIndex<CRadioEntity>* pcRadioIndex =
             &(cRadio.GetMedium().GetIndex());
-         /* Transmit the data to receiving radios in the space */
-         pcRadioIndex->ForEntitiesInBoxRange(cRadio.GetPosition(), cTxRange, cTxOperation);
-         /* Flush data from the control interface */
-         m_vecInterfaces[i].Data.clear();
+         /* Transmit the messages to receiving radios in the space */
+         pcRadioIndex->ForEntitiesInBoxRange(cRadio.GetPosition(), cRange, cSendOperation);
+         /* Flush messages from the control interface */
+         m_vecInterfaces[i].Messages.clear();
       }
    }
 
@@ -75,30 +75,20 @@ namespace argos {
 
    void CRadiosDefaultActuator::Reset() {
       for(SInterface& s_interface : m_vecInterfaces) {
-         /* Clear any data in the interface */
-         s_interface.Data.clear();
+         /* Clear any messages in the interface */
+         s_interface.Messages.clear();
       }
    }
 
    /****************************************/
    /****************************************/
 
-   CRadiosDefaultActuator::CTxOperation::CTxOperation(const CRadioEntity& c_tx_radio,
-                                                      const std::vector<CByteArray>& c_tx_data) :
-      m_cTxRadio(c_tx_radio),
-      m_cTxData(c_tx_data) {}
-
-   /****************************************/
-   /****************************************/
-
-   bool CRadiosDefaultActuator::CTxOperation::operator()(CRadioEntity& c_rx_radio) {
-      if(&c_rx_radio != &m_cTxRadio) {
-         const CVector3& cRxRadioPosition = c_rx_radio.GetPosition();
-         const CVector3& cTxRadioPosition = m_cTxRadio.GetPosition();
-         Real fDistance = (cRxRadioPosition - cTxRadioPosition).Length();
-         if(fDistance < m_cTxRadio.GetRange()) {
-            for(const CByteArray& c_data : m_cTxData) {
-               c_rx_radio.ReceiveData(cTxRadioPosition, c_data);
+   bool CRadiosDefaultActuator::CSendOperation::operator()(CRadioEntity& c_recv_radio) {
+      if(&c_recv_radio != &m_cRadio) {
+         Real fDistance = (c_recv_radio.GetPosition() - m_cRadio.GetPosition()).Length();
+         if(fDistance < m_cRadio.GetRange()) {
+            for(const CByteArray& c_message : m_cMessages) {
+               c_recv_radio.ReceiveMessage(m_cRadio.GetPosition(), c_message);
             }
          }
       }

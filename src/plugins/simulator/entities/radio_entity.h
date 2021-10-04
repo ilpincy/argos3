@@ -37,6 +37,7 @@ namespace argos {
 
       CRadioEntity(CComposableEntity* pc_parent,
                    const std::string& str_id,
+                   CRadioMedium& c_medium,
                    Real f_transmit_range);
                                             
       virtual ~CRadioEntity() {}
@@ -50,40 +51,41 @@ namespace argos {
       virtual void SetEnabled(bool b_enabled);
 
       /**
-       * Returns a constant reference to the received data.
-       * @return A constant reference to the received data.
-       * @see ReceiveData()
+       * Returns a constant reference to the received messages.
+       * @return A constant reference to the received messages.
+       * @see ReceiveMessage()
        */
-      inline const std::vector<std::pair<CVector3, CByteArray> >& GetData() const {
-         return m_vecData;
+      inline const std::vector<std::pair<CVector3, CByteArray> >& GetMessages() const {
+         return m_vecMessages;
       }
 
       /**
-       * Returns a reference to the received data.
-       * @return A reference to the received data.
-       * @see ReceiveData()
+       * Returns a reference to the received messages.
+       * @return A reference to the received messages.
+       * @see ReceiveMessage()
        */
-      inline std::vector<std::pair<CVector3, CByteArray> >& GetData() {
-         return m_vecData;
+      inline std::vector<std::pair<CVector3, CByteArray> >& GetMessages() {
+         return m_vecMessages;
       }
 
       /**
        * Adds data received by the radio
-       * @param c_data a pair containing the data to be received and its origin.
-       * @see GetData()
+       * @param c_origin the origin of the message in the global coordinate system.
+       * @param c_message a byte array containing the actual message.
+       * @see GetMessages()
        */
-      inline void ReceiveData(const CVector3& c_tx_location, const CByteArray& c_tx_data) {
-         m_vecData.emplace_back(c_tx_location, c_tx_data);
+      inline void ReceiveMessage(const CVector3& c_origin, const CByteArray& c_message) {
+         m_vecMessages.emplace_back(c_origin, c_message);
       }
 
       /**
        * Checks if there has been data received by the radio
        * @return A boolean value representing whether data has been received
-       * @see GetData()
-       * @see ClearData()
+       * @see GetMessages()
+       * @see ClearMessages()
        */
-      inline bool HasData() const {
-         return !m_vecData.empty();
+      inline bool HasMessages() const {
+         return !m_vecMessages.empty();
       }
 
       /**
@@ -133,9 +135,9 @@ namespace argos {
 
    protected:
 
-      Real m_fRange;
-      std::vector<std::pair<CVector3, CByteArray> > m_vecData;
       CRadioMedium* m_pcMedium;
+      Real m_fRange;
+      std::vector<std::pair<CVector3, CByteArray> > m_vecMessages;
 
    };
 

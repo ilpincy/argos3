@@ -1,0 +1,91 @@
+<?xml version="1.0" ?>
+<argos-configuration>
+
+  <!-- ************************* -->
+  <!-- * General configuration * -->
+  <!-- ************************* -->
+  <framework>
+    <experiment length="0" ticks_per_second="10" random_seed="1"/>
+  </framework>
+
+  <!-- *************** -->
+  <!-- * Controllers * -->
+  <!-- *************** -->
+  <controllers>
+    <test_controller library="@CMAKE_CURRENT_BINARY_DIR@/libprototype_radios_controller"
+                     id="test_controller">
+      <actuators>
+        <radios implementation="default"/>
+      </actuators>
+      <sensors>
+        <radios implementation="default" show_rays="true"/>
+      </sensors>
+      <params/>
+    </test_controller>
+  </controllers>
+
+  <!-- ****************** -->
+  <!-- * Loop functions * -->
+  <!-- ****************** -->
+  <loop_functions library="@CMAKE_CURRENT_BINARY_DIR@/libprototype_radios_loop_functions"
+                  label="test_loop_functions" />
+
+  <!-- *********************** -->
+  <!-- * Arena configuration * -->
+  <!-- *********************** -->
+  <arena size="0.25, 0.25, 0.25" center="0, 0, 0">
+    <prototype id="node0" movable="true">
+      <body position="0,0.05,0" orientation="0,0,0" />
+      <controller config="test_controller"/>
+      <links ref="base">
+        <link id="base" geometry="box" size=".1,.05,.025" mass="0.1"
+              position="0,0,0" orientation="0,0,0" />
+      </links>
+      <devices>
+        <radios>
+          <!-- this radio is just in range of the other radio -->
+          <radio id="radio" anchor="base" position="0,0,.0125"
+                 medium="radio" range="0.101" />
+        </radios>
+      </devices>
+    </prototype>
+
+    <prototype id="node1" movable="true">
+      <body position="0,-0.05,0" orientation="0,0,0" />
+      <controller config="test_controller"/>
+      <links ref="base">
+        <link id="base" geometry="box" size=".1,.05,.025" mass="0.1"
+              position="0,0,0" orientation="0,0,0" />
+      </links>
+      <devices>
+        <radios>
+          <!-- this radio is just out of range of the other radio -->
+          <radio id="radio" anchor="base" position="0,0,.0125"
+                 medium="radio" range="0.099" />
+        </radios>
+      </devices>
+    </prototype>
+  </arena>
+
+  <!-- ******************* -->
+  <!-- * Physics engines * -->
+  <!-- ******************* -->
+  <physics_engines>
+    <dynamics3d id="dyn3d" iterations="1" />
+  </physics_engines>
+
+  <!-- ********* -->
+  <!-- * Media * -->
+  <!-- ********* -->
+  <media>
+    <radio id="radio" index="grid" grid_size="20,20,20" />
+  </media>
+
+  <!-- ****************** -->
+  <!-- * Visualization * -->
+  <!-- ****************** -->
+  <visualization>
+    <qt-opengl show_boundary="false"/>
+  </visualization>
+
+</argos-configuration>
