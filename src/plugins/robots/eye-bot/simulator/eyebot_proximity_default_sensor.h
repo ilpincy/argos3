@@ -36,6 +36,10 @@ namespace argos {
 
       virtual void Reset();
 
+      virtual void Enable();
+
+      virtual void Disable();
+
    private:
 
       CProximityDefaultSensor* m_pcProximityImpl;
