@@ -1,0 +1,40 @@
+
+## block
+
+newmtl block 
+Ka  0.25   0.25   0.25 
+Kd  0.25   0.25   0.25 
+Ks  0   0   0
+d 1.0
+Tf 1.0
+illum 2
+Ns  1 
+Ni 1.0
+
+## LEDs
+
+newmtl led_0
+newmtl led_1
+newmtl led_2
+newmtl led_3
+newmtl led_4
+newmtl led_5
+newmtl led_6
+newmtl led_7
+newmtl led_8
+newmtl led_9
+newmtl led_10
+newmtl led_11
+newmtl led_12
+newmtl led_13
+newmtl led_14
+newmtl led_15
+newmtl led_16
+newmtl led_17
+newmtl led_18
+newmtl led_19
+newmtl led_20
+newmtl led_21
+newmtl led_22
+newmtl led_23
+
