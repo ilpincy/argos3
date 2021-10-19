@@ -1,0 +1,82 @@
+<?xml version="1.0" ?>
+<argos-configuration>
+
+  <!-- ************************* -->
+  <!-- * General configuration * -->
+  <!-- ************************* -->
+  <framework>
+    <experiment length="0" ticks_per_second="5" random_seed="1"/>
+  </framework>
+
+  <!-- *************** -->
+  <!-- * Controllers * -->
+  <!-- *************** -->
+  <controllers>
+    <lua_controller id="builderbot_controller">
+      <actuators>
+        <radios implementation="default"/>
+      </actuators>
+      <sensors>
+        <radios implementation="default" show_rays="true"/>
+      </sensors>
+      <params script="@CMAKE_CURRENT_BINARY_DIR@/builderbot.lua"/>
+    </lua_controller>
+
+    <lua_controller id="block_controller">
+      <actuators>
+        <radios implementation="default"/>
+      </actuators>
+      <sensors>
+        <radios implementation="default" show_rays="true"/>
+      </sensors>
+      <params script="@CMAKE_CURRENT_BINARY_DIR@/block.lua"/>
+    </lua_controller>
+  </controllers>
+
+  <!-- ****************** -->
+  <!-- * Loop functions * -->
+  <!-- ****************** -->
+  <loop_functions library="@CMAKE_CURRENT_BINARY_DIR@/libbuilderbot_nfc_lua_loop_functions"
+                  label="test_loop_functions" />
+
+  <!-- *********************** -->
+  <!-- * Arena configuration * -->
+  <!-- *********************** -->
+  <arena size="1, 1, 1" center="0, 0, 0">
+    <builderbot id="robot">
+      <body position="0,0,0" orientation="0,0,0" />
+      <controller config="builderbot_controller"/>
+    </builderbot>
+
+    <block id="block">
+      <body position="0.1,0,0" orientation="0,0,0" />
+      <controller config="block_controller"/>
+    </block>
+  </arena>
+
+  <!-- ******************* -->
+  <!-- * Physics engines * -->
+  <!-- ******************* -->
+  <physics_engines>
+    <dynamics3d id="dyn3d" iterations="20" />
+  </physics_engines>
+
+  <!-- ********* -->
+  <!-- * Media * -->
+  <!-- ********* -->
+  <media>
+    <radio id="wifi" index="grid" grid_size="20,20,20" />
+    <radio id="nfc" index="grid" grid_size="20,20,20" />
+    
+    <tag id="tags" index="grid" grid_size="20,20,20" />
+    <directional_led id="directional_leds" index="grid" grid_size="20,20,20" />
+  </media>
+
+  <!-- ****************** -->
+  <!-- * Visualization * -->
+  <!-- ****************** -->
+  <!--visualization>
+    <qt-opengl show_boundary="false"/>
+  </visualization-->
+
+</argos-configuration>

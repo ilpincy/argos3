@@ -480,11 +480,8 @@ set(ARGOS3_HEADERS_PLUGINS_SIMULATOR_PHYSICS_ENGINES_DYNAMICS3D
   dynamics3d_box_model.h
   dynamics3d_cylinder_model.h
   dynamics3d_multi_body_object_model.h
-  dynamics3d_plugin.h
-  dynamics3d_floor_plugin.h
-  dynamics3d_gravity_plugin.h
-  dynamics3d_magnetism_plugin.h)
-  
+  dynamics3d_plugin.h)
+
 #
 # Source files
 #
@@ -495,13 +492,10 @@ set(ARGOS3_SOURCES_PLUGINS_SIMULATOR_PHYSICS_ENGINES_DYNAMICS3D
   dynamics3d_single_body_object_model.cpp
   dynamics3d_box_model.cpp
   dynamics3d_cylinder_model.cpp
-  dynamics3d_multi_body_object_model.cpp
-  dynamics3d_floor_plugin.cpp
-  dynamics3d_gravity_plugin.cpp
-  dynamics3d_magnetism_plugin.cpp)
+  dynamics3d_multi_body_object_model.cpp)
 
 #
-# Create Dynamics3d engine plugin library
+# Create a library for the dynamics3d engine
 #
 add_library(argos3plugin_${ARGOS_BUILD_FOR}_dynamics3d SHARED
   ${ARGOS3_SOURCES_PLUGINS_SIMULATOR_PHYSICS_ENGINES_DYNAMICS3D_BULLET}
@@ -512,6 +506,60 @@ if(ARGOS_USE_DOUBLE)
 endif(ARGOS_USE_DOUBLE)
 # Disable Bullet's inbuilt profiler
 target_compile_definitions(argos3plugin_${ARGOS_BUILD_FOR}_dynamics3d PUBLIC BT_NO_PROFILE=1)
+
+#
+# Create libraries for the dynamics3d engine's plugins
+#
+add_library(argos3plugin_${ARGOS_BUILD_FOR}_dynamics3d_floor SHARED
+  dynamics3d_floor_plugin.cpp
+  dynamics3d_floor_plugin.h)
+# Use double precision if ARGoS is using double precision
+if(ARGOS_USE_DOUBLE)
+   target_compile_definitions(argos3plugin_${ARGOS_BUILD_FOR}_dynamics3d_floor PUBLIC BT_USE_DOUBLE_PRECISION)
+endif(ARGOS_USE_DOUBLE)
+# Disable Bullet's inbuilt profiler
+target_compile_definitions(argos3plugin_${ARGOS_BUILD_FOR}_dynamics3d_floor PUBLIC BT_NO_PROFILE=1)
+target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_dynamics3d_floor
+  argos3core_${ARGOS_BUILD_FOR}
+  argos3plugin_${ARGOS_BUILD_FOR}_dynamics3d)
+add_library(argos3plugin_${ARGOS_BUILD_FOR}_dynamics3d_gravity SHARED
+  dynamics3d_gravity_plugin.cpp
+  dynamics3d_gravity_plugin.h)
+# Use double precision if ARGoS is using double precision
+if(ARGOS_USE_DOUBLE)
+   target_compile_definitions(argos3plugin_${ARGOS_BUILD_FOR}_dynamics3d_gravity PUBLIC BT_USE_DOUBLE_PRECISION)
+endif(ARGOS_USE_DOUBLE)
+# Disable Bullet's inbuilt profiler
+target_compile_definitions(argos3plugin_${ARGOS_BUILD_FOR}_dynamics3d_gravity PUBLIC BT_NO_PROFILE=1)
+target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_dynamics3d_gravity
+  argos3core_${ARGOS_BUILD_FOR}
+  argos3plugin_${ARGOS_BUILD_FOR}_dynamics3d)
+add_library(argos3plugin_${ARGOS_BUILD_FOR}_dynamics3d_magnetism SHARED
+  dynamics3d_magnetism_plugin.cpp
+  dynamics3d_magnetism_plugin.h)
+# Use double precision if ARGoS is using double precision
+if(ARGOS_USE_DOUBLE)
+   target_compile_definitions(argos3plugin_${ARGOS_BUILD_FOR}_dynamics3d_magnetism PUBLIC BT_USE_DOUBLE_PRECISION)
+endif(ARGOS_USE_DOUBLE)
+# Disable Bullet's inbuilt profiler
+target_compile_definitions(argos3plugin_${ARGOS_BUILD_FOR}_dynamics3d_magnetism PUBLIC BT_NO_PROFILE=1)
+target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_dynamics3d_magnetism
+  argos3core_${ARGOS_BUILD_FOR}
+  argos3plugin_${ARGOS_BUILD_FOR}_dynamics3d)
+add_library(argos3plugin_${ARGOS_BUILD_FOR}_dynamics3d_srocs SHARED
+  dynamics3d_srocs_plugin.cpp
+  dynamics3d_srocs_plugin.h)
+# Use double precision if ARGoS is using double precision
+if(ARGOS_USE_DOUBLE)
+   target_compile_definitions(argos3plugin_${ARGOS_BUILD_FOR}_dynamics3d_srocs PUBLIC BT_USE_DOUBLE_PRECISION)
+endif(ARGOS_USE_DOUBLE)
+# Disable Bullet's inbuilt profiler
+target_compile_definitions(argos3plugin_${ARGOS_BUILD_FOR}_dynamics3d_srocs PUBLIC BT_NO_PROFILE=1)
+target_link_libraries(argos3plugin_${ARGOS_BUILD_FOR}_dynamics3d_srocs
+  argos3core_${ARGOS_BUILD_FOR}
+  argos3plugin_${ARGOS_BUILD_FOR}_builderbot
+  argos3plugin_${ARGOS_BUILD_FOR}_block
+  argos3plugin_${ARGOS_BUILD_FOR}_dynamics3d)
 
 #
 # Add plugin to ARGOS_PLUGIN_PATH
@@ -600,8 +648,12 @@ install(FILES
   ${ARGOS3_HEADERS_PLUGINS_SIMULATOR_PHYSICS_ENGINES_DYNAMICS3D}
   DESTINATION
   include/argos3/plugins/simulator/physics_engines/dynamics3d)
-install(TARGETS argos3plugin_${ARGOS_BUILD_FOR}_dynamics3d
+install(TARGETS
+  argos3plugin_${ARGOS_BUILD_FOR}_dynamics3d
+  argos3plugin_${ARGOS_BUILD_FOR}_dynamics3d_floor
+  argos3plugin_${ARGOS_BUILD_FOR}_dynamics3d_gravity
+  argos3plugin_${ARGOS_BUILD_FOR}_dynamics3d_magnetism
+  argos3plugin_${ARGOS_BUILD_FOR}_dynamics3d_srocs
   RUNTIME DESTINATION bin
   LIBRARY DESTINATION lib/argos3
   ARCHIVE DESTINATION lib/argos3)
-

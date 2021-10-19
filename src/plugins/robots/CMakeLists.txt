@@ -1,5 +1,9 @@
 add_subdirectory(generic)
 
+if(ARGOS_BUILD_FOR_SIMULATOR OR ARGOS_BUILD_FOR STREQUAL "builderbot")
+  add_subdirectory(builderbot)
+endif(ARGOS_BUILD_FOR_SIMULATOR OR ARGOS_BUILD_FOR STREQUAL "builderbot")
+
 if(ARGOS_BUILD_FOR_SIMULATOR OR ARGOS_BUILD_FOR STREQUAL "foot-bot")
   add_subdirectory(foot-bot)
 endif(ARGOS_BUILD_FOR_SIMULATOR OR ARGOS_BUILD_FOR STREQUAL "foot-bot")
@@ -18,4 +22,5 @@ endif(ARGOS_BUILD_FOR_SIMULATOR OR ARGOS_BUILD_FOR STREQUAL "spiri")
 
 if(ARGOS_BUILD_FOR_SIMULATOR)
   add_subdirectory(prototype)
+  add_subdirectory(block)
 endif(ARGOS_BUILD_FOR_SIMULATOR)

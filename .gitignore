@@ -1,4 +1,4 @@
-build*
+/build*
 install
 doc/api
 .emacs.desktop*
