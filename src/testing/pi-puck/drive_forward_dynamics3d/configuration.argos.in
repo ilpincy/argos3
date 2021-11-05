@@ -33,7 +33,7 @@
   <!-- * Arena configuration * -->
   <!-- *********************** -->
   <arena size="2, 1, 1" positional_index="grid" positional_grid_size="25,25,1">
-    <pipuck id="pp">
+    <pipuck id="pipuck">
       <body position="-0.5,0,0" orientation="0,0,0"/>
       <controller config="test_controller"/>
     </pipuck>
@@ -52,10 +52,7 @@
   <!-- ********* -->
   <!-- * Media * -->
   <!-- ********* -->
-  <media>
-    <range_and_bearing id="rab" index="grid" grid_size="3,3,3" />
-    <led id="leds" index="grid" grid_size="3,3,3" />
-  </media>
+  <media />
 
   <!-- ****************** -->
   <!-- * Visualization * -->

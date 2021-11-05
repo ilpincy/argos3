@@ -14,7 +14,7 @@ namespace argos {
       else {
          CPiPuckEntity* pcPiPuck = nullptr;
          try {
-            CEntity& cEntity = GetSpace().GetEntity("pp");
+            CEntity& cEntity = GetSpace().GetEntity("pipuck");
             pcPiPuck = dynamic_cast<CPiPuckEntity*>(&cEntity);
          }
          catch(CARGoSException& ex) {
