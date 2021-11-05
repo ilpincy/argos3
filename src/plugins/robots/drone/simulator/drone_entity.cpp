@@ -51,8 +51,6 @@ namespace argos {
          AddComponent(*m_pcEmbodiedEntity);
          m_pcEmbodiedEntity->Init(GetNode(t_tree, "body"));
          SAnchor& sOriginAnchor = m_pcEmbodiedEntity->GetOriginAnchor();
-         /* get mediums */
-         CRadioMedium& cWifiRadioMedium = CSimulator::GetInstance().GetMedium<CRadioMedium>("wifi");
          /* create and initialize the flight system entity */
          m_pcFlightSystemEntity = 
             new CDroneFlightSystemEntity(this, "flight_system_0");
@@ -60,8 +58,13 @@ namespace argos {
          AddComponent(*m_pcFlightSystemEntity);
          /* create and initialize a radio equipped entity for WiFi */
          m_pcRadioEquippedEntity = new CRadioEquippedEntity(this, "radios_0");
-         m_pcRadioEquippedEntity->AddRadio("wifi", CVector3(0.0f, 0.0f, 0.1f), sOriginAnchor, cWifiRadioMedium, WIFI_TRANSMISSION_RANGE);
-         m_pcRadioEquippedEntity->Enable();
+         std::string strWifiMedium;
+         GetNodeAttributeOrDefault(t_tree, "wifi_medium", strWifiMedium, strWifiMedium);
+         if(!strWifiMedium.empty()) {
+            CRadioMedium& cWifiMedium = CSimulator::GetInstance().GetMedium<CRadioMedium>(strWifiMedium);
+            m_pcRadioEquippedEntity->AddRadio("wifi", CVector3(0.0f, 0.0f, 0.1f), sOriginAnchor, cWifiMedium, WIFI_TRANSMISSION_RANGE);
+            m_pcRadioEquippedEntity->Enable();
+         }
          AddComponent(*m_pcRadioEquippedEntity);
          /* create and initialize the directional LED equipped entity */
          m_pcDirectionalLEDEquippedEntity = new CDirectionalLEDEquippedEntity(this, "leds_0");
@@ -89,10 +92,14 @@ namespace argos {
                                                   sOriginAnchor,
                                                   CRadians::PI_OVER_THREE,
                                                   CColor::BLACK);
-         CDirectionalLEDMedium& cDirectionalLEDMedium = 
-            CSimulator::GetInstance().GetMedium<CDirectionalLEDMedium>("directional_leds");
-         m_pcDirectionalLEDEquippedEntity->SetMedium(cDirectionalLEDMedium);
-         m_pcDirectionalLEDEquippedEntity->Enable();
+         std::string strLedMedium;
+         GetNodeAttributeOrDefault(t_tree, "led_medium", strLedMedium, strLedMedium);
+         if(!strLedMedium.empty()) {
+            CDirectionalLEDMedium& cLedMedium =
+               CSimulator::GetInstance().GetMedium<CDirectionalLEDMedium>(strLedMedium);
+            m_pcDirectionalLEDEquippedEntity->SetMedium(cLedMedium);
+            m_pcDirectionalLEDEquippedEntity->Enable();
+         }
          AddComponent(*m_pcDirectionalLEDEquippedEntity);
          /* Create and initialize the controllable entity */
          m_pcControllableEntity = new CControllableEntity(this);
