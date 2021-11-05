@@ -66,15 +66,9 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CPiPuckDifferentialDriveDefaultActuator::SetTargetVelocityLeft(Real f_target_velocity_left) {
-      m_fTargetVelocityLeft = f_target_velocity_left;
-   }
-
-   /****************************************/
-   /****************************************/
-
-   void CPiPuckDifferentialDriveDefaultActuator::SetTargetVelocityRight(Real f_target_velocity_right) {
-      m_fTargetVelocityRight = f_target_velocity_right;
+   void CPiPuckDifferentialDriveDefaultActuator::SetLinearVelocity(Real f_left, Real f_right) {
+      m_fTargetVelocityLeft = f_left;
+      m_fTargetVelocityRight = f_right;
    }
 
    /****************************************/

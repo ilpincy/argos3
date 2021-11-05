@@ -13,19 +13,13 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   static const Real PIPUCK_MASS                = 0.4f;
-
-   static const Real PIPUCK_RADIUS              = 0.035f;
-   static const Real PIPUCK_INTERWHEEL_DISTANCE = 0.053f;
-   static const Real PIPUCK_HEIGHT              = 0.086f;
-
-   static const Real PIPUCK_MAX_FORCE           = 1.5f;
-   static const Real PIPUCK_MAX_TORQUE          = 1.5f;
-
-   enum PIPUCK_WHEELS {
-      PIPUCK_LEFT_WHEEL = 0,
-      PIPUCK_RIGHT_WHEEL = 1
-   };
+   const Real CDynamics2DPiPuckModel::PIPUCK_RADIUS              = 0.0362f;
+   const Real CDynamics2DPiPuckModel::PIPUCK_INTERWHEEL_DISTANCE = 0.0565f;
+   /* TODO calibrate these values */
+   const Real CDynamics2DPiPuckModel::PIPUCK_HEIGHT              = 0.08f;
+   const Real CDynamics2DPiPuckModel::PIPUCK_MASS                = 0.4f;
+   const Real CDynamics2DPiPuckModel::PIPUCK_MAX_FORCE           = 1.5f;
+   const Real CDynamics2DPiPuckModel::PIPUCK_MAX_TORQUE          = 1.5f;
 
    /****************************************/
    /****************************************/

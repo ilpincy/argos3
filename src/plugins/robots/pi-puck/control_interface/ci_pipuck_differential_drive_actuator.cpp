@@ -24,7 +24,7 @@ namespace argos {
    int LuaSetPiPuckDifferentialDriveActuatorTargetVelocity(lua_State* pt_lua_state) {
       /* Check parameters */
       if(lua_gettop(pt_lua_state) != 2) {
-         return luaL_error(pt_lua_state, "robot.differential_drive.set_target_velocity() expects 2 arguments");
+         return luaL_error(pt_lua_state, "robot.differential_drive.set_linear_velocity() expects 2 arguments");
       }
       luaL_checktype(pt_lua_state, 1, LUA_TNUMBER);
       luaL_checktype(pt_lua_state, 2, LUA_TNUMBER);
@@ -32,8 +32,7 @@ namespace argos {
       CCI_PiPuckDifferentialDriveActuator* pcDifferentialDriveActuator =
          CLuaUtility::GetDeviceInstance<CCI_PiPuckDifferentialDriveActuator>(pt_lua_state, "differential_drive");
       /* Update actuator */
-      pcDifferentialDriveActuator->SetTargetVelocityLeft(lua_tonumber(pt_lua_state, 1));
-      pcDifferentialDriveActuator->SetTargetVelocityRight(lua_tonumber(pt_lua_state, 2));
+      pcDifferentialDriveActuator->SetLinearVelocity(lua_tonumber(pt_lua_state, 1), lua_tonumber(pt_lua_state, 2));
       return 0;
    }
 #endif
@@ -46,7 +45,7 @@ namespace argos {
       CLuaUtility::OpenRobotStateTable(pt_lua_state, "differential_drive");
       CLuaUtility::AddToTable(pt_lua_state, "_instance", this);
       CLuaUtility::AddToTable(pt_lua_state,
-                              "set_target_velocity",
+                              "set_linear_velocity",
                               &LuaSetPiPuckDifferentialDriveActuatorTargetVelocity);
       CLuaUtility::CloseRobotStateTable(pt_lua_state);
    }

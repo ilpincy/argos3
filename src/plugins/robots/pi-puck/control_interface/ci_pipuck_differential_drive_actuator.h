@@ -21,9 +21,7 @@ namespace argos {
 
       virtual ~CCI_PiPuckDifferentialDriveActuator() {}
 
-      virtual void SetTargetVelocityLeft(Real f_target_velocity_left) = 0;
-
-      virtual void SetTargetVelocityRight(Real f_target_velocity_left) = 0;
+      virtual void SetLinearVelocity(Real f_left, Real f_right) = 0;
 
 #ifdef ARGOS_WITH_LUA
       virtual void CreateLuaState(lua_State* pt_lua_state);

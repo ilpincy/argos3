@@ -40,9 +40,7 @@ namespace argos {
 
       virtual void Reset();
 
-      virtual void SetTargetVelocityLeft(Real f_target_velocity_left);
-
-      virtual void SetTargetVelocityRight(Real f_target_velocity_right);
+      virtual void SetLinearVelocity(Real f_left, Real f_right);
 
    private:
 

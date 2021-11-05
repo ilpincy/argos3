@@ -34,11 +34,27 @@ namespace argos {
       
    private:
 
+      enum PIPUCK_WHEELS {
+         PIPUCK_LEFT_WHEEL = 0,
+         PIPUCK_RIGHT_WHEEL = 1
+      };
+
+   private:
+
       void UpdateAuxiliaryAnchor(SAnchor& s_anchor);
       
       CPiPuckEntity& m_cPiPuckEntity;
       CPiPuckDifferentialDriveEntity& m_cDifferentialDriveEntity;
       CDynamics2DDifferentialSteeringControl m_cDiffSteering;
+
+   private:
+      static const Real PIPUCK_RADIUS;
+      static const Real PIPUCK_INTERWHEEL_DISTANCE;
+      static const Real PIPUCK_HEIGHT;
+      static const Real PIPUCK_MASS;
+      static const Real PIPUCK_MAX_FORCE;
+      static const Real PIPUCK_MAX_TORQUE;
+
    };
 
 }
