@@ -1,0 +1,63 @@
+<?xml version="1.0" ?>
+<argos-configuration>
+
+  <!-- ************************* -->
+  <!-- * General configuration * -->
+  <!-- ************************* -->
+  <framework>
+    <system threads="0" />
+    <experiment length="0" ticks_per_second="10" random_seed="0" />
+  </framework>
+  
+  <!-- *************** -->
+  <!-- * Controllers * -->
+  <!-- *************** -->
+  <controllers>
+    <test_controller library="@CMAKE_CURRENT_BINARY_DIR@/libdrone_fly_pointmass3d_controller"
+                     id="test_controller">
+      <actuators>
+        <drone_flight_system implementation="default" />
+      </actuators>
+      <sensors>
+        <drone_flight_system implementation="default" />
+      </sensors>
+      <params />
+    </test_controller>
+  </controllers>
+
+  <!-- ****************** -->
+  <!-- * Loop functions * -->
+  <!-- ****************** -->
+  <loop_functions library="@CMAKE_CURRENT_BINARY_DIR@/libdrone_fly_pointmass3d_loop_functions"
+                  label="test_loop_functions" />
+
+  <!-- *********************** -->
+  <!-- * Arena configuration * -->
+  <!-- *********************** -->
+  <arena size="5, 2, 2" positional_index="grid" positional_grid_size="25,25,1">
+    <drone id="drone">
+      <body position="-2,0,0" orientation="0,0,0"/>
+      <controller config="test_controller"/>
+    </drone>
+  </arena>
+
+  <!-- ******************* -->
+  <!-- * Physics engines * -->
+  <!-- ******************* -->
+  <physics_engines>
+    <pointmass3d id="pm3d" />
+  </physics_engines>
+
+  <!-- ********* -->
+  <!-- * Media * -->
+  <!-- ********* -->
+  <media />
+
+  <!-- ****************** -->
+  <!-- * Visualization * -->
+  <!-- ****************** -->
+  <visualization>
+    <qt-opengl show_boundary="false"/>
+  </visualization>
+
+</argos-configuration>

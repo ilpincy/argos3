@@ -1,0 +1,13 @@
+# Free SolidWorks .OBJ Exporter v2.0
+# num_materials: 1 
+
+newmtl 1 
+Ka  1   1   1 
+Kd  0.7   0.7   0.7 
+Ks  0.05   0.05   0.05 
+d 1.0
+Tf 1.0
+illum 2
+Ns  687.5 
+Ni 1.0
+
