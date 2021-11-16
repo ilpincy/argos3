@@ -27,6 +27,7 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
     simulator/pipuck_system_default_sensor.h
     simulator/pipuck_rangefinders_default_sensor.h)
   if(ARGOS_QTOPENGL_FOUND)
+    include_directories(${ARGOS_QTOPENGL_INCLUDE_DIRS})
     set(ARGOS3_HEADERS_PLUGINS_ROBOTS_PIPUCK_SIMULATOR
       ${ARGOS3_HEADERS_PLUGINS_ROBOTS_PIPUCK_SIMULATOR}
       simulator/qtopengl_pipuck.h)
