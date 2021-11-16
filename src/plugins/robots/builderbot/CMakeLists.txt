@@ -32,6 +32,7 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
     simulator/builderbot_rangefinders_default_sensor.h
     simulator/dynamics3d_builderbot_model.h)
   if(ARGOS_QTOPENGL_FOUND)
+    include_directories(${ARGOS_QTOPENGL_INCLUDE_DIRS})
     set(ARGOS3_HEADERS_PLUGINS_ROBOTS_BUILDERBOT_SIMULATOR
       ${ARGOS3_HEADERS_PLUGINS_ROBOTS_BUILDERBOT_SIMULATOR}
       simulator/qtopengl_builderbot.h)

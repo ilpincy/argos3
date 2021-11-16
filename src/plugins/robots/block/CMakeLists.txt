@@ -7,6 +7,7 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
     simulator/block_entity.h
     simulator/dynamics3d_block_model.h)
   if(ARGOS_QTOPENGL_FOUND)
+    include_directories(${ARGOS_QTOPENGL_INCLUDE_DIRS})
     set(ARGOS3_HEADERS_PLUGINS_ROBOTS_BLOCK_SIMULATOR
       ${ARGOS3_HEADERS_PLUGINS_ROBOTS_BLOCK_SIMULATOR}
       simulator/qtopengl_block.h)

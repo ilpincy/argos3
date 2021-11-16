@@ -22,6 +22,7 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
     simulator/drone_system_default_sensor.h
     simulator/pointmass3d_drone_model.h)
   if(ARGOS_QTOPENGL_FOUND)
+    include_directories(${ARGOS_QTOPENGL_INCLUDE_DIRS})
     set(ARGOS3_HEADERS_PLUGINS_ROBOTS_DRONE_SIMULATOR
       ${ARGOS3_HEADERS_PLUGINS_ROBOTS_DRONE_SIMULATOR}
       simulator/qtopengl_drone.h)
