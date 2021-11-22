@@ -68,9 +68,9 @@ namespace argos {
          CLuaUtility::StartTable(pt_lua_state, s_interface.Label);
          /* add data about this interfaces transform */
          CLuaUtility::StartTable(pt_lua_state, "transform");
-         CLuaUtility::AddToTable(pt_lua_state, "position", std::get<CVector3>(s_interface.Configuration));
-         CLuaUtility::AddToTable(pt_lua_state, "orientation", std::get<CQuaternion>(s_interface.Configuration));
-         CLuaUtility::AddToTable(pt_lua_state, "anchor", std::get<const char*>(s_interface.Configuration));
+         CLuaUtility::AddToTable(pt_lua_state, "position", std::get<CVector3>(s_interface.GetSensorConfiguration()));
+         CLuaUtility::AddToTable(pt_lua_state, "orientation", std::get<CQuaternion>(s_interface.GetSensorConfiguration()));
+         CLuaUtility::AddToTable(pt_lua_state, "anchor", std::get<const char*>(s_interface.GetSensorConfiguration()));
          CLuaUtility::EndTable(pt_lua_state);
          /* push closure for the enable function */
          lua_pushstring(pt_lua_state, "enable");

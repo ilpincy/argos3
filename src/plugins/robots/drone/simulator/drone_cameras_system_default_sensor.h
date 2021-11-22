@@ -66,11 +66,16 @@ namespace argos {
 
          CVector2 GetResolution() const;
 
+         const TConfiguration& GetSensorConfiguration() const;
+
       private:
 
          const SAnchor& Anchor;
 
          CDroneCamerasSystemDefaultSensor& m_cParent;
+
+         /* camera position and orientation */
+         const TConfiguration& m_tConfiguration;
 
          /* AprilTag corner offsets / ordering */
          // TODO make static, initialize in CPP

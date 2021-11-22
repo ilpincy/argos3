@@ -51,17 +51,15 @@ namespace argos {
 
       struct SInterface {
          /* constructor */
-         SInterface(const std::string& str_label,
-                    const TConfiguration& t_configuration) :
+         SInterface(const std::string& str_label):
             Label(str_label),
-            Configuration(t_configuration),
             Enabled(false) {}
          /* methods */
          virtual void Enable();
          virtual void Disable();
          /* configuration data */
          const std::string& Label;
-         const TConfiguration& Configuration;
+         virtual const TConfiguration& GetSensorConfiguration() const = 0;
          /* state */
          bool Enabled;
          STag::TVector Tags;

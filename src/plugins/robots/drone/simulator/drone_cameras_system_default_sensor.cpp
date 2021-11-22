@@ -112,9 +112,10 @@ namespace argos {
                           const CCI_DroneCamerasSystemSensor::TConfiguration& t_configuration,
                           const SAnchor& s_anchor,
                           CDroneCamerasSystemDefaultSensor& c_parent) :
-      SInterface(str_label, t_configuration),
+      SInterface(str_label),
       Anchor(s_anchor),
-      m_cParent(c_parent) {
+      m_cParent(c_parent),
+      m_tConfiguration(t_configuration) {
       /* set up the project matrix */
       m_cProjectionMatrix.SetIdentityMatrix();
       m_cProjectionMatrix(0,0) = CAMERA_FOCAL_LENGTH_X;
@@ -129,8 +130,8 @@ namespace argos {
       m_fFarPlaneHeight = fHeightToDepthRatio * CAMERA_RANGE_MAX;
       m_fFarPlaneWidth = fWidthToDepthRatio * CAMERA_RANGE_MAX;
       /* transformation matrix */
-      m_cOffset.SetFromComponents(std::get<CQuaternion>(Configuration),
-                                  std::get<CVector3>(Configuration));
+      m_cOffset.SetFromComponents(std::get<CQuaternion>(GetSensorConfiguration()),
+                                  std::get<CVector3>(GetSensorConfiguration()));
    }
 
    /****************************************/
@@ -173,7 +174,7 @@ namespace argos {
          m_cCameraToWorldTransform = cWorldToCameraTransform.GetInverse();
          /* calculate camera direction vectors */
          m_cCameraPosition = cWorldToCameraTransform.GetTranslationVector();
-         m_cCameraOrientation = Anchor.Orientation * std::get<CQuaternion>(Configuration);
+         m_cCameraOrientation = Anchor.Orientation * std::get<CQuaternion>(GetSensorConfiguration());
          cLookAt = cWorldToCameraTransform * CVector3::Z;
          cUp = -CVector3::Y;
          cUp.Rotate(cWorldToCameraTransform.GetRotationMatrix());
@@ -326,6 +327,14 @@ namespace argos {
 
    CVector2 CDroneCamerasSystemDefaultSensor::SSimulatedInterface::GetResolution() const {
       return CVector2(CAMERA_RESOLUTION_X, CAMERA_RESOLUTION_Y);
+   }
+
+   /****************************************/
+   /****************************************/
+
+   const CCI_DroneCamerasSystemSensor::TConfiguration&
+      CDroneCamerasSystemDefaultSensor::SSimulatedInterface::GetSensorConfiguration() const {
+      return m_tConfiguration;
    }
 
    /****************************************/
