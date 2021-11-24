@@ -68,9 +68,12 @@ namespace argos {
          CLuaUtility::StartTable(pt_lua_state, s_interface.Label);
          /* add data about this interfaces transform */
          CLuaUtility::StartTable(pt_lua_state, "transform");
-         CLuaUtility::AddToTable(pt_lua_state, "position", std::get<CVector3>(s_interface.Configuration));
-         CLuaUtility::AddToTable(pt_lua_state, "orientation", std::get<CQuaternion>(s_interface.Configuration));
-         CLuaUtility::AddToTable(pt_lua_state, "anchor", std::get<const char*>(s_interface.Configuration));
+         CLuaUtility::AddToTable(pt_lua_state, "position",
+            std::get<CVector3>(s_interface.GetConfiguration()));
+         CLuaUtility::AddToTable(pt_lua_state, "orientation",
+            std::get<CQuaternion>(s_interface.GetConfiguration()));
+         CLuaUtility::AddToTable(pt_lua_state, "anchor",
+            std::get<const char*>(s_interface.GetConfiguration()));
          CLuaUtility::EndTable(pt_lua_state);
          /* push closure for the enable function */
          lua_pushstring(pt_lua_state, "enable");
@@ -144,41 +147,39 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   /* constants */
-   const UInt32 CCI_DroneCamerasSystemSensor::CAMERA_RESOLUTION_X = 700;
-   const UInt32 CCI_DroneCamerasSystemSensor::CAMERA_RESOLUTION_Y = 700;
-   const Real CCI_DroneCamerasSystemSensor::CAMERA_FOCAL_LENGTH_X = 1040.0;
-   const Real CCI_DroneCamerasSystemSensor::CAMERA_FOCAL_LENGTH_Y = 1040.0;
-   const Real CCI_DroneCamerasSystemSensor::CAMERA_PRINCIPAL_POINT_X = 350.0;
-   const Real CCI_DroneCamerasSystemSensor::CAMERA_PRINCIPAL_POINT_Y = 350.0;
-   const Real CCI_DroneCamerasSystemSensor::CAMERA_XY_OFFSET = 0.12;
-   const Real CCI_DroneCamerasSystemSensor::CAMERA_Z_OFFSET = 0.16;
-   const CDegrees CCI_DroneCamerasSystemSensor::CAMERA_ANGLE = CDegrees(180 - 18);
+   const UInt32 CCI_DroneCamerasSystemSensor::DEFAULT_CAMERA_RESOLUTION_X = 700;
+   const UInt32 CCI_DroneCamerasSystemSensor::DEFAULT_CAMERA_RESOLUTION_Y = 700;
+   const Real CCI_DroneCamerasSystemSensor::DEFAULT_CAMERA_FOCAL_LENGTH_X = 1040.0;
+   const Real CCI_DroneCamerasSystemSensor::DEFAULT_CAMERA_FOCAL_LENGTH_Y = 1040.0;
+   const Real CCI_DroneCamerasSystemSensor::DEFAULT_CAMERA_PRINCIPAL_POINT_X = 350.0;
+   const Real CCI_DroneCamerasSystemSensor::DEFAULT_CAMERA_PRINCIPAL_POINT_Y = 350.0;
+   const Real CCI_DroneCamerasSystemSensor::DEFAULT_CAMERA_XY_OFFSET = 0.12;
+   const Real CCI_DroneCamerasSystemSensor::DEFAULT_CAMERA_Z_OFFSET = 0.16;
+   const CDegrees CCI_DroneCamerasSystemSensor::DEFAULT_CAMERA_ANGLE = CDegrees(180 - 18);
 
    /****************************************/
    /****************************************/
 
-   /* sensor configuration map */
    const std::map<std::string, CCI_DroneCamerasSystemSensor::TConfiguration>
-      CCI_DroneCamerasSystemSensor::SENSOR_CONFIGURATION = {
+      CCI_DroneCamerasSystemSensor::DEFAULT_SENSOR_CONFIGURATION = {
       std::make_pair("arm0",
                      std::make_tuple("origin",
-                                     CVector3( CAMERA_XY_OFFSET,  CAMERA_XY_OFFSET, CAMERA_Z_OFFSET),
-                                     CQuaternion(ToRadians(CAMERA_ANGLE), CVector3(-1,1,0).Normalize())
+                                     CVector3( DEFAULT_CAMERA_XY_OFFSET,  DEFAULT_CAMERA_XY_OFFSET, DEFAULT_CAMERA_Z_OFFSET),
+                                     CQuaternion(ToRadians(DEFAULT_CAMERA_ANGLE), CVector3(-1,1,0).Normalize())
                                         * CQuaternion(CRadians::PI, CVector3::Z))),
       std::make_pair("arm1",
                      std::make_tuple("origin",
-                                     CVector3(-CAMERA_XY_OFFSET,  CAMERA_XY_OFFSET, CAMERA_Z_OFFSET),
-                                     CQuaternion(ToRadians(CAMERA_ANGLE), CVector3(-1,-1,0).Normalize()))),
+                                     CVector3(-DEFAULT_CAMERA_XY_OFFSET,  DEFAULT_CAMERA_XY_OFFSET, DEFAULT_CAMERA_Z_OFFSET),
+                                     CQuaternion(ToRadians(DEFAULT_CAMERA_ANGLE), CVector3(-1,-1,0).Normalize()))),
       std::make_pair("arm2",
                      std::make_tuple("origin",
-                                     CVector3(-CAMERA_XY_OFFSET, -CAMERA_XY_OFFSET, CAMERA_Z_OFFSET),
-                                     CQuaternion(ToRadians(CAMERA_ANGLE), CVector3(1,-1,0).Normalize())
+                                     CVector3(-DEFAULT_CAMERA_XY_OFFSET, -DEFAULT_CAMERA_XY_OFFSET, DEFAULT_CAMERA_Z_OFFSET),
+                                     CQuaternion(ToRadians(DEFAULT_CAMERA_ANGLE), CVector3(1,-1,0).Normalize())
                                         * CQuaternion(CRadians::PI, CVector3::Z))),
       std::make_pair("arm3",
                      std::make_tuple("origin",
-                                     CVector3( CAMERA_XY_OFFSET, -CAMERA_XY_OFFSET, CAMERA_Z_OFFSET),
-                                     CQuaternion(ToRadians(CAMERA_ANGLE), CVector3(1,1,0).Normalize()))),
+                                     CVector3( DEFAULT_CAMERA_XY_OFFSET, -DEFAULT_CAMERA_XY_OFFSET, DEFAULT_CAMERA_Z_OFFSET),
+                                     CQuaternion(ToRadians(DEFAULT_CAMERA_ANGLE), CVector3(1,1,0).Normalize()))),
    };
 
    /****************************************/

@@ -39,9 +39,9 @@ namespace argos {
          m_pcEmbodiedEntity =
             &(c_entity.GetComponent<CEmbodiedEntity>("body"));
          /* allocate memory for the sensor interfaces */
-         m_vecSimulatedInterfaces.reserve(SENSOR_CONFIGURATION.size());
+         m_vecSimulatedInterfaces.reserve(DEFAULT_SENSOR_CONFIGURATION.size());
          /* get the anchors for the sensor interfaces from m_mapSensorConfig */
-         for(const std::pair<const std::string, TConfiguration>& t_config : SENSOR_CONFIGURATION) {
+         for(const std::pair<const std::string, TConfiguration>& t_config : DEFAULT_SENSOR_CONFIGURATION) {
             const char* pchAnchor = std::get<const char*>(t_config.second);
             const SAnchor& sAnchor =
                c_entity.GetComponent<CEmbodiedEntity>("body").GetAnchor(pchAnchor);
@@ -112,25 +112,26 @@ namespace argos {
                           const CCI_DroneCamerasSystemSensor::TConfiguration& t_configuration,
                           const SAnchor& s_anchor,
                           CDroneCamerasSystemDefaultSensor& c_parent) :
-      SInterface(str_label, t_configuration),
+      SInterface(str_label),
       Anchor(s_anchor),
-      m_cParent(c_parent) {
+      m_cParent(c_parent),
+      m_tConfiguration(t_configuration) {
       /* set up the project matrix */
       m_cProjectionMatrix.SetIdentityMatrix();
-      m_cProjectionMatrix(0,0) = CAMERA_FOCAL_LENGTH_X;
-      m_cProjectionMatrix(1,1) = CAMERA_FOCAL_LENGTH_Y;
-      m_cProjectionMatrix(0,2) = CAMERA_PRINCIPAL_POINT_X;
-      m_cProjectionMatrix(1,2) = CAMERA_PRINCIPAL_POINT_Y;
+      m_cProjectionMatrix(0,0) = DEFAULT_CAMERA_FOCAL_LENGTH_X;
+      m_cProjectionMatrix(1,1) = DEFAULT_CAMERA_FOCAL_LENGTH_Y;
+      m_cProjectionMatrix(0,2) = DEFAULT_CAMERA_PRINCIPAL_POINT_X;
+      m_cProjectionMatrix(1,2) = DEFAULT_CAMERA_PRINCIPAL_POINT_Y;
       /* calculate fustrum constants */
-      Real fWidthToDepthRatio = (0.5 * CAMERA_RESOLUTION_X) / CAMERA_FOCAL_LENGTH_X;
-      Real fHeightToDepthRatio = (0.5 * CAMERA_RESOLUTION_Y) / CAMERA_FOCAL_LENGTH_Y;
+      Real fWidthToDepthRatio = (0.5 * DEFAULT_CAMERA_RESOLUTION_X) / DEFAULT_CAMERA_FOCAL_LENGTH_X;
+      Real fHeightToDepthRatio = (0.5 * DEFAULT_CAMERA_RESOLUTION_Y) / DEFAULT_CAMERA_FOCAL_LENGTH_Y;
       m_fNearPlaneHeight = fHeightToDepthRatio * CAMERA_RANGE_MIN;
       m_fNearPlaneWidth = fWidthToDepthRatio * CAMERA_RANGE_MIN;
       m_fFarPlaneHeight = fHeightToDepthRatio * CAMERA_RANGE_MAX;
       m_fFarPlaneWidth = fWidthToDepthRatio * CAMERA_RANGE_MAX;
       /* transformation matrix */
-      m_cOffset.SetFromComponents(std::get<CQuaternion>(Configuration),
-                                  std::get<CVector3>(Configuration));
+      m_cOffset.SetFromComponents(std::get<CQuaternion>(m_tConfiguration),
+                                  std::get<CVector3>(m_tConfiguration));
    }
 
    /****************************************/
@@ -173,7 +174,7 @@ namespace argos {
          m_cCameraToWorldTransform = cWorldToCameraTransform.GetInverse();
          /* calculate camera direction vectors */
          m_cCameraPosition = cWorldToCameraTransform.GetTranslationVector();
-         m_cCameraOrientation = Anchor.Orientation * std::get<CQuaternion>(Configuration);
+         m_cCameraOrientation = Anchor.Orientation * std::get<CQuaternion>(m_tConfiguration);
          cLookAt = cWorldToCameraTransform * CVector3::Z;
          cUp = -CVector3::Y;
          cUp.Rotate(cWorldToCameraTransform.GetRotationMatrix());
@@ -325,7 +326,15 @@ namespace argos {
    /****************************************/
 
    CVector2 CDroneCamerasSystemDefaultSensor::SSimulatedInterface::GetResolution() const {
-      return CVector2(CAMERA_RESOLUTION_X, CAMERA_RESOLUTION_Y);
+      return CVector2(DEFAULT_CAMERA_RESOLUTION_X, DEFAULT_CAMERA_RESOLUTION_Y);
+   }
+
+   /****************************************/
+   /****************************************/
+
+   const CCI_DroneCamerasSystemSensor::TConfiguration&
+      CDroneCamerasSystemDefaultSensor::SSimulatedInterface::GetConfiguration() const {
+      return m_tConfiguration;
    }
 
    /****************************************/

@@ -51,18 +51,15 @@ namespace argos {
 
       struct SInterface {
          /* constructor */
-         SInterface(const std::string& str_label,
-                    const TConfiguration& t_configuration) :
+         SInterface(const std::string& str_label):
             Label(str_label),
-            Configuration(t_configuration),
             Enabled(false) {}
          /* methods */
          virtual void Enable();
          virtual void Disable();
-         /* configuration data */
-         const std::string& Label;
-         const TConfiguration& Configuration;
-         /* state */
+         virtual const TConfiguration& GetConfiguration() const = 0;
+         /*  data */
+         std::string Label;
          bool Enabled;
          STag::TVector Tags;
          Real Timestamp;
@@ -84,16 +81,16 @@ namespace argos {
 
    protected:
 
-      static const UInt32 CAMERA_RESOLUTION_X;
-      static const UInt32 CAMERA_RESOLUTION_Y;
-      static const Real CAMERA_FOCAL_LENGTH_X;
-      static const Real CAMERA_FOCAL_LENGTH_Y;
-      static const Real CAMERA_PRINCIPAL_POINT_X;
-      static const Real CAMERA_PRINCIPAL_POINT_Y;
-      static const Real CAMERA_XY_OFFSET;
-      static const Real CAMERA_Z_OFFSET;
-      static const CDegrees CAMERA_ANGLE;
-      static const std::map<std::string, TConfiguration> SENSOR_CONFIGURATION;
+      static const UInt32 DEFAULT_CAMERA_RESOLUTION_X;
+      static const UInt32 DEFAULT_CAMERA_RESOLUTION_Y;
+      static const Real DEFAULT_CAMERA_FOCAL_LENGTH_X;
+      static const Real DEFAULT_CAMERA_FOCAL_LENGTH_Y;
+      static const Real DEFAULT_CAMERA_PRINCIPAL_POINT_X;
+      static const Real DEFAULT_CAMERA_PRINCIPAL_POINT_Y;
+      static const Real DEFAULT_CAMERA_XY_OFFSET;
+      static const Real DEFAULT_CAMERA_Z_OFFSET;
+      static const CDegrees DEFAULT_CAMERA_ANGLE;
+      static const std::map<std::string, TConfiguration> DEFAULT_SENSOR_CONFIGURATION;
 
    };
 

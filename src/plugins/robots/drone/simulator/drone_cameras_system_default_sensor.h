@@ -66,11 +66,16 @@ namespace argos {
 
          CVector2 GetResolution() const;
 
+         const TConfiguration& GetConfiguration() const;
+
       private:
 
          const SAnchor& Anchor;
 
          CDroneCamerasSystemDefaultSensor& m_cParent;
+
+         /* camera position and orientation */
+         const TConfiguration& m_tConfiguration;
 
          /* AprilTag corner offsets / ordering */
          // TODO make static, initialize in CPP
@@ -133,11 +138,9 @@ namespace argos {
       CControllableEntity* m_pcControllableEntity;
       CEmbodiedEntity* m_pcEmbodiedEntity;
       CPositionalIndex<CTagEntity>* m_pcTagIndex;
-
       /* debugging information */
       bool m_bShowFrustum;
       bool m_bShowTagRays;
-
       std::vector<SSimulatedInterface> m_vecSimulatedInterfaces;
 
    };
