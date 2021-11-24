@@ -57,10 +57,9 @@ namespace argos {
          /* methods */
          virtual void Enable();
          virtual void Disable();
-         /* configuration data */
-         const std::string& Label;
-         virtual const TConfiguration& GetSensorConfiguration() const = 0;
-         /* state */
+         virtual const TConfiguration& GetConfiguration() const = 0;
+         /*  data */
+         std::string Label;
          bool Enabled;
          STag::TVector Tags;
          Real Timestamp;
@@ -79,19 +78,6 @@ namespace argos {
 
       virtual void ReadingsToLuaState(lua_State* pt_lua_state);
 #endif
-
-   protected:
-
-      static const UInt32 CAMERA_RESOLUTION_X;
-      static const UInt32 CAMERA_RESOLUTION_Y;
-      static const Real CAMERA_FOCAL_LENGTH_X;
-      static const Real CAMERA_FOCAL_LENGTH_Y;
-      static const Real CAMERA_PRINCIPAL_POINT_X;
-      static const Real CAMERA_PRINCIPAL_POINT_Y;
-      static const Real CAMERA_XY_OFFSET;
-      static const Real CAMERA_Z_OFFSET;
-      static const CDegrees CAMERA_ANGLE;
-      static const std::map<std::string, TConfiguration> SENSOR_CONFIGURATION;
 
    };
 

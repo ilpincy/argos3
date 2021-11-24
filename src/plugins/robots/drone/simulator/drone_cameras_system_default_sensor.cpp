@@ -130,8 +130,8 @@ namespace argos {
       m_fFarPlaneHeight = fHeightToDepthRatio * CAMERA_RANGE_MAX;
       m_fFarPlaneWidth = fWidthToDepthRatio * CAMERA_RANGE_MAX;
       /* transformation matrix */
-      m_cOffset.SetFromComponents(std::get<CQuaternion>(GetSensorConfiguration()),
-                                  std::get<CVector3>(GetSensorConfiguration()));
+      m_cOffset.SetFromComponents(std::get<CQuaternion>(m_tConfiguration),
+                                  std::get<CVector3>(m_tConfiguration));
    }
 
    /****************************************/
@@ -174,7 +174,7 @@ namespace argos {
          m_cCameraToWorldTransform = cWorldToCameraTransform.GetInverse();
          /* calculate camera direction vectors */
          m_cCameraPosition = cWorldToCameraTransform.GetTranslationVector();
-         m_cCameraOrientation = Anchor.Orientation * std::get<CQuaternion>(GetSensorConfiguration());
+         m_cCameraOrientation = Anchor.Orientation * std::get<CQuaternion>(m_tConfiguration);
          cLookAt = cWorldToCameraTransform * CVector3::Z;
          cUp = -CVector3::Y;
          cUp.Rotate(cWorldToCameraTransform.GetRotationMatrix());
@@ -333,7 +333,7 @@ namespace argos {
    /****************************************/
 
    const CCI_DroneCamerasSystemSensor::TConfiguration&
-      CDroneCamerasSystemDefaultSensor::SSimulatedInterface::GetSensorConfiguration() const {
+      CDroneCamerasSystemDefaultSensor::SSimulatedInterface::GetConfiguration() const {
       return m_tConfiguration;
    }
 
@@ -380,6 +380,44 @@ namespace argos {
       }
       return true;
    }
+
+   /****************************************/
+   /****************************************/
+
+   const UInt32 CDroneCamerasSystemDefaultSensor::CAMERA_RESOLUTION_X = 700;
+   const UInt32 CDroneCamerasSystemDefaultSensor::CAMERA_RESOLUTION_Y = 700;
+   const Real CDroneCamerasSystemDefaultSensor::CAMERA_FOCAL_LENGTH_X = 1040.0;
+   const Real CDroneCamerasSystemDefaultSensor::CAMERA_FOCAL_LENGTH_Y = 1040.0;
+   const Real CDroneCamerasSystemDefaultSensor::CAMERA_PRINCIPAL_POINT_X = 350.0;
+   const Real CDroneCamerasSystemDefaultSensor::CAMERA_PRINCIPAL_POINT_Y = 350.0;
+   const Real CDroneCamerasSystemDefaultSensor::CAMERA_XY_OFFSET = 0.12;
+   const Real CDroneCamerasSystemDefaultSensor::CAMERA_Z_OFFSET = 0.16;
+   const CDegrees CDroneCamerasSystemDefaultSensor::CAMERA_ANGLE = CDegrees(180 - 18);
+
+   /****************************************/
+   /****************************************/
+
+   const std::map<std::string, CCI_DroneCamerasSystemSensor::TConfiguration>
+      CDroneCamerasSystemDefaultSensor::SENSOR_CONFIGURATION = {
+      std::make_pair("arm0",
+                     std::make_tuple("origin",
+                                     CVector3( CAMERA_XY_OFFSET,  CAMERA_XY_OFFSET, CAMERA_Z_OFFSET),
+                                     CQuaternion(ToRadians(CAMERA_ANGLE), CVector3(-1,1,0).Normalize())
+                                        * CQuaternion(CRadians::PI, CVector3::Z))),
+      std::make_pair("arm1",
+                     std::make_tuple("origin",
+                                     CVector3(-CAMERA_XY_OFFSET,  CAMERA_XY_OFFSET, CAMERA_Z_OFFSET),
+                                     CQuaternion(ToRadians(CAMERA_ANGLE), CVector3(-1,-1,0).Normalize()))),
+      std::make_pair("arm2",
+                     std::make_tuple("origin",
+                                     CVector3(-CAMERA_XY_OFFSET, -CAMERA_XY_OFFSET, CAMERA_Z_OFFSET),
+                                     CQuaternion(ToRadians(CAMERA_ANGLE), CVector3(1,-1,0).Normalize())
+                                        * CQuaternion(CRadians::PI, CVector3::Z))),
+      std::make_pair("arm3",
+                     std::make_tuple("origin",
+                                     CVector3( CAMERA_XY_OFFSET, -CAMERA_XY_OFFSET, CAMERA_Z_OFFSET),
+                                     CQuaternion(ToRadians(CAMERA_ANGLE), CVector3(1,1,0).Normalize()))),
+   };
 
    /****************************************/
    /****************************************/
