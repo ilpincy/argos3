@@ -39,9 +39,9 @@ namespace argos {
          m_pcEmbodiedEntity =
             &(c_entity.GetComponent<CEmbodiedEntity>("body"));
          /* allocate memory for the sensor interfaces */
-         m_vecSimulatedInterfaces.reserve(SENSOR_CONFIGURATION.size());
+         m_vecSimulatedInterfaces.reserve(DEFAULT_SENSOR_CONFIGURATION.size());
          /* get the anchors for the sensor interfaces from m_mapSensorConfig */
-         for(const std::pair<const std::string, TConfiguration>& t_config : SENSOR_CONFIGURATION) {
+         for(const std::pair<const std::string, TConfiguration>& t_config : DEFAULT_SENSOR_CONFIGURATION) {
             const char* pchAnchor = std::get<const char*>(t_config.second);
             const SAnchor& sAnchor =
                c_entity.GetComponent<CEmbodiedEntity>("body").GetAnchor(pchAnchor);
@@ -118,13 +118,13 @@ namespace argos {
       m_tConfiguration(t_configuration) {
       /* set up the project matrix */
       m_cProjectionMatrix.SetIdentityMatrix();
-      m_cProjectionMatrix(0,0) = CAMERA_FOCAL_LENGTH_X;
-      m_cProjectionMatrix(1,1) = CAMERA_FOCAL_LENGTH_Y;
-      m_cProjectionMatrix(0,2) = CAMERA_PRINCIPAL_POINT_X;
-      m_cProjectionMatrix(1,2) = CAMERA_PRINCIPAL_POINT_Y;
+      m_cProjectionMatrix(0,0) = DEFAULT_CAMERA_FOCAL_LENGTH_X;
+      m_cProjectionMatrix(1,1) = DEFAULT_CAMERA_FOCAL_LENGTH_Y;
+      m_cProjectionMatrix(0,2) = DEFAULT_CAMERA_PRINCIPAL_POINT_X;
+      m_cProjectionMatrix(1,2) = DEFAULT_CAMERA_PRINCIPAL_POINT_Y;
       /* calculate fustrum constants */
-      Real fWidthToDepthRatio = (0.5 * CAMERA_RESOLUTION_X) / CAMERA_FOCAL_LENGTH_X;
-      Real fHeightToDepthRatio = (0.5 * CAMERA_RESOLUTION_Y) / CAMERA_FOCAL_LENGTH_Y;
+      Real fWidthToDepthRatio = (0.5 * DEFAULT_CAMERA_RESOLUTION_X) / DEFAULT_CAMERA_FOCAL_LENGTH_X;
+      Real fHeightToDepthRatio = (0.5 * DEFAULT_CAMERA_RESOLUTION_Y) / DEFAULT_CAMERA_FOCAL_LENGTH_Y;
       m_fNearPlaneHeight = fHeightToDepthRatio * CAMERA_RANGE_MIN;
       m_fNearPlaneWidth = fWidthToDepthRatio * CAMERA_RANGE_MIN;
       m_fFarPlaneHeight = fHeightToDepthRatio * CAMERA_RANGE_MAX;
@@ -326,7 +326,7 @@ namespace argos {
    /****************************************/
 
    CVector2 CDroneCamerasSystemDefaultSensor::SSimulatedInterface::GetResolution() const {
-      return CVector2(CAMERA_RESOLUTION_X, CAMERA_RESOLUTION_Y);
+      return CVector2(DEFAULT_CAMERA_RESOLUTION_X, DEFAULT_CAMERA_RESOLUTION_Y);
    }
 
    /****************************************/
@@ -380,44 +380,6 @@ namespace argos {
       }
       return true;
    }
-
-   /****************************************/
-   /****************************************/
-
-   const UInt32 CDroneCamerasSystemDefaultSensor::CAMERA_RESOLUTION_X = 700;
-   const UInt32 CDroneCamerasSystemDefaultSensor::CAMERA_RESOLUTION_Y = 700;
-   const Real CDroneCamerasSystemDefaultSensor::CAMERA_FOCAL_LENGTH_X = 1040.0;
-   const Real CDroneCamerasSystemDefaultSensor::CAMERA_FOCAL_LENGTH_Y = 1040.0;
-   const Real CDroneCamerasSystemDefaultSensor::CAMERA_PRINCIPAL_POINT_X = 350.0;
-   const Real CDroneCamerasSystemDefaultSensor::CAMERA_PRINCIPAL_POINT_Y = 350.0;
-   const Real CDroneCamerasSystemDefaultSensor::CAMERA_XY_OFFSET = 0.12;
-   const Real CDroneCamerasSystemDefaultSensor::CAMERA_Z_OFFSET = 0.16;
-   const CDegrees CDroneCamerasSystemDefaultSensor::CAMERA_ANGLE = CDegrees(180 - 18);
-
-   /****************************************/
-   /****************************************/
-
-   const std::map<std::string, CCI_DroneCamerasSystemSensor::TConfiguration>
-      CDroneCamerasSystemDefaultSensor::SENSOR_CONFIGURATION = {
-      std::make_pair("arm0",
-                     std::make_tuple("origin",
-                                     CVector3( CAMERA_XY_OFFSET,  CAMERA_XY_OFFSET, CAMERA_Z_OFFSET),
-                                     CQuaternion(ToRadians(CAMERA_ANGLE), CVector3(-1,1,0).Normalize())
-                                        * CQuaternion(CRadians::PI, CVector3::Z))),
-      std::make_pair("arm1",
-                     std::make_tuple("origin",
-                                     CVector3(-CAMERA_XY_OFFSET,  CAMERA_XY_OFFSET, CAMERA_Z_OFFSET),
-                                     CQuaternion(ToRadians(CAMERA_ANGLE), CVector3(-1,-1,0).Normalize()))),
-      std::make_pair("arm2",
-                     std::make_tuple("origin",
-                                     CVector3(-CAMERA_XY_OFFSET, -CAMERA_XY_OFFSET, CAMERA_Z_OFFSET),
-                                     CQuaternion(ToRadians(CAMERA_ANGLE), CVector3(1,-1,0).Normalize())
-                                        * CQuaternion(CRadians::PI, CVector3::Z))),
-      std::make_pair("arm3",
-                     std::make_tuple("origin",
-                                     CVector3( CAMERA_XY_OFFSET, -CAMERA_XY_OFFSET, CAMERA_Z_OFFSET),
-                                     CQuaternion(ToRadians(CAMERA_ANGLE), CVector3(1,1,0).Normalize()))),
-   };
 
    /****************************************/
    /****************************************/
