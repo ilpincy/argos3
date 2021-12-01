@@ -48,6 +48,30 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   CQTOpenGLObjModel::CQTOpenGLObjModel(const std::string& str_mtl, const std::string& str_obj) {
+      QString qstrMaterials = QString::fromStdString(str_mtl);
+      QString qstrGeometry = QString::fromStdString(str_obj);
+      /* create a default material */
+      m_mapMaterials["__default_material"];
+      /* load materials */
+      QTextStream cMaterialStream(&qstrMaterials);
+      ImportMaterials(cMaterialStream);
+      /* load geometry */
+      QTextStream cGeometryStream(&qstrGeometry);
+      ImportGeometry(cGeometryStream);
+      /* build the meshes */
+      BuildMeshes();
+      /* check if normals have been provided */
+      if (m_vecNormals.empty()) {
+         THROW_ARGOSEXCEPTION("Error loading model: model does not specify normals.")
+      }
+      /* generate the OpenGL vectors */
+      GenerateOpenGLVectors();
+   }
+
+   /****************************************/
+   /****************************************/
+
    CQTOpenGLObjModel::SMaterial& CQTOpenGLObjModel::GetMaterial(const std::string& str_material) {
       auto tIter = m_mapMaterials.find(str_material);
       if(tIter == std::end(m_mapMaterials)) {
