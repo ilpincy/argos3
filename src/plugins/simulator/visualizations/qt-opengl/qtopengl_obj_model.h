@@ -55,6 +55,8 @@ namespace argos {
 
       CQTOpenGLObjModel(const std::string& str_model);
 
+      CQTOpenGLObjModel(const std::string& str_mtl, const std::string& str_obj);
+
       SMaterial& GetMaterial(const std::string& str_material);
 
       void Draw() const;
