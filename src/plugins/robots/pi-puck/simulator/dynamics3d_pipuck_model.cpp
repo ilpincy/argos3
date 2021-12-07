@@ -21,20 +21,18 @@ namespace argos {
 
    CDynamics3DPiPuckModel::CDynamics3DPiPuckModel(CDynamics3DEngine& c_engine,
                                                   CPiPuckEntity& c_pipuck) :
-      /* technically, the CDynamics3DMultiBodyObjectModel should be initialized with 7 children
-         links, however, setting it to 7 makes the pipuck less stable for reasons. */
       CDynamics3DMultiBodyObjectModel(c_engine, c_pipuck, 3, false),
       m_cDifferentialDriveEntity(c_pipuck.GetDifferentialDriveEntity()) {
       /* get the required collision shapes */
       std::shared_ptr<btCollisionShape> ptrBodyShape =
-         CDynamics3DShapeManager::RequestCylinder(m_cBodyHalfExtents);
+         CDynamics3DShapeManager::RequestCylinder(BODY_HALF_EXTENTS);
       std::shared_ptr<btCollisionShape> ptrWheelShape =
-         CDynamics3DShapeManager::RequestCylinder(m_cWheelHalfExtents);
+         CDynamics3DShapeManager::RequestCylinder(WHEEL_HALF_EXTENTS);
       /* calculate the inertia of the collision objects */
       btVector3 cBodyInertia;
       btVector3 cWheelInertia;
-      ptrBodyShape->calculateLocalInertia(m_fBodyMass, cBodyInertia);
-      ptrWheelShape->calculateLocalInertia(m_fWheelMass, cWheelInertia);
+      ptrBodyShape->calculateLocalInertia(BODY_MASS, cBodyInertia);
+      ptrWheelShape->calculateLocalInertia(WHEEL_MASS, cWheelInertia);
       /* calculate a btTransform that moves us from the global coordinate system to the
          local coordinate system */
       const SAnchor& sOriginAnchor = c_pipuck.GetEmbodiedEntity().GetOriginAnchor();
@@ -50,23 +48,23 @@ namespace argos {
                   -cPosition.GetY()));
       /* create a CAbstractBody::SData structure for each body */
       CAbstractBody::SData sBodyData(
-         cStartTransform * m_cBodyOffset,
-         m_cBodyGeometricOffset,
+         cStartTransform * BODY_OFFSET,
+         BODY_GEOMETRIC_OFFSET,
          cBodyInertia,
-         m_fBodyMass,
-         m_fBodyFriction);
+         BODY_MASS,
+         BODY_FRICTION);
       CAbstractBody::SData sLeftWheelData(
-         cStartTransform * m_cLeftWheelOffset,
-         m_cWheelGeometricOffset,
+         cStartTransform * WHEEL_OFFSET_LEFT,
+         WHEEL_GEOMETRIC_OFFSET,
          cWheelInertia,
-         m_fWheelMass,
-         m_fWheelFriction);
+         WHEEL_MASS,
+         WHEEL_FRICTION);
       CAbstractBody::SData sRightWheelData(
-         cStartTransform * m_cRightWheelOffset,
-         m_cWheelGeometricOffset,
+         cStartTransform * WHEEL_OFFSET_RIGHT,
+         WHEEL_GEOMETRIC_OFFSET,
          cWheelInertia,
-         m_fWheelMass,
-         m_fWheelFriction);
+         WHEEL_MASS,
+         WHEEL_FRICTION);
       SAnchor* psBodyAnchor = &c_pipuck.GetEmbodiedEntity().GetAnchor("body");
       SAnchor* psLeftWheelAnchor = &c_pipuck.GetEmbodiedEntity().GetAnchor("left_wheel");
       SAnchor* psRightWheelAnchor = &c_pipuck.GetEmbodiedEntity().GetAnchor("right_wheel");
@@ -91,33 +89,33 @@ namespace argos {
                                  m_ptrLeftWheel->GetData().Mass,
                                  m_ptrLeftWheel->GetData().Inertia,
                                  m_ptrBody->GetIndex(),
-                                 m_cBodyToLeftWheelJointRotation,
+                                 BODY_TO_WHEEL_LEFT_JOINT_ROTATION,
                                  btVector3(0.0, 1.0, 0.0),
-                                 m_cBodyToLeftWheelJointOffset,
-                                 m_cLeftWheelToBodyJointOffset,
+                                 BODY_TO_WHEEL_LEFT_JOINT_OFFSET,
+                                 WHEEL_LEFT_TO_BODY_JOINT_OFFSET,
                                  true);
       m_cMultiBody.setupRevolute(m_ptrRightWheel->GetIndex(),
                                  m_ptrRightWheel->GetData().Mass,
                                  m_ptrRightWheel->GetData().Inertia,
                                  m_ptrBody->GetIndex(),
-                                 m_cBodyToRightWheelJointRotation,
+                                 BODY_TO_WHEEL_RIGHT_JOINT_ROTATION,
                                  btVector3(0.0, 1.0, 0.0),
-                                 m_cBodyToRightWheelJointOffset,
-                                 m_cRightWheelToBodyJointOffset,
+                                 BODY_TO_WHEEL_RIGHT_JOINT_OFFSET,
+                                 WHEEL_RIGHT_TO_BODY_JOINT_OFFSET,
                                  true);
       /* set up motors for the wheels */
       m_ptrLeftMotor = 
          std::make_unique<btMultiBodyJointMotor>(&m_cMultiBody,
                                                  m_ptrLeftWheel->GetIndex(),
                                                  0.0,
-                                                 m_fWheelMotorMaxImpulse);
-      m_ptrLeftMotor->setRhsClamp(m_fWheelMotorClamp);
+                                                 WHEEL_MOTOR_MAX_IMPULSE);
+      m_ptrLeftMotor->setRhsClamp(WHEEL_MOTOR_CLAMP);
       m_ptrRightMotor = 
          std::make_unique<btMultiBodyJointMotor>(&m_cMultiBody,
                                                  m_ptrRightWheel->GetIndex(),
                                                  0.0,
-                                                 m_fWheelMotorMaxImpulse);
-      m_ptrRightMotor->setRhsClamp(m_fWheelMotorClamp);
+                                                 WHEEL_MOTOR_MAX_IMPULSE);
+      m_ptrRightMotor->setRhsClamp(WHEEL_MOTOR_CLAMP);
       /* Allocate memory and prepare the btMultiBody */
       m_cMultiBody.finalizeMultiDof();
       /* Synchronize with the entity in the space */
@@ -141,8 +139,8 @@ namespace argos {
    
    void CDynamics3DPiPuckModel::UpdateEntityStatus() {
       /* write current wheel speeds back to the simulation */
-      m_cDifferentialDriveEntity.SetVelocityLeft(m_cMultiBody.getJointVel(m_ptrLeftWheel->GetIndex()) * m_cWheelHalfExtents.getX());
-      m_cDifferentialDriveEntity.SetVelocityRight(-m_cMultiBody.getJointVel(m_ptrRightWheel->GetIndex()) * m_cWheelHalfExtents.getX());
+      m_cDifferentialDriveEntity.SetVelocityLeft(m_cMultiBody.getJointVel(m_ptrLeftWheel->GetIndex()) * WHEEL_HALF_EXTENTS.getX());
+      m_cDifferentialDriveEntity.SetVelocityRight(-m_cMultiBody.getJointVel(m_ptrRightWheel->GetIndex()) * WHEEL_HALF_EXTENTS.getX());
       /* run the base class's implementation of this method */
       CDynamics3DMultiBodyObjectModel::UpdateEntityStatus();
    }
@@ -154,10 +152,10 @@ namespace argos {
       /* run the base class's implementation of this method */
       CDynamics3DMultiBodyObjectModel::UpdateFromEntityStatus();
       /* update joint velocities */
-      m_ptrLeftMotor->setVelocityTarget(m_cDifferentialDriveEntity.GetTargetVelocityLeft() / m_cWheelHalfExtents.getX(),
-                                        m_fWheelMotorKdCoefficient);
-      m_ptrRightMotor->setVelocityTarget(-m_cDifferentialDriveEntity.GetTargetVelocityRight() / m_cWheelHalfExtents.getX(),
-                                         m_fWheelMotorKdCoefficient);
+      m_ptrLeftMotor->setVelocityTarget(m_cDifferentialDriveEntity.GetTargetVelocityLeft() / WHEEL_HALF_EXTENTS.getX(),
+                                        WHEEL_MOTOR_KD_COEFFICIENT);
+      m_ptrRightMotor->setVelocityTarget(-m_cDifferentialDriveEntity.GetTargetVelocityRight() / WHEEL_HALF_EXTENTS.getX(),
+                                         WHEEL_MOTOR_KD_COEFFICIENT);
    }
 
    /****************************************/
@@ -190,27 +188,41 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   const btVector3    CDynamics3DPiPuckModel::m_cBodyHalfExtents(0.0362, 0.069, 0.0362);
-   const btScalar     CDynamics3DPiPuckModel::m_fBodyMass(0.001);
-   const btTransform  CDynamics3DPiPuckModel::m_cBodyOffset(btQuaternion(0.0, 0.0, 0.0, 1.0), btVector3(0.0,0.00125,0.0));
-   const btTransform  CDynamics3DPiPuckModel::m_cBodyGeometricOffset(btQuaternion(0.0, 0.0, 0.0, 1.0), btVector3(0.0, -0.069, 0.0));
-   const btVector3    CDynamics3DPiPuckModel::m_cWheelHalfExtents(0.02125, 0.0055, 0.02125);
-   const btScalar     CDynamics3DPiPuckModel::m_fWheelMass(0.1265);
-   const btTransform  CDynamics3DPiPuckModel::m_cWheelGeometricOffset(btQuaternion(0.0, 0.0, 0.0, 1.0), btVector3(0.0, -0.0015, 0.0));
-   const btTransform  CDynamics3DPiPuckModel::m_cLeftWheelOffset(btQuaternion(btVector3(-1,0,0), SIMD_HALF_PI), btVector3(0.0, 0.02125, -0.0255));
-   const btTransform  CDynamics3DPiPuckModel::m_cRightWheelOffset(btQuaternion(btVector3(1,0,0), SIMD_HALF_PI), btVector3(0.0, 0.02125, 0.0255));
-   const btVector3    CDynamics3DPiPuckModel::m_cBodyToRightWheelJointOffset(0.0, -0.049, 0.0255);
-   const btVector3    CDynamics3DPiPuckModel::m_cRightWheelToBodyJointOffset(0.0, 0.0015, 0.0);
-   const btQuaternion CDynamics3DPiPuckModel::m_cBodyToRightWheelJointRotation(btVector3(-1,0,0), SIMD_HALF_PI);
-   const btVector3    CDynamics3DPiPuckModel::m_cBodyToLeftWheelJointOffset(0.0, -0.049, -0.0255);
-   const btVector3    CDynamics3DPiPuckModel::m_cLeftWheelToBodyJointOffset(0.0, 0.0015, -0.0);
-   const btQuaternion CDynamics3DPiPuckModel::m_cBodyToLeftWheelJointRotation(btVector3(1,0,0), SIMD_HALF_PI);
+   const btScalar CDynamics3DPiPuckModel::BODY_MASS(0.13);
+   const btScalar CDynamics3DPiPuckModel::BODY_DISTANCE_FROM_FLOOR(0.00125);
+   const btVector3 CDynamics3DPiPuckModel::BODY_HALF_EXTENTS(0.0362, 0.0304, 0.0362);
+   const btTransform CDynamics3DPiPuckModel::BODY_OFFSET(
+      btQuaternion(0.0, 0.0, 0.0, 1.0), btVector3(0.0,BODY_DISTANCE_FROM_FLOOR, 0.0)
+   );
+   const btTransform CDynamics3DPiPuckModel::BODY_GEOMETRIC_OFFSET(
+      btQuaternion(0.0, 0.0, 0.0, 1.0), btVector3(0.0, -BODY_HALF_EXTENTS.getY(), 0.0)
+   );
+   const btScalar CDynamics3DPiPuckModel::WHEEL_MASS(0.02);
+   const btScalar CDynamics3DPiPuckModel::WHEEL_DISTANCE_BETWEEN(0.054);
+   const btVector3 CDynamics3DPiPuckModel::WHEEL_HALF_EXTENTS(0.02125, 0.0015, 0.02125);
+   const btTransform CDynamics3DPiPuckModel::WHEEL_GEOMETRIC_OFFSET(
+      btQuaternion(0.0, 0.0, 0.0, 1.0), btVector3(0.0, -WHEEL_HALF_EXTENTS.getY(), 0.0)
+   );
+   const btTransform CDynamics3DPiPuckModel::WHEEL_OFFSET_LEFT(
+      btQuaternion(btVector3(-1,0,0), SIMD_HALF_PI), btVector3(0.0, WHEEL_HALF_EXTENTS.getX(), -0.5 * WHEEL_DISTANCE_BETWEEN)
+   );
+   const btTransform CDynamics3DPiPuckModel::WHEEL_OFFSET_RIGHT(
+      btQuaternion(btVector3(1,0,0), SIMD_HALF_PI), btVector3(0.0, WHEEL_HALF_EXTENTS.getX(), 0.5 * WHEEL_DISTANCE_BETWEEN)
+   );
+   const btVector3 CDynamics3DPiPuckModel::BODY_TO_WHEEL_RIGHT_JOINT_OFFSET(0.0, -BODY_HALF_EXTENTS.getY() + 
+      (WHEEL_HALF_EXTENTS.getX() - BODY_DISTANCE_FROM_FLOOR), 0.5 * WHEEL_DISTANCE_BETWEEN - WHEEL_HALF_EXTENTS.getY());
+   const btVector3 CDynamics3DPiPuckModel::WHEEL_RIGHT_TO_BODY_JOINT_OFFSET(0.0, WHEEL_HALF_EXTENTS.getY(), 0.0);
+   const btQuaternion CDynamics3DPiPuckModel::BODY_TO_WHEEL_RIGHT_JOINT_ROTATION(btVector3(-1,0,0), SIMD_HALF_PI);
+   const btVector3 CDynamics3DPiPuckModel::BODY_TO_WHEEL_LEFT_JOINT_OFFSET(0.0, -BODY_HALF_EXTENTS.getY() + 
+      (WHEEL_HALF_EXTENTS.getX() - BODY_DISTANCE_FROM_FLOOR), -0.5 * WHEEL_DISTANCE_BETWEEN + WHEEL_HALF_EXTENTS.getY());
+   const btVector3 CDynamics3DPiPuckModel::WHEEL_LEFT_TO_BODY_JOINT_OFFSET(0.0, WHEEL_HALF_EXTENTS.getY(), -0.0);
+   const btQuaternion CDynamics3DPiPuckModel::BODY_TO_WHEEL_LEFT_JOINT_ROTATION(btVector3(1,0,0), SIMD_HALF_PI);
    /* TODO calibrate these values */
-   const btScalar     CDynamics3DPiPuckModel::m_fBodyFriction(0.0);
-   const btScalar     CDynamics3DPiPuckModel::m_fWheelMotorMaxImpulse(0.05);
-   const btScalar     CDynamics3DPiPuckModel::m_fWheelFriction(10);
-   const btScalar     CDynamics3DPiPuckModel::m_fWheelMotorClamp(5.0);
-   const btScalar     CDynamics3DPiPuckModel::m_fWheelMotorKdCoefficient(2.0);
+   const btScalar CDynamics3DPiPuckModel::BODY_FRICTION(0.125);
+   const btScalar CDynamics3DPiPuckModel::WHEEL_MOTOR_MAX_IMPULSE(0.05);
+   const btScalar CDynamics3DPiPuckModel::WHEEL_FRICTION(2.0);
+   const btScalar CDynamics3DPiPuckModel::WHEEL_MOTOR_CLAMP(5.0);
+   const btScalar CDynamics3DPiPuckModel::WHEEL_MOTOR_KD_COEFFICIENT(2.0);
 
    /****************************************/
    /****************************************/
