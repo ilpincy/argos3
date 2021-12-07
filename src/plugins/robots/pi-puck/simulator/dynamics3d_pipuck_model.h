@@ -50,28 +50,30 @@ namespace argos {
       std::shared_ptr<CLink> m_ptrRightWheel;
       /* entities */
       CPiPuckDifferentialDriveEntity& m_cDifferentialDriveEntity;
-      /* lower base data */
-      static const btVector3 m_cBodyHalfExtents;
-      static const btScalar m_fBodyMass;
-      static const btTransform m_cBodyOffset;
-      static const btTransform m_cBodyGeometricOffset;
+      /* body data */
+      static const btScalar BODY_DISTANCE_FROM_FLOOR;
+      static const btVector3 BODY_HALF_EXTENTS;
+      static const btScalar BODY_MASS;
+      static const btTransform BODY_OFFSET;
+      static const btTransform BODY_GEOMETRIC_OFFSET;
       /* wheel data */
-      static const btVector3 m_cWheelHalfExtents;
-      static const btScalar m_fWheelMass;
-      static const btTransform m_cWheelGeometricOffset;
-      static const btTransform m_cLeftWheelOffset;
-      static const btTransform m_cRightWheelOffset;
-      static const btVector3 m_cBodyToRightWheelJointOffset;
-      static const btVector3 m_cRightWheelToBodyJointOffset;
-      static const btQuaternion m_cBodyToRightWheelJointRotation;
-      static const btVector3 m_cBodyToLeftWheelJointOffset;
-      static const btVector3 m_cLeftWheelToBodyJointOffset;
-      static const btQuaternion m_cBodyToLeftWheelJointRotation;
-      static const btScalar m_fBodyFriction;
-      static const btScalar m_fWheelMotorMaxImpulse;
-      static const btScalar m_fWheelFriction;
-      static const btScalar m_fWheelMotorClamp;
-      static const btScalar m_fWheelMotorKdCoefficient;
+      static const btScalar WHEEL_DISTANCE_BETWEEN;
+      static const btVector3 WHEEL_HALF_EXTENTS;
+      static const btScalar WHEEL_MASS;
+      static const btTransform WHEEL_GEOMETRIC_OFFSET;
+      static const btTransform WHEEL_OFFSET_LEFT;
+      static const btTransform WHEEL_OFFSET_RIGHT;
+      static const btVector3 BODY_TO_WHEEL_RIGHT_JOINT_OFFSET;
+      static const btVector3 WHEEL_RIGHT_TO_BODY_JOINT_OFFSET;
+      static const btQuaternion BODY_TO_WHEEL_RIGHT_JOINT_ROTATION;
+      static const btVector3 BODY_TO_WHEEL_LEFT_JOINT_OFFSET;
+      static const btVector3 WHEEL_LEFT_TO_BODY_JOINT_OFFSET;
+      static const btQuaternion BODY_TO_WHEEL_LEFT_JOINT_ROTATION;
+      static const btScalar BODY_FRICTION;
+      static const btScalar WHEEL_MOTOR_MAX_IMPULSE;
+      static const btScalar WHEEL_FRICTION;
+      static const btScalar WHEEL_MOTOR_CLAMP;
+      static const btScalar WHEEL_MOTOR_KD_COEFFICIENT;
    };
 }
 
