@@ -192,22 +192,27 @@ namespace argos {
    const btScalar CDynamics3DPiPuckModel::BODY_DISTANCE_FROM_FLOOR(0.00125);
    const btVector3 CDynamics3DPiPuckModel::BODY_HALF_EXTENTS(0.0362, 0.0304, 0.0362);
    const btTransform CDynamics3DPiPuckModel::BODY_OFFSET(
-      btQuaternion(0.0, 0.0, 0.0, 1.0), btVector3(0.0,BODY_DISTANCE_FROM_FLOOR, 0.0)
+      btQuaternion(0.0, 0.0, 0.0, 1.0),
+      btVector3(0.0,BODY_DISTANCE_FROM_FLOOR, 0.0)
    );
    const btTransform CDynamics3DPiPuckModel::BODY_GEOMETRIC_OFFSET(
-      btQuaternion(0.0, 0.0, 0.0, 1.0), btVector3(0.0, -BODY_HALF_EXTENTS.getY(), 0.0)
+      btQuaternion(0.0, 0.0, 0.0, 1.0),
+      btVector3(0.0, -BODY_HALF_EXTENTS.getY(), 0.0)
    );
    const btScalar CDynamics3DPiPuckModel::WHEEL_MASS(0.02);
    const btScalar CDynamics3DPiPuckModel::WHEEL_DISTANCE_BETWEEN(0.054);
    const btVector3 CDynamics3DPiPuckModel::WHEEL_HALF_EXTENTS(0.02125, 0.0015, 0.02125);
    const btTransform CDynamics3DPiPuckModel::WHEEL_GEOMETRIC_OFFSET(
-      btQuaternion(0.0, 0.0, 0.0, 1.0), btVector3(0.0, -WHEEL_HALF_EXTENTS.getY(), 0.0)
+      btQuaternion(0.0, 0.0, 0.0, 1.0),
+      btVector3(0.0, -WHEEL_HALF_EXTENTS.getY(), 0.0)
    );
    const btTransform CDynamics3DPiPuckModel::WHEEL_OFFSET_LEFT(
-      btQuaternion(btVector3(-1,0,0), SIMD_HALF_PI), btVector3(0.0, WHEEL_HALF_EXTENTS.getX(), -0.5 * WHEEL_DISTANCE_BETWEEN)
+      btQuaternion(btVector3(-1,0,0), SIMD_HALF_PI),
+      btVector3(0.0, WHEEL_HALF_EXTENTS.getX(), -0.5 * WHEEL_DISTANCE_BETWEEN + WHEEL_HALF_EXTENTS.getY())
    );
    const btTransform CDynamics3DPiPuckModel::WHEEL_OFFSET_RIGHT(
-      btQuaternion(btVector3(1,0,0), SIMD_HALF_PI), btVector3(0.0, WHEEL_HALF_EXTENTS.getX(), 0.5 * WHEEL_DISTANCE_BETWEEN)
+      btQuaternion(btVector3(1,0,0), SIMD_HALF_PI),
+      btVector3(0.0, WHEEL_HALF_EXTENTS.getX(), 0.5 * WHEEL_DISTANCE_BETWEEN - WHEEL_HALF_EXTENTS.getY())
    );
    const btVector3 CDynamics3DPiPuckModel::BODY_TO_WHEEL_RIGHT_JOINT_OFFSET(0.0, -BODY_HALF_EXTENTS.getY() + 
       (WHEEL_HALF_EXTENTS.getX() - BODY_DISTANCE_FROM_FLOOR), 0.5 * WHEEL_DISTANCE_BETWEEN - WHEEL_HALF_EXTENTS.getY());
