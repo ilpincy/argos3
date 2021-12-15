@@ -21,9 +21,9 @@ set(ARGOS3_HEADERS_PLUGINS_SIMULATOR_ENTITIES
   proximity_sensor_equipped_entity.h
   quadrotor_entity.h
   rab_equipped_entity.h
-  radio_entity.h
-  radio_equipped_entity.h
   rotor_equipped_entity.h
+  simple_radio_entity.h
+  simple_radio_equipped_entity.h
   tag_entity.h
   tag_equipped_entity.h
   wheeled_entity.h)
@@ -51,9 +51,9 @@ set(ARGOS3_SOURCES_PLUGINS_SIMULATOR_ENTITIES
   proximity_sensor_equipped_entity.cpp
   quadrotor_entity.cpp
   rab_equipped_entity.cpp
-  radio_entity.cpp
-  radio_equipped_entity.cpp
   rotor_equipped_entity.cpp
+  simple_radio_entity.cpp
+  simple_radio_equipped_entity.cpp
   tag_entity.cpp
   tag_equipped_entity.cpp
   wheeled_entity.cpp)

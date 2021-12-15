@@ -14,11 +14,11 @@
 #include <argos3/plugins/simulator/entities/directional_led_equipped_entity.h>
 #include <argos3/plugins/simulator/entities/led_equipped_entity.h>
 #include <argos3/plugins/simulator/entities/magnet_equipped_entity.h>
-#include <argos3/plugins/simulator/entities/radio_equipped_entity.h>
+#include <argos3/plugins/simulator/entities/simple_radio_equipped_entity.h>
 #include <argos3/plugins/simulator/entities/tag_equipped_entity.h>
 #include <argos3/plugins/simulator/media/directional_led_medium.h>
 #include <argos3/plugins/simulator/media/led_medium.h>
-#include <argos3/plugins/simulator/media/radio_medium.h>
+#include <argos3/plugins/simulator/media/simple_radio_medium.h>
 #include <argos3/plugins/simulator/media/tag_medium.h>
 
 namespace argos {
@@ -35,7 +35,7 @@ namespace argos {
       m_pcDirectionalLEDEquippedEntity(nullptr),
       m_pcLEDEquippedEntity(nullptr),
       m_pcTagEquippedEntity(nullptr),
-      m_pcRadioEquippedEntity(nullptr),
+      m_pcSimpleRadioEquippedEntity(nullptr),
       m_pcMagnetEquippedEntity(nullptr),
       m_pcProximitySensorEquippedEntity(nullptr) {}
 
@@ -116,12 +116,12 @@ namespace argos {
                   m_pcTagEquippedEntity->SetMedium(cTagMedium);
                   m_pcTagEquippedEntity->Enable();
                }
-               else if(itDevice->Value() == "radios" ) {
-                  auto* m_pcRadioEquippedEntity =
-                     new CRadioEquippedEntity(this);
-                  m_pcRadioEquippedEntity->Init(*itDevice);
-                  AddComponent(*m_pcRadioEquippedEntity);
-                  m_pcRadioEquippedEntity->Enable();
+               else if(itDevice->Value() == "simple_radios" ) {
+                  auto* m_pcSimpleRadioEquippedEntity =
+                     new CSimpleRadioEquippedEntity(this);
+                  m_pcSimpleRadioEquippedEntity->Init(*itDevice);
+                  AddComponent(*m_pcSimpleRadioEquippedEntity);
+                  m_pcSimpleRadioEquippedEntity->Enable();
                }
                else if(itDevice->Value() == "magnets" ) {
                   m_pcMagnetEquippedEntity = new CMagnetEquippedEntity(this);

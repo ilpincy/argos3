@@ -12,7 +12,7 @@ namespace argos {
    class CControllableEntity;
    class CDirectionalLEDEquippedEntity;
    class CEmbodiedEntity;
-   class CRadioEquippedEntity;
+   class CSimpleRadioEquippedEntity;
 }
 
 #include <argos3/core/simulator/entity/composable_entity.h>
@@ -32,7 +32,7 @@ namespace argos {
          m_pcControllableEntity(nullptr),
          m_pcEmbodiedEntity(nullptr),
          m_pcDifferentialDriveEntity(nullptr),
-         m_pcRadioEquippedEntity(nullptr),
+         m_pcSimpleRadioEquippedEntity(nullptr),
          m_bDebug(false) {}
 
       CPiPuckEntity(const std::string& str_id,
@@ -79,12 +79,12 @@ namespace argos {
          return *m_pcEmbodiedEntity;
       }
 
-      inline CRadioEquippedEntity& GetRadioEquippedEntity() {
-         return *m_pcRadioEquippedEntity;
+      inline CSimpleRadioEquippedEntity& GetSimpleRadioEquippedEntity() {
+         return *m_pcSimpleRadioEquippedEntity;
       }
 
-      inline const CRadioEquippedEntity& GetRadioEquippedEntity() const {
-         return *m_pcRadioEquippedEntity;
+      inline const CSimpleRadioEquippedEntity& GetSimpleRadioEquippedEntity() const {
+         return *m_pcSimpleRadioEquippedEntity;
       }
 
       inline bool IsDebug() const {
@@ -99,7 +99,7 @@ namespace argos {
       CDirectionalLEDEquippedEntity*  m_pcDirectionalLEDEquippedEntity;
       CEmbodiedEntity*                m_pcEmbodiedEntity;
       CPiPuckDifferentialDriveEntity* m_pcDifferentialDriveEntity;
-      CRadioEquippedEntity*           m_pcRadioEquippedEntity;
+      CSimpleRadioEquippedEntity*     m_pcSimpleRadioEquippedEntity;
 
       bool m_bDebug;
 

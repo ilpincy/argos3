@@ -1,10 +1,10 @@
 /**
- * @file <argos3/plugins/simulator/media/radio_medium.cpp>
+ * @file <argos3/plugins/simulator/media/simple_radio_medium.cpp>
  *
  * @author Michael Allwright - <allsey87@gmail.com>
  */
 
-#include "radio_medium.h"
+#include "simple_radio_medium.h"
 #include <argos3/core/simulator/simulator.h>
 #include <argos3/core/simulator/space/space.h>
 #include <argos3/core/simulator/space/positional_indices/grid.h>
@@ -16,7 +16,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CRadioMedium::Init(TConfigurationNode& t_tree) {
+   void CSimpleRadioMedium::Init(TConfigurationNode& t_tree) {
       try {
          CMedium::Init(t_tree);
          /* Get the positional index method */
@@ -41,84 +41,85 @@ namespace argos {
                GetNodeAttribute(t_tree, "grid_size", strPosGridSize);
                ParseValues<size_t>(strPosGridSize, 3, punGridSize, ',');
             }
-            CGrid<CRadioEntity>* pcGrid = new CGrid<CRadioEntity>(
+            CGrid<CSimpleRadioEntity>* pcGrid = new CGrid<CSimpleRadioEntity>(
                cArenaCenter - cArenaSize * 0.5f, cArenaCenter + cArenaSize * 0.5f,
                punGridSize[0], punGridSize[1], punGridSize[2]);
-            m_pcRadioEntityGridUpdateOperation = new CRadioEntityGridUpdater(*pcGrid);
-            pcGrid->SetUpdateEntityOperation(m_pcRadioEntityGridUpdateOperation);
-            m_pcRadioEntityIndex = pcGrid;
+            m_pcEntityGridUpdateOperation = new CSimpleRadioEntityGridUpdater(*pcGrid);
+            pcGrid->SetUpdateEntityOperation(m_pcEntityGridUpdateOperation);
+            m_pcEntityIndex = pcGrid;
          }
          else {
             THROW_ARGOSEXCEPTION("Unknown method \"" << strPosIndexMethod << "\" for the positional index.");
          }
       }
       catch(CARGoSException& ex) {
-         THROW_ARGOSEXCEPTION_NESTED("Error in initialization of the radio medium", ex);
+         THROW_ARGOSEXCEPTION_NESTED("Error in initialization of the simple radio medium", ex);
       }
    }
 
    /****************************************/
    /****************************************/
 
-   void CRadioMedium::PostSpaceInit() {
+   void CSimpleRadioMedium::PostSpaceInit() {
       Update();
    }
 
    /****************************************/
    /****************************************/
 
-   void CRadioMedium::Reset() {
-      m_pcRadioEntityIndex->Reset();
+   void CSimpleRadioMedium::Reset() {
+      m_pcEntityIndex->Reset();
    }
 
    /****************************************/
    /****************************************/
 
-   void CRadioMedium::Destroy() {
-      delete m_pcRadioEntityIndex;
-      if(m_pcRadioEntityGridUpdateOperation != nullptr) {
-         delete m_pcRadioEntityGridUpdateOperation;
+   void CSimpleRadioMedium::Destroy() {
+      delete m_pcEntityIndex;
+      if(m_pcEntityGridUpdateOperation != nullptr) {
+         delete m_pcEntityGridUpdateOperation;
       }
    }
 
    /****************************************/
    /****************************************/
 
-   void CRadioMedium::Update() {
+   void CSimpleRadioMedium::Update() {
       /* Update the positional indices of the radios */
-      m_pcRadioEntityIndex->Update();
+      m_pcEntityIndex->Update();
    }
 
    /****************************************/
    /****************************************/
 
-   void CRadioMedium::AddEntity(CRadioEntity& c_entity) {
-      m_pcRadioEntityIndex->AddEntity(c_entity);
-      m_pcRadioEntityIndex->Update();
+   void CSimpleRadioMedium::AddEntity(CSimpleRadioEntity& c_entity) {
+      m_pcEntityIndex->AddEntity(c_entity);
+      m_pcEntityIndex->Update();
    }
 
    /****************************************/
    /****************************************/
 
-   void CRadioMedium::RemoveEntity(CRadioEntity& c_entity) {
-      m_pcRadioEntityIndex->RemoveEntity(c_entity);
-      m_pcRadioEntityIndex->Update();
+   void CSimpleRadioMedium::RemoveEntity(CSimpleRadioEntity& c_entity) {
+      m_pcEntityIndex->RemoveEntity(c_entity);
+      m_pcEntityIndex->Update();
    }
 
    /****************************************/
    /****************************************/
 
-   REGISTER_MEDIUM(CRadioMedium,
-                   "radio",
+   REGISTER_MEDIUM(CSimpleRadioMedium,
+                   "simple_radio",
                    "Michael Allwright [allsey87@gmail.com]",
                    "1.0",
-                   "Enables communication between a radio actuator and radio sensor.",
-                   "This medium indexes the radio entities in the space and allows\n"
+                   "Enables communication between a simple radio actuator and a simple\n"
+                   "radio sensor.",
+                   "This medium indexes the simple radio entities in the space and allows\n"
                    "transmitting radios to find nearby receiving radios.\n\n"
                    "REQUIRED XML CONFIGURATION\n\n"
-                   "<radio id=\"radios\" />\n\n"
+                   "<simple_radio id=\"simple_radios\" />\n\n"
                    "OPTIONAL XML CONFIGURATION\n\n"
-                   "None for the time being\n",
+                   "None\n",
                    "Under development"
       );
 

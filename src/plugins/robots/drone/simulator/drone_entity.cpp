@@ -12,9 +12,9 @@
 #include <argos3/core/utility/datatypes/color.h>
 
 #include <argos3/plugins/simulator/entities/directional_led_equipped_entity.h>
-#include <argos3/plugins/simulator/entities/radio_equipped_entity.h>
+#include <argos3/plugins/simulator/entities/simple_radio_equipped_entity.h>
 #include <argos3/plugins/simulator/media/directional_led_medium.h>
-#include <argos3/plugins/simulator/media/radio_medium.h>
+#include <argos3/plugins/simulator/media/simple_radio_medium.h>
 
 #include <argos3/plugins/robots/drone/simulator/drone_flight_system_entity.h>
 
@@ -34,8 +34,7 @@ namespace argos {
       m_pcDirectionalLEDEquippedEntity(nullptr),
       m_pcEmbodiedEntity(nullptr),
       m_pcFlightSystemEntity(nullptr),
-      m_pcRadioEquippedEntity(nullptr),
-      m_bDebug(false) {}
+      m_pcSimpleRadioEquippedEntity(nullptr) {}
 
    /****************************************/
    /****************************************/
@@ -44,8 +43,6 @@ namespace argos {
       try {
          /* initialize the base class */
          CComposableEntity::Init(t_tree);
-         /* check if we are debugging */
-         GetNodeAttributeOrDefault(t_tree, "debug", m_bDebug, m_bDebug);
          /* create and initialize the embodied entity */
          m_pcEmbodiedEntity = new CEmbodiedEntity(this);
          AddComponent(*m_pcEmbodiedEntity);
@@ -57,15 +54,19 @@ namespace argos {
          m_pcFlightSystemEntity->Enable();
          AddComponent(*m_pcFlightSystemEntity);
          /* create and initialize a radio equipped entity for WiFi */
-         m_pcRadioEquippedEntity = new CRadioEquippedEntity(this, "radios_0");
+         m_pcSimpleRadioEquippedEntity = new CSimpleRadioEquippedEntity(this, "simple_radios_0");
          std::string strWifiMedium;
          GetNodeAttributeOrDefault(t_tree, "wifi_medium", strWifiMedium, strWifiMedium);
          if(!strWifiMedium.empty()) {
-            CRadioMedium& cWifiMedium = CSimulator::GetInstance().GetMedium<CRadioMedium>(strWifiMedium);
-            m_pcRadioEquippedEntity->AddRadio("wifi", CVector3(0.0f, 0.0f, 0.1f), sOriginAnchor, cWifiMedium, WIFI_TRANSMISSION_RANGE);
-            m_pcRadioEquippedEntity->Enable();
+            CSimpleRadioMedium& cWifiMedium = CSimulator::GetInstance().GetMedium<CSimpleRadioMedium>(strWifiMedium);
+            m_pcSimpleRadioEquippedEntity->AddRadio("wifi",
+                                                    CVector3(0.0f, 0.0f, 0.1f),
+                                                    sOriginAnchor,
+                                                    cWifiMedium,
+                                                    WIFI_TRANSMISSION_RANGE);
+            m_pcSimpleRadioEquippedEntity->Enable();
          }
-         AddComponent(*m_pcRadioEquippedEntity);
+         AddComponent(*m_pcSimpleRadioEquippedEntity);
          /* create and initialize the directional LED equipped entity */
          m_pcDirectionalLEDEquippedEntity = new CDirectionalLEDEquippedEntity(this, "leds_0");
          m_pcDirectionalLEDEquippedEntity->AddLED("led_0",

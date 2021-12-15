@@ -1,10 +1,10 @@
 /**
- * @file <argos3/plugins/robots/generic/control_interface/ci_radios_sensor.cpp>
+ * @file <argos3/plugins/robots/generic/control_interface/ci_simple_radios_sensor.cpp>
  *
  * @author Michael Allwright - <allsey87@gmail.com>
  */
 
-#include "ci_radios_sensor.h"
+#include "ci_simple_radios_sensor.h"
 
 #ifdef ARGOS_WITH_LUA
 #include <argos3/core/wrappers/lua/lua_utility.h>
@@ -15,16 +15,9 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   const CCI_RadiosSensor::SInterface::TVector& CCI_RadiosSensor::GetInterfaces() const {
-      return m_vecInterfaces;
-   }
-
-   /****************************************/
-   /****************************************/
-
 #ifdef ARGOS_WITH_LUA
-   void CCI_RadiosSensor::CreateLuaState(lua_State* pt_lua_state) {
-      CLuaUtility::OpenRobotStateTable(pt_lua_state, "radios"); // radios
+   void CCI_SimpleRadiosSensor::CreateLuaState(lua_State* pt_lua_state) {
+      CLuaUtility::OpenRobotStateTable(pt_lua_state, "simple_radios"); // radios
       for(size_t i = 0; i < m_vecInterfaces.size(); ++i) {
          CLuaUtility::OpenRobotStateTable(pt_lua_state, m_vecInterfaces[i].Id); // interfaces
          CLuaUtility::StartTable(pt_lua_state, "recv");
@@ -39,8 +32,8 @@ namespace argos {
    /****************************************/
 
 #ifdef ARGOS_WITH_LUA
-   void CCI_RadiosSensor::ReadingsToLuaState(lua_State* pt_lua_state) {
-      lua_getfield(pt_lua_state, -1, "radios"); // radios
+   void CCI_SimpleRadiosSensor::ReadingsToLuaState(lua_State* pt_lua_state) {
+      lua_getfield(pt_lua_state, -1, "simple_radios"); // radios
       for(size_t i = 0; i < m_vecInterfaces.size(); i++) {
          const std::string& strId = m_vecInterfaces[i].Id;
          std::vector<CByteArray>& vecMessages = m_vecInterfaces[i].Messages;

@@ -1,15 +1,15 @@
 /**
- * @file <argos3/plugins/simulator/entities/radio_entity.h>
+ * @file <argos3/plugins/simulator/entities/simple_radio_entity.h>
  *
  * @author Michael Allwright - <allsey87@gmail.com>
  */
 
-#ifndef RADIO_ENTITY_H
-#define RADIO_ENTITY_H
+#ifndef SIMPLE_RADIO_ENTITY_H
+#define SIMPLE_RADIO_ENTITY_H
 
 namespace argos {
-   class CRadioEntity;
-   class CRadioMedium;
+   class CSimpleRadioEntity;
+   class CSimpleRadioMedium;
 }
 
 #include <argos3/core/simulator/entity/positional_entity.h>
@@ -21,7 +21,7 @@ namespace argos {
 
 namespace argos {
 
-   class CRadioEntity : public CPositionalEntity {
+   class CSimpleRadioEntity : public CPositionalEntity {
 
    public:
 
@@ -29,18 +29,18 @@ namespace argos {
 
    public:
 
-      typedef std::vector<CRadioEntity*> TList;
+      typedef std::vector<CSimpleRadioEntity*> TList;
 
    public:
 
-      CRadioEntity(CComposableEntity* pc_parent);
+      CSimpleRadioEntity(CComposableEntity* pc_parent);
 
-      CRadioEntity(CComposableEntity* pc_parent,
-                   const std::string& str_id,
-                   CRadioMedium& c_medium,
-                   Real f_transmit_range);
+      CSimpleRadioEntity(CComposableEntity* pc_parent,
+                         const std::string& str_id,
+                         CSimpleRadioMedium& c_medium,
+                         Real f_transmit_range);
                                             
-      virtual ~CRadioEntity() {}
+      virtual ~CSimpleRadioEntity() {}
 
       virtual void Init(TConfigurationNode& t_tree);
 
@@ -124,18 +124,18 @@ namespace argos {
        * @return The medium associated to this radio.
        * @see CRadioMedium
        */
-      CRadioMedium& GetMedium() const;
+      CSimpleRadioMedium& GetMedium() const;
 
       /**
        * Sets the medium associated to this entity.
        * @param c_medium The medium to associate to this entity.
        * @see CRadioMedium
        */
-      void SetMedium(CRadioMedium& c_medium);
+      void SetMedium(CSimpleRadioMedium& c_medium);
 
    protected:
 
-      CRadioMedium* m_pcMedium;
+      CSimpleRadioMedium* m_pcMedium;
       Real m_fRange;
       std::vector<std::pair<CVector3, CByteArray> > m_vecMessages;
 
@@ -144,12 +144,12 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   class CRadioEntitySpaceHashUpdater : public CSpaceHashUpdater<CRadioEntity> {
+   class CSimpleRadioEntitySpaceHashUpdater : public CSpaceHashUpdater<CSimpleRadioEntity> {
 
    public:
 
-      virtual void operator()(CAbstractSpaceHash<CRadioEntity>& c_space_hash,
-                              CRadioEntity& c_element);
+      virtual void operator()(CAbstractSpaceHash<CSimpleRadioEntity>& c_space_hash,
+                              CSimpleRadioEntity& c_element);
 
    private:
 
@@ -160,16 +160,16 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   class CRadioEntityGridUpdater : public CGrid<CRadioEntity>::COperation {
+   class CSimpleRadioEntityGridUpdater : public CGrid<CSimpleRadioEntity>::COperation {
 
    public:
 
-      CRadioEntityGridUpdater(CGrid<CRadioEntity>& c_grid);
-      virtual bool operator()(CRadioEntity& c_entity);
+      CSimpleRadioEntityGridUpdater(CGrid<CSimpleRadioEntity>& c_grid);
+      virtual bool operator()(CSimpleRadioEntity& c_entity);
 
    private:
 
-      CGrid<CRadioEntity>& m_cGrid;
+      CGrid<CSimpleRadioEntity>& m_cGrid;
       SInt32 m_nI, m_nJ, m_nK;
 
    };

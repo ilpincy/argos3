@@ -1,34 +1,34 @@
 /**
- * @file <argos3/plugins/robots/generic/simulator/radios_default_sensor.cpp>
+ * @file <argos3/plugins/robots/generic/simulator/simple_radios_default_sensor.cpp>
  *
  * @author Michael Allwright - <allsey87@gmail.com>
  */
 
-#include "radios_default_sensor.h"
-#include <argos3/plugins/simulator/entities/radio_equipped_entity.h>
+#include "simple_radios_default_sensor.h"
+#include <argos3/plugins/simulator/entities/simple_radio_equipped_entity.h>
 
 namespace argos {
 
    /****************************************/
    /****************************************/
 
-   CRadiosDefaultSensor::CRadiosDefaultSensor() :
-      m_pcRadioEquippedEntity(nullptr),
+   CSimpleRadiosDefaultSensor::CSimpleRadiosDefaultSensor() :
+      m_pcSimpleRadioEquippedEntity(nullptr),
       m_pcControllableEntity(nullptr),
       m_bShowRays(false) {}
 
    /****************************************/
    /****************************************/
 
-   void CRadiosDefaultSensor::SetRobot(CComposableEntity& c_entity) {
+   void CSimpleRadiosDefaultSensor::SetRobot(CComposableEntity& c_entity) {
       try {
          /* Get the radio equipped entity */
-         m_pcRadioEquippedEntity = &(c_entity.GetComponent<CRadioEquippedEntity>("radios"));
+         m_pcSimpleRadioEquippedEntity = &(c_entity.GetComponent<CSimpleRadioEquippedEntity>("simple_radios"));
          /* Resize the interface vector for each radio in the radio equipped entity */
-         m_vecInterfaces.reserve(m_pcRadioEquippedEntity->GetInstances().size());
+         m_vecInterfaces.reserve(m_pcSimpleRadioEquippedEntity->GetInstances().size());
          /* For each radio, create an interface */
-         for(CRadioEquippedEntity::SInstance& s_instance :
-             m_pcRadioEquippedEntity->GetInstances()) {
+         for(CSimpleRadioEquippedEntity::SInstance& s_instance :
+             m_pcSimpleRadioEquippedEntity->GetInstances()) {
             /* Clear the existing message */
             m_vecInterfaces.emplace_back(s_instance.Radio.GetId());
          }
@@ -46,10 +46,10 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CRadiosDefaultSensor::Init(TConfigurationNode& t_tree) {
+   void CSimpleRadiosDefaultSensor::Init(TConfigurationNode& t_tree) {
       try {
          /* Parent class init */
-         CCI_RadiosSensor::Init(t_tree);
+         CCI_SimpleRadiosSensor::Init(t_tree);
          /* Show rays? */
          GetNodeAttributeOrDefault(t_tree, "show_rays", m_bShowRays, m_bShowRays);
       }
@@ -61,13 +61,13 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CRadiosDefaultSensor::Update() {
+   void CSimpleRadiosDefaultSensor::Update() {
       /* sensor is disabled--nothing to do */
       if (IsDisabled()) {
         return;
       }
-      for(size_t i = 0; i < m_pcRadioEquippedEntity->GetInstances().size(); ++i) {
-         CRadioEntity& cRadio = m_pcRadioEquippedEntity->GetRadio(i);
+      for(size_t i = 0; i < m_pcSimpleRadioEquippedEntity->GetInstances().size(); ++i) {
+         CSimpleRadioEntity& cRadio = m_pcSimpleRadioEquippedEntity->GetRadio(i);
          /* Clear messages in the interface */
          m_vecInterfaces[i].Messages.clear();
          /* Copy messages from the radio entity to the control interface */
@@ -86,7 +86,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CRadiosDefaultSensor::Reset() {
+   void CSimpleRadiosDefaultSensor::Reset() {
       for(SInterface& s_interface : m_vecInterfaces) {
          /* Clear the existing message */
          s_interface.Messages.clear();
@@ -96,8 +96,8 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   REGISTER_SENSOR(CRadiosDefaultSensor,
-                   "radios", "default",
+   REGISTER_SENSOR(CSimpleRadiosDefaultSensor,
+                   "simple_radios", "default",
                    "Michael Allwright [allsey87@gmail.com]",
                    "1.0",
 
@@ -118,7 +118,7 @@ namespace argos {
                    "      ...\n"
                    "      <sensors>\n"
                    "        ...\n"
-                   "        <radios implementation=\"default\" />\n"
+                   "        <simple_radios implementation=\"default\" />\n"
                    "        ...\n"
                    "      </sensors>\n"
                    "      ...\n"

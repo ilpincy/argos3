@@ -1,33 +1,33 @@
 /**
- * @file <argos3/plugins/simulator/entities/radio_equipped_entity.h>
+ * @file <argos3/plugins/simulator/entities/simple_radio_equipped_entity.h>
  *
  * @author Michael Allwright - <allsey87@gmail.com>
  */
 
-#ifndef RADIO_EQUIPPED_ENTITY_H
-#define RADIO_EQUIPPED_ENTITY_H
+#ifndef SIMPLE_RADIO_EQUIPPED_ENTITY_H
+#define SIMPLE_RADIO_EQUIPPED_ENTITY_H
 
 namespace argos {
-   class CRadioEquippedEntity;
-   class CRadioEntity;
+   class CSimpleRadioEquippedEntity;
+   class CSimpleRadioEntity;
 }
 
 #include <argos3/core/simulator/entity/composable_entity.h>
-#include <argos3/plugins/simulator/entities/radio_entity.h>
+#include <argos3/plugins/simulator/entities/simple_radio_entity.h>
 #include <vector>
 
 namespace argos {
 
    /**
-    * A container of CRadioEntity.
+    * A container of CSimpleRadioEntity.
     * <p>
-    * This is a convenience class that acts a container of CRadioEntity objects.
+    * This is a convenience class that acts a container of CSimpleRadioEntity objects.
     * It is mostly useful when a robot is equipped with a number of radios, and you
     * want to manage them comfortably.
     * </p>
-    * @see CRadioEntity
+    * @see CSimpleRadioEntity
     */
-   class CRadioEquippedEntity : public CComposableEntity {
+   class CSimpleRadioEquippedEntity : public CComposableEntity {
 
    public:
 
@@ -36,10 +36,10 @@ namespace argos {
    public:
 
       struct SInstance {
-         CRadioEntity& Radio;
+         CSimpleRadioEntity& Radio;
          SAnchor& Anchor;
          CVector3 Offset;
-         SInstance(CRadioEntity& c_radio,
+         SInstance(CSimpleRadioEntity& c_radio,
                    SAnchor& s_anchor,
                    const CVector3& c_offset);
          using TVector = std::vector<SInstance>;
@@ -51,17 +51,17 @@ namespace argos {
        * Class constructor.
        * @param pc_parent The parent entity.
        */
-      CRadioEquippedEntity(CComposableEntity* pc_parent);
+      CSimpleRadioEquippedEntity(CComposableEntity* pc_parent);
 
       /**
        * Class constructor.
        * @param pc_parent The parent entity.
        * @param str_id The id of this entity.
        */
-      CRadioEquippedEntity(CComposableEntity* pc_parent,
-                         const std::string& str_id);
+      CSimpleRadioEquippedEntity(CComposableEntity* pc_parent,
+                                 const std::string& str_id);
 
-      virtual ~CRadioEquippedEntity() {}
+      virtual ~CSimpleRadioEquippedEntity() {}
 
       virtual void Init(TConfigurationNode& t_tree);
 
@@ -82,7 +82,7 @@ namespace argos {
       void AddRadio(const std::string& str_id,
                     const CVector3& c_offset,
                     SAnchor& s_anchor,
-                    CRadioMedium& c_medium,
+                    CSimpleRadioMedium& c_medium,
                     Real f_transmit_range);
 
       /**
@@ -91,7 +91,7 @@ namespace argos {
        * @return A radio by numeric index.
        * @see GetInstances()
        */
-      CRadioEntity& GetRadio(UInt32 un_index);
+      CSimpleRadioEntity& GetRadio(UInt32 un_index);
 
       /**
        * Returns the radios.
@@ -114,7 +114,7 @@ namespace argos {
       }
 
       virtual std::string GetTypeDescription() const {
-         return "radios";
+         return "simple_radios";
       }
 
    protected:

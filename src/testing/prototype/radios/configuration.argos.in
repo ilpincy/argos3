@@ -15,10 +15,10 @@
     <test_controller library="@CMAKE_CURRENT_BINARY_DIR@/libprototype_radios_controller"
                      id="test_controller">
       <actuators>
-        <radios implementation="default"/>
+        <simple_radios implementation="default"/>
       </actuators>
       <sensors>
-        <radios implementation="default" show_rays="true"/>
+        <simple_radios implementation="default" show_rays="true"/>
       </sensors>
       <params/>
     </test_controller>
@@ -42,11 +42,11 @@
               position="0,0,0" orientation="0,0,0" />
       </links>
       <devices>
-        <radios>
+        <simple_radios>
           <!-- this radio is just in range of the other radio -->
-          <radio id="radio" anchor="base" position="0,0,.0125"
-                 medium="radio" range="0.101" />
-        </radios>
+          <simple_radio id="radio" anchor="base" position="0,0,.0125"
+            medium="simple_radio" range="0.101" />
+        </simple_radios>
       </devices>
     </prototype>
 
@@ -55,14 +55,14 @@
       <controller config="test_controller"/>
       <links ref="base">
         <link id="base" geometry="box" size=".1,.05,.025" mass="0.1"
-              position="0,0,0" orientation="0,0,0" />
+          position="0,0,0" orientation="0,0,0" />
       </links>
       <devices>
-        <radios>
+        <simple_radios>
           <!-- this radio is just out of range of the other radio -->
-          <radio id="radio" anchor="base" position="0,0,.0125"
-                 medium="radio" range="0.099" />
-        </radios>
+          <simple_radio id="radio" anchor="base" position="0,0,.0125"
+            medium="simple_radio" range="0.099" />
+        </simple_radios>
       </devices>
     </prototype>
   </arena>
@@ -78,7 +78,7 @@
   <!-- * Media * -->
   <!-- ********* -->
   <media>
-    <radio id="radio" index="grid" grid_size="20,20,20" />
+    <simple_radio id="simple_radio" index="grid" grid_size="20,20,20" />
   </media>
 
   <!-- ****************** -->

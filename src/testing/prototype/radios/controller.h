@@ -4,7 +4,7 @@
  */
 
 namespace argos {
-   class CCI_RadiosActuator;
+   class CCI_SimpleRadiosActuator;
 }
 
 #include <argos3/core/control_interface/ci_controller.h>
@@ -16,7 +16,7 @@ namespace argos {
    public:
 
       CTestController() :
-         m_pcRadioActuator(nullptr) {}
+         m_pcSimpleRadioActuator(nullptr) {}
 
       virtual ~CTestController() {}
 
@@ -26,7 +26,7 @@ namespace argos {
 
    private:
 
-      CCI_RadiosActuator* m_pcRadioActuator;
+      CCI_SimpleRadiosActuator* m_pcSimpleRadioActuator;
 
    };
 }

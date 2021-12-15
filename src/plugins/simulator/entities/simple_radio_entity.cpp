@@ -1,20 +1,20 @@
 /**
- * @file <argos3/plugins/simulator/entities/radio_entity.h>
+ * @file <argos3/plugins/simulator/entities/simple_radio_entity.cpp>
  *
  * @author Michael Allwright - <allsey87@gmail.com>
  */
 
-#include "radio_entity.h"
+#include "simple_radio_entity.h"
 #include <argos3/core/simulator/space/space.h>
 #include <argos3/core/simulator/simulator.h>
-#include <argos3/plugins/simulator/media/radio_medium.h>
+#include <argos3/plugins/simulator/media/simple_radio_medium.h>
 
 namespace argos {
 
    /****************************************/
    /****************************************/
 
-   CRadioEntity::CRadioEntity(CComposableEntity* pc_parent) :
+   CSimpleRadioEntity::CSimpleRadioEntity(CComposableEntity* pc_parent) :
       CPositionalEntity(pc_parent),
       m_pcMedium(nullptr),
       m_fRange(0.0f) {}
@@ -22,10 +22,10 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   CRadioEntity::CRadioEntity(CComposableEntity* pc_parent,
-                              const std::string& str_id,
-                              CRadioMedium& c_medium,
-                              Real f_range) :
+   CSimpleRadioEntity::CSimpleRadioEntity(CComposableEntity* pc_parent,
+                                          const std::string& str_id,
+                                          CSimpleRadioMedium& c_medium,
+                                          Real f_range) :
       CPositionalEntity(pc_parent, str_id, CVector3(), CQuaternion()),
       m_pcMedium(&c_medium),
       m_fRange(f_range) {}
@@ -33,24 +33,24 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CRadioEntity::Init(TConfigurationNode& t_tree) {
+   void CSimpleRadioEntity::Init(TConfigurationNode& t_tree) {
       try {
          /* Parse XML */
          CPositionalEntity::Init(t_tree);
          GetNodeAttribute(t_tree, "range", m_fRange);
          std::string strMedium;
          GetNodeAttribute(t_tree, "medium", strMedium);
-         m_pcMedium = &CSimulator::GetInstance().GetMedium<CRadioMedium>(strMedium);
+         m_pcMedium = &CSimulator::GetInstance().GetMedium<CSimpleRadioMedium>(strMedium);
       }
       catch(CARGoSException& ex) {
-         THROW_ARGOSEXCEPTION_NESTED("Error while initializing radio entity", ex);
+         THROW_ARGOSEXCEPTION_NESTED("Error while initializing simple radio entity", ex);
       }
    }
 
    /****************************************/
    /****************************************/
 
-   void CRadioEntity::Reset() {
+   void CSimpleRadioEntity::Reset() {
       /* Erase received messages */
       m_vecMessages.clear();
    }
@@ -58,14 +58,14 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CRadioEntity::Destroy() {
+   void CSimpleRadioEntity::Destroy() {
       Disable();
    }
 
    /****************************************/
    /****************************************/
 
-   void CRadioEntity::SetEnabled(bool b_enabled) {
+   void CSimpleRadioEntity::SetEnabled(bool b_enabled) {
       /* Perform generic enable behavior */
       CEntity::SetEnabled(b_enabled);
       if(b_enabled) {
@@ -83,7 +83,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   CRadioMedium& CRadioEntity::GetMedium() const {
+   CSimpleRadioMedium& CSimpleRadioEntity::GetMedium() const {
       if(m_pcMedium == nullptr) {
          THROW_ARGOSEXCEPTION("radio entity \"" << GetContext() << GetId() <<
                               "\" has no associated medium.");
@@ -94,7 +94,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CRadioEntity::SetMedium(CRadioMedium& c_medium) {
+   void CSimpleRadioEntity::SetMedium(CSimpleRadioMedium& c_medium) {
       if(m_pcMedium != nullptr && m_pcMedium != &c_medium)
          m_pcMedium->RemoveEntity(*this);
       m_pcMedium = &c_medium;
@@ -103,8 +103,8 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CRadioEntitySpaceHashUpdater::operator()(CAbstractSpaceHash<CRadioEntity>& c_space_hash,
-                                                          CRadioEntity& c_element) {
+   void CSimpleRadioEntitySpaceHashUpdater::operator()(CAbstractSpaceHash<CSimpleRadioEntity>& c_space_hash,
+                                                       CSimpleRadioEntity& c_element) {
       /* Calculate the position of the radop in the space hash */
       c_space_hash.SpaceToHashTable(m_nI, m_nJ, m_nK, c_element.GetPosition());
       /* Update the corresponding cell */
@@ -114,13 +114,13 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   CRadioEntityGridUpdater::CRadioEntityGridUpdater(CGrid<CRadioEntity>& c_grid) :
+   CSimpleRadioEntityGridUpdater::CSimpleRadioEntityGridUpdater(CGrid<CSimpleRadioEntity>& c_grid) :
       m_cGrid(c_grid) {}
 
    /****************************************/
    /****************************************/
 
-   bool CRadioEntityGridUpdater::operator()(CRadioEntity& c_entity) {
+   bool CSimpleRadioEntityGridUpdater::operator()(CSimpleRadioEntity& c_entity) {
       try {
          /* Calculate the position of the radio in the space hash */
          m_cGrid.PositionToCell(m_nI, m_nJ, m_nK, c_entity.GetPosition());
@@ -128,7 +128,7 @@ namespace argos {
          m_cGrid.UpdateCell(m_nI, m_nJ, m_nK, c_entity);
       }
       catch(CARGoSException& ex) {
-         THROW_ARGOSEXCEPTION_NESTED("While updating the radio grid for radio \"" <<
+         THROW_ARGOSEXCEPTION_NESTED("While updating the simple radio grid for simple radio \"" <<
                                      c_entity.GetContext() + c_entity.GetId() << "\"", ex);
       }
       /* Continue with the other entities */
@@ -138,9 +138,9 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   class CSpaceOperationAddCRadioEntity : public CSpaceOperationAddEntity {
+   class CSpaceOperationAddCSimpleRadioEntity : public CSpaceOperationAddEntity {
    public:
-      void ApplyTo(CSpace& c_space, CRadioEntity& c_entity) {
+      void ApplyTo(CSpace& c_space, CSimpleRadioEntity& c_entity) {
          /* Add entity to space - this ensures that the radio entity
           * gets an id before being added to the radio medium */
          c_space.AddEntity(c_entity);
@@ -150,9 +150,9 @@ namespace argos {
       }
    };
 
-   class CSpaceOperationRemoveCRadioEntity : public CSpaceOperationRemoveEntity {
+   class CSpaceOperationRemoveCSimpleRadioEntity : public CSpaceOperationRemoveEntity {
    public:
-      void ApplyTo(CSpace& c_space, CRadioEntity& c_entity) {
+      void ApplyTo(CSpace& c_space, CSimpleRadioEntity& c_entity) {
          /* Disable the entity - this ensures that the entity is
           * removed from the radio medium */
          c_entity.Disable();
@@ -162,11 +162,11 @@ namespace argos {
    };
 
    REGISTER_SPACE_OPERATION(CSpaceOperationAddEntity,
-                            CSpaceOperationAddCRadioEntity,
-                            CRadioEntity);
+                            CSpaceOperationAddCSimpleRadioEntity,
+                            CSimpleRadioEntity);
    REGISTER_SPACE_OPERATION(CSpaceOperationRemoveEntity,
-                            CSpaceOperationRemoveCRadioEntity,
-                            CRadioEntity);
+                            CSpaceOperationRemoveCSimpleRadioEntity,
+                            CSimpleRadioEntity);
 
    /****************************************/
    /****************************************/

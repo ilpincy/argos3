@@ -14,20 +14,20 @@
   <controllers>
     <lua_controller id="builderbot_controller">
       <actuators>
-        <radios implementation="default"/>
+        <simple_radios implementation="default"/>
       </actuators>
       <sensors>
-        <radios implementation="default" show_rays="true"/>
+        <simple_radios implementation="default" show_rays="true"/>
       </sensors>
       <params script="@CMAKE_CURRENT_BINARY_DIR@/builderbot.lua"/>
     </lua_controller>
 
     <lua_controller id="block_controller">
       <actuators>
-        <radios implementation="default"/>
+        <simple_radios implementation="default"/>
       </actuators>
       <sensors>
-        <radios implementation="default" show_rays="true"/>
+        <simple_radios implementation="default" show_rays="true"/>
       </sensors>
       <params script="@CMAKE_CURRENT_BINARY_DIR@/block.lua"/>
     </lua_controller>
@@ -65,8 +65,8 @@
   <!-- * Media * -->
   <!-- ********* -->
   <media>
-    <radio id="wifi" index="grid" grid_size="20,20,20" />
-    <radio id="nfc" index="grid" grid_size="20,20,20" />
+    <simple_radio id="wifi" index="grid" grid_size="20,20,20" />
+    <simple_radio id="nfc" index="grid" grid_size="20,20,20" />
     
     <tag id="tags" index="grid" grid_size="20,20,20" />
     <directional_led id="directional_leds" index="grid" grid_size="20,20,20" />
