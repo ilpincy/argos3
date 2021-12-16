@@ -1,30 +1,30 @@
 /**
- * @file <argos3/plugins/robots/generic/simulator/radios_default_sensor.h>
+ * @file <argos3/plugins/robots/generic/simulator/simple_radios_default_sensor.h>
  *
  * @author Michael Allwright - <allsey87@gmail.com>
  */
 
-#ifndef RADIOS_DEFAULT_SENSOR_H
-#define RADIOS_DEFAULT_SENSOR_H
+#ifndef SIMPLE_RADIOS_DEFAULT_SENSOR_H
+#define SIMPLE_RADIOS_DEFAULT_SENSOR_H
 
 namespace argos {
-   class CRadiosDefaultSensor;
+   class CSimpleRadiosDefaultSensor;
 }
 
 #include <argos3/core/simulator/sensor.h>
-#include <argos3/plugins/robots/generic/control_interface/ci_radios_sensor.h>
-#include <argos3/plugins/simulator/entities/radio_equipped_entity.h>
+#include <argos3/plugins/robots/generic/control_interface/ci_simple_radios_sensor.h>
+#include <argos3/plugins/simulator/entities/simple_radio_equipped_entity.h>
 
 namespace argos {
 
-   class CRadiosDefaultSensor : public CSimulatedSensor,
-                                public CCI_RadiosSensor {
+   class CSimpleRadiosDefaultSensor : public CSimulatedSensor,
+                                      public CCI_SimpleRadiosSensor {
 
    public:
 
-      CRadiosDefaultSensor();
+      CSimpleRadiosDefaultSensor();
 
-      virtual ~CRadiosDefaultSensor() {}
+      virtual ~CSimpleRadiosDefaultSensor() {}
 
       virtual void SetRobot(CComposableEntity& c_entity);
 
@@ -52,9 +52,9 @@ namespace argos {
 
    protected:
 
-      CRadioEquippedEntity* m_pcRadioEquippedEntity;
-      CControllableEntity*  m_pcControllableEntity;
-      bool                  m_bShowRays;
+      CSimpleRadioEquippedEntity* m_pcSimpleRadioEquippedEntity;
+      CControllableEntity* m_pcControllableEntity;
+      bool m_bShowRays;
 
    };
 }

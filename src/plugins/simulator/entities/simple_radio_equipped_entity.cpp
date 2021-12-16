@@ -1,22 +1,22 @@
 /**
- * @file <argos3/plugins/simulator/entities/radio_equipped_entity.cpp>
+ * @file <argos3/plugins/simulator/entities/simple_radio_equipped_entity.cpp>
  *
  * @author Michael Allwright - <allsey87@gmail.com>
  */
 
-#include "radio_equipped_entity.h"
+#include "simple_radio_equipped_entity.h"
 #include <argos3/core/simulator/simulator.h>
 #include <argos3/core/simulator/space/space.h>
-#include <argos3/plugins/simulator/media/radio_medium.h>
+#include <argos3/plugins/simulator/media/simple_radio_medium.h>
 
 namespace argos {
 
    /****************************************/
    /****************************************/
 
-   CRadioEquippedEntity::SInstance::SInstance(CRadioEntity& c_radio,
-                                              SAnchor& s_anchor,
-                                              const CVector3& c_offset) :
+   CSimpleRadioEquippedEntity::SInstance::SInstance(CSimpleRadioEntity& c_radio,
+                                                    SAnchor& s_anchor,
+                                                    const CVector3& c_offset) :
       Radio(c_radio),
       Anchor(s_anchor),
       Offset(c_offset) {}
@@ -24,7 +24,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   CRadioEquippedEntity::CRadioEquippedEntity(CComposableEntity* pc_parent) :
+   CSimpleRadioEquippedEntity::CSimpleRadioEquippedEntity(CComposableEntity* pc_parent) :
       CComposableEntity(pc_parent) {
       Disable();
    }
@@ -32,8 +32,8 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   CRadioEquippedEntity::CRadioEquippedEntity(CComposableEntity* pc_parent,
-                                              const std::string& str_id) :
+   CSimpleRadioEquippedEntity::CSimpleRadioEquippedEntity(CComposableEntity* pc_parent,
+                                                          const std::string& str_id) :
       CComposableEntity(pc_parent, str_id) {
       Disable();
    }
@@ -41,17 +41,17 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CRadioEquippedEntity::Init(TConfigurationNode& t_tree) {
+   void CSimpleRadioEquippedEntity::Init(TConfigurationNode& t_tree) {
       try {
          /* Init parent */
          CComposableEntity::Init(t_tree);
          /* Go through the radop entries */
-         TConfigurationNodeIterator itRadio("radio");
+         TConfigurationNodeIterator itRadio("simple_radio");
          for(itRadio = itRadio.begin(&t_tree);
              itRadio != itRadio.end();
              ++itRadio) {
             /* Initialise the radio using the XML */
-            auto* pcRadio = new CRadioEntity(this);
+            auto* pcRadio = new CSimpleRadioEntity(this);
             pcRadio->Init(*itRadio);
             CVector3 cOffset;
             GetNodeAttribute(*itRadio, "position", cOffset);
@@ -74,7 +74,7 @@ namespace argos {
          UpdateComponents();
       }
       catch(CARGoSException& ex) {
-         THROW_ARGOSEXCEPTION_NESTED("Failed to initialize radio equipped entity \"" <<
+         THROW_ARGOSEXCEPTION_NESTED("Failed to initialize simple radio equipped entity \"" <<
                                      GetContext() + GetId() << "\".", ex);
       }
    }
@@ -82,7 +82,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CRadioEquippedEntity::Enable() {
+   void CSimpleRadioEquippedEntity::Enable() {
       /* Perform generic enable behavior */
       CComposableEntity::Enable();
       /* Enable anchors */
@@ -94,7 +94,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CRadioEquippedEntity::Disable() {
+   void CSimpleRadioEquippedEntity::Disable() {
       /* Perform generic disable behavior */
       CComposableEntity::Disable();
       /* Disable anchors */
@@ -106,17 +106,17 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CRadioEquippedEntity::AddRadio(const std::string& str_id,
-                                       const CVector3& c_offset,
-                                       SAnchor& s_anchor,
-                                       CRadioMedium& c_medium,
-                                       Real f_transmit_range) {
+   void CSimpleRadioEquippedEntity::AddRadio(const std::string& str_id,
+                                             const CVector3& c_offset,
+                                             SAnchor& s_anchor,
+                                             CSimpleRadioMedium& c_medium,
+                                             Real f_transmit_range) {
       /* create the new radio entity */
       auto* pcRadio =
-         new CRadioEntity(this,
-                          str_id,
-                          c_medium,
-                          f_transmit_range);
+         new CSimpleRadioEntity(this,
+                                str_id,
+                                c_medium,
+                                f_transmit_range);
       /* add it to the instances vector */
       m_vecInstances.emplace_back(*pcRadio,
                                   s_anchor,
@@ -130,9 +130,9 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   CRadioEntity& CRadioEquippedEntity::GetRadio(UInt32 un_index) {
+   CSimpleRadioEntity& CSimpleRadioEquippedEntity::GetRadio(UInt32 un_index) {
       ARGOS_ASSERT(un_index < m_vecInstances.size(),
-                   "CRadioEquippedEntity::GetRadio(), id=\"" <<
+                   "CSimpleRadioEquippedEntity::GetRadio(), id=\"" <<
                    GetContext() + GetId() <<
                    "\": index out of bounds: un_index = " <<
                    un_index <<
@@ -144,7 +144,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CRadioEquippedEntity::UpdateComponents() {
+   void CSimpleRadioEquippedEntity::UpdateComponents() {
       CVector3 cPosition;
       for(SInstance& s_instance : m_vecInstances) {
          if(s_instance.Radio.IsEnabled()) {
@@ -159,7 +159,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   REGISTER_STANDARD_SPACE_OPERATIONS_ON_COMPOSABLE(CRadioEquippedEntity);
+   REGISTER_STANDARD_SPACE_OPERATIONS_ON_COMPOSABLE(CSimpleRadioEquippedEntity);
 
    /****************************************/
    /****************************************/

@@ -1,33 +1,33 @@
 /**
- * @file <argos3/plugins/robots/generic/simulator/radios_default_actuator.cpp>
+ * @file <argos3/plugins/robots/generic/simulator/simple_radios_default_actuator.cpp>
  *
  * @author Michael Allwright - <allsey87@gmail.com>
  */
 
-#include "radios_default_actuator.h"
-#include <argos3/plugins/simulator/media/radio_medium.h>
-#include <argos3/plugins/simulator/entities/radio_equipped_entity.h>
+#include "simple_radios_default_actuator.h"
+#include <argos3/plugins/simulator/media/simple_radio_medium.h>
+#include <argos3/plugins/simulator/entities/simple_radio_equipped_entity.h>
 
 namespace argos {
 
    /****************************************/
    /****************************************/
 
-   CRadiosDefaultActuator::CRadiosDefaultActuator() :
-      m_pcRadioEquippedEntity(nullptr) {
+   CSimpleRadiosDefaultActuator::CSimpleRadiosDefaultActuator() :
+      m_pcSimpleRadioEquippedEntity(nullptr) {
    }
 
    /****************************************/
    /****************************************/
 
-   void CRadiosDefaultActuator::SetRobot(CComposableEntity& c_entity) {
+   void CSimpleRadiosDefaultActuator::SetRobot(CComposableEntity& c_entity) {
       try {
          /* Get and enable omndirectional radio equipped entity */
-         m_pcRadioEquippedEntity = &(c_entity.GetComponent<CRadioEquippedEntity>("radios"));
+         m_pcSimpleRadioEquippedEntity = &(c_entity.GetComponent<CSimpleRadioEquippedEntity>("simple_radios"));
          /* Create a configuration settings for each radio in the container */
-         m_vecInterfaces.reserve(m_pcRadioEquippedEntity->GetInstances().size());
+         m_vecInterfaces.reserve(m_pcSimpleRadioEquippedEntity->GetInstances().size());
          /* Populate the descriptors */
-         for(CRadioEquippedEntity::SInstance& s_instance : m_pcRadioEquippedEntity->GetInstances()) {
+         for(CSimpleRadioEquippedEntity::SInstance& s_instance : m_pcSimpleRadioEquippedEntity->GetInstances()) {
             m_vecInterfaces.emplace_back(s_instance.Radio.GetId());
          }
       }
@@ -39,10 +39,10 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CRadiosDefaultActuator::Init(TConfigurationNode& t_tree) {
+   void CSimpleRadiosDefaultActuator::Init(TConfigurationNode& t_tree) {
       try {
          /* Parent class init */
-         CCI_RadiosActuator::Init(t_tree);
+         CCI_SimpleRadiosActuator::Init(t_tree);
       }
       catch(CARGoSException& ex) {
          THROW_ARGOSEXCEPTION_NESTED("Error initializing the radios default actuator", ex);
@@ -52,16 +52,16 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CRadiosDefaultActuator::Update() {
+   void CSimpleRadiosDefaultActuator::Update() {
       for(size_t i = 0; i < m_vecInterfaces.size(); ++i) {
-         CRadioEntity& cRadio = m_pcRadioEquippedEntity->GetRadio(i);
+         CSimpleRadioEntity& cRadio = m_pcSimpleRadioEquippedEntity->GetRadio(i);
          /* Create operation instance */
          CSendOperation cSendOperation(cRadio, m_vecInterfaces[i].Messages);
          /* Calculate the coarse range of the transmitting radio */
          CVector3 cRange(1.0f, 1.0f, 1.0f);
          cRange *= cRadio.GetRange();
          /* Get positional index */
-         CPositionalIndex<CRadioEntity>* pcRadioIndex =
+         CPositionalIndex<CSimpleRadioEntity>* pcRadioIndex =
             &(cRadio.GetMedium().GetIndex());
          /* Transmit the messages to receiving radios in the space */
          pcRadioIndex->ForEntitiesInBoxRange(cRadio.GetPosition(), cRange, cSendOperation);
@@ -73,7 +73,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   void CRadiosDefaultActuator::Reset() {
+   void CSimpleRadiosDefaultActuator::Reset() {
       for(SInterface& s_interface : m_vecInterfaces) {
          /* Clear any messages in the interface */
          s_interface.Messages.clear();
@@ -83,7 +83,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   bool CRadiosDefaultActuator::CSendOperation::operator()(CRadioEntity& c_recv_radio) {
+   bool CSimpleRadiosDefaultActuator::CSendOperation::operator()(CSimpleRadioEntity& c_recv_radio) {
       if(&c_recv_radio != &m_cRadio) {
          Real fDistance = (c_recv_radio.GetPosition() - m_cRadio.GetPosition()).Length();
          if(fDistance < m_cRadio.GetRange()) {
@@ -98,8 +98,8 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   REGISTER_ACTUATOR(CRadiosDefaultActuator,
-                     "radios", "default",
+   REGISTER_ACTUATOR(CSimpleRadiosDefaultActuator,
+                     "simple_radios", "default",
                      "Michael Allwright [allsey87@gmail.com]",
                      "1.0",
 
@@ -117,7 +117,7 @@ namespace argos {
                      "      ...\n"
                      "      <actuators>\n"
                      "        ...\n"
-                     "        <radios implementation=\"default\" medium=\"radios\" />\n"
+                     "        <simple_radios implementation=\"default\" medium=\"simple_radios\" />\n"
                      "        ...\n"
                      "      </actuators>\n"
                      "      ...\n"

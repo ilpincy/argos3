@@ -11,10 +11,10 @@
 #include <argos3/core/simulator/entity/embodied_entity.h>
 
 #include <argos3/plugins/simulator/entities/directional_led_equipped_entity.h>
-#include <argos3/plugins/simulator/entities/radio_equipped_entity.h>
+#include <argos3/plugins/simulator/entities/simple_radio_equipped_entity.h>
 #include <argos3/plugins/simulator/entities/tag_equipped_entity.h>
 #include <argos3/plugins/simulator/media/directional_led_medium.h>
-#include <argos3/plugins/simulator/media/radio_medium.h>
+#include <argos3/plugins/simulator/media/simple_radio_medium.h>
 #include <argos3/plugins/simulator/media/tag_medium.h>
 
 namespace argos {
@@ -68,8 +68,7 @@ namespace argos {
       m_pcDirectionalLEDEquippedEntity(nullptr),
       m_pcEmbodiedEntity(nullptr),
       m_pcTagEquippedEntity(nullptr),
-      m_pcRadioEquippedEntity(nullptr),
-      m_bDebug(false) {}
+      m_pcSimpleRadioEquippedEntity(nullptr) {}
 
 
    /****************************************/
@@ -79,8 +78,6 @@ namespace argos {
       try {
          /* Initialize the parent */
          CComposableEntity::Init(t_tree);
-         /* check if we are debugging */
-         GetNodeAttributeOrDefault(t_tree, "debug", m_bDebug, m_bDebug);
          /* create and initialize the embodied entity */
          m_pcEmbodiedEntity = new CEmbodiedEntity(this, "body_0");
          AddComponent(*m_pcEmbodiedEntity);
@@ -109,19 +106,19 @@ namespace argos {
          m_pcTagEquippedEntity->Enable();
          AddComponent(*m_pcTagEquippedEntity);
          /* create and initialize the radios */
-         CRadioMedium& cRadioMedium = 
-            CSimulator::GetInstance().GetMedium<CRadioMedium>("nfc");
-         m_pcRadioEquippedEntity = new CRadioEquippedEntity(this, "radios_0");
+         CSimpleRadioMedium& cRadioMedium = 
+            CSimulator::GetInstance().GetMedium<CSimpleRadioMedium>("nfc");
+         m_pcSimpleRadioEquippedEntity = new CSimpleRadioEquippedEntity(this, "simple_radios_0");
          for(const std::tuple<std::string, CVector3, CQuaternion>& c_face : FACE_DESCRIPTORS) {
             /* add a radio */
-            m_pcRadioEquippedEntity->AddRadio(std::get<std::string>(c_face),
-                                              std::get<CVector3>(c_face),
-                                              sOriginAnchor,
-                                              cRadioMedium,
-                                              NFC_TRANSMISSION_RANGE);
+            m_pcSimpleRadioEquippedEntity->AddRadio(std::get<std::string>(c_face),
+                                                    std::get<CVector3>(c_face),
+                                                    sOriginAnchor,
+                                                    cRadioMedium,
+                                                    NFC_TRANSMISSION_RANGE);
          }
-         m_pcRadioEquippedEntity->Enable();
-         AddComponent(*m_pcRadioEquippedEntity);
+         m_pcSimpleRadioEquippedEntity->Enable();
+         AddComponent(*m_pcSimpleRadioEquippedEntity);
          /* create and initialize the directional LEDs */
          CColor cInitLedColor = CColor::BLACK;
          GetNodeAttributeOrDefault(t_tree, "init_led_color", cInitLedColor, cInitLedColor);
@@ -165,8 +162,6 @@ namespace argos {
    /****************************************/
 
    void CBlockEntity::UpdateComponents() {
-      /* custom update code */
-
       /* update all components using base class method */
       CComposableEntity::UpdateComponents();
    }

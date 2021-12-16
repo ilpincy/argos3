@@ -12,9 +12,8 @@ namespace argos {
    class CBuilderBotElectromagnetSystemEntity;
    class CBuilderBotLiftSystemEntity;
    class CControllableEntity;
-   class CDebugEntity;
    class CEmbodiedEntity;
-   class CRadioEquippedEntity;
+   class CSimpleRadioEquippedEntity;
    class CTagEquippedEntity;
    class CDirectionalLEDEquippedEntity;
 }
@@ -77,12 +76,12 @@ namespace argos {
          return *m_pcEmbodiedEntity;
       }
 
-      inline CRadioEquippedEntity& GetRadioEquippedEntity() {
-         return *m_pcRadioEquippedEntity;
+      inline CSimpleRadioEquippedEntity& GetSimpleRadioEquippedEntity() {
+         return *m_pcSimpleRadioEquippedEntity;
       }
 
-      inline const CRadioEquippedEntity& GetRadioEquippedEntity() const {
-         return *m_pcRadioEquippedEntity;
+      inline const CSimpleRadioEquippedEntity& GetSimpleRadioEquippedEntity() const {
+         return *m_pcSimpleRadioEquippedEntity;
       }
 
       inline CTagEquippedEntity& GetTagEquippedEntity() {
@@ -115,7 +114,7 @@ namespace argos {
       CBuilderBotDifferentialDriveEntity*    m_pcDifferentialDriveEntity;
       CBuilderBotElectromagnetSystemEntity*  m_pcElectromagnetSystemEntity;
       CBuilderBotLiftSystemEntity*           m_pcLiftSystemEntity;
-      CRadioEquippedEntity*                  m_pcRadioEquippedEntity;
+      CSimpleRadioEquippedEntity*            m_pcSimpleRadioEquippedEntity;
       CTagEquippedEntity*                    m_pcTagEquippedEntity;
       CDirectionalLEDEquippedEntity*         m_pcDirectionalLEDEquippedEntity;
 

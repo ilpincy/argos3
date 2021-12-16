@@ -10,10 +10,10 @@
 #include <argos3/core/simulator/entity/controllable_entity.h>
 #include <argos3/core/simulator/entity/embodied_entity.h>
 #include <argos3/plugins/simulator/entities/directional_led_equipped_entity.h>
-#include <argos3/plugins/simulator/entities/radio_equipped_entity.h>
+#include <argos3/plugins/simulator/entities/simple_radio_equipped_entity.h>
 #include <argos3/plugins/simulator/entities/tag_equipped_entity.h>
 #include <argos3/plugins/simulator/media/directional_led_medium.h>
-#include <argos3/plugins/simulator/media/radio_medium.h>
+#include <argos3/plugins/simulator/media/simple_radio_medium.h>
 #include <argos3/plugins/simulator/media/tag_medium.h>
 
 #include <argos3/plugins/robots/builderbot/simulator/builderbot_differential_drive_entity.h>
@@ -44,7 +44,7 @@ namespace argos {
       m_pcDifferentialDriveEntity(nullptr),
       m_pcElectromagnetSystemEntity(nullptr),
       m_pcLiftSystemEntity(nullptr),
-      m_pcRadioEquippedEntity(nullptr),
+      m_pcSimpleRadioEquippedEntity(nullptr),
       m_pcTagEquippedEntity(nullptr),
       m_bDebug(false) {}
 
@@ -109,25 +109,25 @@ namespace argos {
          /* create and initialize a radio equipped entity */
          std::string strWifiMedium("wifi");
          GetNodeAttributeOrDefault(t_tree, "wifi_medium", strWifiMedium, strWifiMedium);
-         CRadioMedium& cWifiMedium =
-            CSimulator::GetInstance().GetMedium<CRadioMedium>(strWifiMedium);
+         CSimpleRadioMedium& cWifiMedium =
+            CSimulator::GetInstance().GetMedium<CSimpleRadioMedium>(strWifiMedium);
          std::string strNFCMedium("nfc");
          GetNodeAttributeOrDefault(t_tree, "nfc_medium", strNFCMedium, strNFCMedium);
-         CRadioMedium& cNFCMedium =
-            CSimulator::GetInstance().GetMedium<CRadioMedium>(strNFCMedium);
-         m_pcRadioEquippedEntity = new CRadioEquippedEntity(this, "radios_0");
-         m_pcRadioEquippedEntity->AddRadio("wifi",
-                                           WIFI_ANCHOR_OFFSET,
-                                           sLowerBaseAnchor,
-                                           cWifiMedium,
-                                           WIFI_TRANSMISSION_RANGE);
-         m_pcRadioEquippedEntity->AddRadio("nfc",
-                                           NFC_ANCHOR_OFFSET,
-                                           sEndEffectorAnchor,
-                                           cNFCMedium,
-                                           NFC_TRANSMISSION_RANGE);
-         m_pcRadioEquippedEntity->Enable();
-         AddComponent(*m_pcRadioEquippedEntity);
+         CSimpleRadioMedium& cNFCMedium =
+            CSimulator::GetInstance().GetMedium<CSimpleRadioMedium>(strNFCMedium);
+         m_pcSimpleRadioEquippedEntity = new CSimpleRadioEquippedEntity(this, "simple_radios_0");
+         m_pcSimpleRadioEquippedEntity->AddRadio("wifi",
+                                                 WIFI_ANCHOR_OFFSET,
+                                                 sLowerBaseAnchor,
+                                                 cWifiMedium,
+                                                 WIFI_TRANSMISSION_RANGE);
+         m_pcSimpleRadioEquippedEntity->AddRadio("nfc",
+                                                 NFC_ANCHOR_OFFSET,
+                                                 sEndEffectorAnchor,
+                                                 cNFCMedium,
+                                                 NFC_TRANSMISSION_RANGE);
+         m_pcSimpleRadioEquippedEntity->Enable();
+         AddComponent(*m_pcSimpleRadioEquippedEntity);
          /* create and initialize the directional LED equipped entity */
          m_pcDirectionalLEDEquippedEntity = new CDirectionalLEDEquippedEntity(this);
          AddComponent(*m_pcDirectionalLEDEquippedEntity);

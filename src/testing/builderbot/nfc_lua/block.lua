@@ -1,9 +1,9 @@
 function init()
-   robot.radios.south.send({'ping'})
+   robot.simple_radios.south.send({'ping'})
 end
 
 function step()
-   for face, radio in pairs(robot.radios) do
+   for face, radio in pairs(robot.simple_radios) do
       for index, message in ipairs(radio.recv) do
 	 if message[1] == 'ping' then
             radio.send({'pong'})

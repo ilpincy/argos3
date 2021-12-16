@@ -10,9 +10,8 @@
 namespace argos {
    class CControllableEntity;
    class CEmbodiedEntity;
-   class CDebugEntity;
    class CDirectionalLEDEquippedEntity;
-   class CRadioEquippedEntity;
+   class CSimpleRadioEquippedEntity;
    class CTagEquippedEntity;
 }
 
@@ -46,14 +45,6 @@ namespace argos {
          return *m_pcEmbodiedEntity;
       }
 
-      inline CDebugEntity& GetDebugEntity() {
-         return *m_pcDebugEntity;
-      }
-
-      inline const CDebugEntity& GetDebugEntity() const {
-         return *m_pcDebugEntity;
-      }
-
       inline CDirectionalLEDEquippedEntity& GetDirectionalLEDEquippedEntity() {
          return *m_pcDirectionalLEDEquippedEntity;
       }
@@ -70,12 +61,12 @@ namespace argos {
          return *m_pcTagEquippedEntity;
       }
 
-      inline CRadioEquippedEntity& GetRadioEquippedEntity() {
-         return *m_pcRadioEquippedEntity;
+      inline CSimpleRadioEquippedEntity& GetSimpleRadioEquippedEntity() {
+         return *m_pcSimpleRadioEquippedEntity;
       }
 
-      inline bool IsDebug() const {
-         return m_bDebug;
+      inline const CSimpleRadioEquippedEntity& GetSimpleRadioEquippedEntity() const {
+         return *m_pcSimpleRadioEquippedEntity;
       }
 
       virtual void UpdateComponents();
@@ -84,12 +75,9 @@ namespace argos {
 
       CControllableEntity*              m_pcControllableEntity;
       CDirectionalLEDEquippedEntity*    m_pcDirectionalLEDEquippedEntity;
-      CDebugEntity*                     m_pcDebugEntity;
       CEmbodiedEntity*                  m_pcEmbodiedEntity;
       CTagEquippedEntity*               m_pcTagEquippedEntity;
-      CRadioEquippedEntity*             m_pcRadioEquippedEntity;
-
-      bool m_bDebug;
+      CSimpleRadioEquippedEntity*       m_pcSimpleRadioEquippedEntity;
 
       /* constants */
       static const Real TAG_SIDE_LENGTH;

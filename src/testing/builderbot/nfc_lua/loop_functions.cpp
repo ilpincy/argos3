@@ -1,7 +1,7 @@
 #include "loop_functions.h"
 #include <argos3/plugins/robots/builderbot/simulator/builderbot_entity.h>
 #include <argos3/plugins/robots/block/simulator/block_entity.h>
-#include <argos3/plugins/robots/generic/control_interface/ci_radios_sensor.h>
+#include <argos3/plugins/robots/generic/control_interface/ci_simple_radios_sensor.h>
 #include <argos3/core/simulator/entity/embodied_entity.h>
 
 namespace argos {
@@ -28,15 +28,15 @@ namespace argos {
          if(pcRobot == nullptr) {
             THROW_ARGOSEXCEPTION("Entity with identifier \"robot\" was not a BuilderBot");
          }
-         CCI_RadiosSensor* pcRadioSensorRobot =
-            pcRobot->GetControllableEntity().GetController().GetSensor<CCI_RadiosSensor>("radios");
+         CCI_SimpleRadiosSensor* pcSimpleRadioSensorRobot =
+            pcRobot->GetControllableEntity().GetController().GetSensor<CCI_SimpleRadiosSensor>("simple_radios");
          auto itRobotInterface = std::find_if(
-            std::begin(pcRadioSensorRobot->GetInterfaces()),
-            std::end(pcRadioSensorRobot->GetInterfaces()),
+            std::begin(pcSimpleRadioSensorRobot->GetInterfaces()),
+            std::end(pcSimpleRadioSensorRobot->GetInterfaces()),
             [] (auto& interface) {
                return interface.Id == "nfc";
             });
-         if(itRobotInterface == std::end(pcRadioSensorRobot->GetInterfaces())) {
+         if(itRobotInterface == std::end(pcSimpleRadioSensorRobot->GetInterfaces())) {
             THROW_ARGOSEXCEPTION("BuilderBot did not have a radio with the identifier: \"nfc\"");
          }
          if(itRobotInterface->Messages.size() != 1) {
@@ -47,15 +47,15 @@ namespace argos {
          if(pcBlock == nullptr) {
             THROW_ARGOSEXCEPTION("Entity with identifier \"block\" was not a block");
          }
-         CCI_RadiosSensor* pcRadioSensorBlock =
-            pcBlock->GetControllableEntity().GetController().GetSensor<CCI_RadiosSensor>("radios");
+         CCI_SimpleRadiosSensor* pcSimpleRadioSensorBlock =
+            pcBlock->GetControllableEntity().GetController().GetSensor<CCI_SimpleRadiosSensor>("simple_radios");
          auto itBlockInterface = std::find_if(
-            std::begin(pcRadioSensorBlock->GetInterfaces()),
-            std::end(pcRadioSensorBlock->GetInterfaces()),
+            std::begin(pcSimpleRadioSensorBlock->GetInterfaces()),
+            std::end(pcSimpleRadioSensorBlock->GetInterfaces()),
             [] (auto& interface) {
                return interface.Id == "south";
             });
-         if(itBlockInterface == std::end(pcRadioSensorBlock->GetInterfaces())) {
+         if(itBlockInterface == std::end(pcSimpleRadioSensorBlock->GetInterfaces())) {
             THROW_ARGOSEXCEPTION("Block did not have a radio with the identifier: \"south\"");
          }
          if(itBlockInterface->Messages.size() != 1) {

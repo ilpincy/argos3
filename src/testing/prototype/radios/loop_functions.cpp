@@ -1,6 +1,6 @@
 #include "loop_functions.h"
 #include <argos3/plugins/robots/prototype/simulator/prototype_entity.h>
-#include <argos3/plugins/robots/generic/control_interface/ci_radios_sensor.h>
+#include <argos3/plugins/robots/generic/control_interface/ci_simple_radios_sensor.h>
 #include <argos3/core/simulator/entity/embodied_entity.h>
 
 namespace argos {
@@ -29,14 +29,14 @@ namespace argos {
          if(pcNode1 == nullptr) {
             THROW_ARGOSEXCEPTION("Node1 was not a prototype");
          }
-         CCI_RadiosSensor* pcRadioSensorNode0 =
-            pcNode0->GetControllableEntity().GetController().GetSensor<CCI_RadiosSensor>("radios");
-         CCI_RadiosSensor* pcRadioSensorNode1 =
-            pcNode1->GetControllableEntity().GetController().GetSensor<CCI_RadiosSensor>("radios");
-         if(pcRadioSensorNode0->GetInterfaces()[0].Messages.size() != 0) {
+         CCI_SimpleRadiosSensor* pcSimpleRadioSensorNode0 =
+            pcNode0->GetControllableEntity().GetController().GetSensor<CCI_SimpleRadiosSensor>("simple_radios");
+         CCI_SimpleRadiosSensor* pcSimpleRadioSensorNode1 =
+            pcNode1->GetControllableEntity().GetController().GetSensor<CCI_SimpleRadiosSensor>("simple_radios");
+         if(pcSimpleRadioSensorNode0->GetInterfaces()[0].Messages.size() != 0) {
             THROW_ARGOSEXCEPTION("node0 should have zero messages");
          }
-         if(pcRadioSensorNode1->GetInterfaces()[0].Messages.size() != 1) {
+         if(pcSimpleRadioSensorNode1->GetInterfaces()[0].Messages.size() != 1) {
             THROW_ARGOSEXCEPTION("node1 should have one message");
          }
          return true;

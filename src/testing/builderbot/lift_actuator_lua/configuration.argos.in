@@ -70,8 +70,8 @@
   <!-- * Media * -->
   <!-- ********* -->
   <media>
-    <radio id="wifi" index="grid" grid_size="20,20,20" />
-    <radio id="nfc" index="grid" grid_size="20,20,20" />
+    <simple_radio id="wifi" index="grid" grid_size="20,20,20" />
+    <simple_radio id="nfc" index="grid" grid_size="20,20,20" />
     <tag id="tags" index="grid" grid_size="20,20,20" />
     <directional_led id="directional_leds" index="grid" grid_size="20,20,20" />
   </media>

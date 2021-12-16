@@ -13,7 +13,7 @@ namespace argos {
    class CPrototypeLinkEquippedEntity;
    class CPrototypeJointEquippedEntity;
    class CTagEquippedEntity;
-   class CRadioEquippedEntity;
+   class CSimpleRadioEquippedEntity;
    class CMagnetEquippedEntity;
    class CCameraEquippedEntity;
    class CProximitySensorEquippedEntity; 
@@ -100,16 +100,16 @@ namespace argos {
          return *m_pcTagEquippedEntity;
       }
 
-      inline bool HasRadioEquippedEntity() const {
-         return (m_pcRadioEquippedEntity != nullptr);
+      inline bool HasSimpleRadioEquippedEntity() const {
+         return (m_pcSimpleRadioEquippedEntity != nullptr);
       }
 
-      inline CRadioEquippedEntity& GetRadioEquippedEntity() {
-         ARGOS_ASSERT(m_pcRadioEquippedEntity != nullptr,
-                      "CPrototypeEntity::GetRadioEquippedEntity(), id=\"" <<
+      inline CSimpleRadioEquippedEntity& GetSimpleRadioEquippedEntity() {
+         ARGOS_ASSERT(m_pcSimpleRadioEquippedEntity != nullptr,
+                      "CPrototypeEntity::GetSimpleRadioEquippedEntity(), id=\"" <<
                       GetId() + GetContext() <<
-                      "\": was not initialized with a radio equipped entity");
-         return *m_pcRadioEquippedEntity;
+                      "\": was not initialized with a simple radio equipped entity");
+         return *m_pcSimpleRadioEquippedEntity;
       }
 
       inline bool HasMagnetEquippedEntity() const {
@@ -149,7 +149,7 @@ namespace argos {
       CDirectionalLEDEquippedEntity*   m_pcDirectionalLEDEquippedEntity;
       CLEDEquippedEntity*              m_pcLEDEquippedEntity;
       CTagEquippedEntity*              m_pcTagEquippedEntity;
-      CRadioEquippedEntity*            m_pcRadioEquippedEntity;
+      CSimpleRadioEquippedEntity*      m_pcSimpleRadioEquippedEntity;
       CMagnetEquippedEntity*           m_pcMagnetEquippedEntity;
       CProximitySensorEquippedEntity*  m_pcProximitySensorEquippedEntity;
 
