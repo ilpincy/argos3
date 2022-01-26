@@ -3,7 +3,7 @@
 #
 # argos3/plugins/robots/pi-puck/control_interface
 set(ARGOS3_HEADERS_PLUGINS_ROBOTS_PIPUCK_CONTROLINTERFACE
-  control_interface/ci_pipuck_camera_system_sensor.h
+  control_interface/ci_pipuck_front_camera_sensor.h
   control_interface/ci_pipuck_differential_drive_actuator.h
   control_interface/ci_pipuck_differential_drive_sensor.h
   control_interface/ci_pipuck_ground_sensor.h
@@ -16,7 +16,7 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
   set(ARGOS3_HEADERS_PLUGINS_ROBOTS_PIPUCK_SIMULATOR
     simulator/dynamics2d_pipuck_model.h
     simulator/dynamics3d_pipuck_model.h
-    simulator/pipuck_camera_system_default_sensor.h
+    simulator/pipuck_front_camera_default_sensor.h
     simulator/pipuck_differential_drive_default_actuator.h
     simulator/pipuck_differential_drive_default_sensor.h
     simulator/pipuck_differential_drive_entity.h
@@ -40,7 +40,7 @@ endif(ARGOS_BUILD_FOR_SIMULATOR)
 # argos3/plugins/robots/pi-puck/control_interface
 set(ARGOS3_SOURCES_PLUGINS_ROBOTS_PIPUCK
   ${ARGOS3_HEADERS_PLUGINS_ROBOTS_PIPUCK_CONTROLINTERFACE}
-  control_interface/ci_pipuck_camera_system_sensor.cpp
+  control_interface/ci_pipuck_front_camera_sensor.cpp
   control_interface/ci_pipuck_differential_drive_actuator.cpp
   control_interface/ci_pipuck_differential_drive_sensor.cpp
   control_interface/ci_pipuck_ground_sensor.cpp
@@ -55,7 +55,7 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
     ${ARGOS3_HEADERS_PLUGINS_ROBOTS_PIPUCK_SIMULATOR}
     simulator/dynamics2d_pipuck_model.cpp
     simulator/dynamics3d_pipuck_model.cpp
-    simulator/pipuck_camera_system_default_sensor.cpp
+    simulator/pipuck_front_camera_default_sensor.cpp
     simulator/pipuck_differential_drive_default_actuator.cpp
     simulator/pipuck_differential_drive_default_sensor.cpp
     simulator/pipuck_differential_drive_entity.cpp

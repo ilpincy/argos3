@@ -1,11 +1,11 @@
 /**
- * @file <argos3/plugins/robots/pi-puck/simulator/pipuck_camera_system_default_sensor.h>
+ * @file <argos3/plugins/robots/pi-puck/simulator/pipuck_front_camera_default_sensor.h>
  *
  * @author Michael Allwright - <allsey87@gmail.com>
  */
 
-#ifndef PIPUCK_CAMERA_SYSTEM_DEFAULT_SENSOR_H
-#define PIPUCK_CAMERA_SYSTEM_DEFAULT_SENSOR_H
+#ifndef PIPUCK_FRONT_CAMERA_DEFAULT_SENSOR_H
+#define PIPUCK_FRONT_CAMERA_DEFAULT_SENSOR_H
 
 namespace argos {
    class CEmbodiedEntity;
@@ -23,17 +23,17 @@ namespace argos {
 
 #include <argos3/plugins/simulator/entities/tag_entity.h>
 #include <argos3/plugins/simulator/entities/directional_led_entity.h>
-#include <argos3/plugins/robots/pi-puck/control_interface/ci_pipuck_camera_system_sensor.h>
+#include <argos3/plugins/robots/pi-puck/control_interface/ci_pipuck_front_camera_sensor.h>
 
 #include <vector>
 #include <array>
 
 namespace argos {
 
-   class CPiPuckCameraSystemDefaultSensor : public CSimulatedSensor,
-                                            public CCI_PiPuckCameraSystemSensor,
-                                            public CPositionalIndex<CTagEntity>::COperation,
-                                            public CPositionalIndex<CDirectionalLEDEntity>::COperation {
+   class CPiPuckFrontCameraDefaultSensor : public CSimulatedSensor,
+                                           public CCI_PiPuckFrontCameraSensor,
+                                           public CPositionalIndex<CTagEntity>::COperation,
+                                           public CPositionalIndex<CDirectionalLEDEntity>::COperation {
 
    public:
 
@@ -52,9 +52,9 @@ namespace argos {
 
    public:
 
-      CPiPuckCameraSystemDefaultSensor();
+      CPiPuckFrontCameraDefaultSensor();
 
-      virtual ~CPiPuckCameraSystemDefaultSensor() {}
+      virtual ~CPiPuckFrontCameraDefaultSensor() {}
 
       virtual void SetRobot(CComposableEntity& c_entity);
 
@@ -87,7 +87,6 @@ namespace argos {
    private:
       CControllableEntity* m_pcControllableEntity;
       CEmbodiedEntity* m_pcEmbodiedEntity;
-      SAnchor* m_psEndEffectorAnchor;
       CPositionalIndex<CDirectionalLEDEntity>* m_pcDirectionalLEDIndex;
       CPositionalIndex<CTagEntity>* m_pcTagIndex;
 
