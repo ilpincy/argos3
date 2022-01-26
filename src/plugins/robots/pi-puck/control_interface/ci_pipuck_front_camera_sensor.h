@@ -1,14 +1,14 @@
 /**
- * @file <argos3/plugins/robots/pi-puck/control_interface/ci_pipuck_camera_system_sensor.h>
+ * @file <argos3/plugins/robots/pi-puck/control_interface/ci_pipuck_front_camera_sensor.h>
  *
  * @author Michael Allwright <allsey87@gmail.com>
  */
 
-#ifndef CCI_PIPUCK_CAMERA_SYSTEM_SENSOR_H
-#define CCI_PIPUCK_CAMERA_SYSTEM_SENSOR_H
+#ifndef CCI_PIPUCK_FRONT_CAMERA_SENSOR_H
+#define CCI_PIPUCK_FRONT_CAMERA_SENSOR_H
 
 namespace argos {
-   class CCI_PiPuckCameraSystemSensor;
+   class CCI_PiPuckFrontCameraSensor;
 }
 
 #include <argos3/core/control_interface/ci_sensor.h>
@@ -18,7 +18,7 @@ namespace argos {
 
 namespace argos {
 
-   class CCI_PiPuckCameraSystemSensor : public CCI_Sensor {
+   class CCI_PiPuckFrontCameraSensor : public CCI_Sensor {
 
    public:
 
@@ -53,12 +53,14 @@ namespace argos {
          using TVector = std::vector<STag>;
       };
 
+      using TConfiguration = std::tuple<const char*, CVector3, CQuaternion>;
+
    public:
 
-      CCI_PiPuckCameraSystemSensor() :
+      CCI_PiPuckFrontCameraSensor() :
          m_bEnabled(false) {}
 
-      virtual ~CCI_PiPuckCameraSystemSensor() {}
+      virtual ~CCI_PiPuckFrontCameraSensor() {}
 
       virtual void Reset() {
          /* clear the readings */
@@ -100,10 +102,12 @@ namespace argos {
       /* the timestamp of the current frame */
       Real m_fTimestamp;
       /* the position, orientation, and anchor of the camera sensor */
-      CVector2 m_cResolution;
-      CVector3 m_cOffsetPosition;
-      CQuaternion m_cOffsetOrientation;
-      std::string m_strAnchor;
+      static const CVector3 CAMERA_POSITION_OFFSET;
+      static const CQuaternion CAMERA_ORIENTATION_OFFSET;
+      static const CVector2 CAMERA_RESOLUTION;
+      static const CVector2 CAMERA_FOCAL_LENGTH;
+      static const CVector2 CAMERA_PRINCIPAL_POINT;
+      static const std::string CAMERA_ANCHOR;
 
    };
 
