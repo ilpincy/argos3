@@ -149,12 +149,12 @@ namespace argos {
 
    const UInt32 CCI_DroneCamerasSystemSensor::DEFAULT_CAMERA_RESOLUTION_X = 700;
    const UInt32 CCI_DroneCamerasSystemSensor::DEFAULT_CAMERA_RESOLUTION_Y = 700;
-   const Real CCI_DroneCamerasSystemSensor::DEFAULT_CAMERA_FOCAL_LENGTH_X = 1040.0;
-   const Real CCI_DroneCamerasSystemSensor::DEFAULT_CAMERA_FOCAL_LENGTH_Y = 1040.0;
+   const Real CCI_DroneCamerasSystemSensor::DEFAULT_CAMERA_FOCAL_LENGTH_X = 865.0;
+   const Real CCI_DroneCamerasSystemSensor::DEFAULT_CAMERA_FOCAL_LENGTH_Y = 865.0;
    const Real CCI_DroneCamerasSystemSensor::DEFAULT_CAMERA_PRINCIPAL_POINT_X = 350.0;
    const Real CCI_DroneCamerasSystemSensor::DEFAULT_CAMERA_PRINCIPAL_POINT_Y = 350.0;
-   const Real CCI_DroneCamerasSystemSensor::DEFAULT_CAMERA_XY_OFFSET = 0.12;
-   const Real CCI_DroneCamerasSystemSensor::DEFAULT_CAMERA_Z_OFFSET = 0.16;
+   const Real CCI_DroneCamerasSystemSensor::DEFAULT_CAMERA_XY_OFFSET = 0.129;
+   const Real CCI_DroneCamerasSystemSensor::DEFAULT_CAMERA_Z_OFFSET = 0.148;
    const CDegrees CCI_DroneCamerasSystemSensor::DEFAULT_CAMERA_ANGLE = CDegrees(180 - 18);
 
    /****************************************/
@@ -162,24 +162,26 @@ namespace argos {
 
    const std::map<std::string, CCI_DroneCamerasSystemSensor::TConfiguration>
       CCI_DroneCamerasSystemSensor::DEFAULT_SENSOR_CONFIGURATION = {
-      std::make_pair("arm0",
+      std::make_pair("front",
                      std::make_tuple("origin",
-                                     CVector3( DEFAULT_CAMERA_XY_OFFSET,  DEFAULT_CAMERA_XY_OFFSET, DEFAULT_CAMERA_Z_OFFSET),
-                                     CQuaternion(ToRadians(DEFAULT_CAMERA_ANGLE), CVector3(-1,1,0).Normalize())
-                                        * CQuaternion(CRadians::PI, CVector3::Z))),
-      std::make_pair("arm1",
+                                     CVector3( DEFAULT_CAMERA_XY_OFFSET,  0.0, DEFAULT_CAMERA_Z_OFFSET),
+                                     CQuaternion(ToRadians(DEFAULT_CAMERA_ANGLE), CVector3::Y)
+                                        * CQuaternion(3 * CRadians::PI_OVER_FOUR, CVector3::Z))),
+      std::make_pair("left",
                      std::make_tuple("origin",
-                                     CVector3(-DEFAULT_CAMERA_XY_OFFSET,  DEFAULT_CAMERA_XY_OFFSET, DEFAULT_CAMERA_Z_OFFSET),
-                                     CQuaternion(ToRadians(DEFAULT_CAMERA_ANGLE), CVector3(-1,-1,0).Normalize()))),
-      std::make_pair("arm2",
+                                     CVector3(0.0,  DEFAULT_CAMERA_XY_OFFSET, DEFAULT_CAMERA_Z_OFFSET),
+                                     CQuaternion(ToRadians(DEFAULT_CAMERA_ANGLE), -CVector3::X)
+                                        * CQuaternion(-CRadians::PI_OVER_FOUR, CVector3::Z))),
+      std::make_pair("back",
                      std::make_tuple("origin",
-                                     CVector3(-DEFAULT_CAMERA_XY_OFFSET, -DEFAULT_CAMERA_XY_OFFSET, DEFAULT_CAMERA_Z_OFFSET),
-                                     CQuaternion(ToRadians(DEFAULT_CAMERA_ANGLE), CVector3(1,-1,0).Normalize())
-                                        * CQuaternion(CRadians::PI, CVector3::Z))),
-      std::make_pair("arm3",
+                                     CVector3(-DEFAULT_CAMERA_XY_OFFSET, 0.0, DEFAULT_CAMERA_Z_OFFSET),
+                                     CQuaternion(ToRadians(DEFAULT_CAMERA_ANGLE), -CVector3::Y)
+                                        * CQuaternion(3 * CRadians::PI_OVER_FOUR, CVector3::Z))),
+      std::make_pair("right",
                      std::make_tuple("origin",
-                                     CVector3( DEFAULT_CAMERA_XY_OFFSET, -DEFAULT_CAMERA_XY_OFFSET, DEFAULT_CAMERA_Z_OFFSET),
-                                     CQuaternion(ToRadians(DEFAULT_CAMERA_ANGLE), CVector3(1,1,0).Normalize()))),
+                                     CVector3(0.0, -DEFAULT_CAMERA_XY_OFFSET, DEFAULT_CAMERA_Z_OFFSET),
+                                     CQuaternion(ToRadians(DEFAULT_CAMERA_ANGLE), CVector3::X)
+                                        * CQuaternion(-CRadians::PI_OVER_FOUR, CVector3::Z))),
    };
 
    /****************************************/

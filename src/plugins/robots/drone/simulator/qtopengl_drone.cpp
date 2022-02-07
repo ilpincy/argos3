@@ -23,7 +23,7 @@ namespace argos {
     CQTOpenGLDrone::CQTOpenGLDrone() :
       /* create the model */
       m_cDroneModel("drone.obj"),
-      m_cPropellerModel("e305_propeller.obj"),
+      m_cPropellerModel("propeller.obj"),
       /* get pointers to the LED materials */
       m_arrLEDs {
          &m_cDroneModel.GetMaterial("led_0"),
@@ -132,7 +132,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   const CVector3 CQTOpenGLDrone::m_cPropellerOffset {0.159, 0.159, 0.208};
+   const CVector3 CQTOpenGLDrone::m_cPropellerOffset {0.159, 0.159, 0.271};
 
    /****************************************/
    /****************************************/
