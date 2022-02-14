@@ -16,9 +16,9 @@
 
 #define CAMERA_RANGE_MIN 0.01f
 #define CAMERA_RANGE_MAX 0.5f
-/* when detecting LEDs, an LED should be within 0.5 cm of the sampled location
+/* when detecting LEDs, an LED should be within 1 cm of the sampled location
    this prevents the detection of adjacent LEDs */
-#define DETECT_LED_DIST_THRES 0.005f
+#define DETECT_LED_DIST_THRES 0.01f
 
 namespace argos {
 
@@ -32,34 +32,16 @@ namespace argos {
       m_pcTagIndex(nullptr),
       m_bShowFrustum(false),
       m_bShowTagRays(false),
-      m_bShowLEDRays(false) {
-      /* set up the project matrix */
-      m_cProjectionMatrix.SetIdentityMatrix();
-      m_cProjectionMatrix(0,0) = CAMERA_FOCAL_LENGTH.GetX();
-      m_cProjectionMatrix(1,1) = CAMERA_FOCAL_LENGTH.GetY();
-      m_cProjectionMatrix(0,2) = CAMERA_PRINCIPAL_POINT.GetX();
-      m_cProjectionMatrix(1,2) = CAMERA_PRINCIPAL_POINT.GetY();
-      /* calculate fustrum constants */
-      Real fWidthToDepthRatio = (0.5 * CAMERA_RESOLUTION.GetX()) / CAMERA_FOCAL_LENGTH.GetX();
-      Real fHeightToDepthRatio = (0.5 * CAMERA_RESOLUTION.GetY()) / CAMERA_FOCAL_LENGTH.GetY();
-      m_fNearPlaneHeight = fHeightToDepthRatio * CAMERA_RANGE_MIN;
-      m_fNearPlaneWidth = fWidthToDepthRatio * CAMERA_RANGE_MIN;
-      m_fFarPlaneHeight = fHeightToDepthRatio * CAMERA_RANGE_MAX;
-      m_fFarPlaneWidth = fWidthToDepthRatio * CAMERA_RANGE_MAX;
-      /* transformation matrix */
-      m_cOffset.SetFromComponents(CAMERA_ORIENTATION_OFFSET, CAMERA_POSITION_OFFSET);
-   }
+      m_bShowLEDRays(false),
+      m_fTimestamp(0.0) {}
 
    /****************************************/
    /****************************************/
 
    void CPiPuckFrontCameraDefaultSensor::SetRobot(CComposableEntity& c_entity) {
       try {
-         /* get required components */
-         m_pcControllableEntity =
-            &(c_entity.GetComponent<CControllableEntity>("controller"));
-         m_pcEmbodiedEntity =
-            &(c_entity.GetComponent<CEmbodiedEntity>("body"));
+         m_pcControllableEntity = &(c_entity.GetComponent<CControllableEntity>("controller"));
+         m_pcEmbodiedEntity = &(c_entity.GetComponent<CEmbodiedEntity>("body"));
       }
       catch(CARGoSException& ex) {
          THROW_ARGOSEXCEPTION_NESTED("Error setting robot for the Pi-Puck front camera sensor", ex);
@@ -77,11 +59,38 @@ namespace argos {
          GetNodeAttributeOrDefault(t_tree, "show_frustum", m_bShowFrustum, m_bShowFrustum);
          GetNodeAttributeOrDefault(t_tree, "show_tag_rays", m_bShowTagRays, m_bShowTagRays);
          GetNodeAttributeOrDefault(t_tree, "show_led_rays", m_bShowLEDRays, m_bShowLEDRays);
+         /* set up the project matrix */
+         m_cProjectionMatrix.SetIdentityMatrix();
+         m_cProjectionMatrix(0,0) = CCI_PiPuckFrontCameraSensor::m_cFocalLength.GetX();
+         m_cProjectionMatrix(1,1) = CCI_PiPuckFrontCameraSensor::m_cFocalLength.GetY();
+         m_cProjectionMatrix(0,2) = CCI_PiPuckFrontCameraSensor::m_cPrincipalPoint.GetX();
+         m_cProjectionMatrix(1,2) = CCI_PiPuckFrontCameraSensor::m_cPrincipalPoint.GetY();
+         /* calculate fustrum constants */
+         Real fWidthToDepthRatio = (0.5 * CCI_PiPuckFrontCameraSensor::m_cResolution.GetX()) /
+            CCI_PiPuckFrontCameraSensor::m_cFocalLength.GetX();
+         Real fHeightToDepthRatio = (0.5 * CCI_PiPuckFrontCameraSensor::m_cResolution.GetY()) /
+            CCI_PiPuckFrontCameraSensor::m_cFocalLength.GetY();
+         m_fNearPlaneHeight = fHeightToDepthRatio * CAMERA_RANGE_MIN;
+         m_fNearPlaneWidth = fWidthToDepthRatio * CAMERA_RANGE_MIN;
+         m_fFarPlaneHeight = fHeightToDepthRatio * CAMERA_RANGE_MAX;
+         m_fFarPlaneWidth = fWidthToDepthRatio * CAMERA_RANGE_MAX;
+         /* transformation matrix */
+         m_cOffset.SetFromComponents(
+            CCI_PiPuckFrontCameraSensor::m_cOrientationOffset,
+            CCI_PiPuckFrontCameraSensor::POSITION_OFFSET);
          /* get indices */
-         m_pcTagIndex =
-            &(CSimulator::GetInstance().GetMedium<CTagMedium>("tags").GetIndex());
-         m_pcDirectionalLEDIndex =
-            &(CSimulator::GetInstance().GetMedium<CDirectionalLEDMedium>("directional_leds").GetIndex());
+         std::string strTagMedium;
+         GetNodeAttributeOrDefault(t_tree, "tag_medium", strTagMedium, strTagMedium);
+         if(!strTagMedium.empty()) {
+            m_pcTagIndex =
+               &(CSimulator::GetInstance().GetMedium<CTagMedium>(strTagMedium).GetIndex());
+         }
+         std::string strDirectionalLedMedium;
+         GetNodeAttributeOrDefault(t_tree, "directional_led_medium", strDirectionalLedMedium, strDirectionalLedMedium);
+         if(!strDirectionalLedMedium.empty()) {
+            m_pcDirectionalLEDIndex =
+               &(CSimulator::GetInstance().GetMedium<CDirectionalLEDMedium>(strDirectionalLedMedium).GetIndex());
+         }
       }
       catch(CARGoSException& ex) {
          THROW_ARGOSEXCEPTION_NESTED("Error initializing the pipuck camera system sensor", ex);
@@ -94,12 +103,12 @@ namespace argos {
 
    void CPiPuckFrontCameraDefaultSensor::Update() {
       /* clear out the readings from the last update */
-      m_tTags.clear();
+      m_vecTags.clear();
       m_vecLedCache.clear();
       /* increment the timestamp */
       m_fTimestamp += CPhysicsEngine::GetSimulationClockTick();
       /* if the sensor is enabled */
-      if(m_bEnabled) {
+      if(IsEnabled()) {
          /* TODO move these sensor parameters to class wide to avoid recalling constructors */
          CTransformationMatrix3 cWorldToAnchorTransform;
          CTransformationMatrix3 cWorldToCameraTransform;
@@ -122,7 +131,8 @@ namespace argos {
          m_cCameraToWorldTransform = cWorldToCameraTransform.GetInverse();
          /* calculate camera direction vectors */
          m_cCameraPosition = cWorldToCameraTransform.GetTranslationVector();
-         m_cCameraOrientation = s_anchor.Orientation * CAMERA_ORIENTATION_OFFSET;
+         m_cCameraOrientation = s_anchor.Orientation *
+            CCI_PiPuckFrontCameraSensor::m_cOrientationOffset;
          cLookAt = cWorldToCameraTransform * CVector3::Z;
          cUp = -CVector3::Y;
          cUp.Rotate(cWorldToCameraTransform.GetRotationMatrix());
@@ -186,13 +196,17 @@ namespace argos {
          /* set the start of the ray for checking occlusions to the camera's location */
          m_cOcclusionCheckRay.SetStart(m_cCameraPosition);
          /* detect tags */
-         m_pcTagIndex->ForEntitiesInBoxRange(cBoundingBoxPosition,
-                                             cBoundingBoxHalfExtents,
-                                             *this);
+         if(m_pcTagIndex) {
+            m_pcTagIndex->ForEntitiesInBoxRange(cBoundingBoxPosition,
+                                                cBoundingBoxHalfExtents,
+                                                *this);
+         }
          /* detect directional LEDs */
-         m_pcDirectionalLEDIndex->ForEntitiesInBoxRange(cBoundingBoxPosition,
-                                                        cBoundingBoxHalfExtents,
-                                                        *this);
+         if(m_pcDirectionalLEDIndex) {
+            m_pcDirectionalLEDIndex->ForEntitiesInBoxRange(cBoundingBoxPosition,
+                                                         cBoundingBoxHalfExtents,
+                                                         *this);
+         }
       }
    }
 
@@ -202,6 +216,8 @@ namespace argos {
    void CPiPuckFrontCameraDefaultSensor::Reset() {
       /* clear the LED cache */
       m_vecLedCache.clear();
+      m_vecTags.clear();
+      m_fTimestamp = 0.0;
       /* reset the base class */
       CCI_PiPuckFrontCameraSensor::Reset();
    }
@@ -261,7 +277,7 @@ namespace argos {
       CVector3 cTagPosition = m_cCameraToWorldTransform * c_tag.GetPosition();
       CQuaternion cTagOrientation = m_cCameraOrientation.Inverse() * c_tag.GetOrientation();
       /* transfer readings to the control interface */
-      m_tTags.emplace_back(unId, cTagPosition, cTagOrientation, cCenterPixel, m_arrTagCornerPixels);
+      m_vecTags.emplace_back(unId, cTagPosition, cTagOrientation, cCenterPixel, m_arrTagCornerPixels);
       return true;
    }
 
@@ -298,16 +314,16 @@ namespace argos {
    /****************************************/
 
    CPiPuckFrontCameraDefaultSensor::ELedState
-      CPiPuckFrontCameraDefaultSensor::DetectLed(const CVector3& c_position) {    
+      CPiPuckFrontCameraDefaultSensor::DetectLed(const CVector3& c_position) const {    
       /* c_position is the led in camera's coordinate system, 
          transfer it to global coordinate system */
       CVector3 cLedPosition(c_position);
       cLedPosition.Rotate(m_cCameraOrientation);
       cLedPosition += m_cCameraPosition;
       /* find the closest LED */
-      std::vector<SLed>::iterator itClosestLed =
-         std::min_element(std::begin(m_vecLedCache),
-                          std::end(m_vecLedCache),
+      std::vector<SLed>::const_iterator itClosestLed =
+         std::min_element(std::cbegin(m_vecLedCache),
+                          std::cend(m_vecLedCache),
                           [&cLedPosition] (const SLed& s_lhs_led, const SLed& s_rhs_led) {
          return (Distance(s_lhs_led.Position, cLedPosition) <
                  Distance(s_rhs_led.Position, cLedPosition));
@@ -335,13 +351,6 @@ namespace argos {
       else {
          return ELedState::OFF;
       }
-   }
-
-   /****************************************/
-   /****************************************/
-
-   CVector2 CPiPuckFrontCameraDefaultSensor::GetResolution() const {
-      return CAMERA_RESOLUTION;
    }
 
    /****************************************/

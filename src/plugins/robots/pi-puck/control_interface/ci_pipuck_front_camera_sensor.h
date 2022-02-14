@@ -57,36 +57,17 @@ namespace argos {
 
    public:
 
-      CCI_PiPuckFrontCameraSensor() :
-         m_bEnabled(false) {}
+      CCI_PiPuckFrontCameraSensor() {}
 
       virtual ~CCI_PiPuckFrontCameraSensor() {}
 
-      virtual void Reset() {
-         /* clear the readings */
-         m_tTags.clear();
-         /* zero the timestamp */
-         m_fTimestamp = 0.0f;
-      }
+      virtual void Init(TConfigurationNode& t_tree);
 
-      virtual void Enable() {
-         m_bEnabled = true;
-      }
+      virtual ELedState DetectLed(const CVector3& c_position) const = 0;
 
-      virtual void Disable() {
-         m_bEnabled = false;
-      }
+      virtual Real GetTimestamp() const = 0;
 
-      virtual ELedState DetectLed(const CVector3& c_position) = 0;
-
-      Real GetTimestamp() const {
-         return m_fTimestamp;
-      }
-
-      const STag::TVector& GetTags() const {
-         return m_tTags;
-      }
-
+      virtual const STag::TVector& GetTags() const = 0;
 
 #ifdef ARGOS_WITH_LUA
       virtual void CreateLuaState(lua_State* pt_lua_state);
@@ -95,20 +76,16 @@ namespace argos {
 #endif
    protected:
 
-      /* whether or not the camera sensor is enabled */
-      bool m_bEnabled;
-      /* the detected tags in the current frame */
-      STag::TVector m_tTags;
-      /* the timestamp of the current frame */
-      Real m_fTimestamp;
       /* the position, orientation, and anchor of the camera sensor */
-      static const CVector3 CAMERA_POSITION_OFFSET;
-      static const CQuaternion CAMERA_ORIENTATION_OFFSET;
-      static const CVector2 CAMERA_RESOLUTION;
-      static const CVector2 CAMERA_FOCAL_LENGTH;
-      static const CVector2 CAMERA_PRINCIPAL_POINT;
-      static const std::string CAMERA_ANCHOR;
-
+      CQuaternion m_cOrientationOffset;
+      CVector2 m_cResolution;
+      CVector2 m_cPrincipalPoint;
+      CVector2 m_cFocalLength;
+      /* constants and defaults */
+      static const CVector3 POSITION_OFFSET;
+      static const Real DEFAULT_ROTATION;
+      static const CVector2 DEFAULT_RESOLUTION;
+      static const CVector2 DEFAULT_FOCAL_LENGTH;
    };
 
 }

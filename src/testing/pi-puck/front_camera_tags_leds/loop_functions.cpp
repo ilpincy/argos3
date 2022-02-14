@@ -32,8 +32,8 @@ namespace argos {
          }
          /* try to detect an LED 2 cm left from the center of the tag. This is a bit of a hack since
             rotation is ignored, but it is sufficient for testing the simulator */
-         const CVector3& cTagPosition = cFrontCamera.GetTags()[0].Position + LED_OFFSET;
-         if(cFrontCamera.DetectLed(cTagPosition) != CCI_PiPuckFrontCameraSensor::ELedState::Q3) {
+         const CVector3& cLedPosition = cFrontCamera.GetTags()[0].Position + LED_OFFSET;
+         if(cFrontCamera.DetectLed(cLedPosition) != CCI_PiPuckFrontCameraSensor::ELedState::Q3) {
             THROW_ARGOSEXCEPTION("Incorrect LED color detected");
          }
          return true;
