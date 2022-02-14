@@ -68,12 +68,14 @@ namespace argos {
 
       virtual bool operator()(CDirectionalLEDEntity& c_led);
 
-      virtual ELedState DetectLed(const CVector3& c_position);
+      virtual ELedState DetectLed(const CVector3& c_position) const;
 
-      CVector2 GetResolution() const;
+      virtual const STag::TVector& GetTags() const {
+         return m_vecTags;
+      }
 
-      const std::vector<SLed>& GetLedCache() const {
-         return m_vecLedCache;
+      virtual Real GetTimestamp() const {
+         return m_fTimestamp;
       }
 
    private:
@@ -126,6 +128,8 @@ namespace argos {
       }};
 
       std::vector<SLed> m_vecLedCache;
+      std::vector<STag> m_vecTags;
+      Real m_fTimestamp;
 
    };
 }
