@@ -207,10 +207,8 @@ The system sensor is used to report the current time and temperature of the CPU.
 These values are available from a Lua controller and can be printed to the ARGoS log.
 ```lua
 function step()
-  for i, sensor in ipairs(robot.system)
-    log('time = ' .. system.time)
-    log('temperature = ' .. system.temperature)
-  end
+  log('time = ' .. robot.system.time)
+  log('temperature = ' .. robot.system.temperature)
 end
 ```
 
