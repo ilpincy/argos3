@@ -55,7 +55,7 @@ Note that the LEDs can still appear in the visualisation and be controlled witho
 The following section lists the sensors that are specific the Pi-Puck. There are also a few generic sensors that can be added which are discoverable by running `argos3 -q sensors` in a terminal.
 
 ### `pipuck_differential_drive`
-This sensor is designed to read back the current velocity from the wheels. It's accuracy is inheritantly tied to the implementation details of the physic model. The sensor can be added to the `actuators` section of a controller as follows:
+This sensor is designed to read back the current velocity from the wheels. It's accuracy is inheritantly tied to the implementation details of the physic model. The sensor can be added to the `sensors` section of a controller as follows:
 ```xml
 <lua_controller id="my_controller">
   <actuators />
@@ -73,6 +73,125 @@ function step()
 end
 ```
 This code will write the speeds of the wheels to the ARGoS logger.
+
+### `pipuck_front_camera`
+This sensor will detect tags and LEDs in front of the Pi-Puck's front camera. The following configuration adds this sensor to the Pi-Puck.
+```xml
+<lua_controller id="my_controller">
+  <actuators />
+  <sensors>
+    <pipuck_front_camera implementation="default"
+      rotation="0"
+      resolution="640,480"
+      principal_point="320,240"
+      focal_length="1000,1000"
+      tag_medium="tags"
+      directional_led_medium="leds"
+      show_tag_rays="false"
+      show_led_rays="false"
+      show_frustum="false" />
+  </sensors>
+  <params />
+</lua_controller>
+```
+There are many attributes that can be used to configure the front camera sensor although most of them have defaults. The only two attributes which have to be supplied for the sensor to work are the `tag_medium` and the `directional_led_medium`. These attributes specify the indices in which the camera should try and find entities. The remaining attributes are optional and default to the values specified above (note that the principal point defaults to half the resolution).
+
+| Attribute                | Description                                                                                                                      |
+|--------------------------|----------------------------------------------------------------------------------------------------------------------------------|
+| `rotation`               | Rotation of the Pi-Puck's front camera. Zero degrees of rotation has the camera rotated by -90 degrees as per the PO3030 variant |
+| `resolution`             | Resolution that the camera is running at. This only influences the pixel coordinates of the detected tags                        |
+| `principal_point`        | An intrinsic parameter of the camera sensor                                                                                      |
+| `focal_length`           | An intrinsic parameter of the camera sensor                                                                                      |
+| `tag_medium`             | The index in which tags can be found                                                                                             |
+| `directional_led_medium` | The index in which LEDs can be found                                                                                             |
+| `show_tag_rays`          | Draws the rays from the camera to the corners of a detected tag                                                                  |
+| `show_led_rays`          | Draws the rays from the camera to an LED                                                                                         |
+| `show_frustum`           | Draw the bounding frustum in which tags and LEDs can be detected                                                                 |
+
+By default the camera is disabled and needs to be enabled as per the following Lua code:
+```lua
+function init()
+  robot.front_camera.enable()
+end
+```
+The detected tags can be iterated over and printed to the ARGoS log as follows:
+```lua
+function step()
+  for i, tag in ipairs(robot.front_camera.tags) do
+    log('tag ' .. tag.id)
+    log('  position = ' .. tag.position)
+    log('  orientation = ' .. tag.orientation)
+    log('  corners')
+    for j, corner in ipairs(tag.corners) do
+      log('    ' .. corner)
+    end
+  end
+end
+```
+The type of `tag.position` is a `vector3` and its units are in meters. The type of `tag.orientation` is a `quaterion`. The type of the tag corners is `vector2` and the units are in pixels.
+
+To detect an LED, you need to specify the position where you expect the LED to be. This design choice reflects how the camera sensor for the real robot works. The function `detect_led` will return an integer in the range from 1..4 which represents which quadrant of the UV color space in which the color of LED matches. In simulation, these colors can be one of four fixed values `magenta`, `orange`, `green`, or `blue` as rough approximations for the four quadrants of the UV color space. Other colors will not be detected in simulation. The following code demonstrates detecting an LED that is 2 centimeters to the left of a detected tag (ignoring rotation).
+```lua
+function step()
+  tag = robot.front_camera.tags[1]
+  if tag ~= nil then
+    led = robot.front_camera.detect_led(tag.position - vector3(0, 0.02, 0))
+    log('led color is in quadrant ' .. led)
+  end
+end
+```
+
+### `pipuck_ground_sensor`
+This is a sensor that is capable of reading the brightness of the floor at three locations near the front of the robot.
+```xml
+<lua_controller id="my_controller">
+  <actuators />
+  <sensors>
+    <pipuck_ground_sensor implementation="default" />
+  </sensors>
+  <params />
+</lua_controller>
+```
+The following code demonstrates how to use the readings from the sensor in Lua by printing the current readings to the ARGoS log. The following code also shows how to get the position and orientation of each sensor relative to an anchor (a local coordinate system) on the robot.
+```lua
+function step()
+  for i, sensor in ipairs(robot.ground_sensors)
+    log('ground sensor ' .. i .. ':')
+    log('  reflected = ' .. sensor.reflected)
+    log('  background = ' .. sensor.background)
+    log('  transform:')
+    log('    anchor = ' .. sensor.transform.anchor)
+    log('    position = ' .. sensor.transform.position)
+    log('    orientation = ' .. sensor.transform.orientation)
+  end
+end
+```
+
+### `pipuck_rangefinders_sensor`
+The rangefinders sensor is used to detect nearby obstacles around the Pi-Puck. The following configuration demonstrates how to use this sensor in a controller.
+```xml
+<lua_controller id="my_controller">
+  <actuators />
+  <sensors>
+    <pipuck_rangefinders_sensor implementation="default" />
+  </sensors>
+  <params />
+</lua_controller>
+```
+The following code demonstrates how to use the readings from the sensor in Lua by printing the current readings to the ARGoS log. The following code also shows how to get the position and orientation of each sensor relative to an anchor (a local coordinate system) on the robot.
+```lua
+function step()
+  for i, sensor in ipairs(robot.rangefinders)
+    log('ground sensor ' .. i .. ':')
+    log('  proximity = ' .. sensor.proximity)
+    log('  illuminance = ' .. sensor.illuminance)
+    log('  transform:')
+    log('    anchor = ' .. sensor.transform.anchor)
+    log('    position = ' .. sensor.transform.position)
+    log('    orientation = ' .. sensor.transform.orientation)
+  end
+end
+```
 
 ## Actuators
 
