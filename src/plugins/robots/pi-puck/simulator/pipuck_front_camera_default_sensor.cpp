@@ -401,7 +401,8 @@ namespace argos {
                    "pipuck_front_camera", "default",
                    "Michael Allwright [allsey87@gmail.com]",
                    "1.0",
-                   "The front camera of the Pi-Puck",
-                   "Long description\n",
-                   "Usable");
+                   "The Pi-Puck front camera sensor.",
+                   "The documentation for this sensor is \e]8;;https://github.com/ilpincy/argos3/blob/master/src/plugins/robots/pi-puck/README.md#pipuck_front_camera\aavailable on Github\e]8;;\a.",
+                   "Usable"
+   );
 }

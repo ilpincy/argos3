@@ -51,8 +51,8 @@ namespace argos {
                   "pipuck_system", "default",
                   "Michael Allwright [allsey87@gmail.com]",
                   "1.0",
-                  "The pipuck system sensor.",
-                  "This sensor provides access to the state of the pipuck.",
+                  "The Pi-Puck system sensor.",
+                  "The documentation for this sensor is \e]8;;https://github.com/ilpincy/argos3/blob/master/src/plugins/robots/pi-puck/README.md#pipuck_system\aavailable on Github\e]8;;\a.",
                   "Usable"
    );
 

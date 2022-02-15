@@ -103,7 +103,7 @@ namespace argos {
                      "Michael Allwright [allsey87@gmail.com]",
                      "1.0",
                      "The Pi-Puck LEDs actuator.",
-                     "This actuator controls the LEDs of the Pi-Puck.",
+                     "The documentation for this actuator is \e]8;;https://github.com/ilpincy/argos3/blob/master/src/plugins/robots/pi-puck/README.md#pipuck_leds\aavailable on Github\e]8;;\a.",
                      "Usable"
    );
 

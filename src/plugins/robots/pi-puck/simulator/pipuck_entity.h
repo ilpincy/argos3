@@ -32,16 +32,7 @@ namespace argos {
          m_pcControllableEntity(nullptr),
          m_pcEmbodiedEntity(nullptr),
          m_pcDifferentialDriveEntity(nullptr),
-         m_pcSimpleRadioEquippedEntity(nullptr),
-         m_bDebug(false) {}
-
-      CPiPuckEntity(const std::string& str_id,
-                    const std::string& str_controller_id,
-                    const CVector3& c_position,
-                    const CQuaternion& c_orientation,
-                    bool b_debug = false,
-                    const std::string& str_wifi_medium = "",
-                    const std::string& str_led_medium = "");
+         m_pcSimpleRadioEquippedEntity(nullptr) {}
 
       virtual ~CPiPuckEntity() {}
 
@@ -87,10 +78,6 @@ namespace argos {
          return *m_pcSimpleRadioEquippedEntity;
       }
 
-      inline bool IsDebug() const {
-         return m_bDebug;
-      }
-
       virtual void UpdateComponents();
 
    private:
@@ -100,8 +87,6 @@ namespace argos {
       CEmbodiedEntity*                m_pcEmbodiedEntity;
       CPiPuckDifferentialDriveEntity* m_pcDifferentialDriveEntity;
       CSimpleRadioEquippedEntity*     m_pcSimpleRadioEquippedEntity;
-
-      bool m_bDebug;
 
       static const CVector3 WIFI_OFFSET_POSITION;
       static const Real     WIFI_TRANSMISSION_RANGE;
