@@ -110,7 +110,7 @@ namespace argos {
                   "Michael Allwright [allsey87@gmail.com]",
                   "1.0",
                   "The Pi-Puck rangefinders sensor.",
-                  "This sensor measures the distance to nearby obstacles.",
+                  "The documentation for this sensor is \e]8;;https://github.com/ilpincy/argos3/blob/master/src/plugins/robots/pi-puck/README.md#pipuck_rangefinders\aavailable on Github\e]8;;\a.",
                   "Usable"
    );
    

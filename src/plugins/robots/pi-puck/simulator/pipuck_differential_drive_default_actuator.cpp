@@ -78,8 +78,8 @@ namespace argos {
                      "pipuck_differential_drive", "default",
                      "Michael Allwright [allsey87@gmail.com]",
                      "1.0",
-                     "The pipuck differential drive actuator.",
-                     "This actuator controls the differential drive of the pipuck.",
+                     "The Pi-Puck differential drive actuator.",
+                     "The documentation for this actuator is \e]8;;https://github.com/ilpincy/argos3/blob/master/src/plugins/robots/pi-puck/README.md#pipuck_differential_drive-1\aavailable on Github\e]8;;\a.",
                      "Usable"
    );
 

@@ -65,7 +65,7 @@ namespace argos {
                    "Michael Allwright [allsey87@gmail.com]",
                    "1.0",
                    "The pipuck IMU sensor.",
-                   "This sensor provides readings from the Pi-Puck's IMU.",
+                   "This sensor provides readings from the IMU on the E-Puck2.",
                    "Incomplete"
    );
 
