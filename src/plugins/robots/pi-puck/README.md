@@ -30,22 +30,49 @@ In the example above, we referenced a controller called `my_controller`, which m
 This controller defines a controller written in Lua, whose script can be passed using the `script` attribute in the `params` tag. The controller cannot do much at the moment since it does not declare any sensors or actuators.
 
 ### Physics Engines
-To create in Pi-Puck in ARGoS, it must be hosted by either the `dynamics2d` or `dynamics3d` physics engine plugins. The `dynamics2d` model is faster since it essentially models a Pi-Puck has a circle in the XY plane. The `dynamics3d` model is somewhat slower but more realistic. This model actually simulates the wheels of the Pi-Puck as cylinderical bodies that drive the Pi-Puck forwards as a result of the friction between the wheels and the floor of the arena. You can use either physics engine, however, entities in one physics engine will not collide with entities from another. The only exception to this rule are static objects such as the walls of the arena which can be modelled by both engines at the same time.
+To create in Pi-Puck in ARGoS, it must be hosted by either the `dynamics2d` or `dynamics3d` physics engine plugins. The `dynamics2d` model is faster since it essentially models a Pi-Puck has a circle in the XY plane. The `dynamics3d` model is somewhat slower but more realistic. This model actually simulates the wheels of the Pi-Puck as cylinderical bodies that drive the Pi-Puck forwards as a result of the friction between the wheels and the floor of the arena. You can use either physics engine, however, entities in one physics engine will not collide with entities from another. The only exception to this rule are static objects such as the walls of the arena which can be hosted by multiple engines at the same time.
 
 ### Media
-Media in ARGoS are indices in which different entities can be looked up based on their current location. These indices predominately enable the sensors of a robot to look up entities of interest. For example, by placing tags or directional LEDs in their respective indices, they can be detected by a camera on another robot.
+Media in ARGoS are the indices in which different entities can be looked up based on their current location. These indices predominately enable the sensors of a robot to look up entities of interest. For example, by placing tags or LEDs in their respective indices, they can be detected by a camera on another robot.
 
-The Pi-Puck's simulation model in ARGoS contains LEDs and a simple radio which need to be assigned to a medium if they are to be detected by another robot's camera or used to send and receive messages. When declaring a Pi-Puck in the arena tag, these mediums can be configured as follows:
-
+The Pi-Puck's simulation model in ARGoS contains LEDs and a crude approximation of wifi whereas messages are simply broadcasted to all nearby robots. To enable the Pi-Puck's LEDs to be seen by another robot, the attribute `led_medium` must be set to a `directional_led` medium declared in the `media` section of the experiment configuration file. Likewise, to enable the sending of receiving of the messages, the attribute `wifi_medium` must be set to a `simple_radio` medium. The following XML provides an example of the required configuration:
 ```xml
+<arena size="1, 1, 1" positional_index="grid" positional_grid_size="1,1,1">
+  <pipuck id="pipuck" led_medium="leds" wifi_medium="wifi">
+    <body position="0,0,0" orientation="0,0,0"/>
+    <controller config="my_controller"/>
+  </pipuck>
+</arena>
 
+<media>
+  <directional_led id="leds" index="grid" grid_size="5,5,5" />
+  <simple_radio id="wifi" index="grid" grid_size="5,5,5" />
+</media>
 ```
-
-
-
+Note that the LEDs can still appear in the visualisation and be controlled without `led_medium` being specified. By contrast, not specifying `wifi_medium` will result in the simple radio (used for approximating wifi) not being added to the robot.
 
 ## Sensors
+The following section lists the sensors that are specific the Pi-Puck. There are also a few generic sensors that can be added which are discoverable by running `argos3 -q sensors` in a terminal.
 
+### `pipuck_differential_drive`
+This sensor is designed to read back the current velocity from the wheels. It's accuracy is inheritantly tied to the implementation details of the physic model. The sensor can be added to the `actuators` section of a controller as follows:
+```xml
+<lua_controller id="my_controller">
+  <actuators />
+  <sensors>
+    <pipuck_differential_drive implementation="default" />
+  </sensors>
+  <params />
+</lua_controller>
+```
+This configuration shows the sensor being added to a Lua controller. With this configuration, the current fowards wheel velocities in centimeters per second can be read from a controller as follows:
+```lua
+function step()
+  log('left speed = ' .. robot.differential_drive.encoders.left)
+  log('right speed = ' .. robot.differential_drive.encoders.right)
+end
+```
+This code will write the speeds of the wheels to the ARGoS logger.
 
 ## Actuators
 
