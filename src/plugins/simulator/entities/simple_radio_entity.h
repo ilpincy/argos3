@@ -18,6 +18,7 @@ namespace argos {
 #include <argos3/core/utility/datatypes/byte_array.h>
 #include <argos3/core/simulator/space/positional_indices/space_hash.h>
 #include <argos3/core/simulator/space/positional_indices/grid.h>
+#include <mutex>
 
 namespace argos {
 
@@ -75,7 +76,9 @@ namespace argos {
        * @see GetMessages()
        */
       inline void ReceiveMessage(const CVector3& c_origin, const CByteArray& c_message) {
+         m_vecMessages_guard.lock();
          m_vecMessages.emplace_back(c_origin, c_message);
+         m_vecMessages_guard.unlock();
       }
 
       /**
@@ -138,6 +141,7 @@ namespace argos {
       CSimpleRadioMedium* m_pcMedium;
       Real m_fRange;
       std::vector<std::pair<CVector3, CByteArray> > m_vecMessages;
+      std::mutex m_vecMessages_guard;
 
    };
 
