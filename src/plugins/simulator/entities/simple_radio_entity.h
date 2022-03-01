@@ -76,9 +76,8 @@ namespace argos {
        * @see GetMessages()
        */
       inline void ReceiveMessage(const CVector3& c_origin, const CByteArray& c_message) {
-         m_vecMessages_guard.lock();
+         std::unique_lock<std::mutex> cLock(m_mtxMessages);
          m_vecMessages.emplace_back(c_origin, c_message);
-         m_vecMessages_guard.unlock();
       }
 
       /**
@@ -141,7 +140,7 @@ namespace argos {
       CSimpleRadioMedium* m_pcMedium;
       Real m_fRange;
       std::vector<std::pair<CVector3, CByteArray> > m_vecMessages;
-      std::mutex m_vecMessages_guard;
+      std::mutex m_mtxMessages;
 
    };
 
