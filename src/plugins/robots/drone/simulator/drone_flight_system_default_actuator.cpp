@@ -60,7 +60,7 @@ namespace argos {
                      "Michael Allwright [allsey87@gmail.com]",
                      "1.0",
                      "The drone flight system actuator.",
-                     "This actuator simulates the interface to a PX4 flight controller.",
+                     "The documentation for this actuator is \e]8;;https://github.com/ilpincy/argos3/blob/master/src/plugins/robots/drone/README.md#drone_flight_system-1\aavailable on Github\e]8;;\a.",
                      "Usable"
    );
 

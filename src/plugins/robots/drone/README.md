@@ -195,7 +195,7 @@ This actuator exports the following functions to Lua:
 
 ```lua
 function step()
-  -- drive forwards at 5 centimeters per second
+  -- take off and hover at one meter above the ground
   if robot.flight_system.ready() then
     robot.flight_system.set_offboard_mode(true)
     robot.flight_system.set_armed(true)
