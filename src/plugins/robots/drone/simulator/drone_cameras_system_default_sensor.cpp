@@ -64,8 +64,10 @@ namespace argos {
          GetNodeAttributeOrDefault(t_tree, "show_frustum", m_bShowFrustum, m_bShowFrustum);
          GetNodeAttributeOrDefault(t_tree, "show_tag_rays", m_bShowTagRays, m_bShowTagRays);
          /* get index */
+         std::string strTagMedium;
+         GetNodeAttribute(t_tree, "tag_medium", strTagMedium);
          m_pcTagIndex =
-            &(CSimulator::GetInstance().GetMedium<CTagMedium>("tags").GetIndex());
+            &(CSimulator::GetInstance().GetMedium<CTagMedium>(strTagMedium).GetIndex());
       }
       catch(CARGoSException& ex) {
          THROW_ARGOSEXCEPTION_NESTED("Error initializing the drone cameras system sensor", ex);
