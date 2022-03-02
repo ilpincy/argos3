@@ -62,7 +62,7 @@ namespace argos {
                   "Michael Allwright [allsey87@gmail.com]",
                   "1.0",
                   "The drone system sensor.",
-                  "This sensor provides access to the state of the drone.",
+                  "The documentation for this sensor is \e]8;;https://github.com/ilpincy/argos3/blob/master/src/plugins/robots/drone/README.md#drone_system\aavailable on Github\e]8;;\a.",
                   "Usable"
    );
 

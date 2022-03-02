@@ -1,13 +1,8 @@
-# ARGoS Support
+# ARGoS Plugin for the Pi-Puck mobile robot
 
-The Pi-Puck mobile robot is supported in the ARGoS simulator.[^1] The plugin in the main repository defines the control interface and provides an implementation of the Pi-Puck in simulation. The implementation provides a visualization for the `qt-opengl` plugin and models for the `dynamics2d` and `dynamics3d` physics engine plugins.
+The Pi-Puck mobile robot is supported in the [ARGoS simulator](https://argos-sim.info/). The plugin in the [ARGoS repository](https://github.com/ilpincy/argos3/tree/master/src/plugins/robots/pi-puck) defines the control interface and provides an implementation of the Pi-Puck in simulation. This implementation provides a visualization for the `qt-opengl` plugin and models for the `dynamics2d` and `dynamics3d` physics engine plugins.
 
-[^1]: The ARGoS website `https://argos-sim.info/`.
-
-The control interface defined in the main repository is also used on the real robot. The plugin for the real robot is available in the argos3-pipuck repository[^2] on the IRIDIA-ULB Github organization. This plugin can compiled as is, however, it is advisable to instead follow the instructions in the meta-pipuck repository,[^3] which provides a step-by-step guide on how to set up a Docker image that builds a complete, bootable, SD card image for the Pi-Puck and that also includes support for ARGoS.
-
-[^2]: Repository for ARGoS3 Pi-Puck: `https://github.com/iridia-ulb/argos3-pipuck`
-[^3]: Repository for the Pi-Puck's Yocto Layer: `https://github.com/iridia-ulb/meta-pipuck`
+The control interface defined in the ARGoS repository is also used on the real robot. The plugin for the real robot is available in the [argos3-pipuck repository](https://github.com/iridia-ulb/argos3-pipuck). This plugin can compiled as is, however, it is advisable to instead follow the instructions in the [meta-pipuck repository](https://github.com/iridia-ulb/meta-pipuck), which provides a step-by-step guide on how to set up a Docker image that builds a complete, bootable, SD card image for the Pi-Puck that includes support for ARGoS.
 
 ## Usage
 A Pi-Puck can be added to the ARGoS simulator by adding a `pipuck` tag under the `arena` section of the experiment configuration file as follows:
@@ -27,6 +22,7 @@ In the example above, we referenced a controller called `my_controller`, which m
   <params />
 </lua_controller>
 ```
+
 This controller defines a controller written in Lua, whose script can be passed using the `script` attribute in the `params` tag. The controller cannot do much at the moment since it does not declare any sensors or actuators.
 
 ### Physics Engines
@@ -49,6 +45,7 @@ The Pi-Puck's simulation model in ARGoS contains LEDs and a crude approximation 
   <simple_radio id="wifi" index="grid" grid_size="5,5,5" />
 </media>
 ```
+
 Note that the LEDs can still appear in the visualization and be controlled without `led_medium` being specified. By contrast, not specifying `wifi_medium` will result in the simple radio (used for approximating wifi) not being added to the robot.
 
 ## Sensors
@@ -65,6 +62,7 @@ This sensor is designed to read back the current velocity from the wheels. It's 
   <params />
 </lua_controller>
 ```
+
 This configuration shows the sensor being added to a Lua controller. With this configuration, the current forwards wheel velocities in centimeters per second can be read from a controller as follows:
 ```lua
 function step()
@@ -72,6 +70,7 @@ function step()
   log('right speed = ' .. robot.differential_drive.encoders.right)
 end
 ```
+
 This code will write the speeds of the wheels to the ARGoS logger.
 
 ### `pipuck_front_camera`
@@ -94,6 +93,7 @@ This sensor will detect tags and LEDs in front of the Pi-Puck's front camera. Th
   <params />
 </lua_controller>
 ```
+
 There are many attributes that can be used to configure the front camera sensor although most of them have defaults. The only two attributes which have to be supplied for the sensor to work are the `tag_medium` and the `directional_led_medium`. These attributes specify the indices in which the camera should try and find entities. The remaining attributes are optional and default to the values specified above (note that the principal point defaults to half the resolution).
 
 | Attribute                | Description                                                                                                                      |
@@ -114,6 +114,7 @@ function init()
   robot.front_camera.enable()
 end
 ```
+
 The detected tags can be iterated over and printed to the ARGoS log as follows:
 ```lua
 function step()
@@ -128,6 +129,7 @@ function step()
   end
 end
 ```
+
 The type of `tag.position` is a `vector3` and its units are in meters. The type of `tag.orientation` is a `quaternion`. The type of the tag corners is `vector2` and the units are in pixels.
 
 To detect an LED, you need to specify the position where you expect the LED to be. This design choice reflects how the camera sensor for the real robot works. The function `detect_led` will return an integer in the range from 1..4 which represents which quadrant of the UV color space in which the color of LED matches. In simulation, these colors can be one of four fixed values `magenta`, `orange`, `green`, or `blue` as rough approximations for the four quadrants of the UV color space. Other colors will not be detected in simulation. The following code demonstrates detecting an LED that is 2 centimeters to the left of a detected tag (ignoring rotation).
@@ -152,6 +154,7 @@ This is a sensor that is capable of reading the brightness of the floor at three
   <params />
 </lua_controller>
 ```
+
 The following code demonstrates how to use the readings from the sensor in Lua by printing the current readings to the ARGoS log. The following code also shows how to get the position and orientation of each sensor relative to an anchor (a local coordinate system) on the robot.
 ```lua
 function step()
@@ -178,11 +181,12 @@ The rangefinders sensor is used to detect nearby obstacles around the Pi-Puck. T
   <params />
 </lua_controller>
 ```
+
 The following code demonstrates how to use the readings from the sensor in Lua by printing the current readings to the ARGoS log. The following code also shows how to get the position and orientation of each sensor relative to an anchor (a local coordinate system) on the robot.
 ```lua
 function step()
   for i, sensor in ipairs(robot.rangefinders)
-    log('ground sensor ' .. i .. ':')
+    log('rangefinder ' .. i .. ':')
     log('  proximity = ' .. sensor.proximity)
     log('  illuminance = ' .. sensor.illuminance)
     log('  transform:')
@@ -204,6 +208,7 @@ The system sensor is used to report the current time and temperature of the CPU.
   <params />
 </lua_controller>
 ```
+
 These values are available from a Lua controller and can be printed to the ARGoS log.
 ```lua
 function step()
@@ -226,6 +231,7 @@ The differential drive actuator controls the differential drive of the Pi-Puck a
   <params />
 </lua_controller>
 ```
+
 The actuator exports a single function in Lua called `set_linear_velocity` which takes two arguments: the target forwards velocity of the left and right wheel in centimeters per second.
 
 ```lua
@@ -246,6 +252,7 @@ The LED actuator turns the LEDs of Pi-Puck off and on. It can be added to a cont
   <params />
 </lua_controller>
 ```
+
 In the Lua, the following functions are exported by the actuator:
 
 | Function             | Arguments                                                    |
@@ -262,3 +269,4 @@ function step()
   robot.leds.set_ring_led_index(5, true)
 end
 ```
+
