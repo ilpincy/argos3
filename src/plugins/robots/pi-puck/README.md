@@ -1,4 +1,4 @@
-# ARGoS Plugin for the Pi-Puck mobile robot
+# ARGoS Plug-in for the Pi-Puck mobile robot
 
 The Pi-Puck mobile robot is supported in the [ARGoS simulator](https://argos-sim.info/). The plugin in the [ARGoS repository](https://github.com/ilpincy/argos3/tree/master/src/plugins/robots/pi-puck) defines the control interface and provides an implementation of the Pi-Puck in simulation. This implementation provides a visualization for the `qt-opengl` plugin and models for the `dynamics2d` and `dynamics3d` physics engine plugins.
 

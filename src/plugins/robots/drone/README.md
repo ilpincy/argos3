@@ -1,4 +1,4 @@
-# ARGoS Plugin for the IRIDIA drone
+# ARGoS Plug-in for the IRIDIA drone
 
 The IRIDIA drone is supported in the [ARGoS simulator](https://argos-sim.info/). The plugin in the [ARGoS repository](https://github.com/ilpincy/argos3/tree/master/src/plugins/robots/drone) defines the control interface and provides an implementation of the drone in simulation. This implementation provides a visualization for the `qt-opengl` plugin and a model for the `pointmass3d` physics engine plugin.
 
@@ -26,7 +26,7 @@ In the example above, we referenced a controller called `my_controller`, which m
 This controller defines a controller written in Lua, whose script can be passed using the `script` attribute in the `params` tag. The controller cannot do much at the moment since it does not declare any sensors or actuators.
 
 ### Physics Engines
-To instansiate a drone in ARGoS, an instance of the Point-mass 3D physics engine must be declared. It should be noted that this engine does not support collisions with other objects in the simulation.
+To instantiate a drone in ARGoS, an instance of the Point-mass 3D physics engine must be declared. It should be noted that this engine does not support collisions with other objects in the simulation.
 
 ### Media
 Media in ARGoS are the indices in which different entities can be looked up based on their current location. These indices predominately enable the sensors of a robot to look up entities of interest. For example, by placing tags or LEDs in their respective indices, they can be detected by a camera on another robot.
@@ -96,7 +96,7 @@ end
 The type of `tag.position` is a `vector3` and its units are in meters. The type of `tag.orientation` is a `quaternion`. The type of the tag corners is `vector2` and the units are in pixels.
 
 ### `drone_flight_system`
-This sensor represents in the input from a Pixhawk device. The sensor can be added to the `sensors` section of a controller as follows:
+This sensor represents the input from a Pixhawk device. The sensor can be added to the `sensors` section of a controller as follows:
 ```xml
 <lua_controller id="my_controller">
   <actuators />
@@ -205,7 +205,7 @@ end
 ```
 
 ### `drone_leds`
-The LED actuator sets the colors of LEDs on drone. It can be added to a controller as follows:
+The LED actuator sets the colors of LEDs on the drone. It can be added to a controller as follows:
 ```xml
 <lua_controller id="my_controller">
   <actuators>

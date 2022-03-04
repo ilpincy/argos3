@@ -192,8 +192,8 @@ namespace argos {
                   "builderbot_rangefinders", "default",
                   "Michael Allwright [allsey87@gmail.com]",
                   "1.0",
-                  "The builderbot differential drive sensor.",
-                  "This sensor monitors the differential drive of the builderbot.",
+                  "The builderbot rangefinders sensor.",
+                  "The documentation for this sensor is \e]8;;https://github.com/ilpincy/argos3/blob/master/src/plugins/robots/builderbot/README.md#builderbot_rangefinders\aavailable on Github\e]8;;\a.",
                   "Usable"
    );
    
