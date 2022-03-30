@@ -115,8 +115,8 @@ namespace argos {
                    "pipuck_ground", "default",
                    "Michael Allwright [allsey87@gmail.com]",
                    "1.0",
-                   "The pipuck ground sensor.",
-                   "This sensor measures the brightness of the floor under the Pi-Puck.",
+                   "The Pi-Puck ground sensor.",
+                   "The documentation for this sensor is \e]8;;https://github.com/ilpincy/argos3/blob/master/src/plugins/robots/pi-puck/README.md#pipuck_ground\aavailable on Github\e]8;;\a.",
                    "Usable"
    );
 

@@ -121,111 +121,12 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   CQTOpenGLPiPuckDebug::CQTOpenGLPiPuckDebug() {
-      m_unDisplayList = glGenLists(4);
-      /* references to the display lists */
-      m_unCylinderList  = m_unDisplayList;
-      /* make cylinder list */
-      glNewList(m_unCylinderList, GL_COMPILE);
-      MakeCylinder();
-      glEndList();
-      /* generate the items to draw list */
-      m_arrItemsToDraw = {
-         std::make_tuple("body", m_unCylinderList, m_cBodyScaling),
-         std::make_tuple("left_wheel", m_unCylinderList, m_cWheelScaling),
-         std::make_tuple("right_wheel", m_unCylinderList, m_cWheelScaling),
-      };
-   }
-
-   /****************************************/
-   /****************************************/
-
-   CQTOpenGLPiPuckDebug::~CQTOpenGLPiPuckDebug() {
-      glDeleteLists(m_unDisplayList, 4);
-   }
-
-   /****************************************/
-   /****************************************/
-
-   void CQTOpenGLPiPuckDebug::Draw(const CPiPuckEntity& c_entity) {
-      /* set materials */
-      glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, m_arrDefaultSpecular.data());
-      glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, m_arrDefaultShininess.data());
-      glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, m_arrDefaultEmission.data());
-      glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, m_arrDefaultColor.data());
-      /* draw bodies */
-      for(const std::tuple<std::string, GLuint, CVector3>& c_item : m_arrItemsToDraw) {
-         const SAnchor& sAnchor = 
-            c_entity.GetEmbodiedEntity().GetAnchor(std::get<std::string>(c_item));
-         const CVector3& cPosition = sAnchor.Position;
-         const CQuaternion& cOrientation = sAnchor.Orientation;
-         CRadians cZAngle, cYAngle, cXAngle;
-         cOrientation.ToEulerAngles(cZAngle, cYAngle, cXAngle);
-         glPushMatrix();
-         glTranslatef(cPosition.GetX(), cPosition.GetY(), cPosition.GetZ());
-         glRotatef(ToDegrees(cXAngle).GetValue(), 1.0f, 0.0f, 0.0f);
-         glRotatef(ToDegrees(cYAngle).GetValue(), 0.0f, 1.0f, 0.0f);
-         glRotatef(ToDegrees(cZAngle).GetValue(), 0.0f, 0.0f, 1.0f);
-         const CVector3& cScaling = std::get<CVector3>(c_item);
-         glScalef(cScaling.GetX(), cScaling.GetY(), cScaling.GetZ());
-         glCallList(std::get<GLuint>(c_item));
-         glPopMatrix();
-      }
-   }
-
-   /****************************************/
-   /****************************************/
-
-   void CQTOpenGLPiPuckDebug::MakeCylinder() {
-      /* side faces */
-      CVector2 cVertex(0.5f, 0.0f);
-      CRadians cAngle(CRadians::TWO_PI / m_unVertices);
-      glEnable(GL_NORMALIZE);
-      glBegin(GL_QUAD_STRIP);
-      for(GLuint i = 0; i <= m_unVertices; i++) {
-         glNormal3f(cVertex.GetX(), cVertex.GetY(), 0.0f);
-         glVertex3f(cVertex.GetX(), cVertex.GetY(), 1.0f);
-         glVertex3f(cVertex.GetX(), cVertex.GetY(), 0.0f);
-         cVertex.Rotate(cAngle);
-      }
-      glEnd();
-      /* Top disk */
-      cVertex.Set(0.5f, 0.0f);
-      glBegin(GL_POLYGON);
-      glNormal3f(0.0f, 0.0f, 1.0f);
-      for(GLuint i = 0; i <= m_unVertices; i++) {
-         glVertex3f(cVertex.GetX(), cVertex.GetY(), 1.0f);
-         cVertex.Rotate(cAngle);
-      }
-      glEnd();
-      /* Bottom disk */
-      cVertex.Set(0.5f, 0.0f);
-      cAngle = -cAngle;
-      glBegin(GL_POLYGON);
-      glNormal3f(0.0f, 0.0f, -1.0f);
-      for(GLuint i = 0; i <= m_unVertices; i++) {
-         glVertex3f(cVertex.GetX(), cVertex.GetY(), 0.0f);
-         cVertex.Rotate(cAngle);
-      }
-      glEnd();
-      glDisable(GL_NORMALIZE);
-   }
-
-   /****************************************/
-   /****************************************/
-
    class CQTOpenGLOperationDrawPiPuckNormal : public CQTOpenGLOperationDrawNormal {
    public:
       void ApplyTo(CQTOpenGLWidget& c_visualization,
                    CPiPuckEntity& c_entity) {
-         if(c_entity.IsDebug()) {
-            static CQTOpenGLPiPuckDebug m_cDebugModel;
-            m_cDebugModel.Draw(c_entity);
-         }
-         else {
-            static CQTOpenGLPiPuck m_cModel;
-            m_cModel.Draw(c_entity);
-         }
+         static CQTOpenGLPiPuck m_cModel;
+         m_cModel.Draw(c_entity);
          c_visualization.DrawRays(c_entity.GetControllableEntity());
       }
    };
@@ -257,17 +158,6 @@ namespace argos {
    const std::array<GLfloat, 4> CQTOpenGLPiPuck::m_arrBodyLedOnAmbientDiffuse   {0.27f, 0.83f, 0.27f, 0.7f};
    const std::array<GLfloat, 4> CQTOpenGLPiPuck::m_arrFrontLedOffAmbientDiffuse {0.75f, 0.75f, 0.75f, 0.8f};
    const std::array<GLfloat, 4> CQTOpenGLPiPuck::m_arrFrontLedOnAmbientDiffuse  {1.00f, 0.00f, 0.00f, 0.8f};
-
-   /****************************************/
-   /****************************************/
-
-   const CVector3 CQTOpenGLPiPuckDebug::m_cBodyScaling                          {0.0724, 0.0724, 0.0472};
-   const CVector3 CQTOpenGLPiPuckDebug::m_cWheelScaling                         {0.0425, 0.0425, 0.003};
-
-   const std::array<GLfloat, 4> CQTOpenGLPiPuckDebug::m_arrDefaultColor         {0.5f, 0.5f, 0.5f, 1.0f};
-   const std::array<GLfloat, 4> CQTOpenGLPiPuckDebug::m_arrDefaultSpecular      {0.0f, 0.0f, 0.0f, 1.0f};
-   const std::array<GLfloat, 4> CQTOpenGLPiPuckDebug::m_arrDefaultEmission      {0.0f, 0.0f, 0.0f, 1.0f};
-   const std::array<GLfloat, 1> CQTOpenGLPiPuckDebug::m_arrDefaultShininess     {0.0f};
 
    /****************************************/
    /****************************************/

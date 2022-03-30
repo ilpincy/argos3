@@ -90,7 +90,7 @@ namespace argos {
                      "Michael Allwright [allsey87@gmail.com]",
                      "1.0",
                      "The BuilderBot LEDs actuator.",
-                     "This actuator controls the LEDs of the BuilderBot.",
+                     "The documentation for this actuator is \e]8;;https://github.com/ilpincy/argos3/blob/master/src/plugins/robots/builderbot/README.md#builderbot_leds\aavailable on Github\e]8;;\a.",
                      "Usable"
    );
 

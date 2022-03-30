@@ -68,12 +68,12 @@ namespace argos {
    /****************************************/
 
    REGISTER_SENSOR(CPiPuckDifferentialDriveDefaultSensor,
-                  "pipuck_differential_drive", "default",
-                  "Michael Allwright [allsey87@gmail.com]",
-                  "1.0",
-                  "The pipuck differential drive sensor.",
-                  "This sensor monitors the differential drive of the pipuck.",
-                  "Usable"
+                     "pipuck_differential_drive", "default",
+                     "Michael Allwright [allsey87@gmail.com]",
+                     "1.0",
+                     "The Pi-Puck differential drive sensor.",
+                     "The documentation for this sensor is \e]8;;https://github.com/ilpincy/argos3/blob/master/src/plugins/robots/pi-puck/README.md#pipuck_differential_drive\aavailable on Github\e]8;;\a.",
+                     "Usable"
    );
 
    /****************************************/

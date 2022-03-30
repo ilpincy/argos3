@@ -438,7 +438,7 @@ namespace argos {
                    "builderbot_camera_system", "default",
                    "Michael Allwright [allsey87@gmail.com]",
                    "1.0",
-                   "A generic multi-camera sensor capable of running various algorithms",
-                   "Long description\n",
+                   "A camera sensor capable of detecting tags and LEDs",
+                   "The documentation for this sensor is \e]8;;https://github.com/ilpincy/argos3/blob/master/src/plugins/robots/builderbot/README.md#builderbot_camera_system\aavailable on Github\e]8;;\a.",
                    "Usable");
 }
