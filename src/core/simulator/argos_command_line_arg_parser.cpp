@@ -101,6 +101,8 @@ namespace argos {
          }
          m_pcInitLogStream = LOG.GetStream().rdbuf();
          LOG.GetStream().rdbuf(m_cLogFile.rdbuf());
+         /* Redirect stdout (different than std::cout!) */
+         std::freopen(m_strLogFileName.c_str(), "w", stdout);
       }
       if(m_strLogErrFileName != "") {
          LOGERR.DisableColoredOutput();
@@ -110,7 +112,13 @@ namespace argos {
          }
          m_pcInitLogErrStream = LOGERR.GetStream().rdbuf();
          LOGERR.GetStream().rdbuf(m_cLogErrFile.rdbuf());
+         /*
+          * Redirect stderr (different than std::cerr!). Exceptions print to
+          * here when uncaught, so we need to capture it too.
+          */
+         std::freopen(m_strLogErrFileName.c_str(), "w", stderr);
       }
+
 
       /* Check that either -h, -v, -c or -q was passed (strictly one of them) */
       UInt32 nOptionsOn = 0;
