@@ -374,6 +374,7 @@ namespace argos {
    private:
 
       void InitFramework(TConfigurationNode& t_tree);
+      void InitFrameworkSystem(TConfigurationNode& t_tree);
       void InitLoopFunctions(TConfigurationNode& t_tree);
       void InitControllers(TConfigurationNode& t_tree);
       void InitSpace(TConfigurationNode& t_tree);

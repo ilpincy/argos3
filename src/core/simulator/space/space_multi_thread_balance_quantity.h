@@ -7,12 +7,12 @@
 #ifndef SPACE_MULTI_THREAD_BALANCE_QUANTITY_H
 #define SPACE_MULTI_THREAD_BALANCE_QUANTITY_H
 
-#include <argos3/core/simulator/space/space.h>
+#include <argos3/core/simulator/space/space_multi_thread.h>
 #include <pthread.h>
 
 namespace argos {
 
-   class CSpaceMultiThreadBalanceQuantity : public CSpace {
+   class CSpaceMultiThreadBalanceQuantity : public CSpaceMultiThread {
 
       /****************************************/
       /****************************************/
@@ -36,9 +36,6 @@ namespace argos {
 
       /** Data structure needed to launch the threads */
       SUpdateThreadData** m_psUpdateThreadData;
-
-      /** The update threads */
-      pthread_t* m_ptUpdateThreads;
 
       /** Update thread related variables */
       UInt32 m_unSenseControlStepPhaseDoneCounter;
@@ -67,7 +64,8 @@ namespace argos {
 
    public:
 
-      CSpaceMultiThreadBalanceQuantity();
+      CSpaceMultiThreadBalanceQuantity(UInt32 un_n_threads,
+                                       bool b_pin_threads_to_cores);
       virtual ~CSpaceMultiThreadBalanceQuantity() {}
 
       virtual void Init(TConfigurationNode& t_tree);
