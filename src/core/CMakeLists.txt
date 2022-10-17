@@ -109,6 +109,7 @@ set(ARGOS3_HEADERS_SIMULATOR_SPACE
   simulator/space/space.h
   simulator/space/space_multi_thread_balance_length.h
   simulator/space/space_multi_thread_balance_quantity.h
+  simulator/space/space_multi_thread.h
   simulator/space/space_no_threads.h)
 # argos3/core/wrappers/lua
 set(ARGOS3_HEADERS_WRAPPERS_LUA
@@ -197,6 +198,7 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
     simulator/space/space.cpp
     simulator/space/space_multi_thread_balance_length.cpp
     simulator/space/space_multi_thread_balance_quantity.cpp
+    simulator/space/space_multi_thread.cpp
     simulator/space/space_no_threads.cpp)
 else(ARGOS_BUILD_FOR_SIMULATOR)
   # Real-robot only code

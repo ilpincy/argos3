@@ -15,15 +15,16 @@ namespace argos {
    class CSpace;
 }
 
-#include <argos3/core/simulator/space/space.h>
+#include <argos3/core/simulator/space/space_multi_thread.h>
 
 namespace argos {
 
-   class CSpaceMultiThreadBalanceLength : public CSpace {
+   class CSpaceMultiThreadBalanceLength : public CSpaceMultiThread {
 
    public:
 
-      CSpaceMultiThreadBalanceLength() {}
+      CSpaceMultiThreadBalanceLength(UInt32 un_n_threads,
+                                     bool b_pin_threads_to_cores);
       virtual ~CSpaceMultiThreadBalanceLength() {}
 
       virtual void Init(TConfigurationNode& t_tree);
@@ -56,8 +57,6 @@ namespace argos {
             Space(pc_space) {}
       };
 
-      /** The slave thread array */
-      pthread_t* m_ptThreads;
 
       /** Data structure needed to launch the threads */
       SThreadLaunchData** m_psThreadData;
