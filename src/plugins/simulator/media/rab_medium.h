@@ -58,7 +58,7 @@ namespace argos {
       /** Defines the routing table */
       typedef unordered_map<ssize_t, CSet<CRABEquippedEntity*,SEntityComparator> > TRoutingTable;
 
-      /** The routing table, that associates each RAB with the RABs that can communicate with it */
+      /** The routing table, that associates each RAB with the RABs that can send a message to it */
       TRoutingTable m_tRoutingTable;
 
       /** A positional index for the RAB entities */
