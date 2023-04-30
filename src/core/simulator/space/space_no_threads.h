@@ -23,7 +23,7 @@ namespace argos {
 
    public:
 
-      CSpaceNoThreads() {}
+      CSpaceNoThreads();
       virtual ~CSpaceNoThreads() {}
 
       virtual void UpdateControllableEntitiesAct();

@@ -35,7 +35,6 @@ namespace argos {
       m_pcLoopFunctions(nullptr),
       m_unMaxSimulationClock(0),
       m_bWasRandomSeedSet(false),
-      m_unThreads(0),
       m_pcProfiler(nullptr),
       m_bHumanReadableProfile(true),
       m_bRealTimeClock(false),
@@ -305,42 +304,8 @@ namespace argos {
 
    void CSimulator::InitFramework(TConfigurationNode& t_tree) {
       try {
-         /* Parse the 'system' node */
-         if(NodeExists(t_tree, "system")) {
-            TConfigurationNode tSystem;
-            tSystem = GetNode(t_tree, "system");
-            GetNodeAttributeOrDefault(tSystem, "threads", m_unThreads, m_unThreads);
-            if(m_unThreads == 0) {
-               LOG << "[INFO] Not using threads" << std::endl;
-               m_pcSpace = new CSpaceNoThreads();
-            }
-            else {
-               LOG << "[INFO] Using " << m_unThreads << " parallel threads" << std::endl;
-               std::string strThreadingMethod = "balance_quantity";
-               GetNodeAttributeOrDefault(tSystem, "method", strThreadingMethod, strThreadingMethod);
-               if(strThreadingMethod == "balance_quantity") {
-                  LOG << "[INFO]   Chosen method \"balance_quantity\": threads will be assigned the same"
-                      << std::endl
-                      << "[INFO]   number of tasks, independently of the task length."
-                      << std::endl;
-                  m_pcSpace = new CSpaceMultiThreadBalanceQuantity();
-               }
-               else if(strThreadingMethod == "balance_length") {
-                  LOG << "[INFO]   Chosen method \"balance_length\": threads will be assigned different"
-                      << std::endl
-                      << "[INFO]   numbers of tasks, depending on the task length."
-                      << std::endl;
-                  m_pcSpace = new CSpaceMultiThreadBalanceLength();
-               }
-               else {
-                  THROW_ARGOSEXCEPTION("Error parsing the <system> tag. Unknown threading method \"" << strThreadingMethod << "\". Available methods: \"balance_quantity\" and \"balance_length\".");
-               }
-            }
-         }
-         else {
-            LOG << "[INFO] Not using threads" << std::endl;
-            m_pcSpace = new CSpaceNoThreads();
-         }
+          /* Parse the 'system' node and initialize */
+         InitFrameworkSystem(t_tree);
          /* Get 'experiment' node */
          TConfigurationNode tExperiment;
          tExperiment = GetNode(t_tree, "experiment");
@@ -413,6 +378,39 @@ namespace argos {
       catch(CARGoSException& ex) {
          THROW_ARGOSEXCEPTION_NESTED("Failed to initialize the simulator. Parse error inside the <framework> tag.", ex);
       }
+   }
+   /****************************************/
+   /****************************************/
+
+   void CSimulator::InitFrameworkSystem(TConfigurationNode& t_tree) {
+     if(NodeExists(t_tree, "system")) {
+       TConfigurationNode tSystem;
+       tSystem = GetNode(t_tree, "system");
+      GetNodeAttributeOrDefault(tSystem, "threads", m_unThreads, m_unThreads);
+
+       if(m_unThreads == 0) {
+         m_pcSpace = new CSpaceNoThreads();
+       }
+       else {
+         bool bPinThreadsToCores = false;
+         GetNodeAttributeOrDefault(tSystem, "pin_threads_to_cores", bPinThreadsToCores, bPinThreadsToCores);
+         std::string strThreadingMethod = "balance_quantity";
+         GetNodeAttributeOrDefault(tSystem, "method", strThreadingMethod, strThreadingMethod);
+
+         if(strThreadingMethod == "balance_quantity") {
+           m_pcSpace = new CSpaceMultiThreadBalanceQuantity(m_unThreads, bPinThreadsToCores);
+         }
+         else if(strThreadingMethod == "balance_length") {
+           m_pcSpace = new CSpaceMultiThreadBalanceLength(m_unThreads, bPinThreadsToCores);
+         }
+         else {
+           THROW_ARGOSEXCEPTION("Error parsing the <system> tag. Unknown threading method \"" << strThreadingMethod << "\". Available methods: \"balance_quantity\" and \"balance_length\".");
+         }
+       }
+     }
+     else {
+       m_pcSpace = new CSpaceNoThreads();
+     }
    }
 
    /****************************************/

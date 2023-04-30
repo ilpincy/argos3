@@ -48,10 +48,16 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   CSpaceMultiThreadBalanceQuantity::CSpaceMultiThreadBalanceQuantity() :
-      m_psUpdateThreadData(nullptr),
-      m_ptUpdateThreads(nullptr),
-      m_bIsControllableEntityAssignmentRecalculationNeeded(true) {}
+   CSpaceMultiThreadBalanceQuantity::CSpaceMultiThreadBalanceQuantity(UInt32 un_n_threads,
+                                                                      bool b_pin_threads_to_cores) :
+         CSpaceMultiThread(un_n_threads, b_pin_threads_to_cores),
+         m_psUpdateThreadData(nullptr),
+         m_bIsControllableEntityAssignmentRecalculationNeeded(true) {
+     LOG << "[INFO]   Chosen method \"balance_quantity\": threads will be assigned the same"
+         << std::endl
+         << "[INFO]   number of tasks, independently of the task length."
+         << std::endl;
+   }
 
    /****************************************/
    /****************************************/
@@ -92,20 +98,16 @@ namespace argos {
    /****************************************/
 
    void CSpaceMultiThreadBalanceQuantity::StartThreads() {
-      int nErrors;
-      /* Create the threads to update the controllable entities */
-      m_ptUpdateThreads = new pthread_t[CSimulator::GetInstance().GetNumThreads()];
-      m_psUpdateThreadData = new SUpdateThreadData*[CSimulator::GetInstance().GetNumThreads()];
-      for(UInt32 i = 0; i < CSimulator::GetInstance().GetNumThreads(); ++i) {
+      m_psUpdateThreadData = new SUpdateThreadData*[GetNumThreads()];
+      /* Create the threads */
+
+      for(UInt32 i = 0; i < GetNumThreads(); ++i) {
          /* Create the struct with the info to launch the thread */
          m_psUpdateThreadData[i] = new SUpdateThreadData(i, this);
          /* Create the thread */
-         if((nErrors = pthread_create(m_ptUpdateThreads + i,
-                                      nullptr,
-                                      LaunchUpdateThreadBalanceQuantity,
-                                      reinterpret_cast<void*>(m_psUpdateThreadData[i])))) {
-            THROW_ARGOSEXCEPTION("Error creating thread: " << ::strerror(nErrors));
-         }
+         CreateSingleThread(i,
+                            LaunchUpdateThreadBalanceQuantity,
+                            reinterpret_cast<void*>(m_psUpdateThreadData[i]));
       }
    }
 
@@ -114,25 +116,7 @@ namespace argos {
 
    void CSpaceMultiThreadBalanceQuantity::Destroy() {
       /* Destroy the threads to update the controllable entities */
-      int nErrors;
-      if(m_ptUpdateThreads != nullptr) {
-         for(UInt32 i = 0; i < CSimulator::GetInstance().GetNumThreads(); ++i) {
-            if((nErrors = pthread_cancel(m_ptUpdateThreads[i]))) {
-               THROW_ARGOSEXCEPTION("Error canceling controllable entities update threads " << ::strerror(nErrors));
-            }
-         }
-         auto** ppJoinResult = new void*[CSimulator::GetInstance().GetNumThreads()];
-         for(UInt32 i = 0; i < CSimulator::GetInstance().GetNumThreads(); ++i) {
-            if((nErrors = pthread_join(m_ptUpdateThreads[i], ppJoinResult + i))) {
-               THROW_ARGOSEXCEPTION("Error joining controllable entities update threads " << ::strerror(nErrors));
-            }
-            if(ppJoinResult[i] != PTHREAD_CANCELED) {
-               LOGERR << "[WARNING] Controllable entities update thread #" << i<< " not canceled" << std::endl;
-            }
-         }
-         delete[] ppJoinResult;
-      }
-      delete[] m_ptUpdateThreads;
+      DestroyAllThreads();
       /* Destroy the thread launch info */
       if(m_psUpdateThreadData != nullptr) {
          for(UInt32 i = 0; i < CSimulator::GetInstance().GetNumThreads(); ++i) {
