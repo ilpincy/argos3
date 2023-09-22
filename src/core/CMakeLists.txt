@@ -56,6 +56,7 @@ set(ARGOS3_HEADERS_UTILITY_MATH
   utility/math/ray3.h
   utility/math/rng.h
   utility/math/pose2.h
+  utility/math/transforms.h
   utility/math/vector2.h
   utility/math/vector3.h)
 # argos3/core/utility/math/matrix
@@ -155,6 +156,7 @@ set(ARGOS3_SOURCES_CORE
   utility/math/cylinder.cpp
   utility/math/convex_hull.cpp
   utility/math/pose2.cpp
+  utility/math/transforms.h
   utility/math/vector2.cpp
   utility/math/vector3.cpp
   utility/math/plane.cpp
