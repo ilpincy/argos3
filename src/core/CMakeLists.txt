@@ -156,7 +156,7 @@ set(ARGOS3_SOURCES_CORE
   utility/math/cylinder.cpp
   utility/math/convex_hull.cpp
   utility/math/pose2.cpp
-  utility/math/transforms.h
+  utility/math/transforms.cpp
   utility/math/vector2.cpp
   utility/math/vector3.cpp
   utility/math/plane.cpp

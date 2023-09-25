@@ -6,13 +6,13 @@
 
 namespace argos {
 
-   CVector3 GlobalToLocal(const CVector3& c_global,
-                          const CVector3& c_translation,
-                          const CQuaternion& c_orientation);
+   CVector3 GlobalToLocal(CVector3 c_global,
+                          CVector3 c_translation,
+                          CQuaternion c_orientation);
 
-   CVector3 LocalToGlobal(const CVector3& c_local,
-                          const CVector3& c_translation,
-                          const CQuaternion& c_orientation);
+   CVector3 LocalToGlobal(CVector3 c_local,
+                          CVector3 c_translation,
+                          CQuaternion c_orientation);
 
 }
 
