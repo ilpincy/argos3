@@ -222,6 +222,32 @@ namespace argos {
              CRadians(-fRotationSensitivity * c_delta.x()));
    }
 
+   void CQTOpenGLCamera::RotateAroundTarget(const QPoint& c_delta) {
+      /* Disable timeline on rotate */
+      m_bEnableTimeline = false;
+      /* Calculate fRotationSensitivity */
+      Real fRotationSensitivity =
+         ROTATE_GAIN * Exp(-m_sActivePlacement.LensFocalLength);
+      /* Rotate the left and right */
+      CVector3 cPositionToTarget = m_sActivePlacement.Target - m_sActivePlacement.Position;
+      cPositionToTarget.Rotate(CQuaternion(CRadians(-fRotationSensitivity * c_delta.x()), CVector3(0,0,1)));
+
+      /* Rotate up and down*/
+      CVector3 cLeft(m_sActivePlacement.Up);
+      cLeft.CrossProduct(cPositionToTarget).Normalize();
+      CVector3 cNewPositionToTarget = CVector3(cPositionToTarget);
+      cNewPositionToTarget.Rotate(CQuaternion(CRadians(fRotationSensitivity * c_delta.y()), cLeft));
+
+      /* Rotate up and down shouldn't go across Z axis */
+      CVector3 cOldPositionToTargetXY = CVector3(cPositionToTarget);
+      CVector3 cNewPositionToTargetXY = CVector3(cNewPositionToTarget);
+      cOldPositionToTargetXY.SetZ(0);
+      cNewPositionToTargetXY.SetZ(0);
+
+      if (cOldPositionToTargetXY.DotProduct(cNewPositionToTargetXY) >= 0)
+         m_sActivePlacement.Position = m_sActivePlacement.Target - cNewPositionToTarget;
+   }
+
    /****************************************/
    /****************************************/
 
@@ -377,6 +403,43 @@ namespace argos {
          cUp * (fMotionSensitivity * n_up_down);
       m_sActivePlacement.Target = m_sActivePlacement.Position;
       m_sActivePlacement.Target += cForward;
+   }
+
+   void CQTOpenGLCamera::MoveByHorizontal(SInt32 n_forwards_backwards,
+                                          SInt32 n_sideways,
+                                          SInt32 n_up_down) {
+      /* disable timeline on move */
+      m_bEnableTimeline = false;
+      /* Get cUp and calculate cForward and cLeft */
+      const CVector3& cUp = m_sActivePlacement.Up;
+      CVector3 cForward(m_sActivePlacement.Target - m_sActivePlacement.Position);
+      cForward.SetZ(0);
+      cForward.Normalize();
+      CVector3 cLeft = m_sActivePlacement.Up;
+      cLeft.CrossProduct(cForward).Normalize();
+      /* Calculate motion sensitivity */
+      Real fMotionSensitivity = MOVE_GAIN * Exp(m_sActivePlacement.LensFocalLength);
+      /* Apply translation */
+      CVector3 cMovement = cForward * (fMotionSensitivity * n_forwards_backwards) +
+                           cLeft * (fMotionSensitivity * n_sideways) +
+                           cUp * (fMotionSensitivity * n_up_down);
+      m_sActivePlacement.Position += cMovement;
+      m_sActivePlacement.Target += cMovement;
+   }
+
+   void CQTOpenGLCamera::ZoomIn(SInt32 n_forwards_backwards) {
+      /* disable timeline on move */
+      m_bEnableTimeline = false;
+      /* Get cUp and calculate cForward and cLeft */
+      CVector3 cForward(m_sActivePlacement.Target - m_sActivePlacement.Position);
+      /* Calculate motion sensitivity */
+      Real fMotionSensitivity = MOVE_GAIN * Exp(m_sActivePlacement.LensFocalLength) * 0.15;
+      /* Apply translation */
+      CVector3 cMovement = cForward * (fMotionSensitivity * n_forwards_backwards);
+      /* Movement shouldn't go beyond target */
+      CVector3 cNewPosition = m_sActivePlacement.Position + cMovement;
+      if ((m_sActivePlacement.Target - cNewPosition).DotProduct(m_sActivePlacement.Target - m_sActivePlacement.Position) > 0)
+         m_sActivePlacement.Position = cNewPosition;
    }
 
    /****************************************/
