@@ -36,8 +36,6 @@ namespace argos {
       try {
          /* Init parent */
          CPhysicsEngine::Init(t_tree);
-         /* Parse XML */
-         GetNodeAttributeOrDefault(t_tree, "elevation", m_fElevation, m_fElevation);
          if(NodeExists(t_tree, "friction")) {
             TConfigurationNode& tNode = GetNode(t_tree, "friction");
             GetNodeAttributeOrDefault(tNode, "box_linear_friction",       m_fBoxLinearFriction,       m_fBoxLinearFriction);
@@ -46,11 +44,21 @@ namespace argos {
             GetNodeAttributeOrDefault(tNode, "cylinder_angular_friction", m_fCylinderAngularFriction, m_fCylinderAngularFriction);
          }
          GetNodeAttributeOrDefault(t_tree, "gripping_rigidity", m_fGrippingRigidity, m_fGrippingRigidity);
-         /* Override volume top and bottom with the value of m_fElevation */
-         if(!GetVolume().TopFace)    GetVolume().TopFace    = new SHorizontalFace;
-         if(!GetVolume().BottomFace) GetVolume().BottomFace = new SHorizontalFace;
-         GetVolume().TopFace->Height    = m_fElevation;
-         GetVolume().BottomFace->Height = m_fElevation;
+
+         /*
+          * Override volume top and bottom with the value of m_fElevation, but
+          * only if the attribute exists. This allows precise specification of
+          * physics engine faces via <boundaries> to take precendence over the
+          * "shorthand" partial specification here of the top and bottom faces.
+          */
+         if (NodeExists(t_tree, "elevation")) {
+           GetNodeAttribute(t_tree, "elevation", m_fElevation);
+           if(!GetVolume().TopFace)    GetVolume().TopFace    = new SHorizontalFace;
+           if(!GetVolume().BottomFace) GetVolume().BottomFace = new SHorizontalFace;
+           GetVolume().TopFace->Height    = m_fElevation;
+           GetVolume().BottomFace->Height = m_fElevation;
+         }
+
          /* Initialize physics */
          cpInitChipmunk();
          cpResetShapeIdCounter();
@@ -193,6 +201,7 @@ namespace argos {
                &cModel.GetEmbodiedEntity(),
                f_t));
       }
+
       else {
          /* Check top surface */
          if(cIntersectionPoint.GetZ() > cModel.GetBoundingBox().MaxCorner.GetZ()) {
@@ -394,7 +403,10 @@ namespace argos {
                            "   - Small arenas\n"
                            "   - Less available ARGoS threads than assigned physics engines\n"
                            "   - Less available CPU cores than assigned ARGoS threads\n\n"
-                           "4. A good starting strategy for physics engine boundary assignment is to assign\n"
+                           "4. When using multiple physics engines, the \".//system/pin_threads_to_cores\"\n"
+                           "   attribute can be set to 'true' too reduce thread context switching, which\n"
+                           "   usually yields a 5-20% performance performance boost (Linux only).\n\n"
+                           "5. A good starting strategy for physics engine boundary assignment is to assign\n"
                            "   each physics engine the same amount of area within the arena. This will be\n"
                            "   sufficient for most cases. Depending on the nature of the simulation, using\n"
                            "   non-homogeneous physics engine sizes may yield increased performance. An\n"
@@ -404,11 +416,21 @@ namespace argos {
                            "   increase performance.\n\n"
                            "5. By default, this engine uses the bounding-box tree method for collision shape\n"
                            "   indexing. This method is the default in Chipmunk and it works well most of\n"
-                           "   the times. However, if you are running simulations with hundreds or thousands\n"
-                           "   of identical robots, a different shape collision indexing is available: the\n"
-                           "   spatial hash. The spatial hash is a grid stored in a hashmap. To get the max\n"
-                           "   out of this indexing method, you must set two parameters: the cell size and\n"
-                           "   the suggested minimum number of cells in the space. According to the\n"
+                           "   the time. However, a different shape collision indexing is also available: the\n"
+                           "   spatial hash, which is a grid stored in a hashmap.\n\n"
+
+                           "   This indexing method should ONLY be used when the following conditions are met:\n\n"
+                           "   - You are simulating hundreds or thousands of identical robots\n"
+                           "   - You cannot use multiple physics engines, such as when using ARGoS on a single-core\n"
+                           "     machine.\n\n"
+                           "   This is because when using the spatial hash with multiple physics engines, any\n"
+                           "   efficiency gains obtained through faster ray queries are (usually) lost due to the\n"
+                           "   increased cache pressure from more structures in memory which are shared between\n"
+                           "   cores. Furthermore, Chipmunk's implementation of the spatial hash is not meant for\n"
+                           "   use with multiple engines, and will crash without careful handling which can slow\n"
+                           "   down ARGoS a lot. ARGoS currently does not implement this handling.\n\n"
+                           "   To get the max out of this indexing method, you must set two parameters: the cell\n"
+                           "   size and the suggested minimum number of cells in the space. According to the\n"
                            "   documentation of Chipmunk, the cell size should correspond to the size of the\n"
                            "   bounding box of the most common object in the simulation; the minimum number\n"
                            "   of cells should be at least 10x the number of objects managed by the physics\n"
@@ -417,13 +439,13 @@ namespace argos {
                            "   <physics_engines>\n"
                            "     ...\n"
                            "     <dynamics2d id=\"dyn2d\">\n"
-                           "       <spatial_hash>\n"
-                           "         <cell_size=\"1.0\"/>\n"
-                           "         <cell_num=\"2.0\"/>\n"
-                           "       </spatial_hash>\n"
+                           "       <spatial_hash\n"
+                           "         cell_size=\"1.0\"\n"
+                           "         cell_num=\"2.0\"\n"
+                           "       />\n"
                            "     </dynamics2d>\n"
                            "     ...\n"
-                           "   </physics_engines>\n"
+                           "   </physics_engines>\n\n"
                            ,
                            "Usable"
       );
