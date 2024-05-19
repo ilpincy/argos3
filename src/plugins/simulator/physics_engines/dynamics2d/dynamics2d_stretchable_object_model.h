@@ -58,6 +58,7 @@ namespace argos {
       }
       
       inline void SetGrippable(CDynamics2DGrippable* pc_grippable) {
+         if(m_pcGrippable) delete m_pcGrippable;
          m_pcGrippable = pc_grippable;
       }
       

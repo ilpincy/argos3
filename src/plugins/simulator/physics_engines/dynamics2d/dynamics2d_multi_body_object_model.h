@@ -104,6 +104,10 @@ namespace argos {
       inline const SBody& GetBody(size_t i) const {
          return m_vecBodies[i];
       }
+
+      inline size_t GetNumBodies() const {
+         return m_vecBodies.size();
+      }
       
       virtual void Reset();
 

@@ -19,7 +19,8 @@ namespace argos {
 
 namespace argos {
 
-   class CDynamics2DBoxModel : public CDynamics2DStretchableObjectModel, public CPhysicsBoxModel {
+   class CDynamics2DBoxModel : public CDynamics2DStretchableObjectModel,
+                               public CPhysicsBoxModel {
 
    public:
 

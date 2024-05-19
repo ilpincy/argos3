@@ -80,18 +80,31 @@ namespace argos {
          /* Zero forces and torques */
          cpBodyResetForces(m_vecBodies[i].Body);
       }
+      /* Recalculate the bounding box */
+      CalculateBoundingBox();
    }
 
    /****************************************/
    /****************************************/
 
    void CDynamics2DMultiBodyObjectModel::CalculateBoundingBox() {
+      /* Nothing to do if no bodies */
       if(m_vecBodies.empty()) return;
-      cpBB tBoundingBox;
-      Real fMaxHeight = 0.0f;
-      for(size_t i = 0; i < m_vecBodies.size(); ++i) {
-         tBoundingBox = cpShapeGetBB(m_vecBodies[i].Body->shapeList);
-         for(cpShape* pt_shape = m_vecBodies[i].Body->shapeList->next;
+      /* Take the shapes of the first body to start the BB */
+      cpBB tBoundingBox = cpShapeGetBB(m_vecBodies[0].Body->shapeList);
+      for(cpShape* pt_shape = m_vecBodies[0].Body->shapeList->next;
+          pt_shape != nullptr;
+          pt_shape = pt_shape->next) {
+         cpBB* ptBB = &pt_shape->bb;
+         if(ptBB->l < tBoundingBox.l) tBoundingBox.l = ptBB->l;
+         if(ptBB->b < tBoundingBox.b) tBoundingBox.b = ptBB->b;
+         if(ptBB->r > tBoundingBox.r) tBoundingBox.r = ptBB->r;
+         if(ptBB->t > tBoundingBox.t) tBoundingBox.t = ptBB->t;
+      }
+      Real fMaxHeight = Max(fMaxHeight, m_vecBodies[0].Height);
+      /* Now go through the other bodies */
+      for(size_t i = 1; i < m_vecBodies.size(); ++i) {
+         for(cpShape* pt_shape = m_vecBodies[i].Body->shapeList;
              pt_shape != nullptr;
              pt_shape = pt_shape->next) {
             cpBB* ptBB = &pt_shape->bb;
@@ -101,7 +114,8 @@ namespace argos {
             if(ptBB->t > tBoundingBox.t) tBoundingBox.t = ptBB->t;
          }
          fMaxHeight = Max(fMaxHeight, m_vecBodies[i].Height);
-      }      
+      }
+      /* All done, update the bounding box */
       GetBoundingBox().MinCorner.SetX(tBoundingBox.l);
       GetBoundingBox().MinCorner.SetY(tBoundingBox.b);
       GetBoundingBox().MinCorner.SetZ(GetDynamics2DEngine().GetElevation());
