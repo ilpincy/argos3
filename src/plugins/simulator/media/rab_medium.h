@@ -53,7 +53,7 @@ namespace argos {
        */
       const CSet<CRABEquippedEntity*,SEntityComparator>& GetRABsCommunicatingWith(CRABEquippedEntity& c_entity) const;
 
-   private:
+   protected:
 
       /** Defines the routing table */
       typedef unordered_map<ssize_t, CSet<CRABEquippedEntity*,SEntityComparator> > TRoutingTable;
