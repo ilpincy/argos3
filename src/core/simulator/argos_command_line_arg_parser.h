@@ -143,9 +143,11 @@ namespace argos {
       std::string m_strQuery;
       std::string m_strLogFileName;
       std::ofstream m_cLogFile;
+      FILE* m_RawLogFile;
       std::streambuf* m_pcInitLogStream;
       std::string m_strLogErrFileName;
       std::ofstream m_cLogErrFile;
+      FILE* m_RawLogErrFile;
       std::streambuf* m_pcInitLogErrStream;
       bool m_bNonColoredLog;
       bool m_bHelpWanted;
