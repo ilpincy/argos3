@@ -84,6 +84,7 @@ namespace argos {
 
    void CPointMass3DQuadRotorModel::UpdateFromEntityStatus() {
       m_sDesiredPositionData = m_cQuadRotorEntity.GetPositionControlData();
+      m_sDesiredSpeedData = m_cQuadRotorEntity.GetSpeedControlData();
    }
 
    /****************************************/
