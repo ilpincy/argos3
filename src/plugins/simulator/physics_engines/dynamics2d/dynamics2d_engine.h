@@ -66,7 +66,6 @@ namespace argos {
       virtual size_t GetNumPhysicsModels();
       virtual bool AddEntity(CEntity& c_entity);
       virtual bool RemoveEntity(CEntity& c_entity);
-
       virtual void CheckIntersectionWithRay(TEmbodiedEntityIntersectionData& t_data,
                                             const CRay3& c_ray) const;
 
@@ -147,7 +146,6 @@ namespace argos {
       cpBody* m_ptGroundBody;
       Real m_fGrippingRigidity;
       Real m_fElevation;
-
       CControllableEntity::TMap m_tControllableEntities;
       std::map<std::string, CDynamics2DModel*> m_tPhysicsModels;
 
