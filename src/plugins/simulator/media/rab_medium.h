@@ -37,13 +37,13 @@ namespace argos {
        * Adds the specified entity to the list of managed entities.
        * @param c_entity The entity to add.
        */
-      void AddEntity(CRABEquippedEntity& c_entity);
+      virtual void AddEntity(CRABEquippedEntity& c_entity);
       
       /**
        * Removes the specified entity from the list of managed entities.
        * @param c_entity The entity to remove.
        */
-      void RemoveEntity(CRABEquippedEntity& c_entity);
+      virtual void RemoveEntity(CRABEquippedEntity& c_entity);
 
       /**
        * Returns an immutable vector of RAB entities that can communicated with the given entity.
@@ -53,7 +53,7 @@ namespace argos {
        */
       const CSet<CRABEquippedEntity*,SEntityComparator>& GetRABsCommunicatingWith(CRABEquippedEntity& c_entity) const;
 
-   private:
+   protected:
 
       /** Defines the routing table */
       typedef unordered_map<ssize_t, CSet<CRABEquippedEntity*,SEntityComparator> > TRoutingTable;
