@@ -163,9 +163,18 @@ namespace argos
       /*** attitude (roll, pitch, yaw) control ***/
       /* roll, pitch, yaw errors */
       CVector3 cOrientationError(cOrientationTarget - m_cOrientation);
+      /* Normalize yaw error to [-pi, pi] */
+      CRadians cOrientationYawError;
+      cOrientationYawError.SetValue(cOrientationError.GetZ());
+      cOrientationError.SetZ(cOrientationYawError.SignedNormalize().GetValue());
       /* desired  roll, pitch, yaw rates */
+      CVector3 cPrevTargetOrientationError = cOrientationTarget - m_cOrientationTargetPrev;
+      /* Normalize previous target orientation yaw error to [-pi, pi] */
+      CRadians cPrevTargetYawError;
+      cPrevTargetYawError.SetValue(cPrevTargetOrientationError.GetZ());
+      cPrevTargetOrientationError.SetZ(cPrevTargetYawError.SignedNormalize().GetValue());
       CVector3 cAngularVelocityTarget =
-         (cOrientationTarget - m_cOrientationTargetPrev) / GetPM3DEngine().GetPhysicsClockTick();
+         cPrevTargetOrientationError / GetPM3DEngine().GetPhysicsClockTick();
       /* previous desired roll, pitch, yaw values for the controllers */
       m_cOrientationTargetPrev = cOrientationTarget;
       /* rotational rate errors */
