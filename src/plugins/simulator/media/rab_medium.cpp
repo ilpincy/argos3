@@ -146,11 +146,7 @@ namespace argos {
             m_pcRABEquippedEntityIndex->GetEntitiesAt(cOtherRABs, cRAB.GetPosition());
          }
          catch(CARGoSException& ex) {
-            std::ostringstream oss;
-            oss << "When checking RAB \""
-                << cRAB.GetId()
-                << "\"";
-            THROW_ARGOSEXCEPTION_NESTED(oss.str(), ex)
+            THROW_ARGOSEXCEPTION_NESTED("When checking RAB \"" << cRAB.GetContext() << cRAB.GetId() << "\"", ex);
          }
          /* Go through the RAB entities in range */
          for(CSet<CRABEquippedEntity*>::iterator it2 = cOtherRABs.begin();
