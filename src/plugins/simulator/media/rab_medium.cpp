@@ -142,7 +142,16 @@ namespace argos {
          cOcclusionCheckRay.SetStart(cRAB.GetPosition());
          /* For each RAB entity, get the list of RAB entities in range */
          cOtherRABs.clear();
-         m_pcRABEquippedEntityIndex->GetEntitiesAt(cOtherRABs, cRAB.GetPosition());
+         try {
+            m_pcRABEquippedEntityIndex->GetEntitiesAt(cOtherRABs, cRAB.GetPosition());
+         }
+         catch(CARGoSException& ex) {
+            std::ostringstream oss;
+            oss << "When checking RAB \""
+                << cRAB.GetId()
+                << "\"";
+            THROW_ARGOSEXCEPTION_NESTED(oss.str(), ex)
+         }
          /* Go through the RAB entities in range */
          for(CSet<CRABEquippedEntity*>::iterator it2 = cOtherRABs.begin();
              it2 != cOtherRABs.end();
