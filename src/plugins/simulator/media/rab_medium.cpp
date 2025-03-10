@@ -11,18 +11,82 @@ namespace argos {
    /****************************************/
    /****************************************/
 
+   template<class ENTITY>
+   class CDummyIndex : public CPositionalIndex<ENTITY> {
+   public:
+      typedef typename CPositionalIndex<ENTITY>::COperation CEntityOperation;
+   public:
+      CDummyIndex() {}
+      
+      virtual ~CDummyIndex() {}
+      
+      virtual void Init(TConfigurationNode& t_tree) {}
+      
+      virtual void Reset() {}
+      
+      virtual void Destroy() {}
+
+      virtual void AddEntity(ENTITY& c_entity) {
+         m_cEntities.insert(&c_entity);
+      }
+
+      virtual void RemoveEntity(ENTITY& c_entity) {
+         m_cEntities.erase(&c_entity);
+      }
+
+      virtual void Update() {}
+
+      virtual void GetEntitiesAt(CSet<ENTITY*,SEntityComparator>& c_entities,
+                                 const CVector3& c_position) const {
+         c_entities = m_cEntities;
+      }
+
+      virtual void ForAllEntities(CEntityOperation& c_operation) {
+         for(typename CSet<ENTITY*,SEntityComparator>::iterator it = m_cEntities.begin();
+             it != m_cEntities.end() && c_operation(**it);
+             ++it);
+      }
+
+      virtual void ForEntitiesInSphereRange(const CVector3& c_center,
+                                            Real f_radius,
+                                            CEntityOperation& c_operation) {}
+
+      virtual void ForEntitiesInBoxRange(const CVector3& c_center,
+                                         const CVector3& c_half_size,
+                                         CEntityOperation& c_operation) {}
+
+      virtual void ForEntitiesInCircleRange(const CVector3& c_center,
+                                            Real f_radius,
+                                            CEntityOperation& c_operation) {}
+
+      virtual void ForEntitiesInRectangleRange(const CVector3& c_center,
+                                               const CVector2& c_half_size,
+                                               CEntityOperation& c_operation) {}
+
+      virtual void ForEntitiesAlongRay(const CRay3& c_ray,
+                                       CEntityOperation& c_operation,
+                                       bool b_stop_at_closest_match = false) {}
+
+   protected:
+
+      CSet<ENTITY*,SEntityComparator> m_cEntities;
+   };
+
+/****************************************/
+/****************************************/
+
    CRABMedium::CRABMedium() :
       m_bCheckOcclusions(true) {
    }
 
-   /****************************************/
-   /****************************************/
+/****************************************/
+/****************************************/
 
    CRABMedium::~CRABMedium() {
    }
 
-   /****************************************/
-   /****************************************/
+/****************************************/
+/****************************************/
 
    void CRABMedium::Init(TConfigurationNode& t_tree) {
       try {
@@ -57,6 +121,19 @@ namespace argos {
             m_pcRABEquippedEntityGridUpdateOperation = new CRABEquippedEntityGridEntityUpdater(*pcGrid);
             pcGrid->SetUpdateEntityOperation(m_pcRABEquippedEntityGridUpdateOperation);
             m_pcRABEquippedEntityIndex = pcGrid;
+            LOG << "[INFO] RAB medium \""
+                << GetId()
+                << "\" using the grid index with size <"
+                << punGridSize[0] << "," << punGridSize[1] << "," << punGridSize[2] << ">"
+                << std::endl;
+         }
+         else if(strPosIndexMethod == "dummy") {
+            m_pcRABEquippedEntityGridUpdateOperation = nullptr;
+            m_pcRABEquippedEntityIndex = new CDummyIndex<CRABEquippedEntity>();
+            LOG << "[INFO] RAB medium \""
+                << GetId()
+                << "\" using the dummy index"
+                << std::endl;
          }
          else {
             THROW_ARGOSEXCEPTION("Unknown method \"" << strPosIndexMethod << "\" for the positional index.");
@@ -67,15 +144,15 @@ namespace argos {
       }
    }
 
-   /****************************************/
-   /****************************************/
+/****************************************/
+/****************************************/
 
    void CRABMedium::PostSpaceInit() {
       Update();
    }
 
-   /****************************************/
-   /****************************************/
+/****************************************/
+/****************************************/
 
    void CRABMedium::Reset() {
       /* Reset positional index of RAB entities */
@@ -88,8 +165,8 @@ namespace argos {
       }
    }
 
-   /****************************************/
-   /****************************************/
+/****************************************/
+/****************************************/
 
    void CRABMedium::Destroy() {
       delete m_pcRABEquippedEntityIndex;
@@ -98,8 +175,8 @@ namespace argos {
       }
    }
 
-   /****************************************/
-   /****************************************/
+/****************************************/
+/****************************************/
 
    static size_t HashRABPair(const std::pair<CRABEquippedEntity*, CRABEquippedEntity*>& c_pair) {
       return
@@ -201,8 +278,8 @@ namespace argos {
       } // for routing table
    }
 
-   /****************************************/
-   /****************************************/
+/****************************************/
+/****************************************/
 
    void CRABMedium::AddEntity(CRABEquippedEntity& c_entity) {
       m_tRoutingTable.insert(
@@ -212,8 +289,8 @@ namespace argos {
       m_pcRABEquippedEntityIndex->Update();
    }
 
-   /****************************************/
-   /****************************************/
+/****************************************/
+/****************************************/
 
    void CRABMedium::RemoveEntity(CRABEquippedEntity& c_entity) {
       m_pcRABEquippedEntityIndex->RemoveEntity(c_entity);
@@ -223,8 +300,8 @@ namespace argos {
          m_tRoutingTable.erase(it);
    }
 
-   /****************************************/
-   /****************************************/
+/****************************************/
+/****************************************/
 
    const CSet<CRABEquippedEntity*,SEntityComparator>& CRABMedium::GetRABsCommunicatingWith(CRABEquippedEntity& c_entity) const {
       TRoutingTable::const_iterator it = m_tRoutingTable.find(c_entity.GetIndex());
@@ -236,8 +313,8 @@ namespace argos {
       }
    }
 
-   /****************************************/
-   /****************************************/
+/****************************************/
+/****************************************/
 
    REGISTER_MEDIUM(CRABMedium,
                    "range_and_bearing",
@@ -254,11 +331,28 @@ namespace argos {
                    "By default, the RAB medium requires two robots to be in direct line-of-sight in\n"
                    "order to be able to exchange messages. You can toggle this behavior on or off\n"
                    "through the 'check_occlusions' attribute:\n\n"
-                   "<range_and_bearing id=\"rab\" check_occlusions=\"false\" />\n\n",
-                   "Under development"
+                   "<range_and_bearing id=\"rab\" check_occlusions=\"false\" />\n\n"
+                   "An important factor in simulation efficiency is how the robots are indexed in\n"
+                   "space, because that impacts how fast neighbor queries can be completed. You can\n"
+                   "control this aspect with the \"index\" attribute. The default is to use the\n"
+                   "\"grid\" index, which superimposes a grid onto the arena. The size of the grid\n"
+                   "cells is calculated automatically from the size of the arena, defaulting at\n"
+                   "1m per side. The optimal choice for your experiment is usually to set this size\n"
+                   "to the diameter of the most common robot in your simulation. You can override\n"
+                   "the defaults by using this configuration:\n\n"
+                   "<range_and_bearing id=\"rab\" index=\"grid\" grid_size=\"20, 10, 5\" />\n\n"
+                   "The example shows how to set a 20x10x5 grid. Imagine that the arena size is\n"
+                   "<10,10,1>: then, the size of a cell would be <10/20, 10/10, 1/5> = <.5, 1, .2>.\n\n"
+                   "It makes sense to pay the cost of a grid when you have a lot of robots. If you\n"
+                   "only have a handful of robots, you might want to avoid grid management\n"
+                   "altogether. In that case, give the \"dummy\" index a try:\n\n"
+                   "<range_and_bearing id=\"rab\" index=\"dummy\" />\n\n"
+                   "This index has O(N^2) complexity (where N is the number of robots), but for\n"
+                   "small experiments it's actually faster than using the grid.\n",
+                   "Usable"
       );
 
-   /****************************************/
-   /****************************************/
+/****************************************/
+/****************************************/
 
 }
