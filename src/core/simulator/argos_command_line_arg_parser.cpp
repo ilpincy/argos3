@@ -14,7 +14,9 @@ namespace argos {
 
    CARGoSCommandLineArgParser::CARGoSCommandLineArgParser() :
       m_eAction(ACTION_UNKNOWN),
+      m_RawLogFile(nullptr),
       m_pcInitLogStream(nullptr),
+      m_RawLogErrFile(nullptr),
       m_pcInitLogErrStream(nullptr) {
       AddFlag(
          'h',
@@ -74,9 +76,15 @@ namespace argos {
          LOG.GetStream().rdbuf(m_pcInitLogStream);
          m_cLogFile.close();
       }
+      if (nullptr != m_RawLogFile) {
+        fclose(m_RawLogFile);
+      }
       if(m_cLogErrFile.is_open()) {
          LOGERR.GetStream().rdbuf(m_pcInitLogErrStream);
          m_cLogErrFile.close();
+      }
+      if (nullptr != m_RawLogErrFile) {
+        fclose(m_RawLogErrFile);
       }
    }
 
@@ -102,13 +110,16 @@ namespace argos {
          m_pcInitLogStream = LOG.GetStream().rdbuf();
          LOG.GetStream().rdbuf(m_cLogFile.rdbuf());
          /* Redirect stdout (different than std::cout!) */
-         std::freopen(m_strLogFileName.c_str(), "w", stdout);
+         m_RawLogFile = std::freopen(m_strLogFileName.c_str(), "w", stdout);
+         if (nullptr == m_RawLogFile) {
+           THROW_ARGOSEXCEPTION("Error redirecting stdout to \"" << m_strLogFileName << "\"");
+         }
       }
       if(m_strLogErrFileName != "") {
          LOGERR.DisableColoredOutput();
          m_cLogErrFile.open(m_strLogErrFileName.c_str(), std::ios::trunc | std::ios::out);
          if(m_cLogErrFile.fail()) {
-            THROW_ARGOSEXCEPTION("Error opening file \"" << m_strLogErrFileName << "\"");
+           THROW_ARGOSEXCEPTION("Error opening file \"" << m_strLogErrFileName << "\"");
          }
          m_pcInitLogErrStream = LOGERR.GetStream().rdbuf();
          LOGERR.GetStream().rdbuf(m_cLogErrFile.rdbuf());
@@ -116,7 +127,10 @@ namespace argos {
           * Redirect stderr (different than std::cerr!). Exceptions print to
           * here when uncaught, so we need to capture it too.
           */
-         std::freopen(m_strLogErrFileName.c_str(), "w", stderr);
+         m_RawLogErrFile = std::freopen(m_strLogErrFileName.c_str(), "w", stderr);
+         if (nullptr == m_RawLogErrFile) {
+           THROW_ARGOSEXCEPTION("Error redirecting stderr to \"" << m_strLogErrFileName << "\"");
+         }
       }
 
 
