@@ -15,6 +15,8 @@
 #include <argos3/plugins/simulator/entities/led_entity.h>
 #include <argos3/plugins/simulator/media/led_medium.h>
 
+#include <cstdint>
+
 namespace argos {
 
    /****************************************/
