@@ -99,6 +99,12 @@ namespace argos {
                 SInt32 n_sideways,
                 SInt32 n_up_down);
 
+      void RotateAroundTarget(const QPoint& c_delta);
+      void MoveByHorizontal(SInt32 n_forwards_backwards,
+                            SInt32 n_sideways,
+                            SInt32 n_up_down);
+      void ZoomIn(SInt32 n_forwards_backwards);
+
       void Interpolate(UInt32 un_start_placement,
                        UInt32 un_end_placement,
                        Real f_time_fraction);

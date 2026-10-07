@@ -879,20 +879,23 @@ namespace argos {
              * Camera movement
              */
             if(pc_event->buttons() == Qt::LeftButton) {
-               if (m_bInvertMouse) m_cCamera.Rotate( pc_event->pos() - m_cMouseGrabPos);
-               else m_cCamera.Rotate( m_cMouseGrabPos - pc_event->pos());
+               QPoint cMouseMovement = m_cMouseGrabPos - pc_event->pos();
+               cMouseMovement = pc_event->pos() - m_cMouseGrabPos;
+               //m_cCamera.Rotate(cMouseMovement);
+               m_cCamera.RotateAroundTarget(cMouseMovement);
                m_cMouseGrabPos = pc_event->pos();
+
                update();
             }
             else if(pc_event->buttons() == Qt::RightButton) {
                QPoint cDelta(pc_event->pos() - m_cMouseGrabPos);
-               m_cCamera.Move(-cDelta.y(), cDelta.x(), 0);
+               m_cCamera.MoveByHorizontal(cDelta.y(), cDelta.x(), 0);
                m_cMouseGrabPos = pc_event->pos();
                update();
             }
             else if(pc_event->buttons() == Qt::MiddleButton) {
                QPoint cDelta(pc_event->pos() - m_cMouseGrabPos);
-               m_cCamera.Move(0, 0, cDelta.y());
+               m_cCamera.MoveByHorizontal(0, 0, cDelta.y());
                m_cMouseGrabPos = pc_event->pos();
                update();
             }
@@ -907,7 +910,19 @@ namespace argos {
    /****************************************/
 
    void CQTOpenGLWidget::wheelEvent(QWheelEvent *pc_event) {
-      if(m_sSelectionInfo.IsSelected && (pc_event->modifiers() & Qt::ControlModifier)) {
+      Qt::KeyboardModifiers cShift = pc_event->modifiers() & Qt::ShiftModifier;
+      Qt::KeyboardModifiers cControl = pc_event->modifiers() & Qt::ControlModifier;
+      Qt::KeyboardModifiers cAlt = pc_event->modifiers() & Qt::AltModifier;
+
+      bool bMouseRightButton = (pc_event->buttons() == Qt::RightButton);
+      bool bKey1 = (cControl != 0);
+      bool bKey2 = (cShift != 0);
+
+      if(!bKey1 && !bKey2) {
+         m_cCamera.ZoomIn(-pc_event->angleDelta().y());
+         update();
+      }
+      else if(m_sSelectionInfo.IsSelected && (bKey1 || bKey2)) {
          /* Treat selected entity as an embodied entity */
          auto* pcEntity = dynamic_cast<CEmbodiedEntity*>(m_sSelectionInfo.Entity);
          if(pcEntity == nullptr) {
@@ -922,14 +937,39 @@ namespace argos {
          }
          /*
           * If we get here, pcEntity is set to a non-NULL value
-          * Rotate the entity
+          * Rotate the entity or Move vertically
           */
-         CDegrees cDegrees(pc_event->angleDelta().y() / 8);
-         CQuaternion cRotation(ToRadians(cDegrees), CVector3::Z);
-         CQuaternion cOldOrientation(pcEntity->GetOriginAnchor().Orientation);
-         CQuaternion cNewOrientation(cOldOrientation * cRotation);
-         if(pcEntity->MoveTo(pcEntity->GetOriginAnchor().Position, cNewOrientation)) {
-            m_cUserFunctions.EntityRotated(pcEntity->GetRootEntity(), cOldOrientation, cNewOrientation);
+         /* check how much the mouse has scrolled
+          * Note that in Ubuntu, Alt + scroll is interpreted has horizontal move,
+          * and in MacOS, Shift + scroll is interpreted has horizontal move,
+          * so if y is 0, check x instead
+          */
+         qreal fScroll = pc_event->angleDelta().y();
+         if (fScroll == 0 ) fScroll = pc_event->angleDelta().x();
+         if (bKey1 && !bKey2) {
+            CDegrees cDegrees(fScroll / 8);
+            CQuaternion cRotation(ToRadians(cDegrees), CVector3::Z);
+            CQuaternion cOldOrientation(pcEntity->GetOriginAnchor().Orientation);
+            CQuaternion cNewOrientation(cOldOrientation * cRotation);
+            if(pcEntity->MoveTo(pcEntity->GetOriginAnchor().Position, cNewOrientation)) {
+               m_cUserFunctions.EntityRotated(pcEntity->GetRootEntity(), cOldOrientation, cNewOrientation);
+            }
+         }
+         else if (!bKey1 && bKey2) {
+            CDegrees cDegrees(fScroll / 8);
+            CQuaternion cRotation(ToRadians(cDegrees), CVector3::X);
+            CQuaternion cOldOrientation(pcEntity->GetOriginAnchor().Orientation);
+            CQuaternion cNewOrientation(cOldOrientation * cRotation);
+            if(pcEntity->MoveTo(pcEntity->GetOriginAnchor().Position, cNewOrientation)) {
+               m_cUserFunctions.EntityRotated(pcEntity->GetRootEntity(), cOldOrientation, cNewOrientation);
+            }
+         }
+         else if (bKey1 && bKey2) {
+            CVector3 cOldPos(pcEntity->GetOriginAnchor().Position);
+            CVector3 cNewPos = cOldPos + CVector3(0, 0, fScroll * 0.00083333333);  // 1/1200
+            if(pcEntity->MoveTo(cNewPos, pcEntity->GetOriginAnchor().Orientation)) {
+               m_cUserFunctions.EntityMoved(pcEntity->GetRootEntity(), cOldPos, cNewPos);
+            }
          }
          /* entity updated, redraw the scene */
          update();
